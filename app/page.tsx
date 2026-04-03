@@ -8,7 +8,7 @@ const CONTENT = {
     hero: {
       greeting: "Cześć, jestem",
       name: "Jakub Chodakowski",
-      headline: "Wdrażam AI w Twojej firmie",
+      headline: "Wdrożę AI w Twojej firmie",
       sub: "Twoi pracownicy tracą godziny na powtarzalne zadania. Ja pokazuję, jak AI może to robić za nich — szybciej, taniej i bez błędów.",
       cta: "Porozmawiajmy",
       cv: "Pobierz CV",
