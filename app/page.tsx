@@ -48,6 +48,7 @@ const CONTENT = {
         image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc",
       },
       milestones: [
+        { date: "Listopad 2024", text: "Wdrożenie AI w SEO. Zbudowałem stronę, zautomatyzowałem publikację artykułów i po 3 miesiącach zacząłem generować ruch organiczny. Minimum wysiłku, zero doświadczenia w SEO.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
         { date: "Marzec 2026", text: "Wdrożenie agenta AI na Instagramie, który automatycznie obsługuje wiadomości DM" },
       ],
     },
@@ -154,6 +155,7 @@ const CONTENT = {
         image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc",
       },
       milestones: [
+        { date: "November 2024", text: "Implemented AI for SEO. Built a website, automated blog post publishing, and started generating organic traffic in 3 months. Minimal effort, zero SEO experience.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
         { date: "March 2026", text: "Deployed an AI agent on Instagram that automatically handles DM conversations" },
       ],
     },
@@ -425,8 +427,18 @@ export default function Home() {
               <div className="mt-8 space-y-3 max-w-2xl mx-auto">
                 {t.after.milestones.map((m, i) => (
                   <div key={i} className="flex items-start gap-4 p-4 rounded-xl border border-emerald-500/10 bg-emerald-500/[0.02]">
-                    <span className="text-xs font-mono text-emerald-400/60 whitespace-nowrap mt-0.5">{m.date}</span>
-                    <p className="text-sm text-neutral-300">{m.text}</p>
+                    {"image" in m && m.image && (
+                      <img
+                        src={m.image as string}
+                        alt={m.text}
+                        className="w-20 h-14 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
+                        onClick={() => setLightbox(m.image as string)}
+                      />
+                    )}
+                    <div>
+                      <span className="text-xs font-mono text-emerald-400/60 block mb-1">{m.date}</span>
+                      <p className="text-sm text-neutral-300">{m.text}</p>
+                    </div>
                   </div>
                 ))}
               </div>
