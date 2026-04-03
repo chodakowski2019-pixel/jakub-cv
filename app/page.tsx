@@ -204,8 +204,9 @@ export default function Home() {
           </div>
           <button
             onClick={() => setLang(lang === "pl" ? "en" : "pl")}
-            className="text-xs px-3 py-1.5 rounded-full border border-white/10 text-neutral-400 hover:text-white hover:border-white/20 transition-all"
+            className="text-xs px-3 py-1.5 rounded-full border border-white/10 text-neutral-400 hover:text-white hover:border-white/20 transition-all flex items-center gap-1.5"
           >
+            <span className="text-sm">{lang === "pl" ? "🇬🇧" : "🇵🇱"}</span>
             {lang === "pl" ? "EN" : "PL"}
           </button>
         </div>
