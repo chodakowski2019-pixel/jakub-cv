@@ -181,22 +181,45 @@ const CONTENT = {
 
 type Lang = "pl" | "en";
 
+function Section({ id, children, className = "" }: { id?: string; children: React.ReactNode; className?: string }) {
+  return (
+    <section
+      id={id}
+      className={`py-24 px-6 opacity-0 animate-[fadeUp_0.6s_ease-out_forwards] ${className}`}
+      style={{ animationDelay: "0.1s" }}
+    >
+      {children}
+    </section>
+  );
+}
+
 export default function Home() {
   const [lang, setLang] = useState<Lang>("pl");
   const t = CONTENT[lang];
 
   return (
     <div className="min-h-screen">
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-xl">
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes glow {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 0.7; }
+        }
+      `}</style>
+
+      {/* Nav — glassmorphism */}
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-[#0a0a0a]/70 backdrop-blur-2xl">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
-          <span className="text-sm font-semibold tracking-tight">JC</span>
+          <span className="text-sm font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">JC</span>
           <div className="hidden md:flex items-center gap-6">
             {(["about", "experience", "skills", "projects", "contact"] as const).map((key) => (
               <a
                 key={key}
                 href={`#${key}`}
-                className="text-xs text-neutral-400 hover:text-white transition-colors"
+                className="text-xs text-neutral-500 hover:text-white transition-colors duration-300"
               >
                 {t.nav[key]}
               </a>
@@ -204,44 +227,48 @@ export default function Home() {
           </div>
           <button
             onClick={() => setLang(lang === "pl" ? "en" : "pl")}
-            className="text-xs px-3 py-1.5 rounded-full border border-white/10 text-neutral-400 hover:text-white hover:border-white/20 transition-all flex items-center gap-1.5"
+            className="text-xs px-3 py-1.5 rounded-full border border-white/10 text-neutral-400 hover:text-white hover:border-white/25 transition-all duration-300 flex items-center gap-1.5"
           >
-            <span className="text-sm">{lang === "pl" ? "🇬🇧" : "🇵🇱"}</span>
+            <span className="text-sm">{lang === "pl" ? "\u{1F1EC}\u{1F1E7}" : "\u{1F1F5}\u{1F1F1}"}</span>
             {lang === "pl" ? "EN" : "PL"}
           </button>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="min-h-screen flex items-center justify-center px-6 pt-14">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="mb-6">
+      {/* Hero — gradient glow + larger type */}
+      <section className="min-h-screen flex items-center justify-center px-6 pt-14 relative overflow-hidden">
+        {/* Background glow orbs */}
+        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] animate-[glow_4s_ease-in-out_infinite]" />
+        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-violet-500/8 rounded-full blur-[100px] animate-[glow_5s_ease-in-out_infinite_1s]" />
+
+        <div className="max-w-3xl mx-auto text-center relative">
+          <div className="mb-8">
             <img
               src="https://media.licdn.com/dms/image/v2/D4D03AQFWaMpQd3x-_Q/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1726162788974?e=1776902400&v=beta&t=hqAVAM6AfC-sl9Bre2Rk5VxgFHIUy37-5vsZgFtAc4A"
               alt="Jakub Chodakowski"
-              className="w-28 h-28 rounded-full mx-auto ring-2 ring-white/10 object-cover"
+              className="w-32 h-32 rounded-full mx-auto ring-2 ring-white/10 ring-offset-4 ring-offset-[#0a0a0a] object-cover hover:ring-indigo-500/30 transition-all duration-500"
             />
           </div>
-          <p className="text-sm text-neutral-500 mb-2">{t.hero.greeting}</p>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">
+          <p className="text-sm text-neutral-500 mb-3 tracking-wide uppercase">{t.hero.greeting}</p>
+          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter mb-5 bg-gradient-to-b from-white via-white to-neutral-400 bg-clip-text text-transparent">
             {t.hero.name}
           </h1>
-          <p className="text-xl md:text-2xl text-indigo-400 font-medium mb-6">
+          <p className="text-xl md:text-2xl font-medium mb-6 bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
             {t.hero.headline}
           </p>
-          <p className="text-neutral-400 max-w-xl mx-auto mb-10 leading-relaxed">
+          <p className="text-neutral-400 max-w-lg mx-auto mb-12 leading-relaxed text-base">
             {t.hero.sub}
           </p>
           <div className="flex items-center justify-center gap-4">
             <a
               href="#contact"
-              className="px-6 py-3 rounded-full bg-indigo-500 hover:bg-indigo-400 text-white text-sm font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="group relative px-7 py-3.5 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
             >
-              {t.hero.cta}
+              <span className="relative z-10">{t.hero.cta}</span>
             </a>
             <a
               href="/cv.pdf"
-              className="px-6 py-3 rounded-full border border-white/10 text-neutral-300 hover:text-white hover:border-white/20 text-sm font-medium transition-all"
+              className="px-7 py-3.5 rounded-full border border-white/10 text-neutral-300 hover:text-white hover:border-white/25 text-sm font-medium transition-all duration-300 hover:bg-white/[0.03]"
             >
               {t.hero.cv}
             </a>
@@ -250,32 +277,32 @@ export default function Home() {
       </section>
 
       {/* About */}
-      <section id="about" className="py-24 px-6">
+      <Section id="about">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-8">{t.about.title}</h2>
+          <h2 className="text-3xl font-bold mb-8 tracking-tight">{t.about.title}</h2>
           <p className="text-neutral-400 leading-relaxed text-lg">
             {t.about.text}
           </p>
         </div>
-      </section>
+      </Section>
 
       {/* Experience */}
-      <section id="experience" className="py-24 px-6 bg-white/[0.02]">
+      <Section id="experience" className="bg-white/[0.015]">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-12">{t.experience.title}</h2>
+          <h2 className="text-3xl font-bold mb-12 tracking-tight">{t.experience.title}</h2>
           <div className="space-y-12">
             {t.experience.items.map((item, i) => (
-              <div key={i} className="relative pl-8 border-l border-white/10">
-                <div className="absolute left-0 top-1 w-2 h-2 rounded-full bg-indigo-500 -translate-x-[5px]" />
+              <div key={i} className="relative pl-8 border-l border-white/[0.08] hover:border-indigo-500/30 transition-colors duration-500">
+                <div className="absolute left-0 top-1.5 w-2.5 h-2.5 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 -translate-x-[6px] shadow-sm shadow-indigo-500/50" />
                 <div className="flex flex-col md:flex-row md:items-baseline md:gap-4 mb-3">
                   <h3 className="text-lg font-semibold">{item.role}</h3>
-                  <span className="text-sm text-indigo-400">{item.company}</span>
-                  <span className="text-xs text-neutral-500 md:ml-auto">{item.period}</span>
+                  <span className="text-sm text-indigo-400/80">{item.company}</span>
+                  <span className="text-xs text-neutral-600 md:ml-auto font-mono">{item.period}</span>
                 </div>
                 <ul className="space-y-2">
                   {item.points.map((point, j) => (
-                    <li key={j} className="text-neutral-400 text-sm flex gap-2">
-                      <span className="text-indigo-500 mt-1 flex-shrink-0">-</span>
+                    <li key={j} className="text-neutral-400 text-sm flex gap-3">
+                      <span className="text-indigo-500/60 mt-0.5 flex-shrink-0">&#9656;</span>
                       {point}
                     </li>
                   ))}
@@ -284,23 +311,26 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
-      {/* Skills */}
-      <section id="skills" className="py-24 px-6">
+      {/* Skills — bento grid */}
+      <Section id="skills">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-12">{t.skills.title}</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <h2 className="text-3xl font-bold mb-12 tracking-tight">{t.skills.title}</h2>
+          <div className="grid md:grid-cols-3 gap-4">
             {t.skills.categories.map((cat, i) => (
-              <div key={i}>
-                <h3 className="text-sm font-semibold text-indigo-400 uppercase tracking-wider mb-4">
+              <div
+                key={i}
+                className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-indigo-500/15 transition-all duration-500"
+              >
+                <h3 className="text-xs font-semibold uppercase tracking-wider mb-5 bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
                   {cat.name}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {cat.items.map((skill, j) => (
                     <span
                       key={j}
-                      className="px-3 py-1.5 rounded-full text-xs border border-white/10 text-neutral-300 hover:border-indigo-500/30 hover:text-white transition-all"
+                      className="px-3 py-1.5 rounded-lg text-xs border border-white/[0.06] text-neutral-400 hover:border-indigo-500/25 hover:text-white hover:bg-indigo-500/5 transition-all duration-300 cursor-default"
                     >
                       {skill}
                     </span>
@@ -310,12 +340,12 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Projects */}
-      <section id="projects" className="py-24 px-6 bg-white/[0.02]">
+      <Section id="projects" className="bg-white/[0.015]">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-12">{t.projects.title}</h2>
+          <h2 className="text-3xl font-bold mb-12 tracking-tight">{t.projects.title}</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {t.projects.items.map((project, i) => (
               <a
@@ -323,52 +353,55 @@ export default function Home() {
                 href={project.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group p-6 rounded-2xl border border-white/5 hover:border-indigo-500/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-300"
+                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-indigo-500/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1"
               >
-                <h3 className="font-semibold mb-2 group-hover:text-indigo-400 transition-colors">
+                <h3 className="font-semibold mb-2 group-hover:text-indigo-400 transition-colors duration-300">
                   {project.name}
                 </h3>
-                <p className="text-sm text-neutral-400 mb-4 leading-relaxed">
+                <p className="text-sm text-neutral-500 mb-4 leading-relaxed">
                   {project.desc}
                 </p>
-                <span className="text-xs text-neutral-500 font-mono">
+                <span className="text-[11px] text-neutral-600 font-mono tracking-wide">
                   {project.tech}
                 </span>
               </a>
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Contact */}
-      <section id="contact" className="py-24 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-4">{t.contact.title}</h2>
-          <p className="text-neutral-400 mb-10">{t.contact.text}</p>
-          <div className="flex items-center justify-center gap-4">
-            <a
-              href={`mailto:${t.contact.email}`}
-              className="px-6 py-3 rounded-full bg-indigo-500 hover:bg-indigo-400 text-white text-sm font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
-            >
-              {t.contact.email}
-            </a>
-            <a
-              href="https://www.linkedin.com/in/jakub-chodakowski"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 rounded-full border border-white/10 text-neutral-300 hover:text-white hover:border-white/20 text-sm font-medium transition-all"
-            >
-              {t.contact.linkedin}
-            </a>
+      <Section id="contact">
+        <div className="max-w-3xl mx-auto text-center relative">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/8 rounded-full blur-[80px]" />
+          <div className="relative">
+            <h2 className="text-3xl font-bold mb-4 tracking-tight">{t.contact.title}</h2>
+            <p className="text-neutral-400 mb-10 max-w-md mx-auto">{t.contact.text}</p>
+            <div className="flex items-center justify-center gap-4">
+              <a
+                href={`mailto:${t.contact.email}`}
+                className="px-7 py-3.5 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
+              >
+                {t.contact.email}
+              </a>
+              <a
+                href="https://www.linkedin.com/in/jakub-chodakowski"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-7 py-3.5 rounded-full border border-white/10 text-neutral-300 hover:text-white hover:border-white/25 text-sm font-medium transition-all duration-300 hover:bg-white/[0.03]"
+              >
+                {t.contact.linkedin}
+              </a>
+            </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-white/5">
-        <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-neutral-500">
+      <footer className="py-8 px-6 border-t border-white/[0.04]">
+        <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-neutral-600">
           <span>{t.footer} &copy; {new Date().getFullYear()}</span>
-          <span>jakubchodakowski.com</span>
+          <span className="font-mono">jakubchodakowski.com</span>
         </div>
       </footer>
     </div>
