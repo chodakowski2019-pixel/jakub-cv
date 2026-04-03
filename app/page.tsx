@@ -8,26 +8,26 @@ const CONTENT = {
     hero: {
       greeting: "Cześć, jestem",
       name: "Jakub Chodakowski",
-      headline: "Specjalista ds. wdrożeń AI w firmach",
-      sub: "Pomagam firmom automatyzować procesy, oszczędzać czas i zwiększać przychody dzięki sztucznej inteligencji.",
+      headline: "Wdrażam AI w Twojej firmie",
+      sub: "Twoi pracownicy tracą godziny na powtarzalne zadania. Ja pokazuję, jak AI może to robić za nich — szybciej, taniej i bez błędów.",
       cta: "Porozmawiajmy",
       cv: "Pobierz CV",
     },
     about: {
       title: "O mnie",
-      text: "Specjalizuję się we wdrażaniu rozwiązań AI w firmach — od automatyzacji procesów, przez chatboty i asystentów AI, po analizę danych i personalizację obsługi klienta. Łączę wiedzę techniczną z biznesowym podejściem, żeby AI faktycznie przynosiło wyniki, a nie było tylko buzzwordem.",
+      text: "Nie jestem kolejnym \"ekspertem od AI\", który mówi ogólnikami. Buduję konkretne rozwiązania, które działają. Chatboty, które odpowiadają klientom 24/7. Automatyzacje, które oszczędzają 20+ godzin tygodniowo. Narzędzia AI dopasowane do Twojego biznesu — nie gotowce z internetu, tylko systemy szyte na miarę. Mówię prostym językiem, rozumiem biznes i dostarczam wyniki.",
     },
     experience: {
       title: "Doświadczenie",
       items: [
         {
-          role: "Founder & AI Strategist",
+          role: "Founder & Specjalista AI",
           company: "Własna działalność",
           period: "2024 — teraz",
           points: [
-            "Wdrażanie rozwiązań AI dla firm z różnych branż",
-            "Budowanie automatyzacji procesów biznesowych",
-            "Tworzenie aplikacji webowych z wykorzystaniem AI",
+            "Wdrożenia AI dla firm — od jednoosobowych po zespoły 50+ osób",
+            "Automatyzacja procesów, które wcześniej zajmowały godziny (teraz minuty)",
+            "Budowa aplikacji webowych i mobilnych opartych o AI",
           ],
         },
         {
@@ -43,28 +43,28 @@ const CONTENT = {
       ],
     },
     skills: {
-      title: "Umiejętności",
+      title: "Co potrafię",
       categories: [
         {
           name: "AI & Automatyzacja",
-          items: ["ChatGPT / Claude API", "AI Agents", "Workflow Automation", "Prompt Engineering", "RAG / Vector Search"],
+          items: ["ChatGPT / Claude API", "AI Agenci", "Automatyzacja procesów", "Prompt Engineering", "Bazy wiedzy AI (RAG)"],
         },
         {
-          name: "Development",
-          items: ["Next.js / React", "TypeScript", "Python", "Supabase / PostgreSQL", "Vercel / Railway"],
+          name: "Budowa aplikacji",
+          items: ["Next.js / React", "TypeScript", "Python", "Bazy danych (Supabase)", "Hosting i deploy"],
         },
         {
           name: "Biznes",
-          items: ["Strategia AI", "Analiza procesów", "Zarządzanie projektami", "Sprzedaż B2B", "Growth Marketing"],
+          items: ["Strategia wdrożenia AI", "Analiza procesów", "Zarządzanie projektami", "Sprzedaż B2B", "Marketing i growth"],
         },
       ],
     },
     projects: {
-      title: "Projekty",
+      title: "Co zbudowałem",
       items: [
         {
           name: "Slam5",
-          desc: "Aplikacja do zarządzania zadaniami z gamifikacją i AI — SaaS",
+          desc: "Aplikacja do zadań z grywalizacją. Planujesz 5 rzeczy na dzień i walczysz o wygraną. Działa jak gra, ale organizuje Ci życie.",
           tech: "Next.js, Supabase, Stripe, AI",
           url: "https://slam5.com",
         },
@@ -83,8 +83,8 @@ const CONTENT = {
       ],
     },
     contact: {
-      title: "Kontakt",
-      text: "Chcesz wdrożyć AI w swojej firmie? Napisz do mnie.",
+      title: "Pogadajmy",
+      text: "Masz firmę i czujesz, że AI mogłoby Ci pomóc — ale nie wiesz od czego zacząć? Napisz. Pierwsza rozmowa nic nie kosztuje.",
       email: "chodakowski2019@gmail.com",
       linkedin: "LinkedIn",
     },
@@ -95,26 +95,26 @@ const CONTENT = {
     hero: {
       greeting: "Hi, I'm",
       name: "Jakub Chodakowski",
-      headline: "AI Implementation Specialist",
-      sub: "I help companies automate processes, save time, and grow revenue with artificial intelligence.",
+      headline: "I bring AI into your company",
+      sub: "Your team wastes hours on repetitive tasks. I show you how AI can do it for them — faster, cheaper, and with zero mistakes.",
       cta: "Let's talk",
       cv: "Download CV",
     },
     about: {
       title: "About me",
-      text: "I specialize in implementing AI solutions for businesses — from process automation, chatbots and AI assistants, to data analysis and customer experience personalization. I combine technical knowledge with a business-first approach, so AI actually delivers results instead of being just a buzzword.",
+      text: "I'm not another \"AI expert\" who speaks in buzzwords. I build real solutions that work. Chatbots that talk to your customers 24/7. Automations that save 20+ hours a week. AI tools built for your business — not cookie-cutter templates, but custom systems. I speak plain language, I understand business, and I deliver results.",
     },
     experience: {
       title: "Experience",
       items: [
         {
-          role: "Founder & AI Strategist",
+          role: "Founder & AI Specialist",
           company: "Self-employed",
           period: "2024 — present",
           points: [
-            "Implementing AI solutions for companies across industries",
-            "Building business process automations",
-            "Creating web applications powered by AI",
+            "AI implementations for companies — from solo founders to 50+ person teams",
+            "Automating processes that used to take hours (now takes minutes)",
+            "Building web and mobile apps powered by AI",
           ],
         },
         {
@@ -130,28 +130,28 @@ const CONTENT = {
       ],
     },
     skills: {
-      title: "Skills",
+      title: "What I do",
       categories: [
         {
           name: "AI & Automation",
-          items: ["ChatGPT / Claude API", "AI Agents", "Workflow Automation", "Prompt Engineering", "RAG / Vector Search"],
+          items: ["ChatGPT / Claude API", "AI Agents", "Process Automation", "Prompt Engineering", "AI Knowledge Bases (RAG)"],
         },
         {
-          name: "Development",
-          items: ["Next.js / React", "TypeScript", "Python", "Supabase / PostgreSQL", "Vercel / Railway"],
+          name: "Building apps",
+          items: ["Next.js / React", "TypeScript", "Python", "Databases (Supabase)", "Hosting & Deploy"],
         },
         {
           name: "Business",
-          items: ["AI Strategy", "Process Analysis", "Project Management", "B2B Sales", "Growth Marketing"],
+          items: ["AI Implementation Strategy", "Process Analysis", "Project Management", "B2B Sales", "Marketing & Growth"],
         },
       ],
     },
     projects: {
-      title: "Projects",
+      title: "What I've built",
       items: [
         {
           name: "Slam5",
-          desc: "Task management app with gamification and AI — SaaS",
+          desc: "A task app with gamification. You pick 5 things a day and fight to win. Works like a game, but organizes your life.",
           tech: "Next.js, Supabase, Stripe, AI",
           url: "https://slam5.com",
         },
@@ -170,8 +170,8 @@ const CONTENT = {
       ],
     },
     contact: {
-      title: "Contact",
-      text: "Want to implement AI in your company? Reach out.",
+      title: "Let's talk",
+      text: "You have a business and feel like AI could help — but you don't know where to start? Write me. First call is free.",
       email: "chodakowski2019@gmail.com",
       linkedin: "LinkedIn",
     },
