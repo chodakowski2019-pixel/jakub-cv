@@ -250,7 +250,7 @@ export default function Home() {
             />
           </div>
           <p className="text-sm text-neutral-500 mb-3 tracking-wide uppercase">{t.hero.greeting}</p>
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter mb-5 bg-gradient-to-b from-white via-white to-neutral-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-5 bg-gradient-to-b from-white via-white to-neutral-400 bg-clip-text text-transparent">
             {t.hero.name}
           </h1>
           <p className="text-xl md:text-2xl font-medium mb-6 bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
