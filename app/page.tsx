@@ -48,6 +48,7 @@ const CONTENT = {
         image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc",
       },
       milestones: [
+        { date: "Sierpień 2024", text: "Prelekcja na CRASH Mondays. Temat: jak wykorzystać AI i dane w nowoczesnej sprzedaży. Przykłady firm jak Żabka i Netflix, które zrewolucjonizowały sprzedaż dzięki AI.", image: "https://media.licdn.com/dms/image/v2/D4D22AQGgY4uuKD4_Wg/feedshare-shrink_800/feedshare-shrink_800/0/1721579818961?e=1776902400&v=beta&t=nc7AvLjWta4XPXQEkne5n8VLyJNDXpOh-chq8FihyK8" },
         { date: "Listopad 2024", text: "Wdrożenie AI w SEO. Zbudowałem stronę, zautomatyzowałem publikację artykułów i po 3 miesiącach zacząłem generować ruch organiczny. Minimum wysiłku, zero doświadczenia w SEO.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
         { date: "Marzec 2026", text: "Wdrożenie agenta AI na Instagramie, który automatycznie obsługuje wiadomości DM" },
       ],
@@ -155,6 +156,7 @@ const CONTENT = {
         image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc",
       },
       milestones: [
+        { date: "August 2024", text: "Speaker at CRASH Mondays. Topic: how to use AI and data in modern sales. Real examples from companies like Żabka and Netflix that revolutionized sales with AI.", image: "https://media.licdn.com/dms/image/v2/D4D22AQGgY4uuKD4_Wg/feedshare-shrink_800/feedshare-shrink_800/0/1721579818961?e=1776902400&v=beta&t=nc7AvLjWta4XPXQEkne5n8VLyJNDXpOh-chq8FihyK8" },
         { date: "November 2024", text: "Implemented AI for SEO. Built a website, automated blog post publishing, and started generating organic traffic in 3 months. Minimal effort, zero SEO experience.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
         { date: "March 2026", text: "Deployed an AI agent on Instagram that automatically handles DM conversations" },
       ],
