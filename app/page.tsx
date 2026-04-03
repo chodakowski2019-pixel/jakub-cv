@@ -40,6 +40,13 @@ const CONTENT = {
         "Dzisiaj łączę doświadczenie biznesowe z umiejętnościami technicznymi. Rozumiem, co firma potrzebuje, bo sam to robiłem. I wiem, jak AI może to zrobić lepiej.",
       ],
       skills: ["ChatGPT / Claude API", "AI Agenci", "Automatyzacja procesów", "Prompt Engineering", "Bazy wiedzy AI (RAG)", "Next.js / React", "TypeScript", "Python"],
+      cert: {
+        date: "Maj 2024",
+        title: "AI Manager. Kurs wdrażania AI w firmach",
+        author: "Maria Parysz",
+        authorDesc: "Wdrażała AI w Rolls-Royce, Sephora i innych globalnych firmach. Jedna z najlepszych specjalistek od AI na świecie.",
+        image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc",
+      },
     },
     now: {
       title: "Co robię teraz",
@@ -78,10 +85,11 @@ const CONTENT = {
           url: "https://slam5.com",
         },
         {
-          name: "Przykładowy projekt",
-          desc: "Opis projektu. Co robi, jaki problem rozwiązuje",
-          tech: "Stack technologiczny",
+          name: "AI Tourist Guide",
+          desc: "Aplikacja mobilna. Turystyczny przewodnik oparty o AI. Pokazuje co warto zobaczyć, jak dojechać i opowiada historię miejsca.",
+          tech: "React Native, AI, Maps API",
           url: "#",
+          image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg",
         },
         {
           name: "Kolejny projekt",
@@ -135,6 +143,13 @@ const CONTENT = {
         "Today I combine business experience with technical skills. I understand what a company needs because I've been there. And I know how AI can do it better.",
       ],
       skills: ["ChatGPT / Claude API", "AI Agents", "Process Automation", "Prompt Engineering", "AI Knowledge Bases (RAG)", "Next.js / React", "TypeScript", "Python"],
+      cert: {
+        date: "May 2024",
+        title: "AI Manager. AI implementation course for businesses",
+        author: "Maria Parysz",
+        authorDesc: "Implemented AI at Rolls-Royce, Sephora and other global companies. One of the world's top AI specialists.",
+        image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc",
+      },
     },
     now: {
       title: "What I do now",
@@ -173,10 +188,11 @@ const CONTENT = {
           url: "https://slam5.com",
         },
         {
-          name: "Example Project",
-          desc: "Project description. What it does, what problem it solves",
-          tech: "Tech stack",
+          name: "AI Tourist Guide",
+          desc: "Mobile app. An AI-powered tourist guide. Shows what to see, how to get there, and tells you the history of each place.",
+          tech: "React Native, AI, Maps API",
           url: "#",
+          image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg",
         },
         {
           name: "Another Project",
@@ -365,6 +381,23 @@ export default function Home() {
                 </span>
               ))}
             </div>
+
+            {/* Certificate */}
+            <div className="mt-16 p-6 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.03] max-w-2xl mx-auto">
+              <div className="flex flex-col md:flex-row gap-6">
+                <img
+                  src={t.after.cert.image}
+                  alt={t.after.cert.title}
+                  className="w-full md:w-48 h-36 object-cover rounded-xl"
+                />
+                <div className="flex-1">
+                  <p className="text-xs font-mono text-emerald-400/60 mb-2">{t.after.cert.date}</p>
+                  <h3 className="text-base font-semibold mb-2">{t.after.cert.title}</h3>
+                  <p className="text-sm text-neutral-400 mb-1">{t.after.cert.author}</p>
+                  <p className="text-xs text-neutral-500 leading-relaxed">{t.after.cert.authorDesc}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -428,17 +461,22 @@ export default function Home() {
                 href={project.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-emerald-500/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1"
+                className="group rounded-2xl border border-white/[0.06] hover:border-emerald-500/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1 overflow-hidden"
               >
-                <h3 className="font-semibold mb-2 group-hover:text-emerald-400 transition-colors duration-300">
-                  {project.name}
-                </h3>
-                <p className="text-sm text-neutral-500 mb-4 leading-relaxed">
-                  {project.desc}
-                </p>
-                <span className="text-[11px] text-neutral-600 font-mono tracking-wide">
-                  {project.tech}
-                </span>
+                {"image" in project && project.image && (
+                  <img src={project.image as string} alt={project.name} className="w-full h-36 object-cover" />
+                )}
+                <div className="p-6">
+                  <h3 className="font-semibold mb-2 group-hover:text-emerald-400 transition-colors duration-300">
+                    {project.name}
+                  </h3>
+                  <p className="text-sm text-neutral-500 mb-4 leading-relaxed">
+                    {project.desc}
+                  </p>
+                  <span className="text-[11px] text-neutral-600 font-mono tracking-wide">
+                    {project.tech}
+                  </span>
+                </div>
               </a>
             ))}
           </div>
