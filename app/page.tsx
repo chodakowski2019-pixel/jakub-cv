@@ -267,10 +267,12 @@ export default function Home() {
               <span className="relative z-10">{t.hero.cta}</span>
             </a>
             <a
-              href="/cv.pdf"
+              href="https://www.linkedin.com/in/jakub-chodakowski"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-7 py-3.5 rounded-full border border-white/10 text-neutral-300 hover:text-white hover:border-white/25 text-sm font-medium transition-all duration-300 hover:bg-white/[0.03]"
             >
-              {t.hero.cv}
+              LinkedIn
             </a>
           </div>
         </div>
