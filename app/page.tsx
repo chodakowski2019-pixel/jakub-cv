@@ -77,7 +77,7 @@ const CONTENT = {
         },
         {
           name: "Biznes",
-          items: ["Strategia wdrożenia AI", "Analiza procesów", "Zarządzanie projektami", "Sprzedaż B2B", "Marketing i growth"],
+          items: ["Strategia i wdrażanie AI", "Analiza procesów", "Zarządzanie projektami"],
         },
       ],
     },
@@ -186,7 +186,7 @@ const CONTENT = {
         },
         {
           name: "Business",
-          items: ["AI Implementation Strategy", "Process Analysis", "Project Management", "B2B Sales", "Marketing & Growth"],
+          items: ["AI Strategy & Implementation", "Process Analysis", "Project Management"],
         },
       ],
     },
