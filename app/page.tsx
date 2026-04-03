@@ -9,13 +9,13 @@ const CONTENT = {
       greeting: "Cześć, jestem",
       name: "Jakub Chodakowski",
       headline: "Wdrożę AI w Twojej firmie",
-      sub: "Twoi pracownicy tracą godziny na powtarzalne zadania. Ja pokazuję, jak AI może to robić za nich — szybciej, taniej i bez błędów.",
+      sub: "Twoi pracownicy tracą godziny na powtarzalne zadania. Ja pokazuję, jak AI może to robić za nich. Szybciej, taniej i bez błędów.",
       cta: "Porozmawiajmy",
       cv: "Pobierz CV",
     },
     about: {
       title: "O mnie",
-      text: "Nie jestem kolejnym \"ekspertem od AI\", który mówi ogólnikami. Buduję konkretne rozwiązania, które działają. Chatboty, które odpowiadają klientom 24/7. Automatyzacje, które oszczędzają 20+ godzin tygodniowo. Narzędzia AI dopasowane do Twojego biznesu — nie gotowce z internetu, tylko systemy szyte na miarę. Mówię prostym językiem, rozumiem biznes i dostarczam wyniki.",
+      text: "Nie jestem kolejnym \"ekspertem od AI\", który mówi ogólnikami. Buduję konkretne rozwiązania, które działają. Chatboty, które odpowiadają klientom 24/7. Automatyzacje, które oszczędzają 20+ godzin tygodniowo. Narzędzia AI dopasowane do Twojego biznesu. Nie gotowce z internetu, tylko systemy szyte na miarę. Mówię prostym językiem, rozumiem biznes i dostarczam wyniki.",
     },
     experience: {
       title: "Doświadczenie",
@@ -23,9 +23,9 @@ const CONTENT = {
         {
           role: "Founder & Specjalista AI",
           company: "Własna działalność",
-          period: "2024 — teraz",
+          period: "2024 – teraz",
           points: [
-            "Wdrożenia AI dla firm — od jednoosobowych po zespoły 50+ osób",
+            "Wdrożenia AI dla firm. Od jednoosobowych po zespoły 50+ osób",
             "Automatyzacja procesów, które wcześniej zajmowały godziny (teraz minuty)",
             "Budowa aplikacji webowych i mobilnych opartych o AI",
           ],
@@ -33,7 +33,7 @@ const CONTENT = {
         {
           role: "Przykładowe stanowisko",
           company: "Nazwa firmy",
-          period: "2022 — 2024",
+          period: "2022 – 2024",
           points: [
             "Opis odpowiedzialności i osiągnięć",
             "Kolejny punkt do uzupełnienia",
@@ -70,13 +70,13 @@ const CONTENT = {
         },
         {
           name: "Przykładowy projekt",
-          desc: "Opis projektu — co robi, jaki problem rozwiązuje",
+          desc: "Opis projektu. Co robi, jaki problem rozwiązuje",
           tech: "Stack technologiczny",
           url: "#",
         },
         {
           name: "Kolejny projekt",
-          desc: "Opis projektu — co robi, jaki problem rozwiązuje",
+          desc: "Opis projektu. Co robi, jaki problem rozwiązuje",
           tech: "Stack technologiczny",
           url: "#",
         },
@@ -84,7 +84,7 @@ const CONTENT = {
     },
     contact: {
       title: "Pogadajmy",
-      text: "Masz firmę i czujesz, że AI mogłoby Ci pomóc — ale nie wiesz od czego zacząć? Napisz. Pierwsza rozmowa nic nie kosztuje.",
+      text: "Masz firmę i czujesz, że AI mogłoby Ci pomóc, ale nie wiesz od czego zacząć? Napisz. Pierwsza rozmowa nic nie kosztuje.",
       email: "chodakowski2019@gmail.com",
       linkedin: "LinkedIn",
     },
@@ -96,13 +96,13 @@ const CONTENT = {
       greeting: "Hi, I'm",
       name: "Jakub Chodakowski",
       headline: "I bring AI into your company",
-      sub: "Your team wastes hours on repetitive tasks. I show you how AI can do it for them — faster, cheaper, and with zero mistakes.",
+      sub: "Your team wastes hours on repetitive tasks. I show you how AI can do it for them. Faster, cheaper, and with zero mistakes.",
       cta: "Let's talk",
       cv: "Download CV",
     },
     about: {
       title: "About me",
-      text: "I'm not another \"AI expert\" who speaks in buzzwords. I build real solutions that work. Chatbots that talk to your customers 24/7. Automations that save 20+ hours a week. AI tools built for your business — not cookie-cutter templates, but custom systems. I speak plain language, I understand business, and I deliver results.",
+      text: "I'm not another \"AI expert\" who speaks in buzzwords. I build real solutions that work. Chatbots that talk to your customers 24/7. Automations that save 20+ hours a week. AI tools built for your business. Not cookie-cutter templates, but custom systems. I speak plain language, I understand business, and I deliver results.",
     },
     experience: {
       title: "Experience",
@@ -110,9 +110,9 @@ const CONTENT = {
         {
           role: "Founder & AI Specialist",
           company: "Self-employed",
-          period: "2024 — present",
+          period: "2024 – present",
           points: [
-            "AI implementations for companies — from solo founders to 50+ person teams",
+            "AI implementations for companies. From solo founders to 50+ person teams",
             "Automating processes that used to take hours (now takes minutes)",
             "Building web and mobile apps powered by AI",
           ],
@@ -120,7 +120,7 @@ const CONTENT = {
         {
           role: "Example Position",
           company: "Company Name",
-          period: "2022 — 2024",
+          period: "2022 – 2024",
           points: [
             "Description of responsibilities and achievements",
             "Another point to fill in",
@@ -157,13 +157,13 @@ const CONTENT = {
         },
         {
           name: "Example Project",
-          desc: "Project description — what it does, what problem it solves",
+          desc: "Project description. What it does, what problem it solves",
           tech: "Tech stack",
           url: "#",
         },
         {
           name: "Another Project",
-          desc: "Project description — what it does, what problem it solves",
+          desc: "Project description. What it does, what problem it solves",
           tech: "Tech stack",
           url: "#",
         },
@@ -171,7 +171,7 @@ const CONTENT = {
     },
     contact: {
       title: "Let's talk",
-      text: "You have a business and feel like AI could help — but you don't know where to start? Write me. First call is free.",
+      text: "You have a business and feel like AI could help, but you don't know where to start? Write me. First call is free.",
       email: "chodakowski2019@gmail.com",
       linkedin: "LinkedIn",
     },
@@ -259,20 +259,12 @@ export default function Home() {
           <p className="text-neutral-400 max-w-lg mx-auto mb-12 leading-relaxed text-base">
             {t.hero.sub}
           </p>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center">
             <a
               href="#contact"
               className="group relative px-7 py-3.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30"
             >
               <span className="relative z-10">{t.hero.cta}</span>
-            </a>
-            <a
-              href="https://www.linkedin.com/in/jakub-chodakowski"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-7 py-3.5 rounded-full border border-white/10 text-neutral-300 hover:text-white hover:border-white/25 text-sm font-medium transition-all duration-300 hover:bg-white/[0.03]"
-            >
-              LinkedIn
             </a>
           </div>
         </div>
