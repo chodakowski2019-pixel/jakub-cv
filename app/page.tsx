@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 
 const CONTENT = {
   pl: {
@@ -216,6 +216,7 @@ type Lang = "pl" | "en";
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("pl");
+  const [lightbox, setLightbox] = useState<string | null>(null);
   const t = CONTENT[lang];
 
   return (
@@ -234,6 +235,19 @@ export default function Home() {
           50% { opacity: 1; }
         }
       `}</style>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 cursor-pointer"
+          onClick={() => setLightbox(null)}
+        >
+          <button className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors">
+            <X size={24} />
+          </button>
+          <img src={lightbox} alt="" className="max-w-full max-h-[90vh] rounded-xl object-contain" />
+        </div>
+      )}
 
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-[#0a0a0a]/70 backdrop-blur-2xl">
@@ -388,7 +402,8 @@ export default function Home() {
                 <img
                   src={t.after.cert.image}
                   alt={t.after.cert.title}
-                  className="w-full md:w-48 h-36 object-cover rounded-xl"
+                  className="w-full md:w-48 h-36 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => setLightbox(t.after.cert.image)}
                 />
                 <div className="flex-1">
                   <p className="text-xs font-mono text-emerald-400/60 mb-2">{t.after.cert.date}</p>
