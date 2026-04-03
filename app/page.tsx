@@ -1,49 +1,58 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 const CONTENT = {
   pl: {
-    nav: { about: "O mnie", experience: "Doświadczenie", skills: "Umiejętności", projects: "Projekty", contact: "Kontakt" },
+    nav: { story: "Historia", skills: "Umiejętności", projects: "Projekty", contact: "Kontakt" },
     hero: {
       greeting: "Cześć, jestem",
       name: "Jakub Chodakowski",
       headline: "Wdrożę AI w Twojej firmie",
       sub: "Twoi pracownicy tracą godziny na powtarzalne zadania. Ja pokazuję, jak AI może to robić za nich. Szybciej, taniej i bez błędów.",
       cta: "Porozmawiajmy",
-      cv: "Pobierz CV",
+      scroll: "Poznaj moją historię",
     },
-    about: {
-      title: "O mnie",
-      text: "Nie jestem kolejnym \"ekspertem od AI\", który mówi ogólnikami. Buduję konkretne rozwiązania, które działają. Chatboty, które odpowiadają klientom 24/7. Automatyzacje, które oszczędzają 20+ godzin tygodniowo. Narzędzia AI dopasowane do Twojego biznesu. Nie gotowce z internetu, tylko systemy szyte na miarę. Mówię prostym językiem, rozumiem biznes i dostarczam wyniki.",
+    before: {
+      label: "Przed AI",
+      period: "2018 – listopad 2022",
+      title: "Zanim świat się zmienił",
+      paragraphs: [
+        "Zaczynałem w startupach. Robiłem wszystko po trochu. Sprzedaż, marketing, obsługa klienta, budowanie procesów. Uczyłem się biznesu od środka.",
+        "Prowadziłem własną działalność. Pracowałem z klientami B2B. Negocjowałem kontrakty, budowałem lejki sprzedażowe, zarządzałem projektami.",
+        "Wiedziałem, jak firma działa od podszewki. Ale wiele rzeczy zajmowało za dużo czasu. Powtarzalne zadania, ręczna robota, ciągłe gaszenie pożarów.",
+      ],
+      skills: ["Sprzedaż B2B", "Marketing", "Zarządzanie projektami", "Własna działalność", "Praca w startupach"],
     },
-    experience: {
-      title: "Doświadczenie",
-      items: [
-        {
-          role: "Founder & Specjalista AI",
-          company: "Własna działalność",
-          period: "2024 – teraz",
-          points: [
-            "Wdrożenia AI dla firm. Od jednoosobowych po zespoły 50+ osób",
-            "Automatyzacja procesów, które wcześniej zajmowały godziny (teraz minuty)",
-            "Budowa aplikacji webowych i mobilnych opartych o AI",
-          ],
-        },
-        {
-          role: "Przykładowe stanowisko",
-          company: "Nazwa firmy",
-          period: "2022 – 2024",
-          points: [
-            "Opis odpowiedzialności i osiągnięć",
-            "Kolejny punkt do uzupełnienia",
-            "Jeszcze jeden punkt",
-          ],
-        },
+    turning: {
+      date: "30 listopada 2022",
+      title: "Premiera ChatGPT",
+      text: "Tego dnia wszystko się zmieniło. Nie tylko dla mnie. Dla całego świata. Zobaczyłem przyszłość i wiedziałem, że muszę być jej częścią.",
+    },
+    after: {
+      label: "Po AI",
+      period: "grudzień 2022 – teraz",
+      title: "Nowe zasady gry",
+      paragraphs: [
+        "Od pierwszego dnia zacząłem budować z AI. Nie czytać o nim. Budować. Testować. Wdrażać.",
+        "Stworzyłem chatboty, które odpowiadają klientom 24/7. Automatyzacje, które oszczędzają firmom 20+ godzin tygodniowo. Aplikacje, które zarabiają pieniądze.",
+        "Dzisiaj łączę doświadczenie biznesowe z umiejętnościami technicznymi. Rozumiem, co firma potrzebuje, bo sam to robiłem. I wiem, jak AI może to zrobić lepiej.",
+      ],
+      skills: ["ChatGPT / Claude API", "AI Agenci", "Automatyzacja procesów", "Prompt Engineering", "Bazy wiedzy AI (RAG)", "Next.js / React", "TypeScript", "Python"],
+    },
+    now: {
+      title: "Co robię teraz",
+      text: "Pomagam firmom wdrożyć AI. Nie teorię. Nie prezentacje PowerPoint. Konkretne narzędzia, które od pierwszego dnia oszczędzają czas i pieniądze.",
+      points: [
+        "Audyt procesów w Twojej firmie. Szukam miejsc, gdzie AI da największy efekt",
+        "Budowa rozwiązań AI dopasowanych do Twojego biznesu",
+        "Szkolenie zespołu, żeby umieli korzystać z AI na co dzień",
+        "Wsparcie po wdrożeniu. Nie zostawiam Cię samego",
       ],
     },
     skills: {
-      title: "Co potrafię",
+      title: "Narzędzia",
       categories: [
         {
           name: "AI & Automatyzacja",
@@ -60,7 +69,7 @@ const CONTENT = {
       ],
     },
     projects: {
-      title: "Co zbudowałem",
+      title: "Co już zbudowałem",
       items: [
         {
           name: "Slam5",
@@ -83,7 +92,7 @@ const CONTENT = {
       ],
     },
     contact: {
-      title: "Pogadajmy",
+      title: "Twoja kolej",
       text: "Masz firmę i czujesz, że AI mogłoby Ci pomóc, ale nie wiesz od czego zacząć? Napisz. Pierwsza rozmowa nic nie kosztuje.",
       email: "chodakowski2019@gmail.com",
       linkedin: "LinkedIn",
@@ -91,46 +100,54 @@ const CONTENT = {
     footer: "Jakub Chodakowski",
   },
   en: {
-    nav: { about: "About", experience: "Experience", skills: "Skills", projects: "Projects", contact: "Contact" },
+    nav: { story: "Story", skills: "Skills", projects: "Projects", contact: "Contact" },
     hero: {
       greeting: "Hi, I'm",
       name: "Jakub Chodakowski",
-      headline: "I bring AI into your company",
+      headline: "I'll implement AI in your company",
       sub: "Your team wastes hours on repetitive tasks. I show you how AI can do it for them. Faster, cheaper, and with zero mistakes.",
       cta: "Let's talk",
-      cv: "Download CV",
+      scroll: "Read my story",
     },
-    about: {
-      title: "About me",
-      text: "I'm not another \"AI expert\" who speaks in buzzwords. I build real solutions that work. Chatbots that talk to your customers 24/7. Automations that save 20+ hours a week. AI tools built for your business. Not cookie-cutter templates, but custom systems. I speak plain language, I understand business, and I deliver results.",
+    before: {
+      label: "Before AI",
+      period: "2018 – November 2022",
+      title: "Before the world changed",
+      paragraphs: [
+        "I started in startups. I did a bit of everything. Sales, marketing, customer service, building processes. I learned business from the inside.",
+        "I ran my own company. Worked with B2B clients. Negotiated contracts, built sales funnels, managed projects.",
+        "I knew how a business works inside out. But too many things took too long. Repetitive tasks, manual work, constant firefighting.",
+      ],
+      skills: ["B2B Sales", "Marketing", "Project Management", "Own Business", "Startup Experience"],
     },
-    experience: {
-      title: "Experience",
-      items: [
-        {
-          role: "Founder & AI Specialist",
-          company: "Self-employed",
-          period: "2024 – present",
-          points: [
-            "AI implementations for companies. From solo founders to 50+ person teams",
-            "Automating processes that used to take hours (now takes minutes)",
-            "Building web and mobile apps powered by AI",
-          ],
-        },
-        {
-          role: "Example Position",
-          company: "Company Name",
-          period: "2022 – 2024",
-          points: [
-            "Description of responsibilities and achievements",
-            "Another point to fill in",
-            "One more point",
-          ],
-        },
+    turning: {
+      date: "November 30, 2022",
+      title: "ChatGPT launches",
+      text: "That day, everything changed. Not just for me. For the entire world. I saw the future and knew I had to be part of it.",
+    },
+    after: {
+      label: "After AI",
+      period: "December 2022 – present",
+      title: "New rules",
+      paragraphs: [
+        "From day one I started building with AI. Not reading about it. Building. Testing. Shipping.",
+        "I created chatbots that answer customers 24/7. Automations that save companies 20+ hours a week. Apps that make money.",
+        "Today I combine business experience with technical skills. I understand what a company needs because I've been there. And I know how AI can do it better.",
+      ],
+      skills: ["ChatGPT / Claude API", "AI Agents", "Process Automation", "Prompt Engineering", "AI Knowledge Bases (RAG)", "Next.js / React", "TypeScript", "Python"],
+    },
+    now: {
+      title: "What I do now",
+      text: "I help companies implement AI. Not theory. Not PowerPoint slides. Real tools that save time and money from day one.",
+      points: [
+        "Process audit. I find where AI will have the biggest impact",
+        "Building custom AI solutions for your business",
+        "Training your team to use AI every day",
+        "Post-launch support. I don't leave you hanging",
       ],
     },
     skills: {
-      title: "What I do",
+      title: "Tools",
       categories: [
         {
           name: "AI & Automation",
@@ -170,7 +187,7 @@ const CONTENT = {
       ],
     },
     contact: {
-      title: "Let's talk",
+      title: "Your turn",
       text: "You have a business and feel like AI could help, but you don't know where to start? Write me. First call is free.",
       email: "chodakowski2019@gmail.com",
       linkedin: "LinkedIn",
@@ -180,18 +197,6 @@ const CONTENT = {
 };
 
 type Lang = "pl" | "en";
-
-function Section({ id, children, className = "" }: { id?: string; children: React.ReactNode; className?: string }) {
-  return (
-    <section
-      id={id}
-      className={`py-24 px-6 opacity-0 animate-[fadeUp_0.6s_ease-out_forwards] ${className}`}
-      style={{ animationDelay: "0.1s" }}
-    >
-      {children}
-    </section>
-  );
-}
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("pl");
@@ -208,14 +213,18 @@ export default function Home() {
           0%, 100% { opacity: 0.4; }
           50% { opacity: 0.7; }
         }
+        @keyframes pulse-line {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 1; }
+        }
       `}</style>
 
-      {/* Nav — glassmorphism */}
+      {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-[#0a0a0a]/70 backdrop-blur-2xl">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
           <span className="text-sm font-bold tracking-tight bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">JC</span>
           <div className="hidden md:flex items-center gap-6">
-            {(["about", "experience", "skills", "projects", "contact"] as const).map((key) => (
+            {(["story", "skills", "projects", "contact"] as const).map((key) => (
               <a
                 key={key}
                 href={`#${key}`}
@@ -235,9 +244,8 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero — gradient glow + larger type */}
+      {/* ===== HERO ===== */}
       <section className="min-h-screen flex items-center justify-center px-6 pt-14 relative overflow-hidden">
-        {/* Background glow orbs */}
         <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] animate-[glow_4s_ease-in-out_infinite]" />
         <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-teal-500/8 rounded-full blur-[100px] animate-[glow_5s_ease-in-out_infinite_1s]" />
 
@@ -259,58 +267,131 @@ export default function Home() {
           <p className="text-neutral-400 max-w-lg mx-auto mb-12 leading-relaxed text-base">
             {t.hero.sub}
           </p>
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center mb-16">
             <a
               href="#contact"
-              className="group relative px-7 py-3.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30"
+              className="px-7 py-3.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30"
             >
-              <span className="relative z-10">{t.hero.cta}</span>
+              {t.hero.cta}
             </a>
+          </div>
+
+          {/* Scroll hint */}
+          <a href="#story" className="inline-flex flex-col items-center gap-2 text-neutral-600 hover:text-neutral-400 transition-colors">
+            <span className="text-xs">{t.hero.scroll}</span>
+            <ChevronDown size={16} className="animate-bounce" />
+          </a>
+        </div>
+      </section>
+
+      {/* ===== STORY TIMELINE ===== */}
+      <section id="story" className="relative">
+
+        {/* Central timeline line */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/[0.08] to-transparent hidden md:block" />
+
+        {/* --- BEFORE AI --- */}
+        <div className="py-24 px-6 relative">
+          <div className="max-w-3xl mx-auto">
+            {/* Era label */}
+            <div className="flex items-center gap-4 mb-4">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-neutral-800" />
+              <span className="text-xs font-mono text-neutral-600 uppercase tracking-widest">{t.before.label}</span>
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-neutral-800" />
+            </div>
+            <p className="text-center text-xs text-neutral-600 font-mono mb-12">{t.before.period}</p>
+
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center">{t.before.title}</h2>
+
+            <div className="space-y-6 max-w-2xl mx-auto">
+              {t.before.paragraphs.map((p, i) => (
+                <p key={i} className="text-neutral-400 leading-relaxed text-lg">{p}</p>
+              ))}
+            </div>
+
+            {/* Skills from that era */}
+            <div className="flex flex-wrap justify-center gap-2 mt-10">
+              {t.before.skills.map((s, i) => (
+                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-white/[0.06] text-neutral-500">
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* --- TURNING POINT --- */}
+        <div className="py-20 px-6 relative">
+          <div className="max-w-xl mx-auto text-center">
+            {/* Big arrow down */}
+            <div className="flex justify-center mb-8">
+              <div className="w-12 h-12 rounded-full border border-emerald-500/30 bg-emerald-500/5 flex items-center justify-center animate-[pulse-line_2s_ease-in-out_infinite]">
+                <ChevronDown size={24} className="text-emerald-400" />
+              </div>
+            </div>
+
+            <p className="text-xs font-mono text-emerald-400 uppercase tracking-widest mb-3">{t.turning.date}</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-6 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+              {t.turning.title}
+            </h2>
+            <p className="text-neutral-400 text-lg leading-relaxed">{t.turning.text}</p>
+          </div>
+        </div>
+
+        {/* --- AFTER AI --- */}
+        <div className="py-24 px-6 bg-white/[0.015] relative">
+          <div className="max-w-3xl mx-auto">
+            {/* Era label */}
+            <div className="flex items-center gap-4 mb-4">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-emerald-900/30" />
+              <span className="text-xs font-mono text-emerald-500/60 uppercase tracking-widest">{t.after.label}</span>
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-900/30" />
+            </div>
+            <p className="text-center text-xs text-emerald-500/40 font-mono mb-12">{t.after.period}</p>
+
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center">{t.after.title}</h2>
+
+            <div className="space-y-6 max-w-2xl mx-auto">
+              {t.after.paragraphs.map((p, i) => (
+                <p key={i} className="text-neutral-400 leading-relaxed text-lg">{p}</p>
+              ))}
+            </div>
+
+            {/* New skills */}
+            <div className="flex flex-wrap justify-center gap-2 mt-10">
+              {t.after.skills.map((s, i) => (
+                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-emerald-500/15 text-emerald-400/70 bg-emerald-500/5">
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* --- WHAT I DO NOW --- */}
+        <div className="py-24 px-6">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6 text-center">{t.now.title}</h2>
+            <p className="text-neutral-400 text-lg text-center max-w-2xl mx-auto mb-12 leading-relaxed">{t.now.text}</p>
+
+            <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              {t.now.points.map((point, i) => (
+                <div key={i} className="p-5 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-emerald-500/15 transition-all duration-500">
+                  <div className="flex items-start gap-3">
+                    <span className="text-emerald-400 font-bold text-sm mt-0.5">{String(i + 1).padStart(2, "0")}</span>
+                    <p className="text-neutral-300 text-sm leading-relaxed">{point}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* About */}
-      <Section id="about">
+      {/* ===== SKILLS ===== */}
+      <section id="skills" className="py-24 px-6 bg-white/[0.015]">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 tracking-tight">{t.about.title}</h2>
-          <p className="text-neutral-400 leading-relaxed text-lg">
-            {t.about.text}
-          </p>
-        </div>
-      </Section>
-
-      {/* Experience */}
-      <Section id="experience" className="bg-white/[0.015]">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 tracking-tight">{t.experience.title}</h2>
-          <div className="space-y-12">
-            {t.experience.items.map((item, i) => (
-              <div key={i} className="relative pl-8 border-l border-white/[0.08] hover:border-emerald-500/30 transition-colors duration-500">
-                <div className="absolute left-0 top-1.5 w-2.5 h-2.5 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 -translate-x-[6px] shadow-sm shadow-emerald-500/50" />
-                <div className="flex flex-col md:flex-row md:items-baseline md:gap-4 mb-3">
-                  <h3 className="text-lg font-semibold">{item.role}</h3>
-                  <span className="text-sm text-emerald-400/80">{item.company}</span>
-                  <span className="text-xs text-neutral-600 md:ml-auto font-mono">{item.period}</span>
-                </div>
-                <ul className="space-y-2">
-                  {item.points.map((point, j) => (
-                    <li key={j} className="text-neutral-400 text-sm flex gap-3">
-                      <span className="text-emerald-500/60 mt-0.5 flex-shrink-0">&#9656;</span>
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* Skills — bento grid */}
-      <Section id="skills">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 tracking-tight">{t.skills.title}</h2>
+          <h2 className="text-3xl font-bold mb-12 tracking-tight text-center">{t.skills.title}</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {t.skills.categories.map((cat, i) => (
               <div
@@ -334,12 +415,12 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </Section>
+      </section>
 
-      {/* Projects */}
-      <Section id="projects" className="bg-white/[0.015]">
+      {/* ===== PROJECTS ===== */}
+      <section id="projects" className="py-24 px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 tracking-tight">{t.projects.title}</h2>
+          <h2 className="text-3xl font-bold mb-12 tracking-tight text-center">{t.projects.title}</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {t.projects.items.map((project, i) => (
               <a
@@ -362,10 +443,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </Section>
+      </section>
 
-      {/* Contact */}
-      <Section id="contact">
+      {/* ===== CONTACT ===== */}
+      <section id="contact" className="py-24 px-6 bg-white/[0.015]">
         <div className="max-w-3xl mx-auto text-center relative">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/8 rounded-full blur-[80px]" />
           <div className="relative">
@@ -389,7 +470,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </Section>
+      </section>
 
       {/* Footer */}
       <footer className="py-8 px-6 border-t border-white/[0.04]">
