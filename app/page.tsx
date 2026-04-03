@@ -47,6 +47,9 @@ const CONTENT = {
         authorDesc: "Wdrażała AI w Rolls-Royce, Sephora i innych globalnych firmach. Jedna z najlepszych specjalistek od AI na świecie.",
         image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc",
       },
+      milestones: [
+        { date: "Marzec 2026", text: "Wdrożenie agenta AI na Instagramie, który automatycznie obsługuje wiadomości DM" },
+      ],
     },
     now: {
       title: "Co robię teraz",
@@ -150,6 +153,9 @@ const CONTENT = {
         authorDesc: "Implemented AI at Rolls-Royce, Sephora and other global companies. One of the world's top AI specialists.",
         image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc",
       },
+      milestones: [
+        { date: "March 2026", text: "Deployed an AI agent on Instagram that automatically handles DM conversations" },
+      ],
     },
     now: {
       title: "What I do now",
@@ -413,6 +419,18 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* Milestones */}
+            {t.after.milestones && t.after.milestones.length > 0 && (
+              <div className="mt-8 space-y-3 max-w-2xl mx-auto">
+                {t.after.milestones.map((m, i) => (
+                  <div key={i} className="flex items-start gap-4 p-4 rounded-xl border border-emerald-500/10 bg-emerald-500/[0.02]">
+                    <span className="text-xs font-mono text-emerald-400/60 whitespace-nowrap mt-0.5">{m.date}</span>
+                    <p className="text-sm text-neutral-300">{m.text}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
