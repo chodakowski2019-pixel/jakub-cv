@@ -9,7 +9,7 @@ const CONTENT = {
     hero: {
       greeting: "Cześć, jestem",
       name: "Jakub Chodakowski",
-      headline: "Wdrożę AI w Twojej firmie",
+      headline: "Przeprowadzę transformację AI w Twojej firmie",
       sub: "Twoi pracownicy tracą godziny na powtarzalne zadania. Ja pokazuję, jak AI może to robić za nich. Szybciej, taniej i bez błędów.",
       cta: "Porozmawiajmy",
       scroll: "Poznaj moją historię",
@@ -119,7 +119,7 @@ const CONTENT = {
     hero: {
       greeting: "Hi, I'm",
       name: "Jakub Chodakowski",
-      headline: "I'll implement AI in your company",
+      headline: "I'll lead the AI transformation in your company",
       sub: "Your team wastes hours on repetitive tasks. I show you how AI can do it for them. Faster, cheaper, and with zero mistakes.",
       cta: "Let's talk",
       scroll: "Read my story",
