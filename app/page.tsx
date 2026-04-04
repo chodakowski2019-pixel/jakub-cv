@@ -340,10 +340,10 @@ export default function Home() {
             {/* Era label */}
             <div className="flex items-center gap-4 mb-4">
               <div className="h-px flex-1 bg-gradient-to-r from-transparent to-neutral-800" />
-              <span className="text-xs font-mono text-neutral-600 uppercase tracking-widest">{t.before.label}</span>
+              <span className="text-sm font-mono text-neutral-500 uppercase tracking-widest font-medium">{t.before.label}</span>
               <div className="h-px flex-1 bg-gradient-to-l from-transparent to-neutral-800" />
             </div>
-            <p className="text-center text-xs text-neutral-600 font-mono mb-12">{t.before.period}</p>
+            <p className="text-center text-sm text-neutral-500 font-mono mb-12">{t.before.period}</p>
 
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center">{t.before.title}</h2>
 
@@ -388,10 +388,10 @@ export default function Home() {
             {/* Era label */}
             <div className="flex items-center gap-4 mb-4">
               <div className="h-px flex-1 bg-gradient-to-r from-transparent to-emerald-900/30" />
-              <span className="text-xs font-mono text-emerald-500/60 uppercase tracking-widest">{t.after.label}</span>
+              <span className="text-sm font-mono text-emerald-400/70 uppercase tracking-widest font-medium">{t.after.label}</span>
               <div className="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-900/30" />
             </div>
-            <p className="text-center text-xs text-emerald-500/40 font-mono mb-12">{t.after.period}</p>
+            <p className="text-center text-sm text-emerald-400/50 font-mono mb-12">{t.after.period}</p>
 
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center">{t.after.title}</h2>
 
