@@ -218,7 +218,8 @@ type Lang = "pl" | "en";
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("pl");
-  const [lightbox, setLightbox] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<string[] | null>(null);
+  const [lightboxIdx, setLightboxIdx] = useState(0);
   const t = CONTENT[lang];
 
   return (
@@ -238,29 +239,56 @@ export default function Home() {
         }
       `}</style>
 
-      {/* Lightbox */}
+      {/* Lightbox gallery */}
       {lightbox && (
         <div
-          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 cursor-pointer"
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6"
           onClick={() => setLightbox(null)}
         >
-          <button className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors">
+          <button className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors z-10">
             <X size={24} />
           </button>
-          <img src={lightbox} alt="" className="max-w-full max-h-[90vh] rounded-xl object-contain" />
+          {lightbox.length > 1 && (
+            <>
+              <button
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+                onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx - 1 + lightbox.length) % lightbox.length); }}
+              >
+                <ChevronDown size={20} className="rotate-90" />
+              </button>
+              <button
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+                onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx + 1) % lightbox.length); }}
+              >
+                <ChevronDown size={20} className="-rotate-90" />
+              </button>
+            </>
+          )}
+          <img src={lightbox[lightboxIdx]} alt="" className="max-w-full max-h-[90vh] rounded-xl object-contain" onClick={(e) => e.stopPropagation()} />
+          {lightbox.length > 1 && (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+              {lightbox.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); setLightboxIdx(i); }}
+                  className={`w-2 h-2 rounded-full transition-all ${i === lightboxIdx ? "bg-white" : "bg-white/30"}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-[#0a0a0a]/70 backdrop-blur-2xl">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
-          <span className="text-sm font-bold tracking-tight bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">JC</span>
+          <span className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-xs font-bold text-white">JC</span>
           <div className="hidden md:flex items-center gap-6">
             {(["story", "skills", "contact"] as const).map((key) => (
               <a
                 key={key}
                 href={`#${key}`}
-                className="text-xs text-neutral-500 hover:text-white transition-colors duration-300"
+                className="text-xs text-neutral-300 hover:text-white transition-colors duration-300"
               >
                 {t.nav[key]}
               </a>
@@ -406,25 +434,21 @@ export default function Home() {
                   return (
                     <div key={i} className="p-6 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.03]">
                       <div className="flex flex-col md:flex-row gap-6">
-                        {imgs.length === 1 && (
-                          <img
-                            src={imgs[0]}
-                            alt={m.text}
-                            className="w-full md:w-48 h-36 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity"
-                            onClick={() => setLightbox(imgs[0])}
-                          />
-                        )}
-                        {imgs.length > 1 && (
-                          <div className="grid grid-cols-2 gap-2 w-full md:w-56 flex-shrink-0">
-                            {imgs.map((img, j) => (
-                              <img
-                                key={j}
-                                src={img}
-                                alt={m.text}
-                                className="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                                onClick={() => setLightbox(img)}
-                              />
-                            ))}
+                        {imgs.length > 0 && (
+                          <div
+                            className="relative w-full md:w-48 h-36 flex-shrink-0 cursor-pointer group"
+                            onClick={() => { setLightbox(imgs); setLightboxIdx(0); }}
+                          >
+                            <img
+                              src={imgs[0]}
+                              alt={m.text}
+                              className="w-full h-36 object-cover rounded-xl group-hover:opacity-80 transition-opacity"
+                            />
+                            {imgs.length > 1 && (
+                              <span className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">
+                                1/{imgs.length}
+                              </span>
+                            )}
                           </div>
                         )}
                         <div className="flex-1">
