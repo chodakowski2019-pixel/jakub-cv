@@ -311,7 +311,7 @@ export default function Home() {
           <p className="text-neutral-400 max-w-lg mx-auto mb-12 leading-relaxed text-base">
             {t.hero.sub}
           </p>
-          <div className="flex items-center justify-center mb-16">
+          <div className="flex items-center justify-center mb-10">
             <a
               href="#contact"
               className="px-7 py-3.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30"
@@ -321,9 +321,9 @@ export default function Home() {
           </div>
 
           {/* Scroll hint */}
-          <a href="#story" className="inline-flex flex-col items-center gap-2 text-neutral-600 hover:text-neutral-400 transition-colors">
-            <span className="text-xs">{t.hero.scroll}</span>
-            <ChevronDown size={16} className="animate-bounce" />
+          <a href="#story" className="inline-flex flex-col items-center gap-3 text-neutral-400 hover:text-white transition-colors">
+            <span className="text-sm font-medium">{t.hero.scroll}</span>
+            <ChevronDown size={20} className="animate-bounce" />
           </a>
         </div>
       </section>
@@ -335,7 +335,7 @@ export default function Home() {
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/[0.08] to-transparent hidden md:block" />
 
         {/* --- BEFORE AI --- */}
-        <div className="py-24 px-6 relative">
+        <div className="pt-12 pb-24 px-6 relative">
           <div className="max-w-3xl mx-auto">
             {/* Era label */}
             <div className="flex items-center gap-4 mb-4">
