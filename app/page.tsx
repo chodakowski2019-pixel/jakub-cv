@@ -40,18 +40,12 @@ const CONTENT = {
         "Dzisiaj łączę doświadczenie biznesowe z umiejętnościami technicznymi. Rozumiem, co firma potrzebuje, bo sam to robiłem. I wiem, jak AI może to zrobić lepiej.",
       ],
       skills: ["ChatGPT / Claude Code", "AI Agenci", "Automatyzacja procesów", "Prompt Engineering", "Bazy wiedzy AI (RAG)", "Next.js / React", "TypeScript", "Python"],
-      cert: {
-        date: "Maj 2024",
-        title: "AI Manager. Kurs wdrażania AI w firmach",
-        author: "Maria Parysz",
-        authorDesc: "Wdrażała AI w Rolls-Royce, Sephora i innych globalnych firmach. Jedna z najlepszych specjalistek od AI na świecie.",
-        image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc",
-      },
       milestones: [
         { date: "Listopad 2023", text: "Wdrożenie AI w SEO. Zbudowałem stronę, zautomatyzowałem publikację artykułów i po 3 miesiącach zacząłem generować ruch organiczny. Minimum wysiłku, zero doświadczenia w SEO.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
+        { date: "Maj 2024", text: "AI Manager. Kurs wdrażania AI w firmach. Maria Parysz. Wdrażała AI w Rolls-Royce, Sephora i innych globalnych firmach.", image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc" },
         { date: "Sierpień 2024", text: "Prelekcja na CRASH Mondays. Temat: jak wykorzystać AI i dane w nowoczesnej sprzedaży. Przykłady firm jak Żabka i Netflix, które zrewolucjonizowały sprzedaż dzięki AI.", image: "https://media.licdn.com/dms/image/v2/D4D22AQGgY4uuKD4_Wg/feedshare-shrink_800/feedshare-shrink_800/0/1721579818961?e=1776902400&v=beta&t=nc7AvLjWta4XPXQEkne5n8VLyJNDXpOh-chq8FihyK8" },
-        { date: "Listopad 2025", text: "Prelekcja jako prelegent. Nauczałem nauczycieli, jak wykorzystywać AI w codziennej pracy.", image: "https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png" },
-        { date: "Luty 2026", text: "Stworzenie aplikacji mobilnej Itera City. Turystyczny przewodnik oparty o AI, który pokazuje co warto zobaczyć i opowiada historię miejsca.", image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg" },
+        { date: "Listopad 2025", text: "Wystąpienie na konferencji. Szkoliłem nauczycieli z praktycznego wykorzystania AI w codziennej pracy.", image: "https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png" },
+        { date: "Luty 2026", text: "Stworzenie aplikacji mobilnej Itera City. Turystyczny przewodnik oparty o AI, który pokazuje co warto zobaczyć i opowiada historię miejsca.", images: ["https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg", "https://media.licdn.com/dms/image/v2/D4D22AQFbpDNadrx65Q/feedshare-shrink_2048_1536/B4DZyuh76oGUAk-/0/1772454658312?e=1776902400&v=beta&t=8DsGLCt1csapAsxA-NNk3QHbugfYwOyj9CSzNEbWlhI", "https://media.licdn.com/dms/image/v2/D4D22AQGAe7E77fjZVA/feedshare-shrink_2048_1536/B4DZyuh7nsJYAk-/0/1772454656751?e=1776902400&v=beta&t=ONA-wNwqMzXLXoaeaj1UD_65hPlvW1NylEtAGjnKhZY", "https://media.licdn.com/dms/image/v2/D4D22AQHqcOj2tUrbvg/feedshare-shrink_2048_1536/B4DZyuh7m_JkAk-/0/1772454656778?e=1776902400&v=beta&t=3XqhQXTs9ybQXydemqY25ORYU8z0ltOk-64CNvfZjKw"] },
         { date: "Marzec 2026", text: "Wdrożenie agenta AI na Instagramie, który automatycznie obsługuje wiadomości DM", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/960px-Instagram_logo_2016.svg.png" },
       ],
     },
@@ -150,18 +144,12 @@ const CONTENT = {
         "Today I combine business experience with technical skills. I understand what a company needs because I've been there. And I know how AI can do it better.",
       ],
       skills: ["ChatGPT / Claude Code", "AI Agents", "Process Automation", "Prompt Engineering", "AI Knowledge Bases (RAG)", "Next.js / React", "TypeScript", "Python"],
-      cert: {
-        date: "May 2024",
-        title: "AI Manager. AI implementation course for businesses",
-        author: "Maria Parysz",
-        authorDesc: "Implemented AI at Rolls-Royce, Sephora and other global companies. One of the world's top AI specialists.",
-        image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc",
-      },
       milestones: [
         { date: "November 2023", text: "Implemented AI for SEO. Built a website, automated blog post publishing, and started generating organic traffic in 3 months. Minimal effort, zero SEO experience.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
+        { date: "May 2024", text: "AI Manager. AI implementation course. Maria Parysz. Implemented AI at Rolls-Royce, Sephora and other global companies.", image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc" },
         { date: "August 2024", text: "Speaker at CRASH Mondays. Topic: how to use AI and data in modern sales. Real examples from companies like Żabka and Netflix that revolutionized sales with AI.", image: "https://media.licdn.com/dms/image/v2/D4D22AQGgY4uuKD4_Wg/feedshare-shrink_800/feedshare-shrink_800/0/1721579818961?e=1776902400&v=beta&t=nc7AvLjWta4XPXQEkne5n8VLyJNDXpOh-chq8FihyK8" },
         { date: "November 2025", text: "Speaker session. Taught teachers how to use AI in their daily work.", image: "https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png" },
-        { date: "February 2026", text: "Built Itera City mobile app. An AI-powered tourist guide that shows what to see and tells the history of each place.", image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg" },
+        { date: "February 2026", text: "Built Itera City mobile app. An AI-powered tourist guide that shows what to see and tells the history of each place.", images: ["https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg", "https://media.licdn.com/dms/image/v2/D4D22AQFbpDNadrx65Q/feedshare-shrink_2048_1536/B4DZyuh76oGUAk-/0/1772454658312?e=1776902400&v=beta&t=8DsGLCt1csapAsxA-NNk3QHbugfYwOyj9CSzNEbWlhI", "https://media.licdn.com/dms/image/v2/D4D22AQGAe7E77fjZVA/feedshare-shrink_2048_1536/B4DZyuh7nsJYAk-/0/1772454656751?e=1776902400&v=beta&t=ONA-wNwqMzXLXoaeaj1UD_65hPlvW1NylEtAGjnKhZY", "https://media.licdn.com/dms/image/v2/D4D22AQHqcOj2tUrbvg/feedshare-shrink_2048_1536/B4DZyuh7m_JkAk-/0/1772454656778?e=1776902400&v=beta&t=3XqhQXTs9ybQXydemqY25ORYU8z0ltOk-64CNvfZjKw"] },
         { date: "March 2026", text: "Deployed an AI agent on Instagram that automatically handles DM conversations", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/960px-Instagram_logo_2016.svg.png" },
       ],
     },
@@ -335,7 +323,7 @@ export default function Home() {
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/[0.08] to-transparent hidden md:block" />
 
         {/* --- BEFORE AI --- */}
-        <div className="pt-12 pb-24 px-6 relative">
+        <div className="pt-8 pb-12 px-6 relative">
           <div className="max-w-3xl mx-auto">
             {/* Era label */}
             <div className="flex items-center gap-4 mb-4">
@@ -343,7 +331,7 @@ export default function Home() {
               <span className="text-sm font-mono text-neutral-500 uppercase tracking-widest font-medium">{t.before.label}</span>
               <div className="h-px flex-1 bg-gradient-to-l from-transparent to-neutral-800" />
             </div>
-            <p className="text-center text-sm text-neutral-500 font-mono mb-12">{t.before.period}</p>
+            <p className="text-center text-sm text-neutral-500 font-mono mb-6">{t.before.period}</p>
 
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center">{t.before.title}</h2>
 
@@ -365,7 +353,7 @@ export default function Home() {
         </div>
 
         {/* --- TURNING POINT --- */}
-        <div className="py-20 px-6 relative">
+        <div className="py-10 px-6 relative">
           <div className="max-w-xl mx-auto text-center">
             {/* Big arrow down */}
             <div className="flex justify-center mb-8">
@@ -383,7 +371,7 @@ export default function Home() {
         </div>
 
         {/* --- AFTER AI --- */}
-        <div className="py-24 px-6 bg-white/[0.015] relative">
+        <div className="py-12 px-6 bg-white/[0.015] relative">
           <div className="max-w-3xl mx-auto">
             {/* Era label */}
             <div className="flex items-center gap-4 mb-4">
@@ -391,7 +379,7 @@ export default function Home() {
               <span className="text-sm font-mono text-emerald-400/70 uppercase tracking-widest font-medium">{t.after.label}</span>
               <div className="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-900/30" />
             </div>
-            <p className="text-center text-sm text-emerald-400/50 font-mono mb-12">{t.after.period}</p>
+            <p className="text-center text-sm text-emerald-400/50 font-mono mb-6">{t.after.period}</p>
 
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center">{t.after.title}</h2>
 
@@ -410,52 +398,50 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Certificate */}
-            <div className="mt-16 p-6 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.03] max-w-2xl mx-auto">
-              <div className="flex flex-col md:flex-row gap-6">
-                <img
-                  src={t.after.cert.image}
-                  alt={t.after.cert.title}
-                  className="w-full md:w-48 h-36 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() => setLightbox(t.after.cert.image)}
-                />
-                <div className="flex-1">
-                  <p className="text-xs font-mono text-emerald-400/60 mb-2">{t.after.cert.date}</p>
-                  <h3 className="text-base font-semibold mb-2">{t.after.cert.title}</h3>
-                  <p className="text-sm text-neutral-400 mb-1">{t.after.cert.author}</p>
-                  <p className="text-xs text-neutral-500 leading-relaxed">{t.after.cert.authorDesc}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Milestones */}
+            {/* Milestones — chronological */}
             {t.after.milestones && t.after.milestones.length > 0 && (
               <div className="mt-8 space-y-3 max-w-2xl mx-auto">
-                {t.after.milestones.map((m, i) => (
-                  <div key={i} className="p-6 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.03]">
-                    <div className="flex flex-col md:flex-row gap-6">
-                      {"image" in m && m.image && (
-                        <img
-                          src={m.image as string}
-                          alt={m.text}
-                          className="w-full md:w-48 h-36 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity"
-                          onClick={() => setLightbox(m.image as string)}
-                        />
-                      )}
-                      <div className="flex-1">
-                        <p className="text-xs font-mono text-emerald-400/60 mb-2">{m.date}</p>
-                        <p className="text-sm text-neutral-300 leading-relaxed">{m.text}</p>
+                {t.after.milestones.map((m, i) => {
+                  const imgs = "images" in m ? (m.images as string[]) : "image" in m && m.image ? [m.image as string] : [];
+                  return (
+                    <div key={i} className="p-6 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.03]">
+                      <div className="flex flex-col md:flex-row gap-6">
+                        {imgs.length === 1 && (
+                          <img
+                            src={imgs[0]}
+                            alt={m.text}
+                            className="w-full md:w-48 h-36 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => setLightbox(imgs[0])}
+                          />
+                        )}
+                        {imgs.length > 1 && (
+                          <div className="grid grid-cols-2 gap-2 w-full md:w-56 flex-shrink-0">
+                            {imgs.map((img, j) => (
+                              <img
+                                key={j}
+                                src={img}
+                                alt={m.text}
+                                className="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                                onClick={() => setLightbox(img)}
+                              />
+                            ))}
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <p className="text-xs font-mono text-emerald-400/60 mb-2">{m.date}</p>
+                          <p className="text-sm text-neutral-300 leading-relaxed">{m.text}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
         </div>
 
         {/* --- WHAT I DO NOW --- */}
-        <div className="py-24 px-6">
+        <div className="py-12 px-6">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6 text-center">{t.now.title}</h2>
             <p className="text-neutral-400 text-lg text-center max-w-2xl mx-auto mb-12 leading-relaxed">{t.now.text}</p>
@@ -475,7 +461,7 @@ export default function Home() {
       </section>
 
       {/* ===== SKILLS ===== */}
-      <section id="skills" className="py-24 px-6 bg-white/[0.015]">
+      <section id="skills" className="py-12 px-6 bg-white/[0.015]">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold mb-12 tracking-tight text-center">{t.skills.title}</h2>
           <div className="grid md:grid-cols-3 gap-4">
@@ -504,7 +490,7 @@ export default function Home() {
       </section>
 
       {/* ===== CONTACT ===== */}
-      <section id="contact" className="py-24 px-6 bg-white/[0.015]">
+      <section id="contact" className="py-12 px-6 bg-white/[0.015]">
         <div className="max-w-3xl mx-auto text-center relative">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/8 rounded-full blur-[80px]" />
           <div className="relative">
