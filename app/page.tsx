@@ -51,8 +51,8 @@ const CONTENT = {
         { date: "Listopad 2023", text: "Wdrożenie AI w SEO. Zbudowałem stronę, zautomatyzowałem publikację artykułów i po 3 miesiącach zacząłem generować ruch organiczny. Minimum wysiłku, zero doświadczenia w SEO.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
         { date: "Sierpień 2024", text: "Prelekcja na CRASH Mondays. Temat: jak wykorzystać AI i dane w nowoczesnej sprzedaży. Przykłady firm jak Żabka i Netflix, które zrewolucjonizowały sprzedaż dzięki AI.", image: "https://media.licdn.com/dms/image/v2/D4D22AQGgY4uuKD4_Wg/feedshare-shrink_800/feedshare-shrink_800/0/1721579818961?e=1776902400&v=beta&t=nc7AvLjWta4XPXQEkne5n8VLyJNDXpOh-chq8FihyK8" },
         { date: "Listopad 2025", text: "Prelekcja jako prelegent. Nauczałem nauczycieli, jak wykorzystywać AI w codziennej pracy.", image: "https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png" },
-        { date: "Luty 2026", text: "Stworzenie aplikacji mobilnej AI Tourist Guide. Turystyczny przewodnik oparty o AI, który pokazuje co warto zobaczyć i opowiada historię miejsca.", image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg" },
-        { date: "Marzec 2026", text: "Wdrożenie agenta AI na Instagramie, który automatycznie obsługuje wiadomości DM" },
+        { date: "Luty 2026", text: "Stworzenie aplikacji mobilnej Itera City. Turystyczny przewodnik oparty o AI, który pokazuje co warto zobaczyć i opowiada historię miejsca.", image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg" },
+        { date: "Marzec 2026", text: "Wdrożenie agenta AI na Instagramie, który automatycznie obsługuje wiadomości DM", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/960px-Instagram_logo_2016.svg.png" },
       ],
     },
     now: {
@@ -92,7 +92,7 @@ const CONTENT = {
           url: "https://slam5.com",
         },
         {
-          name: "AI Tourist Guide",
+          name: "Itera City",
           desc: "Aplikacja mobilna. Turystyczny przewodnik oparty o AI. Pokazuje co warto zobaczyć, jak dojechać i opowiada historię miejsca.",
           tech: "React Native, AI, Maps API",
           url: "#",
@@ -161,8 +161,8 @@ const CONTENT = {
         { date: "November 2023", text: "Implemented AI for SEO. Built a website, automated blog post publishing, and started generating organic traffic in 3 months. Minimal effort, zero SEO experience.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
         { date: "August 2024", text: "Speaker at CRASH Mondays. Topic: how to use AI and data in modern sales. Real examples from companies like Żabka and Netflix that revolutionized sales with AI.", image: "https://media.licdn.com/dms/image/v2/D4D22AQGgY4uuKD4_Wg/feedshare-shrink_800/feedshare-shrink_800/0/1721579818961?e=1776902400&v=beta&t=nc7AvLjWta4XPXQEkne5n8VLyJNDXpOh-chq8FihyK8" },
         { date: "November 2025", text: "Speaker session. Taught teachers how to use AI in their daily work.", image: "https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png" },
-        { date: "February 2026", text: "Built AI Tourist Guide mobile app. An AI-powered tourist guide that shows what to see and tells the history of each place.", image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg" },
-        { date: "March 2026", text: "Deployed an AI agent on Instagram that automatically handles DM conversations" },
+        { date: "February 2026", text: "Built Itera City mobile app. An AI-powered tourist guide that shows what to see and tells the history of each place.", image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg" },
+        { date: "March 2026", text: "Deployed an AI agent on Instagram that automatically handles DM conversations", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/960px-Instagram_logo_2016.svg.png" },
       ],
     },
     now: {
@@ -202,7 +202,7 @@ const CONTENT = {
           url: "https://slam5.com",
         },
         {
-          name: "AI Tourist Guide",
+          name: "Itera City",
           desc: "Mobile app. An AI-powered tourist guide. Shows what to see, how to get there, and tells you the history of each place.",
           tech: "React Native, AI, Maps API",
           url: "#",
