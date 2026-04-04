@@ -5,7 +5,7 @@ import { ChevronDown, X } from "lucide-react";
 
 const CONTENT = {
   pl: {
-    nav: { story: "Historia", skills: "Umiejętności", projects: "Projekty", contact: "Kontakt" },
+    nav: { story: "Historia", skills: "Umiejętności", contact: "Kontakt" },
     hero: {
       greeting: "Cześć, jestem",
       name: "Jakub Chodakowski",
@@ -51,6 +51,7 @@ const CONTENT = {
         { date: "Listopad 2023", text: "Wdrożenie AI w SEO. Zbudowałem stronę, zautomatyzowałem publikację artykułów i po 3 miesiącach zacząłem generować ruch organiczny. Minimum wysiłku, zero doświadczenia w SEO.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
         { date: "Sierpień 2024", text: "Prelekcja na CRASH Mondays. Temat: jak wykorzystać AI i dane w nowoczesnej sprzedaży. Przykłady firm jak Żabka i Netflix, które zrewolucjonizowały sprzedaż dzięki AI.", image: "https://media.licdn.com/dms/image/v2/D4D22AQGgY4uuKD4_Wg/feedshare-shrink_800/feedshare-shrink_800/0/1721579818961?e=1776902400&v=beta&t=nc7AvLjWta4XPXQEkne5n8VLyJNDXpOh-chq8FihyK8" },
         { date: "Listopad 2025", text: "Prelekcja jako prelegent. Nauczałem nauczycieli, jak wykorzystywać AI w codziennej pracy.", image: "https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png" },
+        { date: "Luty 2026", text: "Stworzenie aplikacji mobilnej AI Tourist Guide. Turystyczny przewodnik oparty o AI, który pokazuje co warto zobaczyć i opowiada historię miejsca.", image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg" },
         { date: "Marzec 2026", text: "Wdrożenie agenta AI na Instagramie, który automatycznie obsługuje wiadomości DM" },
       ],
     },
@@ -106,15 +107,15 @@ const CONTENT = {
       ],
     },
     contact: {
-      title: "Twoja kolej",
-      text: "Masz firmę i czujesz, że AI mogłoby Ci pomóc, ale nie wiesz od czego zacząć? Napisz. Pierwsza rozmowa nic nie kosztuje.",
+      title: "Kontakt",
+      text: "Szukasz kogoś, kto wdroży AI w Twojej firmie? Napisz do mnie. Chętnie porozmawiam o tym, jak mogę pomóc.",
       email: "chodakowski2019@gmail.com",
       linkedin: "LinkedIn",
     },
     footer: "Jakub Chodakowski",
   },
   en: {
-    nav: { story: "Story", skills: "Skills", projects: "Projects", contact: "Contact" },
+    nav: { story: "Story", skills: "Skills", contact: "Contact" },
     hero: {
       greeting: "Hi, I'm",
       name: "Jakub Chodakowski",
@@ -160,6 +161,7 @@ const CONTENT = {
         { date: "November 2023", text: "Implemented AI for SEO. Built a website, automated blog post publishing, and started generating organic traffic in 3 months. Minimal effort, zero SEO experience.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
         { date: "August 2024", text: "Speaker at CRASH Mondays. Topic: how to use AI and data in modern sales. Real examples from companies like Żabka and Netflix that revolutionized sales with AI.", image: "https://media.licdn.com/dms/image/v2/D4D22AQGgY4uuKD4_Wg/feedshare-shrink_800/feedshare-shrink_800/0/1721579818961?e=1776902400&v=beta&t=nc7AvLjWta4XPXQEkne5n8VLyJNDXpOh-chq8FihyK8" },
         { date: "November 2025", text: "Speaker session. Taught teachers how to use AI in their daily work.", image: "https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png" },
+        { date: "February 2026", text: "Built AI Tourist Guide mobile app. An AI-powered tourist guide that shows what to see and tells the history of each place.", image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg" },
         { date: "March 2026", text: "Deployed an AI agent on Instagram that automatically handles DM conversations" },
       ],
     },
@@ -215,8 +217,8 @@ const CONTENT = {
       ],
     },
     contact: {
-      title: "Your turn",
-      text: "You have a business and feel like AI could help, but you don't know where to start? Write me. First call is free.",
+      title: "Contact",
+      text: "Looking for someone to implement AI in your company? Reach out. I'd love to talk about how I can help.",
       email: "chodakowski2019@gmail.com",
       linkedin: "LinkedIn",
     },
@@ -266,7 +268,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
           <span className="text-sm font-bold tracking-tight bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">JC</span>
           <div className="hidden md:flex items-center gap-6">
-            {(["story", "skills", "projects", "contact"] as const).map((key) => (
+            {(["story", "skills", "contact"] as const).map((key) => (
               <a
                 key={key}
                 href={`#${key}`}
@@ -494,39 +496,6 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== PROJECTS ===== */}
-      <section id="projects" className="py-24 px-6">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 tracking-tight text-center">{t.projects.title}</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            {t.projects.items.map((project, i) => (
-              <a
-                key={i}
-                href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group rounded-2xl border border-white/[0.06] hover:border-emerald-500/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1 overflow-hidden"
-              >
-                {"image" in project && project.image && (
-                  <img src={project.image as string} alt={project.name} className="w-full h-36 object-cover" />
-                )}
-                <div className="p-6">
-                  <h3 className="font-semibold mb-2 group-hover:text-emerald-400 transition-colors duration-300">
-                    {project.name}
-                  </h3>
-                  <p className="text-sm text-neutral-500 mb-4 leading-relaxed">
-                    {project.desc}
-                  </p>
-                  <span className="text-[11px] text-neutral-600 font-mono tracking-wide">
-                    {project.tech}
-                  </span>
-                </div>
-              </a>
             ))}
           </div>
         </div>
