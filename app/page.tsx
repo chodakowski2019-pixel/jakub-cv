@@ -39,7 +39,7 @@ const CONTENT = {
         "Stworzyłem chatboty, które odpowiadają klientom 24/7. Automatyzacje, które oszczędzają firmom 20+ godzin tygodniowo. Aplikacje, które zarabiają pieniądze.",
         "Dzisiaj łączę doświadczenie biznesowe z umiejętnościami technicznymi. Rozumiem, co firma potrzebuje, bo sam to robiłem. I wiem, jak AI może to zrobić lepiej.",
       ],
-      skills: ["ChatGPT / Claude API", "AI Agenci", "Automatyzacja procesów", "Prompt Engineering", "Bazy wiedzy AI (RAG)", "Next.js / React", "TypeScript", "Python"],
+      skills: ["ChatGPT / Claude Code", "AI Agenci", "Automatyzacja procesów", "Prompt Engineering", "Bazy wiedzy AI (RAG)", "Next.js / React", "TypeScript", "Python"],
       cert: {
         date: "Maj 2024",
         title: "AI Manager. Kurs wdrażania AI w firmach",
@@ -70,7 +70,7 @@ const CONTENT = {
       categories: [
         {
           name: "AI & Automatyzacja",
-          items: ["ChatGPT / Claude API", "AI Agenci", "Automatyzacja procesów", "Prompt Engineering", "Bazy wiedzy AI (RAG)"],
+          items: ["ChatGPT / Claude Code", "AI Agenci", "Automatyzacja procesów", "Prompt Engineering", "Bazy wiedzy AI (RAG)"],
         },
         {
           name: "Budowa aplikacji",
@@ -149,7 +149,7 @@ const CONTENT = {
         "I created chatbots that answer customers 24/7. Automations that save companies 20+ hours a week. Apps that make money.",
         "Today I combine business experience with technical skills. I understand what a company needs because I've been there. And I know how AI can do it better.",
       ],
-      skills: ["ChatGPT / Claude API", "AI Agents", "Process Automation", "Prompt Engineering", "AI Knowledge Bases (RAG)", "Next.js / React", "TypeScript", "Python"],
+      skills: ["ChatGPT / Claude Code", "AI Agents", "Process Automation", "Prompt Engineering", "AI Knowledge Bases (RAG)", "Next.js / React", "TypeScript", "Python"],
       cert: {
         date: "May 2024",
         title: "AI Manager. AI implementation course for businesses",
@@ -180,7 +180,7 @@ const CONTENT = {
       categories: [
         {
           name: "AI & Automation",
-          items: ["ChatGPT / Claude API", "AI Agents", "Process Automation", "Prompt Engineering", "AI Knowledge Bases (RAG)"],
+          items: ["ChatGPT / Claude Code", "AI Agents", "Process Automation", "Prompt Engineering", "AI Knowledge Bases (RAG)"],
         },
         {
           name: "Building apps",
