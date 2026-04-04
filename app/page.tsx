@@ -432,18 +432,20 @@ export default function Home() {
             {t.after.milestones && t.after.milestones.length > 0 && (
               <div className="mt-8 space-y-3 max-w-2xl mx-auto">
                 {t.after.milestones.map((m, i) => (
-                  <div key={i} className="flex items-start gap-4 p-4 rounded-xl border border-emerald-500/10 bg-emerald-500/[0.02]">
-                    {"image" in m && m.image && (
-                      <img
-                        src={m.image as string}
-                        alt={m.text}
-                        className="w-20 h-14 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
-                        onClick={() => setLightbox(m.image as string)}
-                      />
-                    )}
-                    <div>
-                      <span className="text-xs font-mono text-emerald-400/60 block mb-1">{m.date}</span>
-                      <p className="text-sm text-neutral-300">{m.text}</p>
+                  <div key={i} className="p-6 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.03]">
+                    <div className="flex flex-col md:flex-row gap-6">
+                      {"image" in m && m.image && (
+                        <img
+                          src={m.image as string}
+                          alt={m.text}
+                          className="w-full md:w-48 h-36 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => setLightbox(m.image as string)}
+                        />
+                      )}
+                      <div className="flex-1">
+                        <p className="text-xs font-mono text-emerald-400/60 mb-2">{m.date}</p>
+                        <p className="text-sm text-neutral-300 leading-relaxed">{m.text}</p>
+                      </div>
                     </div>
                   </div>
                 ))}
