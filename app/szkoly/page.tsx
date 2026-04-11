@@ -44,8 +44,7 @@ export default function SzkolyPage() {
           </h1>
           <p className="text-neutral-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-10">
             Praktyczne wykłady i warsztaty ze sztucznej inteligencji — dla
-            uczniów, nauczycieli lub całej kadry. Bez teorii. Narzędzia, które
-            można używać już następnego dnia.
+            uczniów, nauczycieli lub całej kadry.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
@@ -92,8 +91,7 @@ export default function SzkolyPage() {
             Dla kogo?
           </h2>
           <p className="text-neutral-400 text-center mb-12 max-w-xl mx-auto">
-            Dostosowuję poziom, tempo i przykłady do odbiorcy. Jedno spotkanie
-            planujące — i wiem, co będzie najlepsze dla Twojej szkoły.
+            Dostosowuję poziom, tempo i przykłady do odbiorcy.
           </p>
           <div className="grid md:grid-cols-3 gap-4">
             {[
@@ -141,8 +139,7 @@ export default function SzkolyPage() {
             Jak to wygląda?
           </h2>
           <p className="text-neutral-400 text-center mb-12 max-w-xl mx-auto">
-            Zero skomplikowanego języka. Zero PowerPointa z teorią. Wchodzę,
-            włączam narzędzia i pokazuję na żywo.
+            Bardzo prosta i łatwa współpraca.
           </p>
           <div className="grid md:grid-cols-2 gap-4">
             {[
@@ -154,17 +151,12 @@ export default function SzkolyPage() {
               {
                 num: "02",
                 title: "Wykład lub warsztat (1–3h)",
-                desc: "Dostosowany do odbiorcy. Uczniowie: interaktywny. Nauczyciele: praktyczny. Zawsze live demo.",
+                desc: "Dostosowany do odbiorcy. Widzimy się online lub na żywo w Państwa szkole.",
               },
               {
                 num: "03",
                 title: "Materiały po spotkaniu",
                 desc: "Lista narzędzi, prompty, ściągawka. Uczestnicy wychodzą z czymś, co mogą użyć od razu.",
-              },
-              {
-                num: "04",
-                title: "Wycena dla grupy",
-                desc: "Szkoła płaci za całą grupę — bez opłat od ucznia. Prosta wycena po rozmowie planującej.",
               },
             ].map((item, i) => (
               <div
@@ -263,23 +255,26 @@ export default function SzkolyPage() {
                     Dzień Otwarty dla Oświaty — HKF Centrum
                   </h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
-                    „Twój asystent AI w szkole" — bezpłatne szkolenie dla
-                    nauczycieli. 5,5h warsztatów z praktycznego wykorzystania AI
-                    w codziennej pracy. Bez teorii, bez PowerPointa — tylko live
-                    demo i gotowe narzędzia.
+                    „Twój asystent AI w szkole" — szkolenie dla nauczycieli.
                   </p>
                 </div>
               </div>
             </div>
-            <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
-              <p className="text-xs font-mono text-neutral-500 mb-2">
-                + kilka szkół
-              </p>
-              <p className="text-sm text-neutral-400 leading-relaxed">
-                Prowadziłem warsztaty AI w kilku szkołach — zarówno dla uczniów,
-                jak i dla rad pedagogicznych. Każde szkolenie było inne, bo
-                każda szkoła ma inne potrzeby.
-              </p>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { value: "14", label: "Licea" },
+                { value: "8", label: "Szkoły podstawowe" },
+              ].map((stat, i) => (
+                <div
+                  key={i}
+                  className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] text-center"
+                >
+                  <p className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent mb-2">
+                    {stat.value}
+                  </p>
+                  <p className="text-sm text-neutral-400">{stat.label}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -332,3 +327,4 @@ export default function SzkolyPage() {
     </div>
   );
 }
+
