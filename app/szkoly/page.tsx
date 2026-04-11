@@ -43,8 +43,8 @@ export default function SzkolyPage() {
             </span>
           </h1>
           <p className="text-neutral-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-10">
-            Praktyczne wykłady i warsztaty ze sztucznej inteligencji — dla
-            uczniów, nauczycieli lub całej kadry.
+            Praktyczne wykłady i warsztaty ze sztucznej inteligencji —<br />
+            dla uczniów, nauczycieli lub całej kadry.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
@@ -262,8 +262,8 @@ export default function SzkolyPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { value: "14", label: "Licea" },
-                { value: "8", label: "Szkoły podstawowe" },
+                { value: "14+", label: "Licea" },
+                { value: "8+", label: "Szkoły podstawowe" },
               ].map((stat, i) => (
                 <div
                   key={i}
@@ -289,8 +289,7 @@ export default function SzkolyPage() {
               Zainteresowana/y?
             </h2>
             <p className="text-neutral-400 mb-3 max-w-md mx-auto">
-              Napisz maila z krótką informacją: dla kogo (uczniowie/nauczyciele),
-              ile osób, i kiedy planujecie wydarzenie.
+              Napisz do mnie!
             </p>
             <p className="text-neutral-500 text-sm mb-10 max-w-md mx-auto">
               Odpiszę w ciągu 24h z propozycją programu i wyceną.
