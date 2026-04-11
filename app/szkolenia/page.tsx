@@ -44,8 +44,7 @@ export default function SzkoleniaPage() {
           </h1>
           <p className="text-neutral-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-10">
             Twój zespół traci godziny na powtarzalne zadania. Pokazuję, jak AI
-            może to robić za nich — szybciej, taniej, bez błędów. Bez teorii,
-            bez slajdów. Wchodzimy, włączamy narzędzia i działamy.
+            może to robić za nich szybciej, taniej, bez błędów.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
@@ -64,23 +63,6 @@ export default function SzkoleniaPage() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-8 px-6 border-y border-white/[0.04] bg-white/[0.015]">
-        <div className="max-w-3xl mx-auto grid grid-cols-3 gap-4 text-center">
-          {[
-            { value: "20+", label: "godzin oszczędności tygodniowo" },
-            { value: "1 dzień", label: "i zespół działa z AI" },
-            { value: "100%", label: "praktyki, 0% teorii" },
-          ].map((stat, i) => (
-            <div key={i}>
-              <p className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                {stat.value}
-              </p>
-              <p className="text-xs text-neutral-500 mt-1">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* Oferty */}
       <section id="oferty" className="py-16 px-6">
@@ -124,7 +106,7 @@ export default function SzkoleniaPage() {
               {
                 tag: "Dla zarządu",
                 name: "AI Strategy",
-                duration: "2h",
+                duration: "kilka dni",
                 highlight: false,
                 desc: "Strategiczne spojrzenie na AI w firmie. Dla CEO, dyrektorów i managerów. Gdzie AI da największy ROI i jak zacząć.",
                 points: [
@@ -192,8 +174,7 @@ export default function SzkoleniaPage() {
             Dla jakich firm?
           </h2>
           <p className="text-neutral-400 text-center mb-12 max-w-xl mx-auto">
-            Pracuję z firmami każdej wielkości. Ważne: masz zespół, który chce
-            pracować mądrzej.
+            Pracuję z firmami każdej wielkości.
           </p>
           <div className="grid md:grid-cols-2 gap-4">
             {[
@@ -292,6 +273,17 @@ export default function SzkoleniaPage() {
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-center mb-12">
             Doświadczenie
           </h2>
+
+          {/* Counter */}
+          <div className="flex justify-center mb-10">
+            <div className="p-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] text-center px-16">
+              <p className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent mb-2">
+                30+
+              </p>
+              <p className="text-sm text-neutral-400">firm przeszkolonych</p>
+            </div>
+          </div>
+
           <div className="space-y-4">
             <div className="p-6 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.03]">
               <div className="flex flex-col md:flex-row gap-6">
@@ -311,6 +303,27 @@ export default function SzkoleniaPage() {
                     Temat: jak wykorzystać AI i dane w nowoczesnej sprzedaży.
                     Przykłady firm jak Żabka i Netflix, które zrewolucjonizowały
                     sprzedaż dzięki AI.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.03]">
+              <div className="flex flex-col md:flex-row gap-6">
+                <img
+                  src="https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc"
+                  alt="AI Manager — certyfikat"
+                  className="w-full md:w-48 h-36 object-cover rounded-xl flex-shrink-0"
+                />
+                <div className="flex-1">
+                  <p className="text-xs font-mono text-emerald-400/60 mb-2">
+                    Maj 2024
+                  </p>
+                  <h3 className="font-semibold mb-2">
+                    AI Manager — certyfikat
+                  </h3>
+                  <p className="text-sm text-neutral-400 leading-relaxed">
+                    Kurs wdrażania AI w firmach. Maria Parysz — wdrażała AI w
+                    Rolls-Royce, Sephora i innych globalnych firmach.
                   </p>
                 </div>
               </div>
