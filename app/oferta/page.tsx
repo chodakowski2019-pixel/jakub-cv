@@ -10,35 +10,34 @@ export const metadata: Metadata = {
 const agenda = [
   {
     part: "Część I — Teoria",
-    duration: "2h 30min",
+    duration: "ok. 1,5h",
     items: [
       {
         title: "Nauczyciel przed AI i po AI",
-        duration: "45 min",
+        duration: "25 min",
         points: [
           "Dlaczego tyle pracujemy po godzinach — i czy da się to zmienić",
           "Czym tak naprawdę jest AI i co potrafi zrobić za nas",
-          "Prawdziwe przykłady: opinia o uczniu w 2 minuty, test w 5 minut, wiadomość do rodzica w 30 sekund",
-          "AI nie zastępuje nauczyciela — zastępuje papierkową robotę",
+          "Stwórz test dla uczniów na 15 min lub sprawdź 10 prac domowych w 10 min",
+          "AI nie zastępuje nauczyciela — zastępuje powtarzalną i nudną pracę",
         ],
       },
       {
-        title: "Pięć narzędzi, których użyjesz już w poniedziałek",
-        duration: "45 min",
+        title: "5 najważniejszych narzędzi AI",
+        duration: "30 min",
         points: [
-          "ChatGPT, Claude, Gemini — pokaz na żywo",
-          "Canva AI — prezentacja w 5 minut",
-          "Gamma.app — wpisujesz temat, dostajesz gotowe slajdy",
+          "ChatGPT, Bielik AI, Claude — pokaz na żywo",
+          "Gamma.app — Stwórz prezentację z AI",
+          "Jak działa prywatny agent AI",
           "Co jest za darmo, co kosztuje. Które działają po polsku.",
         ],
       },
       {
-        title: "Jak rozmawiać z AI żeby rozumiało o co chodzi",
-        duration: "30 min",
+        title: "Jak rozmawiać z AI",
+        duration: "20 min",
         points: [
           "Dlaczego AI czasem daje złe odpowiedzi — i jak tego uniknąć",
-          "Prosty schemat: powiedz kim jesteś + co chcesz + dla kogo to jest",
-          "Gotowe szablony do zabrania do domu — dla każdego przedmiotu",
+          "Prompty: Język AI",
         ],
       },
       {
@@ -53,70 +52,87 @@ const agenda = [
     ],
   },
   {
-    part: "Część II — Ćwiczenia praktyczne",
-    duration: "2h",
+    part: "Część II — Warsztat praktyczny",
+    duration: "1,5h",
     items: [
       {
-        title: "Tworzenie materiałów do lekcji",
-        duration: "40 min",
-        points: [
-          "Wpisujesz temat i klasę — dostajesz gotowy plan lekcji",
-          "Test z odpowiedziami w 3 minuty",
-          "Zadania dla uczniów słabszych i zdolnych — jednym kliknięciem",
-          "Każdy tworzy materiał do swojego przedmiotu",
-        ],
-      },
-      {
-        title: "Koniec z godzinami przy dokumentach",
-        duration: "25 min",
-        points: [
-          "Opinia o uczniu: mówisz co wiesz, AI pisze treść",
-          "Wiadomość do trudnego rodzica — bez stresu",
-          "Sprawozdania, wnioski, plany — szybciej niż myślisz",
-          "Piszemy razem opinię o uczniu — na żywo",
-        ],
-      },
-      {
-        title: "Twój osobisty asystent AI",
-        duration: "40 min",
+        title: "Twój osobisty Asystent AI",
+        duration: "45 min",
         points: [
           "Ustawiamy AI tak, żeby znało Twój przedmiot i Twoje klasy",
           "Od teraz pamięta Twoje preferencje i pisze w Twoim stylu",
           "Każdy wychodzi z gotowym, skonfigurowanym asystentem",
         ],
       },
+      {
+        title: "5 narzędzi w praktyce",
+        duration: "45 min",
+        points: [
+          "Tworzenie grafik, tekstów i filmów z AI",
+          "Sprawdzanie testów i prac domowych",
+          "Planowanie lekcji i materiały dydaktyczne w minuty",
+          "I wiele, wiele więcej — ćwiczymy razem na żywo",
+        ],
+      },
     ],
+  },
+];
+
+const bonuses = [
+  {
+    icon: "🎓",
+    title: "Certyfikat ukończenia",
+    desc: "Imienny certyfikat dla każdego uczestnika — potwierdzenie doskonalenia zawodowego.",
+  },
+  {
+    icon: "📋",
+    title: "Lista 50 narzędzi AI dla nauczycieli",
+    desc: "Gotowa baza narzędzi z opisem zastosowania — do użycia od razu po szkoleniu.",
+  },
+  {
+    icon: "💬",
+    title: "7 dni kontaktu ze mną po szkoleniu",
+    desc: "Pytania po szkoleniu? Piszesz — odpowiadam. Przez 7 dni jestem dostępny dla każdego uczestnika.",
+  },
+  {
+    icon: "📄",
+    title: "PDF: Gotowe prompty dla nauczycieli",
+    desc: "Zbiór najlepszych promptów dopasowanych do pracy nauczyciela — do każdego przedmiotu i sytuacji.",
   },
 ];
 
 const pricing = [
   {
     name: "Wariant podstawowy",
-    duration: "2,5h — sama teoria",
+    duration: "ok. 2h — teoria + Q&A",
     price: "3 500 zł",
     description:
-      "Wykład dla rady pedagogicznej. Teoria, demo na żywo, Q&A. Każdy nauczyciel wychodzi z listą narzędzi i gotowymi szablonami.",
+      "Wykład dla rady pedagogicznej. Teoria, demo na żywo, Q&A. Każdy nauczyciel wychodzi z wiedzą i narzędziami gotowymi do użycia.",
     included: [
-      "Część I — teoria (2h 30min)",
-      "Sesja Q&A",
-      "Materiały do pobrania",
-      "Certyfikat dla każdego uczestnika",
+      "Część I — teoria (ok. 1,5h)",
+      "Sesja Q&A (20 min)",
+      "Lista 50 narzędzi AI",
+      "PDF: Gotowe prompty dla nauczycieli",
+      "Certyfikat ukończenia",
+      "7 dni kontaktu po szkoleniu",
     ],
   },
   {
     name: "Wariant pełny",
-    duration: "5h — teoria + warsztat",
+    duration: "ok. 4h — teoria + warsztat",
     price: "4 500 zł",
     highlight: true,
     description:
-      "Pełny dzień szkoleniowy. Teoria + 2h ćwiczeń praktycznych. Każdy nauczyciel wychodzi z własnym asystentem AI i gotowymi materiałami do swojego przedmiotu.",
+      "Teoria + warsztat praktyczny. Każdy nauczyciel wychodzi z własnym asystentem AI i konkretnymi umiejętnościami do zastosowania od następnego dnia.",
     included: [
-      "Część I — teoria (2h 30min)",
-      "Przerwa kawowa",
-      "Część II — warsztat praktyczny (2h)",
-      "Sesja Q&A",
-      "Materiały do pobrania",
-      "Certyfikat dla każdego uczestnika",
+      "Część I — teoria (ok. 1,5h)",
+      "Sesja Q&A (20 min)",
+      "Przerwa (30 min)",
+      "Część II — warsztat praktyczny (1,5h)",
+      "Lista 50 narzędzi AI",
+      "PDF: Gotowe prompty dla nauczycieli",
+      "Certyfikat ukończenia",
+      "7 dni kontaktu po szkoleniu",
     ],
   },
 ];
@@ -169,7 +185,7 @@ export default function OfertaPage() {
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
             {[
               { label: "Dla kogo", value: "Rada pedagogiczna" },
-              { label: "Czas trwania", value: "2,5h lub 5h" },
+              { label: "Czas trwania", value: "ok. 2h lub ok. 4h" },
               { label: "Format", value: "Na miejscu w szkole lub online" },
               { label: "Certyfikat", value: "Dla każdego uczestnika" },
             ].map((item, i) => (
@@ -247,13 +263,13 @@ export default function OfertaPage() {
                       <p className="text-xs font-mono text-neutral-500 mb-1">
                         Sesja pytań i odpowiedzi
                       </p>
-                      <p className="text-xs text-neutral-600">15 min</p>
+                      <p className="text-xs text-neutral-600">20 min</p>
                     </div>
                     <div className="p-4 rounded-xl border border-white/[0.04] bg-white/[0.01] text-center">
                       <p className="text-xs font-mono text-neutral-500 mb-1">
-                        Przerwa kawowa
+                        Przerwa
                       </p>
-                      <p className="text-xs text-neutral-600">15 min</p>
+                      <p className="text-xs text-neutral-600">30 min</p>
                     </div>
                   </div>
                 )}
@@ -333,6 +349,30 @@ export default function OfertaPage() {
                     </li>
                   ))}
                 </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Bonuses */}
+      <section className="py-16 px-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-center mb-4">
+            Każdy uczestnik otrzymuje
+          </h2>
+          <p className="text-neutral-400 text-center mb-12 max-w-xl mx-auto">
+            Do obu wariantów dołączone są te same bonusy.
+          </p>
+          <div className="grid md:grid-cols-2 gap-4">
+            {bonuses.map((bonus, i) => (
+              <div
+                key={i}
+                className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-emerald-500/15 transition-all duration-500"
+              >
+                <div className="text-2xl mb-3">{bonus.icon}</div>
+                <h3 className="font-semibold mb-2 text-neutral-100">{bonus.title}</h3>
+                <p className="text-sm text-neutral-400 leading-relaxed">{bonus.desc}</p>
               </div>
             ))}
           </div>
