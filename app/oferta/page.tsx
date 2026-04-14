@@ -192,11 +192,7 @@ export default function OfertaPage() {
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-center mb-4">
             Program szkolenia
           </h2>
-          <p className="text-neutral-400 text-center mb-12 max-w-xl mx-auto">
-            Wymagania techniczne: sala z projektorem, każdy uczestnik z laptopem
-            lub tabletem. Nic do instalowania — wszystko działa przez
-            przeglądarkę.
-          </p>
+          <div className="mb-12" />
 
           <div className="space-y-10">
             {agenda.map((block, bi) => (
