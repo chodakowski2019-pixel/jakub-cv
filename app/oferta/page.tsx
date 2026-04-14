@@ -151,7 +151,8 @@ export default function OfertaPage() {
             Szkolenie dla nauczycieli
           </p>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-6 leading-tight">
-            AI nie zastąpi nauczyciela,{" "}
+            AI nie zastąpi nauczyciela,
+            <br />
             <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
               który potrafi z niej korzystać
             </span>
