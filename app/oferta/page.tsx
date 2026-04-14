@@ -170,7 +170,7 @@ export default function OfertaPage() {
             {[
               { label: "Dla kogo", value: "Rada pedagogiczna" },
               { label: "Czas trwania", value: "2,5h lub 5h" },
-              { label: "Format", value: "Na miejscu w szkole" },
+              { label: "Format", value: "Na miejscu w szkole lub online" },
               { label: "Certyfikat", value: "Dla każdego uczestnika" },
             ].map((item, i) => (
               <div key={i} className="text-center">
