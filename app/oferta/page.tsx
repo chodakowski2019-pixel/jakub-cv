@@ -13,40 +13,35 @@ const agenda = [
     duration: "ok. 1,5h",
     items: [
       {
-        title: "Nauczyciel przed AI i po AI",
-        duration: "25 min",
+        title: "Wstęp",
+        duration: "",
         points: [
-          "Dlaczego tyle pracujemy po godzinach — i czy da się to zmienić",
-          "Czym tak naprawdę jest AI i co potrafi zrobić za nas",
-          "Stwórz test dla uczniów na 15 min lub sprawdź 10 prac domowych w 10 min",
-          "AI nie zastępuje nauczyciela — zastępuje powtarzalną i nudną pracę",
+          "AI jest już w Twojej klasie — czy chcesz czy nie",
+          "Co to jest AI i jak działa",
+          "Każdy z nas ma z nią styczność na co dzień",
+          "Prompty — język komunikacji z AI",
         ],
       },
       {
-        title: "5 najważniejszych narzędzi AI",
-        duration: "30 min",
+        title: "Rozwinięcie",
+        duration: "",
         points: [
-          "ChatGPT, Bielik AI, Claude — pokaz na żywo",
-          "Gamma.app — Stwórz prezentację z AI",
-          "Jak działa prywatny agent AI",
-          "Co jest za darmo, co kosztuje. Które działają po polsku.",
+          "Jak uczniowie wykorzystują sztuczną inteligencję",
+          "Jak zaoszczędzić 10h tygodniowo korzystając z AI",
+          "AI w 5 sytuacjach które zdarzają Ci się co tydzień",
+          "5 najważniejszych narzędzi dla nauczyciela",
+          "Jak ułatwić swoje życie i pracę dzięki tej technologii",
         ],
       },
       {
-        title: "Jak rozmawiać z AI",
-        duration: "20 min",
+        title: "Zakończenie",
+        duration: "",
         points: [
-          "Dlaczego AI czasem daje złe odpowiedzi — i jak tego uniknąć",
-          "Prompty: Język AI",
-        ],
-      },
-      {
-        title: "Czy to jest bezpieczne? — co wolno, czego nie",
-        duration: "15 min",
-        points: [
-          "Danych uczniów nie wklejamy do AI — dlaczego i jak to obejść",
-          "Co z prawami autorskimi do materiałów stworzonych przez AI",
-          "Jak sprawdzić, czy uczeń oddał pracę napisaną przez AI",
+          "Bezpieczeństwo AI — co wolno, czego nie",
+          "Prawa autorskie i dane",
+          "Jak AI zmienia edukację w Polsce i na świecie",
+          "Przyszłość pracy nauczyciela",
+          "Podsumowanie",
         ],
       },
     ],
@@ -185,7 +180,7 @@ export default function OfertaPage() {
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
             {[
               { label: "Dla kogo", value: "Rada pedagogiczna" },
-              { label: "Czas trwania", value: "ok. 2h lub ok. 4h" },
+              { label: "Czas trwania", value: "2 lub 4h" },
               { label: "Format", value: "Na miejscu w szkole lub online" },
               { label: "Certyfikat", value: "Dla każdego uczestnika" },
             ].map((item, i) => (
