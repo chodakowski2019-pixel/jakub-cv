@@ -114,7 +114,7 @@ const pricing = [
       "Wykład dla rady pedagogicznej. Teoria, demo na żywo, Q&A. Każdy nauczyciel wychodzi z wiedzą i narzędziami gotowymi do użycia.",
     included: [
       "Część I — teoria (ok. 1,5h)",
-      "Sesja Q&A (20 min)",
+      "Sesja Q&A (30 min)",
       "Lista 50 narzędzi AI",
       "PDF: Gotowe prompty dla nauczycieli",
       "Certyfikat ukończenia",
@@ -130,9 +130,9 @@ const pricing = [
       "Teoria + warsztat praktyczny. Każdy nauczyciel wychodzi z własnym asystentem AI i konkretnymi umiejętnościami do zastosowania od następnego dnia.",
     included: [
       "Część I — teoria (ok. 1,5h)",
-      "Sesja Q&A (20 min)",
+      "Sesja Q&A (30 min)",
       "Przerwa (30 min)",
-      "Część II — warsztat praktyczny (1,5h)",
+      "Część II — warsztat praktyczny (2h 15min)",
       "Lista 50 narzędzi AI",
       "PDF: Gotowe prompty dla nauczycieli",
       "Certyfikat ukończenia",
