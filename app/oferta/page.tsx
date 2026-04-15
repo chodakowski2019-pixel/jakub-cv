@@ -281,7 +281,7 @@ export default function OfertaPage() {
               </div>
             ))}
 
-            <p className="text-xs text-neutral-600 text-center mt-8">
+            <p className="text-xs text-neutral-400 text-center mt-8">
               * Agendę spotkania możemy edytować i dostosować do potrzeb placówki.
             </p>
           </div>
