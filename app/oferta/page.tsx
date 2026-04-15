@@ -48,25 +48,34 @@ const agenda = [
   },
   {
     part: "Część II — Warsztat praktyczny",
-    duration: "1,5h",
+    duration: "2h 15min",
     items: [
       {
         title: "Twój osobisty Asystent AI",
-        duration: "45 min",
+        duration: "60 min",
         points: [
-          "Ustawiamy AI tak, żeby znało Twój przedmiot i Twoje klasy",
-          "Od teraz pamięta Twoje preferencje i pisze w Twoim stylu",
+          "Agent pomaga Ci w pracy — dzięki czemu zaoszczędzisz kilka godzin tygodniowo",
+          "Ułatwi Ci życie codzienne",
           "Każdy wychodzi z gotowym, skonfigurowanym asystentem",
         ],
       },
       {
-        title: "5 narzędzi w praktyce",
-        duration: "45 min",
+        title: "5 narzędzi AI w praktyce",
+        duration: "60 min",
         points: [
           "Tworzenie grafik, tekstów i filmów z AI",
           "Sprawdzanie testów i prac domowych",
           "Planowanie lekcji i materiały dydaktyczne w minuty",
           "I wiele, wiele więcej — ćwiczymy razem na żywo",
+        ],
+      },
+      {
+        title: "Podsumowanie i certyfikaty",
+        duration: "15 min",
+        points: [
+          "Sesja Q&A",
+          "Podsumowanie",
+          "Rozdanie certyfikatów",
         ],
       },
     ],
@@ -114,7 +123,7 @@ const pricing = [
   },
   {
     name: "Wariant pełny",
-    duration: "4,5h — teoria + Q&A + warsztat",
+    duration: "ok. 5h — teoria + Q&A + warsztat",
     price: "4 500 zł",
     highlight: true,
     description:
@@ -180,7 +189,7 @@ export default function OfertaPage() {
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
             {[
               { label: "Dla kogo", value: "Rada pedagogiczna" },
-              { label: "Czas trwania", value: "2h lub 4,5h" },
+              { label: "Czas trwania", value: "2h lub ok. 5h" },
               { label: "Format", value: "Na miejscu w szkole lub online" },
               { label: "Certyfikat", value: "Dla każdego uczestnika" },
             ].map((item, i) => (
@@ -275,33 +284,6 @@ export default function OfertaPage() {
               </div>
             ))}
 
-            {/* Closing */}
-            <div className="p-5 rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.03]">
-              <div className="flex items-start justify-between gap-4 mb-2">
-                <h3 className="font-semibold text-sm text-neutral-100">
-                  Podsumowanie i certyfikaty
-                </h3>
-                <span className="text-xs font-mono text-emerald-400/50 flex-shrink-0">
-                  15 min
-                </span>
-              </div>
-              <ul className="space-y-1.5">
-                {[
-                  "Trzy rzeczy które zrobisz w tym tygodniu",
-                  "Wręczenie certyfikatów ukończenia szkolenia",
-                ].map((point, pi) => (
-                  <li
-                    key={pi}
-                    className="flex items-start gap-2.5 text-sm text-neutral-400"
-                  >
-                    <span className="text-emerald-400/60 mt-0.5 flex-shrink-0 text-xs">
-                      →
-                    </span>
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </div>
       </section>
