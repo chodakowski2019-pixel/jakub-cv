@@ -367,8 +367,8 @@ export default function OfertaPage() {
           <div className="mt-4 p-5 rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.03] flex items-start gap-4">
             <span className="text-2xl flex-shrink-0">💻</span>
             <div>
-              <h3 className="font-semibold text-sm text-neutral-100 mb-1">Szkolenie online — 1 000 zł taniej</h3>
-              <p className="text-sm text-neutral-400 leading-relaxed">Wolą Państwo formę zdalną? Przeprowadzę szkolenie online na tej samej platformie. Każdy wariant dostępny 1 000 zł taniej.</p>
+              <h3 className="font-semibold text-sm text-neutral-100 mb-1">Szkolenie online: 1 000 zł TANIEJ</h3>
+              <p className="text-sm text-neutral-400 leading-relaxed">Wolą Państwo formę zdalną? Przeprowadzę szkolenie online. Oba warianty dostępne 1 000 zł taniej.</p>
             </div>
           </div>
         </div>
