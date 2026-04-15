@@ -191,7 +191,7 @@ export default function OfertaPage() {
       {/* Quick info bar */}
       <section className="py-6 px-6 border-y border-white/[0.04] bg-white/[0.015]">
         <div className="max-w-3xl mx-auto">
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+          <div className="flex flex-nowrap justify-center items-center gap-6 md:gap-10 overflow-x-auto">
             {[
               { label: "Dla kogo", value: "Rada pedagogiczna" },
               { label: "Czas trwania", value: "ok. 2,5h lub ok. 5h" },
