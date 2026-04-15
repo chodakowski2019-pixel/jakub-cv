@@ -76,7 +76,7 @@ const agenda = [
       },
       {
         title: "Podsumowanie i certyfikaty",
-        duration: "25 min",
+        duration: "15 min",
         points: [
           "Sesja Q&A",
           "Podsumowanie",
@@ -281,6 +281,9 @@ export default function OfertaPage() {
               </div>
             ))}
 
+            <p className="text-xs text-neutral-600 text-center mt-8">
+              * Agendę spotkania możemy edytować i dostosować do potrzeb placówki.
+            </p>
           </div>
         </div>
       </section>
