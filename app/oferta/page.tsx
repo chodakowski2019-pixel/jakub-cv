@@ -76,7 +76,7 @@ const agenda = [
       },
       {
         title: "Podsumowanie i certyfikaty",
-        duration: "15 min",
+        duration: "25 min",
         points: [
           "Sesja Q&A",
           "Podsumowanie",
