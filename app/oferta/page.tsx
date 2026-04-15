@@ -96,12 +96,12 @@ const bonuses = [
   {
     icon: "💬",
     title: "7 dni kontaktu ze mną po szkoleniu",
-    desc: "Pytania po szkoleniu? Piszesz — odpowiadam. Przez 7 dni jestem dostępny dla każdego uczestnika.",
+    desc: "Pytania po szkoleniu? Nauczyciele mogą się ze mną kontaktować po szkoleniu.",
   },
   {
     icon: "📄",
     title: "PDF: Gotowe prompty dla nauczycieli",
-    desc: "Zbiór najlepszych promptów dopasowanych do pracy nauczyciela — do każdego przedmiotu i sytuacji.",
+    desc: "Zbiór najlepszych promptów dopasowanych do pracy nauczyciela.",
   },
 ];
 
@@ -288,6 +288,27 @@ export default function OfertaPage() {
         </div>
       </section>
 
+      {/* Bonuses */}
+      <section className="py-16 px-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-center mb-12">
+            Bonusy dla uczestników
+          </h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {bonuses.map((bonus, i) => (
+              <div
+                key={i}
+                className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-emerald-500/15 transition-all duration-500"
+              >
+                <div className="text-2xl mb-3">{bonus.icon}</div>
+                <h3 className="font-semibold mb-2 text-neutral-100">{bonus.title}</h3>
+                <p className="text-sm text-neutral-400 leading-relaxed">{bonus.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Pricing */}
       <section className="py-16 px-6 bg-white/[0.015]">
         <div className="max-w-3xl mx-auto">
@@ -330,30 +351,6 @@ export default function OfertaPage() {
                     </li>
                   ))}
                 </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Bonuses */}
-      <section className="py-16 px-6">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-center mb-4">
-            Każdy uczestnik otrzymuje
-          </h2>
-          <p className="text-neutral-400 text-center mb-12 max-w-xl mx-auto">
-            Do obu wariantów dołączone są te same bonusy.
-          </p>
-          <div className="grid md:grid-cols-2 gap-4">
-            {bonuses.map((bonus, i) => (
-              <div
-                key={i}
-                className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-emerald-500/15 transition-all duration-500"
-              >
-                <div className="text-2xl mb-3">{bonus.icon}</div>
-                <h3 className="font-semibold mb-2 text-neutral-100">{bonus.title}</h3>
-                <p className="text-sm text-neutral-400 leading-relaxed">{bonus.desc}</p>
               </div>
             ))}
           </div>
