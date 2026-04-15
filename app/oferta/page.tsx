@@ -113,7 +113,7 @@ const bonuses = [
 const pricing = [
   {
     name: "Wariant podstawowy",
-    duration: "ok. 2,5h — teoria + Q&A",
+    duration: "2h  teoria + Q&A",
     price: "3 500 zł",
     description:
       "Wykład dla rady pedagogicznej. Teoria, demo na żywo, Q&A. Każdy nauczyciel wychodzi z wiedzą i narzędziami gotowymi do użycia.",
@@ -128,7 +128,7 @@ const pricing = [
   },
   {
     name: "Wariant pełny",
-    duration: "ok. 5h — teoria + Q&A + warsztat",
+    duration: "ok. 5h  teoria + Q&A + warsztat",
     price: "4 500 zł",
     highlight: true,
     description:
