@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const agenda = [
   {
     part: "Część I — Teoria",
-    duration: "2h",
+    duration: "ok. 2,5h",
     items: [
       {
         title: "Wstęp",
@@ -113,12 +113,12 @@ const bonuses = [
 const pricing = [
   {
     name: "Wariant podstawowy",
-    duration: "2h — teoria + Q&A",
+    duration: "ok. 2,5h — teoria + Q&A",
     price: "3 500 zł",
     description:
       "Wykład dla rady pedagogicznej. Teoria, demo na żywo, Q&A. Każdy nauczyciel wychodzi z wiedzą i narzędziami gotowymi do użycia.",
     included: [
-      "Część I — teoria (ok. 1,5h)",
+      "Część I — teoria (ok. 2,5h)",
       "Sesja Q&A (30 min)",
       "Lista 50 narzędzi AI",
       "PDF: Gotowe prompty dla nauczycieli",
@@ -134,7 +134,7 @@ const pricing = [
     description:
       "Teoria + warsztat praktyczny. Każdy nauczyciel wychodzi z własnym asystentem AI i konkretnymi umiejętnościami do zastosowania od następnego dnia.",
     included: [
-      "Część I — teoria (ok. 1,5h)",
+      "Część I — teoria (ok. 2,5h)",
       "Sesja Q&A (30 min)",
       "Przerwa (30 min)",
       "Część II — warsztat praktyczny (2h 15min)",
@@ -194,7 +194,7 @@ export default function OfertaPage() {
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
             {[
               { label: "Dla kogo", value: "Rada pedagogiczna" },
-              { label: "Czas trwania", value: "2h lub ok. 5h" },
+              { label: "Czas trwania", value: "ok. 2,5h lub ok. 5h" },
               { label: "Format", value: "Na miejscu w szkole lub online" },
               { label: "Certyfikat", value: "Dla każdego uczestnika" },
             ].map((item, i) => (
