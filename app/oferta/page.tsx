@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const agenda = [
   {
     part: "Część I — Teoria",
-    duration: "ok. 1,5h",
+    duration: "2h",
     items: [
       {
         title: "Wstęp",
@@ -99,7 +99,7 @@ const bonuses = [
 const pricing = [
   {
     name: "Wariant podstawowy",
-    duration: "ok. 2h — teoria + Q&A",
+    duration: "2h — teoria + Q&A",
     price: "3 500 zł",
     description:
       "Wykład dla rady pedagogicznej. Teoria, demo na żywo, Q&A. Każdy nauczyciel wychodzi z wiedzą i narzędziami gotowymi do użycia.",
@@ -114,7 +114,7 @@ const pricing = [
   },
   {
     name: "Wariant pełny",
-    duration: "ok. 4h — teoria + warsztat",
+    duration: "4,5h — teoria + Q&A + warsztat",
     price: "4 500 zł",
     highlight: true,
     description:
@@ -180,7 +180,7 @@ export default function OfertaPage() {
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
             {[
               { label: "Dla kogo", value: "Rada pedagogiczna" },
-              { label: "Czas trwania", value: "2 lub 4h" },
+              { label: "Czas trwania", value: "2h lub 4,5h" },
               { label: "Format", value: "Na miejscu w szkole lub online" },
               { label: "Certyfikat", value: "Dla każdego uczestnika" },
             ].map((item, i) => (
@@ -253,18 +253,22 @@ export default function OfertaPage() {
                 </div>
 
                 {bi === 0 && (
-                  <div className="mt-4 grid grid-cols-2 gap-3">
-                    <div className="p-4 rounded-xl border border-white/[0.04] bg-white/[0.01] text-center">
-                      <p className="text-xs font-mono text-neutral-500 mb-1">
-                        Sesja pytań i odpowiedzi
-                      </p>
-                      <p className="text-xs text-neutral-600">20 min</p>
+                  <div className="mt-4 space-y-3">
+                    <div className="flex items-center gap-4 mt-6">
+                      <div className="h-px flex-1 bg-white/[0.06]" />
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-semibold text-neutral-200">Sesja pytań i odpowiedzi</span>
+                        <span className="text-xs font-mono text-emerald-400/60 bg-emerald-500/10 px-2 py-0.5 rounded-full">30 min</span>
+                      </div>
+                      <div className="h-px flex-1 bg-white/[0.06]" />
                     </div>
-                    <div className="p-4 rounded-xl border border-white/[0.04] bg-white/[0.01] text-center">
-                      <p className="text-xs font-mono text-neutral-500 mb-1">
-                        Przerwa
-                      </p>
-                      <p className="text-xs text-neutral-600">30 min</p>
+                    <div className="flex items-center gap-4">
+                      <div className="h-px flex-1 bg-white/[0.06]" />
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-semibold text-neutral-200">Przerwa</span>
+                        <span className="text-xs font-mono text-emerald-400/60 bg-emerald-500/10 px-2 py-0.5 rounded-full">30 min</span>
+                      </div>
+                      <div className="h-px flex-1 bg-white/[0.06]" />
                     </div>
                   </div>
                 )}
