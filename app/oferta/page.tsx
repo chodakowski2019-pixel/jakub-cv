@@ -115,6 +115,7 @@ const pricing = [
     name: "Wariant podstawowy",
     duration: "2h  teoria + Q&A",
     price: "3 500 zł",
+    originalPrice: "5 500 zł",
     description:
       "Wykład dla rady pedagogicznej. Teoria, demo na żywo, Q&A. Każdy nauczyciel wychodzi z wiedzą i narzędziami gotowymi do użycia.",
     included: [
@@ -130,6 +131,7 @@ const pricing = [
     name: "Wariant pełny",
     duration: "ok. 5h  teoria + Q&A + warsztat",
     price: "4 500 zł",
+    originalPrice: "6 500 zł",
     highlight: true,
     description:
       "Teoria + warsztat praktyczny. Każdy nauczyciel wychodzi z własnym asystentem AI i konkretnymi umiejętnościami do zastosowania od następnego dnia.",
@@ -315,9 +317,14 @@ export default function OfertaPage() {
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-center mb-4">
             Cennik
           </h2>
-          <p className="text-neutral-400 text-center mb-12 max-w-xl mx-auto">
+          <p className="text-neutral-400 text-center mb-4 max-w-xl mx-auto">
             Cena dotyczy całej rady pedagogicznej — bez limitu uczestników.
           </p>
+          <div className="flex justify-center mb-10">
+            <div className="px-4 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-xs font-mono text-emerald-400 text-center">
+              🎯 Ceny promocyjne — oferta ważna do 30 kwietnia 2026
+            </div>
+          </div>
           <div className="grid md:grid-cols-2 gap-4">
             {pricing.map((plan, i) => (
               <div
@@ -337,6 +344,9 @@ export default function OfertaPage() {
                 <p className="text-xs font-mono text-neutral-500 mb-4">
                   {plan.duration}
                 </p>
+                {"originalPrice" in plan && (
+                  <p className="text-sm text-neutral-600 line-through mb-1">{(plan as typeof plan & {originalPrice: string}).originalPrice}</p>
+                )}
                 <p className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent mb-4">
                   {plan.price}
                 </p>
