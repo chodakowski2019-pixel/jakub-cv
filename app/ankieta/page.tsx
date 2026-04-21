@@ -3,23 +3,96 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const PRZYCHOD_OPTIONS = ["<500K USD", "500K–2M USD", "2M–10M USD", ">10M USD"];
-const BUDZET_OPTIONS = ["<5K USD", "5K–15K USD", "15K–30K USD", ">30K USD"];
+const PRZYCHOD = {
+  en: ["<$500K", "$500K–$2M", "$2M–$10M", ">$10M"],
+  pl: ["<500K USD", "500K–2M USD", "2M–10M USD", ">10M USD"],
+};
+const BUDZET = {
+  en: ["<$5K", "$5K–$15K", "$15K–$30K", ">$30K"],
+  pl: ["<5K USD", "5K–15K USD", "15K–30K USD", ">30K USD"],
+};
+
+const T = {
+  en: {
+    badge: "AI Audit",
+    h1a: "Fill out the", h1b: "questionnaire",
+    sub: "Based on your answers, I'll prepare an AI audit quote tailored to your company.",
+    nav: "jakubchodakowski.com",
+    s1: "🏢 Company Information",
+    s2: "👥 Structure & Team",
+    s3: "📊 Data & Systems",
+    s4: "🤖 AI & Technology",
+    s5: "🎯 Scope & Decision",
+    s6: "💰 Budget",
+    s7: "📝 Additional Notes",
+    companyName: "Company name *", contactName: "First & last name *", position: "Position *", industry: "Industry *",
+    description: "Describe your company: what do you do? *",
+    descriptionPh: "Brief description...",
+    years: "Years in business", yearsPh: "e.g. 5",
+    countries: "Countries / markets", countriesPh: "e.g. USA, Poland",
+    revenue: "Annual revenue",
+    employees: "Total number of employees", employeesPh: "e.g. 12",
+    departments: "What departments does the company have and how many people work in each?",
+    departmentsPh: "e.g. Sales – 4 | Marketing – 2 | Operations – 6 | Finance – 1",
+    dataPolicy: "Do you collect data on customers, sales, operations? Do you have a data collection policy?",
+    dataPolicyPh: "Describe how it works...",
+    dataQuality: "How would you rate your data quality?",
+    dataQualityHint: "1 = total chaos · 10 = everything organized & up to date",
+    aiLevel: "AI knowledge level in the team",
+    aiLevelHint: "1 = no knowledge · 10 = actively used daily",
+    it: "Do you have someone responsible for IT? Internal or external?", itPh: "e.g. External IT company",
+    attempts: "Previous attempt at automation or AI? What worked, what didn't?", attemptsPh: "Describe if applicable...",
+    scope: "Which departments to include — all or selected?", scopePh: "e.g. All / only Sales & Marketing",
+    decisionMaker: "Who makes the decision on AI implementation? *", decisionMakerPh: "e.g. Me — owner / Board",
+    budget: "Budget for AI implementation",
+    notes: "Any additional information to share?", notesPh: "Optional...",
+    submit: "Submit questionnaire →",
+  },
+  pl: {
+    badge: "Audyt AI",
+    h1a: "Wypełnij", h1b: "ankietę",
+    sub: "Na podstawie Twoich odpowiedzi przygotuję wycenę audytu AI dla Twojej firmy.",
+    nav: "jakubchodakowski.com",
+    s1: "🏢 Informacje o firmie",
+    s2: "👥 Struktura i zespół",
+    s3: "📊 Dane i systemy",
+    s4: "🤖 AI i technologia",
+    s5: "🎯 Zakres i decyzja",
+    s6: "💰 Budżet",
+    s7: "📝 Dodatkowe informacje",
+    companyName: "Nazwa firmy *", contactName: "Imię i nazwisko *", position: "Stanowisko *", industry: "Branża *",
+    description: "Opisz firmę: czym się zajmujecie? *",
+    descriptionPh: "Krótki opis działalności...",
+    years: "Ile lat działa firma?", yearsPh: "np. 5",
+    countries: "Kraje / rynki", countriesPh: "np. Polska, USA",
+    revenue: "Roczny przychód firmy",
+    employees: "Ile osób zatrudnia firma łącznie?", employeesPh: "np. 12",
+    departments: "Jakie firma ma działy i ile osób pracuje w każdym z tych działów?",
+    departmentsPh: "np. Sprzedaż – 4 os. | Marketing – 2 os. | Operacje – 6 os.",
+    dataPolicy: "Czy zbieracie dane o klientach, sprzedaży, operacjach? Czy posiadacie politykę zbierania danych?",
+    dataPolicyPh: "Opisz jak to wygląda...",
+    dataQuality: "Jak oceniasz jakość danych?",
+    dataQualityHint: "1 = chaos · 10 = wszystko w jednym miejscu i aktualne",
+    aiLevel: "Poziom wiedzy AI w zespole",
+    aiLevelHint: "1 = zero wiedzy · 10 = aktywnie używają na co dzień",
+    it: "Czy masz kogoś odpowiedzialnego za IT? Wewnętrznie czy zewnętrznie?", itPh: "np. Zewnętrzna firma IT",
+    attempts: "Czy była wcześniej próba wdrożenia automatyzacji lub AI? Co wyszło, co nie?", attemptsPh: "Opisz jeśli tak...",
+    scope: "Które działy objąć audytem — wszystkie, czy wybrane?", scopePh: "np. Wszystkie / tylko Sprzedaż i Marketing",
+    decisionMaker: "Kto podejmuje decyzję o wdrożeniu AI? *", decisionMakerPh: "np. Ja — właściciel / Zarząd",
+    budget: "Jaki budżet rozważasz na wdrożenie AI?",
+    notes: "Jeżeli masz coś jeszcze do przekazania — napisz tutaj", notesPh: "Opcjonalnie...",
+    submit: "Wyślij ankietę →",
+  },
+};
 
 function PillSelect({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) {
   return (
     <div className="flex flex-wrap gap-2">
       {options.map((o) => (
-        <button
-          key={o}
-          type="button"
-          onClick={() => onChange(o)}
-          className={`px-4 py-2 rounded-xl text-sm border transition-all duration-150 ${
-            value === o
-              ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-300 font-medium"
-              : "bg-white/[0.03] border-white/[0.08] text-neutral-400 hover:border-white/20 hover:text-white"
-          }`}
-        >
+        <button key={o} type="button" onClick={() => onChange(o)}
+          className={`px-4 py-2 rounded-xl text-sm border transition-all duration-150 ${value === o
+            ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-300 font-medium"
+            : "bg-white/[0.03] border-white/[0.08] text-neutral-400 hover:border-white/20 hover:text-white"}`}>
           {o}
         </button>
       ))}
@@ -27,9 +100,29 @@ function PillSelect({ options, value, onChange }: { options: string[]; value: st
   );
 }
 
-export default function AudytPage() {
+function ScaleSelect({ value, onChange, hint }: { value: string; onChange: (v: string) => void; hint: string }) {
+  return (
+    <div>
+      <div className="flex gap-1.5 flex-wrap">
+        {Array.from({ length: 10 }, (_, i) => String(i + 1)).map((n) => (
+          <button key={n} type="button" onClick={() => onChange(n)}
+            className={`w-10 h-10 rounded-xl text-sm font-medium border transition-all duration-150 ${value === n
+              ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-300"
+              : "bg-white/[0.03] border-white/[0.08] text-neutral-400 hover:border-white/20 hover:text-white"}`}>
+            {n}
+          </button>
+        ))}
+      </div>
+      <p className="text-xs text-neutral-600 mt-2">{hint}</p>
+    </div>
+  );
+}
+
+export default function AnkietaPage() {
+  const [lang, setLang] = useState<"en" | "pl">("en");
+  const t = T[lang];
   const [form, setForm] = useState({
-    nazwa: "", branza: "", opis: "", lata: "", kraje: "", przychod: "",
+    nazwa: "", contactName: "", position: "", branza: "", opis: "", lata: "", kraje: "", przychod: "",
     pracownicy: "", dzialy: "",
     dane: "", jakoscDanych: "",
     aiPoziom: "", it: "", proby: "",
@@ -38,17 +131,23 @@ export default function AudytPage() {
   });
   const [status, setStatus] = useState<"idle" | "ok">("idle");
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
+  const setVal = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("ok");
-  };
+  const submit = (e: React.FormEvent) => { e.preventDefault(); setStatus("ok"); };
 
   const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-[#ededed] placeholder-neutral-600 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.06] transition-all";
   const labelCls = "block text-xs font-medium text-neutral-400 mb-1.5";
-  const sectionCls = "space-y-4";
+
+  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <div className="space-y-4 pb-8 border-b border-white/[0.06]">
+      <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest font-[var(--font-poppins)]">
+        {title}
+      </h2>
+      {children}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#ededed] font-[var(--font-open-sans)]">
@@ -56,9 +155,15 @@ export default function AudytPage() {
       <nav className="sticky top-0 z-50 backdrop-blur-xl bg-[#0a0a0a]/80 border-b border-white/[0.04]">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link href="/" className="text-sm text-neutral-500 hover:text-white transition-colors flex items-center gap-2">
-            <span>←</span>
-            <span>jakubchodakowski.com</span>
+            <span>←</span><span>{t.nav}</span>
           </Link>
+          <button
+            onClick={() => setLang(lang === "en" ? "pl" : "en")}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.06] transition-all text-xs text-neutral-400 hover:text-white"
+          >
+            <span>{lang === "en" ? "🇺🇸" : "🇵🇱"}</span>
+            <span>{lang === "en" ? "EN" : "PL"}</span>
+          </button>
         </div>
       </nav>
 
@@ -66,16 +171,12 @@ export default function AudytPage() {
       <section className="relative pt-16 pb-10 px-6 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-500/8 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-2xl mx-auto text-center relative">
-          <p className="text-xs font-mono text-emerald-400 uppercase tracking-widest mb-4">Audyt AI</p>
+          <p className="text-xs font-mono text-emerald-400 uppercase tracking-widest mb-4">{t.badge}</p>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 font-[var(--font-poppins)]">
-            Wypełnij{" "}
-            <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-              ankietę
-            </span>
+            {t.h1a}{" "}
+            <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">{t.h1b}</span>
           </h1>
-          <p className="text-neutral-400 text-base leading-relaxed">
-            Na podstawie Twoich odpowiedzi przygotuję wycenę audytu AI dla Twojej firmy. Zajmie to ~10 minut.
-          </p>
+          <p className="text-neutral-400 text-base leading-relaxed">{t.sub}</p>
         </div>
       </section>
 
@@ -83,150 +184,85 @@ export default function AudytPage() {
       <section className="px-6 pb-24">
         <div className="max-w-2xl mx-auto">
           {status === "ok" ? (
-            <div className="text-center py-16 flex flex-col items-center">
-              <div className="relative mb-6">
-                <img
-                  src="https://media.licdn.com/dms/image/v2/D4D03AQFWaMpQd3x-_Q/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1726162788974?e=1776902400&v=beta&t=hqAM6AfC-sl9Bre2Rk5VxgFHIUy37-5vsZgFtAc4A"
-                  alt="Jakub Chodakowski"
-                  className="w-24 h-24 rounded-full object-cover ring-2 ring-emerald-500/40"
-                />
-                <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center text-sm">✓</div>
+            <div className="flex flex-col items-center justify-center py-24">
+              <div className="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center">
+                <svg className="w-10 h-10 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
               </div>
-              <h2 className="text-2xl font-bold mb-3 font-[var(--font-poppins)]">Dziękuję za wypełnienie ankiety!</h2>
-              <p className="text-neutral-400 max-w-sm leading-relaxed">
-                Skontaktuję się z Tobą w ciągu <span className="text-white font-medium">3 dni roboczych</span> z wyceną audytu AI dla Twojego projektu.
-              </p>
-              <p className="text-sm text-neutral-600 mt-4">— Jakub Chodakowski</p>
             </div>
           ) : (
-            <form onSubmit={submit} className="space-y-10">
+            <form onSubmit={submit} className="space-y-0 flex flex-col gap-8">
 
-              {/* Sekcja 1 */}
-              <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
-                  🏢 Informacje o firmie
-                </h2>
+              <Section title={t.s1}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelCls}>Nazwa firmy *</label>
-                    <input required className={inputCls} placeholder="np. Acme Sp. z o.o." value={form.nazwa} onChange={set("nazwa")} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Branża *</label>
-                    <input required className={inputCls} placeholder="np. E-commerce, Logistyka" value={form.branza} onChange={set("branza")} />
-                  </div>
-                </div>
-                <div>
-                  <label className={labelCls}>Opisz firmę — czym się zajmujecie? *</label>
-                  <textarea required rows={3} className={inputCls} placeholder="Krótki opis działalności..." value={form.opis} onChange={set("opis")} />
+                  <div><label className={labelCls}>{t.companyName}</label>
+                    <input required className={inputCls} placeholder="Acme Inc." value={form.nazwa} onChange={set("nazwa")} /></div>
+                  <div><label className={labelCls}>{t.industry}</label>
+                    <input required className={inputCls} placeholder="e.g. E-commerce" value={form.branza} onChange={set("branza")} /></div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelCls}>Ile lat działa firma?</label>
-                    <input className={inputCls} placeholder="np. 5 lat" value={form.lata} onChange={set("lata")} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Kraje / rynki</label>
-                    <input className={inputCls} placeholder="np. Polska, USA" value={form.kraje} onChange={set("kraje")} />
-                  </div>
+                  <div><label className={labelCls}>{t.contactName}</label>
+                    <input required className={inputCls} placeholder="John Smith" value={form.contactName} onChange={set("contactName")} /></div>
+                  <div><label className={labelCls}>{t.position}</label>
+                    <input required className={inputCls} placeholder="CEO / Founder" value={form.position} onChange={set("position")} /></div>
                 </div>
-                <div>
-                  <label className={labelCls}>Roczny przychód firmy</label>
-                  <PillSelect options={PRZYCHOD_OPTIONS} value={form.przychod} onChange={(v) => setForm((f) => ({ ...f, przychod: v }))} />
+                <div><label className={labelCls}>{t.description}</label>
+                  <textarea required rows={3} className={inputCls} placeholder={t.descriptionPh} value={form.opis} onChange={set("opis")} /></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div><label className={labelCls}>{t.years}</label>
+                    <input className={inputCls} placeholder={t.yearsPh} value={form.lata} onChange={set("lata")} /></div>
+                  <div><label className={labelCls}>{t.countries}</label>
+                    <input className={inputCls} placeholder={t.countriesPh} value={form.kraje} onChange={set("kraje")} /></div>
                 </div>
+                <div><label className={labelCls}>{t.revenue}</label>
+                  <PillSelect options={PRZYCHOD[lang]} value={form.przychod} onChange={setVal("przychod")} /></div>
+              </Section>
+
+              <Section title={t.s2}>
+                <div><label className={labelCls}>{t.employees}</label>
+                  <input className={inputCls} placeholder={t.employeesPh} value={form.pracownicy} onChange={set("pracownicy")} /></div>
+                <div><label className={labelCls}>{t.departments}</label>
+                  <textarea rows={3} className={inputCls} placeholder={t.departmentsPh} value={form.dzialy} onChange={set("dzialy")} /></div>
+              </Section>
+
+              <Section title={t.s3}>
+                <div><label className={labelCls}>{t.dataPolicy}</label>
+                  <textarea rows={2} className={inputCls} placeholder={t.dataPolicyPh} value={form.dane} onChange={set("dane")} /></div>
+                <div><label className={labelCls}>{t.dataQuality}</label>
+                  <ScaleSelect value={form.jakoscDanych} onChange={setVal("jakoscDanych")} hint={t.dataQualityHint} /></div>
+              </Section>
+
+              <Section title={t.s4}>
+                <div><label className={labelCls}>{t.aiLevel}</label>
+                  <ScaleSelect value={form.aiPoziom} onChange={setVal("aiPoziom")} hint={t.aiLevelHint} /></div>
+                <div><label className={labelCls}>{t.it}</label>
+                  <input className={inputCls} placeholder={t.itPh} value={form.it} onChange={set("it")} /></div>
+                <div><label className={labelCls}>{t.attempts}</label>
+                  <textarea rows={2} className={inputCls} placeholder={t.attemptsPh} value={form.proby} onChange={set("proby")} /></div>
+              </Section>
+
+              <Section title={t.s5}>
+                <div><label className={labelCls}>{t.scope}</label>
+                  <input className={inputCls} placeholder={t.scopePh} value={form.zakres} onChange={set("zakres")} /></div>
+                <div><label className={labelCls}>{t.decisionMaker}</label>
+                  <input required className={inputCls} placeholder={t.decisionMakerPh} value={form.decydent} onChange={set("decydent")} /></div>
+              </Section>
+
+              <Section title={t.s6}>
+                <div><label className={labelCls}>{t.budget}</label>
+                  <PillSelect options={BUDZET[lang]} value={form.budzet} onChange={setVal("budzet")} /></div>
+              </Section>
+
+              <div className="space-y-4">
+                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest font-[var(--font-poppins)]">{t.s7}</h2>
+                <div><label className={labelCls}>{t.notes}</label>
+                  <textarea rows={3} className={inputCls} placeholder={t.notesPh} value={form.dodatkowe} onChange={set("dodatkowe")} /></div>
               </div>
 
-              {/* Sekcja 2 */}
-              <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
-                  👥 Struktura i zespół
-                </h2>
-                <div>
-                  <label className={labelCls}>Ile osób zatrudnia firma łącznie? (full-time + part-time)</label>
-                  <input className={inputCls} placeholder="np. 12" value={form.pracownicy} onChange={set("pracownicy")} />
-                </div>
-                <div>
-                  <label className={labelCls}>Jakie działy i ile osób w każdym?</label>
-                  <textarea rows={3} className={inputCls} placeholder="np. Sprzedaż – 4 os. | Marketing – 2 os. | Operacje – 6 os." value={form.dzialy} onChange={set("dzialy")} />
-                </div>
-              </div>
-
-              {/* Sekcja 3 */}
-              <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
-                  📊 Dane i systemy
-                </h2>
-                <div>
-                  <label className={labelCls}>Czy zbieracie dane o klientach, sprzedaży, operacjach? Czy jest polityka zbierania danych?</label>
-                  <textarea rows={2} className={inputCls} placeholder="Opisz jak to wygląda..." value={form.dane} onChange={set("dane")} />
-                </div>
-                <div>
-                  <label className={labelCls}>Jak oceniasz jakość danych? (1 = chaos, 10 = wszystko w jednym miejscu i aktualne)</label>
-                  <input type="number" min={1} max={10} className={inputCls} placeholder="1–10" value={form.jakoscDanych} onChange={set("jakoscDanych")} />
-                </div>
-              </div>
-
-              {/* Sekcja 4 */}
-              <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
-                  🤖 AI i technologia
-                </h2>
-                <div>
-                  <label className={labelCls}>Poziom wiedzy AI w zespole — czy używają narzędzi, są szkoleni? (1 = zero wiedzy, 10 = aktywnie używają na co dzień)</label>
-                  <input type="number" min={1} max={10} className={inputCls} placeholder="1–10" value={form.aiPoziom} onChange={set("aiPoziom")} />
-                </div>
-                <div>
-                  <label className={labelCls}>Czy masz kogoś odpowiedzialnego za IT? Wewnętrznie czy zewnętrznie?</label>
-                  <input className={inputCls} placeholder="np. Zewnętrzna firma IT" value={form.it} onChange={set("it")} />
-                </div>
-                <div>
-                  <label className={labelCls}>Czy była wcześniej jakaś próba wdrożenia automatyzacji lub AI? Co wyszło, co nie?</label>
-                  <textarea rows={2} className={inputCls} placeholder="Opisz jeśli tak..." value={form.proby} onChange={set("proby")} />
-                </div>
-              </div>
-
-              {/* Sekcja 5 */}
-              <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
-                  🎯 Zakres i decyzja
-                </h2>
-                <div>
-                  <label className={labelCls}>Które działy chcesz objąć audytem — wszystkie, czy wybrane?</label>
-                  <input className={inputCls} placeholder="np. Wszystkie / tylko Sprzedaż i Marketing" value={form.zakres} onChange={set("zakres")} />
-                </div>
-                <div>
-                  <label className={labelCls}>Kto po Twojej stronie podejmuje decyzję o wdrożeniu AI? *</label>
-                  <input required className={inputCls} placeholder="np. Ja — właściciel / Zarząd" value={form.decydent} onChange={set("decydent")} />
-                </div>
-              </div>
-
-              {/* Sekcja 6 */}
-              <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
-                  💰 Budżet
-                </h2>
-                <div>
-                  <label className={labelCls}>Jaki budżet rozważasz na wdrożenie AI?</label>
-                  <PillSelect options={BUDZET_OPTIONS} value={form.budzet} onChange={(v) => setForm((f) => ({ ...f, budzet: v }))} />
-                </div>
-              </div>
-
-              {/* Sekcja 7 */}
-              <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
-                  📝 Dodatkowe informacje
-                </h2>
-                <div>
-                  <label className={labelCls}>Jeżeli masz coś jeszcze do przekazania — napisz tutaj</label>
-                  <textarea rows={3} className={inputCls} placeholder="Opcjonalnie..." value={form.dodatkowe} onChange={set("dodatkowe")} />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold text-sm hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-lg shadow-emerald-500/20"
-              >
-                Wyślij ankietę →
+              <button type="submit"
+                className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold text-sm hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-lg shadow-emerald-500/20">
+                {t.submit}
               </button>
 
             </form>
