@@ -118,6 +118,17 @@ function ScaleSelect({ value, onChange, hint }: { value: string; onChange: (v: s
   );
 }
 
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-4 pb-8 border-b border-white/[0.06]">
+      <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest font-[var(--font-poppins)]">
+        {title}
+      </h2>
+      {children}
+    </div>
+  );
+}
+
 export default function AnkietaPage() {
   const [lang, setLang] = useState<"en" | "pl">("en");
   const t = T[lang];
@@ -149,15 +160,6 @@ export default function AnkietaPage() {
   const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-[#ededed] placeholder-neutral-600 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.06] transition-all";
   const labelCls = "block text-xs font-medium text-neutral-400 mb-1.5";
 
-  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="space-y-4 pb-8 border-b border-white/[0.06]">
-      <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest font-[var(--font-poppins)]">
-        {title}
-      </h2>
-      {children}
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#ededed] font-[var(--font-open-sans)]">
       {/* Nav */}
@@ -170,8 +172,8 @@ export default function AnkietaPage() {
             onClick={() => setLang(lang === "en" ? "pl" : "en")}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.06] transition-all text-xs text-neutral-400 hover:text-white"
           >
-            <span>{lang === "en" ? "🇺🇸" : "🇵🇱"}</span>
-            <span>{lang === "en" ? "EN" : "PL"}</span>
+            <span>{lang === "en" ? "🇵🇱" : "🇺🇸"}</span>
+            <span>{lang === "en" ? "PL" : "EN"}</span>
           </button>
         </div>
       </nav>
