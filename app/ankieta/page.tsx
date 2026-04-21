@@ -6,6 +6,27 @@ import Link from "next/link";
 const PRZYCHOD_OPTIONS = ["<500K PLN/USD", "500K–2M PLN/USD", "2M–10M PLN/USD", ">10M PLN/USD"];
 const BUDZET_OPTIONS = ["<5K PLN/USD", "5K–15K PLN/USD", "15K–30K PLN/USD", ">30K PLN/USD"];
 
+function PillSelect({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {options.map((o) => (
+        <button
+          key={o}
+          type="button"
+          onClick={() => onChange(o)}
+          className={`px-4 py-2 rounded-xl text-sm border transition-all duration-150 ${
+            value === o
+              ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-300 font-medium"
+              : "bg-white/[0.03] border-white/[0.08] text-neutral-400 hover:border-white/20 hover:text-white"
+          }`}
+        >
+          {o}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function AudytPage() {
   const [form, setForm] = useState({
     nazwa: "", branza: "", opis: "", lata: "", kraje: "", przychod: "",
@@ -111,10 +132,7 @@ export default function AudytPage() {
                 </div>
                 <div>
                   <label className={labelCls}>Roczny przychód firmy</label>
-                  <select className={inputCls} value={form.przychod} onChange={set("przychod")}>
-                    <option value="">Wybierz przedział</option>
-                    {PRZYCHOD_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
-                  </select>
+                  <PillSelect options={PRZYCHOD_OPTIONS} value={form.przychod} onChange={(v) => setForm((f) => ({ ...f, przychod: v }))} />
                 </div>
               </div>
 
@@ -189,10 +207,7 @@ export default function AudytPage() {
                 </h2>
                 <div>
                   <label className={labelCls}>Jaki budżet rozważasz na wdrożenie AI?</label>
-                  <select className={inputCls} value={form.budzet} onChange={set("budzet")}>
-                    <option value="">Wybierz przedział</option>
-                    {BUDZET_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
-                  </select>
+                  <PillSelect options={BUDZET_OPTIONS} value={form.budzet} onChange={(v) => setForm((f) => ({ ...f, budzet: v }))} />
                 </div>
               </div>
 
