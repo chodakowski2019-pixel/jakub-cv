@@ -1,4 +1,12 @@
+import type { Viewport } from "next";
 import { Poppins, Open_Sans } from "next/font/google";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 const poppins = Poppins({
   variable: "--font-poppins",
