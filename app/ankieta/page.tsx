@@ -185,7 +185,7 @@ export default function AnkietaPage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative pt-16 pb-10 px-6 overflow-hidden">
+      <section className={`relative pt-16 pb-10 px-6 overflow-hidden ${status === "ok" ? "hidden" : ""}`}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-500/8 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-2xl mx-auto text-center relative">
           <p className="text-xs font-mono text-emerald-400 uppercase tracking-widest mb-4">{t.badge}</p>
