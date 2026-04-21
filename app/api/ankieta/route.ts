@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
   try {
     await resend.emails.send({
       from: "AI Audit <onboarding@resend.dev>",
-      to: "chodak.job72@gmail.com",
+      to: "iteracity@gmail.com",
       subject: `AI Audit — ${nazwa} (${contactName})`,
       html,
     });
