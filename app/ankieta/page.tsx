@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const PRZYCHOD_OPTIONS = ["<500K PLN/USD", "500K–2M PLN/USD", "2M–10M PLN/USD", ">10M PLN/USD"];
-const BUDZET_OPTIONS = ["<5K PLN/USD", "5K–15K PLN/USD", "15K–30K PLN/USD", ">30K PLN/USD"];
+const PRZYCHOD_OPTIONS = ["<500K USD", "500K–2M USD", "2M–10M USD", ">10M USD"];
+const BUDZET_OPTIONS = ["<5K USD", "5K–15K USD", "15K–30K USD", ">30K USD"];
 
 function PillSelect({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) {
   return (
