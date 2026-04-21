@@ -16,7 +16,7 @@ const agenda = [
         title: "Wstęp",
         duration: "",
         points: [
-          "AI jest już w Twojej klasie — czy chcesz czy nie",
+          "AI jest już w Twojej klasie",
           "Co to jest AI i jak działa",
           "Każdy z nas ma z nią styczność na co dzień",
           "Prompty — język komunikacji z AI",
@@ -45,8 +45,8 @@ const agenda = [
         ],
       },
       {
-        title: "Sesja pytań i odpowiedzi",
-        duration: "30 min",
+        title: "Q&A: Sesja pytań i odpowiedzi",
+        duration: "",
         points: [],
       },
     ],
@@ -113,7 +113,7 @@ const bonuses = [
 const pricing = [
   {
     name: "Wariant podstawowy",
-    duration: "2h  teoria + Q&A",
+    duration: "2.5h  teoria + Q&A",
     price: "3 500 zł",
     originalPrice: "5 500 zł",
     description:
@@ -129,7 +129,7 @@ const pricing = [
   },
   {
     name: "Wariant pełny",
-    duration: "ok. 5h  teoria + Q&A + warsztat",
+    duration: "ok. 5h: teoria + warsztat + 2xQ&A",
     price: "4 500 zł",
     originalPrice: "6 500 zł",
     highlight: true,
@@ -274,7 +274,6 @@ export default function OfertaPage() {
                       <div className="h-px flex-1 bg-white/[0.06]" />
                       <div className="flex items-center gap-3">
                         <span className="text-sm font-semibold text-neutral-200">Przerwa</span>
-                        <span className="text-xs font-mono text-emerald-400/60 bg-emerald-500/10 px-2 py-0.5 rounded-full">30 min</span>
                       </div>
                       <div className="h-px flex-1 bg-white/[0.06]" />
                     </div>
@@ -400,6 +399,30 @@ export default function OfertaPage() {
               >
                 LinkedIn
               </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Social proof photo */}
+      <section className="py-10 px-6 bg-white/[0.015]">
+        <div className="max-w-3xl mx-auto">
+          <div className="p-6 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.03]">
+            <div className="flex flex-col md:flex-row gap-6 items-center">
+              <img
+                src="https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png"
+                alt="HKF Centrum — Dzień Otwarty dla Oświaty"
+                className="w-full md:w-56 h-40 object-cover rounded-xl flex-shrink-0"
+              />
+              <div>
+                <p className="text-xs font-mono text-emerald-400/60 mb-2">
+                  Listopad 2025 — Wrocław
+                </p>
+                <p className="text-neutral-300 leading-relaxed">
+                  Wystąpienie na konferencji. Szkoliłem nauczycieli z praktycznego
+                  wykorzystania AI w codziennej pracy.
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -29,6 +29,26 @@ export default function SzkolyPage() {
         </div>
       </nav>
 
+      {/* Speaker photo — top */}
+      <section className="relative overflow-hidden">
+        <img
+          src="https://media.licdn.com/dms/image/v2/D4D22AQGgY4uuKD4_Wg/feedshare-shrink_800/feedshare-shrink_800/0/1721579818961?e=1776902400&v=beta&t=nc7AvLjWta4XPXQEkne5n8VLyJNDXpOh-chq8FihyK8"
+          alt="Prelekcja na CRASH Mondays — Jakub Chodakowski"
+          className="w-full h-72 md:h-96 object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-6">
+          <div className="max-w-3xl mx-auto">
+            <p className="text-xs font-mono text-emerald-400/80 uppercase tracking-widest mb-1">
+              Sierpień 2024
+            </p>
+            <p className="text-sm text-neutral-300">
+              Prelekcja na CRASH Mondays — AI i dane w nowoczesnej sprzedaży
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Hero */}
       <section className="relative pt-20 pb-16 px-6 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-500/8 rounded-full blur-[120px] pointer-events-none" />
