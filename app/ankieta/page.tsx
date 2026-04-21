@@ -129,13 +129,22 @@ export default function AnkietaPage() {
     zakres: "", decydent: "",
     budzet: "", dodatkowe: "",
   });
-  const [status, setStatus] = useState<"idle" | "ok">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
   const setVal = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 
-  const submit = (e: React.FormEvent) => { e.preventDefault(); setStatus("ok"); };
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/ankieta", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+      setStatus(res.ok ? "ok" : "error");
+    } catch {
+      setStatus("error");
+    }
+  };
 
   const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-[#ededed] placeholder-neutral-600 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.06] transition-all";
   const labelCls = "block text-xs font-medium text-neutral-400 mb-1.5";
@@ -260,9 +269,13 @@ export default function AnkietaPage() {
                   <textarea rows={3} className={inputCls} placeholder={t.notesPh} value={form.dodatkowe} onChange={set("dodatkowe")} /></div>
               </div>
 
-              <button type="submit"
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold text-sm hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-lg shadow-emerald-500/20">
-                {t.submit}
+              {status === "error" && (
+                <p className="text-red-400 text-sm text-center">Something went wrong. Try again or email jakub@jakubchodakowski.com</p>
+              )}
+
+              <button type="submit" disabled={status === "sending"}
+                className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold text-sm hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed">
+                {status === "sending" ? "Sending..." : t.submit}
               </button>
 
             </form>
