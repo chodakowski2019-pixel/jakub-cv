@@ -52,12 +52,19 @@ export async function POST(req: NextRequest) {
   `;
 
   try {
-    await resend.emails.send({
-      from: "AI Audit <onboarding@resend.dev>",
-      to: "iteracity@gmail.com",
-      subject: `AI Audit — ${nazwa} (${contactName})`,
-      html,
-    });
+    await Promise.all([
+      resend.emails.send({
+        from: "AI Audit <onboarding@resend.dev>",
+        to: "iteracity@gmail.com",
+        subject: `AI Audit — ${nazwa} (${contactName})`,
+        html,
+      }),
+      fetch(process.env.SHEETS_WEBHOOK_URL!, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }),
+    ]);
 
     return NextResponse.json({ ok: true });
   } catch {
