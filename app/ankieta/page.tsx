@@ -47,6 +47,9 @@ const T = {
     budget: "Budget for AI implementation",
     notes: "Any additional information to share?", notesPh: "Optional...",
     submit: "Submit questionnaire →",
+    successTitle: "Thank you!",
+    successSub: "I'll get back to you within 3 business days with an AI audit quote.",
+    successName: "— Jakub Chodakowski",
   },
   pl: {
     badge: "Audyt AI",
@@ -82,6 +85,9 @@ const T = {
     budget: "Jaki budżet rozważasz na wdrożenie AI?",
     notes: "Jeżeli masz coś jeszcze do przekazania — napisz tutaj", notesPh: "Opcjonalnie...",
     submit: "Wyślij ankietę →",
+    successTitle: "Dziękuję!",
+    successSub: "Skontaktuję się z Tobą w ciągu 3 dni roboczych z wyceną audytu AI.",
+    successName: "— Jakub Chodakowski",
   },
 };
 
@@ -195,12 +201,15 @@ export default function AnkietaPage() {
       <section className="px-6 pb-24">
         <div className="max-w-2xl mx-auto">
           {status === "ok" ? (
-            <div className="flex flex-col items-center justify-center py-24">
-              <div className="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center mb-6">
                 <svg className="w-10 h-10 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
+              <h2 className="text-2xl font-bold mb-3 font-[var(--font-poppins)]">{t.successTitle}</h2>
+              <p className="text-neutral-400 max-w-sm leading-relaxed">{t.successSub}</p>
+              <p className="text-sm text-neutral-600 mt-4">{t.successName}</p>
             </div>
           ) : (
             <form onSubmit={submit} className="space-y-0 flex flex-col gap-8">
