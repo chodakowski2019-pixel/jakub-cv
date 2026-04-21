@@ -217,7 +217,7 @@ const CONTENT = {
 type Lang = "pl" | "en";
 
 export default function Home() {
-  const [lang, setLang] = useState<Lang>("pl");
+  const [lang, setLang] = useState<Lang>("en");
   const [lightbox, setLightbox] = useState<string[] | null>(null);
   const [lightboxIdx, setLightboxIdx] = useState(0);
   const t = CONTENT[lang];
@@ -345,7 +345,7 @@ export default function Home() {
       </section>
 
       {/* ===== STORY TIMELINE ===== */}
-      {false && <section id="story" className="relative">
+      <section id="story" className="relative">
 
         {/* Central timeline line */}
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/[0.08] to-transparent hidden md:block" />
@@ -427,7 +427,7 @@ export default function Home() {
             </div>
 
             {/* Milestones — chronological */}
-            {t.after.milestones && t.after.milestones.length > 0 && (
+            {false && t.after.milestones && t.after.milestones.length > 0 && (
               <div className="mt-8 space-y-3 max-w-2xl mx-auto">
                 {t.after.milestones.map((m, i) => {
                   const imgs = "images" in m ? (m.images as string[]) : "image" in m && m.image ? [m.image as string] : [];
@@ -482,10 +482,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>}
+      </section>
 
       {/* ===== SKILLS ===== */}
-      <section id="skills" className="py-12 px-6 bg-white/[0.015]">
+      {<section id="skills" className="py-12 px-6 bg-white/[0.015]">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold mb-12 tracking-tight text-center">{t.skills.title}</h2>
           <div className="grid md:grid-cols-3 gap-4">
@@ -511,7 +511,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* ===== CONTACT ===== */}
       <section id="contact" className="py-12 px-6 bg-white/[0.015]">
