@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const data = await req.json();
 
   const {
-    nazwa, branza, opis, lata, kraje, przychod,
+    nazwa, contactName, position, branza, opis, lata, kraje, przychod,
     pracownicy, dzialy,
     dane, jakoscDanych,
     aiPoziom, it, proby,
@@ -15,45 +15,47 @@ export async function POST(req: NextRequest) {
   } = data;
 
   const html = `
-    <h2>Nowa ankieta — Audyt AI</h2>
+    <h2>New AI Audit Submission</h2>
 
-    <h3>🏢 Informacje o firmie</h3>
-    <p><b>Nazwa:</b> ${nazwa}</p>
-    <p><b>Branża:</b> ${branza}</p>
-    <p><b>Opis:</b> ${opis}</p>
-    <p><b>Lata działania:</b> ${lata}</p>
-    <p><b>Kraje/rynki:</b> ${kraje}</p>
-    <p><b>Przychód:</b> ${przychod}</p>
+    <h3>🏢 Company</h3>
+    <p><b>Company:</b> ${nazwa}</p>
+    <p><b>Contact:</b> ${contactName}</p>
+    <p><b>Position:</b> ${position}</p>
+    <p><b>Industry:</b> ${branza}</p>
+    <p><b>Description:</b> ${opis}</p>
+    <p><b>Years:</b> ${lata}</p>
+    <p><b>Markets:</b> ${kraje}</p>
+    <p><b>Revenue:</b> ${przychod}</p>
 
-    <h3>👥 Struktura i zespół</h3>
-    <p><b>Liczba pracowników:</b> ${pracownicy}</p>
-    <p><b>Działy:</b> ${dzialy}</p>
+    <h3>👥 Team</h3>
+    <p><b>Employees:</b> ${pracownicy}</p>
+    <p><b>Departments:</b> ${dzialy}</p>
 
-    <h3>📊 Dane i systemy</h3>
-    <p><b>Zbieranie danych / polityka:</b> ${dane}</p>
-    <p><b>Jakość danych (1–10):</b> ${jakoscDanych}</p>
+    <h3>📊 Data</h3>
+    <p><b>Data policy:</b> ${dane}</p>
+    <p><b>Data quality (1–10):</b> ${jakoscDanych}</p>
 
-    <h3>🤖 AI i technologia</h3>
-    <p><b>Poziom AI w zespole (1–10):</b> ${aiPoziom}</p>
-    <p><b>Odpowiedzialny za IT:</b> ${it}</p>
-    <p><b>Wcześniejsze próby automatyzacji:</b> ${proby}</p>
+    <h3>🤖 AI & Tech</h3>
+    <p><b>AI level (1–10):</b> ${aiPoziom}</p>
+    <p><b>IT responsible:</b> ${it}</p>
+    <p><b>Previous attempts:</b> ${proby}</p>
 
-    <h3>🎯 Zakres i decyzja</h3>
-    <p><b>Działy do audytu:</b> ${zakres}</p>
-    <p><b>Decydent:</b> ${decydent}</p>
+    <h3>🎯 Scope</h3>
+    <p><b>Departments to audit:</b> ${zakres}</p>
+    <p><b>Decision maker:</b> ${decydent}</p>
 
-    <h3>💰 Budżet</h3>
-    <p><b>Budżet na wdrożenie:</b> ${budzet}</p>
+    <h3>💰 Budget</h3>
+    <p><b>Budget:</b> ${budzet}</p>
 
-    <h3>📝 Dodatkowe</h3>
+    <h3>📝 Notes</h3>
     <p>${dodatkowe || "—"}</p>
   `;
 
   try {
     await resend.emails.send({
-      from: "Ankieta AI <onboarding@resend.dev>",
-      to: "jakub@iteracity.com",
-      subject: `Ankieta Audyt AI — ${nazwa}`,
+      from: "AI Audit <onboarding@resend.dev>",
+      to: "chodak.job72@gmail.com",
+      subject: `AI Audit — ${nazwa} (${contactName})`,
       html,
     });
 
