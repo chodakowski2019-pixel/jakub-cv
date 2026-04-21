@@ -207,16 +207,16 @@ export default function AnkietaPage() {
 
               <Section title={t.s1}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className={labelCls}>{t.companyName}</label>
-                    <input required className={inputCls} placeholder="Acme Inc." value={form.nazwa} onChange={set("nazwa")} /></div>
-                  <div><label className={labelCls}>{t.industry}</label>
-                    <input required className={inputCls} placeholder="e.g. E-commerce" value={form.branza} onChange={set("branza")} /></div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className={labelCls}>{t.contactName}</label>
                     <input required className={inputCls} placeholder="John Smith" value={form.contactName} onChange={set("contactName")} /></div>
                   <div><label className={labelCls}>{t.position}</label>
                     <input required className={inputCls} placeholder="CEO / Founder" value={form.position} onChange={set("position")} /></div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div><label className={labelCls}>{t.companyName}</label>
+                    <input required className={inputCls} placeholder="Acme Inc." value={form.nazwa} onChange={set("nazwa")} /></div>
+                  <div><label className={labelCls}>{t.industry}</label>
+                    <input required className={inputCls} placeholder="e.g. E-commerce" value={form.branza} onChange={set("branza")} /></div>
                 </div>
                 <div><label className={labelCls}>{t.description}</label>
                   <textarea required rows={3} className={inputCls} placeholder={t.descriptionPh} value={form.opis} onChange={set("opis")} /></div>
