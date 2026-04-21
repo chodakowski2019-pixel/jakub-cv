@@ -30,7 +30,7 @@ export default function AudytPage() {
   const sectionCls = "space-y-4";
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-[#ededed] font-[var(--font-geist-sans)]">
+    <div className="min-h-screen bg-[#0a0a0a] text-[#ededed] font-[var(--font-open-sans)]">
       {/* Nav */}
       <nav className="sticky top-0 z-50 backdrop-blur-xl bg-[#0a0a0a]/80 border-b border-white/[0.04]">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
@@ -46,7 +46,7 @@ export default function AudytPage() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-500/8 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-2xl mx-auto text-center relative">
           <p className="text-xs font-mono text-emerald-400 uppercase tracking-widest mb-4">Audyt AI</p>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 font-[var(--font-poppins)]">
             Wypełnij{" "}
             <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
               ankietę
@@ -71,7 +71,7 @@ export default function AudytPage() {
                 />
                 <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center text-sm">✓</div>
               </div>
-              <h2 className="text-2xl font-bold mb-3">Dziękuję za wypełnienie ankiety!</h2>
+              <h2 className="text-2xl font-bold mb-3 font-[var(--font-poppins)]">Dziękuję za wypełnienie ankiety!</h2>
               <p className="text-neutral-400 max-w-sm leading-relaxed">
                 Skontaktuję się z Tobą w ciągu <span className="text-white font-medium">3 dni roboczych</span> z wyceną audytu AI dla Twojego projektu.
               </p>
@@ -82,7 +82,7 @@ export default function AudytPage() {
 
               {/* Sekcja 1 */}
               <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06]">
+                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
                   🏢 Informacje o firmie
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -120,7 +120,7 @@ export default function AudytPage() {
 
               {/* Sekcja 2 */}
               <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06]">
+                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
                   👥 Struktura i zespół
                 </h2>
                 <div>
@@ -135,7 +135,7 @@ export default function AudytPage() {
 
               {/* Sekcja 3 */}
               <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06]">
+                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
                   📊 Dane i systemy
                 </h2>
                 <div>
@@ -150,7 +150,7 @@ export default function AudytPage() {
 
               {/* Sekcja 4 */}
               <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06]">
+                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
                   🤖 AI i technologia
                 </h2>
                 <div>
@@ -169,7 +169,7 @@ export default function AudytPage() {
 
               {/* Sekcja 5 */}
               <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06]">
+                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
                   🎯 Zakres i decyzja
                 </h2>
                 <div>
@@ -184,7 +184,7 @@ export default function AudytPage() {
 
               {/* Sekcja 6 */}
               <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06]">
+                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
                   💰 Budżet
                 </h2>
                 <div>
@@ -198,7 +198,7 @@ export default function AudytPage() {
 
               {/* Sekcja 7 */}
               <div className={sectionCls}>
-                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06]">
+                <h2 className="text-sm font-mono text-emerald-400 uppercase tracking-widest pb-2 border-b border-white/[0.06] font-[var(--font-poppins)]">
                   📝 Dodatkowe informacje
                 </h2>
                 <div>
