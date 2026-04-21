@@ -485,7 +485,7 @@ export default function Home() {
       </section>}
 
       {/* ===== SKILLS ===== */}
-      {false && <section id="skills" className="py-12 px-6 bg-white/[0.015]">
+      <section id="skills" className="py-12 px-6 bg-white/[0.015]">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold mb-12 tracking-tight text-center">{t.skills.title}</h2>
           <div className="grid md:grid-cols-3 gap-4">
@@ -511,7 +511,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>}
+      </section>
 
       {/* ===== CONTACT ===== */}
       <section id="contact" className="py-12 px-6 bg-white/[0.015]">
