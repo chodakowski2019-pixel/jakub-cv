@@ -212,7 +212,7 @@ export default function AnkietaPage() {
               <p className="text-sm text-neutral-600 mt-4">{t.successName}</p>
             </div>
           ) : (
-            <form onSubmit={submit} className="space-y-0 flex flex-col gap-8">
+            <form onSubmit={submit} className="space-y-0 flex flex-col gap-8 pt-6">
 
               <Section title={t.s1}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
