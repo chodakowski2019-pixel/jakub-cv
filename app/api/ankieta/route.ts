@@ -61,8 +61,9 @@ export async function POST(req: NextRequest) {
       }),
       fetch(process.env.SHEETS_WEBHOOK_URL!, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(data),
+        redirect: "follow",
       }),
     ]);
 
