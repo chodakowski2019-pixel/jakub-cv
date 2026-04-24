@@ -312,7 +312,7 @@ export default function Home() {
         <div className="max-w-3xl mx-auto text-center relative">
           <div className="mb-8">
             <img
-              src="https://media.licdn.com/dms/image/v2/D4D03AQFWaMpQd3x-_Q/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1726162788974?e=1776902400&v=beta&t=hqAVAM6AfC-sl9Bre2Rk5VxgFHIUy37-5vsZgFtAc4A"
+              src="/profilowe_jakub.png"
               alt="Jakub Chodakowski"
               className="w-32 h-32 rounded-full mx-auto ring-2 ring-white/10 ring-offset-4 ring-offset-[#0a0a0a] object-cover hover:ring-emerald-500/30 transition-all duration-500"
             />
