@@ -220,6 +220,15 @@ export default function AivolaPage() {
               </div>
             ))}
           </div>
+
+          <div className="mt-6 md:mt-8 flex items-center justify-center">
+            <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-emerald-500/[0.06] border border-emerald-400/20 backdrop-blur-xl">
+              <span className="text-emerald-300 font-mono text-sm font-semibold">+10</span>
+              <span className="text-stone-300 text-sm">
+                kolejnych wystąpień i szkoleń o AI w branży edukacyjnej
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
