@@ -12,31 +12,46 @@ const whyMe = [
   {
     icon: "🎓",
     title: "Szkolę nauczycieli z AI",
-    desc: "Wystąpienia dla nauczycieli i szkolenia rad pedagogicznych. AI bez technicznego żargonu.",
+    desc: "Prowadzę szkolenia dla rad pedagogicznych oraz wystąpienia adresowane do nauczycieli. Potrafię tłumaczyć AI w sposób przystępny, bez technicznego żargonu.",
   },
   {
     icon: "🛠",
-    title: "Buduję z AI codziennie",
-    desc: "Aplikacje, agenci konwersacyjni, narzędzia edukacyjne. Pokażę dzieciom, co naprawdę można stworzyć.",
+    title: "Tworzę z AI każdego dnia",
+    desc: "Buduję aplikacje mobilne, agentów konwersacyjnych oraz narzędzia edukacyjne. Z przyjemnością pokażę uczniom, jakie możliwości realnie daje ta technologia.",
   },
   {
     icon: "🧭",
-    title: "Komunikacja z ludźmi",
-    desc: "Lata w sprzedaży i marketingu. Wiem jak słuchać, jak pytać, jak naprowadzać.",
+    title: "Komunikacja i przekazywanie wiedzy",
+    desc: "Wieloletnie doświadczenie w sprzedaży i marketingu pozwoliło mi rozwinąć kompetencje w obszarze komunikacji. Wiem, jak słuchać, zadawać właściwe pytania oraz naprowadzać na rozwiązania.",
   },
   {
     icon: "🔥",
-    title: "Pasja od dnia zero",
-    desc: "Od premiery ChatGPT (30.11.2022) każdy mój projekt opiera się o AI. To centrum mojej pracy.",
+    title: "Pasja od pierwszego dnia",
+    desc: "Od premiery ChatGPT, czyli 30 listopada 2022 roku, każdy mój projekt zawodowy opiera się o AI. To centrum mojej obecnej działalności.",
   },
 ];
 
 const howILead = [
-  { title: "Komiksy z AI", desc: "Midjourney, Canva, ChatGPT. Gotowy komiks po pierwszych zajęciach." },
-  { title: "Muzyka z AI", desc: "Suno i Udio. Od pomysłu do utworu w 10 minut." },
-  { title: "Strony internetowe", desc: "Lovable, v0.dev, Bolt. Dziecko wychodzi z linkiem do własnej strony." },
-  { title: "Krótkie filmy", desc: "Runway, Pika, Sora. Od zdjęcia do animacji." },
-  { title: "Bezpieczeństwo AI", desc: "Halucynacje, dane osobowe, etyka. Językiem dla 10-latka." },
+  {
+    title: "Tworzenie komiksów z AI",
+    desc: "Wspólnie z uczniami wykorzystamy Midjourney, Canva oraz ChatGPT. Każde dziecko opuści zajęcia z gotowym, autorskim komiksem.",
+  },
+  {
+    title: "Muzyka z AI",
+    desc: "Zaprezentuję uczniom narzędzia Suno oraz Udio. Od pomysłu do gotowego utworu w 10 minut.",
+  },
+  {
+    title: "Strony internetowe",
+    desc: "Lovable, v0.dev oraz Bolt. Każde dziecko opuszcza zajęcia z linkiem do własnej witryny, którą może zaprezentować rodzicom.",
+  },
+  {
+    title: "Krótkie filmy",
+    desc: "Runway, Pika oraz Sora. Wspólnie zobaczymy, jak z pojedynczego zdjęcia powstaje animacja.",
+  },
+  {
+    title: "Bezpieczeństwo AI",
+    desc: "Omówimy zjawisko halucynacji, ochronę danych osobowych oraz zasady etyki. Wszystko językiem dostosowanym do dziesięciolatka.",
+  },
 ];
 
 const credentials = [
@@ -44,29 +59,38 @@ const credentials = [
     img: "/cert-ai-managers.png",
     label: "Czerwiec 2024",
     title: "AI for Managers",
-    desc: "7-tygodniowy program. Maria Parysz (Rolls-Royce, Sephora).",
+    desc: "Intensywny, 7-tygodniowy program edukacyjny pod kierunkiem Marii Parysz, ekspertki wdrażającej AI w firmach takich jak Rolls-Royce oraz Sephora.",
     objectFit: "contain" as const,
   },
   {
     img: "/talk-crash-mondays.png",
     label: "Sierpień 2024",
-    title: "Szkolenie nauczycieli",
-    desc: "Wystąpienie dla grona pedagogicznego.",
+    title: "Szkolenie dla nauczycieli",
+    desc: "Wystąpienie skierowane do grona pedagogicznego. Pokazałem nauczycielom praktyczne zastosowania AI w codziennej pracy.",
     objectFit: "cover" as const,
   },
   {
     img: "https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png",
     label: "Listopad 2025 · Wrocław",
     title: "Wykład dla nauczycieli",
-    desc: "Konferencja oświatowa. Praktyczne AI w codziennej pracy.",
+    desc: "Wystąpienie na konferencji oświatowej. Przedstawiłem nauczycielom praktyczne wykorzystanie AI w codziennej pracy.",
     objectFit: "cover" as const,
   },
 ];
 
 const bring = [
-  { label: "Praktyk", desc: "Pokażę uczniom własny kod, aplikacje i narzędzia." },
-  { label: "Tłumacz AI", desc: "Trzy lata tłumaczenia AI laikom. Z dziećmi jest jeszcze łatwiej." },
-  { label: "Energia twórcy", desc: "Uczniowie wyjdą z motywacją do tworzenia, nie tylko wiedzą." },
+  {
+    label: "Praktyk, nie teoretyk",
+    desc: "Z przyjemnością zaprezentuję uczniom własny kod, aplikacje oraz autorskie narzędzia. Autentyczność, której nie da się odtworzyć teorią.",
+  },
+  {
+    label: "Tłumacz AI",
+    desc: "Trzy lata doświadczenia w tłumaczeniu AI osobom początkującym. W przypadku dzieci proces ten jest jeszcze efektywniejszy.",
+  },
+  {
+    label: "Energia twórcy",
+    desc: "Uczniowie opuszczą zajęcia z motywacją do samodzielnego tworzenia, nie wyłącznie z wiedzą teoretyczną.",
+  },
 ];
 
 export default function AivolaPage() {
@@ -101,14 +125,14 @@ export default function AivolaPage() {
             </span>
           </h1>
 
-          <p className="text-stone-400 text-base md:text-lg leading-relaxed max-w-lg mx-auto text-pretty">
-            Jakub Chodakowski. Specjalnie dla Państwa.
+          <p className="text-stone-400 text-base md:text-lg leading-relaxed max-w-xl mx-auto text-pretty">
+            Strona przygotowana specjalnie pod tę rekrutację. Wszystko, czego Państwo potrzebują, bez zbędnego CV.
           </p>
         </div>
       </section>
 
       {/* Quick facts */}
-      <section className="px-6 pb-16 md:pb-20">
+      <section className="px-6 pt-4 md:pt-8 pb-10 md:pb-20">
         <div className="max-w-3xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06]">
             {[
@@ -168,9 +192,9 @@ export default function AivolaPage() {
               02 · Dowody
             </p>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-balance">
-              Certyfikat.
+              Certyfikat
               <br />
-              <span className="text-stone-500">Sceny. Sale wykładowe.</span>
+              <span className="text-stone-500">oraz wystąpienia publiczne.</span>
             </h2>
           </div>
 
@@ -276,7 +300,7 @@ export default function AivolaPage() {
             </span>
           </h2>
           <p className="text-stone-400 mb-10 md:mb-12 text-base md:text-lg">
-            Umówmy pierwszą rozmowę z procesu rekrutacyjnego.
+            Z przyjemnością umówię się z Państwem na pierwszą rozmowę w ramach procesu rekrutacyjnego.
           </p>
           <a
             href="mailto:chodakowski2019@gmail.com?subject=Aplikacja Aivola — Nauczyciel AI Lab"
