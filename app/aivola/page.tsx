@@ -1,104 +1,127 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ZoomableImage from "./ZoomableImage";
 
 export const metadata: Metadata = {
   title: "Aplikacja do Aivola — Nauczyciel AI Lab | Jakub Chodakowski",
   description:
-    "Kandydat na rolę nauczyciela AI dla dzieci i młodzieży w Aivola Universe. AI Builder, mentor, doświadczenie w szkoleniu nauczycieli z AI.",
+    "Kandydat na rolę nauczyciela AI dla dzieci i młodzieży w Aivola Universe.",
 };
 
 const whyMe = [
   {
     icon: "🎓",
-    title: "Szkoliłem wiele szkół z AI",
-    desc: "Mam za sobą szkolenia rad pedagogicznych i wystąpienia dla nauczycieli. Wiem jak tłumaczyć AI prostym językiem, bez technicznego żargonu, z konkretnymi przykładami z klasy.",
+    title: "Szkolę nauczycieli z AI",
+    desc: "Wystąpienia dla nauczycieli i szkolenia rad pedagogicznych. AI bez technicznego żargonu.",
   },
   {
     icon: "🛠",
     title: "Buduję z AI codziennie",
-    desc: "Nie jestem teoretykiem. Tworzę z wykorzystaniem AI aplikacje mobilne, agentów konwersacyjnych, automatyzacje dla firm oraz narzędzia edukacyjne. Pokażę dzieciom, co realnie można stworzyć.",
+    desc: "Aplikacje, agenci konwersacyjni, narzędzia edukacyjne. Pokażę dzieciom, co naprawdę można stworzyć.",
   },
   {
     icon: "🧭",
-    title: "Komunikacja i przekazywanie wiedzy",
-    desc: "Przez wiele lat zajmowałem się sprzedażą i marketingiem, dzięki czemu nabyłem solidne kompetencje w obszarze komunikacji z ludźmi. Potrafię przekazywać wiedzę w sposób przystępny, zadaję pytania, naprowadzam na rozwiązania, dostosowuję język do odbiorcy.",
+    title: "Komunikacja z ludźmi",
+    desc: "Lata w sprzedaży i marketingu. Wiem jak słuchać, jak pytać, jak naprowadzać.",
   },
   {
     icon: "🔥",
-    title: "Pasja od pierwszego dnia",
-    desc: "30 listopada 2022 roku miała miejsce premiera ChatGPT. Od tego dnia każdy mój projekt zawodowy opiera się o AI. To nie jest dla mnie temat zainteresowań, lecz centralny obszar mojej działalności zawodowej.",
+    title: "Pasja od dnia zero",
+    desc: "Od premiery ChatGPT (30.11.2022) każdy mój projekt opiera się o AI. To centrum mojej pracy.",
   },
 ];
 
 const howILead = [
+  { title: "Komiksy z AI", desc: "Midjourney, Canva, ChatGPT. Gotowy komiks po pierwszych zajęciach." },
+  { title: "Muzyka z AI", desc: "Suno i Udio. Od pomysłu do utworu w 10 minut." },
+  { title: "Strony internetowe", desc: "Lovable, v0.dev, Bolt. Dziecko wychodzi z linkiem do własnej strony." },
+  { title: "Krótkie filmy", desc: "Runway, Pika, Sora. Od zdjęcia do animacji." },
+  { title: "Bezpieczeństwo AI", desc: "Halucynacje, dane osobowe, etyka. Językiem dla 10-latka." },
+];
+
+const credentials = [
   {
-    title: "Tworzenie komiksów z AI",
-    desc: "Wprowadzę dzieci w narzędzia Midjourney, Canva oraz ChatGPT. Wspólnie napiszemy scenariusz, wygenerujemy panele i dodamy dialogi. Rezultat to ukończony komiks po pierwszych zajęciach.",
+    img: "/cert-ai-managers.png",
+    label: "Czerwiec 2024",
+    title: "AI for Managers",
+    desc: "7-tygodniowy program. Maria Parysz (Rolls-Royce, Sephora).",
+    objectFit: "contain" as const,
   },
   {
-    title: "Muzyka z AI",
-    desc: "Suno oraz Udio, od koncepcji do gotowego utworu w 10 minut. Uczniowie określają nastrój, gatunek i temat, a następnie obserwują, jak AI komponuje ich muzykę. Po wygenerowaniu utworu analizujemy proces, jak działa technologia oraz co można udoskonalić.",
+    img: "/talk-crash-mondays.png",
+    label: "Sierpień 2024",
+    title: "Szkolenie nauczycieli",
+    desc: "Wystąpienie dla grona pedagogicznego.",
+    objectFit: "cover" as const,
   },
   {
-    title: "Strony internetowe",
-    desc: "Lovable, v0.dev oraz Bolt, narzędzia w których wystarczy opisać oczekiwania, aby otrzymać działającą stronę. Każde dziecko opuszcza zajęcia z linkiem do własnej witryny, którą może zaprezentować rodzicom.",
+    img: "https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png",
+    label: "Listopad 2025 · Wrocław",
+    title: "Wykład dla nauczycieli",
+    desc: "Konferencja oświatowa. Praktyczne AI w codziennej pracy.",
+    objectFit: "cover" as const,
   },
-  {
-    title: "Krótkie filmy",
-    desc: "Runway, Pika oraz Sora, od pojedynczego zdjęcia do animacji. Klatka po klatce poznajemy, w jaki sposób AI interpretuje obraz i ruch.",
-  },
-  {
-    title: "Bezpieczeństwo AI",
-    desc: "Co jest dozwolone, a czego unikać. Dlaczego AI generuje błędne informacje (zjawisko halucynacji). Czym są dane osobowe i dlaczego nie należy wprowadzać ich do ChatGPT. Konkretne studia przypadków przedstawione językiem dostosowanym do dziesięciolatka.",
-  },
+];
+
+const bring = [
+  { label: "Praktyk", desc: "Pokażę uczniom własny kod, aplikacje i narzędzia." },
+  { label: "Tłumacz AI", desc: "Trzy lata tłumaczenia AI laikom. Z dziećmi jest jeszcze łatwiej." },
+  { label: "Energia twórcy", desc: "Uczniowie wyjdą z motywacją do tworzenia, nie tylko wiedzą." },
 ];
 
 export default function AivolaPage() {
   return (
-    <div className="min-h-screen bg-[#fdfbf6] text-neutral-900 font-[var(--font-geist-sans)]">
+    <div className="min-h-screen bg-[#0c0a09] text-stone-100 font-[var(--font-geist-sans)] antialiased selection:bg-emerald-500/30">
       {/* Hero */}
-      <section className="relative pt-12 md:pt-16 pb-10 md:pb-12 px-5 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-300/30 rounded-full blur-[120px] pointer-events-none" />
+      <section className="relative pt-20 md:pt-28 pb-16 md:pb-24 px-6 overflow-hidden">
+        <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-gradient-to-br from-emerald-500/15 via-teal-500/8 to-transparent rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-[200px] right-[-100px] w-[400px] h-[400px] bg-gradient-to-bl from-teal-500/10 to-transparent rounded-full blur-[100px] pointer-events-none" />
+
         <div className="max-w-3xl mx-auto text-center relative">
-          <div className="flex justify-center mb-6">
-            <img
-              src="/profilowe_jakub.png"
-              alt="Jakub Chodakowski"
-              className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover border-2 border-emerald-600/30 shadow-xl shadow-emerald-600/10"
-            />
+          <div className="flex justify-center mb-8 md:mb-10">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-400 rounded-full blur-xl opacity-30" />
+              <img
+                src="/profilowe_jakub.png"
+                alt="Jakub Chodakowski"
+                className="relative w-28 h-28 md:w-36 md:h-36 rounded-full object-cover ring-1 ring-white/10"
+              />
+            </div>
           </div>
-          <p className="text-[10px] md:text-xs font-mono text-emerald-700 uppercase tracking-widest mb-3">
-            Aplikacja do Aivola Universe · AI Lab
+
+          <p className="text-[10px] md:text-xs font-mono text-emerald-300/80 uppercase tracking-[0.2em] mb-5">
+            Aplikacja · Aivola Universe
           </p>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 leading-[1.15] text-balance">
-            Szanowni Państwo,{" "}
-            <span className="bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">
-              przedstawiam swoją kandydaturę.
+
+          <h1 className="text-4xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.05] text-balance">
+            Nauczyciel AI,
+            <br />
+            <span className="bg-gradient-to-r from-emerald-300 via-teal-300 to-emerald-300 bg-clip-text text-transparent">
+              którego szukacie.
             </span>
           </h1>
-          <p className="text-neutral-600 text-base md:text-lg leading-relaxed max-w-2xl mx-auto text-balance">
-            Strona przygotowana specjalnie pod ten proces rekrutacyjny. Zamiast standardowego CV, znajdą Państwo tutaj komplet informacji potrzebnych do podjęcia decyzji.
+
+          <p className="text-stone-400 text-base md:text-lg leading-relaxed max-w-lg mx-auto text-pretty">
+            Jakub Chodakowski. Specjalnie dla Państwa.
           </p>
         </div>
       </section>
 
-      {/* Quick info bar */}
-      <section className="py-5 px-5 border-y border-neutral-200 bg-white/60">
+      {/* Quick facts */}
+      <section className="px-6 pb-16 md:pb-20">
         <div className="max-w-3xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06]">
             {[
-              { label: "Imię", value: "Jakub Chodakowski" },
-              { label: "Rola", value: "Founder + AI Strategist" },
-              { label: "Doświadczenie AI", value: "Od grudnia 2022" },
-              { label: "Język", value: "Polski + English" },
+              { label: "Rola", value: "Founder · AI" },
+              { label: "Z AI od", value: "12.2022" },
+              { label: "Język", value: "PL · EN" },
+              { label: "Tryb", value: "Zdalny" },
             ].map((item, i) => (
-              <div key={i} className="text-center">
-                <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest mb-1">
+              <div key={i} className="bg-[#0c0a09] px-4 py-5 text-center">
+                <p className="text-[9px] font-mono text-stone-500 uppercase tracking-[0.15em] mb-1.5">
                   {item.label}
                 </p>
-                <p className="text-sm font-semibold text-neutral-800">
-                  {item.value}
-                </p>
+                <p className="text-sm font-semibold text-stone-100">{item.value}</p>
               </div>
             ))}
           </div>
@@ -106,118 +129,103 @@ export default function AivolaPage() {
       </section>
 
       {/* Why me */}
-      <section className="py-12 md:py-16 px-5">
+      <section className="py-16 md:py-24 px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-center mb-3">
-            Dlaczego moja kandydatura
-          </h2>
-          <p className="text-neutral-600 text-center mb-8 max-w-xl mx-auto text-balance">
-            Po dokładnej analizie Państwa oferty, wskazuję cztery obszary bezpośredniej zgodności.
-          </p>
+          <div className="mb-10 md:mb-14">
+            <p className="text-[10px] font-mono text-emerald-300/60 uppercase tracking-[0.2em] mb-3">
+              01 · Dopasowanie
+            </p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-balance">
+              Cztery punkty,
+              <br />
+              <span className="text-stone-500">cztery dopasowania.</span>
+            </h2>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-3 md:gap-4">
             {whyMe.map((item, i) => (
               <div
                 key={i}
-                className="p-5 md:p-6 rounded-2xl border border-neutral-200 bg-white hover:border-emerald-300 hover:shadow-md hover:shadow-emerald-600/5 transition-all duration-300"
+                className="group relative p-6 md:p-7 rounded-2xl bg-white/[0.025] border border-white/[0.06] hover:border-emerald-400/30 hover:bg-white/[0.035] transition-all duration-500 backdrop-blur-xl"
               >
-                <div className="text-3xl mb-3">{item.icon}</div>
-                <h3 className="font-semibold mb-2 text-neutral-900">{item.title}</h3>
-                <p className="text-sm text-neutral-600 leading-relaxed">{item.desc}</p>
+                <div className="text-2xl mb-4">{item.icon}</div>
+                <h3 className="font-semibold mb-2 text-stone-100 text-base md:text-lg">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-stone-400 leading-relaxed text-pretty">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Credentials — proof */}
-      <section className="py-12 md:py-16 px-5 bg-emerald-50/40 border-y border-emerald-100">
+      {/* Credentials */}
+      <section className="py-16 md:py-24 px-6 relative">
+        <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-center mb-3">
-            Dowody, nie deklaracje
-          </h2>
-          <p className="text-neutral-600 text-center mb-8 max-w-xl mx-auto text-balance">
-            Certyfikat ukończenia kursu wdrożeniowego AI oraz wystąpienia publiczne na temat AI.
-          </p>
+          <div className="mb-10 md:mb-14">
+            <p className="text-[10px] font-mono text-emerald-300/60 uppercase tracking-[0.2em] mb-3">
+              02 · Dowody
+            </p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-balance">
+              Certyfikat.
+              <br />
+              <span className="text-stone-500">Sceny. Sale wykładowe.</span>
+            </h2>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-3 md:gap-4">
-            <div className="p-5 rounded-2xl border border-emerald-200 bg-white">
-              <img
-                src="/cert-ai-managers.png"
-                alt="Certyfikat AI for Managers — Elephant AI"
-                className="w-full h-48 object-contain rounded-xl mb-4 bg-neutral-50 p-2"
-              />
-              <p className="text-[10px] font-mono text-emerald-700 uppercase tracking-widest mb-2">
-                Czerwiec 2024 · Certyfikat
-              </p>
-              <h3 className="font-semibold text-neutral-900 mb-2">
-                AI for Managers — Elephant AI
-              </h3>
-              <p className="text-sm text-neutral-600 leading-relaxed">
-                Intensywny 7-tygodniowy program edukacyjny obejmujący ponad 35 godzin warsztatów i wykładów, projekt końcowy oraz egzamin pisemny. Prowadzenie: Maria Parysz, ekspertka wdrażająca AI w Rolls-Royce oraz Sephora.
-              </p>
-            </div>
-            <div className="p-5 rounded-2xl border border-emerald-200 bg-white">
-              <img
-                src="/talk-crash-mondays.png"
-                alt="Wystąpienie publiczne na temat AI"
-                className="w-full h-48 object-cover rounded-xl mb-4"
-              />
-              <p className="text-[10px] font-mono text-emerald-700 uppercase tracking-widest mb-2">
-                Sierpień 2024
-              </p>
-              <h3 className="font-semibold text-neutral-900 mb-2">
-                Szkolenie dla nauczycieli
-              </h3>
-              <p className="text-sm text-neutral-600 leading-relaxed">
-                Wystąpienie skierowane do grona pedagogicznego. Pokazałem nauczycielom praktyczne zastosowania AI w codziennej pracy oraz to, w jaki sposób mogą wykorzystać te narzędzia w komunikacji z uczniami.
-              </p>
-            </div>
-            <div className="p-5 rounded-2xl border border-emerald-200 bg-white">
-              <img
-                src="https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png"
-                alt="Szkolenie nauczycieli z AI — Listopad 2025, Wrocław"
-                className="w-full h-48 object-cover rounded-xl mb-4"
-              />
-              <p className="text-[10px] font-mono text-emerald-700 uppercase tracking-widest mb-2">
-                Listopad 2025 · Wrocław
-              </p>
-              <h3 className="font-semibold text-neutral-900 mb-2">
-                Wykład dla nauczycieli
-              </h3>
-              <p className="text-sm text-neutral-600 leading-relaxed">
-                Wystąpienie na konferencji oświatowej. Szkoliłem nauczycieli z praktycznego wykorzystania AI w codziennej pracy. Posiadam umiejętność wprowadzania w świat AI osób bez wcześniejszego doświadczenia w tej technologii.
-              </p>
-            </div>
+            {credentials.map((c, i) => (
+              <div
+                key={i}
+                className="group p-4 rounded-2xl bg-white/[0.025] border border-white/[0.06] hover:border-emerald-400/30 transition-all duration-500"
+              >
+                <div className="w-full h-48 rounded-xl mb-4 overflow-hidden bg-white/[0.02]">
+                  <ZoomableImage
+                    src={c.img}
+                    alt={c.title}
+                    containerClassName="w-full h-full"
+                    className={`w-full h-full ${c.objectFit === "contain" ? "object-contain p-3 bg-white" : "object-cover"}`}
+                  />
+                </div>
+                <p className="text-[10px] font-mono text-emerald-300/60 uppercase tracking-[0.15em] mb-2">
+                  {c.label}
+                </p>
+                <h3 className="font-semibold text-stone-100 mb-2">{c.title}</h3>
+                <p className="text-sm text-stone-400 leading-relaxed">{c.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* How I'll lead AI Lab */}
-      <section className="py-12 md:py-16 px-5">
+      <section className="py-16 md:py-24 px-6 relative">
+        <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-center mb-3">
-            Jak poprowadzę AI Lab
-          </h2>
-          <p className="text-neutral-600 text-center mb-8 max-w-xl mx-auto text-balance">
-            Państwa oferta wymienia komiksy, muzykę, strony internetowe oraz filmy. Poniżej przedstawiam koncepcję realizacji tych obszarów z grupą uczniów w wieku 9+.
-          </p>
-          <div className="space-y-3">
+          <div className="mb-10 md:mb-14">
+            <p className="text-[10px] font-mono text-emerald-300/60 uppercase tracking-[0.2em] mb-3">
+              03 · AI Lab
+            </p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-balance">
+              Jak poprowadzę zajęcia
+              <br />
+              <span className="text-stone-500">z grupą 9+.</span>
+            </h2>
+          </div>
+
+          <div className="space-y-2">
             {howILead.map((item, i) => (
               <div
                 key={i}
-                className="p-5 rounded-2xl border border-neutral-200 bg-white hover:border-emerald-300 hover:shadow-md hover:shadow-emerald-600/5 transition-all duration-300"
+                className="group flex items-baseline gap-5 md:gap-6 p-5 md:p-6 rounded-2xl hover:bg-white/[0.025] border border-transparent hover:border-white/[0.06] transition-all duration-300"
               >
-                <div className="flex items-start gap-4">
-                  <span className="text-emerald-700 text-sm font-mono mt-0.5 flex-shrink-0 font-semibold">
-                    0{i + 1}
-                  </span>
-                  <div>
-                    <h3 className="font-semibold text-base text-neutral-900 mb-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-neutral-600 leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
+                <span className="text-emerald-300/40 text-xs font-mono flex-shrink-0 group-hover:text-emerald-300 transition-colors">
+                  0{i + 1}
+                </span>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-stone-100 mb-1">{item.title}</h3>
+                  <p className="text-sm text-stone-400 leading-relaxed">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -225,80 +233,66 @@ export default function AivolaPage() {
         </div>
       </section>
 
-      {/* Remote work */}
-      <section className="py-12 md:py-16 px-5">
-        <div className="max-w-3xl mx-auto">
-          <div className="p-6 md:p-8 rounded-2xl border border-neutral-200 bg-white text-center">
-            <p className="text-[10px] font-mono text-emerald-700 uppercase tracking-widest mb-3">
-              Praca zdalna
-            </p>
-            <h2 className="text-xl md:text-3xl font-bold tracking-tight mb-3">
-              Codziennie pracuję zdalnie
-            </h2>
-            <p className="text-neutral-600 leading-relaxed max-w-xl mx-auto">
-              Prowadzę firmy, prowadzę zespoły, prowadzę szkolenia, wszystko zdalnie. Sprzęt, internet oraz otoczenie pracy w pełni gotowe pod profesjonalne prowadzenie zajęć online.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* What I bring */}
-      <section className="py-12 md:py-16 px-5 bg-emerald-50/40 border-y border-emerald-100">
+      <section className="py-16 md:py-24 px-6 relative">
+        <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-center mb-8">
-            Co wnoszę do Aivola
-          </h2>
-          <div className="space-y-3 md:space-y-4">
-            <div className="p-5 md:p-6 rounded-2xl border border-emerald-200 bg-white">
-              <h3 className="font-semibold text-neutral-900 mb-2">Praktyk, nie teoretyk</h3>
-              <p className="text-sm text-neutral-600 leading-relaxed">
-                Dzieci niezwykle szybko rozpoznają brak autentyczności. Nie ograniczam się do lektury książek o AI, codziennie tworzę rozwiązania w oparciu o tę technologię. Mogę zaprezentować uczniom własny kod, własne aplikacje oraz autorskie narzędzia. Tego rodzaju autorytetu nie da się odtworzyć teorią.
-              </p>
-            </div>
-            <div className="p-5 md:p-6 rounded-2xl border border-emerald-200 bg-white">
-              <h3 className="font-semibold text-neutral-900 mb-2">Tłumacz między AI a człowiekiem</h3>
-              <p className="text-sm text-neutral-600 leading-relaxed">
-                Przez ostatnie trzy lata tłumaczyłem zagadnienia AI osobom, które obawiały się tej technologii, czyli nauczycielom, właścicielom firm oraz sprzedawcom. Potrafię rozłożyć złożone koncepcje na zrozumiałe elementy. W przypadku dzieci ten proces będzie jeszcze efektywniejszy, ponieważ nie posiadają one mentalnych barier wobec nowych technologii.
-              </p>
-            </div>
-            <div className="p-5 md:p-6 rounded-2xl border border-emerald-200 bg-white">
-              <h3 className="font-semibold text-neutral-900 mb-2">Energia twórcy</h3>
-              <p className="text-sm text-neutral-600 leading-relaxed">
-                Aktywnie tworzę z wykorzystaniem sztucznej inteligencji, czyli aplikacje, treści oraz modele biznesowe. Ta energia twórcza jest zaraźliwa. Uczniowie nie wyjdą z zajęć wyłącznie z wiedzą teoretyczną o AI, lecz z motywacją do tworzenia własnych rozwiązań. To zasadnicza różnica.
-              </p>
-            </div>
+          <div className="mb-10 md:mb-14">
+            <p className="text-[10px] font-mono text-emerald-300/60 uppercase tracking-[0.2em] mb-3">
+              04 · Wartość
+            </p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-balance">
+              Co wnoszę
+              <br />
+              <span className="text-stone-500">do Aivola.</span>
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-3 md:gap-4">
+            {bring.map((item, i) => (
+              <div
+                key={i}
+                className="p-6 rounded-2xl bg-gradient-to-br from-emerald-500/[0.04] to-transparent border border-emerald-400/15"
+              >
+                <p className="text-[10px] font-mono text-emerald-300/80 uppercase tracking-[0.15em] mb-3">
+                  {item.label}
+                </p>
+                <p className="text-sm text-stone-300 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-14 md:py-20 px-5">
-        <div className="max-w-3xl mx-auto text-center relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-300/30 rounded-full blur-[80px] pointer-events-none" />
-          <div className="relative">
-            <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-3">
-              Zapraszam na 15-minutową rozmowę
-            </h2>
-            <p className="text-neutral-600 mb-8 max-w-md mx-auto">
-              Jeśli przedstawione informacje odpowiadają Państwa oczekiwaniom, chętnie umówię się na pierwszą rozmowę w ramach procesu rekrutacyjnego.
-            </p>
-            <div className="flex items-center justify-center">
-              <a
-                href="mailto:chodakowski2019@gmail.com?subject=Aplikacja Aivola — Nauczyciel AI Lab"
-                className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm md:text-base font-medium hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-lg shadow-emerald-600/20"
-              >
-                chodakowski2019@gmail.com
-              </a>
-            </div>
-          </div>
+      <section className="py-20 md:py-32 px-6 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-gradient-to-br from-emerald-500/15 to-teal-500/8 rounded-full blur-[120px] pointer-events-none" />
+        <div className="max-w-2xl mx-auto text-center relative">
+          <h2 className="text-3xl md:text-6xl font-bold tracking-tight mb-4 text-balance leading-[1.05]">
+            15 minut.
+            <br />
+            <span className="bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent">
+              Tyle wystarczy.
+            </span>
+          </h2>
+          <p className="text-stone-400 mb-10 md:mb-12 text-base md:text-lg">
+            Umówmy pierwszą rozmowę z procesu rekrutacyjnego.
+          </p>
+          <a
+            href="mailto:chodakowski2019@gmail.com?subject=Aplikacja Aivola — Nauczyciel AI Lab"
+            className="inline-flex items-center gap-3 px-7 py-4 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 text-stone-950 text-sm md:text-base font-semibold hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-2xl shadow-emerald-500/20"
+          >
+            chodakowski2019@gmail.com
+            <span className="text-lg">→</span>
+          </a>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-6 px-5 border-t border-neutral-200">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-neutral-500">
-          <Link href="/" className="hover:text-neutral-700 transition-colors">
-            Jakub Chodakowski &copy; {new Date().getFullYear()}
+      <footer className="py-8 px-6 border-t border-white/[0.04]">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-stone-500">
+          <Link href="/" className="hover:text-stone-300 transition-colors">
+            Jakub Chodakowski · {new Date().getFullYear()}
           </Link>
           <span className="font-mono">jakubchodakowski.com/aivola</span>
         </div>
