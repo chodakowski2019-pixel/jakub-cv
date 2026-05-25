@@ -103,7 +103,7 @@ const CONTENT = {
     contact: {
       title: "Kontakt",
       text: "Szukasz kogoś, kto wdroży AI w Twojej firmie? Napisz do mnie. Chętnie porozmawiam o tym, jak mogę pomóc.",
-      email: "chodakowski2019@gmail.com",
+      email: "hello@jakubchodakowski.com",
       linkedin: "LinkedIn",
     },
     footer: "Jakub Chodakowski",
@@ -207,7 +207,7 @@ const CONTENT = {
     contact: {
       title: "Contact",
       text: "Looking for someone to implement AI in your company? Reach out. I'd love to talk about how I can help.",
-      email: "chodakowski2019@gmail.com",
+      email: "hello@jakubchodakowski.com",
       linkedin: "LinkedIn",
     },
     footer: "Jakub Chodakowski",
@@ -217,7 +217,7 @@ const CONTENT = {
 type Lang = "pl" | "en";
 
 export default function Home() {
-  const [lang, setLang] = useState<Lang>("en");
+  const lang: Lang = "en";
   const [lightbox, setLightbox] = useState<string[] | null>(null);
   const [lightboxIdx, setLightboxIdx] = useState(0);
   const t = CONTENT[lang];
@@ -283,24 +283,18 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-[#0a0a0a]/70 backdrop-blur-2xl">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
           <span className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-xs font-bold text-white">JC</span>
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-1 p-1 rounded-full border border-white/[0.08] bg-white/[0.02]">
             {(["story", "skills", "contact"] as const).map((key) => (
               <a
                 key={key}
                 href={`#${key}`}
-                className="text-xs text-neutral-300 hover:text-white transition-colors duration-300"
+                className="text-xs font-medium text-neutral-300 hover:text-white px-4 py-1.5 rounded-full hover:bg-white/[0.06] transition-all duration-300"
               >
                 {t.nav[key]}
               </a>
             ))}
           </div>
-          <button
-            onClick={() => setLang(lang === "pl" ? "en" : "pl")}
-            className="text-xs px-3 py-1.5 rounded-full border border-white/10 text-neutral-400 hover:text-white hover:border-white/25 transition-all duration-300 flex items-center gap-1.5"
-          >
-            <span className="text-sm">{lang === "pl" ? "\u{1F1EC}\u{1F1E7}" : "\u{1F1F5}\u{1F1F1}"}</span>
-            {lang === "pl" ? "EN" : "PL"}
-          </button>
+          <span className="w-8" aria-hidden="true" />
         </div>
       </nav>
 

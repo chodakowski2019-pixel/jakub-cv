@@ -21,7 +21,7 @@ export default function SzkoleniaPage() {
             <span>jakubchodakowski.com</span>
           </Link>
           <a
-            href="mailto:chodakowski2019@gmail.com?subject=Szkolenie AI dla firmy"
+            href="mailto:hello@jakubchodakowski.com?subject=Szkolenie AI dla firmy"
             className="px-5 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-medium hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-lg shadow-emerald-500/20"
           >
             Zapytaj o wycenę
@@ -48,7 +48,7 @@ export default function SzkoleniaPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href="mailto:chodakowski2019@gmail.com?subject=Szkolenie AI dla firmy"
+              href="mailto:hello@jakubchodakowski.com?subject=Szkolenie AI dla firmy"
               className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-lg shadow-emerald-500/20"
             >
               Zapytaj o wycenę →
@@ -152,7 +152,7 @@ export default function SzkoleniaPage() {
                   ))}
                 </ul>
                 <a
-                  href={`mailto:chodakowski2019@gmail.com?subject=Zapytanie: ${offer.name}`}
+                  href={`mailto:hello@jakubchodakowski.com?subject=Zapytanie: ${offer.name}`}
                   className={`w-full py-3 rounded-full text-sm font-medium text-center transition-all duration-300 ${
                     offer.highlight
                       ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:scale-[1.02] shadow-lg shadow-emerald-500/20"
@@ -410,10 +410,10 @@ export default function SzkoleniaPage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
-                href="mailto:chodakowski2019@gmail.com?subject=Szkolenie AI dla firmy"
+                href="mailto:hello@jakubchodakowski.com?subject=Szkolenie AI dla firmy"
                 className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-lg shadow-emerald-500/20"
               >
-                chodakowski2019@gmail.com
+                hello@jakubchodakowski.com
               </a>
               <a
                 href="https://www.linkedin.com/in/jakub-chodakowski"

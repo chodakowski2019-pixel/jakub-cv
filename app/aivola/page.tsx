@@ -312,10 +312,10 @@ export default function AivolaPage() {
             Z przyjemnością spotkam się z Państwem na pierwszą rozmowę w ramach rekrutacji.
           </p>
           <a
-            href="mailto:chodakowski2019@gmail.com?subject=Aplikacja Aivola — Nauczyciel AI Lab"
+            href="mailto:hello@jakubchodakowski.com?subject=Aplikacja Aivola — Nauczyciel AI Lab"
             className="inline-flex items-center gap-3 px-7 py-4 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 text-stone-950 text-sm md:text-base font-semibold hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-2xl shadow-emerald-500/20"
           >
-            chodakowski2019@gmail.com
+            hello@jakubchodakowski.com
             <span className="text-lg">→</span>
           </a>
         </div>
