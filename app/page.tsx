@@ -342,7 +342,7 @@ export default function Home() {
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-neutral-700/30 to-transparent hidden md:block" />
 
         {/* --- BEFORE AI --- */}
-        <div className="pt-8 pb-12 px-6 relative">
+        <div className="pt-12 pb-20 px-6 relative">
           <div className="max-w-3xl mx-auto">
             {/* Era label */}
             <div className="flex items-center gap-4 mb-4">
@@ -372,7 +372,7 @@ export default function Home() {
         </div>
 
         {/* --- TURNING POINT --- */}
-        <div className="py-10 px-6 relative">
+        <div className="py-16 px-6 relative">
           <div className="max-w-xl mx-auto text-center">
             {/* Big arrow down */}
             <div className="flex justify-center mb-8">
@@ -390,8 +390,10 @@ export default function Home() {
         </div>
 
         {/* --- AFTER AI --- */}
-        <div className="py-12 px-6 bg-white/[0.02] backdrop-blur-sm relative">
-          <div className="max-w-3xl mx-auto">
+        <div className="py-20 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
+          {/* Corner glow */}
+          <div className="absolute -top-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
+          <div className="max-w-3xl mx-auto relative">
             {/* Era label */}
             <div className="flex items-center gap-4 mb-4">
               <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-500/40" />
@@ -456,7 +458,7 @@ export default function Home() {
         </div>
 
         {/* --- WHAT I DO NOW --- */}
-        <div className="py-12 px-6">
+        <div className="py-20 px-6">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6 text-center text-white">{t.now.title}</h2>
             <p className="text-neutral-300 text-lg text-center max-w-2xl mx-auto mb-12 leading-relaxed">{t.now.text}</p>
@@ -476,8 +478,10 @@ export default function Home() {
       </section>
 
       {/* ===== SKILLS ===== */}
-      {<section id="skills" className="py-12 px-6 bg-white/[0.02] backdrop-blur-sm">
-        <div className="max-w-3xl mx-auto">
+      {<section id="skills" className="py-20 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
+        {/* Corner glow */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-teal-500/12 rounded-full blur-[120px] pointer-events-none" />
+        <div className="max-w-3xl mx-auto relative">
           <h2 className="text-3xl font-bold mb-12 tracking-tight text-center text-white">{t.skills.title}</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {t.skills.categories.map((cat, i) => (
@@ -505,7 +509,9 @@ export default function Home() {
       </section>}
 
       {/* ===== CONTACT ===== */}
-      <section id="contact" className="py-12 px-6 bg-white/[0.02] backdrop-blur-sm">
+      <section id="contact" className="py-24 px-6 bg-white/[0.03] border-t border-cyan-500/15 relative overflow-hidden">
+        {/* Corner glow */}
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-3xl mx-auto text-center relative">
           <div className="relative">
             <h2 className="text-3xl font-bold mb-4 tracking-tight text-white">{t.contact.title}</h2>
