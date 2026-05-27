@@ -28,7 +28,16 @@ export async function POST(req: NextRequest) {
     consentSA,
     publishAnonymously,
     submittedAt,
+    memberToken,
   } = await req.json();
+
+  const allowedTokens = (process.env.SCAM_ALERT_MEMBER_TOKENS ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+  if (!memberToken || !allowedTokens.includes(String(memberToken))) {
+    return NextResponse.json({ ok: false, error: "invalid_member_token" }, { status: 401 });
+  }
 
   if (consentSA !== true) {
     return NextResponse.json({ ok: false, error: "sa_consent_required" }, { status: 400 });

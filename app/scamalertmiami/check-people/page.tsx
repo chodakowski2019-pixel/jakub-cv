@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, X as XIcon } from "lucide-react";
 
@@ -21,6 +22,9 @@ const emptyPerson = (): Person => ({
 });
 
 export default function CheckPeople() {
+  const searchParams = useSearchParams();
+  const memberToken = searchParams?.get("t") ?? "";
+
   const [requesterName, setRequesterName] = useState("");
   const [requesterEmail, setRequesterEmail] = useState("");
   const [people, setPeople] = useState<Person[]>([emptyPerson()]);
@@ -65,6 +69,7 @@ export default function CheckPeople() {
           people,
           consentBusinessInterest: true,
           submittedAt: new Date().toISOString(),
+          memberToken,
         }),
       });
       const data = await res.json();

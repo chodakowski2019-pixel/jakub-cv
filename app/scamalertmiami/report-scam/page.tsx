@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, X } from "lucide-react";
 
@@ -35,6 +36,9 @@ function fileToBase64(file: File): Promise<string> {
 }
 
 export default function ReportScam() {
+  const searchParams = useSearchParams();
+  const memberToken = searchParams?.get("t") ?? "";
+
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -120,6 +124,7 @@ export default function ReportScam() {
           consentSA: true,
           publishAnonymously,
           submittedAt: new Date().toISOString(),
+          memberToken,
         }),
       });
       const data = await res.json();

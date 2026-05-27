@@ -17,13 +17,23 @@ export async function POST(req: NextRequest) {
     people,
     consentBusinessInterest,
     submittedAt,
+    memberToken,
   }: {
     requesterName?: string;
     requesterEmail?: string;
     people?: Person[];
     consentBusinessInterest?: boolean;
     submittedAt?: string;
+    memberToken?: string;
   } = await req.json();
+
+  const allowedTokens = (process.env.SCAM_ALERT_MEMBER_TOKENS ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+  if (!memberToken || !allowedTokens.includes(String(memberToken))) {
+    return NextResponse.json({ ok: false, error: "invalid_member_token" }, { status: 401 });
+  }
 
   if (consentBusinessInterest !== true) {
     return NextResponse.json({ ok: false, error: "business_interest_required" }, { status: 400 });
