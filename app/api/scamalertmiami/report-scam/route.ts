@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await resend.emails.send({
-      from: "Scam Alert Miami <onboarding@resend.dev>",
+      from: "Scam Alert Miami <hello@jakubchodakowski.com>",
       to: "hello@jakubchodakowski.com",
       replyTo: reporterEmail,
       subject: `Scam Alert Miami — REPORT: ${scammerName} (by ${reporterName})`,

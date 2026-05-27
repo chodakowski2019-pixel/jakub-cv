@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await resend.emails.send({
-      from: "Scam Alert Miami <onboarding@resend.dev>",
+      from: "Scam Alert Miami <hello@jakubchodakowski.com>",
       to: "hello@jakubchodakowski.com",
       replyTo: email,
       subject: `Scam Alert Miami — ${name} (${company})`,
@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
     // Auto-reply to the applicant (best-effort, doesn't block success)
     try {
       await resend.emails.send({
-        from: "Jakub Chodakowski <onboarding@resend.dev>",
+        from: "Jakub Chodakowski <hello@jakubchodakowski.com>",
         to: email,
         replyTo: "hello@jakubchodakowski.com",
         subject: "Your Scam Alert Miami application is in the queue",
