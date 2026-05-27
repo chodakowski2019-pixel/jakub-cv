@@ -251,13 +251,13 @@ export default function Home() {
           {lightbox.length > 1 && (
             <>
               <button
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/[0.02] flex items-center justify-center text-white transition-colors z-10"
                 onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx - 1 + lightbox.length) % lightbox.length); }}
               >
                 <ChevronDown size={20} className="rotate-90" />
               </button>
               <button
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/[0.02] flex items-center justify-center text-white transition-colors z-10"
                 onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx + 1) % lightbox.length); }}
               >
                 <ChevronDown size={20} className="-rotate-90" />
@@ -271,7 +271,7 @@ export default function Home() {
                 <button
                   key={i}
                   onClick={(e) => { e.stopPropagation(); setLightboxIdx(i); }}
-                  className={`w-2 h-2 rounded-full transition-all ${i === lightboxIdx ? "bg-white" : "bg-white/30"}`}
+                  className={`w-2 h-2 rounded-full transition-all ${i === lightboxIdx ? "bg-white" : "bg-white/[0.03]"}`}
                 />
               ))}
             </div>
@@ -280,15 +280,15 @@ export default function Home() {
       )}
 
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-[#0a0a0a]/70 backdrop-blur-2xl">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-white/[0.03] backdrop-blur-2xl">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
-          <span className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-xs font-bold text-white">JC</span>
-          <div className="hidden md:flex items-center gap-1 p-1 rounded-full border border-white/[0.08] bg-white/[0.02]">
+          <span className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-cyan-500/25">JC</span>
+          <div className="hidden md:flex items-center gap-1 p-1 rounded-full border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl">
             {(["story", "skills", "contact"] as const).map((key) => (
               <a
                 key={key}
                 href={`#${key}`}
-                className="text-xs font-medium text-neutral-300 hover:text-white px-4 py-1.5 rounded-full hover:bg-white/[0.06] transition-all duration-300"
+                className="text-xs font-medium text-neutral-300 hover:text-white px-4 py-1.5 rounded-full hover:bg-white/[0.08] transition-all duration-300"
               >
                 {t.nav[key]}
               </a>
@@ -300,31 +300,28 @@ export default function Home() {
 
       {/* ===== HERO ===== */}
       <section className="min-h-screen flex items-center justify-center px-6 pt-14 relative overflow-hidden">
-        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] animate-[glow_4s_ease-in-out_infinite]" />
-        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-teal-500/8 rounded-full blur-[100px] animate-[glow_5s_ease-in-out_infinite_1s]" />
-
         <div className="max-w-3xl mx-auto text-center relative">
           <div className="mb-8">
             <img
               src="/profilowe_jakub.png"
               alt="Jakub Chodakowski"
-              className="w-32 h-32 rounded-full mx-auto ring-2 ring-white/10 ring-offset-4 ring-offset-[#0a0a0a] object-cover hover:ring-emerald-500/30 transition-all duration-500"
+              className="w-32 h-32 rounded-full mx-auto ring-2 ring-white/10 ring-offset-4 ring-offset-[#0a1218] object-cover hover:ring-cyan-400/60 transition-all duration-500 shadow-xl shadow-cyan-500/15"
             />
           </div>
-          <p className="text-sm text-neutral-500 mb-3 tracking-wide uppercase">{t.hero.greeting}</p>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-5 bg-gradient-to-b from-white via-white to-neutral-400 bg-clip-text text-transparent">
+          <p className="text-sm text-neutral-400 mb-3 tracking-wide uppercase">{t.hero.greeting}</p>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-5 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
             {t.hero.name}
           </h1>
-          <p className="text-xl md:text-2xl font-medium mb-6 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+          <p className="text-xl md:text-2xl font-medium mb-6 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
             {t.hero.headline}
           </p>
-          <p className="text-neutral-400 max-w-lg mx-auto mb-12 leading-relaxed text-base">
+          <p className="text-neutral-300 max-w-lg mx-auto mb-12 leading-relaxed text-base">
             {t.hero.sub}
           </p>
           <div className="flex items-center justify-center mb-10">
             <a
               href="#contact"
-              className="px-7 py-3.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30"
+              className="px-7 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/50"
             >
               {t.hero.cta}
             </a>
@@ -342,31 +339,31 @@ export default function Home() {
       <section id="story" className="relative">
 
         {/* Central timeline line */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/[0.08] to-transparent hidden md:block" />
+        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-neutral-700/30 to-transparent hidden md:block" />
 
         {/* --- BEFORE AI --- */}
         <div className="pt-8 pb-12 px-6 relative">
           <div className="max-w-3xl mx-auto">
             {/* Era label */}
             <div className="flex items-center gap-4 mb-4">
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-neutral-800" />
-              <span className="text-sm font-mono text-neutral-500 uppercase tracking-widest font-medium">{t.before.label}</span>
-              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-neutral-800" />
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-neutral-700/50" />
+              <span className="text-sm font-mono text-neutral-400 uppercase tracking-widest font-medium">{t.before.label}</span>
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-neutral-700/50" />
             </div>
-            <p className="text-center text-sm text-neutral-500 font-mono mb-6">{t.before.period}</p>
+            <p className="text-center text-sm text-neutral-400 font-mono mb-6">{t.before.period}</p>
 
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center">{t.before.title}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center text-white">{t.before.title}</h2>
 
             <div className="space-y-6 max-w-2xl mx-auto">
               {t.before.paragraphs.map((p, i) => (
-                <p key={i} className="text-neutral-400 leading-relaxed text-lg">{p}</p>
+                <p key={i} className="text-neutral-300 leading-relaxed text-lg">{p}</p>
               ))}
             </div>
 
             {/* Skills from that era */}
             <div className="flex flex-wrap justify-center gap-2 mt-10">
               {t.before.skills.map((s, i) => (
-                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-white/[0.06] text-neutral-500">
+                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-white/[0.08] bg-white/[0.04] backdrop-blur-md text-neutral-300">
                   {s}
                 </span>
               ))}
@@ -379,42 +376,42 @@ export default function Home() {
           <div className="max-w-xl mx-auto text-center">
             {/* Big arrow down */}
             <div className="flex justify-center mb-8">
-              <div className="w-12 h-12 rounded-full border border-emerald-500/30 bg-emerald-500/5 flex items-center justify-center animate-[pulse-line_2s_ease-in-out_infinite]">
-                <ChevronDown size={24} className="text-emerald-400" />
+              <div className="w-12 h-12 rounded-full border border-cyan-400/40 bg-white/[0.04] backdrop-blur-md flex items-center justify-center animate-[pulse-line_2s_ease-in-out_infinite] shadow-lg shadow-cyan-500/25">
+                <ChevronDown size={24} className="text-cyan-400" />
               </div>
             </div>
 
-            <p className="text-xs font-mono text-emerald-400 uppercase tracking-widest mb-3">{t.turning.date}</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-6 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+            <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">{t.turning.date}</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-6 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
               {t.turning.title}
             </h2>
-            <p className="text-neutral-400 text-lg leading-relaxed">{t.turning.text}</p>
+            <p className="text-neutral-300 text-lg leading-relaxed">{t.turning.text}</p>
           </div>
         </div>
 
         {/* --- AFTER AI --- */}
-        <div className="py-12 px-6 bg-white/[0.015] relative">
+        <div className="py-12 px-6 bg-white/[0.02] backdrop-blur-sm relative">
           <div className="max-w-3xl mx-auto">
             {/* Era label */}
             <div className="flex items-center gap-4 mb-4">
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-emerald-900/30" />
-              <span className="text-sm font-mono text-emerald-400/70 uppercase tracking-widest font-medium">{t.after.label}</span>
-              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-900/30" />
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-500/40" />
+              <span className="text-sm font-mono text-cyan-300 uppercase tracking-widest font-medium">{t.after.label}</span>
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-cyan-500/40" />
             </div>
-            <p className="text-center text-sm text-emerald-400/50 font-mono mb-6">{t.after.period}</p>
+            <p className="text-center text-sm text-cyan-400/80 font-mono mb-6">{t.after.period}</p>
 
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center">{t.after.title}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center text-white">{t.after.title}</h2>
 
             <div className="space-y-6 max-w-2xl mx-auto">
               {t.after.paragraphs.map((p, i) => (
-                <p key={i} className="text-neutral-400 leading-relaxed text-lg">{p}</p>
+                <p key={i} className="text-neutral-300 leading-relaxed text-lg">{p}</p>
               ))}
             </div>
 
             {/* New skills */}
             <div className="flex flex-wrap justify-center gap-2 mt-10">
               {t.after.skills.map((s, i) => (
-                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-emerald-500/15 text-emerald-400/70 bg-emerald-500/5">
+                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-cyan-500/40 text-cyan-300 bg-white/[0.05] backdrop-blur-md">
                   {s}
                 </span>
               ))}
@@ -426,7 +423,7 @@ export default function Home() {
                 {t.after.milestones.map((m, i) => {
                   const imgs = "images" in m ? (m.images as string[]) : "image" in m && m.image ? [m.image as string] : [];
                   return (
-                    <div key={i} className="p-6 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.03]">
+                    <div key={i} className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl shadow-sm">
                       <div className="flex flex-col md:flex-row gap-6">
                         {imgs.length > 0 && (
                           <div
@@ -446,7 +443,7 @@ export default function Home() {
                           </div>
                         )}
                         <div className="flex-1">
-                          <p className="text-xs font-mono text-emerald-400/60 mb-2">{m.date}</p>
+                          <p className="text-xs font-mono text-cyan-400 mb-2">{m.date}</p>
                           <p className="text-sm text-neutral-300 leading-relaxed">{m.text}</p>
                         </div>
                       </div>
@@ -461,15 +458,15 @@ export default function Home() {
         {/* --- WHAT I DO NOW --- */}
         <div className="py-12 px-6">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6 text-center">{t.now.title}</h2>
-            <p className="text-neutral-400 text-lg text-center max-w-2xl mx-auto mb-12 leading-relaxed">{t.now.text}</p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6 text-center text-white">{t.now.title}</h2>
+            <p className="text-neutral-300 text-lg text-center max-w-2xl mx-auto mb-12 leading-relaxed">{t.now.text}</p>
 
             <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
               {t.now.points.map((point, i) => (
-                <div key={i} className="p-5 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-emerald-500/15 transition-all duration-500">
+                <div key={i} className="p-5 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:bg-white/[0.08] hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15">
                   <div className="flex items-start gap-3">
-                    <span className="text-emerald-400 font-bold text-sm mt-0.5">{String(i + 1).padStart(2, "0")}</span>
-                    <p className="text-neutral-300 text-sm leading-relaxed">{point}</p>
+                    <span className="text-cyan-400 font-bold text-sm mt-0.5">{String(i + 1).padStart(2, "0")}</span>
+                    <p className="text-neutral-200 text-sm leading-relaxed">{point}</p>
                   </div>
                 </div>
               ))}
@@ -479,23 +476,23 @@ export default function Home() {
       </section>
 
       {/* ===== SKILLS ===== */}
-      {<section id="skills" className="py-12 px-6 bg-white/[0.015]">
+      {<section id="skills" className="py-12 px-6 bg-white/[0.02] backdrop-blur-sm">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 tracking-tight text-center">{t.skills.title}</h2>
+          <h2 className="text-3xl font-bold mb-12 tracking-tight text-center text-white">{t.skills.title}</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {t.skills.categories.map((cat, i) => (
               <div
                 key={i}
-                className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-emerald-500/15 transition-all duration-500"
+                className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:bg-white/[0.08] hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15"
               >
-                <h3 className="text-xs font-semibold uppercase tracking-wider mb-5 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                <h3 className="text-xs font-semibold uppercase tracking-wider mb-5 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
                   {cat.name}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {cat.items.map((skill, j) => (
                     <span
                       key={j}
-                      className="px-3 py-1.5 rounded-lg text-xs border border-white/[0.06] text-neutral-400 hover:border-emerald-500/25 hover:text-white hover:bg-emerald-500/5 transition-all duration-300 cursor-default"
+                      className="px-3 py-1.5 rounded-lg text-xs border border-white/[0.08] bg-white/[0.04] text-neutral-300 hover:border-cyan-400/60 hover:text-cyan-300 hover:bg-white/[0.08] transition-all duration-300 cursor-default"
                     >
                       {skill}
                     </span>
@@ -508,16 +505,15 @@ export default function Home() {
       </section>}
 
       {/* ===== CONTACT ===== */}
-      <section id="contact" className="py-12 px-6 bg-white/[0.015]">
+      <section id="contact" className="py-12 px-6 bg-white/[0.02] backdrop-blur-sm">
         <div className="max-w-3xl mx-auto text-center relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/8 rounded-full blur-[80px]" />
           <div className="relative">
-            <h2 className="text-3xl font-bold mb-4 tracking-tight">{t.contact.title}</h2>
-            <p className="text-neutral-400 mb-10 max-w-md mx-auto">{t.contact.text}</p>
+            <h2 className="text-3xl font-bold mb-4 tracking-tight text-white">{t.contact.title}</h2>
+            <p className="text-neutral-300 mb-10 max-w-md mx-auto">{t.contact.text}</p>
             <div className="flex items-center justify-center gap-4">
               <a
                 href={`mailto:${t.contact.email}`}
-                className="px-7 py-3.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30"
+                className="px-7 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/50"
               >
                 {t.contact.email}
               </a>
@@ -525,7 +521,7 @@ export default function Home() {
                 href="https://www.linkedin.com/in/jakub-chodakowski"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-7 py-3.5 rounded-full border border-white/10 text-neutral-300 hover:text-white hover:border-white/25 text-sm font-medium transition-all duration-300 hover:bg-white/[0.03]"
+                className="px-7 py-3.5 rounded-full border border-white/[0.08] bg-white/[0.04] backdrop-blur-md text-neutral-200 hover:text-white hover:border-cyan-500/40 hover:bg-white/[0.08] text-sm font-medium transition-all duration-300"
               >
                 {t.contact.linkedin}
               </a>
@@ -535,8 +531,8 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-white/[0.04]">
-        <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-neutral-600">
+      <footer className="py-8 px-6 border-t border-white/[0.06]">
+        <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-neutral-400">
           <span>{t.footer} &copy; {new Date().getFullYear()}</span>
           <span className="font-mono">jakubchodakowski.com</span>
         </div>
