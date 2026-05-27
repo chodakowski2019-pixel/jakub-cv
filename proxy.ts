@@ -21,7 +21,7 @@ function isValidMemberToken(token: string | null): boolean {
   return allowed.includes(token);
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
   if (!isGated(pathname)) return NextResponse.next();
