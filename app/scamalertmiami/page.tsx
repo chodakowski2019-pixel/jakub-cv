@@ -153,9 +153,9 @@ export default function ScamAlertMiami() {
       {/* ===== Top bar (scrolls away) ===== */}
       <nav className="relative z-50 backdrop-blur-xl bg-gradient-to-b from-[#0a1218]/85 via-[#0a1218]/55 to-transparent">
         <div className="relative max-w-5xl mx-auto flex items-center justify-between px-6 h-16">
-          <Link href="/" className="flex items-center gap-2 group relative z-10">
-            <span className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-cyan-500/25">JC</span>
-            <span className="text-xs text-neutral-400 group-hover:text-cyan-300 transition-colors hidden sm:inline">jakubchodakowski.com</span>
+          <Link href="/scamalertmiami" className="flex items-center gap-2 group relative z-10">
+            <span className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center text-base shadow-md shadow-red-500/30" aria-label="Scam Alert">🚨</span>
+            <span className="text-xs font-semibold text-red-300 group-hover:text-red-200 transition-colors hidden sm:inline uppercase tracking-widest">Scam Alert</span>
           </Link>
           <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-mono text-cyan-300 uppercase tracking-widest hidden md:inline pointer-events-none">Scam Alert Miami</span>
           <button
