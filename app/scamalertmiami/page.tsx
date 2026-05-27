@@ -43,21 +43,9 @@ const FEATURES = [
 ];
 
 const HOW_IT_WORKS = [
-  {
-    n: "01",
-    title: "Fill out the form",
-    text: "LinkedIn, company, what you do in Miami, why you want in. 90 seconds.",
-  },
-  {
-    n: "02",
-    title: "We vet you for 7 days",
-    text: "I personally review every application: active LinkedIn, real company, a real reason to be in this room.",
-  },
-  {
-    n: "03",
-    title: "You get a decision",
-    text: "Pass: you're in the group. Fail: we let you know and that's it. Nobody gets in without vetting.",
-  },
+  { n: "01", title: "Apply", meta: "90 seconds", text: "LinkedIn, company, why you want in." },
+  { n: "02", title: "Vetted by hand", meta: "7 days", text: "I review every applicant personally." },
+  { n: "03", title: "Get access", meta: "30 days", text: "Vet anyone, search the database, report what you saw." },
 ];
 
 const FAQS = [
@@ -157,16 +145,36 @@ export default function ScamAlertMiami() {
         <div className="absolute bottom-1/4 right-1/4 w-[36rem] h-[36rem] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="max-w-3xl mx-auto text-center relative">
-          <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-5">For founders & operators in Miami</p>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent leading-[1.05]">
-            Before you shake the hand of that Wynwood "investor", check if he hasn't done the same to three others.
+          <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-6">For founders &amp; operators in Miami</p>
+
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent leading-[1.02]">
+            Know who you&rsquo;re shaking hands with.
           </h1>
-          <p className="text-xl md:text-2xl font-medium mb-6 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
-            Closed people-vetting group for Miami. 7-day vetting on the way in.
+
+          <p className="text-lg md:text-xl font-medium mb-12 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+            Closed people-vetting group. Members only.
           </p>
-          <p className="text-neutral-300 max-w-xl mx-auto mb-10 leading-relaxed text-base">
-            Crypto "VCs" in the DMs. Off-market flips out of borrowed Lambos. A "partner" who needs your intro and your operator. Miami is their hunting ground, and you're fresh meat. Get in the group, pull up the database of reported names, read the weekly scam breakdown, and run through the Miami red flag list before you meet the fourth one.
+
+          {/* 3-step preview */}
+          <div className="flex items-center justify-center gap-2 sm:gap-4 mb-12 max-w-2xl mx-auto">
+            {HOW_IT_WORKS.map((step, i) => (
+              <div key={step.n} className="flex items-center flex-1">
+                <div className="flex-1 p-3 sm:p-4 rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl text-center">
+                  <p className="text-[10px] sm:text-xs font-mono text-cyan-400 mb-1">{step.n}</p>
+                  <p className="text-xs sm:text-sm font-semibold text-white leading-tight">{step.title}</p>
+                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-1">{step.meta}</p>
+                </div>
+                {i < HOW_IT_WORKS.length - 1 && (
+                  <div className="w-3 sm:w-6 h-px bg-gradient-to-r from-cyan-500/40 to-cyan-500/10 flex-shrink-0" />
+                )}
+              </div>
+            ))}
+          </div>
+
+          <p className="text-neutral-300 max-w-md mx-auto mb-10 leading-relaxed text-base">
+            Database of reported names. Weekly Miami scam breakdowns. Run anyone new through it before you wire, sign, or intro.
           </p>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
             <button
               onClick={reveal}
@@ -240,24 +248,36 @@ export default function ScamAlertMiami() {
       </section>
 
       {/* ===== HOW IT WORKS ===== */}
-      <section id="how" className="py-20 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
+      <section id="how" className="py-24 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-teal-500/12 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-5xl mx-auto relative">
-          <div className="text-center mb-14">
+          <div className="text-center mb-16">
             <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">How it works</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">We vet every applicant for 7 days.</h2>
-            <p className="text-neutral-300 max-w-2xl mx-auto leading-relaxed">
-              Open signup lets scammers walk right in and see who reported them. Without vetting, the group dies in a week. So we check every person by hand.
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">Vetted by hand. Every time.</h2>
+            <p className="text-neutral-300 max-w-xl mx-auto leading-relaxed">
+              Open signup would let scammers walk in and see who reported them. So we check every person by hand.
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-5">
-            {HOW_IT_WORKS.map((s) => (
-              <div key={s.n} className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl">
-                <p className="text-3xl font-bold text-cyan-400 mb-4 font-mono">{s.n}</p>
-                <h3 className="text-xl font-bold mb-3 text-white">{s.title}</h3>
-                <p className="text-neutral-300 text-sm leading-relaxed">{s.text}</p>
-              </div>
-            ))}
+
+          {/* Horizontal connected timeline */}
+          <div className="relative">
+            {/* desktop connecting line */}
+            <div className="hidden md:block absolute top-8 left-[16.66%] right-[16.66%] h-px bg-gradient-to-r from-cyan-500/10 via-cyan-500/40 to-cyan-500/10" aria-hidden />
+
+            <div className="grid md:grid-cols-3 gap-10 md:gap-6 relative">
+              {HOW_IT_WORKS.map((s) => (
+                <div key={s.n} className="text-center">
+                  {/* circular numbered node */}
+                  <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500/15 to-teal-500/10 border border-cyan-500/40 mb-5 backdrop-blur-xl">
+                    <span className="text-lg font-bold text-cyan-300 font-mono">{s.n}</span>
+                    <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-xl -z-10" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-1">{s.title}</h3>
+                  <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">{s.meta}</p>
+                  <p className="text-sm text-neutral-300 leading-relaxed max-w-[220px] mx-auto">{s.text}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
