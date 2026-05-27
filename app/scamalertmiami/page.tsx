@@ -150,10 +150,7 @@ export default function ScamAlertMiami() {
       {/* ===== Top bar (scrolls away) ===== */}
       <nav className="relative z-50 backdrop-blur-xl bg-gradient-to-b from-[#0a1218]/85 via-[#0a1218]/55 to-transparent">
         <div className="relative max-w-5xl mx-auto flex items-center justify-between px-6 h-16">
-          <Link href="/scamalertmiami" className="flex items-center gap-2 group relative z-10">
-            <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-base shadow-md shadow-white/20 ring-1 ring-white/40" aria-label="Scam Alert">🚨</span>
-            <span className="text-xs font-semibold text-red-300 group-hover:text-red-200 transition-colors hidden sm:inline uppercase tracking-widest">Scam Alert Miami</span>
-          </Link>
+          <span className="flex-1" aria-hidden />
           <button
             onClick={reveal}
             className="relative z-10 text-xs font-medium px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-md shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all hover:scale-[1.03]"
@@ -470,17 +467,6 @@ export default function ScamAlertMiami() {
       <section id="apply" ref={formRef} className="py-24 px-6 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40rem] h-[40rem] bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none" />
         <div className="max-w-2xl mx-auto relative">
-          {!showForm && !submitted && (
-            <div className="text-center">
-              <button
-                onClick={reveal}
-                className="inline-block px-10 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-base font-semibold transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60"
-              >
-                I want to join
-              </button>
-            </div>
-          )}
-
           {showForm && !submitted && (
             <div className="p-8 md:p-10 rounded-3xl border border-cyan-500/30 bg-white/[0.05] backdrop-blur-xl relative overflow-hidden shadow-xl shadow-cyan-500/15">
               <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/20 rounded-full blur-[80px] pointer-events-none" />
