@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { ChevronDown, CheckCircle2, Briefcase, Car, Coffee } from "lucide-react";
+import { ChevronDown, CheckCircle2, Briefcase, Car, Coffee, Search, Mail, Flag, AlertTriangle } from "lucide-react";
 
 const PROBLEMS = [
   {
@@ -25,28 +25,34 @@ const PROBLEMS = [
   },
 ];
 
-const FEATURES = [
+const FEATURE_DATABASE = {
+  label: "Database",
+  icon: Search,
+  title: "Search anyone in Miami.",
+  text: "Name, company, email, LinkedIn. Pull up reported incidents with context, evidence, and dates.",
+};
+
+const FEATURE_SIDE = [
   {
     label: "Newsletter",
-    title: "Weekly scam breakdowns",
-    text: "One fresh Miami scam dissected piece by piece: the hook, the trap, what the founder lost. Plus 2-3 new reports from group members.",
-  },
-  {
-    label: "Database",
-    title: "Searchable reports",
-    text: "Search a name, company, email, or LinkedIn. See if there are reported incidents, with context, evidence, and dates.",
+    icon: Mail,
+    title: "Weekly breakdowns",
+    text: "One fresh Miami scam dissected: hook, trap, outcome.",
   },
   {
     label: "Reports",
+    icon: Flag,
     title: "Report what you saw",
-    text: "Got burned, or watched someone else get burned? Submit it with evidence (screenshots, contracts, statements). Verified before publication.",
-  },
-  {
-    label: "Playbook",
-    title: "Miami red flag list",
-    text: "The patterns that hit founders here: fake VC connects, off-market real estate flips, crypto / Web3 partnerships, visa schemes.",
+    text: "Submit evidence. Verified before publication.",
   },
 ];
+
+const FEATURE_BOTTOM = {
+  label: "Playbook",
+  icon: AlertTriangle,
+  title: "Miami red flag list",
+  text: "Patterns that hit founders here: fake VC connects, off-market real estate flips, crypto / Web3 partnerships, visa schemes.",
+};
 
 const HOW_IT_WORKS = [
   { n: "01", title: "Apply", meta: "90 seconds", text: "LinkedIn, company, why you want in." },
@@ -267,24 +273,89 @@ export default function ScamAlertMiami() {
         </div>
       </section>
 
-      {/* ===== FEATURES ===== */}
-      <section className="py-20 px-6">
+      {/* ===== FEATURES (BENTO) ===== */}
+      <section className="py-24 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">What you get</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">What you get once you're vetted in.</h2>
-            <p className="text-neutral-300 max-w-2xl mx-auto leading-relaxed">
-              Protect your money, your reputation, and your operators from the people who target Miami because the money is loud and the vetting is lazy.
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">Once you&rsquo;re vetted in.</h2>
+            <p className="text-neutral-300 max-w-xl mx-auto leading-relaxed">
+              Protect your money, your reputation, and your operators from people who target Miami because the money is loud and the vetting is lazy.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 gap-5">
-            {FEATURES.map((f, i) => (
-              <div key={i} className="p-7 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:bg-white/[0.08] hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15">
-                <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">{f.label}</p>
-                <h3 className="text-2xl font-bold mb-3 text-white">{f.title}</h3>
-                <p className="text-neutral-300 leading-relaxed">{f.text}</p>
-              </div>
-            ))}
+
+          {/* Bento grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-3 gap-5">
+            {/* Database — big card, 2x2 */}
+            {(() => {
+              const DbIcon = FEATURE_DATABASE.icon;
+              return (
+                <div className="md:col-span-2 md:row-span-2 p-8 rounded-3xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15 relative overflow-hidden group">
+                  <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none" />
+                  <div className="relative flex flex-col h-full">
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
+                        <DbIcon size={22} className="text-cyan-400" />
+                      </div>
+                      <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest">{FEATURE_DATABASE.label}</p>
+                    </div>
+                    <h3 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{FEATURE_DATABASE.title}</h3>
+                    <p className="text-neutral-300 leading-relaxed mb-8">{FEATURE_DATABASE.text}</p>
+
+                    {/* Fake search bar mockup */}
+                    <div className="mt-auto p-4 rounded-xl border border-white/[0.08] bg-black/30 backdrop-blur-xl group-hover:border-cyan-500/40 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <Search size={16} className="text-neutral-500 flex-shrink-0" />
+                        <span className="text-sm text-neutral-500 font-mono">Search name, company, LinkedIn URL...</span>
+                        <span className="ml-auto text-[10px] font-mono text-cyan-400/60 uppercase tracking-widest hidden sm:inline">members only</span>
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-white/[0.05] flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />
+                        <span className="text-xs text-neutral-400 font-mono truncate">3 reported incidents in last 30 days</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Side cards (Newsletter + Reports) */}
+            {FEATURE_SIDE.map((f, i) => {
+              const Icon = f.icon;
+              return (
+                <div key={i} className="p-6 rounded-3xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15">
+                  <div className="w-10 h-10 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center mb-4">
+                    <Icon size={18} className="text-cyan-400" />
+                  </div>
+                  <p className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-2">{f.label}</p>
+                  <h3 className="text-xl font-bold text-white mb-2">{f.title}</h3>
+                  <p className="text-sm text-neutral-300 leading-relaxed">{f.text}</p>
+                </div>
+              );
+            })}
+
+            {/* Bottom wide card (Red flags) */}
+            {(() => {
+              const Icon = FEATURE_BOTTOM.icon;
+              return (
+                <div className="md:col-span-3 p-7 rounded-3xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15">
+                  <div className="flex flex-col md:flex-row md:items-center gap-5">
+                    <div className="flex items-center gap-3 md:flex-shrink-0">
+                      <div className="w-10 h-10 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
+                        <Icon size={18} className="text-cyan-400" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-1">{FEATURE_BOTTOM.label}</p>
+                        <h3 className="text-xl font-bold text-white">{FEATURE_BOTTOM.title}</h3>
+                      </div>
+                    </div>
+                    <p className="text-sm text-neutral-300 leading-relaxed md:ml-6 md:border-l md:border-white/[0.08] md:pl-6">
+                      {FEATURE_BOTTOM.text}
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       </section>
