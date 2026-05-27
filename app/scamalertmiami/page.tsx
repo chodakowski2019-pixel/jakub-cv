@@ -470,26 +470,14 @@ export default function ScamAlertMiami() {
       <section id="apply" ref={formRef} className="py-24 px-6 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40rem] h-[40rem] bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none" />
         <div className="max-w-2xl mx-auto relative">
-          {!submitted && (
-            <div className="text-center mb-12">
-              <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-4">The choice is simple</p>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent leading-tight">
-                You really want to wait until your first scam teaches you this?
-              </h2>
-              <p className="text-neutral-300 mb-8 max-w-xl mx-auto leading-relaxed">
-                Every week without vetting is another week where some "investor" slides into your DMs. The average scam here runs $25K-$80K. Apply once, get vetted, and have the database in your pocket before anyone hands you a business card.
-              </p>
-              <p className="text-cyan-300 text-sm font-medium max-w-lg mx-auto">
-                Either we get you in the group before your first scam, or you meet these people on your own dime.
-              </p>
-              {!showForm && (
-                <button
-                  onClick={reveal}
-                  className="mt-10 inline-block px-10 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-base font-semibold transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60"
-                >
-                  I want to join
-                </button>
-              )}
+          {!showForm && !submitted && (
+            <div className="text-center">
+              <button
+                onClick={reveal}
+                className="inline-block px-10 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-base font-semibold transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60"
+              >
+                I want to join
+              </button>
             </div>
           )}
 
