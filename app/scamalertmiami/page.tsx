@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { ChevronDown, CheckCircle2, Briefcase, Car, Coffee, Search, Mail, Flag, AlertTriangle } from "lucide-react";
+import { ChevronDown, CheckCircle2, Briefcase, Car, Coffee, Search, Mail, Flag, AlertTriangle, X } from "lucide-react";
 
 const PROBLEMS = [
   {
@@ -102,10 +102,26 @@ export default function ScamAlertMiami() {
 
   function reveal() {
     setShowForm(true);
-    setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
   }
+
+  function closeModal() {
+    setShowForm(false);
+    setError("");
+  }
+
+  useEffect(() => {
+    if (!showForm || submitted) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeModal();
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [showForm, submitted]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -465,67 +481,6 @@ export default function ScamAlertMiami() {
             </div>
           )}
 
-          {showForm && !submitted && (
-            <div className="p-8 md:p-10 rounded-3xl border border-cyan-500/30 bg-white/[0.05] backdrop-blur-xl relative overflow-hidden shadow-xl shadow-cyan-500/15">
-              <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/20 rounded-full blur-[80px] pointer-events-none" />
-              <div className="relative">
-                <p className="text-xs font-mono text-cyan-300 uppercase tracking-widest mb-3">Application</p>
-                <h2 className="text-2xl md:text-3xl font-bold mb-3 text-white">Apply to Scam Alert Miami</h2>
-                <p className="text-neutral-300 mb-8 text-sm leading-relaxed">
-                  We review every application by hand over 7 days. You'll get an answer at the email you provided, regardless of the outcome.
-                </p>
-
-                <form onSubmit={submit} className="space-y-4">
-                  <Field label="Full name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
-                  <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
-                  <Field label="Company / project" value={form.company} onChange={(v) => setForm({ ...form, company: v })} required />
-                  <Field label="What do you do in Miami?" textarea value={form.role} onChange={(v) => setForm({ ...form, role: v })} required />
-                  <Field label="Why do you want to join?" textarea value={form.why} onChange={(v) => setForm({ ...form, why: v })} required />
-
-                  <div className="pt-2 space-y-3">
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={consentPrivacy}
-                        onChange={(e) => setConsentPrivacy(e.target.checked)}
-                        required
-                        className="mt-1 w-4 h-4 rounded border border-white/20 bg-white/5 accent-cyan-500 cursor-pointer flex-shrink-0"
-                      />
-                      <span className="text-xs text-neutral-300 leading-relaxed group-hover:text-neutral-200 transition-colors">
-                        I've read and agree to the <Link href="/scamalertmiami/terms-of-service" target="_blank" className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2">Terms of Service</Link> and <Link href="/scamalertmiami/privacy-policy" target="_blank" className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2">Privacy Policy</Link>. <span className="text-cyan-400">*</span>
-                      </span>
-                    </label>
-
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={consentNewsletter}
-                        onChange={(e) => setConsentNewsletter(e.target.checked)}
-                        required
-                        className="mt-1 w-4 h-4 rounded border border-white/20 bg-white/5 accent-cyan-500 cursor-pointer flex-shrink-0"
-                      />
-                      <span className="text-xs text-neutral-300 leading-relaxed group-hover:text-neutral-200 transition-colors">
-                        I agree to receive the Scam Alert Miami newsletter (weekly Miami scam breakdowns + member reports). Opt-out anytime via "unsubscribe" in any email. <span className="text-cyan-400">*</span>
-                      </span>
-                    </label>
-                  </div>
-
-                  {error && (
-                    <p className="text-sm text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3">{error}</p>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={submitting || !consentPrivacy || !consentNewsletter}
-                    className="w-full px-7 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  >
-                    {submitting ? "Sending..." : "Submit application"}
-                  </button>
-                </form>
-              </div>
-            </div>
-          )}
-
           {submitted && (
             <div className="p-10 rounded-3xl border border-cyan-500/40 bg-white/[0.05] backdrop-blur-xl text-center relative overflow-hidden shadow-xl shadow-cyan-500/20">
               <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/25 rounded-full blur-[80px] pointer-events-none" />
@@ -595,6 +550,87 @@ export default function ScamAlertMiami() {
           </div>
         </div>
       </footer>
+
+      {/* ===== APPLICATION MODAL ===== */}
+      {showForm && !submitted && (
+        <div
+          className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center px-4 py-6 sm:py-10 bg-black/70 backdrop-blur-sm overflow-y-auto"
+          onClick={closeModal}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="apply-modal-title"
+        >
+          <div
+            className="relative w-full max-w-2xl my-auto p-6 sm:p-8 md:p-10 rounded-3xl border border-cyan-500/30 bg-[#0a1218] shadow-2xl shadow-cyan-500/20"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/20 rounded-full blur-[80px] pointer-events-none" />
+            <button
+              type="button"
+              onClick={closeModal}
+              aria-label="Close"
+              className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <X size={18} />
+            </button>
+            <div className="relative">
+              <p className="text-xs font-mono text-cyan-300 uppercase tracking-widest mb-3">Application</p>
+              <h2 id="apply-modal-title" className="text-2xl md:text-3xl font-bold mb-3 text-white">Apply to Scam Alert Miami</h2>
+              <p className="text-neutral-300 mb-8 text-sm leading-relaxed">
+                We review every application by hand over 7 days. You'll get an answer at the email you provided, regardless of the outcome.
+              </p>
+
+              <form onSubmit={submit} className="space-y-4">
+                <Field label="Full name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
+                <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
+                <Field label="Company / project" value={form.company} onChange={(v) => setForm({ ...form, company: v })} required />
+                <Field label="What do you do in Miami?" textarea value={form.role} onChange={(v) => setForm({ ...form, role: v })} required />
+                <Field label="Why do you want to join?" textarea value={form.why} onChange={(v) => setForm({ ...form, why: v })} required />
+
+                <div className="pt-2 space-y-3">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={consentPrivacy}
+                      onChange={(e) => setConsentPrivacy(e.target.checked)}
+                      required
+                      className="mt-1 w-4 h-4 rounded border border-white/20 bg-white/5 accent-cyan-500 cursor-pointer flex-shrink-0"
+                    />
+                    <span className="text-xs text-neutral-300 leading-relaxed group-hover:text-neutral-200 transition-colors">
+                      I've read and agree to the <Link href="/scamalertmiami/terms-of-service" target="_blank" className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2">Terms of Service</Link> and <Link href="/scamalertmiami/privacy-policy" target="_blank" className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2">Privacy Policy</Link>. <span className="text-cyan-400">*</span>
+                    </span>
+                  </label>
+
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={consentNewsletter}
+                      onChange={(e) => setConsentNewsletter(e.target.checked)}
+                      required
+                      className="mt-1 w-4 h-4 rounded border border-white/20 bg-white/5 accent-cyan-500 cursor-pointer flex-shrink-0"
+                    />
+                    <span className="text-xs text-neutral-300 leading-relaxed group-hover:text-neutral-200 transition-colors">
+                      I agree to receive the Scam Alert Miami newsletter (weekly Miami scam breakdowns + member reports). Opt-out anytime via "unsubscribe" in any email. <span className="text-cyan-400">*</span>
+                    </span>
+                  </label>
+                </div>
+
+                {error && (
+                  <p className="text-sm text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3">{error}</p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={submitting || !consentPrivacy || !consentNewsletter}
+                  className="w-full px-7 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                >
+                  {submitting ? "Sending..." : "Submit application"}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
