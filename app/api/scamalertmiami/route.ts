@@ -3,7 +3,11 @@ import { Resend } from "resend";
 
 export async function POST(req: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const { name, email, linkedin, company, role, why } = await req.json();
+  const { name, email, linkedin, company, role, why, consentNewsletter, consentPrivacy } = await req.json();
+
+  if (!consentPrivacy) {
+    return NextResponse.json({ ok: false, error: "privacy_consent_required" }, { status: 400 });
+  }
 
   const esc = (s: string) =>
     String(s ?? "")
@@ -11,8 +15,14 @@ export async function POST(req: NextRequest) {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
 
+  const timestamp = new Date().toISOString();
+  const newsletterBadge = consentNewsletter
+    ? `<span style="background:#0891b2;color:white;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600">NEWSLETTER: TAK — dodaj do Brevo</span>`
+    : `<span style="background:#525252;color:white;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600">Newsletter: nie</span>`;
+
   const html = `
     <h2>Scam Alert Miami — nowa aplikacja</h2>
+    <p>${newsletterBadge}</p>
     <p><b>Imię i nazwisko:</b> ${esc(name)}</p>
     <p><b>Email:</b> ${esc(email)}</p>
     <p><b>LinkedIn:</b> <a href="${esc(linkedin)}">${esc(linkedin)}</a></p>
@@ -22,7 +32,11 @@ export async function POST(req: NextRequest) {
     <h3>Dlaczego chce dołączyć</h3>
     <p>${esc(why).replace(/\n/g, "<br/>")}</p>
     <hr/>
-    <p style="color:#888;font-size:12px">Sprawdź LinkedIn + firmę. Odpowiedz w ciągu 7 dni.</p>
+    <p style="color:#888;font-size:12px">
+      Sprawdź LinkedIn + firmę. Odpowiedz w ciągu 7 dni.<br/>
+      Zgoda na Politykę prywatności: TAK (${esc(timestamp)})<br/>
+      Zgoda na newsletter: ${consentNewsletter ? "TAK" : "nie"} (${esc(timestamp)})
+    </p>
   `;
 
   try {
