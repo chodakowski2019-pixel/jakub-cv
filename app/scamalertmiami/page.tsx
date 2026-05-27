@@ -147,21 +147,8 @@ export default function ScamAlertMiami() {
         </div>
       </div>
 
-      {/* ===== Top bar (scrolls away) ===== */}
-      <nav className="relative z-50 backdrop-blur-xl bg-gradient-to-b from-[#0a1218]/85 via-[#0a1218]/55 to-transparent">
-        <div className="relative max-w-5xl mx-auto flex items-center justify-between px-6 h-16">
-          <span className="flex-1" aria-hidden />
-          <button
-            onClick={reveal}
-            className="relative z-10 text-xs font-medium px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-md shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all hover:scale-[1.03]"
-          >
-            I want to join
-          </button>
-        </div>
-      </nav>
-
       {/* ===== HERO ===== */}
-      <section className="min-h-screen flex items-center justify-center px-6 pt-14 relative overflow-hidden">
+      <section className="min-h-screen flex items-center justify-center px-6 pt-8 relative overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-[40rem] h-[40rem] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-[36rem] h-[36rem] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
 
