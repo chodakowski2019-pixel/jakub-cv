@@ -134,8 +134,8 @@ export default function ScamAlertMiami() {
 
   return (
     <main className="min-h-screen">
-      {/* ===== Members count banner (non-sticky, scrolls away) ===== */}
-      <div className="relative z-[60] bg-gradient-to-r from-cyan-500/15 via-cyan-500/10 to-teal-500/15 backdrop-blur-xl border-b border-cyan-500/25">
+      {/* ===== Members count banner (sticky on top) ===== */}
+      <div className="sticky top-0 left-0 right-0 z-[60] bg-gradient-to-r from-cyan-500/15 via-cyan-500/10 to-teal-500/15 backdrop-blur-xl border-b border-cyan-500/25">
         <div className="max-w-5xl mx-auto px-6 py-2 flex items-center justify-center gap-2.5 text-xs">
           <span className="relative flex h-2 w-2" aria-hidden>
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -150,8 +150,8 @@ export default function ScamAlertMiami() {
         </div>
       </div>
 
-      {/* ===== Top bar ===== */}
-      <nav className="sticky top-0 left-0 right-0 z-50 backdrop-blur-xl bg-gradient-to-b from-[#0a1218]/85 via-[#0a1218]/55 to-transparent">
+      {/* ===== Top bar (scrolls away) ===== */}
+      <nav className="relative z-50 backdrop-blur-xl bg-gradient-to-b from-[#0a1218]/85 via-[#0a1218]/55 to-transparent">
         <div className="relative max-w-5xl mx-auto flex items-center justify-between px-6 h-16">
           <Link href="/" className="flex items-center gap-2 group relative z-10">
             <span className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-cyan-500/25">JC</span>
