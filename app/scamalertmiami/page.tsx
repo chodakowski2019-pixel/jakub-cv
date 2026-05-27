@@ -179,22 +179,6 @@ export default function ScamAlertMiami() {
             Vetted before you join
           </p>
 
-          {/* 3-step preview */}
-          <div className="flex items-center justify-center gap-2 sm:gap-4 mb-12 max-w-2xl mx-auto">
-            {HOW_IT_WORKS.map((step, i) => (
-              <div key={step.n} className="flex items-center flex-1">
-                <div className="flex-1 p-3 sm:p-4 rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl text-center">
-                  <p className="text-[10px] sm:text-xs font-mono text-cyan-400 mb-1">{step.n}</p>
-                  <p className="text-xs sm:text-sm font-semibold text-white leading-tight">{step.title}</p>
-                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-1">{step.meta}</p>
-                </div>
-                {i < HOW_IT_WORKS.length - 1 && (
-                  <div className="w-3 sm:w-6 h-px bg-gradient-to-r from-cyan-500/40 to-cyan-500/10 flex-shrink-0" />
-                )}
-              </div>
-            ))}
-          </div>
-
           <ul className="text-neutral-200 max-w-md mx-auto mb-10 space-y-3 text-left text-sm md:text-base">
             {[
               "Database of reported names",
