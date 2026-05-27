@@ -28,8 +28,8 @@ const PROBLEMS = [
 const FEATURE_DATABASE = {
   label: "Database",
   icon: Search,
-  title: "Search anyone in Miami.",
-  text: "Name, company, email, LinkedIn. Pull up reported incidents with context, evidence, and dates.",
+  title: "Search anyone in Miami",
+  text: "Name, company, email. Pull up reported incidents with context, evidence, and dates.",
 };
 
 const FEATURE_SIDE = [
@@ -43,7 +43,7 @@ const FEATURE_SIDE = [
     label: "Reports",
     icon: Flag,
     title: "Report what you saw",
-    text: "Submit evidence. Verified before publication.",
+    text: "Submit evidence. Warn others. Verified before publication.",
   },
 ];
 
@@ -55,8 +55,8 @@ const FEATURE_BOTTOM = {
 };
 
 const HOW_IT_WORKS = [
-  { n: "01", title: "Apply", meta: "90 seconds", text: "LinkedIn, company, why you want in." },
-  { n: "02", title: "Vetted by hand", meta: "7 days", text: "I review every applicant personally." },
+  { n: "01", title: "Apply", meta: "90 seconds", text: "Company, why you want to join." },
+  { n: "02", title: "Vetting", meta: "7 days", text: "I review every applicant personally." },
   { n: "03", title: "Get access", meta: "30 days", text: "Vet anyone, search the database, report what you saw." },
 ];
 
@@ -93,7 +93,6 @@ export default function ScamAlertMiami() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    linkedin: "",
     company: "",
     role: "",
     why: "",
@@ -142,10 +141,8 @@ export default function ScamAlertMiami() {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
           </span>
           <span className="text-neutral-200 leading-none">
-            <strong className="text-white font-semibold">+32 vetted founders</strong>
-            <span className="text-neutral-500 mx-1.5">·</span>
-            <span className="hidden sm:inline">inside the group right now</span>
-            <span className="sm:hidden text-neutral-400">in the group</span>
+            <strong className="text-white font-semibold">+32 vetted entrepreneurs</strong>
+            <span className="text-neutral-400"> in the group</span>
           </span>
         </div>
       </div>
@@ -162,7 +159,7 @@ export default function ScamAlertMiami() {
             onClick={reveal}
             className="relative z-10 text-xs font-medium px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-md shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all hover:scale-[1.03]"
           >
-            I want in
+            I want to join
           </button>
         </div>
       </nav>
@@ -173,14 +170,14 @@ export default function ScamAlertMiami() {
         <div className="absolute bottom-1/4 right-1/4 w-[36rem] h-[36rem] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="max-w-3xl mx-auto text-center relative">
-          <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-6">For founders &amp; operators in Miami</p>
+          <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-6">For entrepreneurs in Miami</p>
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent leading-[1.02]">
-            Know who you&rsquo;re shaking hands with.
+            Know who you&rsquo;re shaking hands with
           </h1>
 
           <p className="text-lg md:text-xl font-medium mb-12 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
-            Closed people-vetting group. Members only.
+            Vetted before you join
           </p>
 
           {/* 3-step preview */}
@@ -199,16 +196,27 @@ export default function ScamAlertMiami() {
             ))}
           </div>
 
-          <p className="text-neutral-300 max-w-md mx-auto mb-10 leading-relaxed text-base">
-            Database of reported names. Weekly Miami scam breakdowns. Run anyone new through it before you wire, sign, or intro.
-          </p>
+          <ul className="text-neutral-200 max-w-md mx-auto mb-10 space-y-3 text-left text-sm md:text-base">
+            {[
+              "Database of reported names",
+              "Weekly Miami scam breakdowns",
+              "Run anyone new through it before you wire, sign, or intro",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center">
+                  <CheckCircle2 size={12} className="text-cyan-300" />
+                </span>
+                <span className="leading-relaxed">{item}</span>
+              </li>
+            ))}
+          </ul>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
             <button
               onClick={reveal}
               className="px-8 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60"
             >
-              I want in
+              I want to join
             </button>
             <a
               href="#how"
@@ -235,12 +243,13 @@ export default function ScamAlertMiami() {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-6">The pattern</p>
             <blockquote className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-[1.05] mb-8">
-              &ldquo;I knew something{" "}
+              &ldquo;I knew something<br />
               <span className="bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">was off.</span>
               &rdquo;
             </blockquote>
             <p className="text-neutral-300 leading-relaxed text-lg">
-              Every founder who got burned says it. After the wire. After the intro. Three plays running right now in Miami:
+              Every founder who got burned says it.<br />
+              After the wire. After the intro. Three plays running right now in Miami:
             </p>
           </div>
 
@@ -294,9 +303,9 @@ export default function ScamAlertMiami() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">What you get</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">Once you&rsquo;re vetted in.</h2>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">After vetting</h2>
             <p className="text-neutral-300 max-w-xl mx-auto leading-relaxed">
-              Protect your money, your reputation, and your operators from people who target Miami because the money is loud and the vetting is lazy.
+              Protect your money, your reputation, and your operators from Miami scammers.
             </p>
           </div>
 
@@ -322,7 +331,7 @@ export default function ScamAlertMiami() {
                     <div className="mt-auto p-4 rounded-xl border border-white/[0.08] bg-black/30 backdrop-blur-xl group-hover:border-cyan-500/40 transition-colors">
                       <div className="flex items-center gap-3">
                         <Search size={16} className="text-neutral-500 flex-shrink-0" />
-                        <span className="text-sm text-neutral-500 font-mono">Search name, company, LinkedIn URL...</span>
+                        <span className="text-sm text-neutral-500 font-mono">Search name, company, email...</span>
                         <span className="ml-auto text-[10px] font-mono text-cyan-400/60 uppercase tracking-widest hidden sm:inline">members only</span>
                       </div>
                       <div className="mt-3 pt-3 border-t border-white/[0.05] flex items-center gap-2">
@@ -394,7 +403,7 @@ export default function ScamAlertMiami() {
         <div className="max-w-5xl mx-auto relative">
           <div className="text-center mb-20">
             <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">How it works</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">Vetted by hand. Every time.</h2>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">Vetted by hand. Every time</h2>
             <p className="text-neutral-300 max-w-xl mx-auto leading-relaxed">
               Open signup would let scammers walk in and see who reported them. So we check every person by hand.
             </p>
@@ -462,8 +471,8 @@ export default function ScamAlertMiami() {
       <section id="apply" ref={formRef} className="py-24 px-6 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40rem] h-[40rem] bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none" />
         <div className="max-w-2xl mx-auto relative">
-          {!showForm && !submitted && (
-            <div className="text-center">
+          {!submitted && (
+            <div className="text-center mb-12">
               <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-4">The choice is simple</p>
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent leading-tight">
                 You really want to wait until your first scam teaches you this?
@@ -471,15 +480,17 @@ export default function ScamAlertMiami() {
               <p className="text-neutral-300 mb-8 max-w-xl mx-auto leading-relaxed">
                 Every week without vetting is another week where some "investor" slides into your DMs. The average scam here runs $25K-$80K. Apply once, get vetted, and have the database in your pocket before anyone hands you a business card.
               </p>
-              <p className="text-cyan-300 text-sm font-medium mb-10 max-w-lg mx-auto">
+              <p className="text-cyan-300 text-sm font-medium max-w-lg mx-auto">
                 Either we get you in the group before your first scam, or you meet these people on your own dime.
               </p>
-              <button
-                onClick={reveal}
-                className="inline-block px-10 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-base font-semibold transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60"
-              >
-                I want in
-              </button>
+              {!showForm && (
+                <button
+                  onClick={reveal}
+                  className="mt-10 inline-block px-10 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-base font-semibold transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60"
+                >
+                  I want to join
+                </button>
+              )}
             </div>
           )}
 
@@ -496,10 +507,9 @@ export default function ScamAlertMiami() {
                 <form onSubmit={submit} className="space-y-4">
                   <Field label="Full name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
                   <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
-                  <Field label="LinkedIn URL" type="url" placeholder="https://linkedin.com/in/..." value={form.linkedin} onChange={(v) => setForm({ ...form, linkedin: v })} required />
                   <Field label="Company / project" value={form.company} onChange={(v) => setForm({ ...form, company: v })} required />
                   <Field label="What do you do in Miami?" textarea value={form.role} onChange={(v) => setForm({ ...form, role: v })} required />
-                  <Field label="Why should we let you in?" textarea value={form.why} onChange={(v) => setForm({ ...form, why: v })} required />
+                  <Field label="Why do you want to join?" textarea value={form.why} onChange={(v) => setForm({ ...form, why: v })} required />
 
                   <div className="pt-2 space-y-3">
                     <label className="flex items-start gap-3 cursor-pointer group">
@@ -565,7 +575,7 @@ export default function ScamAlertMiami() {
         <div className="max-w-3xl mx-auto relative">
           <div className="text-center mb-12">
             <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">FAQ</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">Questions you should be asking.</h2>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">Questions you should be asking</h2>
           </div>
           <div className="space-y-4">
             {FAQS.map((f, i) => (

@@ -3,7 +3,7 @@ import { Resend } from "resend";
 
 export async function POST(req: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const { name, email, linkedin, company, role, why, consentNewsletter, consentPrivacy } = await req.json();
+  const { name, email, company, role, why, consentNewsletter, consentPrivacy } = await req.json();
 
   if (!consentPrivacy) {
     return NextResponse.json({ ok: false, error: "privacy_consent_required" }, { status: 400 });
@@ -25,7 +25,6 @@ export async function POST(req: NextRequest) {
     <p>${newsletterBadge}</p>
     <p><b>Imię i nazwisko:</b> ${esc(name)}</p>
     <p><b>Email:</b> ${esc(email)}</p>
-    <p><b>LinkedIn:</b> <a href="${esc(linkedin)}">${esc(linkedin)}</a></p>
     <p><b>Firma / projekt:</b> ${esc(company)}</p>
     <h3>Czym się zajmuje w Miami</h3>
     <p>${esc(role).replace(/\n/g, "<br/>")}</p>
@@ -33,7 +32,7 @@ export async function POST(req: NextRequest) {
     <p>${esc(why).replace(/\n/g, "<br/>")}</p>
     <hr/>
     <p style="color:#888;font-size:12px">
-      Sprawdź LinkedIn + firmę. Odpowiedz w ciągu 7 dni.<br/>
+      Sprawdź firmę + kontekst. Odpowiedz w ciągu 7 dni.<br/>
       Zgoda na Politykę prywatności: TAK (${esc(timestamp)})<br/>
       Zgoda na newsletter: ${consentNewsletter ? "TAK" : "nie"} (${esc(timestamp)})
     </p>
@@ -91,7 +90,7 @@ export async function POST(req: NextRequest) {
             <td width="60" valign="top" style="width:60px; padding-right:20px;"><table role="presentation" width="60" cellpadding="0" cellspacing="0" border="0"><tr><td width="60" height="60" style="width:60px; height:60px; background-color:#f5f5f7; border-radius:12px; font-size:22px; color:#1d1d1f; font-weight:700; text-align:center; vertical-align:middle; letter-spacing:-0.5px;">01</td></tr></table></td>
             <td valign="top">
               <h3 style="margin:0 0 6px; font-size:18px; line-height:1.3; color:#1d1d1f; font-weight:600; letter-spacing:-0.3px;">I review every application personally</h3>
-              <p style="margin:0; font-size:15px; line-height:1.5; color:#424245;">LinkedIn, company, your context. No automated vetting.</p>
+              <p style="margin:0; font-size:15px; line-height:1.5; color:#424245;">Company, context, why you want to join. No automated vetting.</p>
             </td>
           </tr></table>
         </td></tr>
