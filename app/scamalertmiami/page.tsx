@@ -2,19 +2,25 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { ChevronDown, CheckCircle2 } from "lucide-react";
+import { ChevronDown, CheckCircle2, Briefcase, Car, Coffee } from "lucide-react";
 
 const PROBLEMS = [
   {
+    icon: Briefcase,
     title: "Crypto VC in your DMs",
-    text: "Polished LinkedIn. \"Family office\" in the bio. Wants 30 minutes to talk about your \"exciting round.\" Two weeks later, $40K is gone and the LinkedIn is deleted.",
+    hint: "Polished LinkedIn. \"Family office\" in the bio.",
+    text: "Polished LinkedIn. \"Family office\" in the bio. Wants 30 minutes to talk about your \"exciting round.\" Two weeks later, the cash is gone and the LinkedIn is deleted.",
   },
   {
+    icon: Car,
     title: "Luxury broker out of Wynwood",
+    hint: "Borrowed Lambo. Off-market deals. Cleared deposits.",
     text: "Shows up to your event in a borrowed Lambo. Pitches off-market deals. The deposit clears. The property was never his. Welcome to Miami real estate.",
   },
   {
+    icon: Coffee,
     title: "The Pura Vida \"founder\"",
+    hint: "Coffee. Big vision. Bigger ask.",
     text: "Coffee in Wynwood. Big vision. Bigger ask. Wants a check, an intro, and your operator. Nothing adds up. By the time you catch on, your reputation already vouched for him.",
   },
 ];
@@ -198,29 +204,65 @@ export default function ScamAlertMiami() {
       </section>
 
       {/* ===== PROBLEM ===== */}
-      <section id="problem" className="py-20 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
+      <section id="problem" className="py-28 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
         <div className="absolute -top-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
+
         <div className="max-w-5xl mx-auto relative">
-          <div className="text-center mb-14">
-            <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">The Pattern</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">Three scenes that played out in Miami this week.</h2>
-            <p className="text-neutral-300 max-w-2xl mx-auto leading-relaxed">
-              Different costumes. Same play. Every founder who lost a five-figure check said the same thing: <span className="text-cyan-300">"I knew something was off."</span>
+          {/* Big dramatic quote header */}
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-6">The pattern</p>
+            <blockquote className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-[1.05] mb-8">
+              &ldquo;I knew something{" "}
+              <span className="bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">was off.</span>
+              &rdquo;
+            </blockquote>
+            <p className="text-neutral-300 leading-relaxed text-lg">
+              Every founder who got burned says it. After the wire. After the intro. Three plays running right now in Miami:
             </p>
           </div>
+
+          {/* 3 compact click-to-expand cards */}
           <div className="grid md:grid-cols-3 gap-5">
-            {PROBLEMS.map((p, i) => (
-              <div key={i} className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:bg-white/[0.08] hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15">
-                <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">#{String(i + 1).padStart(2, "0")}</p>
-                <h3 className="text-xl font-bold mb-3 text-white">{p.title}</h3>
-                <p className="text-neutral-300 text-sm leading-relaxed">{p.text}</p>
-              </div>
-            ))}
+            {PROBLEMS.map((p, i) => {
+              const Icon = p.icon;
+              return (
+                <details
+                  key={i}
+                  className="group p-6 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:bg-white/[0.08] hover:border-cyan-500/40 transition-all duration-500 open:border-cyan-500/40 open:bg-white/[0.08]"
+                >
+                  <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
+                        <Icon size={18} className="text-cyan-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-1">
+                          #{String(i + 1).padStart(2, "0")}
+                        </p>
+                        <h3 className="text-lg font-bold text-white mb-1.5">{p.title}</h3>
+                        <p className="text-sm text-neutral-400 leading-relaxed">{p.hint}</p>
+                      </div>
+                      <ChevronDown
+                        size={18}
+                        className="text-cyan-400 flex-shrink-0 mt-1 transition-transform group-open:rotate-180"
+                      />
+                    </div>
+                  </summary>
+                  <p className="text-sm text-neutral-300 leading-relaxed mt-5 pt-5 border-t border-white/[0.08]">
+                    {p.text}
+                  </p>
+                </details>
+              );
+            })}
           </div>
 
-          <div className="mt-14 max-w-3xl mx-auto text-center space-y-4 text-neutral-300 leading-relaxed">
-            <p>Then the second layer kicks in. Your bank asks about the wire. Your partner finds out your intro cost him. The same scammer comes back, new face, to your buddy and says, "Jakub sent me."</p>
-            <p className="text-white font-medium">The first loss is money. The second loss is a reputation you can't wire back.</p>
+          {/* Punchline */}
+          <div className="mt-16 max-w-2xl mx-auto text-center">
+            <p className="text-xl md:text-2xl text-white font-semibold leading-snug">
+              The first loss is money.<br />
+              <span className="text-neutral-400 font-medium">The second is a reputation you can&rsquo;t wire back.</span>
+            </p>
           </div>
         </div>
       </section>
