@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, X as XIcon } from "lucide-react";
@@ -22,6 +22,14 @@ const emptyPerson = (): Person => ({
 });
 
 export default function CheckPeople() {
+  return (
+    <Suspense fallback={null}>
+      <CheckPeopleContent />
+    </Suspense>
+  );
+}
+
+function CheckPeopleContent() {
   const searchParams = useSearchParams();
   const memberToken = searchParams?.get("t") ?? "";
 

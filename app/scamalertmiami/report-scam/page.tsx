@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, X } from "lucide-react";
@@ -36,6 +36,14 @@ function fileToBase64(file: File): Promise<string> {
 }
 
 export default function ReportScam() {
+  return (
+    <Suspense fallback={null}>
+      <ReportScamContent />
+    </Suspense>
+  );
+}
+
+function ReportScamContent() {
   const searchParams = useSearchParams();
   const memberToken = searchParams?.get("t") ?? "";
 
