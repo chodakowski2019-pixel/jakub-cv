@@ -217,7 +217,7 @@ export default function ScamAlertMiami() {
       </section>
 
       {/* ===== PROBLEM ===== */}
-      <section id="problem" className="py-28 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
+      <section id="problem" className="py-16 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
         <div className="absolute -top-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
 
@@ -282,7 +282,7 @@ export default function ScamAlertMiami() {
       </section>
 
       {/* ===== FEATURES (BENTO) ===== */}
-      <section className="py-24 px-6">
+      <section className="py-14 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">What you get</p>
@@ -369,7 +369,7 @@ export default function ScamAlertMiami() {
       </section>
 
       {/* ===== HOW IT WORKS ===== */}
-      <section id="how" className="py-28 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
+      <section id="how" className="py-16 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
         {/* Dotted background pattern (Resend-style) */}
         <div
           className="absolute inset-0 opacity-[0.18] pointer-events-none"
@@ -384,7 +384,7 @@ export default function ScamAlertMiami() {
         <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="max-w-5xl mx-auto relative">
-          <div className="text-center mb-20">
+          <div className="text-center mb-12">
             <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">How it works</p>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">Vetted by hand. Every time</h2>
             <p className="text-neutral-300 max-w-xl mx-auto leading-relaxed">
@@ -451,9 +451,20 @@ export default function ScamAlertMiami() {
       </section>
 
       {/* ===== APPLICATION FORM ===== */}
-      <section id="apply" ref={formRef} className="py-24 px-6 relative overflow-hidden">
+      <section id="apply" ref={formRef} className="py-14 px-6 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40rem] h-[40rem] bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none" />
         <div className="max-w-2xl mx-auto relative">
+          {!showForm && !submitted && (
+            <div className="text-center">
+              <button
+                onClick={reveal}
+                className="inline-block px-10 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-base font-semibold transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60"
+              >
+                I want to join
+              </button>
+            </div>
+          )}
+
           {showForm && !submitted && (
             <div className="p-8 md:p-10 rounded-3xl border border-cyan-500/30 bg-white/[0.05] backdrop-blur-xl relative overflow-hidden shadow-xl shadow-cyan-500/15">
               <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/20 rounded-full blur-[80px] pointer-events-none" />
@@ -490,10 +501,11 @@ export default function ScamAlertMiami() {
                         type="checkbox"
                         checked={consentNewsletter}
                         onChange={(e) => setConsentNewsletter(e.target.checked)}
+                        required
                         className="mt-1 w-4 h-4 rounded border border-white/20 bg-white/5 accent-cyan-500 cursor-pointer flex-shrink-0"
                       />
                       <span className="text-xs text-neutral-300 leading-relaxed group-hover:text-neutral-200 transition-colors">
-                        I'd like to receive the Scam Alert Miami newsletter (weekly Miami scam breakdowns + member reports). Optional, opt-out anytime via "unsubscribe" in any email.
+                        I agree to receive the Scam Alert Miami newsletter (weekly Miami scam breakdowns + member reports). Opt-out anytime via "unsubscribe" in any email. <span className="text-cyan-400">*</span>
                       </span>
                     </label>
                   </div>
@@ -504,7 +516,7 @@ export default function ScamAlertMiami() {
 
                   <button
                     type="submit"
-                    disabled={submitting || !consentPrivacy}
+                    disabled={submitting || !consentPrivacy || !consentNewsletter}
                     className="w-full px-7 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     {submitting ? "Sending..." : "Submit application"}
@@ -530,7 +542,7 @@ export default function ScamAlertMiami() {
       </section>
 
       {/* ===== FAQ ===== */}
-      <section className="py-20 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
+      <section className="py-14 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
         <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-3xl mx-auto relative">
           <div className="text-center mb-12">
