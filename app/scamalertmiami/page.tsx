@@ -134,8 +134,24 @@ export default function ScamAlertMiami() {
 
   return (
     <main className="min-h-screen">
+      {/* ===== Members count banner ===== */}
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-cyan-500/15 via-cyan-500/10 to-teal-500/15 backdrop-blur-xl border-b border-cyan-500/25">
+        <div className="max-w-5xl mx-auto px-6 py-2 flex items-center justify-center gap-2.5 text-xs">
+          <span className="relative flex h-2 w-2" aria-hidden>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+          </span>
+          <span className="text-neutral-200 leading-none">
+            <strong className="text-white font-semibold">32 vetted founders</strong>
+            <span className="text-neutral-500 mx-1.5">·</span>
+            <span className="hidden sm:inline">inside the group right now</span>
+            <span className="sm:hidden text-neutral-400">in the group</span>
+          </span>
+        </div>
+      </div>
+
       {/* ===== Top bar ===== */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-gradient-to-b from-[#0a1218]/85 via-[#0a1218]/55 to-transparent">
+      <nav className="fixed top-9 left-0 right-0 z-50 backdrop-blur-xl bg-gradient-to-b from-[#0a1218]/85 via-[#0a1218]/55 to-transparent">
         <div className="relative max-w-5xl mx-auto flex items-center justify-between px-6 h-16">
           <Link href="/" className="flex items-center gap-2 group relative z-10">
             <span className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-cyan-500/25">JC</span>
@@ -152,7 +168,7 @@ export default function ScamAlertMiami() {
       </nav>
 
       {/* ===== HERO ===== */}
-      <section className="min-h-screen flex items-center justify-center px-6 pt-14 relative overflow-hidden">
+      <section className="min-h-screen flex items-center justify-center px-6 pt-24 relative overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-[40rem] h-[40rem] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-[36rem] h-[36rem] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
 
