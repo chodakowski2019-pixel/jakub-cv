@@ -110,7 +110,7 @@ export default function ScamAlertMiami() {
   }
 
   useEffect(() => {
-    if (!showForm || submitted) return;
+    if (!showForm) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeModal();
     };
@@ -121,7 +121,7 @@ export default function ScamAlertMiami() {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
     };
-  }, [showForm, submitted]);
+  }, [showForm]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -536,7 +536,7 @@ export default function ScamAlertMiami() {
       </footer>
 
       {/* ===== APPLICATION MODAL ===== */}
-      {showForm && !submitted && (
+      {showForm && (
         <div
           className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center px-4 py-6 sm:py-10 bg-black/70 backdrop-blur-sm overflow-y-auto"
           onClick={closeModal}
@@ -557,6 +557,22 @@ export default function ScamAlertMiami() {
             >
               <X size={18} />
             </button>
+            {submitted ? (
+              <div className="relative text-center py-6">
+                <CheckCircle2 size={56} className="mx-auto text-cyan-400 mb-5" />
+                <h2 id="apply-modal-title" className="text-2xl md:text-3xl font-bold mb-4 text-white">Thanks. Application received</h2>
+                <p className="text-neutral-300 leading-relaxed max-w-md mx-auto mb-8">
+                  We'll get back to you on the email you provided within 7 days after verification, regardless of the outcome.
+                </p>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="inline-block px-8 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
             <div className="relative">
               <p className="text-xs font-mono text-cyan-300 uppercase tracking-widest mb-3">Application</p>
               <h2 id="apply-modal-title" className="text-2xl md:text-3xl font-bold mb-3 text-white">Apply to Scam Alert Miami</h2>
@@ -612,6 +628,7 @@ export default function ScamAlertMiami() {
                 </button>
               </form>
             </div>
+            )}
           </div>
         </div>
       )}
