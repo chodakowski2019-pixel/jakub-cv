@@ -429,17 +429,6 @@ export default function ScamAlertMiami() {
               aria-hidden
             />
 
-            {/* Mobile vertical line: faint base + filled portion that grows with scroll */}
-            <div
-              className="md:hidden absolute top-10 bottom-10 left-1/2 -translate-x-1/2 w-px bg-cyan-500/15 pointer-events-none -z-10"
-              aria-hidden
-            />
-            <div
-              className="md:hidden absolute top-10 bottom-10 left-1/2 w-px bg-gradient-to-b from-cyan-400/70 to-teal-400/70 origin-top pointer-events-none -z-10 transition-transform duration-500 ease-out will-change-transform"
-              style={{ transform: `translateX(-50%) scaleY(${timelineProgress})` }}
-              aria-hidden
-            />
-
             <div className="grid md:grid-cols-3 gap-12 md:gap-6 relative">
               {HOW_IT_WORKS.map((s, i) => {
                 const activeStep = Math.min(HOW_IT_WORKS.length - 1, Math.floor(timelineProgress * HOW_IT_WORKS.length));
