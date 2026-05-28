@@ -8,8 +8,8 @@ const PROBLEMS = [
   {
     icon: Briefcase,
     title: "Crypto VC in your DMs",
-    hint: "Polished LinkedIn. \"Family office\" in the bio.",
-    text: "Polished LinkedIn. \"Family office\" in the bio. Wants 30 minutes to talk about your \"exciting round.\" Two weeks later, the cash is gone and the LinkedIn is deleted.",
+    hint: "Slick LinkedIn. \"Family office\" in the bio.",
+    text: "Slick LinkedIn. \"Family office\" in the bio. Wants 30 minutes to talk about your \"exciting round.\" Two weeks later, the cash is gone and the profile is deleted.",
   },
   {
     icon: Car,
@@ -88,9 +88,7 @@ export default function ScamAlertMiami() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
-  const [timelineProgress, setTimelineProgress] = useState(0);
   const formRef = useRef<HTMLDivElement>(null);
-  const timelineRef = useRef<HTMLDivElement>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -124,33 +122,6 @@ export default function ScamAlertMiami() {
       document.body.style.overflow = prevOverflow;
     };
   }, [showForm]);
-
-  useEffect(() => {
-    const el = timelineRef.current;
-    if (!el) return;
-    let ticking = false;
-    const update = () => {
-      const rect = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const traveled = vh * 0.55 - rect.top;
-      const total = Math.max(1, rect.height);
-      const p = Math.max(0, Math.min(1, traveled / total));
-      setTimelineProgress(p);
-      ticking = false;
-    };
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(update);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    update();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -212,7 +183,7 @@ export default function ScamAlertMiami() {
             {[
               "Database of reported names",
               "Weekly Miami scam breakdowns",
-              "Run anyone new through it before you wire, sign, or intro",
+              "Run anyone new through it before you do business",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3">
                 <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center">
@@ -261,7 +232,8 @@ export default function ScamAlertMiami() {
             </blockquote>
             <p className="text-neutral-300 leading-relaxed text-lg">
               Every founder who got burned says it.<br />
-              After the wire. After the intro. Three plays running right now in Miami:
+              After the wire. After the intro.<br />
+              Three plays running right now in Miami:
             </p>
           </div>
 
@@ -270,32 +242,33 @@ export default function ScamAlertMiami() {
             {PROBLEMS.map((p, i) => {
               const Icon = p.icon;
               return (
-                <details
-                  key={i}
-                  className="group p-6 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:bg-white/[0.08] hover:border-cyan-500/40 transition-all duration-500 open:border-cyan-500/40 open:bg-white/[0.08]"
-                >
-                  <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
-                        <Icon size={18} className="text-cyan-400" />
+                <Reveal key={i} delay={i * 120}>
+                  <details
+                    className="group p-6 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:bg-white/[0.08] hover:border-cyan-500/40 transition-all duration-500 open:border-cyan-500/40 open:bg-white/[0.08]"
+                  >
+                    <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
+                          <Icon size={18} className="text-cyan-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-1">
+                            #{String(i + 1).padStart(2, "0")}
+                          </p>
+                          <h3 className="text-lg font-bold text-white mb-1.5">{p.title}</h3>
+                          <p className="text-sm text-neutral-400 leading-relaxed">{p.hint}</p>
+                        </div>
+                        <ChevronDown
+                          size={18}
+                          className="text-cyan-400 flex-shrink-0 mt-1 transition-transform group-open:rotate-180"
+                        />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-1">
-                          #{String(i + 1).padStart(2, "0")}
-                        </p>
-                        <h3 className="text-lg font-bold text-white mb-1.5">{p.title}</h3>
-                        <p className="text-sm text-neutral-400 leading-relaxed">{p.hint}</p>
-                      </div>
-                      <ChevronDown
-                        size={18}
-                        className="text-cyan-400 flex-shrink-0 mt-1 transition-transform group-open:rotate-180"
-                      />
-                    </div>
-                  </summary>
-                  <p className="text-sm text-neutral-300 leading-relaxed mt-5 pt-5 border-t border-white/[0.08]">
-                    {p.text}
-                  </p>
-                </details>
+                    </summary>
+                    <p className="text-sm text-neutral-300 leading-relaxed mt-5 pt-5 border-t border-white/[0.08]">
+                      {p.text}
+                    </p>
+                  </details>
+                </Reveal>
               );
             })}
           </div>
@@ -327,32 +300,34 @@ export default function ScamAlertMiami() {
             {(() => {
               const DbIcon = FEATURE_DATABASE.icon;
               return (
-                <div className="md:col-span-2 md:row-span-2 p-8 rounded-3xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15 relative overflow-hidden group">
-                  <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none" />
-                  <div className="relative flex flex-col h-full">
-                    <div className="flex items-center gap-3 mb-5">
-                      <div className="w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
-                        <DbIcon size={22} className="text-cyan-400" />
+                <Reveal className="md:col-span-2 md:row-span-2">
+                  <div className="p-8 h-full rounded-3xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15 relative overflow-hidden group">
+                    <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none" />
+                    <div className="relative flex flex-col h-full">
+                      <div className="flex items-center gap-3 mb-5">
+                        <div className="w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
+                          <DbIcon size={22} className="text-cyan-400" />
+                        </div>
+                        <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest">{FEATURE_DATABASE.label}</p>
                       </div>
-                      <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest">{FEATURE_DATABASE.label}</p>
-                    </div>
-                    <h3 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{FEATURE_DATABASE.title}</h3>
-                    <p className="text-neutral-300 leading-relaxed mb-8">{FEATURE_DATABASE.text}</p>
+                      <h3 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{FEATURE_DATABASE.title}</h3>
+                      <p className="text-neutral-300 leading-relaxed mb-8">{FEATURE_DATABASE.text}</p>
 
-                    {/* Fake search bar mockup */}
-                    <div className="mt-auto p-4 rounded-xl border border-white/[0.08] bg-black/30 backdrop-blur-xl group-hover:border-cyan-500/40 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <Search size={16} className="text-neutral-500 flex-shrink-0" />
-                        <span className="text-sm text-neutral-500 font-mono">Search name, company, email...</span>
-                        <span className="ml-auto text-[10px] font-mono text-cyan-400/60 uppercase tracking-widest hidden sm:inline">members only</span>
-                      </div>
-                      <div className="mt-3 pt-3 border-t border-white/[0.05] flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />
-                        <span className="text-xs text-neutral-400 font-mono truncate">3 reported incidents in last 30 days</span>
+                      {/* Fake search bar mockup */}
+                      <div className="mt-auto p-4 rounded-xl border border-white/[0.08] bg-black/30 backdrop-blur-xl group-hover:border-cyan-500/40 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <Search size={16} className="text-neutral-500 flex-shrink-0" />
+                          <span className="text-sm text-neutral-500 font-mono">Search name, company, email...</span>
+                          <span className="ml-auto text-[10px] font-mono text-cyan-400/60 uppercase tracking-widest hidden sm:inline">members only</span>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-white/[0.05] flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />
+                          <span className="text-xs text-neutral-400 font-mono truncate">3 reported incidents in last 30 days</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </Reveal>
               );
             })()}
 
@@ -360,14 +335,16 @@ export default function ScamAlertMiami() {
             {FEATURE_SIDE.map((f, i) => {
               const Icon = f.icon;
               return (
-                <div key={i} className="p-6 rounded-3xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15">
-                  <div className="w-10 h-10 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center mb-4">
-                    <Icon size={18} className="text-cyan-400" />
+                <Reveal key={i} delay={120 + i * 120}>
+                  <div className="p-6 h-full rounded-3xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15">
+                    <div className="w-10 h-10 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center mb-4">
+                      <Icon size={18} className="text-cyan-400" />
+                    </div>
+                    <p className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-2">{f.label}</p>
+                    <h3 className="text-xl font-bold text-white mb-2">{f.title}</h3>
+                    <p className="text-sm text-neutral-300 leading-relaxed">{f.text}</p>
                   </div>
-                  <p className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-2">{f.label}</p>
-                  <h3 className="text-xl font-bold text-white mb-2">{f.title}</h3>
-                  <p className="text-sm text-neutral-300 leading-relaxed">{f.text}</p>
-                </div>
+                </Reveal>
               );
             })}
 
@@ -375,22 +352,24 @@ export default function ScamAlertMiami() {
             {(() => {
               const Icon = FEATURE_BOTTOM.icon;
               return (
-                <div className="md:col-span-3 p-7 rounded-3xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15">
-                  <div className="flex flex-col md:flex-row md:items-center gap-5">
-                    <div className="flex items-center gap-3 md:flex-shrink-0">
-                      <div className="w-10 h-10 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
-                        <Icon size={18} className="text-cyan-400" />
+                <Reveal className="md:col-span-3" delay={360}>
+                  <div className="p-7 rounded-3xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15">
+                    <div className="flex flex-col md:flex-row md:items-center gap-5">
+                      <div className="flex items-center gap-3 md:flex-shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center">
+                          <Icon size={18} className="text-cyan-400" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-1">{FEATURE_BOTTOM.label}</p>
+                          <h3 className="text-xl font-bold text-white">{FEATURE_BOTTOM.title}</h3>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-1">{FEATURE_BOTTOM.label}</p>
-                        <h3 className="text-xl font-bold text-white">{FEATURE_BOTTOM.title}</h3>
-                      </div>
+                      <p className="text-sm text-neutral-300 leading-relaxed md:ml-6 md:border-l md:border-white/[0.08] md:pl-6">
+                        {FEATURE_BOTTOM.text}
+                      </p>
                     </div>
-                    <p className="text-sm text-neutral-300 leading-relaxed md:ml-6 md:border-l md:border-white/[0.08] md:pl-6">
-                      {FEATURE_BOTTOM.text}
-                    </p>
                   </div>
-                </div>
+                </Reveal>
               );
             })()}
           </div>
@@ -422,7 +401,7 @@ export default function ScamAlertMiami() {
           </div>
 
           {/* Horizontal connected timeline */}
-          <div ref={timelineRef} className="relative">
+          <div className="relative">
             {/* Dotted connecting line (desktop only) */}
             <div
               className="hidden md:block absolute top-10 left-[16.66%] right-[16.66%] border-t-2 border-dashed border-cyan-500/30 z-0"
@@ -430,54 +409,18 @@ export default function ScamAlertMiami() {
             />
 
             <div className="grid md:grid-cols-3 gap-12 md:gap-6 relative">
-              {HOW_IT_WORKS.map((s, i) => {
-                const activeStep = Math.min(HOW_IT_WORKS.length - 1, Math.floor(timelineProgress * HOW_IT_WORKS.length));
-                const isActive = i === activeStep;
-                return (
-                  <div
-                    key={s.n}
-                    className={`text-center group relative transition-opacity duration-500 md:opacity-100 ${isActive ? "opacity-100" : "opacity-30"}`}
-                  >
-                    {/* Pulse ring for active step */}
-                    {isActive && (
-                      <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 w-24 h-24 rounded-2xl border-2 border-cyan-400/30 animate-pulse" aria-hidden />
-                    )}
-
-                    {/* Large node */}
-                    <div
-                      className={`relative inline-flex items-center justify-center w-20 h-20 rounded-2xl backdrop-blur-xl mb-6 transition-all duration-500 group-hover:scale-110 ${
-                        isActive
-                          ? "bg-gradient-to-br from-cyan-500/40 to-teal-500/25 border border-cyan-400/70 shadow-lg shadow-cyan-500/40"
-                          : "bg-gradient-to-br from-cyan-500/15 to-teal-500/8 border border-cyan-500/30 shadow-md shadow-cyan-500/10"
-                      }`}
-                    >
-                      <span className={`text-xl font-bold font-mono ${isActive ? "text-cyan-100" : "text-cyan-400"}`}>
-                        {s.n}
-                      </span>
-                      {/* Outer glow */}
-                      <div
-                        className={`absolute inset-0 rounded-2xl bg-cyan-500/30 blur-2xl -z-10 transition-opacity ${
-                          isActive ? "opacity-90" : "opacity-30"
-                        } group-hover:opacity-100`}
-                        aria-hidden
-                      />
-                    </div>
-
-                    {/* Status pill above title (active only) */}
-                    {isActive && (
-                      <div className="mb-2">
-                        <span className="inline-block px-2.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-400/40 text-[10px] font-mono text-cyan-300 uppercase tracking-wider">
-                          Start here
-                        </span>
-                      </div>
-                    )}
-
-                    <h3 className="text-xl font-bold text-white mb-1">{s.title}</h3>
-                    <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">{s.meta}</p>
-                    <p className="text-sm text-neutral-300 leading-relaxed max-w-[220px] mx-auto">{s.text}</p>
+              {HOW_IT_WORKS.map((s, i) => (
+                <Reveal key={s.n} delay={i * 120} className="text-center group relative">
+                  {/* Large node */}
+                  <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-2xl backdrop-blur-xl mb-6 transition-transform duration-500 group-hover:scale-110 bg-gradient-to-br from-cyan-500/30 to-teal-500/15 border border-cyan-400/60 shadow-lg shadow-cyan-500/25">
+                    <span className="text-xl font-bold font-mono text-cyan-100">{s.n}</span>
+                    <div className="absolute inset-0 rounded-2xl bg-cyan-500/25 blur-2xl -z-10 opacity-60 group-hover:opacity-100 transition-opacity" aria-hidden />
                   </div>
-                );
-              })}
+
+                  <h3 className="text-xl font-bold text-white mb-1">{s.title}</h3>
+                  <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest">{s.meta}</p>
+                </Reveal>
+              ))}
             </div>
           </div>
         </div>
@@ -666,6 +609,49 @@ export default function ScamAlertMiami() {
         </div>
       )}
     </main>
+  );
+}
+
+function Reveal({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof window !== "undefined" && !("IntersectionObserver" in window)) {
+      setInView(true);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return (
+    <div
+      ref={ref}
+      className={`transition-[opacity,transform] duration-700 ease-out will-change-[opacity,transform] motion-reduce:transition-none ${className} ${
+        inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+      }`}
+      style={{ transitionDelay: inView ? `${delay}ms` : "0ms" }}
+    >
+      {children}
+    </div>
   );
 }
 
