@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { ChevronDown, CheckCircle2, Briefcase, Car, Coffee, Search, Mail, Flag, AlertTriangle, X, ArrowRight } from "lucide-react";
+import { ChevronDown, CheckCircle2, Briefcase, Car, Coffee, Search, Mail, Flag, AlertTriangle, X } from "lucide-react";
 
 const PROBLEMS = [
   {
@@ -431,11 +431,11 @@ export default function ScamAlertMiami() {
 
             {/* Mobile vertical line: faint base + filled portion that grows with scroll */}
             <div
-              className="md:hidden absolute top-10 bottom-10 left-1/2 -translate-x-1/2 w-0.5 bg-cyan-500/15 pointer-events-none z-0"
+              className="md:hidden absolute top-10 bottom-10 left-1/2 -translate-x-1/2 w-px bg-cyan-500/15 pointer-events-none -z-10"
               aria-hidden
             />
             <div
-              className="md:hidden absolute top-10 bottom-10 left-1/2 w-0.5 bg-gradient-to-b from-cyan-400 to-teal-400 origin-top pointer-events-none z-0 shadow-[0_0_8px_rgba(34,211,238,0.5)]"
+              className="md:hidden absolute top-10 bottom-10 left-1/2 w-px bg-gradient-to-b from-cyan-400/70 to-teal-400/70 origin-top pointer-events-none -z-10 transition-transform duration-500 ease-out will-change-transform"
               style={{ transform: `translateX(-50%) scaleY(${timelineProgress})` }}
               aria-hidden
             />
@@ -578,30 +578,6 @@ export default function ScamAlertMiami() {
           </div>
         </div>
       </footer>
-
-      {/* ===== STICKY JOIN BUTTON ===== */}
-      {!showForm && !submitted && (
-        <div
-          className="fixed left-1/2 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0 z-[55] pointer-events-none"
-          style={{ bottom: "max(1rem, env(safe-area-inset-bottom))" }}
-        >
-          <div className="absolute inset-0 rounded-full bg-cyan-400/30 blur-2xl pointer-events-none" aria-hidden />
-          <button
-            type="button"
-            onClick={reveal}
-            className="relative pointer-events-auto inline-flex items-center gap-2.5 pl-6 pr-4 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 via-cyan-400 to-teal-400 text-white text-sm font-semibold tracking-wide shadow-2xl shadow-cyan-500/50 ring-1 ring-cyan-300/50 hover:scale-[1.04] active:scale-[0.97] transition-transform"
-          >
-            <span className="relative flex h-2 w-2" aria-hidden>
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-70"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-            </span>
-            <span>Join the group</span>
-            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white/20">
-              <ArrowRight size={14} strokeWidth={2.5} />
-            </span>
-          </button>
-        </div>
-      )}
 
       {/* ===== APPLICATION MODAL ===== */}
       {showForm && (
