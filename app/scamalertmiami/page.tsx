@@ -386,7 +386,7 @@ export default function ScamAlertMiami() {
         <div className="max-w-5xl mx-auto relative">
           <div className="text-center mb-12">
             <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">How it works</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">Vetted by hand. Every time</h2>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5 text-white">Vetted by hand<br />Every time</h2>
             <p className="text-neutral-300 max-w-xl mx-auto leading-relaxed">
               Open signup would let scammers walk in and see who reported them. So we check every person by hand.
             </p>
