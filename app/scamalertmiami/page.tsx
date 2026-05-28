@@ -88,7 +88,9 @@ export default function ScamAlertMiami() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [timelineProgress, setTimelineProgress] = useState(0);
   const formRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -122,6 +124,33 @@ export default function ScamAlertMiami() {
       document.body.style.overflow = prevOverflow;
     };
   }, [showForm]);
+
+  useEffect(() => {
+    const el = timelineRef.current;
+    if (!el) return;
+    let ticking = false;
+    const update = () => {
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const traveled = vh * 0.55 - rect.top;
+      const total = Math.max(1, rect.height);
+      const p = Math.max(0, Math.min(1, traveled / total));
+      setTimelineProgress(p);
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -393,12 +422,25 @@ export default function ScamAlertMiami() {
           </div>
 
           {/* Horizontal connected timeline */}
-          <div className="relative">
+          <div ref={timelineRef} className="relative">
             {/* Dotted connecting line (desktop only) */}
             <div
               className="hidden md:block absolute top-10 left-[16.66%] right-[16.66%] border-t-2 border-dashed border-cyan-500/30 z-0"
               aria-hidden
             />
+
+            {/* Mobile vertical line + scroll-driven arrow */}
+            <div
+              className="md:hidden absolute top-10 bottom-10 left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-cyan-500/10 via-cyan-500/30 to-cyan-500/10 pointer-events-none z-0"
+              aria-hidden
+            />
+            <div
+              className="md:hidden absolute left-1/2 z-20 pointer-events-none drop-shadow-[0_0_10px_rgba(255,255,255,0.55)]"
+              style={{ top: `${timelineProgress * 100}%`, transform: "translate(-50%, -50%)" }}
+              aria-hidden
+            >
+              <ChevronDown size={36} strokeWidth={2.5} className="text-white" />
+            </div>
 
             <div className="grid md:grid-cols-3 gap-12 md:gap-6 relative">
               {HOW_IT_WORKS.map((s, i) => {
@@ -534,6 +576,17 @@ export default function ScamAlertMiami() {
           </div>
         </div>
       </footer>
+
+      {/* ===== STICKY JOIN BUTTON ===== */}
+      {!showForm && !submitted && (
+        <button
+          type="button"
+          onClick={reveal}
+          className="fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-[55] px-6 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold shadow-xl shadow-cyan-500/40 hover:shadow-cyan-500/60 hover:scale-[1.04] active:scale-[0.97] transition-all"
+        >
+          Join
+        </button>
+      )}
 
       {/* ===== APPLICATION MODAL ===== */}
       {showForm && (
