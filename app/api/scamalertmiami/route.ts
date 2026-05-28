@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY);
@@ -7,6 +8,20 @@ export async function POST(req: NextRequest) {
 
   if (!consentPrivacy) {
     return NextResponse.json({ ok: false, error: "privacy_consent_required" }, { status: 400 });
+  }
+
+  try {
+    await supabaseAdmin.from("scamalertmiami_applications").insert({
+      name,
+      email,
+      company,
+      role,
+      why,
+      consent_newsletter: !!consentNewsletter,
+      consent_privacy: !!consentPrivacy,
+    });
+  } catch (err) {
+    console.error("supabase insert failed", err);
   }
 
   const esc = (s: string) =>
