@@ -538,7 +538,7 @@ export default function ScamAlertMiami() {
       {/* ===== APPLICATION MODAL ===== */}
       {showForm && (
         <div
-          className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center px-4 py-6 sm:py-10 bg-black/70 backdrop-blur-sm overflow-y-auto"
+          className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center px-4 py-6 sm:py-10 bg-black/70 backdrop-blur-sm overflow-y-auto overflow-x-hidden overscroll-contain touch-pan-y"
           onClick={closeModal}
           role="dialog"
           aria-modal="true"
