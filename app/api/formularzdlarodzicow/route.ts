@@ -1,11 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const data = await req.json();
 
   const { imie, telefon, email, godziny, kontakt, wiekDziecka } = data;
+
+  // Kopia w bazie (best-effort, nie blokuje wysyłki maila)
+  try {
+    await supabaseAdmin.from("szkolenia_ai_dzieci").insert({
+      imie,
+      telefon,
+      email,
+      godziny,
+      kontakt,
+      wiek_dziecka: wiekDziecka,
+    });
+  } catch (err) {
+    console.error("supabase insert failed", err);
+  }
 
   const html = `
     <h2>Nowe zgłoszenie — Szkolenia z AI dla dzieci i nastolatków</h2>
@@ -20,8 +35,9 @@ export async function POST(req: NextRequest) {
 
   try {
     await resend.emails.send({
-      from: "Szkolenia AI <onboarding@resend.dev>",
+      from: "Szkolenia AI <hello@jakubchodakowski.com>",
       to: "hello@jakubchodakowski.com",
+      replyTo: email,
       subject: `Szkolenia AI dla dzieci — ${imie} (${telefon})`,
       html,
     });
