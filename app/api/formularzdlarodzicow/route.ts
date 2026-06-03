@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await resend.emails.send({
-      from: "Szkolenia AI <formularz@jakubchodakowski.com>",
+      from: "Szkolenia AI <hello@jakubchodakowski.com>",
       to: "chodakowski2019@gmail.com",
       replyTo: email,
       subject: `Szkolenia AI dla dzieci — ${imie} (${telefon})`,
