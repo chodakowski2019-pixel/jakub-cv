@@ -23,6 +23,20 @@ function fmt(sec: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
+// Logowanie zdarzeń lejka (best-effort, keepalive żeby przetrwało przekierowanie)
+function logEvent(type: "page_view" | "generate_click" | "pay_click", jobId?: string) {
+  try {
+    fetch("/api/transkrypcje/event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, jobId }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    /* ignoruj */
+  }
+}
+
 function VideoCard({ id, title }: { id: string; title: string | null }) {
   return (
     <div className="flex items-center gap-3 p-3 rounded-xl border border-white/[0.1] bg-white/[0.04] mb-5 text-left">
@@ -126,6 +140,13 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
     };
   }, [phase, videoId]);
 
+  // wejście na stronę narzędzia (pomijamy tryb twórcy i powroty ze Stripe)
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get("creator") === "1" || p.get("success") || p.get("canceled")) return;
+    logEvent("page_view");
+  }, []);
+
   const promoActive = remaining > 0;
   const priceLabel = promoActive ? "4,97 zł" : "15,00 zł";
 
@@ -135,6 +156,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
       setError("Wklej link do filmu z YouTube.");
       return;
     }
+    logEvent("generate_click");
     setStepIdx(0);
     setLoadingProgress(0);
     setLoadingLeft(14);
@@ -172,6 +194,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
 
   function handlePay() {
     if (!jobId) return;
+    logEvent("pay_click", jobId);
     setPhase("redirecting");
     // promo aktywne -> link 4,97; po wygaśnięciu licznika -> link 15 zł
     const link = remaining > 0 ? PAY_LINK_PROMO : PAY_LINK_FULL;
