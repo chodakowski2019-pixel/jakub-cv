@@ -164,7 +164,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
               Zaoszczędź <span className="text-cyan-300">90% czasu</span> i otrzymaj:
             </p>
             <ul className="inline-block text-left space-y-1.5 mb-4">
-              {["pełną transkrypcję", "streszczenie", "najważniejsze punkty filmu"].map((item) => (
+              {["najważniejsze punkty filmu", "streszczenie", "pełną transkrypcję"].map((item) => (
                 <li key={item} className="flex items-center gap-2.5">
                   <span className="text-cyan-400">✓</span>
                   {item}
