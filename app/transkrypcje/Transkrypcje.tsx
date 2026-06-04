@@ -45,8 +45,13 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
   const [stepIdx, setStepIdx] = useState(0);
   const [remaining, setRemaining] = useState(PROMO_WINDOW);
   const [creatorMode, setCreatorMode] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingLeft, setLoadingLeft] = useState(10);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const autoRan = useRef(false);
+  const jobIdRef = useRef<string | null>(null);
+
+  const LOADING_DURATION = 10000; // 10 s paska postępu
 
   // odczyt parametrów wejściowych (deep-link z komentarza, powrót ze Stripe, tryb twórcy)
   useEffect(() => {
@@ -88,6 +93,22 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
     return () => clearInterval(id);
   }, [phase]);
 
+  // pasek postępu + odliczanie 10 s; po czasie (gdy jobId gotowy) -> paywall
+  useEffect(() => {
+    if (phase !== "loading") return;
+    const start = Date.now();
+    const id = setInterval(() => {
+      const elapsed = Date.now() - start;
+      setLoadingProgress(Math.min(100, (elapsed / LOADING_DURATION) * 100));
+      setLoadingLeft(Math.max(0, Math.ceil((LOADING_DURATION - elapsed) / 1000)));
+      if (elapsed >= LOADING_DURATION && jobIdRef.current) {
+        clearInterval(id);
+        setPhase("paywall");
+      }
+    }, 100);
+    return () => clearInterval(id);
+  }, [phase]);
+
   // licznik promocji — deadline w localStorage (per film), żeby refresh nie resetował
   useEffect(() => {
     if (phase !== "paywall") return;
@@ -114,9 +135,11 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
       setError("Wklej link do filmu z YouTube.");
       return;
     }
-    setPhase("loading");
     setStepIdx(0);
-    const startedAt = Date.now();
+    setLoadingProgress(0);
+    setLoadingLeft(10);
+    jobIdRef.current = null;
+    setPhase("loading");
     try {
       const res = await fetch("/api/transkrypcje/start", {
         method: "POST",
@@ -125,11 +148,9 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Coś poszło nie tak.");
-      const wait = Math.max(0, 5000 - (Date.now() - startedAt));
-      setTimeout(() => {
-        setJobId(data.jobId);
-        setPhase("paywall");
-      }, wait);
+      // jobId gotowy; przejście do paywalla robi efekt paska po 10 s
+      jobIdRef.current = data.jobId;
+      setJobId(data.jobId);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Błąd serwera.");
       setPhase("idle");
@@ -253,9 +274,17 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
             </button>
 
             {phase === "loading" && (
-              <div className="mt-6 flex items-center justify-center gap-3 text-neutral-300 text-sm">
-                <span className="w-4 h-4 rounded-full border-2 border-cyan-400/30 border-t-cyan-400 animate-spin" />
-                <span>{LOADING_STEPS[stepIdx]}</span>
+              <div className="mt-6">
+                <div className="flex items-center justify-between text-sm text-neutral-200 mb-2">
+                  <span>{LOADING_STEPS[stepIdx]}</span>
+                  <span className="font-mono font-bold text-cyan-300">{loadingLeft}s</span>
+                </div>
+                <div className="h-2.5 w-full rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 transition-[width] duration-100 ease-linear"
+                    style={{ width: `${loadingProgress}%` }}
+                  />
+                </div>
               </div>
             )}
           </form>
