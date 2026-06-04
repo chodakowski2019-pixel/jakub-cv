@@ -325,7 +325,6 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
 
             <div className="absolute inset-0 flex items-center justify-center p-4 bg-[#0a1218]/70 backdrop-blur-[2px]">
               <div className="w-full max-w-md rounded-2xl border border-cyan-500/40 bg-[#0d161d] shadow-2xl shadow-cyan-500/20 p-7 text-center">
-                <p className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">Gotowe ✅</p>
                 <h2 className="text-2xl font-bold text-white mb-3">Twoje streszczenie jest gotowe!</h2>
                 {videoId && <VideoCard id={videoId} title={videoTitle} />}
 
