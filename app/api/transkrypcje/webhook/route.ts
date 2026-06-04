@@ -24,7 +24,8 @@ export async function POST(req: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const jobId = session.metadata?.jobId;
+    // Payment Link przekazuje jobId w client_reference_id; Checkout API w metadata.
+    const jobId = session.metadata?.jobId ?? session.client_reference_id ?? undefined;
     const email = session.customer_details?.email ?? session.customer_email;
 
     if (jobId && email) {

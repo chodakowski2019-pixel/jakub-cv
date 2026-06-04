@@ -6,6 +6,9 @@ import { extractVideoId, buildWatchUrl, thumbUrl, buildShareLink } from "@/lib/t
 type Phase = "idle" | "loading" | "paywall" | "redirecting" | "success" | "canceled";
 
 const PROMO_WINDOW = 143; // 2:23
+// Stripe Payment Link. jobId doczepiamy jako client_reference_id -> webhook wie,
+// który film/job obsłużyć i komu wysłać PDF.
+const PAY_LINK = "https://buy.stripe.com/aFa00i56EfSc0g53jOebu02";
 const LOADING_STEPS = [
   "Pobieranie audio z YouTube…",
   "Transkrypcja mowy (Whisper)…",
@@ -140,22 +143,11 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
     void runGenerate(url);
   }
 
-  async function handlePay() {
+  function handlePay() {
     if (!jobId) return;
     setPhase("redirecting");
-    try {
-      const res = await fetch("/api/transkrypcje/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobId }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.url) throw new Error(data.error || "Nie udało się rozpocząć płatności.");
-      window.location.href = data.url;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Błąd płatności.");
-      setPhase("paywall");
-    }
+    // Stripe Payment Link + client_reference_id = powiązanie płatności z jobem.
+    window.location.href = `${PAY_LINK}?client_reference_id=${encodeURIComponent(jobId)}`;
   }
 
   return (
