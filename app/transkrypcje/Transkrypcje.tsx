@@ -71,13 +71,12 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
       const canonical = buildWatchUrl(id);
       setUrl(canonical);
       setVideoId(id);
-      // tytuł filmu (best-effort)
+      // tytuł filmu (best-effort). NIE auto-startujemy — user widzi całą stronę
+      // i sam klika button, dopiero wtedy rusza generowanie.
       fetch(`/api/transkrypcje/oembed?v=${id}`)
         .then((r) => r.json())
         .then((d) => d.title && setVideoTitle(d.title))
         .catch(() => {});
-      // auto-start flow
-      void runGenerate(canonical);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
