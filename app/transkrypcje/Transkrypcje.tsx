@@ -162,9 +162,11 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
       <style>{`@keyframes softpulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.82 } }`}</style>
       <div className="w-full max-w-2xl">
         <div className="text-center mb-10">
-          <span className="inline-block w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 mb-5" />
+          {/* Zapas nagłówka na przyszłość: "Nie masz czasu oglądać? Przeczytaj" */}
           <h1 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
-            Nie masz czasu oglądać? Przeczytaj
+            2 godziny filmu?
+            <br />
+            Przeczytaj w 2 minuty!
           </h1>
           <div className="text-neutral-100 max-w-lg mx-auto leading-relaxed text-lg">
             <p className="mb-3">
