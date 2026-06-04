@@ -160,11 +160,20 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
           <h1 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
             Nie masz czasu oglądać? Przeczytaj
           </h1>
-          <p className="text-neutral-300 max-w-lg mx-auto leading-relaxed text-lg">
-            Każdy film z YouTube zamieniamy w gotowy tekst:
-            <span className="text-cyan-300"> pełna transkrypcja, streszczenie i najważniejsze punkty</span>.
-            PDF na maila w minutę, po polsku.
-          </p>
+          <div className="text-neutral-300 max-w-lg mx-auto leading-relaxed text-lg">
+            <p className="mb-3">
+              Zaoszczędź <span className="text-cyan-300">90% czasu</span> i otrzymaj:
+            </p>
+            <ul className="inline-block text-left space-y-1.5 mb-4">
+              {["pełną transkrypcję", "streszczenie", "najważniejsze punkty filmu"].map((item) => (
+                <li key={item} className="flex items-center gap-2.5">
+                  <span className="text-cyan-400">✓</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <p>PDF na maila w minutę, po polsku.</p>
+          </div>
         </div>
 
         {/* TRYB TWÓRCY — generator linków do komentarzy */}
