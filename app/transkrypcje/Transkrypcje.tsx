@@ -46,12 +46,12 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
   const [remaining, setRemaining] = useState(PROMO_WINDOW);
   const [creatorMode, setCreatorMode] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingLeft, setLoadingLeft] = useState(10);
+  const [loadingLeft, setLoadingLeft] = useState(14);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const autoRan = useRef(false);
   const jobIdRef = useRef<string | null>(null);
 
-  const LOADING_DURATION = 10000; // 10 s paska postępu
+  const LOADING_DURATION = 14000; // 14 s paska postępu
 
   // odczyt parametrów wejściowych (deep-link z komentarza, powrót ze Stripe, tryb twórcy)
   useEffect(() => {
@@ -137,7 +137,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
     }
     setStepIdx(0);
     setLoadingProgress(0);
-    setLoadingLeft(10);
+    setLoadingLeft(14);
     jobIdRef.current = null;
     setPhase("loading");
     try {
@@ -297,7 +297,11 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
         {(phase === "paywall" || phase === "redirecting") && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
             <div className="w-full max-w-md rounded-2xl border border-cyan-500/40 bg-[#0d161d] shadow-2xl shadow-cyan-500/20 p-7 text-center">
-              <h2 className="text-2xl font-bold text-white mb-3">Twoje streszczenie jest gotowe!</h2>
+              <h2 className="text-2xl font-bold text-white mb-3">
+                Twoje streszczenie
+                <br />
+                jest gotowe!
+              </h2>
               {videoId && <VideoCard id={videoId} title={videoTitle} />}
 
               <div className="flex items-center justify-center gap-3 mb-3 mt-5">
