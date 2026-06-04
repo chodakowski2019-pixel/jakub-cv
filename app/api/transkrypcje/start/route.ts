@@ -27,7 +27,10 @@ export async function POST(req: NextRequest) {
 
   if (error || !data) {
     console.error("transkrypcje/start insert failed", error);
-    return NextResponse.json({ error: "Błąd serwera" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Błąd serwera", _debug: error?.message ?? "no data", _hint: error?.hint, _code: error?.code },
+      { status: 500 },
+    );
   }
 
   return NextResponse.json({ jobId: data.id });
