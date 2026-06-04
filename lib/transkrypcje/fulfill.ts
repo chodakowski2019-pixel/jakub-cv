@@ -35,14 +35,14 @@ export async function fulfillJob(jobId: string, email: string, amount?: number |
     await resend.emails.send({
       from: "Jakub Chodakowski <hello@jakubchodakowski.com>",
       to: email,
-      subject: `Twoja transkrypcja: ${title}`,
+      subject: `Twój tekst gotowy: ${title}`,
       html: `
         <div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;color:#1a1f24">
           <h2 style="color:#0aa69a">Gotowe! 🎬</h2>
           <p>Cześć,</p>
-          <p>W załączniku znajdziesz transkrypcję, streszczenie i wyjaśnienie filmu:</p>
+          <p>Nie musisz oglądać — wszystko, co ważne z tego filmu, masz w załączonym PDF:</p>
           <p style="padding:12px 16px;background:#f4f6f7;border-radius:8px"><b>${title}</b></p>
-          <p>Plik PDF zawiera: pełną transkrypcję, najważniejsze punkty oraz analizę treści.</p>
+          <p>W środku: pełna transkrypcja, streszczenie i najważniejsze punkty.</p>
           <p style="color:#6b7280;font-size:13px;margin-top:24px">jakubchodakowski.com</p>
         </div>
       `,

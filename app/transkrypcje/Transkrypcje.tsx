@@ -11,10 +11,10 @@ const PROMO_WINDOW = 143; // 2:23
 const PAY_LINK_PROMO = "https://buy.stripe.com/aFa00i56EfSc0g53jOebu02"; // 4,97 zł
 const PAY_LINK_FULL = "https://buy.stripe.com/6oUdR8dDagWg8MB1bGebu03"; // 15 zł
 const LOADING_STEPS = [
-  "Pobieranie audio z YouTube…",
-  "Transkrypcja mowy (Whisper)…",
-  "Analiza treści przez AI…",
-  "Składanie podsumowania…",
+  "Pobieram audio z YouTube…",
+  "Transkrybuję mowę…",
+  "Analizuję treść…",
+  "Składam streszczenie…",
 ];
 
 function fmt(sec: number): string {
@@ -158,12 +158,12 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
         <div className="text-center mb-10">
           <span className="inline-block w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 mb-5" />
           <h1 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
-            Każdy film z YouTube jako gotowy tekst
+            Nie masz czasu oglądać? Przeczytaj.
           </h1>
           <p className="text-neutral-300 max-w-lg mx-auto leading-relaxed text-lg">
-            Nie trać godzin na oglądanie. Wklej link i w kilka sekund masz
-            <span className="text-cyan-300"> pełną transkrypcję, streszczenie i najważniejsze punkty</span> —
-            gotowy PDF na maila, po polsku.
+            Każdy film z YouTube zamieniamy w gotowy tekst:
+            <span className="text-cyan-300"> pełna transkrypcja, streszczenie i najważniejsze punkty</span>.
+            PDF na maila w minutę, po polsku.
           </p>
         </div>
 
@@ -175,8 +175,8 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
           <div className="rounded-2xl border border-cyan-500/40 bg-white/[0.05] backdrop-blur-xl p-8 text-center">
             <h2 className="text-2xl font-bold text-white mb-3">Płatność przyjęta! 🎉</h2>
             <p className="text-neutral-300">
-              Twój plik PDF z transkrypcją i analizą wysyłamy na podany e-mail. Powinien dotrzeć w
-              ciągu kilku minut. Sprawdź też folder SPAM.
+              Twój PDF z transkrypcją i streszczeniem jest w drodze na podany e-mail. Dotrze w ciągu
+              kilku minut — sprawdź też folder SPAM.
             </p>
             <button
               onClick={() => {
@@ -232,7 +232,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
               disabled={phase === "loading"}
               className="mt-4 w-full px-6 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 disabled:hover:scale-100"
             >
-              {phase === "loading" ? "Przetwarzanie…" : "Generuj transkrypcję"}
+              {phase === "loading" ? "Przetwarzam…" : "Zamień film w tekst"}
             </button>
 
             {phase === "loading" && (
@@ -250,9 +250,9 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
             {/* Korzyści */}
             <div className="grid sm:grid-cols-3 gap-4">
               {[
-                { ico: "⏱️", t: "Oszczędź godziny", d: "Nie oglądaj 2-godzinnego filmu. Esencję masz w minutę." },
-                { ico: "📄", t: "Wszystko w jednym PDF", d: "Pełna transkrypcja + streszczenie + lista kluczowych punktów." },
-                { ico: "🇵🇱", t: "Po polsku, każdy film", d: "Wykład, podcast, wywiad, szkolenie — niezależnie od języka." },
+                { ico: "⏱️", t: "Odzyskaj swój czas", d: "2 godziny filmu? Przeczytasz esencję w 2 minuty." },
+                { ico: "📄", t: "Nic Ci nie umknie", d: "Pełna transkrypcja, streszczenie i lista kluczowych punktów — w jednym PDF." },
+                { ico: "🇵🇱", t: "Po polsku, każdy film", d: "Wykład, podcast, wywiad, szkolenie — bez względu na język oryginału." },
               ].map((b, i) => (
                 <div key={i} className="p-5 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl">
                   <div className="text-2xl mb-3">{b.ico}</div>
@@ -268,8 +268,8 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
               <div className="grid sm:grid-cols-3 gap-4">
                 {[
                   { n: "1", t: "Wklej link", d: "Skopiuj adres filmu z YouTube i wklej powyżej." },
-                  { n: "2", t: "Odbierz na maila", d: "Generujemy transkrypcję, streszczenie i punkty w PDF." },
-                  { n: "3", t: "Czytaj w minutę", d: "Masz całą wartość filmu bez oglądania od deski do deski." },
+                  { n: "2", t: "My robimy robotę", d: "Transkrybujemy i streszczamy w kilka sekund." },
+                  { n: "3", t: "Czytaj zamiast oglądać", d: "Cała wartość filmu ląduje w PDF na Twoim mailu." },
                 ].map((s, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 text-white text-sm font-bold flex items-center justify-center">
@@ -287,10 +287,11 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
             {/* Dla kogo + zaufanie */}
             <div className="mt-10 text-center">
               <p className="text-neutral-400 text-sm">
-                Idealne dla: <span className="text-neutral-200">studentów · twórców · dziennikarzy · marketerów</span>
+                Dla każdego, kto ma za dużo do obejrzenia i za mało czasu:{" "}
+                <span className="text-neutral-200">studenci · twórcy · dziennikarze · marketerzy</span>
               </p>
               <p className="text-neutral-500 text-xs mt-3">
-                Jednorazowa płatność. Bez subskrypcji. Plik trafia prosto na Twój e-mail.
+                Jednorazowa płatność. Bez subskrypcji. Plik prosto na Twój e-mail.
               </p>
             </div>
           </div>
@@ -317,10 +318,10 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
             <div className="absolute inset-0 flex items-center justify-center p-4 bg-[#0a1218]/70 backdrop-blur-[2px]">
               <div className="w-full max-w-md rounded-2xl border border-cyan-500/40 bg-[#0d161d] shadow-2xl shadow-cyan-500/20 p-7 text-center">
                 <p className="text-xs uppercase tracking-widest text-cyan-400 mb-2">Gotowe ✅</p>
-                <h2 className="text-2xl font-bold text-white mb-3">Twoja transkrypcja czeka</h2>
+                <h2 className="text-2xl font-bold text-white mb-3">Twój tekst jest gotowy</h2>
                 {videoId && <VideoCard id={videoId} title={videoTitle} />}
                 <p className="text-neutral-400 text-sm mb-5">
-                  Pełna transkrypcja + streszczenie + wyjaśnienie. PDF wyślemy na Twój e-mail.
+                  Pełna transkrypcja, streszczenie i najważniejsze punkty. Wyślemy PDF na Twój e-mail.
                 </p>
 
                 <div className="flex items-center justify-center gap-3 mb-1">
@@ -345,7 +346,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
                   disabled={phase === "redirecting"}
                   className="w-full px-6 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
                 >
-                  {phase === "redirecting" ? "Przekierowanie…" : `Odblokuj i wyślij na e-mail (${priceLabel})`}
+                  {phase === "redirecting" ? "Przekierowanie…" : `Odbierz PDF na maila (${priceLabel})`}
                 </button>
                 <p className="text-[11px] text-neutral-500 mt-3">
                   Bezpieczna płatność przez Stripe. E-mail podasz w kolejnym kroku.
