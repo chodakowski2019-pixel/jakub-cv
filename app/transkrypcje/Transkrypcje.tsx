@@ -89,14 +89,22 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
     return () => clearInterval(id);
   }, [phase]);
 
-  // licznik promocji
+  // licznik promocji — deadline w localStorage (per film), żeby refresh nie resetował
   useEffect(() => {
     if (phase !== "paywall") return;
-    timerRef.current = setInterval(() => setRemaining((r) => (r > 0 ? r - 1 : 0)), 1000);
+    const key = `promo_deadline_${videoId ?? "default"}`;
+    let deadline = Number(localStorage.getItem(key));
+    if (!deadline) {
+      deadline = Date.now() + PROMO_WINDOW * 1000;
+      localStorage.setItem(key, String(deadline));
+    }
+    const tick = () => setRemaining(Math.max(0, Math.round((deadline - Date.now()) / 1000)));
+    tick();
+    timerRef.current = setInterval(tick, 1000);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [phase]);
+  }, [phase, videoId]);
 
   const promoActive = remaining > 0;
   const priceLabel = promoActive ? "4,97 zł" : "15,00 zł";
@@ -121,7 +129,6 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
       const wait = Math.max(0, 3200 - (Date.now() - startedAt));
       setTimeout(() => {
         setJobId(data.jobId);
-        setRemaining(PROMO_WINDOW);
         setPhase("paywall");
       }, wait);
     } catch (err) {
@@ -307,7 +314,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
 
         {/* PAYWALL + rozmyty fake-podgląd */}
         {(phase === "paywall" || phase === "redirecting") && (
-          <div className="relative rounded-2xl border border-white/[0.08] overflow-hidden">
+          <div className="relative max-w-md mx-auto rounded-2xl border border-white/[0.08] overflow-hidden">
             <div aria-hidden className="p-6 blur-sm select-none pointer-events-none bg-white/[0.05]">
               <div className="h-5 w-2/3 bg-white/20 rounded mb-4" />
               <div className="space-y-2">
@@ -324,7 +331,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
             </div>
 
             <div className="absolute inset-0 flex items-center justify-center p-4 bg-[#0a1218]/70 backdrop-blur-[2px]">
-              <div className="w-full max-w-md rounded-2xl border border-cyan-500/40 bg-[#0d161d] shadow-2xl shadow-cyan-500/20 p-7 text-center">
+              <div className="w-full max-w-full rounded-2xl border border-cyan-500/40 bg-[#0d161d] shadow-2xl shadow-cyan-500/20 p-7 text-center">
                 <h2 className="text-2xl font-bold text-white mb-3">Twoje streszczenie jest gotowe!</h2>
                 {videoId && <VideoCard id={videoId} title={videoTitle} />}
 
