@@ -10,7 +10,7 @@ function slugify(s: string): string {
 
 // Wywoływane PO potwierdzonej płatności (Stripe webhook).
 // Tu dopiero ponosimy koszty: audio + Whisper + Claude.
-export async function fulfillJob(jobId: string, email: string): Promise<void> {
+export async function fulfillJob(jobId: string, email: string, amount?: number | null): Promise<void> {
   const { data: job, error } = await supabaseAdmin
     .from("transkrypcje_jobs")
     .select("id, url, status")
@@ -22,7 +22,7 @@ export async function fulfillJob(jobId: string, email: string): Promise<void> {
 
   await supabaseAdmin
     .from("transkrypcje_jobs")
-    .update({ status: "processing", email })
+    .update({ status: "processing", email, ...(amount != null ? { amount } : {}) })
     .eq("id", jobId);
 
   try {

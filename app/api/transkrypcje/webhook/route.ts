@@ -29,10 +29,11 @@ export async function POST(req: NextRequest) {
     const email = session.customer_details?.email ?? session.customer_email;
 
     if (jobId && email) {
+      const amount = session.amount_total; // grosze, do statystyk przychodu
       // Odpowiadamy Stripe od razu, robota (audio+Whisper+Claude+PDF+mail) leci po response.
       after(async () => {
         try {
-          await fulfillJob(jobId, email);
+          await fulfillJob(jobId, email, amount);
         } catch (err) {
           console.error("fulfillJob failed", jobId, err);
         }
