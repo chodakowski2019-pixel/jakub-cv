@@ -277,38 +277,6 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
               ))}
             </div>
 
-            {/* Jak to działa */}
-            <div className="mt-10">
-              <h2 className="text-center text-sm uppercase tracking-widest text-neutral-400 mb-6">Jak to działa</h2>
-              <div className="grid sm:grid-cols-3 gap-4">
-                {[
-                  { n: "1", t: "Wklej link", d: "Skopiuj adres filmu z YouTube i wklej powyżej." },
-                  { n: "2", t: "My robimy robotę", d: "Transkrybujemy i streszczamy w kilka sekund." },
-                  { n: "3", t: "Czytaj zamiast oglądać", d: "Cała wartość filmu ląduje w PDF na Twoim mailu." },
-                ].map((s, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 text-white text-sm font-bold flex items-center justify-center">
-                      {s.n}
-                    </span>
-                    <div>
-                      <p className="text-white font-medium text-sm">{s.t}</p>
-                      <p className="text-neutral-400 text-sm leading-relaxed">{s.d}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Dla kogo + zaufanie */}
-            <div className="mt-10 text-center">
-              <p className="text-neutral-400 text-sm">
-                Dla każdego, kto ma za dużo do obejrzenia i za mało czasu:{" "}
-                <span className="text-neutral-200">studenci · twórcy · dziennikarze · marketerzy</span>
-              </p>
-              <p className="text-neutral-500 text-xs mt-3">
-                Jednorazowa płatność. Bez subskrypcji. Plik prosto na Twój e-mail.
-              </p>
-            </div>
           </div>
         )}
 
