@@ -261,26 +261,6 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
           </form>
         )}
 
-        {/* SEKCJA SPRZEDAŻOWA — tylko na ekranie startowym */}
-        {!creatorMode && phase === "idle" && (
-          <div className="mt-12">
-            {/* Korzyści */}
-            <div className="grid sm:grid-cols-3 gap-4">
-              {[
-                { ico: "⏱️", t: "Odzyskaj swój czas", d: "2 godziny filmu? Przeczytasz esencję w 2 minuty." },
-                { ico: "📄", t: "Nic Ci nie umknie", d: "Pełna transkrypcja, streszczenie i lista kluczowych punktów — w jednym PDF." },
-                { ico: "🇵🇱", t: "Po polsku, każdy film", d: "Wykład, podcast, wywiad, szkolenie — bez względu na język oryginału." },
-              ].map((b, i) => (
-                <div key={i} className="p-5 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl">
-                  <div className="text-2xl mb-3">{b.ico}</div>
-                  <h3 className="text-white font-semibold mb-1.5">{b.t}</h3>
-                  <p className="text-neutral-400 text-sm leading-relaxed">{b.d}</p>
-                </div>
-              ))}
-            </div>
-
-          </div>
-        )}
 
         {/* PAYWALL — prawdziwy popup (overlay na całą stronę) */}
         {(phase === "paywall" || phase === "redirecting") && (
