@@ -351,7 +351,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
                   disabled={phase === "redirecting"}
                   className="w-full px-6 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
                 >
-                  {phase === "redirecting" ? "Przekierowanie…" : `Chcę otrzymać streszczenie (${priceLabel})`}
+                  {phase === "redirecting" ? "Przekierowanie…" : "Chcę otrzymać streszczenie"}
                 </button>
                 <p className="text-[11px] text-neutral-500 mt-3">
                   Bezpieczna płatność przez Stripe.
