@@ -13,8 +13,10 @@ export default function Page() {
       <div className="w-full max-w-md rounded-2xl border border-cyan-500/40 bg-white/[0.05] backdrop-blur-xl p-8 text-center">
         <h1 className="text-2xl font-bold text-white mb-3">Płatność przyjęta! 🎉</h1>
         <p className="text-neutral-300 leading-relaxed">
-          Twój PDF z transkrypcją i streszczeniem jest w drodze na podany e-mail. Dotrze w ciągu
-          kilku minut — sprawdź też folder SPAM.
+          Twój PDF z transkrypcją i streszczeniem jest w drodze na podany e-mail.
+        </p>
+        <p className="text-neutral-300 leading-relaxed mt-3">
+          Dotrze w ciągu kilku minut — sprawdź też folder SPAM.
         </p>
         <Link
           href="/youtube"

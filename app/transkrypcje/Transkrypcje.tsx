@@ -213,8 +213,10 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
           <div className="rounded-2xl border border-cyan-500/40 bg-white/[0.05] backdrop-blur-xl p-8 text-center">
             <h2 className="text-2xl font-bold text-white mb-3">Płatność przyjęta! 🎉</h2>
             <p className="text-neutral-300">
-              Twój PDF z transkrypcją i streszczeniem jest w drodze na podany e-mail. Dotrze w ciągu
-              kilku minut — sprawdź też folder SPAM.
+              Twój PDF z transkrypcją i streszczeniem jest w drodze na podany e-mail.
+            </p>
+            <p className="text-neutral-300 mt-3">
+              Dotrze w ciągu kilku minut — sprawdź też folder SPAM.
             </p>
             <button
               onClick={() => {
