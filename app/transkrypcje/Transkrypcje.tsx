@@ -160,13 +160,14 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
 
   return (
     <main className="min-h-screen px-6 py-20 flex flex-col items-center">
+      <style>{`@keyframes softpulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.82 } }`}</style>
       <div className="w-full max-w-2xl">
         <div className="text-center mb-10">
           <span className="inline-block w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 mb-5" />
           <h1 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
             Nie masz czasu oglądać? Przeczytaj
           </h1>
-          <div className="text-neutral-300 max-w-lg mx-auto leading-relaxed text-lg">
+          <div className="text-neutral-100 max-w-lg mx-auto leading-relaxed text-lg">
             <p className="mb-3">
               Zaoszczędź <span className="text-cyan-300">90% czasu</span> i otrzymaj:
             </p>
@@ -312,58 +313,39 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
           </div>
         )}
 
-        {/* PAYWALL + rozmyty fake-podgląd */}
+        {/* PAYWALL — prawdziwy popup (overlay na całą stronę) */}
         {(phase === "paywall" || phase === "redirecting") && (
-          <div className="relative max-w-md mx-auto rounded-2xl border border-white/[0.08] overflow-hidden">
-            <div aria-hidden className="p-6 blur-sm select-none pointer-events-none bg-white/[0.05]">
-              <div className="h-5 w-2/3 bg-white/20 rounded mb-4" />
-              <div className="space-y-2">
-                {Array.from({ length: 9 }).map((_, i) => (
-                  <div key={i} className="h-3 bg-white/10 rounded" style={{ width: `${70 + ((i * 7) % 30)}%` }} />
-                ))}
-              </div>
-              <div className="h-4 w-1/2 bg-white/15 rounded mt-6 mb-3" />
-              <div className="space-y-2">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-3 bg-white/10 rounded" style={{ width: `${60 + ((i * 9) % 35)}%` }} />
-                ))}
-              </div>
-            </div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+            <div className="w-full max-w-md rounded-2xl border border-cyan-500/40 bg-[#0d161d] shadow-2xl shadow-cyan-500/20 p-7 text-center">
+              <h2 className="text-2xl font-bold text-white mb-3">Twoje streszczenie jest gotowe!</h2>
+              {videoId && <VideoCard id={videoId} title={videoTitle} />}
 
-            <div className="absolute inset-0 flex items-center justify-center p-4 bg-[#0a1218]/70 backdrop-blur-[2px]">
-              <div className="w-full max-w-full rounded-2xl border border-cyan-500/40 bg-[#0d161d] shadow-2xl shadow-cyan-500/20 p-7 text-center">
-                <h2 className="text-2xl font-bold text-white mb-3">Twoje streszczenie jest gotowe!</h2>
-                {videoId && <VideoCard id={videoId} title={videoTitle} />}
+              <div className="flex items-center justify-center gap-3 mb-3 mt-5">
+                {promoActive && <span className="text-neutral-500 line-through text-lg">15,00 zł</span>}
+                <span className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+                  {priceLabel}
+                </span>
+              </div>
 
-                <div className="flex items-center justify-center gap-3 mb-3 mt-5">
-                  {promoActive && <span className="text-neutral-500 line-through text-lg">15,00 zł</span>}
-                  <span className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
-                    {priceLabel}
-                  </span>
+              {promoActive ? (
+                <div className="mb-5 px-4 py-3 rounded-xl border-2 border-red-500/80 bg-red-600/20 animate-[softpulse_2.2s_ease-in-out_infinite]">
+                  <p className="text-red-100 text-sm">Cena promocyjna kończy się za…</p>
+                  <p className="font-mono font-bold text-3xl text-white mt-1">{fmt(remaining)}</p>
                 </div>
+              ) : (
+                <p className="text-sm text-neutral-400 mb-5">Promocja zakończona.</p>
+              )}
 
-                {promoActive ? (
-                  <div className="mb-5 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-rose-500/50 bg-rose-500/10">
-                    <span className="text-rose-200 text-sm">⏳ Cena promocyjna znika za</span>
-                    <span className="font-mono font-bold text-xl text-rose-100">{fmt(remaining)}</span>
-                  </div>
-                ) : (
-                  <p className="text-sm text-neutral-400 mb-5">Promocja zakończona.</p>
-                )}
+              {error && <p className="text-rose-400 text-sm mb-3">{error}</p>}
 
-                {error && <p className="text-rose-400 text-sm mb-3">{error}</p>}
-
-                <button
-                  onClick={handlePay}
-                  disabled={phase === "redirecting"}
-                  className="w-full px-6 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
-                >
-                  {phase === "redirecting" ? "Przekierowanie…" : "Chcę otrzymać streszczenie"}
-                </button>
-                <p className="text-[11px] text-neutral-500 mt-3">
-                  Bezpieczna płatność przez Stripe.
-                </p>
-              </div>
+              <button
+                onClick={handlePay}
+                disabled={phase === "redirecting"}
+                className="w-full px-6 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
+              >
+                {phase === "redirecting" ? "Przekierowanie…" : "Chcę otrzymać streszczenie"}
+              </button>
+              <p className="text-[11px] text-neutral-500 mt-3">Bezpieczna płatność przez Stripe.</p>
             </div>
           </div>
         )}
