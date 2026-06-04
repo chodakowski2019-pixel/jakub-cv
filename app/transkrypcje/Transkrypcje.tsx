@@ -304,21 +304,21 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
               </h2>
               {videoId && <VideoCard id={videoId} title={videoTitle} />}
 
-              <div className="flex items-center justify-center gap-3 mb-3 mt-5">
+              {promoActive ? (
+                <div className="mt-5 mb-4 px-4 py-3 rounded-xl border-2 border-red-500/80 bg-red-600/20 animate-[softpulse_2.2s_ease-in-out_infinite]">
+                  <p className="text-red-100 text-sm">Cena promocyjna kończy się za…</p>
+                  <p className="font-mono font-bold text-3xl text-white mt-1">{fmt(remaining)}</p>
+                </div>
+              ) : (
+                <p className="text-sm text-neutral-400 mt-5 mb-4">Promocja zakończona.</p>
+              )}
+
+              <div className="flex items-center justify-center gap-3 mb-5">
                 {promoActive && <span className="text-neutral-500 line-through text-lg">15,00 zł</span>}
                 <span className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
                   {priceLabel}
                 </span>
               </div>
-
-              {promoActive ? (
-                <div className="mb-5 px-4 py-3 rounded-xl border-2 border-red-500/80 bg-red-600/20 animate-[softpulse_2.2s_ease-in-out_infinite]">
-                  <p className="text-red-100 text-sm">Cena promocyjna kończy się za…</p>
-                  <p className="font-mono font-bold text-3xl text-white mt-1">{fmt(remaining)}</p>
-                </div>
-              ) : (
-                <p className="text-sm text-neutral-400 mb-5">Promocja zakończona.</p>
-              )}
 
               {error && <p className="text-rose-400 text-sm mb-3">{error}</p>}
 
@@ -327,7 +327,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
                 disabled={phase === "redirecting"}
                 className="w-full px-6 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
               >
-                {phase === "redirecting" ? "Przekierowanie…" : "Chcę otrzymać streszczenie"}
+                {phase === "redirecting" ? "Przekierowanie…" : "Chcę otrzymać streszczenie!"}
               </button>
               <p className="text-[11px] text-neutral-500 mt-3">Bezpieczna płatność przez Stripe.</p>
             </div>
