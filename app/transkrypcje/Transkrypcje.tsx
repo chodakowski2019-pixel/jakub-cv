@@ -158,11 +158,12 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
         <div className="text-center mb-10">
           <span className="inline-block w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 mb-5" />
           <h1 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
-            Transkrypcja YouTube w sekundy
+            Każdy film z YouTube jako gotowy tekst
           </h1>
-          <p className="text-neutral-300 max-w-lg mx-auto leading-relaxed">
-            Wklej link do filmu. Dostaniesz pełną transkrypcję, streszczenie i wyjaśnienie
-            najważniejszych punktów w pliku PDF na maila.
+          <p className="text-neutral-300 max-w-lg mx-auto leading-relaxed text-lg">
+            Nie trać godzin na oglądanie. Wklej link i w kilka sekund masz
+            <span className="text-cyan-300"> pełną transkrypcję, streszczenie i najważniejsze punkty</span> —
+            gotowy PDF na maila, po polsku.
           </p>
         </div>
 
@@ -241,6 +242,58 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
               </div>
             )}
           </form>
+        )}
+
+        {/* SEKCJA SPRZEDAŻOWA — tylko na ekranie startowym */}
+        {!creatorMode && phase === "idle" && (
+          <div className="mt-12">
+            {/* Korzyści */}
+            <div className="grid sm:grid-cols-3 gap-4">
+              {[
+                { ico: "⏱️", t: "Oszczędź godziny", d: "Nie oglądaj 2-godzinnego filmu. Esencję masz w minutę." },
+                { ico: "📄", t: "Wszystko w jednym PDF", d: "Pełna transkrypcja + streszczenie + lista kluczowych punktów." },
+                { ico: "🇵🇱", t: "Po polsku, każdy film", d: "Wykład, podcast, wywiad, szkolenie — niezależnie od języka." },
+              ].map((b, i) => (
+                <div key={i} className="p-5 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl">
+                  <div className="text-2xl mb-3">{b.ico}</div>
+                  <h3 className="text-white font-semibold mb-1.5">{b.t}</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">{b.d}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Jak to działa */}
+            <div className="mt-10">
+              <h2 className="text-center text-sm uppercase tracking-widest text-neutral-400 mb-6">Jak to działa</h2>
+              <div className="grid sm:grid-cols-3 gap-4">
+                {[
+                  { n: "1", t: "Wklej link", d: "Skopiuj adres filmu z YouTube i wklej powyżej." },
+                  { n: "2", t: "Odbierz na maila", d: "Generujemy transkrypcję, streszczenie i punkty w PDF." },
+                  { n: "3", t: "Czytaj w minutę", d: "Masz całą wartość filmu bez oglądania od deski do deski." },
+                ].map((s, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 text-white text-sm font-bold flex items-center justify-center">
+                      {s.n}
+                    </span>
+                    <div>
+                      <p className="text-white font-medium text-sm">{s.t}</p>
+                      <p className="text-neutral-400 text-sm leading-relaxed">{s.d}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Dla kogo + zaufanie */}
+            <div className="mt-10 text-center">
+              <p className="text-neutral-400 text-sm">
+                Idealne dla: <span className="text-neutral-200">studentów · twórców · dziennikarzy · marketerów</span>
+              </p>
+              <p className="text-neutral-500 text-xs mt-3">
+                Jednorazowa płatność. Bez subskrypcji. Plik trafia prosto na Twój e-mail.
+              </p>
+            </div>
+          </div>
         )}
 
         {/* PAYWALL + rozmyty fake-podgląd */}
