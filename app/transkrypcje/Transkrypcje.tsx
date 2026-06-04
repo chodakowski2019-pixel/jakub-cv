@@ -184,7 +184,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
       <div className="w-full max-w-2xl">
         <div className="text-center mb-10">
           {/* Zapas nagłówka na przyszłość: "Nie masz czasu oglądać? Przeczytaj" */}
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
             2 godziny filmu?
             <br />
             Przeczytaj w 2 minuty!
