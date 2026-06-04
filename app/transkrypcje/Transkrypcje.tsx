@@ -6,9 +6,10 @@ import { extractVideoId, buildWatchUrl, thumbUrl, buildShareLink } from "@/lib/t
 type Phase = "idle" | "loading" | "paywall" | "redirecting" | "success" | "canceled";
 
 const PROMO_WINDOW = 143; // 2:23
-// Stripe Payment Link. jobId doczepiamy jako client_reference_id -> webhook wie,
-// który film/job obsłużyć i komu wysłać PDF.
-const PAY_LINK = "https://buy.stripe.com/aFa00i56EfSc0g53jOebu02";
+// Stripe Payment Links. jobId doczepiamy jako client_reference_id -> webhook wie,
+// który film/job obsłużyć i komu wysłać PDF. Dwa linki = dynamiczna cena z licznika.
+const PAY_LINK_PROMO = "https://buy.stripe.com/aFa00i56EfSc0g53jOebu02"; // 4,97 zł
+const PAY_LINK_FULL = "https://buy.stripe.com/6oUdR8dDagWg8MB1bGebu03"; // 15 zł
 const LOADING_STEPS = [
   "Pobieranie audio z YouTube…",
   "Transkrypcja mowy (Whisper)…",
@@ -146,8 +147,9 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
   function handlePay() {
     if (!jobId) return;
     setPhase("redirecting");
-    // Stripe Payment Link + client_reference_id = powiązanie płatności z jobem.
-    window.location.href = `${PAY_LINK}?client_reference_id=${encodeURIComponent(jobId)}`;
+    // promo aktywne -> link 4,97; po wygaśnięciu licznika -> link 15 zł
+    const link = remaining > 0 ? PAY_LINK_PROMO : PAY_LINK_FULL;
+    window.location.href = `${link}?client_reference_id=${encodeURIComponent(jobId)}`;
   }
 
   return (
