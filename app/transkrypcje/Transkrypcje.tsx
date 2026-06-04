@@ -252,7 +252,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
             </button>
 
             {phase === "loading" && (
-              <div className="mt-6 flex items-center gap-3 text-neutral-300 text-sm">
+              <div className="mt-6 flex items-center justify-center gap-3 text-neutral-300 text-sm">
                 <span className="w-4 h-4 rounded-full border-2 border-cyan-400/30 border-t-cyan-400 animate-spin" />
                 <span>{LOADING_STEPS[stepIdx]}</span>
               </div>
