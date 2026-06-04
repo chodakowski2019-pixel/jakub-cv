@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import HomePage from "./_components/HomePage";
+import HomePage from "../_components/HomePage";
 
 export const metadata: Metadata = {
-  title: "Jakub Chodakowski — Wdrożenia AI dla firm",
+  title: "Jakub Chodakowski — AI Implementation Specialist",
   description:
-    "Pomagam firmom wdrażać AI w codzienne procesy biznesowe. Audyt, budowa rozwiązań, szkolenia zespołu.",
+    "I help companies implement AI into their everyday business processes. Audit, custom solutions, team training.",
   alternates: {
-    canonical: "https://jakubchodakowski.com/",
+    canonical: "https://jakubchodakowski.com/en",
     languages: {
       pl: "https://jakubchodakowski.com/",
       en: "https://jakubchodakowski.com/en",
@@ -16,5 +16,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <HomePage lang="pl" />;
+  return <HomePage lang="en" />;
 }
