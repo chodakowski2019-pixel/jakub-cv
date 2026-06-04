@@ -158,7 +158,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
         <div className="text-center mb-10">
           <span className="inline-block w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 mb-5" />
           <h1 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
-            Nie masz czasu oglądać? Przeczytaj.
+            Nie masz czasu oglądać? Przeczytaj
           </h1>
           <p className="text-neutral-300 max-w-lg mx-auto leading-relaxed text-lg">
             Każdy film z YouTube zamieniamy w gotowy tekst:
