@@ -126,7 +126,7 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Coś poszło nie tak.");
-      const wait = Math.max(0, 3200 - (Date.now() - startedAt));
+      const wait = Math.max(0, 5000 - (Date.now() - startedAt));
       setTimeout(() => {
         setJobId(data.jobId);
         setPhase("paywall");
