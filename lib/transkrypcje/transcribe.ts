@@ -53,3 +53,24 @@ export async function transcribeAudio(audio: Buffer): Promise<string> {
   }
   return (await res.text()).trim();
 }
+
+// Pobranie audio + transkrypcja przez zewnętrznego workera (Railway, yt-dlp),
+// bo YouTube blokuje pobieranie audio z IP Vercela.
+export async function transcribeViaWorker(url: string): Promise<{ title: string; transcript: string }> {
+  const base = process.env.TRANSCRIBE_WORKER_URL;
+  if (!base) throw new Error("TRANSCRIBE_WORKER_URL missing");
+  const res = await fetch(`${base.replace(/\/$/, "")}/transcribe`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.TRANSCRIBE_WORKER_SECRET ?? ""}`,
+    },
+    body: JSON.stringify({ url: url.trim() }),
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(`Worker failed: ${res.status} ${detail}`);
+  }
+  const data = await res.json();
+  return { title: String(data.title ?? ""), transcript: String(data.transcript ?? "") };
+}

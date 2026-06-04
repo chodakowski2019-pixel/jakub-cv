@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 import { supabaseAdmin } from "@/lib/supabase";
-import { downloadAudio, transcribeAudio } from "./transcribe";
+import { downloadAudio, transcribeAudio, transcribeViaWorker } from "./transcribe";
 import { analyzeTranscript } from "./summarize";
 import { buildPdf } from "./pdf";
 
@@ -26,8 +26,17 @@ export async function fulfillJob(jobId: string, email: string, amount?: number |
     .eq("id", jobId);
 
   try {
-    const { buffer, title } = await downloadAudio(job.url);
-    const transcript = await transcribeAudio(buffer);
+    // Audio z YouTube: jeśli skonfigurowany worker (Railway) -> tam (omija blokadę
+    // YouTube na IP Vercela). W przeciwnym razie próba lokalnie (działa tylko poza Vercelem).
+    let title: string;
+    let transcript: string;
+    if (process.env.TRANSCRIBE_WORKER_URL) {
+      ({ title, transcript } = await transcribeViaWorker(job.url));
+    } else {
+      const dl = await downloadAudio(job.url);
+      title = dl.title;
+      transcript = await transcribeAudio(dl.buffer);
+    }
     const analysis = await analyzeTranscript(transcript, title);
     const pdf = await buildPdf({ title, url: job.url, analysis, transcript });
 
