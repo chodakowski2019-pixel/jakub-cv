@@ -29,7 +29,6 @@ function VideoCard({ id, title }: { id: string; title: string | null }) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={thumbUrl(id)} alt="" className="w-24 h-14 object-cover rounded-lg flex-shrink-0" />
       <div className="min-w-0">
-        <p className="text-[11px] uppercase tracking-wider text-cyan-400 mb-0.5">Wybrany film</p>
         <p className="text-sm text-white leading-snug line-clamp-2">{title || "Film z YouTube"}</p>
       </div>
     </div>
@@ -326,14 +325,11 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
 
             <div className="absolute inset-0 flex items-center justify-center p-4 bg-[#0a1218]/70 backdrop-blur-[2px]">
               <div className="w-full max-w-md rounded-2xl border border-cyan-500/40 bg-[#0d161d] shadow-2xl shadow-cyan-500/20 p-7 text-center">
-                <p className="text-xs uppercase tracking-widest text-cyan-400 mb-2">Gotowe ✅</p>
-                <h2 className="text-2xl font-bold text-white mb-3">Twój tekst jest gotowy</h2>
+                <p className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">Gotowe ✅</p>
+                <h2 className="text-2xl font-bold text-white mb-3">Twoje streszczenie jest gotowe!</h2>
                 {videoId && <VideoCard id={videoId} title={videoTitle} />}
-                <p className="text-neutral-400 text-sm mb-5">
-                  Pełna transkrypcja, streszczenie i najważniejsze punkty. Wyślemy PDF na Twój e-mail.
-                </p>
 
-                <div className="flex items-center justify-center gap-3 mb-1">
+                <div className="flex items-center justify-center gap-3 mb-3 mt-5">
                   {promoActive && <span className="text-neutral-500 line-through text-lg">15,00 zł</span>}
                   <span className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
                     {priceLabel}
@@ -341,9 +337,10 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
                 </div>
 
                 {promoActive ? (
-                  <p className="text-sm text-rose-300 mb-5">
-                    Cena promocyjna znika za <span className="font-mono font-bold">{fmt(remaining)}</span>
-                  </p>
+                  <div className="mb-5 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-rose-500/50 bg-rose-500/10">
+                    <span className="text-rose-200 text-sm">⏳ Cena promocyjna znika za</span>
+                    <span className="font-mono font-bold text-xl text-rose-100">{fmt(remaining)}</span>
+                  </div>
                 ) : (
                   <p className="text-sm text-neutral-400 mb-5">Promocja zakończona.</p>
                 )}
@@ -355,10 +352,10 @@ export default function Transkrypcje({ initialId }: { initialId?: string } = {})
                   disabled={phase === "redirecting"}
                   className="w-full px-6 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
                 >
-                  {phase === "redirecting" ? "Przekierowanie…" : `Odbierz PDF na maila (${priceLabel})`}
+                  {phase === "redirecting" ? "Przekierowanie…" : `Chcę otrzymać streszczenie (${priceLabel})`}
                 </button>
                 <p className="text-[11px] text-neutral-500 mt-3">
-                  Bezpieczna płatność przez Stripe. E-mail podasz w kolejnym kroku.
+                  Bezpieczna płatność przez Stripe.
                 </p>
               </div>
             </div>
