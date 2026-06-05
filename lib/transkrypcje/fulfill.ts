@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { supabaseAdmin } from "@/lib/supabase";
 import { downloadAudio, transcribeAudio, transcribeViaWorker } from "./transcribe";
-import { analyzeTranscript } from "./summarize";
+import { analyzeTranscript, parseAnalysis } from "./summarize";
 import { buildPdf } from "./pdf";
 
 function slugify(s: string): string {
@@ -75,9 +75,16 @@ export async function startTranscription(jobId: string, email: string, amount?: 
   }
 }
 
-// KROK 2 (callback z workera): mamy transkrypcję -> analiza Claude + PDF + mail.
-// To już szybka, tekstowa robota — mieści się w 60s funkcji Vercela.
-export async function finalizeJob(jobId: string, title: string, transcript: string): Promise<void> {
+// KROK 2 (callback z workera): mamy transkrypcję + gotową analizę (z workera) -> PDF + mail.
+// Analizę Claude robi worker (Railway, bez limitu), więc tu zostaje tylko szybka robota:
+// parsowanie + PDF + mail — mieści się w 60s funkcji Vercela. analysisText opcjonalne:
+// jak go nie ma (np. stary worker), liczymy analizę tu jako fallback.
+export async function finalizeJob(
+  jobId: string,
+  title: string,
+  transcript: string,
+  analysisText?: string,
+): Promise<void> {
   const { data: job, error } = await supabaseAdmin
     .from("transkrypcje_jobs")
     .select("id, url, email, status")
@@ -89,7 +96,7 @@ export async function finalizeJob(jobId: string, title: string, transcript: stri
   if (!job.email) throw new Error(`Job ${jobId} bez emaila`);
 
   try {
-    const analysis = await analyzeTranscript(transcript, title);
+    const analysis = analysisText ? parseAnalysis(analysisText) : await analyzeTranscript(transcript, title);
     const pdf = await buildPdf({ title, url: job.url, analysis, transcript });
     await sendResultEmail(job.email, title, pdf);
     await supabaseAdmin.from("transkrypcje_jobs").update({ status: "done", title }).eq("id", jobId);

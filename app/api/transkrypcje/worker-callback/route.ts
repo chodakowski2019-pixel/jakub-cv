@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  let body: { jobId?: string; title?: string; transcript?: string; error?: string };
+  let body: { jobId?: string; title?: string; transcript?: string; analysisText?: string; error?: string };
   try {
     body = await req.json();
   } catch {
@@ -29,12 +29,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ received: true });
   }
 
-  // Analiza + PDF + mail leci po odpowiedzi (tekstowa robota, mieści się w 60s).
+  // PDF + mail leci po odpowiedzi. Analizę Claude zrobił już worker (analysisText),
+  // więc tu zostaje tylko parsowanie + PDF + mail — mieści się w 60s.
   const title = body.title || "Film z YouTube";
   const transcript = body.transcript || "";
+  const analysisText = body.analysisText;
   after(async () => {
     try {
-      await finalizeJob(jobId, title, transcript);
+      await finalizeJob(jobId, title, transcript, analysisText);
     } catch (err) {
       console.error("finalizeJob failed", jobId, err);
     }

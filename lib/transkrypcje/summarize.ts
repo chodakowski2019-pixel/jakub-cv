@@ -38,7 +38,7 @@ Wymagania:
 - całość po polsku, prosto i zrozumiale.
 - jeśli transkrypcja jest pusta lub bez sensu, zwróć puste pola.`;
 
-function safeParse(text: string): Analysis {
+export function parseAnalysis(text: string): Analysis {
   let raw = text.trim();
   // usuń ewentualne ```json ... ```
   raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
@@ -74,5 +74,5 @@ export async function analyzeTranscript(transcript: string, title: string): Prom
 
   const textPart = msg.content.find((c) => c.type === "text");
   const text = textPart && "text" in textPart ? textPart.text : "";
-  return safeParse(text);
+  return parseAnalysis(text);
 }
