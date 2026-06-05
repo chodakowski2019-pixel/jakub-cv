@@ -101,27 +101,58 @@ export async function buildPdf(input: {
   drawText(ctx, "jakubchodakowski.com", { size: 9, color: MUTED, gap: 8 });
 
   if (input.analysis.shortSummary) {
-    heading(ctx, "Streszczenie");
+    heading(ctx, "W skrócie");
     drawText(ctx, input.analysis.shortSummary, { size: 11, gap: 6 });
   }
 
-  if (input.analysis.keyPoints.length) {
-    heading(ctx, "Najważniejsze punkty");
-    for (const point of input.analysis.keyPoints) {
+  if (input.analysis.sections.length) {
+    heading(ctx, "Szczegółowe streszczenie");
+    let i = 1;
+    for (const sec of input.analysis.sections) {
+      // nagłówek wątku (numerowany) + treść — trzymaj razem na stronie
+      ensureSpace(ctx, 48);
+      if (sec.heading) {
+        drawText(ctx, `${i}. ${sec.heading}`, { size: 12, font: bold, color: INK, gap: 3 });
+      }
+      if (sec.detail) {
+        drawText(ctx, sec.detail, { size: 11, indent: 14, gap: 8 });
+      }
+      i++;
+    }
+  }
+
+  if (input.analysis.takeaways.length) {
+    heading(ctx, "Najważniejsze wnioski");
+    for (const t of input.analysis.takeaways) {
       ensureSpace(ctx, 18);
       ctx.page.drawText("•", { x: MARGIN, y: ctx.y - 11, size: 11, font: bold, color: ACCENT });
-      drawText(ctx, point, { size: 11, indent: 16, gap: 2 });
+      drawText(ctx, t, { size: 11, indent: 16, gap: 3 });
     }
     ctx.y -= 4;
   }
 
-  if (input.analysis.explanation) {
-    heading(ctx, "Wyjaśnienie");
-    drawText(ctx, input.analysis.explanation, { size: 11, gap: 6 });
+  heading(ctx, "Pełna transkrypcja");
+  const paras = paragraphize(input.transcript);
+  if (!paras.length) {
+    drawText(ctx, "(brak transkrypcji)", { size: 10, color: rgb(0.2, 0.22, 0.24) });
+  } else {
+    for (const para of paras) {
+      drawText(ctx, para, { size: 10, color: rgb(0.2, 0.22, 0.24), gap: 7 });
+    }
   }
 
-  heading(ctx, "Pełna transkrypcja");
-  drawText(ctx, input.transcript || "(brak transkrypcji)", { size: 10, color: rgb(0.2, 0.22, 0.24) });
-
   return doc.save();
+}
+
+// Dzieli ścianę transkrypcji na akapity (po ~4 zdania), bez zmiany słów.
+function paragraphize(text: string, perPara = 4): string[] {
+  const clean = (text ?? "").trim();
+  if (!clean) return [];
+  const sentences = clean.match(/[^.!?]+[.!?]+["”»)]?\s*/g) ?? [clean];
+  const paras: string[] = [];
+  for (let i = 0; i < sentences.length; i += perPara) {
+    const chunk = sentences.slice(i, i + perPara).join("").trim();
+    if (chunk) paras.push(chunk);
+  }
+  return paras;
 }
