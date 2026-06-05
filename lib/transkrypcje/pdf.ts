@@ -97,8 +97,7 @@ export async function buildPdf(input: {
   ctx.page.drawText("Transkrypcja i analiza wideo", { x: MARGIN, y: ctx.y - 10, size: 10, font: bold, color: ACCENT });
   ctx.y -= 28;
   drawText(ctx, input.title, { size: 20, font: bold, gap: 4 });
-  drawText(ctx, input.url, { size: 9, color: MUTED, gap: 6 });
-  drawText(ctx, "jakubchodakowski.com", { size: 9, color: MUTED, gap: 8 });
+  drawText(ctx, input.url, { size: 9, color: MUTED, gap: 8 });
 
   if (input.analysis.shortSummary) {
     heading(ctx, "W skrócie");

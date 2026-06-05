@@ -24,7 +24,7 @@ async function sendResultEmail(email: string, title: string, pdf: Uint8Array): P
         <p>Nie musisz oglądać — wszystko, co ważne z tego filmu, masz w załączonym PDF:</p>
         <p style="padding:12px 16px;background:#f4f6f7;border-radius:8px"><b>${title}</b></p>
         <p>W środku: pełna transkrypcja, streszczenie i najważniejsze punkty.</p>
-        <p style="color:#6b7280;font-size:13px;margin-top:24px">jakubchodakowski.com</p>
+        <p style="color:#6b7280;font-size:13px;margin-top:24px"><a href="https://www.jakubchodakowski.com" style="color:#6b7280">www.jakubchodakowski.com</a></p>
       </div>
     `,
     attachments: [{ filename: `${slugify(title)}.pdf`, content: Buffer.from(pdf) }],
@@ -161,7 +161,7 @@ export async function fulfillJob(jobId: string, email: string, amount?: number |
           <p>Nie musisz oglądać — wszystko, co ważne z tego filmu, masz w załączonym PDF:</p>
           <p style="padding:12px 16px;background:#f4f6f7;border-radius:8px"><b>${title}</b></p>
           <p>W środku: pełna transkrypcja, streszczenie i najważniejsze punkty.</p>
-          <p style="color:#6b7280;font-size:13px;margin-top:24px">jakubchodakowski.com</p>
+          <p style="color:#6b7280;font-size:13px;margin-top:24px"><a href="https://www.jakubchodakowski.com" style="color:#6b7280">www.jakubchodakowski.com</a></p>
         </div>
       `,
       attachments: [
