@@ -9,9 +9,11 @@ function slugify(s: string): string {
 }
 
 // Wysyła gotowy PDF na maila klienta.
+// WAŻNE: Resend SDK NIE rzuca wyjątku przy odrzuceniu (np. domena niezweryfikowana) —
+// zwraca { error }. Musimy to sprawdzić i rzucić, inaczej job byłby fałszywie "done".
 async function sendResultEmail(email: string, title: string, pdf: Uint8Array): Promise<void> {
   const resend = new Resend(process.env.RESEND_API_KEY);
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: "Jakub Chodakowski <hello@jakubchodakowski.com>",
     to: email,
     subject: `Twój tekst gotowy: ${title}`,
@@ -27,6 +29,9 @@ async function sendResultEmail(email: string, title: string, pdf: Uint8Array): P
     `,
     attachments: [{ filename: `${slugify(title)}.pdf`, content: Buffer.from(pdf) }],
   });
+  if (error) {
+    throw new Error(`Resend: ${error.name ?? ""} ${error.message ?? JSON.stringify(error)}`);
+  }
 }
 
 // KROK 1 (po płatności): oznacz job, odpal workera w trybie async i NIE czekaj.
