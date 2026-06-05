@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { after } from "next/server";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
-import { fulfillJob } from "@/lib/transkrypcje/fulfill";
+import { startTranscription } from "@/lib/transkrypcje/fulfill";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -30,12 +30,14 @@ export async function POST(req: NextRequest) {
 
     if (jobId && email) {
       const amount = session.amount_total; // grosze, do statystyk przychodu
-      // Odpowiadamy Stripe od razu, robota (audio+Whisper+Claude+PDF+mail) leci po response.
+      // Odpowiadamy Stripe od razu, tylko odpalamy workera (async). Worker oddzwoni na
+      // /api/transkrypcje/worker-callback, gdzie dopiero PDF + mail. Nie czekamy na nic
+      // długiego, więc limit 60s nie boli długich filmów.
       after(async () => {
         try {
-          await fulfillJob(jobId, email, amount);
+          await startTranscription(jobId, email, amount);
         } catch (err) {
-          console.error("fulfillJob failed", jobId, err);
+          console.error("startTranscription failed", jobId, err);
         }
       });
     }

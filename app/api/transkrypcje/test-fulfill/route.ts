@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { fulfillJob } from "@/lib/transkrypcje/fulfill";
+import { startTranscription } from "@/lib/transkrypcje/fulfill";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-// TYMCZASOWY endpoint testowy: odpala pełny fulfillJob (worker -> Whisper ->
-// Claude -> PDF -> mail) BEZ płatności Stripe. Zabezpieczony sekretem.
-// USUNĄĆ po teście.
+// TYMCZASOWY endpoint testowy: odpala pełną ścieżkę async (start -> worker ->
+// callback -> Claude -> PDF -> mail) BEZ płatności Stripe. Zabezpieczony sekretem.
+// Zwraca od razu (jak prawdziwy webhook) — mail przychodzi po chwili. USUNĄĆ po teście.
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const secret = searchParams.get("secret");
@@ -31,8 +31,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    await fulfillJob(data.id, email, 0);
-    return NextResponse.json({ ok: true, jobId: data.id, email, url });
+    await startTranscription(data.id, email, 0);
+    return NextResponse.json({ ok: true, jobId: data.id, email, url, note: "worker odpalony, mail przyjdzie po chwili" });
   } catch (err) {
     return NextResponse.json({ ok: false, jobId: data.id, error: String(err) }, { status: 500 });
   }
