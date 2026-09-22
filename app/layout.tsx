@@ -13,9 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Jakub Chodakowski — AI Implementation Specialist",
+  // USER_001 2026-09-19: marka osobista sprzedaje SEO dla klinik prywatnych.
+  // Stara pozycja (wdrozenia AI) zostala, ale jako podstrona /ai.
+  title: "Nowi pacjenci w Twoim gabinecie | Jakub Chodakowski",
   description:
-    "I help companies implement AI into their everyday business processes.",
+    "Buduje klinikom prywatnym wlasny kanal pacjentow z Google. Pozycjonowanie na zabieg i miasto, tresci, analityka i raport co miesiac.",
 };
 
 export default function RootLayout({
@@ -25,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="pl"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
