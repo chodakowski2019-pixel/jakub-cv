@@ -155,6 +155,21 @@ const BONUSES = [
   },
 ];
 
+// PL: KLIENCI.slice(0, 8) from gabinety-lp.tsx, the same 8 people and photos
+// as on the Polish offers (USER_001 22.09: the tiles must be there). Photos
+// copied to public/klienci/. ⚠️ Same caveat as on the Polish side: the first
+// five photos come from TwójPsycholog profiles without image consent.
+const CLIENTS = [
+  { name: "Katarzyna Klimowicz", title: "psychotherapist", file: "/klienci/katarzyna-klimowicz.jpg" },
+  { name: "Barbara Czarny", title: "psychologist", file: "/klienci/barbara-czarny.jpg" },
+  { name: "Joanna Wolff", title: "psychotherapist", file: "/klienci/joanna-wolff.jpg" },
+  { name: "Joanna Nowicka", title: "psychologist", file: "/klienci/joanna-nowicka.jpg" },
+  { name: "Krystian Sobczyk", title: "psychotherapist", file: "/klienci/krystian-sobczyk.jpg" },
+  { name: "Tomasz Lipa", title: "psychotherapist", file: "/klienci/tomasz-lipa.jpg" },
+  { name: "Przemysław Matul", title: "psychotherapist", file: "/klienci/przemyslaw-matul.jpg" },
+  { name: "Martyna Kazanecka", title: "psychotherapist", file: "/klienci/martyna-kazanecka.jpg" },
+];
+
 // PL: FAQ, one to one.
 const FAQ = [
   {
@@ -423,6 +438,20 @@ export function ClinicOfferPage() {
             have received patients from us
           </h2>
         </Reveal>
+        <div className="mt-9 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          {CLIENTS.map((k, i) => (
+            <Reveal key={k.name} delay={i * 60}>
+              <div className={`${CARD} h-full p-5 text-center`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={k.file} alt={k.name} className="mx-auto size-20 rounded-full object-cover" />
+                <p className="mt-3 text-[0.95rem] font-semibold leading-tight text-zinc-900">{k.name}</p>
+                <span className="mt-2 inline-block rounded-full bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700">
+                  {k.title}
+                </span>
+              </div>
+            </Reveal>
+          ))}
+        </div>
         <Reveal delay={200}>
           <div className="mt-9 text-center">
             {/* PL: "Chcę do nich dołączyć" */}
