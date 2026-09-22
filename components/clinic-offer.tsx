@@ -550,6 +550,24 @@ export function ClinicOfferPage() {
                     </li>
                   ))}
                 </ul>
+                {/* PL: Stripe, Visa, Mastercard, BLIK, KSeF. BLIK and KSeF are
+                    Polish only, so here the three international marks. */}
+                <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4">
+                  {[
+                    { name: "Stripe", file: "/znaki/stripe.svg" },
+                    { name: "Visa", file: "/znaki/visa.svg" },
+                    { name: "Mastercard", file: "/znaki/mastercard.svg" },
+                  ].map((z) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={z.name}
+                      src={z.file}
+                      alt={z.name}
+                      className="h-7 w-auto object-contain sm:h-8"
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
               </div>
             </Reveal>
           </div>
