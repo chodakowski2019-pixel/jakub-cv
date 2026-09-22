@@ -17,6 +17,8 @@ export type ClinicOffer = {
   name: string;
   city: string;
   country: string;
+  /** Market the search volume is measured for ("Ireland"). Exclusivity stays per city. */
+  market: string;
   /** Procedure we build the channel for. */
   procedure: string;
   /** Main phrase we work on. */
@@ -63,21 +65,36 @@ export type ClinicOffer = {
 //   from 3 499, Tir na nOg 2 000-5 000) with similar Google ratings (4.8-4.9).
 //
 // searches: NO public source gives Irish volumes for "hair transplant
-// Dublin / Ireland / cost". To be measured in Keyword Planner (Ireland) or
-// taken from their Search Console. Until then the page shows a red preview
-// bar and MUST NOT be sent. Field `searches: 0` triggers the bar.
+// Dublin / Ireland / cost" (agent research 22.09: Semrush/Ahrefs previews,
+// Google Trends, Irish agency articles, all empty). ESTIMATE used instead,
+// the same way as KPU Lublin on the Polish side when the Planner was silent:
+//   UK cluster "hair transplant" = 77 170/mo (Keyword Planner via Istanbul
+//   Care study, goodmenproject.com, 2025/26) x population ratio IE/UK
+//   5.3 M / 68 M = 0.078 → ~6 000/mo for the whole of Ireland. Google Trends
+//   2018-2023 puts Ireland at 92 vs UK 89 per capita (PMC13143260), so the
+//   ratio does not overstate. Rounded DOWN to 6 000.
+//   The market is national, like hair transplants in Poland: the patient
+//   travels for the procedure, so the funnel says "in Ireland" and the
+//   exclusivity stays "one clinic in Dublin".
+// visitShare cut to 1-2% (not the default 2-4%): a national cluster mixes
+// head terms held by comparison portals and Turkish clinics with a long tail
+// we can win, the same reasoning as LUX MED (0.3-0.8%) vs Medmix (2-4%) on
+// the Polish side.
+// ⚠️ Replace with a Keyword Planner (Ireland) reading as soon as USER_001
+// runs it; 6 000 is an estimate, not a measurement.
 export const CLINIC_OFFERS: Record<string, ClinicOffer> = {
   ailesbury: {
     name: "Ailesbury Hair Clinic",
     city: "Dublin",
     country: "Ireland",
+    market: "Ireland",
     procedure: "hair transplant",
     phrase: "hair transplant Dublin",
     searching:
       "A man thinking about a hair transplant searches Google for months. He compares methods, prices per graft and before-and-after photos, and reads about clinics in Turkey, before he books a single consultation.",
     person: "Ioannis",
-    searches: 0,
-    visitShare: [0.02, 0.04],
+    searches: 6000,
+    visitShare: [0.01, 0.02],
     cap: [3, 10],
     procedurePriceEur: 5500,
     // USER_001 22.09: 2 000 EUR/mc (was 590 = Polish SEO+ converted).

@@ -222,7 +222,7 @@ export function ClinicOfferPage() {
   // "Zostawia zgłoszenie" / "Nowych pacjentów miesięcznie".
   const FUNNEL = [
     {
-      step: `People look for help in ${o.city}`,
+      step: `People look for a ${o.procedure} in ${o.market}`,
       value: noData ? "—" : `approx. ${eur(o.searches)} / month`,
       pct: null as string | null,
     },
