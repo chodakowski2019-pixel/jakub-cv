@@ -44,10 +44,13 @@ export type ClinicOffer = {
 };
 
 // ── Ailesbury Hair Clinic, Dublin ─────────────────────────────────────────
-// Price 590 EUR/mo = the Polish SEO+ line (2 500 zł) converted, USER_001 22.09.
+// Price 2 000 EUR/mo (USER_001 22.09, first draft had 590 = Polish SEO+
+// converted). Dublin market check the same day: agencies with public prices
+// start at the same level (Webjuice 1 497-3 500, &Grow 1 500-5 000+, Riordan
+// up to 1 500), "SEO cost Ireland" guides give 800-3 500 for a service
+// business in a competitive city, medical/aesthetic SEO in UK 1 500-5 000 GBP.
 // The cold email promised: own patient channel, site optimised for Dublin,
-// no commission, exclusivity (one clinic in Dublin), one procedure a year
-// covers the whole partnership. All four are kept on the page.
+// no commission, exclusivity (one clinic in Dublin). Kept on the page.
 //
 // Research 22.09.2026 (web, sources in memory project_gabi_oferta_kliniki_zagranica):
 // - their own price page: FUE/AHI 4 000-7 500 EUR, eyebrows 2 000-3 500 EUR,
