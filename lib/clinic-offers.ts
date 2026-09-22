@@ -114,6 +114,44 @@ export const CLINIC_OFFERS: Record<string, ClinicOffer> = {
     warning:
       "The next patient who searches for a hair transplant in Dublin will land on a comparison portal or a clinic in Istanbul.",
   },
+
+  // ── Scandinavian Hair Institute (Skandinavisk Hårinstitutt), Oslo ──────────
+  // Dr Emil George (half Polish, writes in Polish) replied on 22.09.2026 at
+  // 07:05 to the Norwegian cold email sent on 21.09 from
+  // hello@jakubchodakowski.com, and at 08:09: "Może być. Zależy na oferty
+  // konkretny" after USER_001 said he works remotely from Poland.
+  // Clinic (their site, 22.09): FUE + FUT + beard, Oslo Kirkeveien 7A main,
+  // also Stavanger and Trondheim (email footer lists Stockholm too), agency
+  // built site (Journey Group) with a blog and SEO landing pages, Google 5.0
+  // / 66 reviews, "one patient a day". Same price as Ailesbury: 2 000 EUR/mo,
+  // same Stripe link (the amount lives in Stripe).
+  // procedurePriceEur: Norwegian FUE prices published by Oslo clinics run
+  // 30 000-85 000 NOK (Medicura price list, altomnorge guide, 22.09.2026),
+  // ~2 600-7 400 EUR; middle taken = 4 700 EUR (55 000 NOK).
+  // searches: no public Norwegian volume, ESTIMATE the same way as Ailesbury:
+  // UK cluster 77 170/mo x population NO/UK 5.6 M / 68 M = 0.082 → ~6 300,
+  // rounded DOWN to 5 000 because the Norwegian cluster splits between
+  // "hårtransplantasjon" and English queries and part of it goes straight to
+  // Turkish clinics. ⚠️ Replace with a Keyword Planner (Norway) reading.
+  scandinavian: {
+    name: "Scandinavian Hair Institute",
+    city: "Oslo",
+    country: "Norway",
+    market: "Norway",
+    procedure: "hair transplant",
+    phrase: "hårtransplantasjon Oslo",
+    searching:
+      "A man thinking about a hair transplant searches Google for months. He compares methods, prices per graft and before-and-after photos, and reads about clinics in Turkey, before he books a single consultation.",
+    person: "Emil",
+    searches: 5000,
+    visitShare: [0.01, 0.02],
+    cap: [3, 10],
+    procedurePriceEur: 4700,
+    priceEur: 2000,
+    paymentLink: "https://buy.stripe.com/fZu9AT65839e85maKp3F60p",
+    warning:
+      "The next patient who searches for a hair transplant in Oslo will land on a comparison portal or a clinic in Istanbul.",
+  },
 };
 
 export const DEFAULT_PRICE_EUR = 2000;
