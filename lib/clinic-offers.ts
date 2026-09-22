@@ -1,0 +1,118 @@
+// Offer pages for clinics abroad (USER_001 2026-09-22), the same mechanism
+// as lovemyself.pl/klinikaoferta: one page, content picked by ?k=<key>, the
+// link is sent by name in an email, the page is noindex and reports every
+// visit by email (/api/offer-view).
+//
+// First clinic: Ailesbury Hair Clinic, Dublin. Ioannis Ypatidis replied on
+// 21.09 to the cold email sent from hello@jakubchodakowski.com ("can you
+// please send me more detail about the SEO work you can deliver and what is
+// the cost?").
+//
+// ⛔ Keep this file free of working notes in string fields: it is imported by
+// a client component, so every string ends up in the JS bundle the clinic
+// downloads. Reasoning stays in comments (stripped by the minifier).
+
+export type ClinicOffer = {
+  /** Clinic name exactly as they use it. */
+  name: string;
+  city: string;
+  country: string;
+  /** Procedure we build the channel for. */
+  procedure: string;
+  /** Main phrase we work on. */
+  phrase: string;
+  /** How this patient searches (one or two sentences). */
+  searching: string;
+  /** Who we address on the page. */
+  person: string;
+  /** Monthly searches for the phrase cluster in this market. 0 = not measured. */
+  searches: number;
+  /** Share of searches that land on the clinic's site once it ranks [min, max]. */
+  visitShare: [number, number];
+  /** Cap on consultations a month the clinic can realistically take [min, max]. */
+  cap: [number, number];
+  /** Typical price of one procedure, EUR, for the "one procedure pays for the year" line. */
+  procedurePriceEur: number;
+  /** Monthly fee, EUR. */
+  priceEur: number;
+  /** Stripe Payment Link in EUR. Missing = CTA opens an email instead. */
+  paymentLink?: string;
+  /** Extra sentence for the "what if you don't" section. */
+  warning?: string;
+};
+
+// ── Ailesbury Hair Clinic, Dublin ─────────────────────────────────────────
+// Price 590 EUR/mo = the Polish SEO+ line (2 500 zł) converted, USER_001 22.09.
+// The cold email promised: own patient channel, site optimised for Dublin,
+// no commission, exclusivity (one clinic in Dublin), one procedure a year
+// covers the whole partnership. All four are kept on the page.
+//
+// Research 22.09.2026 (web, sources in memory project_gabi_oferta_kliniki_zagranica):
+// - their own price page: FUE/AHI 4 000-7 500 EUR, eyebrows 2 000-3 500 EUR,
+//   so procedurePriceEur = 5 500 (middle of their range),
+// - legal entity Fleming Place Health Clinic Ltd, founded 07.2024, micro
+//   company, Ioannis Ypatidis = CEO; Google 4.9 / 282 reviews on their site,
+//   IG 29 000 followers, Facebook dead (59 likes), Trustpilot 3.7 unclaimed,
+// - they ALREADY have SEO basics: WordPress + Yoast, landing pages for
+//   "Non-Shave FUE Ireland", "DHI Ireland", "Cork", 20 blog posts (irregular,
+//   none in 07-08.2026), FAQ schema. Gaps: no MedicalClinic/LocalBusiness
+//   schema, ~40 DE/FR pages without hreflang, blog irregular. Hence the
+//   "technical fixes" line in INCLUDED and no talk of "building a site",
+// - GTM carries Google Ads, Meta and TikTok pixels: they pay for leads today,
+// - Dublin competition publishes prices harder (Total Hair 6 495, Grow Club
+//   from 3 499, Tir na nOg 2 000-5 000) with similar Google ratings (4.8-4.9).
+//
+// searches: NO public source gives Irish volumes for "hair transplant
+// Dublin / Ireland / cost". To be measured in Keyword Planner (Ireland) or
+// taken from their Search Console. Until then the page shows a red preview
+// bar and MUST NOT be sent. Field `searches: 0` triggers the bar.
+export const CLINIC_OFFERS: Record<string, ClinicOffer> = {
+  ailesbury: {
+    name: "Ailesbury Hair Clinic",
+    city: "Dublin",
+    country: "Ireland",
+    procedure: "hair transplant",
+    phrase: "hair transplant Dublin",
+    searching:
+      "A man thinking about a hair transplant searches Google for months. He compares methods, prices per graft and before-and-after photos, and reads about clinics in Turkey, before he books a single consultation.",
+    person: "Ioannis",
+    searches: 0,
+    visitShare: [0.02, 0.04],
+    cap: [3, 10],
+    procedurePriceEur: 5500,
+    priceEur: 590,
+    warning:
+      "The next patient who searches for a hair transplant in Dublin will land on a comparison portal or a clinic in Istanbul.",
+  },
+};
+
+export const DEFAULT_PRICE_EUR = 590;
+
+// Funnel: the same market ranges as the Polish offers (lib/oferta-miasta.ts).
+// 2-4% of city searches land on the site, 5-8% of visitors send an enquiry,
+// 70% of enquiries turn into a consultation. Each end is capped by what the
+// clinic can take.
+export const ENQUIRY_SHARE: [number, number] = [0.05, 0.08];
+export const TO_CONSULTATION = 0.7;
+
+const round = (x: number) => (x >= 100 ? Math.round(x / 10) * 10 : Math.round(x));
+
+export function funnel(o: ClinicOffer) {
+  const visits: [number, number] = [
+    round(o.searches * o.visitShare[0]),
+    round(o.searches * o.visitShare[1]),
+  ];
+  const enquiries: [number, number] = [
+    Math.round(visits[0] * ENQUIRY_SHARE[0]),
+    Math.round(visits[1] * ENQUIRY_SHARE[1]),
+  ];
+  const market: [number, number] = [
+    Math.round(enquiries[0] * TO_CONSULTATION),
+    Math.round(enquiries[1] * TO_CONSULTATION),
+  ];
+  const consultations: [number, number] = [
+    Math.min(market[0], o.cap[0]),
+    Math.min(market[1], o.cap[1]),
+  ];
+  return { visits, enquiries, consultations };
+}
