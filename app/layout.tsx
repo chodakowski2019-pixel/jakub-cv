@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,17 +22,23 @@ export const metadata: Metadata = {
     "Buduje klinikom prywatnym wlasny kanal pacjentow z Google. Pozycjonowanie na zabieg i miasto, tresci, analityka i raport co miesiac.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Merge 22.09: strona glowna jest po polsku (SEO dla klinik), ale /en dalej
+  // istnieje z czerwcowego przelacznika PL/EN, wiec jezyk bierzemy z naglowka.
+  const locale = (await headers()).get("x-locale") ?? "pl";
   return (
     <html
-      lang="pl"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
