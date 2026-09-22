@@ -3,23 +3,34 @@
 import { useEffect, useRef, useState } from "react";
 import { CLINIC_OFFERS, funnel, type ClinicOffer } from "@/lib/clinic-offers";
 
-// English offer page for clinics abroad (USER_001 2026-09-22). Structure
-// mirrors lovemyself.pl/klinikaoferta (OfertaNowa in clinic mode): hero with
-// three promises, "your month", funnel with numbers, price + what you get,
-// guarantee, warning, who I am + payments, FAQ, closing. Texts rewritten in
-// plain American English (12-year-old level, USER rule) for a clinic that
-// has never heard of lovemyself: no Polish brand, no Polish directories.
+// English offer page for clinics abroad (USER_001 2026-09-22).
 //
-// Look: the same as the jakubchodakowski.com home page (white, zinc text,
-// cyan/teal accent), not the lovemyself blue.
+// ⚠️ USER_001 22.09: the texts must be EXACTLY the ones from
+// lovemyself.pl/klinikaoferta (OfertaNowa in clinic mode, version 2),
+// translated, not rewritten. Section order, headings, bullet lists, CTA
+// labels, guarantee, FAQ and PS follow src/components/oferta-nowa.tsx in
+// zwiazki-lp one to one. Differences, all forced by the market:
+//   - brand: Jakub Chodakowski instead of lovemyself (logo, header, footer),
+//   - the social-proof section keeps the heading and CTA but not the photos
+//     of Polish psychologists (no consent for their image, and they mean
+//     nothing to a clinic in Dublin),
+//   - "Premium Europa" (Polish patients abroad) is dropped: it sells Polish
+//     search results, which an Irish clinic does not need,
+//   - KSeF (Polish e-invoicing) does not exist in Ireland; the payments card
+//     says "invoice in EUR" instead,
+//   - the FAQ item about ZnanyLekarz becomes "a profile on a directory site".
+//
+// Look: same as the jakubchodakowski.com home page (white, zinc, cyan/teal).
 //
 // One CTA on the whole page. With a Stripe Payment Link it goes to payment;
-// without one (Ailesbury today) it opens a reply email, because a EUR link
-// does not exist yet.
+// without one it opens a reply email (no EUR link yet).
 
 const GREEN = "#16a34a";
 const CARD = "rounded-2xl border border-zinc-200 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)]";
 const EMAIL = "hello@jakubchodakowski.com";
+// Same number as on the Polish offers (LICZBA_SPECJALISTOW in oferta-nowa.tsx,
+// given by USER_001, not counted from the database).
+const SPECIALISTS = 250;
 
 const eur = (n: number) => new Intl.NumberFormat("en-IE").format(n);
 const range = (p: [number, number]) => (p[0] === p[1] ? eur(p[0]) : `${eur(p[0])}-${eur(p[1])}`);
@@ -95,78 +106,76 @@ function Tick({ color = GREEN, children }: { color?: string; children: React.Rea
   );
 }
 
+// PL: "0 prowizji od pacjenta" / "Gwarancja wzrostu" / "Rezygnujesz kiedy chcesz"
+const HERO_POINTS = ["0 commission per patient", "Growth guarantee", "Cancel whenever you want"];
+
+// PL: TWOJ_MIESIAC without the red row (clinic mode).
 const YOUR_MONTH = [
-  { title: "You do only your work", text: "I bring the patients." },
+  { title: "You do only your own work", text: "We find the patients." },
   { title: "Peace of mind", text: "The website works while you rest." },
-  { title: "You stay in control", text: "You get a report every month." },
+  { title: "You are in control", text: "You receive a report every month." },
 ];
 
+// PL: wPakiecie(v2) in clinic mode: report and online booking moved to
+// bonuses, directory profile removed.
 const INCLUDED = (o: ClinicOffer) => [
+  { what: "Your clinic's website", detail: `Optimised for ${o.city}, ready in 14 days.` },
   {
-    what: "Your website, your domain",
-    detail: `Optimised for ${o.procedure} in ${o.city}. First changes live within 14 days.`,
-  },
-  {
-    what: "Articles on your website, every month",
-    detail: "Written for what patients really type into Google: cost per graft, FUE vs DHI, recovery, results, Turkey vs Ireland.",
-  },
-  {
-    what: "Technical fixes",
-    detail: "Titles, headings, speed, clinic schema for Google, language versions set up properly.",
+    what: "Articles on your website",
+    detail: "We write for what people really type into Google when they look for help.",
   },
   {
     what: "Google Business Profile",
-    detail: "Photos, questions and answers, replies to reviews.",
+    detail: "We run your profile: photos, questions and answers, replies to reviews.",
   },
   {
-    what: "Visibility in AI search",
-    detail: "ChatGPT, Perplexity and Google AI answers. Content written so they quote you.",
+    what: "Ranking in AI search engines",
+    detail: "ChatGPT, Perplexity and AI answers in Google. We write the content so that they quote you.",
   },
+  { what: "Collecting patient reviews", detail: "New reviews strongly attract new patients." },
   {
-    what: "Collecting patient reviews",
-    detail: "New reviews bring new patients.",
-  },
-  {
-    what: "Analytics set up",
+    what: "Analytics tools connected",
     detail: "Google Search Console and Google Analytics on your website.",
   },
-  {
-    what: `Exclusivity: one clinic in ${o.city}`,
-    detail: `I do not work with another ${o.procedure} clinic in ${o.city}.`,
-  },
 ];
 
+// PL: bonusy(v2) in clinic mode.
 const BONUSES = [
   {
-    what: "Monthly report",
-    detail: "Impressions and clicks in Google, the phrases patients come from, and next steps.",
+    what: "A report once a month",
+    detail: "Impressions and clicks in Google, the phrases patients come in on, and conclusions for the next month.",
   },
   {
-    what: "Online booking on your website",
-    detail: "The patient picks a consultation slot and it lands in your calendar.",
+    what: "Online booking on the website",
+    detail: "The patient picks the slot and lands in your calendar.",
+  },
+  {
+    what: "Patient CRM",
+    detail: "Patient card, visit history, payments, documents and notes in one place.",
   },
 ];
 
-const FAQ = (o: ClinicOffer) => [
+// PL: FAQ, one to one.
+const FAQ = [
   {
-    q: "We already have a website. Do you build a new one?",
-    a: "No. I work on your website and your domain. Everything I build stays yours.",
+    q: "We already have a clinic website. Do you build a new one?",
+    a: "If you have a website, we work on it and start pushing it higher.",
   },
   {
-    q: "We already run Google Ads. Does this replace them?",
-    a: "No. Ads stop the moment you stop paying. This channel keeps working. Many clinics run both and cut the ad budget over time.",
+    q: "We take bookings in several places at once. Can that be combined?",
+    a: "Yes. We can merge all your calendars into one to make your work easier.",
   },
   {
-    q: "Who owns the content if we stop?",
-    a: "You do. Every article, page and setting stays on your domain. You can cancel any month.",
+    q: "We have a profile on a directory site. Does that clash?",
+    a: "No. You can keep it. We work outside the directories, so one does not get in the way of the other.",
   },
   {
-    q: "How soon do we see results?",
-    a: "First changes go live within 14 days. Google needs time: the report shows impressions growing month by month, and consultations usually follow from month 3 to 4.",
+    q: "Who owns the website and what happens to it if we cancel?",
+    a: "The domain and the website are yours. If you end the partnership, we hand over the whole website and everything we built.",
   },
   {
-    q: `Why only one clinic in ${o.city}?`,
-    a: "Because I cannot put two clinics in the same first place in Google. One clinic per city per procedure, no exceptions.",
+    q: "Our clinic has several specialists. Does that change anything?",
+    a: "For the better. More specialisations mean more phrases we can show you under in Google.",
   },
 ];
 
@@ -195,10 +204,10 @@ export function ClinicOfferPage() {
   if (!o) {
     return (
       <main className="mx-auto max-w-xl px-5 py-24 text-center text-zinc-800">
-        <h1 className="text-2xl font-semibold">This offer is not available</h1>
+        <h1 className="text-2xl font-semibold">Offer not available</h1>
         <p className="mt-3 text-zinc-600">
-          This link is sent by name. Please open it exactly as it came in the email, or reply to that
-          email and I will send it again.
+          This address is sent by name. Please open the link exactly as it came by email, or reply to
+          the message and I will send it again.
         </p>
       </main>
     );
@@ -207,9 +216,28 @@ export function ClinicOfferPage() {
   const f = funnel(o);
   const noData = o.searches <= 0;
   const cta = o.paymentLink ?? `mailto:${EMAIL}?subject=${encodeURIComponent(`${o.name}: let's start`)}`;
-  const monthsPerProcedure = Math.floor(o.procedurePriceEur / o.priceEur);
   const included = INCLUDED(o);
-  const faq = FAQ(o);
+
+  // PL: lejek(): "Ludzie szukają pomocy w X" / "Wchodzi na Twoją stronę" /
+  // "Zostawia zgłoszenie" / "Nowych pacjentów miesięcznie".
+  const FUNNEL = [
+    {
+      step: `People look for help in ${o.city}`,
+      value: noData ? "—" : `approx. ${eur(o.searches)} / month`,
+      pct: null as string | null,
+    },
+    {
+      step: "Land on your website",
+      value: noData ? "—" : `${range(f.visits)} people`,
+      pct: `${Math.round(o.visitShare[0] * 100)}-${Math.round(o.visitShare[1] * 100)}%`,
+    },
+    { step: "Send an enquiry", value: noData ? "—" : `${range(f.enquiries)} people`, pct: "5-8%" },
+    {
+      step: "New patients a month",
+      value: noData ? "—" : `${range(f.consultations)} new patients`,
+      pct: "70%",
+    },
+  ];
 
   return (
     <div className="min-h-screen overflow-x-clip bg-white text-zinc-800 antialiased">
@@ -230,34 +258,35 @@ export function ClinicOfferPage() {
           />
           <span className="text-sm font-medium text-zinc-900">Jakub Chodakowski</span>
           <span className="ml-auto">
-            <Cta label={`Start in ${o.city}`} href={cta} />
+            {/* PL: "Rezerwuję {miasto}" */}
+            <Cta label={`I'm booking ${o.city}`} href={cta} />
           </span>
         </div>
       </header>
 
-      {/* HERO */}
+      {/* ── HERO: "Pacjenci sami Cię znajdą" ── */}
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute -top-40 right-0 size-[28rem] rounded-full bg-cyan-400/20 blur-[120px]" />
         <div className="mx-auto flex min-h-[calc(100svh-64px)] max-w-5xl flex-col justify-center px-5 pb-10 text-center">
           <Reveal>
-            <p className="mb-5 font-mono text-xs uppercase tracking-widest text-cyan-600">
-              Offer for {o.name}
-            </p>
-            <h1 className="text-[clamp(1.6rem,8vw,2.6rem)] font-bold leading-[1.08] tracking-tighter text-zinc-900 sm:text-7xl sm:leading-[1.03]">
+            <h1 className="text-[clamp(1.55rem,8vw,2.6rem)] font-semibold leading-[1.08] tracking-tight text-zinc-900 sm:text-7xl sm:leading-[1.03]">
               Patients
               <br />
-              <Accent>will find you</Accent>
+              <Accent>will find you themselves</Accent>
             </h1>
           </Reveal>
           <Reveal delay={160}>
+            {/* PL clinic subtitle: "Zamiast konkurować z innymi, pokaż pacjentom,
+                że jesteś ich najlepszym wyborem." */}
             <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-600">
-              Instead of competing with comparison portals and clinics abroad,
-              <br className="hidden sm:block" /> show patients in {o.city} that you are their best choice.
+              Instead of competing with others, show patients
+              <br />
+              that you are their best choice.
             </p>
           </Reveal>
           <Reveal delay={260}>
             <ul className="mx-auto mt-9 grid max-w-2xl gap-3 text-left sm:grid-cols-3">
-              {["No commission per patient", `One clinic in ${o.city}`, "Cancel any month"].map((t) => (
+              {HERO_POINTS.map((t) => (
                 <li key={t} className={`${CARD} flex items-start gap-3 p-4 text-[0.95rem]`}>
                   <Tick>✓</Tick>
                   <span>{t}</span>
@@ -268,12 +297,12 @@ export function ClinicOfferPage() {
         </div>
       </section>
 
-      {/* YOUR MONTH */}
+      {/* ── "Jak wygląda Twój miesiąc?" ── */}
       <section className="border-t border-zinc-200">
         <div className="mx-auto max-w-5xl px-5 py-12 sm:py-16">
           <Reveal>
-            <h2 className="text-center text-3xl font-bold tracking-tighter text-zinc-900 sm:text-5xl">
-              What does <Accent>your month</Accent> look like?
+            <h2 className="text-center text-3xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
+              What does <Accent>your month look like?</Accent>
             </h2>
           </Reveal>
           <Reveal delay={120}>
@@ -303,41 +332,21 @@ export function ClinicOfferPage() {
         </div>
       </section>
 
-      {/* HOW MANY PATIENTS */}
+      {/* ── "Ile na tym zarobisz?" (no calculator in clinic mode) ── */}
       <section className="border-y border-zinc-200 bg-zinc-50">
         <div className="mx-auto max-w-5xl px-5 py-12 sm:py-16">
           <Reveal>
-            <h2 className="text-center text-3xl font-bold tracking-tighter text-zinc-900 sm:text-5xl">
-              How many patients <Accent>are out there?</Accent>
+            <h2 className="text-center text-3xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
+              How much will you <Accent>earn on this?</Accent>
             </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-center text-base leading-relaxed text-zinc-600">
-              {o.searching}
-            </p>
           </Reveal>
 
           <div className="mx-auto mt-10 max-w-3xl space-y-3">
-            {[
-              {
-                step: `People search for a ${o.procedure} in ${o.city}`,
-                value: noData ? "—" : `about ${eur(o.searches)} / month`,
-                pct: null as string | null,
-              },
-              {
-                step: "Land on your website",
-                value: noData ? "—" : `${range(f.visits)} people`,
-                pct: `${Math.round(o.visitShare[0] * 100)}-${Math.round(o.visitShare[1] * 100)}%`,
-              },
-              { step: "Send an enquiry", value: noData ? "—" : `${range(f.enquiries)} people`, pct: "5-8%" },
-              {
-                step: "New consultations a month",
-                value: noData ? "—" : `${range(f.consultations)} consultations`,
-                pct: "70%",
-              },
-            ].map((l, i, arr) => (
+            {FUNNEL.map((l, i) => (
               <Reveal key={l.step} delay={i * 90}>
                 <div
                   className={`${CARD} flex items-center justify-between gap-4 p-5 ${
-                    i === arr.length - 1 ? "ring-2 ring-cyan-500" : ""
+                    i === FUNNEL.length - 1 ? "ring-2 ring-cyan-500" : ""
                   }`}
                 >
                   <span className="flex items-center gap-3 text-[0.95rem]">
@@ -354,21 +363,18 @@ export function ClinicOfferPage() {
             ))}
           </div>
 
-          {/* PRICE + WHAT YOU GET */}
+          {/* PL: panel "Nasza praca X zł / msc." + "Co otrzymasz" + "Bonusy" */}
           <Reveal delay={120}>
             <div className={`${CARD} mx-auto mt-10 max-w-3xl overflow-hidden ring-2 ring-cyan-500`}>
-              <div className="bg-white/60 px-4 py-6 text-center">
-                <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">My work</p>
-                <p className="mt-1 text-2xl font-semibold tabular-nums text-zinc-900 sm:text-3xl">
+              <div className="bg-white/60 px-4 py-5 text-center">
+                <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Our work</p>
+                <p className="mt-1 text-xl font-semibold tabular-nums text-zinc-900 sm:text-2xl">
                   {eur(o.priceEur)} EUR / month
-                </p>
-                <p className="mt-1 text-sm text-zinc-500">
-                  One {o.procedure} covers about {monthsPerProcedure} months of the partnership.
                 </p>
               </div>
               <div className="border-t border-zinc-200 px-6 py-6 sm:px-8">
                 <p className="text-center text-xs font-bold uppercase tracking-wider text-zinc-500">
-                  What you get
+                  What you will receive
                 </p>
                 <ul className="mt-4 divide-y divide-zinc-200">
                   {included.map((c) => (
@@ -387,7 +393,7 @@ export function ClinicOfferPage() {
                 <ul className="divide-y divide-zinc-200">
                   {BONUSES.map((c) => (
                     <li key={c.what} className="flex items-start gap-3 py-4">
-                      <Tick color="#0891b2">+</Tick>
+                      <Tick color="#5856d6">+</Tick>
                       <span>
                         <span className="text-[0.95rem] font-semibold text-zinc-900">{c.what}</span>
                         <span className="block text-sm leading-relaxed text-zinc-600">{c.detail}</span>
@@ -401,116 +407,135 @@ export function ClinicOfferPage() {
 
           <Reveal>
             <div className="mt-8 text-center">
-              <Cta label="Yes, this is for us" href={cta} />
+              {/* PL: "Tak! to coś dla mnie!" */}
+              <Cta label="Yes! This is for me!" href={cta} />
             </div>
           </Reveal>
         </div>
       </section>
 
-      {/* GUARANTEE */}
+      {/* ── Social proof: "+250 specjalistów otrzymało od nas pacjentów" ── */}
+      <section className="mx-auto max-w-5xl px-5 pb-4 pt-12 sm:pt-16">
+        <Reveal>
+          <h2 className="text-center text-3xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
+            <Accent>+{SPECIALISTS}</Accent> specialists
+            <br />
+            have received patients from us
+          </h2>
+        </Reveal>
+        <Reveal delay={200}>
+          <div className="mt-9 text-center">
+            {/* PL: "Chcę do nich dołączyć" */}
+            <Cta label="I want to join them" href={cta} big />
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ── "3 miesiące Gwarancji" ── */}
       <section className="mx-auto max-w-3xl px-5 py-12 text-center sm:py-16">
         <Reveal>
-          <h2 className="text-3xl font-bold tracking-tighter text-zinc-900 sm:text-5xl">
-            3-month <Accent>guarantee</Accent>
+          <h2 className="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
+            3 months of <Accent>Guarantee</Accent>
           </h2>
           <div className={`${CARD} mt-8 p-8`}>
             <p className="text-lg font-semibold text-zinc-900">
-              For 3 months you see the report from Google Search Console.
+              For 3 months we show you the report from the analytics tools.
             </p>
             <p className="mt-3 text-base leading-relaxed text-zinc-600">
-              If your impressions in Google have not grown,
+              If your clinic&apos;s impressions have not grown,
               <br />
-              I refund the last month.
+              we refund the money for the last month.
             </p>
           </div>
         </Reveal>
       </section>
 
-      {/* WARNING */}
+      {/* ── "Co jeśli nie podejmiesz współpracy?" ── */}
       <section className="border-y border-zinc-200 bg-zinc-50">
         <div className="mx-auto max-w-3xl px-5 py-12 text-center sm:py-16">
           <Reveal>
-            <h2 className="text-3xl font-bold tracking-tighter text-zinc-900 sm:text-5xl">
-              What if you <Accent>don&apos;t?</Accent>
+            <h2 className="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
+              What if you <Accent>don&apos;t start the partnership?</Accent>
             </h2>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed">
-              {o.warning ?? "Your next patient will go to another clinic."}
+              Your potential patients will go to another specialist.
             </p>
             <div className="mt-8">
-              <Cta label="I want those patients" href={cta} />
+              {/* PL: "Chcę dołączyć!" */}
+              <Cta label="I want to join!" href={cta} />
             </div>
           </Reveal>
         </div>
       </section>
 
-      {/* WHO + PAYMENTS */}
-      <section className="mx-auto max-w-5xl px-5 py-12 sm:py-16">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Reveal>
-            <div className={`${CARD} h-full p-7`}>
-              <p className="font-mono text-xs uppercase tracking-widest text-cyan-600">Who you work with</p>
-              <div className="mt-4 flex items-center gap-4">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/profilowe_jakub.png"
-                  alt="Jakub Chodakowski"
-                  className="size-16 shrink-0 rounded-full object-cover"
-                />
-                <div>
-                  <p className="text-xl font-semibold text-zinc-900">Jakub Chodakowski</p>
-                  <p className="text-sm text-zinc-600">SEO for private clinics</p>
+      {/* ── CEO + Płatności ── */}
+      <section className="border-b border-zinc-200 bg-zinc-50">
+        <div className="mx-auto max-w-5xl px-5 py-12 sm:py-16">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Reveal>
+              <div className={`${CARD} h-full p-7`}>
+                <p className="text-xs font-semibold uppercase tracking-wider text-cyan-600">CEO</p>
+                <div className="mt-4 flex items-center gap-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/profilowe_jakub.png"
+                    alt="Jakub Chodakowski"
+                    className="size-16 shrink-0 rounded-full object-cover"
+                  />
+                  <div>
+                    <p className="text-xl font-semibold text-zinc-900">Jakub Chodakowski</p>
+                    <p className="text-sm text-zinc-600">founder</p>
+                  </div>
                 </div>
+                <table className="mt-5 w-full border-collapse text-sm">
+                  <tbody>
+                    {[
+                      ["Phone", "+48 506 151 615"],
+                      ["E-mail", EMAIL],
+                      ["Tax ID (PL)", "6711845485"],
+                    ].map(([k, v]) => (
+                      <tr key={k} className="border-b border-zinc-200 last:border-0">
+                        <td className="py-2.5 pr-4 text-zinc-500">{k}</td>
+                        <td className="break-all py-2.5 text-right font-medium text-zinc-900">{v}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <table className="mt-5 w-full border-collapse text-sm">
-                <tbody>
+            </Reveal>
+            <Reveal delay={120}>
+              <div className={`${CARD} h-full p-7`}>
+                <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  Payments and invoices
+                </p>
+                <p className="mt-4 text-xl font-semibold text-zinc-900">Payments are handled by Stripe</p>
+                <ul className="mt-4 space-y-3">
                   {[
-                    ["Phone", "+48 506 151 615"],
-                    ["Email", EMAIL],
-                    ["Business no. (PL)", "6711845485"],
-                  ].map(([k, v]) => (
-                    <tr key={k} className="border-b border-zinc-200 last:border-0">
-                      <td className="py-2.5 pr-4 text-zinc-500">{k}</td>
-                      <td className="break-all py-2.5 text-right font-medium text-zinc-900">{v}</td>
-                    </tr>
+                    "An invoice for your company's details for every month.",
+                    "Issued in EUR, VAT reverse charge for EU businesses.",
+                    "We take no commission on the patient's payment.",
+                  ].map((t) => (
+                    <li key={t} className="flex items-start gap-3 text-sm leading-relaxed">
+                      <Tick>✓</Tick>
+                      <span>{t}</span>
+                    </li>
                   ))}
-                </tbody>
-              </table>
-              <p className="mt-4 text-sm leading-relaxed text-zinc-600">
-                I reply to every email myself. No agency, no account manager in between.
-              </p>
-            </div>
-          </Reveal>
-          <Reveal delay={120}>
-            <div className={`${CARD} h-full p-7`}>
-              <p className="font-mono text-xs uppercase tracking-widest text-zinc-500">Payments and invoices</p>
-              <p className="mt-4 text-xl font-semibold text-zinc-900">Card payment by Stripe</p>
-              <ul className="mt-4 space-y-3">
-                {[
-                  "An invoice in EUR for your company every month.",
-                  "EU business: VAT reverse charge on your VAT number.",
-                  "No commission on your patients' payments. Ever.",
-                  "Month to month. Cancel any time, no notice period.",
-                ].map((t) => (
-                  <li key={t} className="flex items-start gap-3 text-sm leading-relaxed">
-                    <Tick>✓</Tick>
-                    <span>{t}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
+                </ul>
+              </div>
+            </Reveal>
+          </div>
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* ── FAQ ── */}
       <section className="mx-auto max-w-3xl px-5 py-12 sm:py-16">
         <Reveal>
-          <h2 className="text-center text-3xl font-bold tracking-tighter text-zinc-900 sm:text-5xl">
+          <h2 className="text-center text-3xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
             <Accent>FAQ</Accent>
           </h2>
         </Reveal>
         <div className="mt-9 space-y-3">
-          {faq.map((f, i) => (
+          {FAQ.map((f, i) => (
             <Reveal key={f.q} delay={i * 60}>
               <details className="group rounded-2xl border border-zinc-200 bg-white px-6 py-5 shadow-sm">
                 <summary className="cursor-pointer list-none text-base font-semibold text-zinc-900 marker:hidden">
@@ -528,31 +553,39 @@ export function ClinicOfferPage() {
         </div>
       </section>
 
-      {/* CLOSING + PS */}
+      {/* ── "Rezerwujesz {miasto}?" + PS ── */}
       <section className="border-t border-zinc-200 bg-zinc-50">
         <div className="mx-auto max-w-3xl px-5 py-12 text-center sm:py-16">
           <Reveal>
-            <h2 className="text-3xl font-bold tracking-tighter text-zinc-900 sm:text-5xl">
-              Shall we take <Accent>{o.city}?</Accent>
+            <h2 className="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
+              Are you booking <Accent>{o.city}?</Accent>
             </h2>
             <p className="mx-auto mt-5 max-w-xl text-lg text-zinc-600">
-              {eur(o.priceEur)} EUR a month, no fixed term.
+              {eur(o.priceEur)} EUR a month, no fixed-term contract.
               <br />
-              Renewed month by month.
+              The partnership renews every month.
             </p>
             <div className="mt-8">
-              <Cta label="Let's start" href={cta} big />
+              {/* PL: "Chcę nowych pacjentów!" */}
+              <Cta label="I want new patients!" href={cta} big />
             </div>
             {!o.paymentLink && (
-              <p className="mt-3 text-xs text-zinc-500">The button opens an email to me. I send the invoice the same day.</p>
+              <p className="mt-3 text-xs text-zinc-500">
+                The button opens an e-mail to me. The invoice goes out the same day.
+              </p>
             )}
           </Reveal>
           <Reveal delay={200}>
             <div className="mx-auto mt-12 max-w-2xl border-t border-zinc-200 pt-8 text-left">
+              {/* PL clinic PS: "X zł miesięcznie to ułamek ceny jednego zabiegu.
+                  Jeśli przyjdzie choćby jeden nowy pacjent, wychodzisz na plus,
+                  a przy dwóch zarabiasz drugie tyle. Jeśli przez 3 miesiące
+                  wyświetlenia nie urosną, oddajemy pieniądze za ostatni miesiąc." */}
               <p className="text-sm leading-relaxed text-zinc-600">
-                <strong className="text-zinc-900">PS.</strong> {eur(o.priceEur)} EUR a month is a fraction of one{" "}
-                {o.procedure}. If even one new patient comes, you are ahead. If after 3 months your impressions
-                in Google have not grown, I refund the last month.
+                <strong className="text-zinc-900">PS.</strong> {eur(o.priceEur)} EUR a month is a fraction of
+                the price of one procedure. If even one new patient comes, you are in profit, and with two you
+                earn as much again. If impressions do not grow within 3 months, we give back the money for the
+                last month.
               </p>
             </div>
           </Reveal>
@@ -561,9 +594,13 @@ export function ClinicOfferPage() {
 
       <footer className="border-t border-zinc-200 bg-white">
         <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-5 py-10 sm:flex-row sm:justify-between">
-          <span className="text-sm font-medium text-zinc-900">jakubchodakowski.com</span>
+          <span className="flex items-center gap-2.5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/profilowe_jakub.png" alt="Jakub Chodakowski" className="size-9 rounded-full object-cover" />
+            <span className="text-[15px] font-semibold tracking-tight text-zinc-900">Jakub Chodakowski</span>
+          </span>
           <p className="text-center text-xs text-zinc-500 sm:text-right">
-            Jakub Chodakowski, business no. (PL) 6711845485, {EMAIL}
+            Jakub Chodakowski, Tax ID (PL) 6711845485, {EMAIL}
           </p>
         </div>
       </footer>

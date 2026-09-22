@@ -80,13 +80,19 @@ export const CLINIC_OFFERS: Record<string, ClinicOffer> = {
     visitShare: [0.02, 0.04],
     cap: [3, 10],
     procedurePriceEur: 5500,
-    priceEur: 590,
+    // USER_001 22.09: 2 000 EUR/mc (was 590 = Polish SEO+ converted).
+    // ⚠️ The cold email of 20.09 promised "one procedure a year covers the
+    // cost of the whole partnership": at 2 000 EUR/mo that is 24 000 EUR a
+    // year vs 4 000-7 500 EUR per FUE, so that sentence is no longer true and
+    // must not be repeated in the reply. The page itself says "a fraction of
+    // the price of one procedure" (2 000 of 5 500), which holds.
+    priceEur: 2000,
     warning:
       "The next patient who searches for a hair transplant in Dublin will land on a comparison portal or a clinic in Istanbul.",
   },
 };
 
-export const DEFAULT_PRICE_EUR = 590;
+export const DEFAULT_PRICE_EUR = 2000;
 
 // Funnel: the same market ranges as the Polish offers (lib/oferta-miasta.ts).
 // 2-4% of city searches land on the site, 5-8% of visitors send an enquiry,
