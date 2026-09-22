@@ -568,6 +568,28 @@ export function ClinicOfferPage() {
                     />
                   ))}
                 </div>
+                {/* Partners (USER_001 22.09: "dodajmy te 3 loga lux med itd."),
+                    the same files as public/partnerzy on lovemyself.pl. USER
+                    confirmed 11.08 these are real partnerships. */}
+                <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  We work with
+                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-x-7 gap-y-4">
+                  {[
+                    { name: "LUX MED", file: "/partnerzy/luxmed.png" },
+                    { name: "Medicover", file: "/partnerzy/medicover.svg" },
+                    { name: "ALAB", file: "/partnerzy/alab.svg" },
+                  ].map((p) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={p.name}
+                      src={p.file}
+                      alt={p.name}
+                      className="h-7 w-auto object-contain opacity-80 sm:h-9"
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
               </div>
             </Reveal>
           </div>
