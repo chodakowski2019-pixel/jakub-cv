@@ -33,12 +33,12 @@ export type ClinicOffer = {
   visitShare: [number, number];
   /** Cap on consultations a month the clinic can realistically take [min, max]. */
   cap: [number, number];
-  /** Typical price of one procedure, EUR, for the "one procedure pays for the year" line. */
-  procedurePriceEur: number;
-  /** Monthly fee, EUR. */
-  priceEur: number;
-  /** Stripe Payment Link in EUR. Missing = CTA opens an email instead. */
-  paymentLink?: string;
+  /** Currency of this offer: the clinic's own, not ours. */
+  currency: "EUR" | "NOK" | "SEK";
+  /** Typical price of one procedure in that currency, for the "fraction of one procedure" line. */
+  procedurePrice: number;
+  /** Monthly fee in that currency. */
+  price: number;
   /** Extra sentence for the "what if you don't" section. */
   warning?: string;
 };
@@ -54,7 +54,7 @@ export type ClinicOffer = {
 //
 // Research 22.09.2026 (web, sources in memory project_gabi_oferta_kliniki_zagranica):
 // - their own price page: FUE/AHI 4 000-7 500 EUR, eyebrows 2 000-3 500 EUR,
-//   so procedurePriceEur = 5 500 (middle of their range),
+//   so procedurePrice = 5 500 EUR (middle of their range),
 // - legal entity Fleming Place Health Clinic Ltd, founded 07.2024, micro
 //   company, Ioannis Ypatidis = CEO; Google 4.9 / 282 reviews on their site,
 //   IG 29 000 followers, Facebook dead (59 likes), Trustpilot 3.7 unclaimed,
@@ -99,18 +99,17 @@ export const CLINIC_OFFERS: Record<string, ClinicOffer> = {
     searches: 6000,
     visitShare: [0.01, 0.02],
     cap: [3, 10],
-    procedurePriceEur: 5500,
-    // USER_001 22.09: 2 000 EUR/mc (was 590 = Polish SEO+ converted).
+    currency: "EUR",
+    procedurePrice: 5500,
+    // USER_001 22.09: 2 000 EUR/mc (was 590 = Polish SEO+ converted), set
+    // against their own price list (FUE 4 000-7 500 EUR) = 36% of one
+    // procedure, and 8 700 zl, well over the 4 000 zl floor.
     // ⚠️ The cold email of 20.09 promised "one procedure a year covers the
     // cost of the whole partnership": at 2 000 EUR/mo that is 24 000 EUR a
     // year vs 4 000-7 500 EUR per FUE, so that sentence is no longer true and
     // must not be repeated in the reply. The page itself says "a fraction of
     // the price of one procedure" (2 000 of 5 500), which holds.
-    priceEur: 2000,
-    // Stripe Payment Link 2 000 EUR/mo (USER_001 22.09). ⚠️ The amount lives in
-    // Stripe, not here: a price change needs a NEW link, otherwise the page
-    // shows one number and Stripe charges another.
-    paymentLink: "https://buy.stripe.com/fZu9AT65839e85maKp3F60p",
+    price: 2000,
     warning:
       "The next patient who searches for a hair transplant in Dublin will land on a comparison portal or a clinic in Istanbul.",
   },
@@ -123,11 +122,7 @@ export const CLINIC_OFFERS: Record<string, ClinicOffer> = {
   // Clinic (their site, 22.09): FUE + FUT + beard, Oslo Kirkeveien 7A main,
   // also Stavanger and Trondheim (email footer lists Stockholm too), agency
   // built site (Journey Group) with a blog and SEO landing pages, Google 5.0
-  // / 66 reviews, "one patient a day". Same price as Ailesbury: 2 000 EUR/mo,
-  // same Stripe link (the amount lives in Stripe).
-  // procedurePriceEur: Norwegian FUE prices published by Oslo clinics run
-  // 30 000-85 000 NOK (Medicura price list, altomnorge guide, 22.09.2026),
-  // ~2 600-7 400 EUR; middle taken = 4 700 EUR (55 000 NOK).
+  // / 66 reviews, "one patient a day".
   // searches: no public Norwegian volume, ESTIMATE the same way as Ailesbury:
   // UK cluster 77 170/mo x population NO/UK 5.6 M / 68 M = 0.082 → ~6 300,
   // rounded DOWN to 5 000 because the Norwegian cluster splits between
@@ -146,15 +141,31 @@ export const CLINIC_OFFERS: Record<string, ClinicOffer> = {
     searches: 5000,
     visitShare: [0.01, 0.02],
     cap: [3, 10],
-    procedurePriceEur: 4700,
-    priceEur: 2000,
-    paymentLink: "https://buy.stripe.com/fZu9AT65839e85maKp3F60p",
+    // Cena w ICH walucie, ustawiona pod ICH cennik (USER_001 22.09):
+    // norweskie FUE 30 000-85 000 NOK (cenniki Medicura i Poseidon, przewodnik
+    // altomnorge, 22.09.2026), srodek 55 000 NOK = procedurePrice.
+    // 20 000 NOK/mc = 36% ceny jednego zabiegu, ta sama proporcja co Ailesbury
+    // (2 000 z 5 500 EUR), i 8 050 zl, czyli dwa razy ponad podloge 4 000 zl
+    // (podloga w NOK to 9 900). Obnizamy tylko swiadomie, nie ponizej 9 900.
+    currency: "NOK",
+    procedurePrice: 55000,
+    price: 20000,
     warning:
       "The next patient who searches for a hair transplant in Oslo will land on a comparison portal or a clinic in Istanbul.",
   },
 };
 
-export const DEFAULT_PRICE_EUR = 2000;
+// ⚠️ CENA USTALANA PER KLINIKA (USER_001 2026-09-22). Nie ma jednej stawki:
+// przed każdą ofertą sprawdzamy, ile TA klinika bierze za swoje zabiegi, i
+// cenę ustawiamy pod to. Podłoga: 4 000 zł na rękę z jednej współpracy
+// miesięcznie (kurs NBP 21.09.2026: 1 EUR = 4,353 zł, 1 NOK = 0,4026 zł,
+// 1 SEK = 0,3862 zł), czyli nie schodzimy poniżej ~920 EUR / ~9 900 NOK /
+// ~10 400 SEK miesięcznie.
+export const MIN_MONTHLY_PLN = 4000;
+
+// Klient nie płaci przez stronę: kupuje po rozmowie, na fakturę. Strona ma
+// podać cenę, a nie zbierać płatność (USER_001 2026-09-22), więc żadnych
+// Payment Linków tu nie ma i każdy guzik otwiera maila.
 
 // Funnel: the same market ranges as the Polish offers (lib/oferta-miasta.ts).
 // 2-4% of city searches land on the site, 5-8% of visitors send an enquiry,

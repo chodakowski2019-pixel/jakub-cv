@@ -22,8 +22,9 @@ import { CLINIC_OFFERS, funnel, type ClinicOffer } from "@/lib/clinic-offers";
 //
 // Look: same as the jakubchodakowski.com home page (white, zinc, cyan/teal).
 //
-// One CTA on the whole page. With a Stripe Payment Link it goes to payment;
-// without one it opens a reply email (no EUR link yet).
+// One CTA on the whole page, and it always opens a reply email: clinics do not
+// buy SEO off a landing page, they buy after a call and pay on an invoice
+// (USER_001 22.09). The page states the price, it does not take money.
 
 const GREEN = "#16a34a";
 const CARD = "rounded-2xl border border-zinc-200 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)]";
@@ -230,7 +231,10 @@ export function ClinicOfferPage() {
 
   const f = funnel(o);
   const noData = o.searches <= 0;
-  const cta = o.paymentLink ?? `mailto:${EMAIL}?subject=${encodeURIComponent(`${o.name}: let's start`)}`;
+  // USER_001 22.09: nobody buys SEO off a landing page, so the page only
+  // states the price. Every button opens an email, there is no payment link.
+  const cta = `mailto:${EMAIL}?subject=${encodeURIComponent(`${o.name}: let's start`)}`;
+  const price = `${eur(o.price)} ${o.currency}`;
   const included = INCLUDED(o);
 
   // PL: lejek(): "Ludzie szukają pomocy w X" / "Wchodzi na Twoją stronę" /
@@ -404,7 +408,7 @@ export function ClinicOfferPage() {
               <div className="bg-white/60 px-4 py-5 text-center">
                 <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Our work</p>
                 <p className="mt-1 text-xl font-semibold tabular-nums text-zinc-900 sm:text-2xl">
-                  {eur(o.priceEur)} EUR / month
+                  {price} / month
                 </p>
               </div>
               <div className="border-t border-zinc-200 px-6 py-6 sm:px-8">
@@ -557,11 +561,11 @@ export function ClinicOfferPage() {
                 <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Payments and invoices
                 </p>
-                <p className="mt-4 text-xl font-semibold text-zinc-900">Payments are handled by Stripe</p>
+                <p className="mt-4 text-xl font-semibold text-zinc-900">You pay by bank transfer</p>
                 <ul className="mt-4 space-y-3">
                   {[
                     "An invoice for your company's details for every month.",
-                    "Issued in EUR, VAT reverse charge for EU businesses.",
+                    `Issued in ${o.currency}, VAT reverse charge for EU businesses.`,
                     "We take no commission on the patient's payment.",
                   ].map((t) => (
                     <li key={t} className="flex items-start gap-3 text-sm leading-relaxed">
@@ -570,24 +574,12 @@ export function ClinicOfferPage() {
                     </li>
                   ))}
                 </ul>
-                {/* PL: Stripe, Visa, Mastercard, BLIK, KSeF. BLIK and KSeF are
-                    Polish only, so here the three international marks. */}
-                <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4">
-                  {[
-                    { name: "Stripe", file: "/znaki/stripe.svg" },
-                    { name: "Visa", file: "/znaki/visa.svg" },
-                    { name: "Mastercard", file: "/znaki/mastercard.svg" },
-                  ].map((z) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      key={z.name}
-                      src={z.file}
-                      alt={z.name}
-                      className="h-7 w-auto object-contain sm:h-8"
-                      loading="lazy"
-                    />
-                  ))}
-                </div>
+                {/* USER_001 22.09: no card payment on the page (clinics buy
+                    after a call, on an invoice), so no Stripe/Visa marks. */}
+                <p className="mt-6 text-sm leading-relaxed text-zinc-500">
+                  The first invoice is issued once we agree to start. You can cancel before any month, with
+                  no notice period.
+                </p>
               </div>
             </Reveal>
           </div>
@@ -628,7 +620,7 @@ export function ClinicOfferPage() {
               Are you booking <Accent>{o.city}?</Accent>
             </h2>
             <p className="mx-auto mt-5 max-w-xl text-lg text-zinc-600">
-              {eur(o.priceEur)} EUR a month, no fixed-term contract.
+              {price} a month, no fixed-term contract.
               <br />
               The partnership renews every month.
             </p>
@@ -636,11 +628,9 @@ export function ClinicOfferPage() {
               {/* PL: "Chcę nowych pacjentów!" */}
               <Cta label="I want new patients!" href={cta} big />
             </div>
-            {!o.paymentLink && (
-              <p className="mt-3 text-xs text-zinc-500">
-                The button opens an e-mail to me. The invoice goes out the same day.
-              </p>
-            )}
+            <p className="mt-3 text-xs text-zinc-500">
+              The button opens an e-mail to me. The invoice goes out the same day.
+            </p>
           </Reveal>
           <Reveal delay={200}>
             <div className="mx-auto mt-12 max-w-2xl border-t border-zinc-200 pt-8 text-left">
@@ -649,7 +639,7 @@ export function ClinicOfferPage() {
                   a przy dwóch zarabiasz drugie tyle. Jeśli przez 3 miesiące
                   wyświetlenia nie urosną, oddajemy pieniądze za ostatni miesiąc." */}
               <p className="text-sm leading-relaxed text-zinc-600">
-                <strong className="text-zinc-900">PS.</strong> {eur(o.priceEur)} EUR a month is a fraction of
+                <strong className="text-zinc-900">PS.</strong> {price} a month is a fraction of
                 the price of one procedure. If even one new patient comes, you are in profit, and with two you
                 earn as much again. If impressions do not grow within 3 months, we give back the money for the
                 last month.
