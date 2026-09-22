@@ -313,19 +313,19 @@ export function ClinicOfferPage() {
               files as public/partnerzy on lovemyself.pl. USER confirmed 11.08
               these are real partnerships. */}
           <Reveal delay={360}>
-            <div className="mx-auto mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
+            {/* Thin dividers between the logos (USER_001 22.09), the same
+                layout as Partnerzy on lovemyself.pl: a divider row on wide
+                screens, stacked with horizontal lines on the phone. */}
+            <div className="mx-auto mt-10 flex max-w-2xl flex-col items-stretch divide-y divide-zinc-200 sm:flex-row sm:divide-x sm:divide-y-0">
               {[
                 { name: "LUX MED", file: "/partnerzy/luxmed.png" },
                 { name: "Medicover", file: "/partnerzy/medicover.svg" },
                 { name: "ALAB", file: "/partnerzy/alab.svg" },
               ].map((p) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={p.name}
-                  src={p.file}
-                  alt={p.name}
-                  className="h-8 w-auto object-contain opacity-75 sm:h-10"
-                />
+                <div key={p.name} className="flex flex-1 items-center justify-center px-6 py-5 sm:py-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={p.file} alt={p.name} className="h-8 w-auto object-contain opacity-75 sm:h-10" />
+                </div>
               ))}
             </div>
           </Reveal>
