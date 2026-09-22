@@ -141,15 +141,20 @@ export const CLINIC_OFFERS: Record<string, ClinicOffer> = {
     searches: 5000,
     visitShare: [0.01, 0.02],
     cap: [3, 10],
-    // Cena w ICH walucie, ustawiona pod ICH cennik (USER_001 22.09):
-    // norweskie FUE 30 000-85 000 NOK (cenniki Medicura i Poseidon, przewodnik
-    // altomnorge, 22.09.2026), srodek 55 000 NOK = procedurePrice.
-    // 20 000 NOK/mc = 36% ceny jednego zabiegu, ta sama proporcja co Ailesbury
-    // (2 000 z 5 500 EUR), i 8 050 zl, czyli dwa razy ponad podloge 4 000 zl
-    // (podloga w NOK to 9 900). Obnizamy tylko swiadomie, nie ponizej 9 900.
+    // Cena w ICH walucie, ustawiona pod ICH cennik i pod ICH rynek agencyjny
+    // (USER_001 22.09, obnizone z 20 000 po sprawdzeniu stawek):
+    // - ich zabieg: norweskie FUE 30 000-85 000 NOK (cenniki Medicura i
+    //   Poseidon, przewodnik altomnorge, 22.09.2026), srodek 55 000 NOK,
+    // - rynek: norweskie agencje SEO biora 10 000-40 000 NOK/mc, SEO
+    //   ogolnokrajowe (a przeszczep wlosow taki wlasnie jest) 15 000-30 000,
+    //   lokalne 5 000-12 000 (mementor.no, moodymedia.io, nettify.no, 22.09).
+    // 15 000 NOK/mc = dolny prog stawki krajowej, 27% ceny jednego zabiegu
+    // i 6 040 zl, czyli ponad podloge 4 000 zl (w NOK: 9 900).
+    // ⛔ Nie schodzic ponizej 10 000 NOK: w Norwegii taka cena czyta sie jako
+    // amatorska i psuje pozycjonowanie oferty, a nie tylko marze.
     currency: "NOK",
     procedurePrice: 55000,
-    price: 20000,
+    price: 15000,
     warning:
       "The next patient who searches for a hair transplant in Oslo will land on a comparison portal or a clinic in Istanbul.",
   },
