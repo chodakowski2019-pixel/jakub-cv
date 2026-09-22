@@ -107,6 +107,10 @@ export const CLINIC_OFFERS: Record<string, ClinicOffer> = {
     // must not be repeated in the reply. The page itself says "a fraction of
     // the price of one procedure" (2 000 of 5 500), which holds.
     priceEur: 2000,
+    // Stripe Payment Link 2 000 EUR/mo (USER_001 22.09). ⚠️ The amount lives in
+    // Stripe, not here: a price change needs a NEW link, otherwise the page
+    // shows one number and Stripe charges another.
+    paymentLink: "https://buy.stripe.com/fZu9AT65839e85maKp3F60p",
     warning:
       "The next patient who searches for a hair transplant in Dublin will land on a comparison portal or a clinic in Istanbul.",
   },
