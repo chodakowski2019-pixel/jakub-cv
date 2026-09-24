@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 
-// Strona główna jakubchodakowski.com (USER_001 2026-09-19).
+// Podstrona /seo: SEO dla klinik prywatnych (USER_001 2026-09-19).
 //
-// ZAMIANA: do 19.09 stała tu oferta wdrożeń AI. Decyzja USER-a: marka osobista
-// sprzedaje SEO dla klinik prywatnych, bo to jest biznes, który realnie idzie.
-// Stara strona AI nie zniknęła, leży pod /ai.
+// 22.09 to była strona główna. USER_001 24.09: na głównej wraca strona o AI,
+// ta zostaje pod /seo.
 //
 // ⚠️ Ceny NIE MA i ma nie być. Cennik wysyłamy imiennie mailem (decyzja z 11.08),
 // a ta strona jest indeksowana, żeby dało się na nią puścić Google Ads.
@@ -16,12 +15,12 @@ export const metadata: Metadata = {
   title: "Nowi pacjenci w Twoim gabinecie | Jakub Chodakowski",
   description:
     "Buduję klinikom prywatnym własny kanał pacjentów z Google. Pozycjonowanie na zabieg i miasto, treści, analityka i raport co miesiąc. Bez prowizji od pacjenta.",
-  alternates: { canonical: "https://jakubchodakowski.com" },
+  alternates: { canonical: "https://jakubchodakowski.com/seo" },
   openGraph: {
     title: "Nowi pacjenci w Twoim gabinecie | Jakub Chodakowski",
     description:
       "Pacjent szuka zabiegu w Google i trafia do porównywarek. Buduję klinikom własny kanał pacjentów.",
-    url: "https://jakubchodakowski.com",
+    url: "https://jakubchodakowski.com/seo",
     type: "website",
   },
 };

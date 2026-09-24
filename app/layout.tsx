@@ -15,11 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  // USER_001 2026-09-19: marka osobista sprzedaje SEO dla klinik prywatnych.
-  // Stara pozycja (wdrozenia AI) zostala, ale jako podstrona /ai.
-  title: "Nowi pacjenci w Twoim gabinecie | Jakub Chodakowski",
+  // USER_001 2026-09-24: powrot do strony o AI na glownej. SEO dla klinik
+  // (z 22.09) zostalo jako podstrona /seo.
+  title: "Jakub Chodakowski | AI Implementation Specialist",
   description:
-    "Buduje klinikom prywatnym wlasny kanal pacjentow z Google. Pozycjonowanie na zabieg i miasto, tresci, analityka i raport co miesiac.",
+    "I help companies implement AI into their everyday business processes.",
 };
 
 export default async function RootLayout({
