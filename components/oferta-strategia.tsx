@@ -529,45 +529,57 @@ export function OfertaStrategia({ klucz }: { klucz: string }) {
               Dwa pakiety
             </H2>
             <div className={`${KARTA} mt-10 overflow-hidden`}>
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[680px] border-collapse text-[15px]">
+              {/* Telefon (USER_001 24.09): zero przewijania w bok. Kolumny A/B
+                  mają tylko kółka, nagłówek pokazuje literę + cenę, nazwa
+                  pakietu i „jednorazowo" wchodzą od sm. */}
+              <div>
+                <table className="w-full table-fixed border-collapse text-[14px] sm:table-auto sm:text-[15px]">
+                  <colgroup>
+                    <col />
+                    <col className="w-[76px] sm:w-auto" />
+                    <col className="w-[76px] sm:w-auto" />
+                  </colgroup>
                   <thead>
                     <tr className="border-b border-[var(--ramka)]">
-                      <th className="w-[46%] px-6 py-6 text-left align-bottom">
+                      <th className="px-4 py-5 text-left align-bottom sm:w-[46%] sm:px-6 sm:py-6">
                         <Nadtytul kolor="szary" mocny>Co otrzymacie</Nadtytul>
                       </th>
-                      <th className="px-6 py-6 text-left align-bottom">
-                        <div className="flex items-center gap-2.5">
+                      <th className="px-2 py-5 text-center align-bottom sm:px-6 sm:py-6 sm:text-left">
+                        <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-2.5">
                           <Kolko ton="jasne" rozmiar="sm">
                             A
                           </Kolko>
-                          <H3>Strategia</H3>
+                          <span className="hidden sm:block">
+                            <H3>Strategia</H3>
+                          </span>
                         </div>
-                        <p className="mt-3 whitespace-nowrap text-2xl tabular-nums" style={NAGLOWEK}>
+                        <p className="mt-2 whitespace-nowrap text-[15px] leading-tight tabular-nums sm:mt-3 sm:text-2xl" style={NAGLOWEK}>
                           {zl(m.cenaA)} zł
                         </p>
-                        <p className="mt-0.5 text-xs font-normal text-[var(--tekst-cichy)]">jednorazowo</p>
+                        <p className="mt-0.5 hidden text-xs font-normal text-[var(--tekst-cichy)] sm:block">jednorazowo</p>
                       </th>
                       <th
-                        className="relative px-6 py-6 text-left align-bottom"
+                        className="relative px-2 py-5 text-center align-bottom sm:px-6 sm:py-6 sm:text-left"
                         style={{ background: "var(--akcent-mgla-2)", boxShadow: "inset 0 3px 0 var(--akcent)" }}
                       >
-                        <div className="flex flex-wrap items-center gap-2.5">
+                        <div className="flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap sm:gap-2.5">
                           <Kolko ton="pelne" rozmiar="sm">
                             B
                           </Kolko>
-                          <H3>Strategia + wdrożenie</H3>
+                          <span className="hidden sm:block">
+                            <H3>Strategia + wdrożenie</H3>
+                          </span>
                           <span
-                            className="rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white"
+                            className="hidden rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white sm:inline-block"
                             style={{ background: "var(--akcent)" }}
                           >
                             polecam
                           </span>
                         </div>
-                        <p className="mt-3 whitespace-nowrap text-2xl tabular-nums" style={NAGLOWEK}>
+                        <p className="mt-2 whitespace-nowrap text-[15px] leading-tight tabular-nums sm:mt-3 sm:text-2xl" style={NAGLOWEK}>
                           {zl(m.cenaB)} zł
                         </p>
-                        <p className="mt-0.5 text-xs font-normal text-[var(--tekst-cichy)]">jednorazowo</p>
+                        <p className="mt-0.5 hidden text-xs font-normal text-[var(--tekst-cichy)] sm:block">jednorazowo</p>
                       </th>
                     </tr>
                   </thead>
@@ -578,33 +590,37 @@ export function OfertaStrategia({ klucz }: { klucz: string }) {
                         className="border-b border-[var(--ramka)] last:border-0"
                         style={{ background: i % 2 ? "rgba(0,0,0,0.012)" : undefined }}
                       >
-                        <td className="px-6 py-3.5 font-medium">{w.co}</td>
-                        <td className="px-6 py-3.5">
+                        <td className="px-4 py-3 font-medium leading-snug sm:px-6 sm:py-3.5">{w.co}</td>
+                        <td className="px-2 py-3 sm:px-6 sm:py-3.5">
                           {w.a ? (
-                            <Kolko ton="zielone" rozmiar="sm">
-                              ✓
-                            </Kolko>
+                            <span className="flex justify-center sm:justify-start"><Kolko ton="zielone" rozmiar="sm">✓</Kolko></span>
                           ) : (
-                            <Kolko ton="szare" rozmiar="sm">
-                              –
-                            </Kolko>
+                            <span className="flex justify-center sm:justify-start"><Kolko ton="szare" rozmiar="sm">–</Kolko></span>
                           )}
                         </td>
-                        <td className="px-6 py-3.5" style={{ background: "var(--akcent-mgla-2)" }}>
+                        <td className="px-2 py-3 sm:px-6 sm:py-3.5" style={{ background: "var(--akcent-mgla-2)" }}>
                           {w.b ? (
-                            <Kolko ton="zielone" rozmiar="sm">
-                              ✓
-                            </Kolko>
+                            <span className="flex justify-center sm:justify-start"><Kolko ton="zielone" rozmiar="sm">✓</Kolko></span>
                           ) : (
-                            <Kolko ton="szare" rozmiar="sm">
-                              –
-                            </Kolko>
+                            <span className="flex justify-center sm:justify-start"><Kolko ton="szare" rozmiar="sm">–</Kolko></span>
                           )}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+
+            {/* Telefon: legenda A/B pod tabelą, bo nazwy pakietów są schowane w nagłówku. */}
+            <div className="mt-3 grid grid-cols-2 gap-3 sm:hidden">
+              <div className="flex items-center gap-2 rounded-2xl border border-[var(--ramka)] px-3 py-2.5">
+                <Kolko ton="jasne" rozmiar="sm">A</Kolko>
+                <span className="text-sm font-semibold leading-tight">Strategia</span>
+              </div>
+              <div className="flex items-center gap-2 rounded-2xl px-3 py-2.5" style={{ background: "var(--akcent-mgla)" }}>
+                <Kolko ton="pelne" rozmiar="sm">B</Kolko>
+                <span className="text-sm font-semibold leading-tight">Strategia + wdrożenie<span className="block text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: "var(--akcent)" }}>polecam</span></span>
               </div>
             </div>
 
