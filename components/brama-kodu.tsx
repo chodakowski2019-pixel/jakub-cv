@@ -54,7 +54,8 @@ export function BramaKodu({
       >
         <label
           htmlFor="kod"
-          className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6e6e73]"
+          // USER_001 24.09: pogrubione, wyśrodkowane, czarne.
+          className="block text-center text-[11px] font-bold uppercase tracking-[0.2em] text-[#1d1d1f]"
         >
           Kod dostępu
         </label>
