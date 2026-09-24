@@ -1,244 +1,548 @@
-import type { Metadata } from "next";
-import Image from "next/image";
+"use client";
 
-// Strona główna jakubchodakowski.com (USER_001 2026-09-19).
-//
-// ZAMIANA: do 19.09 stała tu oferta wdrożeń AI. Decyzja USER-a: marka osobista
-// sprzedaje SEO dla klinik prywatnych, bo to jest biznes, który realnie idzie.
-// Stara strona AI nie zniknęła, leży pod /ai.
-//
-// ⚠️ Ceny NIE MA i ma nie być. Cennik wysyłamy imiennie mailem (decyzja z 11.08),
-// a ta strona jest indeksowana, żeby dało się na nią puścić Google Ads.
-// Obietnice zgodne z audytem ZRODLA-KLIENTOW-I-OBIETNICE-2026-09-19.md w zwiazki-lp:
-// 14 dni na start, zero liczby artykułów, zero obietnic liczby pacjentów.
+import { useState } from "react";
+import { ChevronDown, X } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Nowi pacjenci w Twoim gabinecie | Jakub Chodakowski",
-  description:
-    "Buduję klinikom prywatnym własny kanał pacjentów z Google. Pozycjonowanie na zabieg i miasto, treści, analityka i raport co miesiąc. Bez prowizji od pacjenta.",
-  alternates: { canonical: "https://jakubchodakowski.com" },
-  openGraph: {
-    title: "Nowi pacjenci w Twoim gabinecie | Jakub Chodakowski",
-    description:
-      "Pacjent szuka zabiegu w Google i trafia do porównywarek. Buduję klinikom własny kanał pacjentów.",
-    url: "https://jakubchodakowski.com",
-    type: "website",
+const CONTENT = {
+  pl: {
+    nav: { story: "Historia", skills: "Umiejętności", contact: "Kontakt" },
+    hero: {
+      greeting: "Cześć, jestem",
+      name: "Jakub Chodakowski",
+      headline: "Przeprowadzę transformację AI w Twojej firmie",
+      sub: "Twoi pracownicy tracą godziny na powtarzalne zadania. Ja pokazuję, jak AI może to robić za nich. Szybciej, taniej i bez błędów.",
+      cta: "Porozmawiajmy",
+      scroll: "Poznaj moją historię",
+    },
+    before: {
+      label: "Przed AI",
+      period: "2018 – listopad 2022",
+      title: "Zanim świat się zmienił",
+      paragraphs: [
+        "Zaczynałem w startupach. Robiłem wszystko po trochu. Sprzedaż, marketing, obsługa klienta, budowanie procesów. Uczyłem się biznesu od środka.",
+        "Prowadziłem własną działalność. Pracowałem z klientami B2B. Negocjowałem kontrakty, budowałem lejki sprzedażowe, zarządzałem projektami.",
+        "Wiedziałem, jak firma działa od podszewki. Ale wiele rzeczy zajmowało za dużo czasu. Powtarzalne zadania, ręczna robota, ciągłe gaszenie pożarów.",
+      ],
+      skills: ["Sprzedaż B2B", "Marketing", "Zarządzanie projektami", "Własna działalność", "Praca w startupach"],
+    },
+    turning: {
+      date: "30 listopada 2022",
+      title: "Premiera ChatGPT",
+      text: "Tego dnia wszystko się zmieniło. Nie tylko dla mnie. Dla całego świata. Zobaczyłem przyszłość i wiedziałem, że muszę być jej częścią.",
+    },
+    after: {
+      label: "Po AI",
+      period: "grudzień 2022 – teraz",
+      title: "Nowe zasady gry",
+      paragraphs: [
+        "Od pierwszego dnia zacząłem budować z AI. Nie czytać o nim. Budować. Testować. Wdrażać.",
+        "Stworzyłem chatboty, które odpowiadają klientom 24/7. Automatyzacje, które oszczędzają firmom 20+ godzin tygodniowo. Aplikacje, które zarabiają pieniądze.",
+        "Dzisiaj łączę doświadczenie biznesowe z umiejętnościami technicznymi. Rozumiem, co firma potrzebuje, bo sam to robiłem. I wiem, jak AI może to zrobić lepiej.",
+      ],
+      skills: ["ChatGPT / Claude Code", "AI Agenci", "Automatyzacja procesów", "Prompt Engineering", "Bazy wiedzy AI (RAG)", "Next.js / React", "TypeScript", "Python"],
+      milestones: [
+        { date: "Listopad 2023", text: "Wdrożenie AI w SEO. Zbudowałem stronę, zautomatyzowałem publikację artykułów i po 3 miesiącach zacząłem generować ruch organiczny. Minimum wysiłku, zero doświadczenia w SEO.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
+        { date: "Maj 2024", text: "AI Manager. Kurs wdrażania AI w firmach. Maria Parysz. Wdrażała AI w Rolls-Royce, Sephora i innych globalnych firmach.", image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc" },
+        { date: "Sierpień 2024", text: "Prelekcja na CRASH Mondays. Temat: jak wykorzystać AI i dane w nowoczesnej sprzedaży. Przykłady firm jak Żabka i Netflix, które zrewolucjonizowały sprzedaż dzięki AI.", image: "https://media.licdn.com/dms/image/v2/D4D22AQGgY4uuKD4_Wg/feedshare-shrink_800/feedshare-shrink_800/0/1721579818961?e=1776902400&v=beta&t=nc7AvLjWta4XPXQEkne5n8VLyJNDXpOh-chq8FihyK8" },
+        { date: "Listopad 2025", text: "Wystąpienie na konferencji. Szkoliłem nauczycieli z praktycznego wykorzystania AI w codziennej pracy.", image: "https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png" },
+        { date: "Luty 2026", text: "Stworzenie aplikacji mobilnej Itera City. Turystyczny przewodnik oparty o AI, który pokazuje co warto zobaczyć i opowiada historię miejsca.", images: ["https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg", "https://media.licdn.com/dms/image/v2/D4D22AQFbpDNadrx65Q/feedshare-shrink_2048_1536/B4DZyuh76oGUAk-/0/1772454658312?e=1776902400&v=beta&t=8DsGLCt1csapAsxA-NNk3QHbugfYwOyj9CSzNEbWlhI", "https://media.licdn.com/dms/image/v2/D4D22AQGAe7E77fjZVA/feedshare-shrink_2048_1536/B4DZyuh7nsJYAk-/0/1772454656751?e=1776902400&v=beta&t=ONA-wNwqMzXLXoaeaj1UD_65hPlvW1NylEtAGjnKhZY", "https://media.licdn.com/dms/image/v2/D4D22AQHqcOj2tUrbvg/feedshare-shrink_2048_1536/B4DZyuh7m_JkAk-/0/1772454656778?e=1776902400&v=beta&t=3XqhQXTs9ybQXydemqY25ORYU8z0ltOk-64CNvfZjKw"] },
+        { date: "Marzec 2026", text: "Wdrożenie agenta AI na Instagramie, który automatycznie obsługuje wiadomości DM", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/960px-Instagram_logo_2016.svg.png" },
+      ],
+    },
+    now: {
+      title: "Co robię teraz",
+      text: "Pomagam firmom wdrożyć AI. Nie teorię. Nie prezentacje PowerPoint. Konkretne narzędzia, które od pierwszego dnia oszczędzają czas i pieniądze.",
+      points: [
+        "Audyt procesów w Twojej firmie. Szukam miejsc, gdzie AI da największy efekt",
+        "Budowa rozwiązań AI dopasowanych do Twojego biznesu",
+        "Szkolenie zespołu, żeby umieli korzystać z AI na co dzień",
+        "Wsparcie po wdrożeniu. Nie zostawiam Cię samego",
+      ],
+    },
+    skills: {
+      title: "Narzędzia",
+      categories: [
+        {
+          name: "AI & Automatyzacja",
+          items: ["ChatGPT / Claude Code", "AI Agenci", "Automatyzacja procesów", "Prompt Engineering", "Bazy wiedzy AI (RAG)"],
+        },
+        {
+          name: "Budowa aplikacji",
+          items: ["Next.js / React", "TypeScript", "Python", "Bazy danych (Supabase)", "Hosting i deploy"],
+        },
+        {
+          name: "Biznes",
+          items: ["Strategia i wdrażanie AI", "Analiza procesów", "Zarządzanie projektami"],
+        },
+      ],
+    },
+    projects: {
+      title: "Co już zbudowałem",
+      items: [
+        {
+          name: "Slam5",
+          desc: "Aplikacja do zadań z grywalizacją. Planujesz 5 rzeczy na dzień i walczysz o wygraną. Działa jak gra, ale organizuje Ci życie.",
+          tech: "Next.js, Supabase, Stripe, AI",
+          url: "https://slam5.com",
+        },
+        {
+          name: "Itera City",
+          desc: "Aplikacja mobilna. Turystyczny przewodnik oparty o AI. Pokazuje co warto zobaczyć, jak dojechać i opowiada historię miejsca.",
+          tech: "React Native, AI, Maps API",
+          url: "#",
+          image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg",
+        },
+        {
+          name: "Kolejny projekt",
+          desc: "Opis projektu. Co robi, jaki problem rozwiązuje",
+          tech: "Stack technologiczny",
+          url: "#",
+        },
+      ],
+    },
+    contact: {
+      title: "Kontakt",
+      text: "Szukasz kogoś, kto wdroży AI w Twojej firmie? Napisz do mnie. Chętnie porozmawiam o tym, jak mogę pomóc.",
+      email: "hello@jakubchodakowski.com",
+      linkedin: "LinkedIn",
+    },
+    footer: "Jakub Chodakowski",
+  },
+  en: {
+    nav: { story: "Story", skills: "Skills", contact: "Contact" },
+    hero: {
+      greeting: "Hi, I'm",
+      name: "Jakub Chodakowski",
+      headline: "I'll lead the AI transformation in your company",
+      sub: "Your team wastes hours on repetitive tasks. I show you how AI can do it for them. Faster, cheaper, and with zero mistakes.",
+      cta: "Let's talk",
+      scroll: "Read my story",
+    },
+    before: {
+      label: "Before AI",
+      period: "2018 – November 2022",
+      title: "Before the world changed",
+      paragraphs: [
+        "I started in startups. I did a bit of everything. Sales, marketing, customer service, building processes. I learned business from the inside.",
+        "I ran my own company. Worked with B2B clients. Negotiated contracts, built sales funnels, managed projects.",
+        "I knew how a business works inside out. But too many things took too long. Repetitive tasks, manual work, constant firefighting.",
+      ],
+      skills: ["B2B Sales", "Marketing", "Project Management", "Own Business", "Startup Experience"],
+    },
+    turning: {
+      date: "November 30, 2022",
+      title: "ChatGPT launches",
+      text: "That day, everything changed. Not just for me. For the entire world. I saw the future and knew I had to be part of it.",
+    },
+    after: {
+      label: "After AI",
+      period: "December 2022 – present",
+      title: "New rules",
+      paragraphs: [
+        "From day one I started building with AI. Not reading about it. Building. Testing. Shipping.",
+        "I created chatbots that answer customers 24/7. Automations that save companies 20+ hours a week. Apps that make money.",
+        "Today I combine business experience with technical skills. I understand what a company needs because I've been there. And I know how AI can do it better.",
+      ],
+      skills: ["ChatGPT / Claude Code", "AI Agents", "Process Automation", "Prompt Engineering", "AI Knowledge Bases (RAG)", "Next.js / React", "TypeScript", "Python"],
+      milestones: [
+        { date: "November 2023", text: "Implemented AI for SEO. Built a website, automated blog post publishing, and started generating organic traffic in 3 months. Minimal effort, zero SEO experience.", image: "https://media.licdn.com/dms/image/v2/D4D22AQG29tpWYC8qrw/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1719218131585?e=1776902400&v=beta&t=FjBD2R1E7LQGfG9lXYy5Dm2dKYBhSC24jOBHtMF_oPI" },
+        { date: "May 2024", text: "AI Manager. AI implementation course. Maria Parysz. Implemented AI at Rolls-Royce, Sephora and other global companies.", image: "https://media.licdn.com/dms/image/v2/D4D22AQFYxpWaimMfTA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1718907292052?e=1776902400&v=beta&t=Mp23D4wFml6H-rAaSpho-3-J2rMuak86ez9FWA7G2Yc" },
+        { date: "August 2024", text: "Speaker at CRASH Mondays. Topic: how to use AI and data in modern sales. Real examples from companies like Żabka and Netflix that revolutionized sales with AI.", image: "https://media.licdn.com/dms/image/v2/D4D22AQGgY4uuKD4_Wg/feedshare-shrink_800/feedshare-shrink_800/0/1721579818961?e=1776902400&v=beta&t=nc7AvLjWta4XPXQEkne5n8VLyJNDXpOh-chq8FihyK8" },
+        { date: "November 2025", text: "Speaker session. Taught teachers how to use AI in their daily work.", image: "https://prod-fillout-oregon-s3.s3.us-west-2.amazonaws.com/orgid-542209/flowpublicid-i6Cw5dBunXus/67d299c9-f5c0-43d9-9c4a-a82550520903-PY7fXcqHejnPSSmEpcSes2G21gE0LB3EHvtMcsKDWCILwz6wAthEeP1GLLNhvxjHDq2alxyhhFwTCrEYqnrF4TpYtTlUqiN4OgC/Screenshot-2026-04-04-at-1.45.04aAM.png" },
+        { date: "February 2026", text: "Built Itera City mobile app. An AI-powered tourist guide that shows what to see and tells the history of each place.", images: ["https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg", "https://media.licdn.com/dms/image/v2/D4D22AQFbpDNadrx65Q/feedshare-shrink_2048_1536/B4DZyuh76oGUAk-/0/1772454658312?e=1776902400&v=beta&t=8DsGLCt1csapAsxA-NNk3QHbugfYwOyj9CSzNEbWlhI", "https://media.licdn.com/dms/image/v2/D4D22AQGAe7E77fjZVA/feedshare-shrink_2048_1536/B4DZyuh7nsJYAk-/0/1772454656751?e=1776902400&v=beta&t=ONA-wNwqMzXLXoaeaj1UD_65hPlvW1NylEtAGjnKhZY", "https://media.licdn.com/dms/image/v2/D4D22AQHqcOj2tUrbvg/feedshare-shrink_2048_1536/B4DZyuh7m_JkAk-/0/1772454656778?e=1776902400&v=beta&t=3XqhQXTs9ybQXydemqY25ORYU8z0ltOk-64CNvfZjKw"] },
+        { date: "March 2026", text: "Deployed an AI agent on Instagram that automatically handles DM conversations", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/960px-Instagram_logo_2016.svg.png" },
+      ],
+    },
+    now: {
+      title: "What I do now",
+      text: "I help companies implement AI. Not theory. Not PowerPoint slides. Real tools that save time and money from day one.",
+      points: [
+        "Process audit. I find where AI will have the biggest impact",
+        "Building custom AI solutions for your business",
+        "Training your team to use AI every day",
+        "Post-launch support. I don't leave you hanging",
+      ],
+    },
+    skills: {
+      title: "Tools",
+      categories: [
+        {
+          name: "AI & Automation",
+          items: ["ChatGPT / Claude Code", "AI Agents", "Process Automation", "Prompt Engineering", "AI Knowledge Bases (RAG)"],
+        },
+        {
+          name: "Building apps",
+          items: ["Next.js / React", "TypeScript", "Python", "Databases (Supabase)", "Hosting & Deploy"],
+        },
+        {
+          name: "Business",
+          items: ["AI Strategy & Implementation", "Process Analysis", "Project Management"],
+        },
+      ],
+    },
+    projects: {
+      title: "What I've built",
+      items: [
+        {
+          name: "Slam5",
+          desc: "A task app with gamification. You pick 5 things a day and fight to win. Works like a game, but organizes your life.",
+          tech: "Next.js, Supabase, Stripe, AI",
+          url: "https://slam5.com",
+        },
+        {
+          name: "Itera City",
+          desc: "Mobile app. An AI-powered tourist guide. Shows what to see, how to get there, and tells you the history of each place.",
+          tech: "React Native, AI, Maps API",
+          url: "#",
+          image: "https://media.licdn.com/dms/image/v2/D4D22AQEoH8m1jugGNw/feedshare-shrink_2048_1536/B4DZyuh7z5GwAk-/0/1772454657569?e=1776902400&v=beta&t=flv7PbCJ8JCM-0mcLGG-lH4HQUPA8ZL7sscs8q64Mcg",
+        },
+        {
+          name: "Another Project",
+          desc: "Project description. What it does, what problem it solves",
+          tech: "Tech stack",
+          url: "#",
+        },
+      ],
+    },
+    contact: {
+      title: "Contact",
+      text: "Looking for someone to implement AI in your company? Reach out. I'd love to talk about how I can help.",
+      email: "hello@jakubchodakowski.com",
+      linkedin: "LinkedIn",
+    },
+    footer: "Jakub Chodakowski",
   },
 };
 
-const TLO = "#ffffff";
+type Lang = "pl" | "en";
 
-const PROBLEM = [
-  {
-    tytul: "Decyzja zapada tygodniami",
-    opis: "Pacjent czyta o zabiegu kilka tygodni, zanim zadzwoni. Cały ten czas jest w Google.",
-  },
-  {
-    tytul: "Pierwsze miejsca mają katalogi",
-    opis: "Na „przeszczep włosów Kraków” wyżej od Ciebie stoją porównywarki i kliniki z Turcji.",
-  },
-  {
-    tytul: "Płacisz za miejsce w kolejce",
-    opis: "Katalog bierze abonament i prowizję za listę, na której stoisz obok kilkunastu innych.",
-  },
-];
+export default function Home() {
+  const lang: Lang = "en";
+  const [lightbox, setLightbox] = useState<string[] | null>(null);
+  const [lightboxIdx, setLightboxIdx] = useState(0);
+  const t = CONTENT[lang];
 
-const ZAKRES = [
-  { tytul: "Pozycjonowanie Twojej strony", opis: "Twoja domena, Twoja strona." },
-  { tytul: "Treści pod pytania pacjentów", opis: "Przebieg, rekonwalescencja, ryzyka, koszty." },
-  { tytul: "Porządki techniczne", opis: "Tytuły, opisy, nagłówki, szybkość, wizytówka Google." },
-  { tytul: "Analityka", opis: "Search Console i Analytics podpięte do Twojej strony." },
-  { tytul: "Raport co miesiąc", opis: "Wyświetlenia, kliknięcia i frazy, na które wchodzą pacjenci." },
-  { tytul: "Wyłączność na miasto", opis: "Jedna klinika w mieście na dany zabieg." },
-];
-
-const BRANZE = [
-  "Przeszczep włosów",
-  "Chirurgia plastyczna",
-  "Stomatologia i implanty",
-  "Okulistyka laserowa",
-  "Leczenie niepłodności",
-  "Ortopedia",
-];
-
-const KROKI = [
-  "Rozmowa, 10 minut. Pytam o zabiegi i o to, skąd dziś masz pacjentów.",
-  "Audyt. Pokazuję, na jakie frazy masz szansę się pokazać.",
-  "Start w 14 dni. Pierwsze treści i porządki techniczne.",
-  "Co miesiąc. Nowe treści i raport.",
-];
-
-function Sekcja({
-  id,
-  etykieta,
-  tytul,
-  children,
-}: {
-  id?: string;
-  etykieta: string;
-  tytul: string;
-  children: React.ReactNode;
-}) {
   return (
-    <section id={id} className="mx-auto max-w-5xl px-6 py-20 md:py-28">
-      <div className="mb-3 flex items-center gap-3">
-        <span className="font-mono text-xs uppercase tracking-widest text-cyan-600">
-          {etykieta}
-        </span>
-        <span className="h-px flex-1 bg-gradient-to-r from-cyan-500/30 to-transparent" />
-      </div>
-      <h2 className="mb-10 text-3xl font-bold tracking-tighter text-zinc-900 md:text-4xl">{tytul}</h2>
-      {children}
-    </section>
-  );
-}
+    <div className="min-h-screen">
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes glow {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 0.7; }
+        }
+        @keyframes pulse-line {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 1; }
+        }
+      `}</style>
 
-function Karta({ tytul, opis }: { tytul: string; opis: string }) {
-  return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-colors hover:border-cyan-500/50">
-      <h3 className="font-semibold text-zinc-900">{tytul}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-zinc-600">{opis}</p>
-    </div>
-  );
-}
-
-export default function Strona() {
-  return (
-    <main
-      className="min-h-screen text-zinc-800"
-      style={{ background: TLO }}
-    >
-      {/* pasek */}
-      <header className="sticky top-0 z-20 border-b border-zinc-200 backdrop-blur-md" style={{ background: "rgba(255,255,255,0.85)" }}>
-        <div className="mx-auto flex max-w-5xl items-center gap-3 px-6 py-4">
-          {/* USER_001 2026-09-19: zamiast inicjałów JC prawdziwe zdjęcie, to samo co w stopce maili. */}
-          <Image
-            src="/profilowe_jakub.png"
-            alt="Jakub Chodakowski"
-            width={32}
-            height={32}
-            priority
-            className="size-8 rounded-full object-cover ring-2 ring-cyan-500/30"
-          />
-          <span className="text-sm font-medium text-zinc-900">Jakub Chodakowski</span>
-          <a
-            href="#kontakt"
-            className="ml-auto rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-cyan-500/30 transition-transform hover:scale-[1.03]"
-          >
-            Porozmawiajmy
-          </a>
+      {/* Lightbox gallery */}
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6"
+          onClick={() => setLightbox(null)}
+        >
+          <button className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors z-10">
+            <X size={24} />
+          </button>
+          {lightbox.length > 1 && (
+            <>
+              <button
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/[0.02] flex items-center justify-center text-white transition-colors z-10"
+                onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx - 1 + lightbox.length) % lightbox.length); }}
+              >
+                <ChevronDown size={20} className="rotate-90" />
+              </button>
+              <button
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/[0.02] flex items-center justify-center text-white transition-colors z-10"
+                onClick={(e) => { e.stopPropagation(); setLightboxIdx((lightboxIdx + 1) % lightbox.length); }}
+              >
+                <ChevronDown size={20} className="-rotate-90" />
+              </button>
+            </>
+          )}
+          <img src={lightbox[lightboxIdx]} alt="" className="max-w-full max-h-[90vh] rounded-xl object-contain" onClick={(e) => e.stopPropagation()} />
+          {lightbox.length > 1 && (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+              {lightbox.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); setLightboxIdx(i); }}
+                  className={`w-2 h-2 rounded-full transition-all ${i === lightboxIdx ? "bg-white" : "bg-white/[0.03]"}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      </header>
+      )}
 
-      {/* hero */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -top-40 right-0 size-[28rem] rounded-full bg-cyan-400/20 blur-[120px]" />
-        <div className="mx-auto max-w-5xl px-6 pb-20 pt-20 md:pb-28 md:pt-28">
-          {/* USER_001 2026-09-19: hero prowadzi korzyścią, nie nazwą usługi. */}
-          <p className="mb-5 font-mono text-xs uppercase tracking-widest text-cyan-600">
-            Nowi pacjenci w Twoim gabinecie
-          </p>
-          <h1 className="max-w-3xl text-4xl font-bold leading-[1.1] tracking-tighter text-zinc-900 md:text-6xl">
-            Twoi klienci
-            <br />
-            <span className="bg-gradient-to-r from-cyan-600 to-teal-500 bg-clip-text text-transparent">
-              sami Cię znajdą!
-            </span>
-          </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-relaxed text-zinc-600">
-            Bez katalogu, bez listy konkurencji obok.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center gap-4">
-            <a
-              href="#kontakt"
-              className="rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 px-7 py-3.5 text-sm font-medium text-white shadow-lg shadow-cyan-500/40 transition-transform hover:scale-[1.03]"
-            >
-              Umów 10 minut rozmowy
-            </a>
-            <a
-              href="#zakres"
-              className="rounded-full border border-zinc-300 px-7 py-3.5 text-sm font-medium text-zinc-700 transition-colors hover:border-cyan-500"
-            >
-              Zobacz, co robię
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <Sekcja etykieta="Problem" tytul="Dlaczego nie widać Cię w Google?">
-        <div className="grid gap-4 md:grid-cols-3">
-          {PROBLEM.map((p) => (
-            <Karta key={p.tytul} {...p} />
-          ))}
-        </div>
-      </Sekcja>
-
-      <div className="border-y border-zinc-200 bg-zinc-50">
-        <Sekcja id="zakres" etykieta="Zakres" tytul="Co dokładnie robię">
-          <div className="grid gap-4 md:grid-cols-2">
-            {ZAKRES.map((z) => (
-              <Karta key={z.tytul} {...z} />
+      {/* Nav */}
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-white/[0.03] backdrop-blur-2xl">
+        <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
+          <span className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-cyan-500/25">JC</span>
+          <div className="hidden md:flex items-center gap-1 p-1 rounded-full border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl">
+            {(["story", "skills", "contact"] as const).map((key) => (
+              <a
+                key={key}
+                href={`#${key}`}
+                className="text-xs font-medium text-neutral-300 hover:text-white px-4 py-1.5 rounded-full hover:bg-white/[0.08] transition-all duration-300"
+              >
+                {t.nav[key]}
+              </a>
             ))}
           </div>
-        </Sekcja>
-      </div>
-
-      <Sekcja etykieta="Dla kogo" tytul="Placówki, z którymi pracuję">
-        <div className="flex flex-wrap gap-3">
-          {BRANZE.map((b) => (
-            <span
-              key={b}
-              className="rounded-full border border-zinc-200 bg-white px-5 py-2.5 text-sm text-zinc-700"
-            >
-              {b}
-            </span>
-          ))}
+          <span className="w-8" aria-hidden="true" />
         </div>
-      </Sekcja>
+      </nav>
 
-
-      <Sekcja etykieta="Przebieg" tytul="Jak zaczynamy?">
-        <ol className="space-y-5">
-          {KROKI.map((k, i) => (
-            <li key={k} className="flex gap-4">
-              <span className="grid size-8 flex-none place-items-center rounded-full border border-cyan-500/40 bg-cyan-50 text-sm font-semibold text-cyan-700">
-                {i + 1}
-              </span>
-              <span className="pt-1 leading-relaxed text-zinc-700">{k}</span>
-            </li>
-          ))}
-        </ol>
-      </Sekcja>
-
-      {/* kontakt */}
-      <section id="kontakt" className="relative overflow-hidden border-t border-zinc-200">
-        <div className="pointer-events-none absolute -bottom-40 left-0 size-[28rem] rounded-full bg-teal-400/20 blur-[120px]" />
-        <div className="mx-auto max-w-5xl px-6 py-24 text-center">
-          <h2 className="text-3xl font-bold tracking-tighter text-zinc-900 md:text-4xl">
-            Porozmawiajmy 10 minut
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-zinc-600">
-            Powiem wprost, czy widzę miejsce na wzrost. Jeśli nie widzę, też to powiem.
+      {/* ===== HERO ===== */}
+      <section className="min-h-screen flex items-center justify-center px-6 pt-14 relative overflow-hidden">
+        <div className="max-w-3xl mx-auto text-center relative">
+          <div className="mb-8">
+            <img
+              src="/profilowe_jakub.png"
+              alt="Jakub Chodakowski"
+              className="w-32 h-32 rounded-full mx-auto ring-2 ring-white/10 ring-offset-4 ring-offset-[#0a1218] object-cover hover:ring-cyan-400/60 transition-all duration-500 shadow-xl shadow-cyan-500/15"
+            />
+          </div>
+          <p className="text-sm text-neutral-400 mb-3 tracking-wide uppercase">{t.hero.greeting}</p>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-5 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
+            {t.hero.name}
+          </h1>
+          <p className="text-xl md:text-2xl font-medium mb-6 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+            {t.hero.headline}
           </p>
-          <div className="mt-9 flex flex-col items-center gap-4">
+          <p className="text-neutral-300 max-w-lg mx-auto mb-12 leading-relaxed text-base">
+            {t.hero.sub}
+          </p>
+          <div className="flex items-center justify-center mb-10">
             <a
-              href="mailto:hello@jakubchodakowski.com?subject=Rozmowa%20w%20sprawie%20wsp%C3%B3%C5%82pracy"
-              className="rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 px-8 py-4 text-base font-medium text-white shadow-lg shadow-cyan-500/40 transition-transform hover:scale-[1.03]"
+              href="#contact"
+              className="px-7 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/50"
             >
-              hello@jakubchodakowski.com
+              {t.hero.cta}
             </a>
-            <a href="tel:+48506151615" className="text-sm text-zinc-500 underline underline-offset-4">
-              albo zadzwoń: 506 151 615
-            </a>
+          </div>
+
+          {/* Scroll hint */}
+          <a href="#story" className="inline-flex flex-col items-center gap-3 text-neutral-400 hover:text-white transition-colors">
+            <span className="text-sm font-medium">{t.hero.scroll}</span>
+            <ChevronDown size={20} className="animate-bounce" />
+          </a>
+        </div>
+      </section>
+
+      {/* ===== STORY TIMELINE ===== */}
+      <section id="story" className="relative">
+
+        {/* Central timeline line */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-neutral-700/30 to-transparent hidden md:block" />
+
+        {/* --- BEFORE AI --- */}
+        <div className="pt-12 pb-20 px-6 relative">
+          <div className="max-w-3xl mx-auto">
+            {/* Era label */}
+            <div className="flex items-center gap-4 mb-4">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-neutral-700/50" />
+              <span className="text-sm font-mono text-neutral-400 uppercase tracking-widest font-medium">{t.before.label}</span>
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-neutral-700/50" />
+            </div>
+            <p className="text-center text-sm text-neutral-400 font-mono mb-6">{t.before.period}</p>
+
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center text-white">{t.before.title}</h2>
+
+            <div className="space-y-6 max-w-2xl mx-auto">
+              {t.before.paragraphs.map((p, i) => (
+                <p key={i} className="text-neutral-300 leading-relaxed text-lg">{p}</p>
+              ))}
+            </div>
+
+            {/* Skills from that era */}
+            <div className="flex flex-wrap justify-center gap-2 mt-10">
+              {t.before.skills.map((s, i) => (
+                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-white/[0.08] bg-white/[0.04] backdrop-blur-md text-neutral-300">
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* --- TURNING POINT --- */}
+        <div className="py-16 px-6 relative">
+          <div className="max-w-xl mx-auto text-center">
+            {/* Big arrow down */}
+            <div className="flex justify-center mb-8">
+              <div className="w-12 h-12 rounded-full border border-cyan-400/40 bg-white/[0.04] backdrop-blur-md flex items-center justify-center animate-[pulse-line_2s_ease-in-out_infinite] shadow-lg shadow-cyan-500/25">
+                <ChevronDown size={24} className="text-cyan-400" />
+              </div>
+            </div>
+
+            <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">{t.turning.date}</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-6 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+              {t.turning.title}
+            </h2>
+            <p className="text-neutral-300 text-lg leading-relaxed">{t.turning.text}</p>
+          </div>
+        </div>
+
+        {/* --- AFTER AI --- */}
+        <div className="py-20 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
+          {/* Corner glow */}
+          <div className="absolute -top-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
+          <div className="max-w-3xl mx-auto relative">
+            {/* Era label */}
+            <div className="flex items-center gap-4 mb-4">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-500/40" />
+              <span className="text-sm font-mono text-cyan-300 uppercase tracking-widest font-medium">{t.after.label}</span>
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-cyan-500/40" />
+            </div>
+            <p className="text-center text-sm text-cyan-400/80 font-mono mb-6">{t.after.period}</p>
+
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center text-white">{t.after.title}</h2>
+
+            <div className="space-y-6 max-w-2xl mx-auto">
+              {t.after.paragraphs.map((p, i) => (
+                <p key={i} className="text-neutral-300 leading-relaxed text-lg">{p}</p>
+              ))}
+            </div>
+
+            {/* New skills */}
+            <div className="flex flex-wrap justify-center gap-2 mt-10">
+              {t.after.skills.map((s, i) => (
+                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-cyan-500/40 text-cyan-300 bg-white/[0.05] backdrop-blur-md">
+                  {s}
+                </span>
+              ))}
+            </div>
+
+            {/* Milestones — chronological */}
+            {false && t.after.milestones && t.after.milestones.length > 0 && (
+              <div className="mt-8 space-y-3 max-w-2xl mx-auto">
+                {t.after.milestones.map((m, i) => {
+                  const imgs = "images" in m ? (m.images as string[]) : "image" in m && m.image ? [m.image as string] : [];
+                  return (
+                    <div key={i} className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl shadow-sm">
+                      <div className="flex flex-col md:flex-row gap-6">
+                        {imgs.length > 0 && (
+                          <div
+                            className="relative w-full md:w-48 h-36 flex-shrink-0 cursor-pointer group"
+                            onClick={() => { setLightbox(imgs); setLightboxIdx(0); }}
+                          >
+                            <img
+                              src={imgs[0]}
+                              alt={m.text}
+                              className="w-full h-36 object-cover rounded-xl group-hover:opacity-80 transition-opacity"
+                            />
+                            {imgs.length > 1 && (
+                              <span className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">
+                                1/{imgs.length}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <p className="text-xs font-mono text-cyan-400 mb-2">{m.date}</p>
+                          <p className="text-sm text-neutral-300 leading-relaxed">{m.text}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* --- WHAT I DO NOW --- */}
+        <div className="py-20 px-6">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6 text-center text-white">{t.now.title}</h2>
+            <p className="text-neutral-300 text-lg text-center max-w-2xl mx-auto mb-12 leading-relaxed">{t.now.text}</p>
+
+            <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              {t.now.points.map((point, i) => (
+                <div key={i} className="p-5 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:bg-white/[0.08] hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15">
+                  <div className="flex items-start gap-3">
+                    <span className="text-cyan-400 font-bold text-sm mt-0.5">{String(i + 1).padStart(2, "0")}</span>
+                    <p className="text-neutral-200 text-sm leading-relaxed">{point}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-zinc-200">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-8 text-sm text-zinc-500">
-          <span>Jakub Chodakowski, NIP 6711845485</span>
+      {/* ===== SKILLS ===== */}
+      {<section id="skills" className="py-20 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
+        {/* Corner glow */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-teal-500/12 rounded-full blur-[120px] pointer-events-none" />
+        <div className="max-w-3xl mx-auto relative">
+          <h2 className="text-3xl font-bold mb-12 tracking-tight text-center text-white">{t.skills.title}</h2>
+          <div className="grid md:grid-cols-3 gap-4">
+            {t.skills.categories.map((cat, i) => (
+              <div
+                key={i}
+                className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:bg-white/[0.08] hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15"
+              >
+                <h3 className="text-xs font-semibold uppercase tracking-wider mb-5 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+                  {cat.name}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {cat.items.map((skill, j) => (
+                    <span
+                      key={j}
+                      className="px-3 py-1.5 rounded-lg text-xs border border-white/[0.08] bg-white/[0.04] text-neutral-300 hover:border-cyan-400/60 hover:text-cyan-300 hover:bg-white/[0.08] transition-all duration-300 cursor-default"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>}
+
+      {/* ===== CONTACT ===== */}
+      <section id="contact" className="py-24 px-6 bg-white/[0.03] border-t border-cyan-500/15 relative overflow-hidden">
+        {/* Corner glow */}
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
+        <div className="max-w-3xl mx-auto text-center relative">
+          <div className="relative">
+            <h2 className="text-3xl font-bold mb-4 tracking-tight text-white">{t.contact.title}</h2>
+            <p className="text-neutral-300 mb-10 max-w-md mx-auto">{t.contact.text}</p>
+            <div className="flex items-center justify-center gap-4">
+              <a
+                href={`mailto:${t.contact.email}`}
+                className="px-7 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/50"
+              >
+                {t.contact.email}
+              </a>
+              <a
+                href="https://www.linkedin.com/in/jakub-chodakowski"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-7 py-3.5 rounded-full border border-white/[0.08] bg-white/[0.04] backdrop-blur-md text-neutral-200 hover:text-white hover:border-cyan-500/40 hover:bg-white/[0.08] text-sm font-medium transition-all duration-300"
+              >
+                {t.contact.linkedin}
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-8 px-6 border-t border-white/[0.06]">
+        <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-neutral-400">
+          <span>{t.footer} &copy; {new Date().getFullYear()}</span>
+          <span className="font-mono">jakubchodakowski.com</span>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }
