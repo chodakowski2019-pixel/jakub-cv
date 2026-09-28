@@ -1,39 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { track } from "@vercel/analytics";
 
-// Ankieta wdrożeniowa SalesAI. Wygląd przepisany z /aisaleskontakt (jasne szkło),
-// żeby firma, która przeszła z lead forma, widziała tę samą stronę.
+// Ankieta wdrożeniowa SalesAI. Wygląd przepisany z /aisaleskontakt (jasne szkło).
 //
-// Różnica wobec /aisaleskontakt: tam zbieramy kontakt, tu zbieramy wsad do
-// narzędzia. Formularz jest długi z premedytacją — wypełnia go firma, która już
-// powiedziała "tak", więc opór jest niski, a każde brakujące pole to rozmowa,
-// w której AI gada ogólnikami.
+// Jeden formularz dla wszystkich (decyzja USER_001 28.09): bez nazwy firmy,
+// bez wstrzykiwania czegokolwiek linkiem. Ten sam adres dostaje każdy klient.
 //
-// Nazwę firmy da się wstrzyknąć linkiem: /aisalesbrief?firma=STYROBUD
-// (czytane z window.location, nie z useSearchParams — to drugie wymaga Suspense).
+// Skrócony 28.09 z 18 pól do 10. Wyleciało wszystko, co albo wiadomo już
+// z rozmowy (wielkość zespołu, branża klienta, wartość transakcji), albo było
+// pytaniem dla większej firmy niż realny klient (żargon, zakazy prawne,
+// konkurencja). Imię i mail też wypadły (USER_001 28.09): z formularza
+// rozpoznajemy nadawcę po nazwie firmy, link i tak idzie imiennie.
 const TLO = "#ffffff";
 
-const WARTOSC_TRANSAKCJI = [
-  "do 5 tys. zł",
-  "5-20 tys. zł",
-  "20-100 tys. zł",
-  "powyżej 100 tys. zł",
-];
+const KANALY = ["Telefon", "Spotkanie online", "Spotkanie u klienta"];
 
-const WIELKOSC_ZESPOLU = ["1-4 handlowców", "5-15", "16-40", "powyżej 40"];
-
-const KANALY = [
-  "Zimny telefon",
-  "Telefon do leada",
-  "Spotkanie online",
-  "Spotkanie u klienta",
-  "Mail / oferta",
-];
-
-// Wielokrotny wybór: firma zwykle ma problem na 2-3 etapach naraz,
-// a to one decydują, jakie scenariusze dostanie zespół.
 const ETAPY = [
   "Pierwszy kontakt",
   "Badanie potrzeb",
@@ -44,6 +27,8 @@ const ETAPY = [
   "Follow-up po ofercie",
 ];
 
+const INNE = "Inne";
+
 const ZACHOWANIA = [
   "Spieszy się, ucina rozmowę",
   "Milczy, nie daje sygnałów",
@@ -51,92 +36,81 @@ const ZACHOWANIA = [
   "Uprzejmy, ale ucieka w 'prześlij ofertę'",
   "Wie dużo, sprawdza handlowca",
   "Odsyła do kogoś innego",
+  INNE,
 ];
+
+type Plik = { nazwa: string; sciezka?: string; stan: "wysylanie" | "ok" | "blad" };
 
 type Form = {
   firma: string;
-  osoba: string;
-  email: string;
-  coSprzedajecie: string;
-  wartosc: string;
-  zespol: string;
+  coSprzedajesz: string;
   ktoDecyduje: string;
-  branzaKlienta: string;
   ileOsobDecyzja: string;
   zachowania: string[];
+  zachowaniaInne: string;
   kanal: string;
   etapy: string[];
   przebieg: string;
   obiekcje: string;
   sukces: string;
   powodPrzegranej: string;
-  konkurencja: string;
-  zargon: string;
-  zakazy: string;
-  nagranie: string;
+  uwagi: string;
 };
-
-// Sekcja stoi POZA komponentem strony z rozmysłem. Zdefiniowana w środku byłaby
-// przy każdym naciśnięciu klawisza nowym typem komponentu, React odmontowałby
-// całe pudło i pole traciłoby kursor po pierwszej literze.
-// Z tego samego powodu klasa szkła leci przez `style jsx global`: scope'owany
-// styled-jsx nie dosięga JSX-a innego komponentu.
-function Sekcja({
-  numer,
-  tytul,
-  podtytul,
-  children,
-}: {
-  numer: string;
-  tytul: string;
-  podtytul: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="brief-szklo rounded-3xl p-6 sm:p-8">
-      <div className="mb-6">
-        <span className="inline-block text-[11px] font-bold tracking-[0.12em] text-cyan-700 mb-2">{numer}</span>
-        <h2 className="text-xl sm:text-2xl font-bold font-[var(--font-poppins)] tracking-[-0.015em] leading-tight">
-          {tytul}
-        </h2>
-        <p className="text-slate-500 text-[13px] mt-1.5 leading-relaxed">{podtytul}</p>
-      </div>
-      <div className="flex flex-col gap-5">{children}</div>
-    </section>
-  );
-}
 
 const PUSTY: Form = {
   firma: "",
-  osoba: "",
-  email: "",
-  coSprzedajecie: "",
-  wartosc: "",
-  zespol: "",
+  coSprzedajesz: "",
   ktoDecyduje: "",
-  branzaKlienta: "",
   ileOsobDecyzja: "",
   zachowania: [],
+  zachowaniaInne: "",
   kanal: "",
   etapy: [],
   przebieg: "",
   obiekcje: "",
   sukces: "",
   powodPrzegranej: "",
-  konkurencja: "",
-  zargon: "",
-  zakazy: "",
-  nagranie: "",
+  uwagi: "",
 };
+
+// Pasek postępu zastąpił napis "CZĘŚĆ 1 / 3" (USER_001 28.09): trzy kreski,
+// wypełnione do bieżącej części, wyśrodkowane nad tytułem.
+function Pasek({ krok }: { krok: number }) {
+  return (
+    <div className="flex justify-center gap-1.5 mb-5" role="img" aria-label={`Część ${krok} z 3`}>
+      {[1, 2, 3].map((i) => (
+        <span
+          key={i}
+          className={`h-1.5 w-12 rounded-full transition-colors duration-200 ${
+            i <= krok ? "bg-gradient-to-r from-cyan-700 to-teal-700" : "bg-slate-200"
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Sekcja stoi POZA komponentem strony z rozmysłem. Zdefiniowana w środku byłaby
+// przy każdym naciśnięciu klawisza nowym typem komponentu, React odmontowałby
+// całe pudło i pole traciłoby kursor po pierwszej literze.
+// Z tego samego powodu klasa szkła leci przez `style jsx global`: scope'owany
+// styled-jsx nie dosięga JSX-a innego komponentu.
+function Sekcja({ krok, tytul, children }: { krok: number; tytul: string; children: React.ReactNode }) {
+  return (
+    <section className="brief-szklo rounded-3xl p-6 sm:p-8">
+      <Pasek krok={krok} />
+      <h2 className="text-xl sm:text-2xl font-bold font-[var(--font-poppins)] tracking-[-0.015em] leading-tight text-center mb-6">
+        {tytul}
+      </h2>
+      <div className="flex flex-col gap-5">{children}</div>
+    </section>
+  );
+}
 
 export default function AiSalesBriefPage() {
   const [form, setForm] = useState<Form>(PUSTY);
+  const [pliki, setPliki] = useState<Plik[]>([]);
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
-
-  useEffect(() => {
-    const firma = new URLSearchParams(window.location.search).get("firma");
-    if (firma) setForm((f) => ({ ...f, firma }));
-  }, []);
 
   const pole =
     (k: keyof Form) =>
@@ -149,6 +123,37 @@ export default function AiSalesBriefPage() {
       [k]: f[k].includes(v) ? f[k].filter((x) => x !== v) : [...f[k], v],
     }));
 
+  // Plik idzie prosto do Supabase Storage po podpisany URL z naszego API.
+  // Gdyby szedł przez nasz endpoint, zatrzymałby się na limicie 4,5 MB
+  // na treść żądania, a nagranie rozmowy to dziesiątki megabajtów.
+  const dodajPliki = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const wybrane = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    for (const plik of wybrane) {
+      setPliki((p) => [...p, { nazwa: plik.name, stan: "wysylanie" }]);
+      try {
+        const res = await fetch("/api/aisalesbrief/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nazwa: plik.name, rozmiar: plik.size }),
+        });
+        if (!res.ok) throw new Error("brak podpisu");
+        const { signedUrl, sciezka } = await res.json();
+
+        const wgranie = await fetch(signedUrl, {
+          method: "PUT",
+          headers: { "Content-Type": plik.type || "application/octet-stream" },
+          body: plik,
+        });
+        if (!wgranie.ok) throw new Error("wgranie odrzucone");
+
+        setPliki((p) => p.map((x) => (x.nazwa === plik.name && x.stan === "wysylanie" ? { ...x, sciezka, stan: "ok" } : x)));
+      } catch {
+        setPliki((p) => p.map((x) => (x.nazwa === plik.name && x.stan === "wysylanie" ? { ...x, stan: "blad" } : x)));
+      }
+    }
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
@@ -156,7 +161,10 @@ export default function AiSalesBriefPage() {
       const res = await fetch("/api/aisalesbrief", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          nagrania: pliki.filter((p) => p.stan === "ok").map((p) => p.sciezka),
+        }),
       });
       setStatus(res.ok ? "ok" : "error");
       if (res.ok) track("salesai_brief", { firma: form.firma });
@@ -177,23 +185,22 @@ export default function AiSalesBriefPage() {
         : "bg-white border-slate-300/90 text-slate-600 hover:border-slate-400 hover:text-slate-900"
     }`;
 
+  const inneWybrane = form.zachowania.includes(INNE);
+
   const komplet =
     form.firma &&
-    form.osoba &&
-    form.email &&
-    form.coSprzedajecie &&
-    form.wartosc &&
-    form.zespol &&
+    form.coSprzedajesz &&
     form.ktoDecyduje &&
-    form.branzaKlienta &&
     form.ileOsobDecyzja &&
     form.zachowania.length > 0 &&
+    (!inneWybrane || form.zachowaniaInne) &&
     form.kanal &&
     form.etapy.length > 0 &&
     form.przebieg &&
     form.obiekcje &&
     form.sukces &&
-    form.powodPrzegranej;
+    form.powodPrzegranej &&
+    !pliki.some((p) => p.stan === "wysylanie");
 
   return (
     <div className="min-h-screen text-slate-900 font-[var(--font-open-sans)]" style={{ background: TLO }}>
@@ -229,308 +236,269 @@ export default function AiSalesBriefPage() {
             </div>
             <h1 className="text-2xl font-bold mb-3 font-[var(--font-poppins)] tracking-[-0.01em]">Mam wszystko.</h1>
             <p className="text-slate-700 leading-relaxed">
-              Ustawiam trening pod Waszą rozmowę i odzywam się w ciągu 48 godzin.
+              Ustawiam trening pod Twoją rozmowę i odzywam się w ciągu 48 godzin.
             </p>
             <p className="text-sm text-slate-500 mt-4">Jakub Chodakowski</p>
           </div>
         ) : (
-          <>
-            <div className="max-w-2xl mx-auto mb-10 sm:mb-12 text-center">
-              <h1 className="text-[1.8rem] sm:text-[2.5rem] font-bold font-[var(--font-poppins)] leading-[1.1] tracking-[-0.025em] mb-4">
-                Opisz swoją rozmowę,{" "}
-                <span className="bg-gradient-to-r from-cyan-700 to-teal-700 bg-clip-text text-transparent">
-                  AI zagra Twojego klienta
+          <form onSubmit={submit} className="max-w-2xl mx-auto flex flex-col gap-6">
+            <Sekcja krok={1} tytul="Twoja firma i produkt">
+              <div>
+                <label className={labelCls} htmlFor="firma">
+                  Nazwa firmy *
+                </label>
+                <input
+                  id="firma"
+                  required
+                  autoComplete="organization"
+                  className={inputCls}
+                  placeholder="STYROBUD"
+                  value={form.firma}
+                  onChange={pole("firma")}
+                />
+              </div>
+
+              <div>
+                <label className={labelCls} htmlFor="coSprzedajesz">
+                  Co sprzedajesz? *
+                </label>
+                <span className={opisCls}>Jedno, dwa zdania. Tak, jak powiedziałbyś to klientowi przez telefon.</span>
+                <textarea
+                  id="coSprzedajesz"
+                  required
+                  rows={3}
+                  className={inputCls}
+                  placeholder="Prefabrykaty betonowe dla firm budowlanych. Produkcja na zamówienie, dostawa w 14 dni."
+                  value={form.coSprzedajesz}
+                  onChange={pole("coSprzedajesz")}
+                />
+              </div>
+            </Sekcja>
+
+            <Sekcja krok={2} tytul="Twój klient">
+              <div>
+                <label className={labelCls} htmlFor="ktoDecyduje">
+                  Kto po stronie klienta podejmuje decyzję? *
+                </label>
+                <span className={opisCls}>Stanowisko, nie nazwisko. Np. kierownik budowy, właściciel zakładu, dyrektor zakupów.</span>
+                <input
+                  id="ktoDecyduje"
+                  required
+                  className={inputCls}
+                  placeholder="Kierownik budowy"
+                  value={form.ktoDecyduje}
+                  onChange={pole("ktoDecyduje")}
+                />
+              </div>
+
+              <div>
+                <label className={labelCls} htmlFor="ileOsobDecyzja">
+                  Ile osób po stronie klienta bierze udział w decyzji? *
+                </label>
+                <span className={opisCls}>Jeden człowiek decyduje sam czy musi to przez kogoś przepchnąć?</span>
+                <input
+                  id="ileOsobDecyzja"
+                  required
+                  className={inputCls}
+                  placeholder="Zwykle dwie: kierownik i właściciel"
+                  value={form.ileOsobDecyzja}
+                  onChange={pole("ileOsobDecyzja")}
+                />
+              </div>
+
+              <fieldset>
+                <legend className={labelCls}>Jak taki klient zachowuje się w rozmowie? *</legend>
+                <span className={opisCls}>Zaznacz wszystko, co pasuje. To ustawia trudność treningu.</span>
+                <div className="flex flex-wrap gap-2">
+                  {ZACHOWANIA.map((z) => (
+                    <button
+                      key={z}
+                      type="button"
+                      aria-pressed={form.zachowania.includes(z)}
+                      onClick={() => przelacz("zachowania", z)}
+                      className={chip(form.zachowania.includes(z))}
+                    >
+                      {z}
+                    </button>
+                  ))}
+                </div>
+                {inneWybrane && (
+                  <input
+                    aria-label="Opisz, jak zachowuje się klient"
+                    required
+                    className={`${inputCls} mt-3`}
+                    placeholder="Opisz, jak zachowuje się Twój klient"
+                    value={form.zachowaniaInne}
+                    onChange={pole("zachowaniaInne")}
+                  />
+                )}
+              </fieldset>
+            </Sekcja>
+
+            <Sekcja krok={3} tytul="Twoja rozmowa">
+              <fieldset>
+                <legend className={labelCls}>Gdzie odbywa się rozmowa? *</legend>
+                <div className="flex flex-wrap gap-2">
+                  {KANALY.map((k) => (
+                    <button
+                      key={k}
+                      type="button"
+                      aria-pressed={form.kanal === k}
+                      onClick={() => setForm((f) => ({ ...f, kanal: k }))}
+                      className={chip(form.kanal === k)}
+                    >
+                      {k}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <legend className={labelCls}>Który etap chcesz trenować? *</legend>
+                <span className={opisCls}>Zaznacz wszystkie, na których dziś tracisz najwięcej.</span>
+                <div className="flex flex-wrap gap-2">
+                  {ETAPY.map((e) => (
+                    <button
+                      key={e}
+                      type="button"
+                      aria-pressed={form.etapy.includes(e)}
+                      onClick={() => przelacz("etapy", e)}
+                      className={chip(form.etapy.includes(e))}
+                    >
+                      {e}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+
+              <div>
+                <label className={labelCls} htmlFor="przebieg">
+                  Przebieg rozmowy krok po kroku *
+                </label>
+                <span className={opisCls}>Od pierwszego zdania do końca. Jeśli masz skrypt, wklej go tutaj w całości.</span>
+                <textarea
+                  id="przebieg"
+                  required
+                  rows={7}
+                  className={inputCls}
+                  placeholder={"1. Przedstawienie się i powód telefonu\n2. Pytanie o aktualnego dostawcę\n3. Pytanie o terminy dostaw\n4. Propozycja wyceny\n5. Umówienie się na wysłanie oferty"}
+                  value={form.przebieg}
+                  onChange={pole("przebieg")}
+                />
+              </div>
+
+              <div>
+                <label className={labelCls} htmlFor="obiekcje">
+                  Najczęstsze obiekcje *
+                </label>
+                <span className={opisCls}>
+                  Przepisz zdania, które realnie słyszysz. Nie „obiekcja cenowa", tylko „macie drożej niż konkurencja".
                 </span>
-              </h1>
-              <p className="text-slate-600 text-[15px] sm:text-base leading-relaxed">
-                Im dokładniej to wypełnisz, tym mniej trening będzie przypominał rozmowę z botem.
-                Zajmie 10-15 minut. Pola z gwiazdką są konieczne.
+                <textarea
+                  id="obiekcje"
+                  required
+                  rows={5}
+                  className={inputCls}
+                  placeholder={"1. Mamy już dostawcę i jesteśmy zadowoleni\n2. To jest drogie, konkurencja daje taniej\n3. Prześlij ofertę mailem, odezwiemy się"}
+                  value={form.obiekcje}
+                  onChange={pole("obiekcje")}
+                />
+              </div>
+
+              <div>
+                <label className={labelCls} htmlFor="sukces">
+                  Co znaczy, że rozmowa się udała? *
+                </label>
+                <span className={opisCls}>Bez tego AI nie ma czego oceniać. Umówione spotkanie? Wysłana wycena? Podpis?</span>
+                <input
+                  id="sukces"
+                  required
+                  className={inputCls}
+                  placeholder="Klient zgadza się na wycenę i podaje ilości"
+                  value={form.sukces}
+                  onChange={pole("sukces")}
+                />
+              </div>
+
+              <div>
+                <label className={labelCls} htmlFor="powodPrzegranej">
+                  Najczęstszy powód, dla którego przegrywasz *
+                </label>
+                <textarea
+                  id="powodPrzegranej"
+                  required
+                  rows={3}
+                  className={inputCls}
+                  placeholder="Klient ma dostawcę od lat i nie chce zmieniać. Odpuszczam po pierwszym 'nie'."
+                  value={form.powodPrzegranej}
+                  onChange={pole("powodPrzegranej")}
+                />
+              </div>
+
+              <div>
+                <label className={labelCls} htmlFor="nagrania">
+                  Nagrania rozmów <span className="font-normal text-slate-400">(opcjonalnie)</span>
+                </label>
+                <span className={opisCls}>
+                  mp3, m4a, wav, mp4, mov. Jedno nagranie mówi więcej niż połowa tego formularza. Potrzebna zgoda drugiej strony.
+                </span>
+                <input
+                  id="nagrania"
+                  type="file"
+                  multiple
+                  accept="audio/*,video/*,.mp3,.m4a,.wav,.ogg,.mp4,.mov,.webm"
+                  onChange={dodajPliki}
+                  className="w-full text-[13px] text-slate-600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border file:border-slate-300/90 file:bg-white file:text-[13px] file:font-medium file:text-slate-700 hover:file:border-slate-400 file:cursor-pointer"
+                />
+                {pliki.length > 0 && (
+                  <ul className="mt-3 flex flex-col gap-1.5">
+                    {pliki.map((p, i) => (
+                      <li key={`${p.nazwa}-${i}`} className="text-[12px] flex items-center gap-2">
+                        <span className="text-slate-700 truncate">{p.nazwa}</span>
+                        <span
+                          className={
+                            p.stan === "ok"
+                              ? "text-cyan-700 font-medium shrink-0"
+                              : p.stan === "blad"
+                                ? "text-red-700 shrink-0"
+                                : "text-slate-400 shrink-0"
+                          }
+                        >
+                          {p.stan === "ok" ? "wgrane" : p.stan === "blad" ? "nie poszło" : "wysyłam..."}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div>
+                <label className={labelCls} htmlFor="uwagi">
+                  Jeżeli chcesz coś dodać, napisz tutaj
+                </label>
+                <textarea id="uwagi" rows={4} className={inputCls} value={form.uwagi} onChange={pole("uwagi")} />
+              </div>
+            </Sekcja>
+
+            {status === "error" && (
+              <p className="text-red-700 text-sm text-center">
+                Coś poszło nie tak. Napisz na hello@jakubchodakowski.com
               </p>
-            </div>
+            )}
 
-            <form onSubmit={submit} className="max-w-2xl mx-auto flex flex-col gap-6">
-              <Sekcja
-                numer="CZĘŚĆ 1 / 3"
-                tytul="Wy i Wasz produkt"
-                podtytul="Bez tego AI nie wie, o czym w ogóle jest rozmowa."
-              >
-                <div>
-                  <label className={labelCls} htmlFor="firma">
-                    Nazwa firmy *
-                  </label>
-                  <input id="firma" required className={inputCls} placeholder="STYROBUD" value={form.firma} onChange={pole("firma")} />
-                </div>
+            <button
+              type="submit"
+              disabled={status === "sending" || !komplet}
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-700 to-teal-700 text-white font-semibold text-sm active:scale-[0.98] hover:brightness-110 transition-all duration-150 shadow-lg shadow-cyan-800/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+            >
+              {status === "sending" ? "Wysyłam..." : "Wyślij ankietę →"}
+            </button>
 
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className={labelCls} htmlFor="osoba">
-                      Imię i nazwisko *
-                    </label>
-                    <input
-                      id="osoba"
-                      required
-                      autoComplete="name"
-                      className={inputCls}
-                      placeholder="Adam Nowak"
-                      value={form.osoba}
-                      onChange={pole("osoba")}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls} htmlFor="email">
-                      Adres email *
-                    </label>
-                    <input
-                      id="email"
-                      required
-                      type="email"
-                      autoComplete="email"
-                      className={inputCls}
-                      placeholder="adam@firma.pl"
-                      value={form.email}
-                      onChange={pole("email")}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className={labelCls} htmlFor="coSprzedajecie">
-                    Co sprzedajecie? *
-                  </label>
-                  <span className={opisCls}>Jedno, dwa zdania. Tak, jak powiedziałbyś to klientowi przez telefon.</span>
-                  <textarea
-                    id="coSprzedajecie"
-                    required
-                    rows={3}
-                    className={inputCls}
-                    placeholder="Prefabrykaty betonowe dla firm budowlanych. Produkcja na zamówienie, dostawa w 14 dni."
-                    value={form.coSprzedajecie}
-                    onChange={pole("coSprzedajecie")}
-                  />
-                </div>
-
-                <fieldset>
-                  <legend className={labelCls}>Średnia wartość jednej transakcji *</legend>
-                  <div className="flex flex-wrap gap-2">
-                    {WARTOSC_TRANSAKCJI.map((w) => (
-                      <button key={w} type="button" aria-pressed={form.wartosc === w} onClick={() => setForm((f) => ({ ...f, wartosc: w }))} className={chip(form.wartosc === w)}>
-                        {w}
-                      </button>
-                    ))}
-                  </div>
-                </fieldset>
-
-                <fieldset>
-                  <legend className={labelCls}>Ilu macie handlowców? *</legend>
-                  <div className="flex flex-wrap gap-2">
-                    {WIELKOSC_ZESPOLU.map((w) => (
-                      <button key={w} type="button" aria-pressed={form.zespol === w} onClick={() => setForm((f) => ({ ...f, zespol: w }))} className={chip(form.zespol === w)}>
-                        {w}
-                      </button>
-                    ))}
-                  </div>
-                </fieldset>
-              </Sekcja>
-
-              <Sekcja
-                numer="CZĘŚĆ 2 / 3"
-                tytul="Kto jest Waszym klientem"
-                podtytul="W tę osobę wciela się AI. Im konkretniej, tym trudniej będzie handlowcowi."
-              >
-                <div>
-                  <label className={labelCls} htmlFor="ktoDecyduje">
-                    Kto po stronie klienta podejmuje decyzję? *
-                  </label>
-                  <span className={opisCls}>Stanowisko, nie nazwisko. Np. kierownik budowy, właściciel zakładu, dyrektor zakupów.</span>
-                  <input id="ktoDecyduje" required className={inputCls} placeholder="Kierownik budowy" value={form.ktoDecyduje} onChange={pole("ktoDecyduje")} />
-                </div>
-
-                <div>
-                  <label className={labelCls} htmlFor="branzaKlienta">
-                    Branża i wielkość firmy klienta *
-                  </label>
-                  <input
-                    id="branzaKlienta"
-                    required
-                    className={inputCls}
-                    placeholder="Firmy budowlane, 20-100 osób, Podkarpacie"
-                    value={form.branzaKlienta}
-                    onChange={pole("branzaKlienta")}
-                  />
-                </div>
-
-                <div>
-                  <label className={labelCls} htmlFor="ileOsobDecyzja">
-                    Ile osób po stronie klienta bierze udział w decyzji? *
-                  </label>
-                  <span className={opisCls}>Jeden człowiek decyduje sam czy musi to przez kogoś przepchnąć?</span>
-                  <input id="ileOsobDecyzja" required className={inputCls} placeholder="Zwykle dwie: kierownik i właściciel" value={form.ileOsobDecyzja} onChange={pole("ileOsobDecyzja")} />
-                </div>
-
-                <fieldset>
-                  <legend className={labelCls}>Jak taki klient zachowuje się w rozmowie? *</legend>
-                  <span className={opisCls}>Zaznacz wszystko, co pasuje. To ustawia trudność treningu.</span>
-                  <div className="flex flex-wrap gap-2">
-                    {ZACHOWANIA.map((z) => (
-                      <button key={z} type="button" aria-pressed={form.zachowania.includes(z)} onClick={() => przelacz("zachowania", z)} className={chip(form.zachowania.includes(z))}>
-                        {z}
-                      </button>
-                    ))}
-                  </div>
-                </fieldset>
-              </Sekcja>
-
-              <Sekcja
-                numer="CZĘŚĆ 3 / 3"
-                tytul="Jak wygląda Wasza rozmowa"
-                podtytul="Scenariusz, który AI ma prowadzić, i moment, w którym rozmowy najczęściej padają."
-              >
-                <fieldset>
-                  <legend className={labelCls}>Gdzie odbywa się rozmowa? *</legend>
-                  <div className="flex flex-wrap gap-2">
-                    {KANALY.map((k) => (
-                      <button key={k} type="button" aria-pressed={form.kanal === k} onClick={() => setForm((f) => ({ ...f, kanal: k }))} className={chip(form.kanal === k)}>
-                        {k}
-                      </button>
-                    ))}
-                  </div>
-                </fieldset>
-
-                <fieldset>
-                  <legend className={labelCls}>Który etap ma trenować zespół? *</legend>
-                  <span className={opisCls}>Zaznacz wszystkie, na których dziś tracicie najwięcej.</span>
-                  <div className="flex flex-wrap gap-2">
-                    {ETAPY.map((e) => (
-                      <button key={e} type="button" aria-pressed={form.etapy.includes(e)} onClick={() => przelacz("etapy", e)} className={chip(form.etapy.includes(e))}>
-                        {e}
-                      </button>
-                    ))}
-                  </div>
-                </fieldset>
-
-                <div>
-                  <label className={labelCls} htmlFor="przebieg">
-                    Przebieg rozmowy krok po kroku *
-                  </label>
-                  <span className={opisCls}>
-                    Od pierwszego zdania do końca. Jeśli macie skrypt, wklej go tutaj w całości.
-                  </span>
-                  <textarea
-                    id="przebieg"
-                    required
-                    rows={7}
-                    className={inputCls}
-                    placeholder={"1. Przedstawienie się i powód telefonu\n2. Pytanie o aktualnego dostawcę\n3. Pytanie o terminy dostaw\n4. Propozycja wyceny\n5. Umówienie się na wysłanie oferty"}
-                    value={form.przebieg}
-                    onChange={pole("przebieg")}
-                  />
-                </div>
-
-                <div>
-                  <label className={labelCls} htmlFor="obiekcje">
-                    Trzy najczęstsze obiekcje, dosłownie *
-                  </label>
-                  <span className={opisCls}>
-                    Przepisz zdania, które realnie słyszycie. Nie „obiekcja cenowa", tylko „macie drożej niż konkurencja".
-                  </span>
-                  <textarea
-                    id="obiekcje"
-                    required
-                    rows={5}
-                    className={inputCls}
-                    placeholder={"1. Mamy już dostawcę i jesteśmy zadowoleni\n2. To jest drogie, konkurencja daje taniej\n3. Prześlijcie ofertę mailem, odezwiemy się"}
-                    value={form.obiekcje}
-                    onChange={pole("obiekcje")}
-                  />
-                </div>
-
-                <div>
-                  <label className={labelCls} htmlFor="sukces">
-                    Co znaczy, że rozmowa się udała? *
-                  </label>
-                  <span className={opisCls}>Bez tego AI nie ma czego oceniać. Umówione spotkanie? Wysłana wycena? Podpis?</span>
-                  <input
-                    id="sukces"
-                    required
-                    className={inputCls}
-                    placeholder="Klient zgadza się na wycenę i podaje ilości"
-                    value={form.sukces}
-                    onChange={pole("sukces")}
-                  />
-                </div>
-
-                <div>
-                  <label className={labelCls} htmlFor="powodPrzegranej">
-                    Najczęstszy powód, dla którego przegrywacie *
-                  </label>
-                  <textarea
-                    id="powodPrzegranej"
-                    required
-                    rows={3}
-                    className={inputCls}
-                    placeholder="Klient ma dostawcę od lat i nie chce zmieniać. Handlowiec odpuszcza po pierwszym 'nie'."
-                    value={form.powodPrzegranej}
-                    onChange={pole("powodPrzegranej")}
-                  />
-                </div>
-
-                <div className="h-px bg-slate-200/80 my-1" />
-                <p className="text-[12px] text-slate-500 -mb-1">Poniżej opcjonalnie, ale każde pole podnosi jakość treningu.</p>
-
-                <div>
-                  <label className={labelCls} htmlFor="konkurencja">
-                    Z kim porównuje Was klient?
-                  </label>
-                  <input id="konkurencja" className={inputCls} placeholder="Nazwy 2-3 firm" value={form.konkurencja} onChange={pole("konkurencja")} />
-                </div>
-
-                <div>
-                  <label className={labelCls} htmlFor="zargon">
-                    Żargon i skróty z Waszej branży
-                  </label>
-                  <span className={opisCls}>Słowa, których używa klient. Dzięki nim AI brzmi jak człowiek z branży, a nie jak bot.</span>
-                  <textarea id="zargon" rows={3} className={inputCls} placeholder="MPP, strop filigran, ITB, deklaracja właściwości użytkowych" value={form.zargon} onChange={pole("zargon")} />
-                </div>
-
-                <div>
-                  <label className={labelCls} htmlFor="zakazy">
-                    Czego handlowcowi nie wolno powiedzieć?
-                  </label>
-                  <span className={opisCls}>Ograniczenia prawne, zakazane obietnice, tematy do omijania.</span>
-                  <textarea id="zakazy" rows={3} className={inputCls} placeholder="Nie wolno podawać ceny przed wyceną techniczną. Nie obiecujemy terminu dostawy przez telefon." value={form.zakazy} onChange={pole("zakazy")} />
-                </div>
-
-                <div>
-                  <label className={labelCls} htmlFor="nagranie">
-                    Link do nagrania prawdziwej rozmowy
-                  </label>
-                  <span className={opisCls}>
-                    Jedno nagranie zastępuje połowę tego formularza. Drive, Dropbox, WeTransfer. Potrzebna zgoda drugiej strony.
-                  </span>
-                  <input id="nagranie" type="url" className={inputCls} placeholder="https://" value={form.nagranie} onChange={pole("nagranie")} />
-                </div>
-              </Sekcja>
-
-              {status === "error" && (
-                <p className="text-red-700 text-sm text-center">
-                  Coś poszło nie tak. Napisz na hello@jakubchodakowski.com
-                </p>
-              )}
-
-              <button
-                type="submit"
-                disabled={status === "sending" || !komplet}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-700 to-teal-700 text-white font-semibold text-sm active:scale-[0.98] hover:brightness-110 transition-all duration-150 shadow-lg shadow-cyan-800/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
-              >
-                {status === "sending" ? "Wysyłam..." : "Wyślij ankietę →"}
-              </button>
-
-              <p className="text-[11px] text-slate-500 text-center leading-relaxed pb-4">
-                Dane trafiają wyłącznie do Jakuba Chodakowskiego, NIP 6711845485, i służą wyłącznie
-                do ustawienia treningu dla Waszego zespołu.
-              </p>
-            </form>
-          </>
+            <p className="text-[11px] text-slate-500 text-center leading-relaxed pb-4">
+              Dane trafiają wyłącznie do Jakuba Chodakowskiego, NIP 6711845485, i służą wyłącznie do ustawienia
+              treningu.
+            </p>
+          </form>
         )}
       </main>
 
