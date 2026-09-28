@@ -14,7 +14,6 @@ const WYMAGANE = [
   "coSprzedajesz",
   "ktoDecyduje",
   "ileOsobDecyzja",
-  "kanal",
   "przebieg",
   "obiekcje",
   "sukces",
@@ -43,8 +42,9 @@ export async function POST(req: NextRequest) {
   const brak = WYMAGANE.filter((k) => !d[k]);
   const zachowania: string[] = Array.isArray(d.zachowania) ? d.zachowania : [];
   const etapy: string[] = Array.isArray(d.etapy) ? d.etapy : [];
+  const kanaly: string[] = Array.isArray(d.kanaly) ? d.kanaly : [];
   const nagrania: string[] = Array.isArray(d.nagrania) ? d.nagrania.filter((x: unknown) => typeof x === "string") : [];
-  if (brak.length || zachowania.length === 0 || etapy.length === 0) {
+  if (brak.length || zachowania.length === 0 || etapy.length === 0 || kanaly.length === 0) {
     return NextResponse.json({ ok: false, blad: "Brak wymaganych pól" }, { status: 400 });
   }
 
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       ile_osob_decyzja: d.ileOsobDecyzja,
       zachowania,
       zachowania_inne: d.zachowaniaInne || null,
-      kanal: d.kanal,
+      kanaly,
       etapy,
       przebieg: d.przebieg,
       obiekcje: d.obiekcje,
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
     <p><b>Zachowanie w rozmowie:</b> ${zachowaniaTekst}</p>
 
     <h3>3. Rozmowa</h3>
-    <p><b>Kanał:</b> ${esc(d.kanal)}</p>
+    <p><b>Kanały:</b> ${kanaly.map(esc).join(", ")}</p>
     <p><b>Etapy do trenowania:</b> ${etapy.map(esc).join(", ")}</p>
     <p><b>Przebieg krok po kroku:</b><br>${blok(d.przebieg)}</p>
     <p><b>Obiekcje:</b><br>${blok(d.obiekcje)}</p>

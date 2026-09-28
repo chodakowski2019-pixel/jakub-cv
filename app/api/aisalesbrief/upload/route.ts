@@ -39,24 +39,38 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, blad: "Nieobsługiwany format" }, { status: 400 });
   }
 
+  const sciezka = `${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}-${bezpiecznaNazwa(nazwa)}`;
+  const magazyn = supabaseAdmin.storage;
+
+  // Najpierw próbujemy podpisać od razu. Zakładanie kubełka przy każdym pliku
+  // kosztowało jedno wywołanie więcej i wywracało cały upload, gdy klucz
+  // serwisowy nie miał prawa tworzyć kubełków — a nie musi go mieć, jeśli
+  // kubełek już istnieje.
+  let { data, error } = await magazyn.from(KUBELEK_NAGRANIA).createSignedUploadUrl(sciezka);
+
   // Kubełek prywatny: nagranie rozmowy handlowej nie ma prawa wisieć pod
   // zgadywalnym publicznym adresem. Do maila leci podpisany link.
-  const { error: bladKubelka } = await supabaseAdmin.storage.createBucket(KUBELEK_NAGRANIA, {
-    public: false,
-    fileSizeLimit: MAX_BAJTOW,
-  });
-  // "already exists" to normalny stan po pierwszym pliku, nie awaria.
-  if (bladKubelka && !/exist/i.test(bladKubelka.message)) {
-    console.error("createBucket failed", bladKubelka);
-    return NextResponse.json({ ok: false, blad: "Magazyn niedostępny" }, { status: 500 });
+  if (error && /not found|does not exist/i.test(error.message)) {
+    const { error: bladKubelka } = await magazyn.createBucket(KUBELEK_NAGRANIA, {
+      public: false,
+      fileSizeLimit: MAX_BAJTOW,
+    });
+    if (bladKubelka && !/exist/i.test(bladKubelka.message)) {
+      console.error("createBucket failed", bladKubelka);
+      return NextResponse.json(
+        { ok: false, blad: "Magazyn niedostępny", powod: bladKubelka.message },
+        { status: 500 },
+      );
+    }
+    ({ data, error } = await magazyn.from(KUBELEK_NAGRANIA).createSignedUploadUrl(sciezka));
   }
 
-  const sciezka = `${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}-${bezpiecznaNazwa(nazwa)}`;
-
-  const { data, error } = await supabaseAdmin.storage.from(KUBELEK_NAGRANIA).createSignedUploadUrl(sciezka);
   if (error || !data) {
     console.error("createSignedUploadUrl failed", error);
-    return NextResponse.json({ ok: false, blad: "Nie udało się przygotować wysyłki" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, blad: "Nie udało się przygotować wysyłki", powod: error?.message },
+      { status: 500 },
+    );
   }
 
   return NextResponse.json({ ok: true, signedUrl: data.signedUrl, sciezka });

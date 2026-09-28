@@ -39,7 +39,7 @@ const ZACHOWANIA = [
   INNE,
 ];
 
-type Plik = { nazwa: string; sciezka?: string; stan: "wysylanie" | "ok" | "blad" };
+type Plik = { nazwa: string; sciezka?: string; stan: "wysylanie" | "ok" | "blad"; powod?: string };
 
 type Form = {
   firma: string;
@@ -48,7 +48,7 @@ type Form = {
   ileOsobDecyzja: string;
   zachowania: string[];
   zachowaniaInne: string;
-  kanal: string;
+  kanaly: string[];
   etapy: string[];
   przebieg: string;
   obiekcje: string;
@@ -64,7 +64,7 @@ const PUSTY: Form = {
   ileOsobDecyzja: "",
   zachowania: [],
   zachowaniaInne: "",
-  kanal: "",
+  kanaly: [],
   etapy: [],
   przebieg: "",
   obiekcje: "",
@@ -120,7 +120,7 @@ export default function AiSalesBriefPage() {
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const przelacz = (k: "zachowania" | "etapy", v: string) =>
+  const przelacz = (k: "zachowania" | "etapy" | "kanaly", v: string) =>
     setForm((f) => ({
       ...f,
       [k]: f[k].includes(v) ? f[k].filter((x) => x !== v) : [...f[k], v],
@@ -140,19 +140,21 @@ export default function AiSalesBriefPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ nazwa: plik.name, rozmiar: plik.size }),
         });
-        if (!res.ok) throw new Error("brak podpisu");
-        const { signedUrl, sciezka } = await res.json();
+        const odp = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(odp.powod || odp.blad || "serwer odmówił");
+        const { signedUrl, sciezka } = odp;
 
         const wgranie = await fetch(signedUrl, {
           method: "PUT",
           headers: { "Content-Type": plik.type || "application/octet-stream" },
           body: plik,
         });
-        if (!wgranie.ok) throw new Error("wgranie odrzucone");
+        if (!wgranie.ok) throw new Error(`magazyn odmówił (${wgranie.status})`);
 
         setPliki((p) => p.map((x) => (x.nazwa === plik.name && x.stan === "wysylanie" ? { ...x, sciezka, stan: "ok" } : x)));
-      } catch {
-        setPliki((p) => p.map((x) => (x.nazwa === plik.name && x.stan === "wysylanie" ? { ...x, stan: "blad" } : x)));
+      } catch (err) {
+        const powod = err instanceof Error ? err.message : "nieznany błąd";
+        setPliki((p) => p.map((x) => (x.nazwa === plik.name && x.stan === "wysylanie" ? { ...x, stan: "blad", powod } : x)));
       }
     }
   };
@@ -205,7 +207,7 @@ export default function AiSalesBriefPage() {
         (!inneWybrane || form.zachowaniaInne),
     ),
     3: Boolean(
-      form.kanal &&
+      form.kanaly.length > 0 &&
         form.etapy.length > 0 &&
         form.przebieg &&
         form.obiekcje &&
@@ -263,7 +265,7 @@ export default function AiSalesBriefPage() {
         ) : (
           <form onSubmit={submit} className="max-w-2xl mx-auto flex flex-col gap-6">
             {krok === 1 && (
-            <Sekcja krok={1} tytul="Twoja firma i produkt">
+            <Sekcja krok={1} tytul="Firma i produkt">
               <div>
                 <label className={labelCls} htmlFor="firma">
                   Nazwa firmy *
@@ -283,7 +285,6 @@ export default function AiSalesBriefPage() {
                 <label className={labelCls} htmlFor="coSprzedajesz">
                   Co sprzedajesz? *
                 </label>
-                <span className={opisCls}>Jedno, dwa zdania. Tak, jak powiedziałbyś to klientowi przez telefon.</span>
                 <textarea
                   id="coSprzedajesz"
                   required
@@ -298,12 +299,11 @@ export default function AiSalesBriefPage() {
             )}
 
             {krok === 2 && (
-            <Sekcja krok={2} tytul="Twój klient">
+            <Sekcja krok={2} tytul="Klient">
               <div>
                 <label className={labelCls} htmlFor="ktoDecyduje">
                   Kto po stronie klienta podejmuje decyzję? *
                 </label>
-                <span className={opisCls}>Stanowisko, nie nazwisko. Np. kierownik budowy, właściciel zakładu, dyrektor zakupów.</span>
                 <input
                   id="ktoDecyduje"
                   required
@@ -318,7 +318,6 @@ export default function AiSalesBriefPage() {
                 <label className={labelCls} htmlFor="ileOsobDecyzja">
                   Ile osób po stronie klienta bierze udział w decyzji? *
                 </label>
-                <span className={opisCls}>Jeden człowiek decyduje sam czy musi to przez kogoś przepchnąć?</span>
                 <input
                   id="ileOsobDecyzja"
                   required
@@ -331,7 +330,6 @@ export default function AiSalesBriefPage() {
 
               <fieldset>
                 <legend className={labelCls}>Jak taki klient zachowuje się w rozmowie? *</legend>
-                <span className={opisCls}>Zaznacz wszystko, co pasuje. To ustawia trudność treningu.</span>
                 <div className="flex flex-wrap gap-2">
                   {ZACHOWANIA.map((z) => (
                     <button
@@ -360,7 +358,7 @@ export default function AiSalesBriefPage() {
             )}
 
             {krok === 3 && (
-            <Sekcja krok={3} tytul="Twoja rozmowa">
+            <Sekcja krok={3} tytul="Rozmowa">
               <fieldset>
                 <legend className={labelCls}>Gdzie odbywa się rozmowa? *</legend>
                 <div className="flex flex-wrap gap-2">
@@ -368,9 +366,9 @@ export default function AiSalesBriefPage() {
                     <button
                       key={k}
                       type="button"
-                      aria-pressed={form.kanal === k}
-                      onClick={() => setForm((f) => ({ ...f, kanal: k }))}
-                      className={chip(form.kanal === k)}
+                      aria-pressed={form.kanaly.includes(k)}
+                      onClick={() => przelacz("kanaly", k)}
+                      className={chip(form.kanaly.includes(k))}
                     >
                       {k}
                     </button>
@@ -380,7 +378,6 @@ export default function AiSalesBriefPage() {
 
               <fieldset>
                 <legend className={labelCls}>Który etap chcesz trenować? *</legend>
-                <span className={opisCls}>Zaznacz wszystkie, na których dziś tracisz najwięcej.</span>
                 <div className="flex flex-wrap gap-2">
                   {ETAPY.map((e) => (
                     <button
@@ -400,7 +397,7 @@ export default function AiSalesBriefPage() {
                 <label className={labelCls} htmlFor="przebieg">
                   Przebieg rozmowy krok po kroku *
                 </label>
-                <span className={opisCls}>Od pierwszego zdania do końca. Jeśli masz skrypt, wklej go tutaj w całości.</span>
+                <span className={opisCls}>Jeśli masz skrypt, wklej go tutaj w całości.</span>
                 <textarea
                   id="przebieg"
                   required
@@ -416,9 +413,6 @@ export default function AiSalesBriefPage() {
                 <label className={labelCls} htmlFor="obiekcje">
                   Najczęstsze obiekcje *
                 </label>
-                <span className={opisCls}>
-                  Przepisz zdania, które realnie słyszysz. Nie „obiekcja cenowa", tylko „macie drożej niż konkurencja".
-                </span>
                 <textarea
                   id="obiekcje"
                   required
@@ -434,7 +428,6 @@ export default function AiSalesBriefPage() {
                 <label className={labelCls} htmlFor="sukces">
                   Co znaczy, że rozmowa się udała? *
                 </label>
-                <span className={opisCls}>Bez tego AI nie ma czego oceniać. Umówione spotkanie? Wysłana wycena? Podpis?</span>
                 <input
                   id="sukces"
                   required
@@ -489,7 +482,7 @@ export default function AiSalesBriefPage() {
                                 : "text-slate-400 shrink-0"
                           }
                         >
-                          {p.stan === "ok" ? "wgrane" : p.stan === "blad" ? "nie poszło" : "wysyłam..."}
+                          {p.stan === "ok" ? "wgrane" : p.stan === "blad" ? `nie poszło: ${p.powod}` : "wysyłam..."}
                         </span>
                       </li>
                     ))}
