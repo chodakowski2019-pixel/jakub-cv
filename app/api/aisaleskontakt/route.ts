@@ -13,7 +13,9 @@ export async function POST(req: NextRequest) {
 
   const { imie, email, telefon, zawod, zgoda } = data;
 
-  if (!imie || !email || !telefon || !zawod || !zgoda) {
+  // Telefon jest opcjonalny (decyzja USER_001 28.09): przy ruchu z reklamy
+  // to pole o najwyzszym oporze, a do odpisania wystarczy mail.
+  if (!imie || !email || !zawod || !zgoda) {
     return NextResponse.json({ ok: false, blad: "Brak wymaganych pól" }, { status: 400 });
   }
 
@@ -34,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     <p><b>Imię:</b> ${imie}</p>
     <p><b>Email:</b> ${email}</p>
-    <p><b>Telefon:</b> ${telefon}</p>
+    <p><b>Telefon:</b> ${telefon || "nie podano"}</p>
     <p><b>Zawód:</b> ${zawod}</p>
     <p><b>Zgoda na kontakt:</b> ${zgoda ? "tak" : "nie"}</p>
   `;
@@ -44,7 +46,7 @@ export async function POST(req: NextRequest) {
       from: "SalesAI <hello@jakubchodakowski.com>",
       to: "chodakowski2019@gmail.com",
       replyTo: email,
-      subject: `SalesAI — ${imie}, ${zawod} (${telefon})`,
+      subject: `SalesAI — ${imie}, ${zawod}${telefon ? ` (${telefon})` : ""}`,
       html,
     });
 

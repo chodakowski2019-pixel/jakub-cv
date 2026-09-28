@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 
 // Wariant jasny + szkło (USER_001 28.09).
 //
@@ -74,39 +73,6 @@ export default function AiSalesKontaktPage() {
         />
       </div>
 
-      {/* Po wysłaniu pasek znika: zostać ma samo podziękowanie, bez nicągającego
-          wyjścia (decyzja USER_001 28.09). */}
-      <nav
-        className={`sticky top-0 z-50 backdrop-blur-xl bg-white/70 border-b border-white/60 ${
-          status === "ok" ? "hidden" : ""
-        }`}
-      >
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center">
-          {/* Pigułka zamiast gołego linku. Strzałka cofa się na hover, więc kierunek
-              widać, zanim człowiek przeczyta napis. */}
-          <Link
-            href="/"
-            className="group inline-flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-full bg-white/70 border border-white/90 shadow-sm shadow-slate-900/[0.06] backdrop-blur-xl text-sm font-medium text-slate-700 hover:bg-white hover:text-slate-900 hover:shadow-md hover:shadow-slate-900/[0.08] active:scale-[0.97] transition-all duration-150"
-          >
-            <span className="w-6 h-6 rounded-full bg-cyan-600/10 flex items-center justify-center shrink-0">
-              <svg
-                className="w-3.5 h-3.5 text-cyan-700 transition-transform duration-200 group-hover:-translate-x-0.5"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden
-              >
-                <path d="M10 3.5 5.5 8l4.5 4.5" />
-              </svg>
-            </span>
-            <span>jakubchodakowski.com</span>
-          </Link>
-        </div>
-      </nav>
-
       <main className="relative px-6 py-14 sm:py-20">
         {/* Copy nad formularzem (USER_001 28.09) pod ruch z reklamy na Instagramie.
             Ruch z cold maila zna juz kontekst, ruch z reklamy nie, wiec formularz
@@ -120,7 +86,9 @@ export default function AiSalesKontaktPage() {
               </span>
             </h1>
             <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-7">
-              Każda przepalona rozmowa to lead, za którego już zapłaciłeś.
+              Każda przepalona rozmowa to lead,
+              <br />
+              za którego już zapłaciłeś.
             </p>
             {/* Wezwanie w kafelku: ma odciac sie od reszty, zeby oko trafilo
                 na nie w drodze do formularza. */}
@@ -187,11 +155,10 @@ export default function AiSalesKontaktPage() {
 
               <div>
                 <label className={labelCls} htmlFor="telefon">
-                  Numer telefonu *
+                  Numer telefonu <span className="font-normal text-slate-400">(opcjonalnie)</span>
                 </label>
                 <input
                   id="telefon"
-                  required
                   type="tel"
                   autoComplete="tel"
                   className={inputCls}
