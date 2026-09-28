@@ -108,6 +108,27 @@ export default function AiSalesKontaktPage() {
       </nav>
 
       <main className="relative px-6 py-14 sm:py-20">
+        {/* Copy nad formularzem (USER_001 28.09) pod ruch z reklamy na Instagramie.
+            Ruch z cold maila zna juz kontekst, ruch z reklamy nie, wiec formularz
+            nie moze byc pierwsza rzecza na ekranie. */}
+        {status !== "ok" && (
+          <div className="max-w-2xl mx-auto mb-10 sm:mb-12 text-center">
+            <h1 className="text-[1.9rem] sm:text-[2.75rem] font-bold font-[var(--font-poppins)] leading-[1.08] tracking-[-0.025em] mb-4">
+              Twoi handlowcy uczą się na{" "}
+              <span className="bg-gradient-to-r from-cyan-700 to-teal-700 bg-clip-text text-transparent">
+                Twoich klientach
+              </span>
+            </h1>
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-7">
+              Każda przepalona rozmowa to lead, za którego już zapłaciłeś.
+            </p>
+            <p className="text-slate-800 text-[15px] sm:text-base font-medium leading-relaxed max-w-lg mx-auto">
+              Wypełnij formularz i otrzymaj dostęp do narzędzia,
+              <br className="hidden sm:block" /> które wytrenuje Twoich handlowców w sprzedaży 1:1
+            </p>
+          </div>
+        )}
+
         {status === "ok" ? (
           <div className="karta-szklo max-w-md mx-auto rounded-3xl p-8 flex flex-col items-center text-center">
             <div className="w-20 h-20 rounded-full bg-white/70 border-2 border-cyan-600/40 flex items-center justify-center mb-6">
