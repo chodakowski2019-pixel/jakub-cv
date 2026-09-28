@@ -223,7 +223,16 @@ export default function Home() {
   const t = CONTENT[lang];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen text-slate-900" style={{ background: "#ffffff" }}>
+      {/* Materiał robi się tylko wtedy, gdy ma co rozmywać. To jest to, co widać przez szkło. */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden bg-white">
+        <div className="absolute -top-40 -left-32 w-[680px] h-[680px] rounded-full blur-[130px] opacity-70"
+          style={{ background: "radial-gradient(closest-side, #a5f3fc, transparent)" }} />
+        <div className="absolute top-1/3 -right-40 w-[620px] h-[620px] rounded-full blur-[130px] opacity-60"
+          style={{ background: "radial-gradient(closest-side, #99f6e4, transparent)" }} />
+        <div className="absolute bottom-0 left-1/4 w-[700px] h-[560px] rounded-full blur-[140px] opacity-50"
+          style={{ background: "radial-gradient(closest-side, #bae6fd, transparent)" }} />
+      </div>
       <style>{`
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(20px); }
@@ -280,15 +289,15 @@ export default function Home() {
       )}
 
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-white/[0.03] backdrop-blur-2xl">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/70 bg-white/70 backdrop-blur-2xl">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
-          <span className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-cyan-500/25">JC</span>
-          <div className="hidden md:flex items-center gap-1 p-1 rounded-full border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl">
+          <span className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-600 to-teal-600 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-cyan-700/20">JC</span>
+          <div className="hidden md:flex items-center gap-1 p-1 rounded-full border border-white/80 bg-white/65 backdrop-blur-xl">
             {(["story", "skills", "contact"] as const).map((key) => (
               <a
                 key={key}
                 href={`#${key}`}
-                className="text-xs font-medium text-neutral-300 hover:text-white px-4 py-1.5 rounded-full hover:bg-white/[0.08] transition-all duration-300"
+                className="text-xs font-medium text-slate-600 hover:text-slate-900 px-4 py-1.5 rounded-full hover:bg-white/90 transition-all duration-300"
               >
                 {t.nav[key]}
               </a>
@@ -305,30 +314,30 @@ export default function Home() {
             <img
               src="/profilowe_jakub.png"
               alt="Jakub Chodakowski"
-              className="w-32 h-32 rounded-full mx-auto ring-2 ring-white/10 ring-offset-4 ring-offset-[#0a1218] object-cover hover:ring-cyan-400/60 transition-all duration-500 shadow-xl shadow-cyan-500/15"
+              className="w-32 h-32 rounded-full mx-auto ring-2 ring-slate-200 ring-offset-4 ring-offset-white object-cover hover:ring-cyan-600/60 transition-all duration-500 shadow-xl shadow-cyan-700/12"
             />
           </div>
-          <p className="text-sm text-neutral-400 mb-3 tracking-wide uppercase">{t.hero.greeting}</p>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-5 bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
+          <p className="text-sm text-slate-500 mb-3 tracking-wide uppercase">{t.hero.greeting}</p>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-5 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-500 bg-clip-text text-transparent">
             {t.hero.name}
           </h1>
-          <p className="text-xl md:text-2xl font-medium mb-6 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+          <p className="text-xl md:text-2xl font-medium mb-6 bg-gradient-to-r from-cyan-700 to-teal-700 bg-clip-text text-transparent">
             {t.hero.headline}
           </p>
-          <p className="text-neutral-300 max-w-lg mx-auto mb-12 leading-relaxed text-base">
+          <p className="text-slate-600 max-w-lg mx-auto mb-12 leading-relaxed text-base">
             {t.hero.sub}
           </p>
           <div className="flex items-center justify-center mb-10">
             <a
               href="#contact"
-              className="px-7 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/50"
+              className="px-7 py-3.5 rounded-full bg-gradient-to-r from-cyan-700 to-teal-700 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-700/30 hover:shadow-cyan-700/35"
             >
               {t.hero.cta}
             </a>
           </div>
 
           {/* Scroll hint */}
-          <a href="#story" className="inline-flex flex-col items-center gap-3 text-neutral-400 hover:text-white transition-colors">
+          <a href="#story" className="inline-flex flex-col items-center gap-3 text-slate-500 hover:text-slate-900 transition-colors">
             <span className="text-sm font-medium">{t.hero.scroll}</span>
             <ChevronDown size={20} className="animate-bounce" />
           </a>
@@ -339,31 +348,31 @@ export default function Home() {
       <section id="story" className="relative">
 
         {/* Central timeline line */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-neutral-700/30 to-transparent hidden md:block" />
+        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-slate-300 to-transparent hidden md:block" />
 
         {/* --- BEFORE AI --- */}
         <div className="pt-12 pb-20 px-6 relative">
           <div className="max-w-3xl mx-auto">
             {/* Era label */}
             <div className="flex items-center gap-4 mb-4">
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-neutral-700/50" />
-              <span className="text-sm font-mono text-neutral-400 uppercase tracking-widest font-medium">{t.before.label}</span>
-              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-neutral-700/50" />
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-slate-300" />
+              <span className="text-sm font-mono text-slate-500 uppercase tracking-widest font-medium">{t.before.label}</span>
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-slate-300" />
             </div>
-            <p className="text-center text-sm text-neutral-400 font-mono mb-6">{t.before.period}</p>
+            <p className="text-center text-sm text-slate-500 font-mono mb-6">{t.before.period}</p>
 
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center text-white">{t.before.title}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center text-slate-900">{t.before.title}</h2>
 
             <div className="space-y-6 max-w-2xl mx-auto">
               {t.before.paragraphs.map((p, i) => (
-                <p key={i} className="text-neutral-300 leading-relaxed text-lg">{p}</p>
+                <p key={i} className="text-slate-600 leading-relaxed text-lg">{p}</p>
               ))}
             </div>
 
             {/* Skills from that era */}
             <div className="flex flex-wrap justify-center gap-2 mt-10">
               {t.before.skills.map((s, i) => (
-                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-white/[0.08] bg-white/[0.04] backdrop-blur-md text-neutral-300">
+                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-white/80 bg-white/65 backdrop-blur-md text-slate-600">
                   {s}
                 </span>
               ))}
@@ -376,44 +385,44 @@ export default function Home() {
           <div className="max-w-xl mx-auto text-center">
             {/* Big arrow down */}
             <div className="flex justify-center mb-8">
-              <div className="w-12 h-12 rounded-full border border-cyan-400/40 bg-white/[0.04] backdrop-blur-md flex items-center justify-center animate-[pulse-line_2s_ease-in-out_infinite] shadow-lg shadow-cyan-500/25">
-                <ChevronDown size={24} className="text-cyan-400" />
+              <div className="w-12 h-12 rounded-full border border-cyan-600/50 bg-white/65 backdrop-blur-md flex items-center justify-center animate-[pulse-line_2s_ease-in-out_infinite] shadow-lg shadow-cyan-700/20">
+                <ChevronDown size={24} className="text-cyan-700" />
               </div>
             </div>
 
-            <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3">{t.turning.date}</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-6 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+            <p className="text-xs font-mono text-cyan-700 uppercase tracking-widest mb-3">{t.turning.date}</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-6 bg-gradient-to-r from-cyan-700 to-teal-700 bg-clip-text text-transparent">
               {t.turning.title}
             </h2>
-            <p className="text-neutral-300 text-lg leading-relaxed">{t.turning.text}</p>
+            <p className="text-slate-600 text-lg leading-relaxed">{t.turning.text}</p>
           </div>
         </div>
 
         {/* --- AFTER AI --- */}
-        <div className="py-20 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
+        <div className="py-20 px-6 bg-white/55 backdrop-blur-xl border-y border-white/70 relative overflow-hidden">
           {/* Corner glow */}
-          <div className="absolute -top-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute -top-32 -right-32 w-96 h-96 bg-cyan-200/60 rounded-full blur-[120px] pointer-events-none" />
           <div className="max-w-3xl mx-auto relative">
             {/* Era label */}
             <div className="flex items-center gap-4 mb-4">
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-500/40" />
-              <span className="text-sm font-mono text-cyan-300 uppercase tracking-widest font-medium">{t.after.label}</span>
-              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-cyan-500/40" />
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-600/50" />
+              <span className="text-sm font-mono text-cyan-700 uppercase tracking-widest font-medium">{t.after.label}</span>
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-cyan-600/50" />
             </div>
-            <p className="text-center text-sm text-cyan-400/80 font-mono mb-6">{t.after.period}</p>
+            <p className="text-center text-sm text-cyan-700/80 font-mono mb-6">{t.after.period}</p>
 
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center text-white">{t.after.title}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-10 text-center text-slate-900">{t.after.title}</h2>
 
             <div className="space-y-6 max-w-2xl mx-auto">
               {t.after.paragraphs.map((p, i) => (
-                <p key={i} className="text-neutral-300 leading-relaxed text-lg">{p}</p>
+                <p key={i} className="text-slate-600 leading-relaxed text-lg">{p}</p>
               ))}
             </div>
 
             {/* New skills */}
             <div className="flex flex-wrap justify-center gap-2 mt-10">
               {t.after.skills.map((s, i) => (
-                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-cyan-500/40 text-cyan-300 bg-white/[0.05] backdrop-blur-md">
+                <span key={i} className="px-3 py-1.5 rounded-lg text-xs border border-cyan-600/50 text-cyan-700 bg-white/60 backdrop-blur-md">
                   {s}
                 </span>
               ))}
@@ -425,7 +434,7 @@ export default function Home() {
                 {t.after.milestones.map((m, i) => {
                   const imgs = "images" in m ? (m.images as string[]) : "image" in m && m.image ? [m.image as string] : [];
                   return (
-                    <div key={i} className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl shadow-sm">
+                    <div key={i} className="p-6 rounded-2xl border border-white/80 bg-white/60 backdrop-blur-xl shadow-sm">
                       <div className="flex flex-col md:flex-row gap-6">
                         {imgs.length > 0 && (
                           <div
@@ -438,15 +447,15 @@ export default function Home() {
                               className="w-full h-36 object-cover rounded-xl group-hover:opacity-80 transition-opacity"
                             />
                             {imgs.length > 1 && (
-                              <span className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">
+                              <span className="absolute bottom-2 right-2 bg-black/60 text-slate-900 text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">
                                 1/{imgs.length}
                               </span>
                             )}
                           </div>
                         )}
                         <div className="flex-1">
-                          <p className="text-xs font-mono text-cyan-400 mb-2">{m.date}</p>
-                          <p className="text-sm text-neutral-300 leading-relaxed">{m.text}</p>
+                          <p className="text-xs font-mono text-cyan-700 mb-2">{m.date}</p>
+                          <p className="text-sm text-slate-600 leading-relaxed">{m.text}</p>
                         </div>
                       </div>
                     </div>
@@ -460,15 +469,15 @@ export default function Home() {
         {/* --- WHAT I DO NOW --- */}
         <div className="py-20 px-6">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6 text-center text-white">{t.now.title}</h2>
-            <p className="text-neutral-300 text-lg text-center max-w-2xl mx-auto mb-12 leading-relaxed">{t.now.text}</p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6 text-center text-slate-900">{t.now.title}</h2>
+            <p className="text-slate-600 text-lg text-center max-w-2xl mx-auto mb-12 leading-relaxed">{t.now.text}</p>
 
             <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
               {t.now.points.map((point, i) => (
-                <div key={i} className="p-5 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:bg-white/[0.08] hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15">
+                <div key={i} className="p-5 rounded-2xl border border-white/80 bg-white/60 backdrop-blur-xl hover:bg-white/90 hover:border-cyan-600/60 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-700/12">
                   <div className="flex items-start gap-3">
-                    <span className="text-cyan-400 font-bold text-sm mt-0.5">{String(i + 1).padStart(2, "0")}</span>
-                    <p className="text-neutral-200 text-sm leading-relaxed">{point}</p>
+                    <span className="text-cyan-700 font-bold text-sm mt-0.5">{String(i + 1).padStart(2, "0")}</span>
+                    <p className="text-slate-700 text-sm leading-relaxed">{point}</p>
                   </div>
                 </div>
               ))}
@@ -478,25 +487,25 @@ export default function Home() {
       </section>
 
       {/* ===== SKILLS ===== */}
-      {<section id="skills" className="py-20 px-6 bg-white/[0.03] border-y border-cyan-500/15 relative overflow-hidden">
+      {<section id="skills" className="py-20 px-6 bg-white/55 backdrop-blur-xl border-y border-white/70 relative overflow-hidden">
         {/* Corner glow */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-teal-500/12 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-teal-200/55 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-3xl mx-auto relative">
-          <h2 className="text-3xl font-bold mb-12 tracking-tight text-center text-white">{t.skills.title}</h2>
+          <h2 className="text-3xl font-bold mb-12 tracking-tight text-center text-slate-900">{t.skills.title}</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {t.skills.categories.map((cat, i) => (
               <div
                 key={i}
-                className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.05] backdrop-blur-xl hover:bg-white/[0.08] hover:border-cyan-500/40 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-500/15"
+                className="p-6 rounded-2xl border border-white/80 bg-white/60 backdrop-blur-xl hover:bg-white/90 hover:border-cyan-600/60 transition-all duration-500 shadow-sm hover:shadow-md hover:shadow-cyan-700/12"
               >
-                <h3 className="text-xs font-semibold uppercase tracking-wider mb-5 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+                <h3 className="text-xs font-semibold uppercase tracking-wider mb-5 bg-gradient-to-r from-cyan-700 to-teal-700 bg-clip-text text-transparent">
                   {cat.name}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {cat.items.map((skill, j) => (
                     <span
                       key={j}
-                      className="px-3 py-1.5 rounded-lg text-xs border border-white/[0.08] bg-white/[0.04] text-neutral-300 hover:border-cyan-400/60 hover:text-cyan-300 hover:bg-white/[0.08] transition-all duration-300 cursor-default"
+                      className="px-3 py-1.5 rounded-lg text-xs border border-white/80 bg-white/65 text-slate-600 hover:border-cyan-600/70 hover:text-cyan-800 hover:bg-white/90 transition-all duration-300 cursor-default"
                     >
                       {skill}
                     </span>
@@ -509,17 +518,17 @@ export default function Home() {
       </section>}
 
       {/* ===== CONTACT ===== */}
-      <section id="contact" className="py-24 px-6 bg-white/[0.03] border-t border-cyan-500/15 relative overflow-hidden">
+      <section id="contact" className="py-24 px-6 bg-white/55 backdrop-blur-xl border-t border-white/70 relative overflow-hidden">
         {/* Corner glow */}
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-200/60 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-3xl mx-auto text-center relative">
           <div className="relative">
-            <h2 className="text-3xl font-bold mb-4 tracking-tight text-white">{t.contact.title}</h2>
-            <p className="text-neutral-300 mb-10 max-w-md mx-auto">{t.contact.text}</p>
+            <h2 className="text-3xl font-bold mb-4 tracking-tight text-slate-900">{t.contact.title}</h2>
+            <p className="text-slate-600 mb-10 max-w-md mx-auto">{t.contact.text}</p>
             <div className="flex items-center justify-center gap-4">
               <a
                 href={`mailto:${t.contact.email}`}
-                className="px-7 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/50"
+                className="px-7 py-3.5 rounded-full bg-gradient-to-r from-cyan-700 to-teal-700 text-white text-sm font-medium transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-cyan-700/30 hover:shadow-cyan-700/35"
               >
                 {t.contact.email}
               </a>
@@ -527,7 +536,7 @@ export default function Home() {
                 href="https://www.linkedin.com/in/jakub-chodakowski"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-7 py-3.5 rounded-full border border-white/[0.08] bg-white/[0.04] backdrop-blur-md text-neutral-200 hover:text-white hover:border-cyan-500/40 hover:bg-white/[0.08] text-sm font-medium transition-all duration-300"
+                className="px-7 py-3.5 rounded-full border border-white/80 bg-white/65 backdrop-blur-md text-slate-700 hover:text-slate-900 hover:border-cyan-600/60 hover:bg-white/90 text-sm font-medium transition-all duration-300"
               >
                 {t.contact.linkedin}
               </a>
@@ -537,8 +546,8 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-white/[0.06]">
-        <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-neutral-400">
+      <footer className="py-8 px-6 border-t border-slate-200/70">
+        <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-slate-500">
           <span>{t.footer} &copy; {new Date().getFullYear()}</span>
           <span className="font-mono">jakubchodakowski.com</span>
         </div>
