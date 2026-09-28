@@ -122,10 +122,14 @@ export default function AiSalesKontaktPage() {
             <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-7">
               Każda przepalona rozmowa to lead, za którego już zapłaciłeś.
             </p>
-            <p className="text-slate-800 text-[15px] sm:text-base font-medium leading-relaxed max-w-lg mx-auto">
-              Wypełnij formularz i otrzymaj dostęp do narzędzia,
-              <br className="hidden sm:block" /> które wytrenuje Twoich handlowców w sprzedaży 1:1
-            </p>
+            {/* Wezwanie w kafelku: ma odciac sie od reszty, zeby oko trafilo
+                na nie w drodze do formularza. */}
+            <div className="inline-block rounded-2xl bg-white/75 backdrop-blur-xl border border-cyan-600/30 ring-1 ring-inset ring-white/70 px-6 py-4 sm:px-8 sm:py-5 shadow-lg shadow-cyan-900/[0.07]">
+              <p className="text-slate-800 text-[15px] sm:text-base font-semibold leading-relaxed">
+                Wypełnij formularz i otrzymaj dostęp do narzędzia,
+                <br className="hidden sm:block" /> które wytrenuje Twoich handlowców w sprzedaży 1:1
+              </p>
+            </div>
           </div>
         )}
 
