@@ -256,11 +256,8 @@ export default function AiSalesBriefPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold mb-3 font-[var(--font-poppins)] tracking-[-0.01em]">Mam wszystko.</h1>
-            <p className="text-slate-700 leading-relaxed">
-              Ustawiam trening pod Twoją rozmowę i odzywam się w ciągu 48 godzin.
-            </p>
-            <p className="text-sm text-slate-500 mt-4">Jakub Chodakowski</p>
+            <h1 className="text-2xl font-bold mb-3 font-[var(--font-poppins)] tracking-[-0.01em]">To już wszystko</h1>
+            <p className="text-slate-700 leading-relaxed">Odezwiemy się w 24h</p>
           </div>
         ) : (
           <form onSubmit={submit} className="max-w-2xl mx-auto flex flex-col gap-6">
