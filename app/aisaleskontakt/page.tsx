@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "@vercel/analytics";
 
 // Wariant jasny + szkło (USER_001 28.09).
 //
@@ -43,6 +44,9 @@ export default function AiSalesKontaktPage() {
         body: JSON.stringify(form),
       });
       setStatus(res.ok ? "ok" : "error");
+      // Zdarzenie w Vercel Analytics: same wejscia nie mowia nic o skutecznosci.
+      // Zawod leci jako wymiar, zeby bylo widac, kto realnie wypelnia.
+      if (res.ok) track("salesai_lead", { zawod: form.zawod });
     } catch {
       setStatus("error");
     }
