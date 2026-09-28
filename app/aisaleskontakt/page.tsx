@@ -74,7 +74,13 @@ export default function AiSalesKontaktPage() {
         />
       </div>
 
-      <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/70 border-b border-white/60">
+      {/* Po wysłaniu pasek znika: zostać ma samo podziękowanie, bez nicągającego
+          wyjścia (decyzja USER_001 28.09). */}
+      <nav
+        className={`sticky top-0 z-50 backdrop-blur-xl bg-white/70 border-b border-white/60 ${
+          status === "ok" ? "hidden" : ""
+        }`}
+      >
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center">
           {/* Pigułka zamiast gołego linku. Strzałka cofa się na hover, więc kierunek
               widać, zanim człowiek przeczyta napis. */}
