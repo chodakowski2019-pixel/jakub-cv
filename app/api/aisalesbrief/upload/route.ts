@@ -11,7 +11,11 @@ import { KUBELEK_NAGRANIA } from "@/lib/salesai";
 // Kubełek zakłada się sam przy pierwszym pliku, bo projektu Supabase tego repo
 // nie da się ruszyć z zewnątrz (MCP jest podpięty do innego konta).
 
-const MAX_BAJTOW = 200 * 1024 * 1024;
+// 50 MB to nie nasz wybór, tylko sufit planu Supabase: próba założenia kubełka
+// na 200 MB wróciła z "Payload too large". Kubełek salesai-nagrania stoi
+// z dokładnie tym limitem, więc klient nie może przyjąć większego pliku,
+// bo magazyn i tak go odrzuci.
+const MAX_BAJTOW = 50 * 1024 * 1024;
 
 const DOZWOLONE = ["mp3", "m4a", "wav", "ogg", "mp4", "mov", "webm", "aac", "flac"];
 
@@ -31,12 +35,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, blad: "Brak nazwy pliku" }, { status: 400 });
   }
   if (typeof rozmiar !== "number" || rozmiar <= 0 || rozmiar > MAX_BAJTOW) {
-    return NextResponse.json({ ok: false, blad: "Plik za duży (limit 200 MB)" }, { status: 400 });
+    return NextResponse.json({ ok: false, blad: "Plik za duży (limit 50 MB)" }, { status: 400 });
   }
 
   const rozszerzenie = nazwa.split(".").pop()?.toLowerCase() ?? "";
   if (!DOZWOLONE.includes(rozszerzenie)) {
     return NextResponse.json({ ok: false, blad: "Nieobsługiwany format" }, { status: 400 });
+  }
+
+  // Brak adresu albo klucza daje z klienta Supabase goły "fetch failed", po
+  // którym nie widać, że to kwestia konfiguracji, a nie sieci. Lepiej powiedzieć
+  // to wprost, niż szukać tego drugi raz.
+  const brakKonfiguracji = [
+    !process.env.SUPABASE_URL && "SUPABASE_URL",
+    !process.env.SUPABASE_SERVICE_ROLE_KEY && "SUPABASE_SERVICE_ROLE_KEY",
+  ].filter(Boolean);
+  if (brakKonfiguracji.length) {
+    return NextResponse.json(
+      { ok: false, blad: "Magazyn nieskonfigurowany", powod: `brak ${brakKonfiguracji.join(" i ")} na serwerze` },
+      { status: 500 },
+    );
   }
 
   const sciezka = `${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}-${bezpiecznaNazwa(nazwa)}`;

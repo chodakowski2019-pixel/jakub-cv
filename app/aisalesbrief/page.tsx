@@ -275,7 +275,6 @@ export default function AiSalesBriefPage() {
                   required
                   autoComplete="organization"
                   className={inputCls}
-                  placeholder="STYROBUD"
                   value={form.firma}
                   onChange={pole("firma")}
                 />
