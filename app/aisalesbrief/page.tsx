@@ -5,10 +5,10 @@ import { track } from "@vercel/analytics";
 
 // Ankieta wdrożeniowa SalesAI. Wygląd przepisany z /aisaleskontakt (jasne szkło).
 //
-// Jeden formularz dla wszystkich (decyzja USER_001 28.09): bez nazwy firmy,
-// bez wstrzykiwania czegokolwiek linkiem. Ten sam adres dostaje każdy klient.
+// Jeden formularz dla wszystkich (decyzja USER_001 28.09): bez wstrzykiwania
+// czegokolwiek linkiem, ten sam adres dostaje każdy klient.
 //
-// Skrócony 28.09 z 18 pól do 10. Wyleciało wszystko, co albo wiadomo już
+// Skrócony 28.09 z 18 pól do 11. Wyleciało wszystko, co albo wiadomo już
 // z rozmowy (wielkość zespołu, branża klienta, wartość transakcji), albo było
 // pytaniem dla większej firmy niż realny klient (żargon, zakazy prawne,
 // konkurencja). Imię i mail też wypadły (USER_001 28.09): z formularza
@@ -75,6 +75,8 @@ const PUSTY: Form = {
 
 // Pasek postępu zastąpił napis "CZĘŚĆ 1 / 3" (USER_001 28.09): trzy kreski,
 // wypełnione do bieżącej części, wyśrodkowane nad tytułem.
+// Od 28.09 formularz jest kreatorem: jeden ekran naraz, przyciski Wstecz
+// i Dalej. Trzy ekrany po 2-6 pól czyta się inaczej niż jedna ściana.
 function Pasek({ krok }: { krok: number }) {
   return (
     <div className="flex justify-center gap-1.5 mb-5" role="img" aria-label={`Część ${krok} z 3`}>
@@ -108,6 +110,7 @@ function Sekcja({ krok, tytul, children }: { krok: number; tytul: string; childr
 }
 
 export default function AiSalesBriefPage() {
+  const [krok, setKrok] = useState(1);
   const [form, setForm] = useState<Form>(PUSTY);
   const [pliki, setPliki] = useState<Plik[]>([]);
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
@@ -156,6 +159,9 @@ export default function AiSalesBriefPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Enter w polu tekstowym wysyla formularz nawet bez przycisku submit
+    // na ekranie. Bez tej blokady ankieta poszlaby z pierwszego ekranu.
+    if (krok !== 3) return;
     setStatus("sending");
     try {
       const res = await fetch("/api/aisalesbrief", {
@@ -187,20 +193,34 @@ export default function AiSalesBriefPage() {
 
   const inneWybrane = form.zachowania.includes(INNE);
 
-  const komplet =
-    form.firma &&
-    form.coSprzedajesz &&
-    form.ktoDecyduje &&
-    form.ileOsobDecyzja &&
-    form.zachowania.length > 0 &&
-    (!inneWybrane || form.zachowaniaInne) &&
-    form.kanal &&
-    form.etapy.length > 0 &&
-    form.przebieg &&
-    form.obiekcje &&
-    form.sukces &&
-    form.powodPrzegranej &&
-    !pliki.some((p) => p.stan === "wysylanie");
+  // Kazdy ekran pilnuje sam siebie: "Dalej" jest martwy, dopoki jego wlasne
+  // pola nie sa wypelnione. Dzieki temu nikt nie dochodzi do konca kreatora
+  // i nie dowiaduje sie dopiero tam, ze czegos brakuje dwa ekrany wstecz.
+  const kompletKroku: Record<number, boolean> = {
+    1: Boolean(form.firma && form.coSprzedajesz),
+    2: Boolean(
+      form.ktoDecyduje &&
+        form.ileOsobDecyzja &&
+        form.zachowania.length > 0 &&
+        (!inneWybrane || form.zachowaniaInne),
+    ),
+    3: Boolean(
+      form.kanal &&
+        form.etapy.length > 0 &&
+        form.przebieg &&
+        form.obiekcje &&
+        form.sukces &&
+        form.powodPrzegranej &&
+        !pliki.some((p) => p.stan === "wysylanie"),
+    ),
+  };
+
+  // Po zmianie ekranu widok musi wrocic na gore, bo trzeci ekran jest dlugi
+  // i bez tego czlowiek laduje w srodku nowej sekcji.
+  const idz = (nowy: number) => {
+    setKrok(nowy);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="min-h-screen text-slate-900 font-[var(--font-open-sans)]" style={{ background: TLO }}>
@@ -242,6 +262,7 @@ export default function AiSalesBriefPage() {
           </div>
         ) : (
           <form onSubmit={submit} className="max-w-2xl mx-auto flex flex-col gap-6">
+            {krok === 1 && (
             <Sekcja krok={1} tytul="Twoja firma i produkt">
               <div>
                 <label className={labelCls} htmlFor="firma">
@@ -274,7 +295,9 @@ export default function AiSalesBriefPage() {
                 />
               </div>
             </Sekcja>
+            )}
 
+            {krok === 2 && (
             <Sekcja krok={2} tytul="Twój klient">
               <div>
                 <label className={labelCls} htmlFor="ktoDecyduje">
@@ -334,7 +357,9 @@ export default function AiSalesBriefPage() {
                 )}
               </fieldset>
             </Sekcja>
+            )}
 
+            {krok === 3 && (
             <Sekcja krok={3} tytul="Twoja rozmowa">
               <fieldset>
                 <legend className={labelCls}>Gdzie odbywa się rozmowa? *</legend>
@@ -479,6 +504,7 @@ export default function AiSalesBriefPage() {
                 <textarea id="uwagi" rows={4} className={inputCls} value={form.uwagi} onChange={pole("uwagi")} />
               </div>
             </Sekcja>
+            )}
 
             {status === "error" && (
               <p className="text-red-700 text-sm text-center">
@@ -486,13 +512,36 @@ export default function AiSalesBriefPage() {
               </p>
             )}
 
-            <button
-              type="submit"
-              disabled={status === "sending" || !komplet}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-700 to-teal-700 text-white font-semibold text-sm active:scale-[0.98] hover:brightness-110 transition-all duration-150 shadow-lg shadow-cyan-800/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
-            >
-              {status === "sending" ? "Wysyłam..." : "Wyślij ankietę →"}
-            </button>
+            <div className="flex gap-3">
+              {krok > 1 && (
+                <button
+                  type="button"
+                  onClick={() => idz(krok - 1)}
+                  className="py-4 px-6 rounded-2xl bg-white border border-slate-300/90 text-slate-600 font-semibold text-sm shadow-sm active:scale-[0.98] hover:border-slate-400 hover:text-slate-900 transition-all duration-150"
+                >
+                  ← Wstecz
+                </button>
+              )}
+
+              {krok < 3 ? (
+                <button
+                  type="button"
+                  onClick={() => idz(krok + 1)}
+                  disabled={!kompletKroku[krok]}
+                  className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-cyan-700 to-teal-700 text-white font-semibold text-sm active:scale-[0.98] hover:brightness-110 transition-all duration-150 shadow-lg shadow-cyan-800/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+                >
+                  Dalej →
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={status === "sending" || !kompletKroku[3]}
+                  className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-cyan-700 to-teal-700 text-white font-semibold text-sm active:scale-[0.98] hover:brightness-110 transition-all duration-150 shadow-lg shadow-cyan-800/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+                >
+                  {status === "sending" ? "Wysyłam..." : "Wyślij ankietę →"}
+                </button>
+              )}
+            </div>
 
             <p className="text-[11px] text-slate-500 text-center leading-relaxed pb-4">
               Dane trafiają wyłącznie do Jakuba Chodakowskiego, NIP 6711845485, i służą wyłącznie do ustawienia
