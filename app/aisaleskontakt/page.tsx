@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { track } from "@vercel/analytics";
-import AiSalesBriefForm from "@/components/aisales-brief-form";
+import { firmowyEmail } from "@/lib/firmowy-email";
 
 // Wariant jasny + szkło (USER_001 28.09).
 //
@@ -211,29 +211,62 @@ function Kafelek({
 }
 
 export default function AiSalesKontaktPage() {
-  const [form, setForm] = useState({ imie: "", email: "", telefon: "", zawod: "", zgoda: false });
+  // Weryfikacja przed dostępem (USER_001 29.09): formularz zbiera to, po czym
+  // odsiewamy firmy poza ICP (5-40 handlowców): liczbę handlowców, produkt
+  // i FIRMOWY adres e-mail. Po wysłaniu komunikat o weryfikacji do 24 h,
+  // ankieta konfiguracyjna już się tu nie pokazuje (idzie linkiem po weryfikacji).
+  const [form, setForm] = useState({
+    imie: "",
+    email: "",
+    telefon: "",
+    zawod: "",
+    handlowcy: "",
+    produkt: "",
+    zgoda: false,
+  });
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
+  const [blad, setBlad] = useState<string | null>(null);
+  // Formularz pokazuje się dopiero po kliknięciu jednego z 3 przycisków (USER_001 29.09).
+  // Numer przycisku leci do Analytics: będzie widać, który tekst przekonuje.
+  const [pokazFormularz, setPokazFormularz] = useState(false);
+  const otworzFormularz = (przycisk: number) => () => {
+    setPokazFormularz(true);
+    track("salesai_cta", { przycisk });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const przyciskCls =
+    "inline-block px-7 py-4 rounded-2xl bg-gradient-to-r from-cyan-700 to-teal-700 text-white font-semibold text-[15px] sm:text-base active:scale-[0.98] hover:brightness-110 transition-all duration-150 shadow-lg shadow-cyan-800/25";
 
-  const set = (k: "imie" | "email" | "telefon") => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm((f) => ({ ...f, [k]: e.target.value }));
+  const set =
+    (k: "imie" | "email" | "telefon" | "handlowcy" | "produkt") => (e: React.ChangeEvent<HTMLInputElement>) =>
+      setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const emailPrywatny = form.email.includes("@") && !firmowyEmail(form.email);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setBlad(null);
+    if (!firmowyEmail(form.email)) {
+      setBlad("Podaj firmowy adres e-mail (nie Gmail, WP, Onet itp.).");
+      return;
+    }
     setStatus("sending");
     try {
       const res = await fetch("/api/aisaleskontakt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, handlowcy: Number(form.handlowcy) }),
       });
-      setStatus(res.ok ? "ok" : "error");
-      // Zdarzenie w Vercel Analytics: same wejscia nie mowia nic o skutecznosci.
-      // Zawod leci jako wymiar, zeby bylo widac, kto realnie wypelnia.
       if (res.ok) {
-        track("salesai_lead", { zawod: form.zawod });
-        // Po wysłaniu pojawia się ankieta konfiguracyjna (USER_001 29.09).
-        // Bez przewinięcia człowiek zostałby na dole, pod starym formularzem.
+        setStatus("ok");
+        // Zdarzenie w Vercel Analytics: same wejscia nie mowia nic o skutecznosci.
+        // Zawod i liczba handlowców lecą jako wymiary, zeby bylo widac, kto realnie wypelnia.
+        track("salesai_lead", { zawod: form.zawod, handlowcy: Number(form.handlowcy) });
         window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        const body = (await res.json().catch(() => null)) as { blad?: string } | null;
+        setBlad(body?.blad ?? null);
+        setStatus("error");
       }
     } catch {
       setStatus("error");
@@ -269,8 +302,8 @@ export default function AiSalesKontaktPage() {
         {/* Copy nad formularzem (USER_001 28.09) pod ruch z reklamy na Instagramie.
             Ruch z cold maila zna juz kontekst, ruch z reklamy nie, wiec formularz
             nie moze byc pierwsza rzecza na ekranie. */}
-        {status !== "ok" && (
-          <div className="max-w-4xl mx-auto mb-10 sm:mb-12 text-center">
+        {status !== "ok" && !pokazFormularz && (
+          <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-[2.2rem] sm:text-[3.25rem] font-bold font-[var(--font-poppins)] leading-[1.08] tracking-[-0.025em] mb-8 sm:mb-10">
               Jak działa{" "}
               <span className="bg-gradient-to-r from-cyan-700 to-teal-700 bg-clip-text text-transparent">
@@ -278,11 +311,18 @@ export default function AiSalesKontaktPage() {
               </span>
               ?
             </h1>
-            <ul className="grid gap-4 md:grid-cols-3 mb-12 sm:mb-16">
+            <ul className="grid gap-4 md:grid-cols-3 mb-8 sm:mb-10">
               {KROKI.map((k, i) => (
                 <Kafelek key={k.tytul} numer={i + 1} tytul={k.tytul} opis={k.opis} grafika={k.grafika} />
               ))}
             </ul>
+
+            {/* Przycisk 1: pod 3 krokami, po wyjaśnieniu czym jest Bruno AI (USER_001 29.09). */}
+            <div className="mb-12 sm:mb-16">
+              <button type="button" onClick={otworzFormularz(1)} className={przyciskCls}>
+                Chcę przetestować narzędzie!
+              </button>
+            </div>
 
             <h2 className="text-[2rem] sm:text-[2.75rem] font-bold font-[var(--font-poppins)] leading-[1.1] tracking-[-0.02em] mb-6 sm:mb-8">
               Korzyści
@@ -300,36 +340,48 @@ export default function AiSalesKontaktPage() {
               ))}
             </ul>
 
-            {/* Wezwanie w kafelku: ma odciac sie od reszty, zeby oko trafilo
-                na nie w drodze do formularza. */}
-            <div className="inline-block rounded-2xl bg-white/75 backdrop-blur-xl border border-cyan-600/30 ring-1 ring-inset ring-white/70 px-6 py-4 sm:px-8 sm:py-5 shadow-lg shadow-cyan-900/[0.07]">
-              <p className="text-slate-800 text-[15px] sm:text-base font-semibold leading-relaxed">
-                Otrzymaj dostęp do Bruno AI bezpłatnie.
-                <br className="hidden sm:block" /> Wypełnij formularz poniżej.
-              </p>
-            </div>
+            {/* Przycisk 2: pod korzyściami, w miejscu dawnego wezwania „Otrzymaj dostęp...”.
+                Bez obwódki (USER_001 29.09). */}
+            <button type="button" onClick={otworzFormularz(2)} className={przyciskCls}>
+              Chcę otrzymać dostęp do narzędzia bezpłatnie!
+            </button>
+          </div>
+        )}
+
+        {status !== "ok" && pokazFormularz && (
+          <div className="max-w-md mx-auto text-center mb-8">
+            <h1 className="text-[1.9rem] sm:text-[2.5rem] font-bold font-[var(--font-poppins)] leading-[1.1] tracking-[-0.025em]">
+              <span className="bg-gradient-to-r from-cyan-700 to-teal-700 bg-clip-text text-transparent">
+                Wypełnij formularz,
+              </span>
+              <br /> aby otrzymać dostęp
+            </h1>
           </div>
         )}
 
         {status === "ok" ? (
-          // Zamiast "Dziękuję" od razu ankieta konfiguracyjna (USER_001 29.09).
-          // Lead jest już zapisany i mail poszedł, teraz zbieramy wsad do Bruno.
-          <AiSalesBriefForm
-            kontakt={{ imie: form.imie, email: form.email }}
-            naglowek={
-              <div className="text-center mb-2 sm:mb-4">
-                <h1 className="text-[1.9rem] sm:text-[2.75rem] font-bold font-[var(--font-poppins)] leading-[1.08] tracking-[-0.025em] mb-3">
-                  Uzupełnij formularz konfiguracyjny
-                </h1>
-                {/* Na telefonie łamane po "informacji" (USER_001 29.09), na desktopie jedna linia. */}
-                <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-                  Na podstawie tych informacji
-                  <br className="sm:hidden" /> dostosujemy Bruno AI do Ciebie.
-                </p>
-              </div>
-            }
-          />
-        ) : (
+          // Komunikat o weryfikacji (USER_001 29.09). Lead zapisany, mail poszedł.
+          // Dostęp + ankieta konfiguracyjna idą mailem po ręcznej weryfikacji.
+          <div className="karta-szklo max-w-md mx-auto rounded-3xl p-8 sm:p-10 text-center">
+            <div className="mx-auto mb-6 w-16 h-16 rounded-2xl bg-white/80 border border-cyan-600/20 flex items-center justify-center">
+              <svg viewBox="0 0 48 48" className="w-9 h-9" aria-hidden>
+                <Gradient />
+                <circle cx="24" cy="24" r="17" {...KRESKA} />
+                <path d="M24 13v11l7 5" {...KRESKA} />
+              </svg>
+            </div>
+            <h1 className="text-[1.75rem] sm:text-[2.25rem] font-bold font-[var(--font-poppins)] leading-[1.1] tracking-[-0.02em] mb-4">
+              Trwa weryfikacja
+            </h1>
+            <p className="text-slate-600 text-base leading-relaxed mb-3">
+              Może potrwać do <span className="font-semibold text-slate-800">24 godzin</span>.
+            </p>
+            <p className="text-slate-600 text-base leading-relaxed">
+              Po jej zakończeniu prześlemy na <span className="font-semibold text-slate-800">{form.email}</span>{" "}
+              bezpłatny dostęp do Bruno AI na 7 dni.
+            </p>
+          </div>
+        ) : pokazFormularz ? (
           <div className="karta-szklo max-w-md mx-auto rounded-3xl p-6 sm:p-8">
             <form onSubmit={submit} className="flex flex-col gap-5">
               <div>
@@ -349,18 +401,24 @@ export default function AiSalesKontaktPage() {
 
               <div>
                 <label className={labelCls} htmlFor="email">
-                  Adres email *
+                  Firmowy adres email *
                 </label>
                 <input
                   id="email"
                   required
                   type="email"
                   autoComplete="email"
-                  className={inputCls}
-                  placeholder="adam@firma.pl"
+                  aria-invalid={emailPrywatny}
+                  className={`${inputCls} ${emailPrywatny ? "border-amber-400 focus:border-amber-500 focus:ring-amber-500/15" : ""}`}
+                  placeholder="adam@twojafirma.pl"
                   value={form.email}
                   onChange={set("email")}
                 />
+                {emailPrywatny && (
+                  <p className="mt-1.5 text-[12px] text-amber-700">
+                    Podaj adres w domenie firmy. Prywatne skrzynki nie przechodzą weryfikacji.
+                  </p>
+                )}
               </div>
 
               <div>
@@ -379,7 +437,7 @@ export default function AiSalesKontaktPage() {
               </div>
 
               <fieldset>
-                <legend className={labelCls}>Wybierz swój zawód *</legend>
+                <legend className={labelCls}>Wybierz swoją rolę *</legend>
                 <div className="flex flex-wrap gap-2">
                   {ZAWODY.map((z) => {
                     const wybrany = form.zawod === z;
@@ -402,6 +460,40 @@ export default function AiSalesKontaktPage() {
                 </div>
               </fieldset>
 
+              <div>
+                <label className={labelCls} htmlFor="handlowcy">
+                  Ilu handlowców jest w Twojej firmie? *
+                </label>
+                <input
+                  id="handlowcy"
+                  required
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  max={9999}
+                  step={1}
+                  className={inputCls}
+                  placeholder="np. 8"
+                  value={form.handlowcy}
+                  onChange={set("handlowcy")}
+                />
+              </div>
+
+              <div>
+                <label className={labelCls} htmlFor="produkt">
+                  Jaki produkt sprzedajecie? *
+                </label>
+                <input
+                  id="produkt"
+                  required
+                  maxLength={200}
+                  className={inputCls}
+                  placeholder="np. ubezpieczenia na życie dla firm"
+                  value={form.produkt}
+                  onChange={set("produkt")}
+                />
+              </div>
+
               <label className="flex items-start gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
@@ -416,22 +508,22 @@ export default function AiSalesKontaktPage() {
                 </span>
               </label>
 
-              {status === "error" && (
+              {(blad || status === "error") && (
                 <p className="text-red-700 text-sm text-center">
-                  Coś poszło nie tak. Napisz na hello@jakubchodakowski.com
+                  {blad ?? "Coś poszło nie tak. Napisz na hello@jakubchodakowski.com"}
                 </p>
               )}
 
               <button
                 type="submit"
-                disabled={status === "sending" || !form.zawod}
+                disabled={status === "sending" || !form.zawod || emailPrywatny}
                 className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-700 to-teal-700 text-white font-semibold text-sm active:scale-[0.98] hover:brightness-110 transition-all duration-150 shadow-lg shadow-cyan-800/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
               >
                 {status === "sending" ? "Wysyłam..." : "Wyślij →"}
               </button>
             </form>
           </div>
-        )}
+        ) : null}
       </main>
 
       <style jsx>{`
