@@ -53,8 +53,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, blad: "Opisz zachowanie klienta" }, { status: 400 });
   }
 
+  // supabase-js nie rzuca wyjątku przy błędzie zapisu, zwraca `error`.
   try {
-    await supabaseAdmin.from("salesai_briefy").insert({
+    const { error } = await supabaseAdmin.from("salesai_briefy").insert({
       firma: d.firma,
       co_sprzedajesz: d.coSprzedajesz,
       kto_decyduje: d.ktoDecyduje,
@@ -70,6 +71,7 @@ export async function POST(req: NextRequest) {
       uwagi: d.uwagi || null,
       nagrania,
     });
+    if (error) console.error("supabase insert failed", error.code, error.message);
   } catch (err) {
     console.error("supabase insert failed", err);
   }

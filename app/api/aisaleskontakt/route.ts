@@ -19,14 +19,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, blad: "Brak wymaganych pól" }, { status: 400 });
   }
 
+  // supabase-js nie rzuca wyjątku przy błędzie zapisu, zwraca `error`.
+  // Bez tego sprawdzenia błąd ginie po cichu (tak było 28-29.09).
   try {
-    await supabaseAdmin.from("salesai_leady").insert({
+    const { error } = await supabaseAdmin.from("salesai_leady").insert({
       imie,
       email,
       telefon,
       zawod,
       zgoda: Boolean(zgoda),
     });
+    if (error) console.error("supabase insert failed", error.code, error.message);
   } catch (err) {
     console.error("supabase insert failed", err);
   }
