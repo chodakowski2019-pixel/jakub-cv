@@ -27,6 +27,178 @@ const ZAWODY = [
   "Inne",
 ];
 
+// Kafelki nad formularzem (USER_001 29.09). Treści przychodzą od USER_001,
+// poniżej ZAŚLEPKI do podmiany. Stary nagłówek ("Twoi handlowcy uczą się na
+// Twoich klientach") odłożony do SalesAI/COPY-ODLOZONE.md na inną stronę.
+// Grafiki 3 kroków: SVG w kodzie, kreska w kolorach strony (cyan 700 / teal 700).
+// Bez plików PNG: ostre na retinie, zero dodatkowego ładowania, łatwo przemalować.
+const KRESKA = { fill: "none", stroke: "url(#bruno-grad)", strokeWidth: 2.2, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+
+function Gradient() {
+  return (
+    <defs>
+      <linearGradient id="bruno-grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#0e7490" />
+        <stop offset="1" stopColor="#0f766e" />
+      </linearGradient>
+    </defs>
+  );
+}
+
+// Krok 1: człowiek i AI w rozmowie, dwa dymki.
+function GrafikaRozmowa() {
+  return (
+    <svg viewBox="0 0 96 96" className="w-24 h-24" aria-hidden>
+      <Gradient />
+      {/* człowiek */}
+      <circle cx="26" cy="34" r="9" {...KRESKA} />
+      <path d="M10 66c0-10 7-16 16-16s16 6 16 16" {...KRESKA} />
+      {/* AI: głowa robota */}
+      <rect x="58" y="26" width="24" height="20" rx="6" {...KRESKA} />
+      <circle cx="66" cy="36" r="2" fill="#0e7490" />
+      <circle cx="74" cy="36" r="2" fill="#0f766e" />
+      <path d="M70 26v-6M64 20h12" {...KRESKA} />
+      <path d="M56 66c0-10 6-16 14-16s14 6 14 16" {...KRESKA} />
+      {/* dymki */}
+      <path d="M38 12h20a5 5 0 0 1 5 5v6a5 5 0 0 1-5 5h-8l-6 5v-5h-6a5 5 0 0 1-5-5v-6a5 5 0 0 1 5-5z" {...KRESKA} />
+      <path d="M40 76h16M40 82h10" {...KRESKA} />
+    </svg>
+  );
+}
+
+// Krok 2: karta wyniku z ocenami i wykresem po rozmowie.
+function GrafikaFeedback() {
+  return (
+    <svg viewBox="0 0 96 96" className="w-24 h-24" aria-hidden>
+      <Gradient />
+      <rect x="18" y="14" width="60" height="68" rx="8" {...KRESKA} />
+      <path d="M36 14v-4h24v4" {...KRESKA} />
+      {/* wiersze z zaliczeniem */}
+      <path d="M30 34l4 4 8-8" {...KRESKA} />
+      <path d="M48 34h18" {...KRESKA} />
+      <path d="M30 50l4 4 8-8" {...KRESKA} />
+      <path d="M48 50h18" {...KRESKA} />
+      {/* wiersz do poprawy */}
+      <circle cx="34" cy="66" r="4" {...KRESKA} />
+      <path d="M48 66h12" {...KRESKA} />
+      {/* gwiazdka oceny */}
+      <path d="M72 6l2.4 5 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L64 11.8l5.4-.8z" fill="#0e7490" stroke="none" />
+    </svg>
+  );
+}
+
+// Krok 3: słupki rosną, strzałka w górę, cel trafiony.
+function GrafikaWynik() {
+  return (
+    <svg viewBox="0 0 96 96" className="w-24 h-24" aria-hidden>
+      <Gradient />
+      <path d="M14 80h68" {...KRESKA} />
+      <rect x="20" y="58" width="12" height="22" rx="3" {...KRESKA} />
+      <rect x="40" y="44" width="12" height="36" rx="3" {...KRESKA} />
+      <rect x="60" y="28" width="12" height="52" rx="3" fill="url(#bruno-grad)" stroke="none" opacity="0.9" />
+      {/* strzałka trendu */}
+      <path d="M18 46l20-14 14 8 22-20" {...KRESKA} />
+      <path d="M64 20h10v10" {...KRESKA} />
+    </svg>
+  );
+}
+
+const KROKI: { tytul: string; opis: string; grafika: React.ReactNode }[] = [
+  {
+    tytul: "Spotkania sprzedażowe 1:1",
+    opis: "Rozmawiasz z Bruno jak z prawdziwym klientem.",
+    grafika: <GrafikaRozmowa />,
+  },
+  {
+    tytul: "Dostajesz feedback\n+ plan powtórek",
+    opis: "Po rozmowie wiesz, co jest skuteczne, i utrwalasz to w pamięci.",
+    grafika: <GrafikaFeedback />,
+  },
+  {
+    tytul: "Lepiej sprzedajesz na żywo",
+    opis: "Przećwiczone techniki przenosisz na prawdziwe rozmowy z klientami.",
+    grafika: <GrafikaWynik />,
+  },
+];
+
+// Korzyści = liczby z researchu 25.09 i 28.09 (SalesAI/PLAN.md). Trzy wybrane
+// przez USER_001 29.09 (ROI 353 % wyleciał). Tytuł = liczba, opis = co znaczy, zrodlo = skąd.
+// Liczba jest grafiką kafelka (jak ikony w krokach), reszta tytułu pod nią (USER_001 29.09).
+function GrafikaLiczba({ liczba }: { liczba: string }) {
+  // Dłuższy zapis ("76 % vs 47 %") dostaje mniejszą czcionkę, żeby zmieścić się w kafelku.
+  const dluga = liczba.length > 7;
+  return (
+    <span
+      className={`whitespace-nowrap px-5 font-extrabold font-[var(--font-poppins)] tracking-[-0.04em] leading-none bg-gradient-to-r from-cyan-700 to-teal-700 bg-clip-text text-transparent ${
+        dluga ? "text-[1.9rem] sm:text-[2.1rem]" : "text-[2.6rem] sm:text-[3rem]"
+      }`}
+    >
+      {liczba}
+    </span>
+  );
+}
+
+const KORZYSCI: { liczba: string; tytul: string; opis: string; zrodlo: string }[] = [
+  {
+    liczba: "+28 %",
+    tytul: "domkniętych rozmów",
+    opis: "O tyle rośnie skuteczność domykania po treningach.",
+    zrodlo: "RAIN Group, badanie 472 firm",
+  },
+  {
+    liczba: "76 % vs 47 %",
+    tytul: "realizacji planu sprzedażowego",
+    opis: "Tyle robią handlowcy trenowani 1 raz w tygodniu, a tyle 1 raz na kwartał.",
+    zrodlo: "MySalesCoach, badanie 3 700 handlowców, 2026",
+  },
+  {
+    liczba: "+170 %",
+    tytul: "lepsze zapamiętanie technik",
+    opis: "Tyle daje trening z powtórkami zamiast jednorazowego. Bruno planuje powtórki za Ciebie.",
+    zrodlo: "RAIN Group, program wzmocnień",
+  },
+];
+
+function Kafelek({
+  numer,
+  tytul,
+  opis,
+  grafika,
+  zrodlo,
+}: {
+  numer: number;
+  tytul: string;
+  opis: string;
+  grafika?: React.ReactNode;
+  zrodlo?: string;
+}) {
+  // Nie uzywa .karta-szklo: <style jsx> w stronie jest zakresowy i nie siega
+  // do tego komponentu. Te same wartosci wpisane klasami Tailwind.
+  return (
+    <li className="relative overflow-hidden rounded-2xl p-5 sm:p-6 text-left flex flex-col gap-3 bg-white/60 backdrop-blur-2xl backdrop-saturate-150 border border-white/90 shadow-[0_24px_60px_-20px_rgba(15,23,42,0.22),0_2px_10px_-4px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,0.9)]">
+      {/* Numer jako znak wodny: wielka cyfra w tle, prawy górny róg (USER_001 29.09).
+          Kolor = bardzo jasny cyan, żeby nie walczył z tekstem. */}
+      <span
+        aria-hidden
+        className="pointer-events-none select-none absolute -top-5 right-3 sm:right-4 text-[11rem] sm:text-[12rem] leading-none font-extrabold font-[var(--font-poppins)] tracking-[-0.06em] text-cyan-700/10"
+      >
+        {numer}
+      </span>
+      {grafika && (
+        <div className="relative self-center min-w-28 h-28 rounded-2xl bg-white/70 border border-cyan-600/15 flex items-center justify-center shrink-0">
+          {grafika}
+        </div>
+      )}
+      {/* whitespace-pre-line: łamanie wiersza w tytule zadane znakiem \n w treści. */}
+      <h3 className="relative whitespace-pre-line text-base sm:text-lg font-bold font-[var(--font-poppins)] tracking-[-0.01em] leading-snug">
+        {tytul}
+      </h3>
+      <p className="relative text-slate-600 text-sm sm:text-[15px] leading-relaxed">{opis}</p>
+      {zrodlo && <p className="relative mt-auto pt-2 text-[11px] text-slate-400">Źródło: {zrodlo}</p>}
+    </li>
+  );
+}
+
 export default function AiSalesKontaktPage() {
   const [form, setForm] = useState({ imie: "", email: "", telefon: "", zawod: "", zgoda: false });
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
@@ -82,24 +254,42 @@ export default function AiSalesKontaktPage() {
             Ruch z cold maila zna juz kontekst, ruch z reklamy nie, wiec formularz
             nie moze byc pierwsza rzecza na ekranie. */}
         {status !== "ok" && (
-          <div className="max-w-2xl mx-auto mb-10 sm:mb-12 text-center">
-            <h1 className="text-[1.9rem] sm:text-[2.75rem] font-bold font-[var(--font-poppins)] leading-[1.08] tracking-[-0.025em] mb-4">
-              Twoi handlowcy uczą się na{" "}
+          <div className="max-w-4xl mx-auto mb-10 sm:mb-12 text-center">
+            <h1 className="text-[1.9rem] sm:text-[2.75rem] font-bold font-[var(--font-poppins)] leading-[1.08] tracking-[-0.025em] mb-8 sm:mb-10">
+              Jak działa{" "}
               <span className="bg-gradient-to-r from-cyan-700 to-teal-700 bg-clip-text text-transparent">
-                Twoich klientach
+                Bruno AI
               </span>
+              ?
             </h1>
-            <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-7">
-              Każda przepalona rozmowa to lead,
-              <br />
-              za którego już zapłaciłeś.
-            </p>
+            <ul className="grid gap-4 md:grid-cols-3 mb-12 sm:mb-16">
+              {KROKI.map((k, i) => (
+                <Kafelek key={k.tytul} numer={i + 1} tytul={k.tytul} opis={k.opis} grafika={k.grafika} />
+              ))}
+            </ul>
+
+            <h2 className="text-[1.6rem] sm:text-[2.25rem] font-bold font-[var(--font-poppins)] leading-[1.1] tracking-[-0.02em] mb-6 sm:mb-8">
+              Korzyści
+            </h2>
+            <ul className="grid gap-4 md:grid-cols-3 mb-12 sm:mb-14">
+              {KORZYSCI.map((k, i) => (
+                <Kafelek
+                  key={k.tytul}
+                  numer={i + 1}
+                  tytul={k.tytul}
+                  opis={k.opis}
+                  zrodlo={k.zrodlo}
+                  grafika={<GrafikaLiczba liczba={k.liczba} />}
+                />
+              ))}
+            </ul>
+
             {/* Wezwanie w kafelku: ma odciac sie od reszty, zeby oko trafilo
                 na nie w drodze do formularza. */}
             <div className="inline-block rounded-2xl bg-white/75 backdrop-blur-xl border border-cyan-600/30 ring-1 ring-inset ring-white/70 px-6 py-4 sm:px-8 sm:py-5 shadow-lg shadow-cyan-900/[0.07]">
               <p className="text-slate-800 text-[15px] sm:text-base font-semibold leading-relaxed">
-                Wypełnij formularz i otrzymaj dostęp do narzędzia,
-                <br className="hidden sm:block" /> które wytrenuje Twoich handlowców w sprzedaży 1:1
+                Otrzymaj dostęp do Bruno AI bezpłatnie.
+                <br className="hidden sm:block" /> Wypełnij formularz poniżej.
               </p>
             </div>
           </div>

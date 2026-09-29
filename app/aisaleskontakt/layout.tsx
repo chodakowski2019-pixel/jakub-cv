@@ -7,12 +7,12 @@ import { Poppins, Open_Sans } from "next/font/google";
 // sprzedaży albo właściciel małej firmy. HR świadomie pominięte.
 
 export const metadata: Metadata = {
-  title: "Trening handlowców z AI | Jakub Chodakowski",
+  title: "Bruno AI: trening handlowców z AI | Jakub Chodakowski",
   description:
     "Handlowcy coachowani co tydzień robią 76% planu, raz na kwartał 47%. Buduję narzędzie, które tę cotygodniową powtórkę robi za szefa sprzedaży. Szukam firm na bezpłatny pilotaż.",
   alternates: { canonical: "https://jakubchodakowski.com/aisaleskontakt" },
   openGraph: {
-    title: "Trening handlowców z AI | Jakub Chodakowski",
+    title: "Bruno AI: trening handlowców z AI | Jakub Chodakowski",
     description:
       "Na jednego szefa sprzedaży przypada 12 handlowców. Nikt nie usiądzie z każdym co tydzień. Narzędzie robi tę powtórkę za Ciebie.",
     url: "https://jakubchodakowski.com/aisaleskontakt",
