@@ -115,7 +115,9 @@ function Sekcja({ krok, tytul, children }: { krok: number; tytul: string; childr
 
 export type Kontakt = { imie: string; email: string };
 
-export default function AiSalesBriefForm({ kontakt }: { kontakt?: Kontakt }) {
+// `naglowek` pokazuje się tylko nad pierwszym ekranem (USER_001 29.09): na drugim
+// i trzecim zostaje sam formularz.
+export default function AiSalesBriefForm({ kontakt, naglowek }: { kontakt?: Kontakt; naglowek?: React.ReactNode }) {
   const [krok, setKrok] = useState(1);
   const [form, setForm] = useState<Form>(PUSTY);
   const [pliki, setPliki] = useState<Plik[]>([]);
@@ -255,6 +257,7 @@ export default function AiSalesBriefForm({ kontakt }: { kontakt?: Kontakt }) {
         </div>
       ) : (
         <form onSubmit={submit} className="max-w-2xl mx-auto flex flex-col gap-6">
+          {krok === 1 && naglowek}
           {krok === 1 && (
             <Sekcja krok={1} tytul="Firma i produkt">
               <div>

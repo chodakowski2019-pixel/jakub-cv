@@ -314,17 +314,21 @@ export default function AiSalesKontaktPage() {
         {status === "ok" ? (
           // Zamiast "Dziękuję" od razu ankieta konfiguracyjna (USER_001 29.09).
           // Lead jest już zapisany i mail poszedł, teraz zbieramy wsad do Bruno.
-          <>
-            <div className="max-w-2xl mx-auto mb-8 sm:mb-10 text-center">
-              <h1 className="text-[1.9rem] sm:text-[2.75rem] font-bold font-[var(--font-poppins)] leading-[1.08] tracking-[-0.025em] mb-3">
-                Uzupełnij formularz konfiguracyjny
-              </h1>
-              <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-                Na podstawie tych informacji dostosujemy Bruno AI do Ciebie.
-              </p>
-            </div>
-            <AiSalesBriefForm kontakt={{ imie: form.imie, email: form.email }} />
-          </>
+          <AiSalesBriefForm
+            kontakt={{ imie: form.imie, email: form.email }}
+            naglowek={
+              <div className="text-center mb-2 sm:mb-4">
+                <h1 className="text-[1.9rem] sm:text-[2.75rem] font-bold font-[var(--font-poppins)] leading-[1.08] tracking-[-0.025em] mb-3">
+                  Uzupełnij formularz konfiguracyjny
+                </h1>
+                {/* Na telefonie łamane po "informacji" (USER_001 29.09), na desktopie jedna linia. */}
+                <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
+                  Na podstawie tych informacji
+                  <br className="sm:hidden" /> dostosujemy Bruno AI do Ciebie.
+                </p>
+              </div>
+            }
+          />
         ) : (
           <div className="karta-szklo max-w-md mx-auto rounded-3xl p-6 sm:p-8">
             <form onSubmit={submit} className="flex flex-col gap-5">
