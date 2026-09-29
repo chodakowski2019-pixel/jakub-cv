@@ -141,19 +141,19 @@ function GrafikaLiczba({ liczba }: { liczba: string }) {
 const KORZYSCI: { liczba: string; tytul: string; opis: string; zrodlo: string }[] = [
   {
     liczba: "+28 %",
-    tytul: "domkniętych rozmów",
+    tytul: "Domkniętych rozmów",
     opis: "O tyle rośnie skuteczność domykania po treningach.",
     zrodlo: "RAIN Group, badanie 472 firm",
   },
   {
     liczba: "76 % vs 47 %",
-    tytul: "realizacji planu sprzedażowego",
+    tytul: "Realizacji planu sprzedażowego",
     opis: "Tyle robią handlowcy trenowani 1 raz w tygodniu, a tyle 1 raz na kwartał.",
     zrodlo: "MySalesCoach, badanie 3 700 handlowców, 2026",
   },
   {
     liczba: "+170 %",
-    tytul: "lepsze zapamiętanie technik",
+    tytul: "Lepsze zapamiętanie technik",
     opis: "Tyle daje trening z powtórkami zamiast jednorazowego. Bruno planuje powtórki za Ciebie.",
     zrodlo: "RAIN Group, program wzmocnień",
   },
@@ -189,9 +189,19 @@ function Kafelek({
           {grafika}
         </div>
       )}
-      {/* whitespace-pre-line: łamanie wiersza w tytule zadane znakiem \n w treści. */}
-      <h3 className="relative whitespace-pre-line text-base sm:text-lg font-bold font-[var(--font-poppins)] tracking-[-0.01em] leading-snug">
-        {tytul}
+      {/* \n w tytule = łamanie wiersza tylko od md w górę. Na telefonie jedna linia (USER_001 29.09). */}
+      <h3 className="relative text-base sm:text-lg font-bold font-[var(--font-poppins)] tracking-[-0.01em] leading-snug">
+        {tytul.split("\n").map((czesc, i, arr) => (
+          <span key={i}>
+            {czesc}
+            {i < arr.length - 1 && (
+              <>
+                <span className="md:hidden"> </span>
+                <br className="hidden md:inline" />
+              </>
+            )}
+          </span>
+        ))}
       </h3>
       <p className="relative text-slate-600 text-sm sm:text-[15px] leading-relaxed">{opis}</p>
       {zrodlo && <p className="relative mt-auto pt-2 text-[11px] text-slate-400">Źródło: {zrodlo}</p>}
@@ -255,7 +265,7 @@ export default function AiSalesKontaktPage() {
             nie moze byc pierwsza rzecza na ekranie. */}
         {status !== "ok" && (
           <div className="max-w-4xl mx-auto mb-10 sm:mb-12 text-center">
-            <h1 className="text-[1.9rem] sm:text-[2.75rem] font-bold font-[var(--font-poppins)] leading-[1.08] tracking-[-0.025em] mb-8 sm:mb-10">
+            <h1 className="text-[2.2rem] sm:text-[3.25rem] font-bold font-[var(--font-poppins)] leading-[1.08] tracking-[-0.025em] mb-8 sm:mb-10">
               Jak działa{" "}
               <span className="bg-gradient-to-r from-cyan-700 to-teal-700 bg-clip-text text-transparent">
                 Bruno AI
@@ -268,7 +278,7 @@ export default function AiSalesKontaktPage() {
               ))}
             </ul>
 
-            <h2 className="text-[1.6rem] sm:text-[2.25rem] font-bold font-[var(--font-poppins)] leading-[1.1] tracking-[-0.02em] mb-6 sm:mb-8">
+            <h2 className="text-[2rem] sm:text-[2.75rem] font-bold font-[var(--font-poppins)] leading-[1.1] tracking-[-0.02em] mb-6 sm:mb-8">
               Korzyści
             </h2>
             <ul className="grid gap-4 md:grid-cols-3 mb-12 sm:mb-14">
