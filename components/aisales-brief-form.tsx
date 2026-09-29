@@ -119,6 +119,8 @@ export default function AiSalesBriefForm({ kontakt }: { kontakt?: Kontakt }) {
   const [krok, setKrok] = useState(1);
   const [form, setForm] = useState<Form>(PUSTY);
   const [pliki, setPliki] = useState<Plik[]>([]);
+  // Checkbox na końcu ankiety (USER_001 29.09): polityka prywatności + zgoda osób z nagrań.
+  const [zgoda, setZgoda] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
 
   const pole =
@@ -220,6 +222,7 @@ export default function AiSalesBriefForm({ kontakt }: { kontakt?: Kontakt }) {
         form.obiekcje &&
         form.sukces &&
         form.powodPrzegranej &&
+        zgoda &&
         !pliki.some((p) => p.stan === "wysylanie"),
     ),
   };
@@ -384,7 +387,7 @@ export default function AiSalesBriefForm({ kontakt }: { kontakt?: Kontakt }) {
                 <label className={labelCls} htmlFor="przebieg">
                   Przebieg rozmowy krok po kroku *
                 </label>
-                <span className={opisCls}>Jeśli masz skrypt, wklej go tutaj w całości.</span>
+                <span className={opisCls}>Jeśli masz skrypt, wklej go tutaj w całości. Możesz go dodać też później.</span>
                 <textarea
                   id="przebieg"
                   required
@@ -442,7 +445,7 @@ export default function AiSalesBriefForm({ kontakt }: { kontakt?: Kontakt }) {
 
               <div>
                 <label className={labelCls} htmlFor="nagrania">
-                  Nagrania rozmów <span className="font-normal text-slate-400">(opcjonalnie)</span>
+                  Nagrania rozmów <span className="font-normal text-slate-400">(można dodać później)</span>
                 </label>
                 <span className={opisCls}>
                   mp3, m4a, wav, mp4, mov. Jedno nagranie mówi więcej niż połowa tego formularza. Potrzebna zgoda drugiej strony.
@@ -483,6 +486,28 @@ export default function AiSalesBriefForm({ kontakt }: { kontakt?: Kontakt }) {
                 </label>
                 <textarea id="uwagi" rows={4} className={inputCls} value={form.uwagi} onChange={pole("uwagi")} />
               </div>
+
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  required
+                  checked={zgoda}
+                  onChange={(e) => setZgoda(e.target.checked)}
+                  className="mt-0.5 w-[18px] h-[18px] shrink-0 rounded accent-cyan-600 cursor-pointer"
+                />
+                <span className="text-[12px] text-slate-600 leading-relaxed group-hover:text-slate-800 transition-colors duration-150">
+                  Zapoznałem się z{" "}
+                  <a
+                    href="/polityka-prywatnosci"
+                    target="_blank"
+                    rel="noopener"
+                    className="text-cyan-700 underline underline-offset-2"
+                  >
+                    polityką prywatności
+                  </a>
+                  . Nagrania wgrywam za zgodą osób, które na nich słychać.
+                </span>
+              </label>
             </Sekcja>
           )}
 
