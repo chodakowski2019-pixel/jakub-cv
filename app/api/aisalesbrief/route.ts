@@ -53,6 +53,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, blad: "Opisz zachowanie klienta" }, { status: 400 });
   }
 
+  // Gdy ankieta idzie zaraz po formularzu kontaktowym (/aisaleskontakt), front
+  // dokłada "Imię <mail>" leada. Sama ankieta nie pyta o imię ani mail (28.09).
+  const kontakt: string | null = typeof d.kontakt === "string" && d.kontakt.trim() ? d.kontakt.trim().slice(0, 200) : null;
+  const mailLeada = kontakt?.match(/<([^>]+)>/)?.[1] ?? null;
+
   // supabase-js nie rzuca wyjątku przy błędzie zapisu, zwraca `error`.
   try {
     const { error } = await supabaseAdmin.from("salesai_briefy").insert({
@@ -70,6 +75,7 @@ export async function POST(req: NextRequest) {
       powod_przegranej: d.powodPrzegranej,
       uwagi: d.uwagi || null,
       nagrania,
+      kontakt,
     });
     if (error) console.error("supabase insert failed", error.code, error.message);
   } catch (err) {
@@ -92,7 +98,8 @@ export async function POST(req: NextRequest) {
     .join(", ");
 
   const html = `
-    <h2>Ankieta wdrożeniowa SalesAI — ${esc(d.firma)}</h2>
+    <h2>Ankieta wdrożeniowa Bruno AI — ${esc(d.firma)}</h2>
+    ${kontakt ? `<p><b>Wypełnił lead z formularza kontaktowego:</b> ${esc(kontakt)}</p>` : ""}
 
     <h3>1. Firma i produkt</h3>
     <p><b>Firma:</b> ${esc(d.firma)}</p>
@@ -120,9 +127,10 @@ export async function POST(req: NextRequest) {
 
   try {
     await resend.emails.send({
-      from: "SalesAI <hello@jakubchodakowski.com>",
+      from: "Bruno AI <hello@jakubchodakowski.com>",
       to: "chodakowski2019@gmail.com",
-      subject: `Ankieta SalesAI — ${d.firma}`,
+      ...(mailLeada ? { replyTo: mailLeada } : {}),
+      subject: `Ankieta Bruno AI — ${d.firma}`,
       html,
     });
 

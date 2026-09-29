@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { track } from "@vercel/analytics";
+import AiSalesBriefForm from "@/components/aisales-brief-form";
 
 // Wariant jasny + szkło (USER_001 28.09).
 //
@@ -228,7 +229,12 @@ export default function AiSalesKontaktPage() {
       setStatus(res.ok ? "ok" : "error");
       // Zdarzenie w Vercel Analytics: same wejscia nie mowia nic o skutecznosci.
       // Zawod leci jako wymiar, zeby bylo widac, kto realnie wypelnia.
-      if (res.ok) track("salesai_lead", { zawod: form.zawod });
+      if (res.ok) {
+        track("salesai_lead", { zawod: form.zawod });
+        // Po wysłaniu pojawia się ankieta konfiguracyjna (USER_001 29.09).
+        // Bez przewinięcia człowiek zostałby na dole, pod starym formularzem.
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     } catch {
       setStatus("error");
     }
@@ -306,23 +312,19 @@ export default function AiSalesKontaktPage() {
         )}
 
         {status === "ok" ? (
-          <div className="karta-szklo max-w-md mx-auto rounded-3xl p-8 flex flex-col items-center text-center">
-            <div className="w-20 h-20 rounded-full bg-white/70 border-2 border-cyan-600/40 flex items-center justify-center mb-6">
-              <svg
-                className="w-10 h-10 text-cyan-700"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-                aria-hidden
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
+          // Zamiast "Dziękuję" od razu ankieta konfiguracyjna (USER_001 29.09).
+          // Lead jest już zapisany i mail poszedł, teraz zbieramy wsad do Bruno.
+          <>
+            <div className="max-w-2xl mx-auto mb-8 sm:mb-10 text-center">
+              <h1 className="text-[1.9rem] sm:text-[2.75rem] font-bold font-[var(--font-poppins)] leading-[1.08] tracking-[-0.025em] mb-3">
+                Uzupełnij formularz konfiguracyjny
+              </h1>
+              <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
+                Na podstawie tych informacji dostosujemy Bruno AI do Ciebie.
+              </p>
             </div>
-            <h1 className="text-2xl font-bold mb-3 font-[var(--font-poppins)] tracking-[-0.01em]">Dziękuję.</h1>
-            <p className="text-slate-700 leading-relaxed">Odezwę się w ciągu 24 godzin.</p>
-            <p className="text-sm text-slate-500 mt-4">Jakub Chodakowski</p>
-          </div>
+            <AiSalesBriefForm kontakt={{ imie: form.imie, email: form.email }} />
+          </>
         ) : (
           <div className="karta-szklo max-w-md mx-auto rounded-3xl p-6 sm:p-8">
             <form onSubmit={submit} className="flex flex-col gap-5">
