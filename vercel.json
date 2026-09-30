@@ -1,0 +1,5 @@
+{
+  "crons": [
+    { "path": "/api/bruno/przypomnienia", "schedule": "0 * * * *" }
+  ]
+}

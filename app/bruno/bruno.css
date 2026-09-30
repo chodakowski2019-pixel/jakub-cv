@@ -1,0 +1,193 @@
+/* Panel Bruno AI: wariant jasny + szkło, ten sam język co /aisaleskontakt.
+   Plik CSS zamiast <style jsx>, bo layout jest komponentem serwerowym,
+   a klasy mają sięgać do wszystkich podstron. */
+
+.bruno {
+  --b-akcent: #0e7490;
+  --b-akcent-2: #0f766e;
+  --b-tekst: #0f172a;
+  --b-szary: #64748b;
+  color: var(--b-tekst);
+  background: #ffffff;
+  min-height: 100vh;
+}
+
+.bruno-plamy {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #fff;
+  z-index: 0;
+}
+.bruno-plamy > i {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(120px);
+  display: block;
+}
+
+.bruno-szklo {
+  position: relative;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 24px 60px -20px rgba(15, 23, 42, 0.22),
+    0 2px 10px -4px rgba(15, 23, 42, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.bruno-przycisk {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.95rem 1.6rem;
+  border-radius: 1rem;
+  background: linear-gradient(90deg, var(--b-akcent), var(--b-akcent-2));
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: 0 10px 24px -10px rgba(14, 116, 144, 0.5);
+  transition:
+    transform 100ms ease-out,
+    filter 150ms ease-out;
+}
+.bruno-przycisk:hover {
+  filter: brightness(1.08);
+}
+.bruno-przycisk:active {
+  transform: scale(0.97);
+}
+.bruno-przycisk:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.bruno-przycisk-2 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.1rem;
+  border-radius: 0.9rem;
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  color: var(--b-tekst);
+  font-weight: 500;
+  font-size: 14px;
+  transition:
+    transform 100ms ease-out,
+    border-color 150ms ease-out;
+}
+.bruno-przycisk-2:hover {
+  border-color: var(--b-akcent);
+}
+.bruno-przycisk-2:active {
+  transform: scale(0.97);
+}
+
+.bruno-pole {
+  width: 100%;
+  background: #fff;
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 16px;
+  color: var(--b-tekst);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+}
+.bruno-pole::placeholder {
+  color: #94a3b8;
+}
+.bruno-pole:focus {
+  outline: none;
+  border-color: var(--b-akcent);
+  box-shadow: 0 0 0 3px rgba(14, 116, 144, 0.15);
+}
+
+.bruno-etykieta {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.01em;
+}
+
+.bruno-h1 {
+  font-family: var(--font-poppins), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+}
+.bruno-h2 {
+  font-family: var(--font-poppins), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+.bruno-gradient-tekst {
+  background: linear-gradient(90deg, var(--b-akcent), var(--b-akcent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bruno-nav a {
+  padding: 0.45rem 0.8rem;
+  border-radius: 0.7rem;
+  font-size: 14px;
+  color: #475569;
+  transition:
+    background 120ms,
+    color 120ms;
+}
+.bruno-nav a:hover {
+  background: rgba(14, 116, 144, 0.08);
+  color: var(--b-tekst);
+}
+.bruno-nav a[aria-current="page"] {
+  background: rgba(14, 116, 144, 0.12);
+  color: var(--b-akcent);
+  font-weight: 600;
+}
+
+/* Pulsujące kółko podczas rozmowy: skala zamiast zmiany koloru, żeby nie migało. */
+@keyframes bruno-puls {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.25;
+  }
+}
+.bruno-puls {
+  animation: bruno-puls 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bruno-puls {
+    animation: none;
+  }
+  .bruno-przycisk,
+  .bruno-przycisk-2 {
+    transition: none;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .bruno-szklo {
+    background: #fff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: rgb(203 213 225);
+  }
+}
