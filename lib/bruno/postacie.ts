@@ -1,5 +1,5 @@
 import type { Karta, Konfig } from "./db";
-import { listaObiekcji } from "./db";
+import { listaObiekcji } from "./obiekcje";
 
 // Bruno w kilku odsłonach (USER_001 30.09). Każda postać = własne instrukcje
 // i głos. Bruno-KLIENT nie zna rubryki trenera i nie przerywa treningu:

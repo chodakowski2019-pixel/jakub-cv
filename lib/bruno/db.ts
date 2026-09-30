@@ -1,4 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase";
+import { listaObiekcji } from "./obiekcje";
+
+export { listaObiekcji };
 
 // Dostęp do tabel bruno_* (Supabase jakubchodakowski-com, założone 30.09).
 
@@ -201,11 +204,3 @@ export async function wszystkieKarty(email: string): Promise<Karta[]> {
   return (data as Karta[]) ?? [];
 }
 
-/** Lista obiekcji z pola tekstowego: jedna na linię, puste pomijamy. */
-export function listaObiekcji(tekst: string | null | undefined): string[] {
-  return (tekst ?? "")
-    .split(/\r?\n/)
-    .map((l) => l.replace(/^[\s\-\*\d\.\)]+/, "").trim())
-    .filter((l) => l.length >= 3)
-    .slice(0, 20);
-}
