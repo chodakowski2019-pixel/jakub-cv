@@ -88,7 +88,7 @@ export default async function BrunoPanelPage() {
             : POSTACIE[postac].opis}
         </p>
         {planZrobiony ? (
-          <p className="text-slate-500 text-sm">Wróć jutro. Przypomnimy mailem o {konfig.godzina_przypomnienia}:00.</p>
+          <p className="text-slate-500 text-sm">Wróć jutro. Przypomnimy mailem rano.</p>
         ) : minutZostalo < 1 ? (
           <p className="text-slate-500 text-sm">Limit minut testu wyczerpany.</p>
         ) : (

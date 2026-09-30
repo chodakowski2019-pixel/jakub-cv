@@ -6,10 +6,11 @@ import { htmlPrzypomnienie, wyslij } from "@/lib/bruno/mail";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-// GET /api/bruno/przypomnienia: cron (vercel.json, co godzinę). Wysyła mail
-// każdemu z aktywnym dostępem, u kogo bieżąca godzina w Polsce = jego godzina
-// przypomnienia i kto nie zrobił jeszcze planu dnia. Zero zadań z głowy
-// USER_001: biegnie samo (zasada z /bruno).
+// GET /api/bruno/przypomnienia: cron z vercel.json. Plan Hobby Vercela
+// dopuszcza cron raz dziennie, więc biegnie o 6:00 UTC (8:00 PL latem, 7:00
+// zimą) z ?wymus=1 i pomija godzinę z konfiguracji. Godzinowe wysyłanie
+// wróci razem z planem Pro. Wysyła każdemu z aktywnym dostępem, kto nie
+// zrobił jeszcze planu dnia. Zero zadań z głowy USER_001: biegnie samo.
 export async function GET(req: Request) {
   const sekret = process.env.CRON_SECRET;
   const auth = req.headers.get("authorization");

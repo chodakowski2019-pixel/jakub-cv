@@ -70,7 +70,7 @@ export default function DostosujForm({ start }: { start: Konfig }) {
           </select>
         </div>
         <div>
-          <label className="bruno-etykieta" htmlFor="godzina">Przypomnienie mailem o godzinie</label>
+          <label className="bruno-etykieta" htmlFor="godzina">Przypomnienie mailem o godzinie <span className="font-normal text-slate-400">(w teście: rano ok. 8:00)</span></label>
           <select id="godzina" className="bruno-pole" value={f.godzina_przypomnienia} onChange={(e) => setF((x) => ({ ...x, godzina_przypomnienia: Number(e.target.value) }))}>
             {Array.from({ length: 18 }, (_, i) => i + 5).map((h) => (
               <option key={h} value={h}>{h}:00</option>
