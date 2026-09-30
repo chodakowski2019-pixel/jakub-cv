@@ -10,7 +10,7 @@ export default function AdminForm({ klucz }: { klucz: string }) {
   const [konta, setKonta] = useState<Konto[]>([]);
   const [rozmowy, setRozmowy] = useState<RozmowaSkrot[]>([]);
   const [zaint, setZaint] = useState<{ email: string; wiadomosc: string; utworzono: string }[]>([]);
-  const [f, setF] = useState({ email: "", imie: "", firma: "", dni: 7, limit_min: 105, produkt: "", klient: "", obiekcje: "", udana_rozmowa: "", skrypt: "", postac: "twardy" as PostacId });
+  const [f, setF] = useState({ email: "", imie: "", firma: "", kod: "", dni: 7, limit_min: 105, produkt: "", klient: "", obiekcje: "", udana_rozmowa: "", skrypt: "", postac: "twardy" as PostacId });
   const [stan, setStan] = useState<string>("");
 
   const odswiez = async () => {
@@ -39,13 +39,15 @@ export default function AdminForm({ klucz }: { klucz: string }) {
         email: f.email,
         imie: f.imie,
         firma: f.firma,
+        kod: f.kod || undefined,
         dni: f.dni,
         limit_sekund: f.limit_min * 60,
         konfig: { produkt: f.produkt, klient: f.klient, obiekcje: f.obiekcje, udana_rozmowa: f.udana_rozmowa, skrypt: f.skrypt, postac: f.postac },
       }),
     });
     const d = await res.json();
-    setStan(res.ok ? `Konto ${d.email} zapisane. Tester loguje się na /bruno kodem z maila.` : `Błąd: ${d.blad}`);
+    const mail = d.mail === "wyslany" ? "Mail z dostępem wysłany." : d.mail === "blad" ? "UWAGA: mail nie poszedł, podaj kod sam." : "Mail nie poszedł (kod bez zmian).";
+    setStan(res.ok ? `Konto ${d.email} zapisane.${d.kod ? ` Kod: ${d.kod}.` : ""} ${mail}` : `Błąd: ${d.blad}`);
     if (res.ok) void odswiez();
   };
 
@@ -67,6 +69,9 @@ export default function AdminForm({ klucz }: { klucz: string }) {
           <input className="bruno-pole" placeholder="firma" value={f.firma} onChange={pole("firma")} />
         </div>
         <div className="grid sm:grid-cols-3 gap-3">
+          <label className="text-sm text-slate-600">kod 6 cyfr <span className="text-slate-400">(puste = losowy)</span>
+            <input className="bruno-pole mt-1" inputMode="numeric" maxLength={6} placeholder="losowy" value={f.kod} onChange={(e) => setF((x) => ({ ...x, kod: e.target.value.replace(/\D/g, "").slice(0, 6) }))} />
+          </label>
           <label className="text-sm text-slate-600">dni <input className="bruno-pole mt-1" type="number" min={1} value={f.dni} onChange={(e) => setF((x) => ({ ...x, dni: Number(e.target.value) }))} /></label>
           <label className="text-sm text-slate-600">limit minut <input className="bruno-pole mt-1" type="number" min={5} value={f.limit_min} onChange={(e) => setF((x) => ({ ...x, limit_min: Number(e.target.value) }))} /></label>
           <label className="text-sm text-slate-600">postać

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonfig } from "@/lib/bruno/db";
 import DostosujForm from "@/components/bruno/dostosuj-form";
+import KodForm from "@/components/bruno/kod-form";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ export default async function BrunoDostosujPage() {
         <p className="text-slate-600 mt-2">Bruno czyta to przed każdą rozmową. Im konkretniej, tym bardziej brzmi jak Twój klient.</p>
       </div>
       <DostosujForm start={konfig} />
+      <KodForm />
     </div>
   );
 }

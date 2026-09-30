@@ -17,6 +17,10 @@ export type Konto = {
   dni: number;
   limit_sekund: number;
   aktywne: boolean;
+  /** Skrót scrypt stałego kodu logowania (sól:skrót). Nigdy nie wychodzi poza serwer. */
+  kod_hash: string | null;
+  nieudane: number | null;
+  blokada_do: string | null;
 };
 
 export type Konfig = {

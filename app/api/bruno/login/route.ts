@@ -1,42 +1,67 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { supabaseAdmin } from "@/lib/supabase";
-import { CIASTECZKO, WAZNOSC_SESJI_S, normalizujEmail, nowyToken } from "@/lib/bruno/auth";
+import {
+  BLOKADA_MS,
+  CIASTECZKO,
+  LIMIT_PROB,
+  WAZNOSC_SESJI_S,
+  kodPasuje,
+  normalizujEmail,
+  nowyToken,
+  poprawnyKod,
+} from "@/lib/bruno/auth";
 import { pobierzKonto, pobierzKonfig, stanDostepu } from "@/lib/bruno/db";
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 
 export const dynamic = "force-dynamic";
 
-// POST /api/bruno/login: e-mail + kod → ciasteczko sesji.
+// POST /api/bruno/login: e-mail + stały 6-cyfrowy kod konta → ciasteczko sesji.
 // Pierwsze udane logowanie uruchamia 7-dniowy licznik dostępu (USER_001 30.09).
+//
+// Komunikat o błędzie jest jeden dla złego adresu i złego kodu: formularz nie
+// może być sprawdzarką, kto ma dostęp do testu.
+const ZLE = "Zły adres albo kod.";
+
 export async function POST(req: Request) {
   try {
     const b = await req.json();
     const email = normalizujEmail(b.email);
-    const kod = String(b.kod ?? "").replace(/\D/g, "");
-    if (!email || kod.length !== 6) return NextResponse.json({ ok: false, blad: "Podaj adres i 6-cyfrowy kod." }, { status: 400 });
-
-    const { data: wpis } = await supabaseAdmin
-      .from("bruno_kody")
-      .select("id, wygasa")
-      .eq("email", email)
-      .eq("kod", kod)
-      .gt("wygasa", new Date().toISOString())
-      .order("utworzono", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (!wpis) return NextResponse.json({ ok: false, blad: "Kod jest zły albo wygasł." }, { status: 401 });
+    const kod = poprawnyKod(b.kod);
+    if (!email || !kod) return NextResponse.json({ ok: false, blad: "Podaj adres i 6-cyfrowy kod." }, { status: 400 });
 
     const konto = await pobierzKonto(email);
-    const stan = stanDostepu(konto);
-    if (!konto || !stan.aktywny) return NextResponse.json({ ok: false, blad: "Dostęp wygasł albo konto nie istnieje." }, { status: 403 });
+    if (!konto || !konto.kod_hash) return NextResponse.json({ ok: false, blad: ZLE }, { status: 401 });
 
-    // Kod jednorazowy: kasujemy wszystkie kody tego adresu.
-    await supabaseAdmin.from("bruno_kody").delete().eq("email", email);
-
-    if (!konto.start_dostepu) {
-      await supabaseAdmin.from("bruno_konta").update({ start_dostepu: new Date().toISOString() }).eq("email", email);
+    if (konto.blokada_do && new Date(konto.blokada_do).getTime() > Date.now()) {
+      const minut = Math.ceil((new Date(konto.blokada_do).getTime() - Date.now()) / 60_000);
+      return NextResponse.json({ ok: false, blad: `Za dużo prób. Spróbuj za ${minut} min.` }, { status: 429 });
     }
+
+    if (!kodPasuje(kod, konto.kod_hash)) {
+      const nieudane = (konto.nieudane ?? 0) + 1;
+      await supabaseAdmin
+        .from("bruno_konta")
+        .update({
+          nieudane,
+          blokada_do: nieudane >= LIMIT_PROB ? new Date(Date.now() + BLOKADA_MS).toISOString() : null,
+        })
+        .eq("email", email);
+      return NextResponse.json({ ok: false, blad: ZLE }, { status: 401 });
+    }
+
+    const stan = stanDostepu(konto);
+    if (!stan.aktywny) return NextResponse.json({ ok: false, blad: "Dostęp testowy wygasł." }, { status: 403 });
+
+    await supabaseAdmin
+      .from("bruno_konta")
+      .update({
+        nieudane: 0,
+        blokada_do: null,
+        ...(konto.start_dostepu ? {} : { start_dostepu: new Date().toISOString() }),
+      })
+      .eq("email", email);
+
     // Karty powtórek od pierwszego dnia, żeby panel od razu miał co pokazać.
     await zapewnijKarty(email, await pobierzKonfig(email));
 

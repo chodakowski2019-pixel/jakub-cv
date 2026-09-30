@@ -1,16 +1,26 @@
-import { createHash, createHmac, randomInt, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, randomBytes, randomInt, scryptSync, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 
-// Logowanie do panelu Bruno AI. Wzór: zwiazki-lp/src/lib/app-auth.ts (gabi).
+// Logowanie do panelu Bruno AI.
 //
-// E-mail + 6-cyfrowy kod z maila zamiast hasła. Kod żyje 15 minut w tabeli
-// bruno_kody, sesja to podpisany token w ciasteczku httpOnly, bez tabeli sesji.
-// Konta zakłada USER_001 ręcznie po weryfikacji leada (decyzja 30.09), więc
-// logowanie nie jest rejestracją: nieznany adres dostaje tę samą odpowiedź.
+// Od 30.09 (USER_001): e-mail + STAŁY 6-cyfrowy kod przypisany do konta,
+// nie kod jednorazowy z maila. Kod nadaje USER_001 przy zakładaniu konta,
+// tester dostaje go mailem i może go zmienić w panelu.
+//
+// W bazie trzymamy wyłącznie skrót scrypt (sól:skrót), bo za kodem stoją
+// nagrania rozmów handlowych. Sesja to podpisany token w ciasteczku httpOnly,
+// bez tabeli sesji.
 
 export const CIASTECZKO = "bruno_sesja";
 export const WAZNOSC_SESJI_S = 30 * 24 * 60 * 60; // 30 dni
-const WAZNOSC_KODU_MS = 15 * 60 * 1000;
+
+/** Ile nieudanych prób, zanim zamkniemy logowanie. */
+export const LIMIT_PROB = 5;
+/** Na jak długo blokujemy po przekroczeniu limitu. */
+export const BLOKADA_MS = 15 * 60 * 1000;
+
+const DLUGOSC_SOLI = 16;
+const DLUGOSC_SKROTU = 32;
 
 function sekret(): string {
   // Osobny sekret jest lepszy; bez niego pochodna klucza serwisowego, żeby
@@ -31,12 +41,31 @@ function rowne(a: string, b: string) {
   return ba.length === bb.length && timingSafeEqual(ba, bb);
 }
 
+/** Losowy kod startowy dla nowego konta. */
 export function nowyKod(): string {
   return String(randomInt(0, 1_000_000)).padStart(6, "0");
 }
 
-export function wygasniecieKodu(): string {
-  return new Date(Date.now() + WAZNOSC_KODU_MS).toISOString();
+export function poprawnyKod(surowy: unknown): string | null {
+  const kod = String(surowy ?? "").replace(/\D/g, "");
+  return kod.length === 6 ? kod : null;
+}
+
+export function zaszyfrujKod(kod: string): string {
+  const sol = randomBytes(DLUGOSC_SOLI).toString("hex");
+  const skrot = scryptSync(kod, sol, DLUGOSC_SKROTU).toString("hex");
+  return `${sol}:${skrot}`;
+}
+
+export function kodPasuje(kod: string, zapisany: string | null | undefined): boolean {
+  if (!zapisany) return false;
+  const [sol, skrot] = zapisany.split(":");
+  if (!sol || !skrot) return false;
+  try {
+    return rowne(scryptSync(kod, sol, DLUGOSC_SKROTU).toString("hex"), skrot);
+  } catch {
+    return false;
+  }
 }
 
 export function nowyToken(email: string): string {

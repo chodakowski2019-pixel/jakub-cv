@@ -40,11 +40,15 @@ const ramka = (tresc: string) => `
     <p style="margin-top:28px;font-size:12px;color:#94a3b8">Bruno AI, Jakub Chodakowski, NIP 6711845485. <a href="${bazaUrl()}/polityka-prywatnosci" style="color:#94a3b8">Polityka prywatności</a></p>
   </div>`;
 
-export function htmlKodLogowania(kod: string) {
+export function htmlDostep(args: { imie: string | null; kod: string; dni: number }) {
+  const link = `${bazaUrl()}/bruno`;
   return ramka(`
-    <p style="font-size:15px">Twój kod logowania do Bruno AI:</p>
-    <p style="font-size:34px;font-weight:700;letter-spacing:0.18em;margin:12px 0">${kod}</p>
-    <p style="font-size:13px;color:#64748b">Ważny 15 minut. Jeśli to nie Ty, zignoruj tę wiadomość.</p>
+    <p style="font-size:15px">${args.imie ? `${args.imie}, ` : ""}Twój dostęp do Bruno AI jest gotowy. Masz <b>${args.dni} dni</b> od pierwszego logowania.</p>
+    <p style="font-size:15px;margin-top:18px">Adres: <b>${link}</b></p>
+    <p style="font-size:15px;margin:10px 0 4px">Kod logowania:</p>
+    <p style="font-size:34px;font-weight:700;letter-spacing:0.18em;margin:0 0 4px">${args.kod}</p>
+    <p style="font-size:13px;color:#64748b">Logujesz się tym samym kodem za każdym razem. Możesz go zmienić w panelu, w zakładce „Dostosuj Bruno”.</p>
+    <p style="margin:22px 0"><a href="${link}" style="display:inline-block;background:#0e7490;color:#fff;text-decoration:none;padding:12px 20px;border-radius:12px;font-weight:600">Zaloguj się</a></p>
   `);
 }
 

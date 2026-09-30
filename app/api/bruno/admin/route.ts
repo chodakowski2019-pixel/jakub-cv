@@ -1,13 +1,16 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { normalizujEmail } from "@/lib/bruno/auth";
+import { normalizujEmail, nowyKod, poprawnyKod, zaszyfrujKod } from "@/lib/bruno/auth";
+import { pobierzKonto } from "@/lib/bruno/db";
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
+import { htmlDostep, mailDziala, wyslij } from "@/lib/bruno/mail";
 import { postacLubDomyslna } from "@/lib/bruno/postacie";
 
 export const dynamic = "force-dynamic";
 
-// Panel USER_001: zakłada konto testera i wstępną konfigurację z ankiety.
-// Klucz = STATS_KEY (już w env Vercela), w nagłówku x-klucz albo ?k=.
+// Panel USER_001: zakłada konto testera, nadaje kod logowania i wstępną
+// konfigurację z ankiety. Klucz = STATS_KEY (już w env Vercela), w nagłówku
+// x-klucz albo ?k=.
 function autoryzowany(req: Request) {
   const k = process.env.STATS_KEY;
   if (!k) return false;
@@ -16,7 +19,10 @@ function autoryzowany(req: Request) {
 
 export async function GET(req: Request) {
   if (!autoryzowany(req)) return NextResponse.json({ ok: false }, { status: 401 });
-  const { data: konta } = await supabaseAdmin.from("bruno_konta").select("*").order("utworzono", { ascending: false });
+  const { data: konta } = await supabaseAdmin
+    .from("bruno_konta")
+    .select("email, imie, firma, start_dostepu, dni, limit_sekund, aktywne, utworzono")
+    .order("utworzono", { ascending: false });
   const { data: rozmowy } = await supabaseAdmin.from("bruno_rozmowy").select("email, status, sekundy, ocena, start");
   const { data: zaint } = await supabaseAdmin.from("bruno_zainteresowani").select("*").order("utworzono", { ascending: false });
   return NextResponse.json({ ok: true, konta, rozmowy, zainteresowani: zaint });
@@ -28,6 +34,11 @@ export async function POST(req: Request) {
   const email = normalizujEmail(b.email);
   if (!email) return NextResponse.json({ ok: false, blad: "Zły e-mail." }, { status: 400 });
 
+  const istnieje = await pobierzKonto(email);
+  // Kod: podany ręcznie, wylosowany dla nowego konta, albo zostaje stary.
+  const podany = poprawnyKod(b.kod);
+  const kod = podany ?? (istnieje?.kod_hash ? null : nowyKod());
+
   const konto = {
     email,
     imie: String(b.imie ?? "").slice(0, 80) || null,
@@ -35,6 +46,7 @@ export async function POST(req: Request) {
     dni: Math.min(90, Math.max(1, Number(b.dni) || 7)),
     limit_sekund: Math.min(36_000, Math.max(300, Number(b.limit_sekund) || 6300)),
     aktywne: b.aktywne === undefined ? true : Boolean(b.aktywne),
+    ...(kod ? { kod_hash: zaszyfrujKod(kod), nieudane: 0, blokada_do: null } : {}),
   };
   const { error } = await supabaseAdmin.from("bruno_konta").upsert(konto, { onConflict: "email" });
   if (error) return NextResponse.json({ ok: false, blad: error.message }, { status: 500 });
@@ -56,5 +68,23 @@ export async function POST(req: Request) {
     if (e2) return NextResponse.json({ ok: false, blad: e2.message }, { status: 500 });
     await zapewnijKarty(email, wiersz);
   }
-  return NextResponse.json({ ok: true, email });
+
+  // Mail z dostępem idzie tylko wtedy, gdy kod jest nowy: inaczej nie mamy go
+  // czym wpisać (w bazie leży sam skrót).
+  let mail: "wyslany" | "pominiety" | "blad" = "pominiety";
+  if (kod && b.wyslij_mail !== false && mailDziala()) {
+    try {
+      await wyslij({
+        do: email,
+        temat: "Twój dostęp do Bruno AI",
+        html: htmlDostep({ imie: konto.imie, kod, dni: konto.dni }),
+      });
+      mail = "wyslany";
+    } catch (e) {
+      console.error("[bruno admin] mail", e);
+      mail = "blad";
+    }
+  }
+
+  return NextResponse.json({ ok: true, email, kod, mail });
 }
