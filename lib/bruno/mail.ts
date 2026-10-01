@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { ROZMOWA_SEKUND, ROZMOW_DZIENNIE } from "./db";
 
 // Maile Bruno AI przez Resend z hello@jakubchodakowski.com (jak reszta repo).
 // Przypomnienia mailem, nie SMS: Twilio nie jest darmowy (USER_001 30.09).
@@ -47,28 +48,38 @@ export function htmlDostep(args: { imie: string | null; kod: string; dni: number
     <p style="font-size:15px;margin-top:18px">Adres: <b>${link}</b></p>
     <p style="font-size:15px;margin:10px 0 4px">Kod logowania:</p>
     <p style="font-size:34px;font-weight:700;letter-spacing:0.18em;margin:0 0 4px">${args.kod}</p>
-    <p style="font-size:13px;color:#64748b">Logujesz się tym samym kodem za każdym razem. Możesz go zmienić w panelu, w zakładce „Dostosuj Bruno”.</p>
+    <p style="font-size:13px;color:#64748b">Logujesz się tym samym kodem za każdym razem. Możesz go zmienić w panelu, w zakładce „Ustawienia”.</p>
     <p style="margin:22px 0"><a href="${link}" style="display:inline-block;background:#0e7490;color:#fff;text-decoration:none;padding:12px 20px;border-radius:12px;font-weight:600">Zaloguj się</a></p>
   `);
 }
 
 export function htmlPrzypomnienie(args: { imie: string | null; kart: number; rozmowyDzis: number; dniZostalo: number }) {
   const link = `${bazaUrl()}/bruno/panel`;
-  const zostalo = Math.max(0, 3 - args.rozmowyDzis);
+  const zostalo = Math.max(0, ROZMOW_DZIENNIE - args.rozmowyDzis);
+  const minuty = ROZMOWA_SEKUND / 60;
   return ramka(`
-    <p style="font-size:15px">${args.imie ? `${args.imie}, ` : ""}plan na dziś: <b>${zostalo === 0 ? "zrobione" : `${zostalo} ${zostalo === 1 ? "rozmowa" : "rozmowy"} po 5 minut`}</b>.</p>
+    <p style="font-size:15px">${args.imie ? `${args.imie}, ` : ""}plan na dziś: <b>${zostalo === 0 ? "zrobione" : `${zostalo} ${zostalo === 1 ? "rozmowa" : "rozmowy"} po ${minuty} ${minuty === 1 ? "minutę" : minuty < 5 ? "minuty" : "minut"}`}</b>.</p>
     ${args.kart ? `<p style="font-size:15px">Do powtórki czeka: <b>${args.kart}</b> ${args.kart === 1 ? "temat" : "tematów"}. Bruno zacznie od najsłabszego.</p>` : ""}
     <p style="margin:22px 0"><a href="${link}" style="display:inline-block;background:#0e7490;color:#fff;text-decoration:none;padding:12px 20px;border-radius:12px;font-weight:600">Rozmawiaj z Bruno</a></p>
     <p style="font-size:13px;color:#64748b">Dostęp testowy: ${args.dniZostalo} ${args.dniZostalo === 1 ? "dzień" : "dni"}.</p>
   `);
 }
 
+export function htmlWiadomosc(args: { email: string; imie: string | null; firma: string | null; tekst: string }) {
+  return `
+    <h2>Bruno AI: wiadomość z dymka w panelu</h2>
+    <p><b>Od:</b> ${args.imie ?? ""} ${args.firma ? `(${args.firma})` : ""} &lt;${args.email}&gt;</p>
+    <blockquote style="border-left:3px solid #0e7490;margin:12px 0;padding:6px 12px;white-space:pre-wrap">${args.tekst.replace(/</g, "&lt;")}</blockquote>
+    <p style="margin-top:16px">Kliknij „Odpowiedz": reply-to = tester, odpowiedź trafi prosto do niego.</p>
+  `;
+}
+
 export function htmlZainteresowany(args: { email: string; imie: string | null; firma: string | null; wiadomosc: string; rozmow: number; sredniaOcena: number | null }) {
   return `
-    <h2>Bruno AI: „Jestem zainteresowany"</h2>
+    <h2>Bruno AI: „Chcę pełen dostęp"</h2>
     <p><b>Kto:</b> ${args.imie ?? ""} ${args.firma ? `(${args.firma})` : ""} &lt;${args.email}&gt;</p>
     <p><b>Rozmów w teście:</b> ${args.rozmow}${args.sredniaOcena !== null ? `, średnia ocena ${args.sredniaOcena}/10` : ""}</p>
-    <p><b>Wiadomość:</b><br>${args.wiadomosc.replace(/</g, "&lt;").replace(/\n/g, "<br>") || "(brak)"}</p>
-    <p style="margin-top:16px">Odpisz z tego maila (reply-to = klient) i umów rozmowę.</p>
+    ${args.wiadomosc ? `<p><b>Wiadomość:</b><br>${args.wiadomosc.replace(/</g, "&lt;").replace(/\n/g, "<br>")}</p>` : ""}
+    <p style="margin-top:16px">Obiecane: kontakt do 3 dni roboczych. Odpisz z tego maila (reply-to = klient) i umów rozmowę.</p>
   `;
 }

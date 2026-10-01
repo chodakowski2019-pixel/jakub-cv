@@ -17,7 +17,7 @@ export const POSTACIE: Record<PostacId, { nazwa: string; opis: string; glos: str
   },
   zajety: {
     nazwa: "Bruno zajęty",
-    opis: "Ma 5 minut, ucina, chce konkretu. Nagradza krótkie otwarcie.",
+    opis: "Ma 3 minuty, ucina, chce konkretu. Nagradza krótkie otwarcie.",
     glos: "ash",
     charakter:
       "Masz mało czasu i mówisz to od razu. Ucinasz dygresje: „do rzeczy”. Jeśli handlowiec w 30 sekund nie powie, po co dzwoni i co z tego masz, mówisz, że musisz kończyć. Doceniasz konkret i jasny następny krok.",
@@ -62,7 +62,7 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, karta?: Kart
   }
   if (karta?.typ === "obiekcja") {
     czesci.push(
-      `POWTÓRKA: w tej rozmowie MUSISZ podnieść tę obiekcję w pierwszych 2 minutach, a jeśli handlowiec ją zbije słabo, wrócić do niej raz jeszcze: „${karta.tresc}”.`,
+      `POWTÓRKA: w tej rozmowie MUSISZ podnieść tę obiekcję w pierwszej minucie, a jeśli handlowiec ją zbije słabo, wrócić do niej raz jeszcze: „${karta.tresc}”.`,
     );
   } else if (karta?.typ === "kryterium") {
     const nacisk: Record<string, string> = {
@@ -84,7 +84,7 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, karta?: Kart
     );
   }
   czesci.push(
-    `STYL: mów jak człowiek przez telefon: krótkie zdania, naturalne pauzy, czasem „mhm”, „no dobrze”. Maksymalnie 2-3 zdania na wypowiedź. Nie wygłaszaj monologów. Zaczynasz rozmowę Ty, jednym krótkim zdaniem, jak odbierając telefon: „Halo, słucham?” albo „Tak, Bruno, słucham”. Rozmowa trwa maksymalnie 5 minut: gdy handlowiec się żegna, żegnasz się krótko.`,
+    `STYL: mów jak człowiek przez telefon: krótkie zdania, naturalne pauzy, czasem „mhm”, „no dobrze”. Maksymalnie 2-3 zdania na wypowiedź. Nie wygłaszaj monologów. Zaczynasz rozmowę Ty, jednym krótkim zdaniem, jak odbierając telefon: „Halo, słucham?” albo „Tak, Bruno, słucham”. Rozmowa trwa maksymalnie 3 minuty: gdy handlowiec się żegna, żegnasz się krótko.`,
   );
   return czesci.join("\n\n");
 }

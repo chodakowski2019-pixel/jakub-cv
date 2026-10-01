@@ -5,8 +5,8 @@ export { listaObiekcji };
 
 // Dostęp do tabel bruno_* (Supabase jakubchodakowski-com, założone 30.09).
 
-/** Jedna rozmowa treningowa: 5 minut, twarde odcięcie w przeglądarce i na serwerze. */
-export const ROZMOWA_SEKUND = 300;
+/** Jedna rozmowa treningowa: 3 minuty (USER_001 1.10, 5 min to za dużo), twarde odcięcie w przeglądarce i na serwerze. */
+export const ROZMOWA_SEKUND = 180;
 /** Zapas na łączenie i pożegnanie: powyżej tego serwer i tak liczy tylko tyle. */
 export const ROZMOWA_SEKUND_MAX = ROZMOWA_SEKUND + 30;
 /** Plan dnia: 3 rozmowy (USER_001 30.09). */

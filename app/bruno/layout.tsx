@@ -2,11 +2,12 @@ import type { Metadata, Viewport } from "next";
 import { Poppins, Open_Sans } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import BrunoNav from "@/components/bruno/nav";
+import CzatDymek from "@/components/bruno/czat-dymek";
 import "./bruno.css";
 
-// Panel testowy Bruno AI (USER_001 30.09): logowanie kodem z maila, dostęp
-// 7 dni od pierwszego logowania, 3 rozmowy po 5 minut dziennie, feedback
-// trenera, powtórki FSRS, „Dostosuj Bruno", „Odblokuj pełen dostęp".
+// Panel testowy Bruno AI (USER_001 30.09): logowanie stałym kodem, dostęp
+// 7 dni od pierwszego logowania, 3 rozmowy po 3 minuty dziennie (1.10), feedback
+// trenera, powtórki FSRS, „Dostosuj Bruno", „Ustawienia", „Odblokuj pełen dostęp".
 // Na jakubchodakowski.com do czasu zakupu salesbruno.com.
 
 export const metadata: Metadata = {
@@ -31,7 +32,8 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
       </div>
       <div className="relative z-[1] min-h-screen flex flex-col">
         <BrunoNav zalogowany={Boolean(email)} />
-        <main className="flex-1 px-4 sm:px-6 pb-16 pt-6 sm:pt-10 max-w-3xl w-full mx-auto">{children}</main>
+        <main className="flex-1 px-4 sm:px-6 pb-28 pt-6 sm:pt-10 max-w-3xl w-full mx-auto">{children}</main>
+        {email && <CzatDymek />}
       </div>
     </div>
   );

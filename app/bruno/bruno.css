@@ -157,6 +157,17 @@
   color: var(--b-akcent);
   font-weight: 600;
 }
+/* „Odblokuj pełen dostęp" z kłódką: wyróżniona pastylka (USER_001 1.10). */
+.bruno-nav a.bruno-nav-klodka {
+  border: 1px solid rgba(14, 116, 144, 0.35);
+  color: var(--b-akcent);
+  font-weight: 600;
+}
+.bruno-nav a.bruno-nav-klodka[aria-current="page"] {
+  background: linear-gradient(90deg, var(--b-akcent), var(--b-akcent-2));
+  color: #fff;
+  border-color: transparent;
+}
 
 /* Pulsujące kółko podczas rozmowy: skala zamiast zmiany koloru, żeby nie migało. */
 @keyframes bruno-puls {
@@ -174,8 +185,47 @@
   animation: bruno-puls 1.6s ease-in-out infinite;
 }
 
+/* Kula rozmowy jak w Gabi (USER_001 1.10): rozmyty gradient, oddycha. */
+@keyframes bruno-kula {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.16);
+    opacity: 0.95;
+  }
+}
+.bruno-kula {
+  animation: bruno-kula 3.2s ease-in-out infinite;
+}
+.bruno-kula-mowi {
+  animation-duration: 1.1s;
+}
+.bruno-kula-czeka {
+  animation-duration: 5s;
+  opacity: 0.4;
+}
+
+/* Zegar w ostatnich 15 s: czerwony, lekko pulsuje. */
+@keyframes bruno-zegar-alarm {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(220, 38, 38, 0);
+  }
+}
+.bruno-zegar-alarm {
+  animation: bruno-zegar-alarm 1s ease-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .bruno-puls {
+  .bruno-puls,
+  .bruno-kula,
+  .bruno-zegar-alarm {
     animation: none;
   }
   .bruno-przycisk,

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { ROZMOW_DZIENNIE, kartyDoPowtorki, rozmowyDzis, stanDostepu, type Konto } from "@/lib/bruno/db";
+import { ROZMOWA_SEKUND, ROZMOW_DZIENNIE, kartyDoPowtorki, rozmowyDzis, stanDostepu, type Konto } from "@/lib/bruno/db";
 import { htmlPrzypomnienie, wyslij } from "@/lib/bruno/mail";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +36,7 @@ export async function GET(req: Request) {
     try {
       await wyslij({
         do: konto.email,
-        temat: dzis === 0 ? "Bruno czeka: 3 rozmowy po 5 minut" : `Bruno czeka: zostały ${ROZMOW_DZIENNIE - dzis} rozmowy`,
+        temat: dzis === 0 ? `Bruno czeka: ${ROZMOW_DZIENNIE} rozmowy po ${ROZMOWA_SEKUND / 60} minuty` : `Bruno czeka: zostały ${ROZMOW_DZIENNIE - dzis} rozmowy`,
         html: htmlPrzypomnienie({ imie: konto.imie, kart: karty.length, rozmowyDzis: dzis, dniZostalo: stan.dniZostalo }),
       });
       wyslane.push(konto.email);

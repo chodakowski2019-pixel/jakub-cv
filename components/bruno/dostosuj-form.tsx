@@ -17,7 +17,6 @@ export default function DostosujForm({ start }: { start: Konfig }) {
     udana_rozmowa: start.udana_rozmowa,
     skrypt: start.skrypt,
     postac: start.postac as PostacId,
-    godzina_przypomnienia: start.godzina_przypomnienia,
   });
   const [stan, setStan] = useState<"idle" | "zapis" | "ok" | "blad">("idle");
 
@@ -60,23 +59,13 @@ export default function DostosujForm({ start }: { start: Konfig }) {
         <textarea id="skrypt" rows={6} className="bruno-pole text-[14px]" placeholder="Wklej skrypt, jeśli masz. Trener sprawdzi, czy się go trzymasz tam, gdzie warto." value={f.skrypt} onChange={pole("skrypt")} maxLength={8000} />
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-5">
-        <div>
-          <label className="bruno-etykieta" htmlFor="postac">Domyślna postać Bruno</label>
-          <select id="postac" className="bruno-pole" value={f.postac} onChange={pole("postac")}>
-            {(Object.keys(POSTACIE) as PostacId[]).map((id) => (
-              <option key={id} value={id}>{POSTACIE[id].nazwa}: {POSTACIE[id].opis}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="bruno-etykieta" htmlFor="godzina">Przypomnienie mailem o godzinie <span className="font-normal text-slate-400">(w teście: rano ok. 8:00)</span></label>
-          <select id="godzina" className="bruno-pole" value={f.godzina_przypomnienia} onChange={(e) => setF((x) => ({ ...x, godzina_przypomnienia: Number(e.target.value) }))}>
-            {Array.from({ length: 18 }, (_, i) => i + 5).map((h) => (
-              <option key={h} value={h}>{h}:00</option>
-            ))}
-          </select>
-        </div>
+      <div>
+        <label className="bruno-etykieta" htmlFor="postac">Domyślna postać Bruno</label>
+        <select id="postac" className="bruno-pole" value={f.postac} onChange={pole("postac")}>
+          {(Object.keys(POSTACIE) as PostacId[]).map((id) => (
+            <option key={id} value={id}>{POSTACIE[id].nazwa}: {POSTACIE[id].opis}</option>
+          ))}
+        </select>
       </div>
 
       <div className="flex items-center gap-4">

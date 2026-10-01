@@ -11,8 +11,10 @@ import FeedbackWidok from "./feedback";
 // Przebieg: serwer sprawdza limit i wydaje klucz tymczasowy (/rozmowa/start),
 // przeglądarka łączy się z OpenAI bezpośrednio (audio nie przechodzi przez
 // Vercela), zbiera transkrypcję z kanału danych, nagrywa oba głosy do webm,
-// po 5 minutach albo po „Zakończ" wgrywa nagranie do Supabase i wysyła
+// po 3 minutach albo po „Zakończ" wgrywa nagranie do Supabase i wysyła
 // transkrypcję do /rozmowa/koniec, skąd wraca feedback trenera.
+// Transkrypcja NIE jest pokazywana w trakcie rozmowy (USER_001 1.10): zbiera
+// się po cichu dla trenera, handlowiec słucha i mówi jak przez telefon.
 
 type Stan = "wybor" | "laczenie" | "trwa" | "konczenie" | "feedback" | "blad";
 
@@ -22,6 +24,7 @@ type Props = {
   rozmowyDzis: number;
   rozmowDziennie: number;
   minutZostalo: number;
+  sekundRozmowy: number;
 };
 
 function czas(s: number) {
@@ -30,13 +33,12 @@ function czas(s: number) {
   return `${m}:${String(r).padStart(2, "0")}`;
 }
 
-export default function Rozmowa({ postacDomyslna, karta, rozmowyDzis, rozmowDziennie, minutZostalo }: Props) {
+export default function Rozmowa({ postacDomyslna, karta, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy }: Props) {
   const [postac, setPostac] = useState<PostacId>(postacDomyslna);
   const [stan, setStan] = useState<Stan>("wybor");
   const [blad, setBlad] = useState<string | null>(null);
   const [sekundy, setSekundy] = useState(0);
-  const [limit, setLimit] = useState(300);
-  const [ostatnie, setOstatnie] = useState<Wypowiedz[]>([]);
+  const [limit, setLimit] = useState(sekundRozmowy);
   const [mowi, setMowi] = useState<"bruno" | "ty" | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [rozmowaId, setRozmowaId] = useState<string | null>(null);
@@ -60,7 +62,6 @@ export default function Rozmowa({ postacDomyslna, karta, rozmowyDzis, rozmowDzie
 
   const dodaj = (w: Wypowiedz) => {
     transkrypcja.current.push(w);
-    setOstatnie((o) => [...o.slice(-3), w]);
   };
 
   const posprzataj = () => {
@@ -181,7 +182,6 @@ export default function Rozmowa({ postacDomyslna, karta, rozmowyDzis, rozmowDzie
     setBlad(null);
     konczenie.current = false;
     transkrypcja.current = [];
-    setOstatnie([]);
     setStan("laczenie");
     setEtap("Proszę o mikrofon...");
     try {
@@ -297,7 +297,8 @@ export default function Rozmowa({ postacDomyslna, karta, rozmowyDzis, rozmowDzie
   };
 
   const zostalo = Math.max(0, limit - sekundy);
-  const ostrzezenie = stan === "trwa" && zostalo <= 30;
+  // Ostatnie 15 sekund: zegar w rogu świeci na czerwono (USER_001 1.10).
+  const ostrzezenie = stan === "trwa" && zostalo <= 15;
 
   if (stan === "feedback" && feedback) {
     return (
@@ -316,7 +317,7 @@ export default function Rozmowa({ postacDomyslna, karta, rozmowyDzis, rozmowDzie
         <>
           <div className="text-center">
             <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Rozmowa z <span className="bruno-gradient-tekst">Bruno</span></h1>
-            <p className="text-slate-600 mt-2">5 minut. Bruno odbiera telefon, Ty sprzedajesz. Mów jak do prawdziwego klienta.</p>
+            <p className="text-slate-600 mt-2">{sekundRozmowy / 60} minuty. Bruno odbiera telefon, Ty sprzedajesz. Mów jak do prawdziwego klienta.</p>
           </div>
 
           {karta && (
@@ -360,29 +361,35 @@ export default function Rozmowa({ postacDomyslna, karta, rozmowyDzis, rozmowDzie
       )}
 
       {(stan === "laczenie" || stan === "trwa" || stan === "konczenie") && (
-        <div className="bruno-szklo rounded-3xl p-8 sm:p-10 text-center flex flex-col items-center gap-5">
-          <div className="relative w-36 h-36 flex items-center justify-center">
-            <span className={`absolute inset-0 rounded-full bg-gradient-to-br from-cyan-600/40 to-teal-600/40 ${mowi === "bruno" ? "bruno-puls" : ""}`} aria-hidden />
-            <span className={`absolute inset-3 rounded-full bg-gradient-to-br from-cyan-700 to-teal-700 transition-transform duration-150 ${mowi === "ty" ? "scale-95" : ""}`} aria-hidden />
-            <span className="relative text-white bruno-h2 text-3xl tabular-nums">{stan === "trwa" ? czas(zostalo) : "…"}</span>
-          </div>
-          <div>
-            <div className="bruno-h2 text-xl">{POSTACIE[postac].nazwa}</div>
-            <div className={`text-sm mt-1 ${ostrzezenie ? "text-amber-700 font-semibold" : "text-slate-600"}`}>
-              {stan === "trwa" ? (ostrzezenie ? "Zostało pół minuty. Domykaj." : mowi === "bruno" ? "Bruno mówi" : mowi === "ty" ? "Słucha Cię" : "Rozmowa trwa") : etap}
+        <div className="bruno-szklo relative rounded-3xl p-8 sm:p-10 text-center flex flex-col items-center gap-6 min-h-[28rem] justify-center">
+          {/* Zegar w prawym górnym rogu, nie w kuli (USER_001 1.10). */}
+          {stan === "trwa" && (
+            <div
+              className={`absolute top-4 right-4 sm:top-5 sm:right-5 rounded-full px-3 py-1.5 text-sm font-semibold tabular-nums transition-colors ${
+                ostrzezenie ? "bg-red-600 text-white bruno-zegar-alarm" : "bg-white/70 text-slate-700 border border-slate-200/80"
+              }`}
+              aria-live={ostrzezenie ? "assertive" : "off"}
+            >
+              {czas(zostalo)}
             </div>
+          )}
+
+          {/* Pulsująca kula jak w Gabi: rozmyty gradient, oddycha cały czas, szybciej gdy Bruno mówi, kurczy się gdy mówisz. */}
+          <div className="relative size-44 sm:size-56" aria-hidden>
+            <div
+              className={`bruno-kula absolute inset-0 rounded-full blur-2xl transition-transform duration-200 ${
+                stan !== "trwa" ? "bruno-kula-czeka" : mowi === "bruno" ? "bruno-kula-mowi" : mowi === "ty" ? "scale-90" : ""
+              }`}
+              style={{ background: "radial-gradient(circle at 45% 40%, #67e8f9 0%, #0e7490 48%, rgba(14,116,144,0) 74%)" }}
+            />
           </div>
 
-          {ostatnie.length > 0 && (
-            <ul className="w-full max-w-md text-left text-sm flex flex-col gap-1.5" aria-live="polite">
-              {ostatnie.map((w, i) => (
-                <li key={i} className={`${w.rola === "klient" ? "text-slate-800" : "text-cyan-900"}`}>
-                  <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 mr-2">{w.rola === "klient" ? "Bruno" : "Ty"}</span>
-                  {w.tekst}
-                </li>
-              ))}
-            </ul>
-          )}
+          <div>
+            <div className="bruno-h2 text-xl">{POSTACIE[postac].nazwa}</div>
+            <div className="text-sm mt-1 text-slate-600">
+              {stan === "trwa" ? (mowi === "bruno" ? "Bruno mówi" : mowi === "ty" ? "Słucha Cię" : "Rozmowa trwa") : etap}
+            </div>
+          </div>
 
           {stan === "trwa" && (
             <button type="button" onClick={() => zakoncz("recznie")} className="bruno-przycisk-2">Zakończ rozmowę</button>

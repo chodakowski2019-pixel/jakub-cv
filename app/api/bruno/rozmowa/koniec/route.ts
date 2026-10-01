@@ -65,6 +65,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, id, feedback, ocena: feedback.ocena });
   } catch (e) {
     console.error("[bruno koniec] trener", e);
-    return NextResponse.json({ ok: true, id, feedback: null, blad: "Rozmowa zapisana, trener nie odpowiedział. Spróbuj odświeżyć historię." });
+    // Powód błędu zapisujemy przy rozmowie (1.10: na produkcji feedback=null
+    // bez śladu, a logów Vercela nie da się ściągnąć z CLI). Krótki, bez kluczy.
+    const err = e as { status?: number; message?: string };
+    const trener_blad = `${err?.status ?? ""} ${String(err?.message ?? e).slice(0, 300)}`.trim();
+    await supabaseAdmin.from("bruno_rozmowy").update({ metryki: { ...metryki, trener_blad } }).eq("id", id);
+    return NextResponse.json({ ok: true, id, feedback: null, blad: "Rozmowa zapisana, trener nie odpowiedział. Spróbuj odświeżyć historię.", trener_blad });
   }
 }

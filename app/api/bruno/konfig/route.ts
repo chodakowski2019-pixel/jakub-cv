@@ -22,15 +22,20 @@ export async function POST(req: Request) {
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
   try {
     const b = await req.json();
+    // Zapis częściowy: „Dostosuj Bruno" i „Ustawienia" (godzina przypomnienia)
+    // to osobne formularze, więc pole nieobecne w żądaniu zostaje bez zmian.
+    const stare = await pobierzKonfig(email);
+    const tekst = (k: keyof typeof LIMITY) => (b[k] === undefined ? stare[k] : String(b[k] ?? "").slice(0, LIMITY[k]));
     const wiersz = {
       email,
-      produkt: String(b.produkt ?? "").slice(0, LIMITY.produkt),
-      klient: String(b.klient ?? "").slice(0, LIMITY.klient),
-      obiekcje: String(b.obiekcje ?? "").slice(0, LIMITY.obiekcje),
-      udana_rozmowa: String(b.udana_rozmowa ?? "").slice(0, LIMITY.udana_rozmowa),
-      skrypt: String(b.skrypt ?? "").slice(0, LIMITY.skrypt),
-      postac: postacLubDomyslna(b.postac),
-      godzina_przypomnienia: Math.min(22, Math.max(5, Number(b.godzina_przypomnienia) || 8)),
+      produkt: tekst("produkt"),
+      klient: tekst("klient"),
+      obiekcje: tekst("obiekcje"),
+      udana_rozmowa: tekst("udana_rozmowa"),
+      skrypt: tekst("skrypt"),
+      postac: b.postac === undefined ? postacLubDomyslna(stare.postac) : postacLubDomyslna(b.postac),
+      godzina_przypomnienia:
+        b.godzina_przypomnienia === undefined ? stare.godzina_przypomnienia : Math.min(22, Math.max(5, Number(b.godzina_przypomnienia) || 8)),
       zaktualizowano: new Date().toISOString(),
     };
     const { error } = await supabaseAdmin.from("bruno_konfig").upsert(wiersz, { onConflict: "email" });

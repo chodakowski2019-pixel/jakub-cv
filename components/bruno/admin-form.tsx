@@ -10,7 +10,7 @@ export default function AdminForm({ klucz }: { klucz: string }) {
   const [konta, setKonta] = useState<Konto[]>([]);
   const [rozmowy, setRozmowy] = useState<RozmowaSkrot[]>([]);
   const [zaint, setZaint] = useState<{ email: string; wiadomosc: string; utworzono: string }[]>([]);
-  const [f, setF] = useState({ email: "", imie: "", firma: "", kod: "", dni: 7, limit_min: 105, produkt: "", klient: "", obiekcje: "", udana_rozmowa: "", skrypt: "", postac: "twardy" as PostacId });
+  const [f, setF] = useState({ email: "", imie: "", firma: "", kod: "", dni: 7, limit_min: 63, produkt: "", klient: "", obiekcje: "", udana_rozmowa: "", skrypt: "", postac: "twardy" as PostacId });
   const [stan, setStan] = useState<string>("");
 
   const odswiez = async () => {

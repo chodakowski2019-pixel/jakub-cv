@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     imie: String(b.imie ?? "").slice(0, 80) || null,
     firma: String(b.firma ?? "").slice(0, 120) || null,
     dni: Math.min(90, Math.max(1, Number(b.dni) || 7)),
-    limit_sekund: Math.min(36_000, Math.max(300, Number(b.limit_sekund) || 6300)),
+    limit_sekund: Math.min(36_000, Math.max(180, Number(b.limit_sekund) || 3780)),
     aktywne: b.aktywne === undefined ? true : Boolean(b.aktywne),
     ...(kod ? { kod_hash: zaszyfrujKod(kod), nieudane: 0, blokada_do: null } : {}),
   };

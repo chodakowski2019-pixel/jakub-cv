@@ -4,9 +4,9 @@ import OdblokujForm from "@/components/bruno/odblokuj-form";
 
 export const dynamic = "force-dynamic";
 
-// „Odblokuj pełen dostęp" (USER_001 30.09): kafelki co się odblokowuje,
-// krótki formularz „jestem zainteresowany", USER_001 dostaje mail i dzwoni.
-// Bez ceny na stronie: wycena po rozmowie.
+// „Odblokuj pełen dostęp" (USER_001 30.09, uproszczone 1.10): kafelki co się
+// odblokowuje + sam przycisk „Chcę pełen dostęp". USER_001 dostaje mail
+// i dzwoni. Bez ceny i bez pola tekstowego na stronie.
 
 const KAFELKI = [
   { tytul: "Bez limitu dni", opis: "Test kończy się po 7 dniach. Pełen dostęp trwa, dopóki trenujesz." },
@@ -14,7 +14,7 @@ const KAFELKI = [
   { tytul: "Panel szefa sprzedaży", opis: "Widzisz, kto trenuje, kto rośnie, kto od 2 tygodni nie odbył rozmowy." },
   { tytul: "Bruno pod Wasz produkt", opis: "Konfigurujemy razem: klient, obiekcje, skrypt, definicja udanej rozmowy. Nie robisz tego sam." },
   { tytul: "Więcej odsłon Bruno", opis: "Nowe postacie i scenariusze pod Wasze etapy: pierwszy kontakt, negocjacja ceny, domykanie." },
-  { tytul: "Raport tygodniowy", opis: "Co poniedziałek: średnia zespołu, najsłabsze kryterium, 3 rozmowy do odsłuchania." },
+  { tytul: "Raport miesięczny", opis: "Średnia zespołu, najsłabsze kryterium, statystyki handlowców." },
 ];
 
 export default async function BrunoOdblokujPage() {
@@ -24,7 +24,7 @@ export default async function BrunoOdblokujPage() {
     <div className="flex flex-col gap-8">
       <div className="text-center">
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Odblokuj <span className="bruno-gradient-tekst">pełen dostęp</span></h1>
-        <p className="text-slate-600 mt-2 max-w-xl mx-auto">Test to jedno konto i 7 dni. Pełen dostęp to Bruno dla całego zespołu, ustawiony pod Wasz produkt.</p>
+        <p className="text-slate-600 mt-2 max-w-xl mx-auto">Pełen dostęp to Bruno dla całego zespołu, skonfigurowany pod Wasz produkt.</p>
       </div>
       <ul className="grid sm:grid-cols-2 gap-4">
         {KAFELKI.map((k, i) => (

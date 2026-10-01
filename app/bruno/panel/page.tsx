@@ -42,19 +42,24 @@ export default async function BrunoPanelPage() {
     );
   }
 
-  const [zuzyte, dzis, karty, konfig, rozmowy] = await Promise.all([
+  const [zuzyte, dzis, karty, konfig, wszystkie] = await Promise.all([
     zuzyteSekundy(email),
     rozmowyDzis(email),
     kartyDoPowtorki(email, 6),
     pobierzKonfig(email),
-    pobierzRozmowy(email, 5),
+    pobierzRozmowy(email, 200),
   ]);
+  const rozmowy = wszystkie.slice(0, 5);
+  const ocenione = wszystkie.filter((r) => r.status === "zakonczona" && r.ocena);
+  const srednia = ocenione.length ? Math.round((ocenione.reduce((s, r) => s + (r.ocena ?? 0), 0) / ocenione.length) * 10) / 10 : null;
   const minutZostalo = Math.max(0, Math.floor((konto.limit_sekund - zuzyte) / 60));
+  const minutLimit = Math.round(konto.limit_sekund / 60);
   const postac = postacLubDomyslna(konfig.postac);
   const skonfigurowany = Boolean(konfig.produkt.trim() || konfig.klient.trim());
   const pierwszaKarta = karty[0] ?? null;
-  const ostatnia = rozmowy.find((r) => r.status === "zakonczona" && r.ocena);
-  const planZrobiony = dzis >= ROZMOW_DZIENNIE;
+  const ostatnia = ocenione[0];
+  const zostaloDzis = Math.max(0, ROZMOW_DZIENNIE - dzis);
+  const planZrobiony = zostaloDzis === 0;
   const linkRozmowy = pierwszaKarta ? `/bruno/rozmowa?karta=${pierwszaKarta.id}` : "/bruno/rozmowa";
 
   return (
@@ -62,11 +67,18 @@ export default async function BrunoPanelPage() {
       <div>
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
           {konto.imie ? `Cześć, ${konto.imie}.` : "Cześć."}{" "}
-          {planZrobiony ? <span className="bruno-gradient-tekst">Plan na dziś zrobiony.</span> : <span className="bruno-gradient-tekst">Dziś: {ROZMOW_DZIENNIE - dzis} {ROZMOW_DZIENNIE - dzis === 1 ? "rozmowa" : "rozmowy"}.</span>}
+          {planZrobiony ? <span className="bruno-gradient-tekst">Plan na dziś zrobiony.</span> : <span className="bruno-gradient-tekst">Dziś: {zostaloDzis} {zostaloDzis === 1 ? "rozmowa" : "rozmowy"}.</span>}
         </h1>
-        <p className="text-slate-600 mt-2">
-          {ROZMOW_DZIENNIE} rozmowy po {ROZMOWA_SEKUND / 60} minut dziennie. Po każdej dostajesz ocenę, jeden cytat na kryterium i jedną rzecz do poprawy.
-        </p>
+      </div>
+
+      {/* Statystyki testu (USER_001 1.10): dostęp, próby dziś, co zostało. */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <Kafelek liczba={`${stan.dniZostalo}`} opis={stan.dniZostalo === 1 ? "dzień dostępu" : "dni dostępu"} uwaga={stan.koniec ? `do ${stan.koniec.toLocaleDateString("pl-PL")}` : `z ${konto.dni}, liczone od pierwszego logowania`} />
+        <Kafelek liczba={`${dzis}/${ROZMOW_DZIENNIE}`} opis="rozmów dziś" uwaga={planZrobiony ? "plan dnia zrobiony" : `zostało ${zostaloDzis}, każda ${ROZMOWA_SEKUND / 60} min`} />
+        <Kafelek liczba={`${minutZostalo}`} opis="minut zostało" uwaga={`z ${minutLimit} w teście`} />
+        <Kafelek liczba={`${ocenione.length}`} opis={ocenione.length === 1 ? "rozmowa oceniona" : "rozmów ocenionych"} uwaga="w całym teście" />
+        <Kafelek liczba={srednia !== null ? `${srednia}/10` : "–"} opis="średnia ocena" />
+        <Kafelek liczba={ostatnia?.ocena ? `${ostatnia.ocena}/10` : "–"} opis="ostatnia ocena" uwaga={ostatnia ? new Date(ostatnia.start).toLocaleDateString("pl-PL") : undefined} />
       </div>
 
       {!skonfigurowany && (
@@ -97,13 +109,6 @@ export default async function BrunoPanelPage() {
         <div className="mt-4 text-xs text-slate-400">
           Inna postać? <Link href="/bruno/rozmowa" className="underline">Wybierz przed rozmową</Link>
         </div>
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Kafelek liczba={`${dzis}/${ROZMOW_DZIENNIE}`} opis="rozmów dziś" />
-        <Kafelek liczba={`${minutZostalo}`} opis="minut zostało" uwaga={`z ${Math.round(konto.limit_sekund / 60)} w teście`} />
-        <Kafelek liczba={`${stan.dniZostalo}`} opis={stan.dniZostalo === 1 ? "dzień dostępu" : "dni dostępu"} uwaga={stan.koniec ? `do ${stan.koniec.toLocaleDateString("pl-PL")}` : "od pierwszego logowania"} />
-        <Kafelek liczba={ostatnia?.ocena ? `${ostatnia.ocena}/10` : "–"} opis="ostatnia ocena" />
       </div>
 
       <section className="bruno-szklo rounded-3xl p-6">
