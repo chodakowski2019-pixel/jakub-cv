@@ -72,9 +72,9 @@ export default function CzatDymek() {
         className={`bruno-dymek ${otwarty ? "bruno-dymek-otwarty" : ""}`}
       >
         {otwarty ? (
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>
         ) : (
-          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden>
             <path d="M12 3C7 3 3 6.4 3 10.6c0 2.3 1.2 4.3 3.1 5.7L5.4 20l4-1.9c.8.2 1.7.3 2.6.3 5 0 9-3.4 9-7.6S17 3 12 3z" />
             <circle cx="8.5" cy="10.8" r="1.1" fill="#0e7490" />
             <circle cx="12" cy="10.8" r="1.1" fill="#0e7490" />

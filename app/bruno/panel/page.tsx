@@ -15,18 +15,9 @@ import {
 } from "@/lib/bruno/db";
 import { NAZWY } from "@/lib/bruno/kryteria";
 import { POSTACIE, postacLubDomyslna } from "@/lib/bruno/postacie";
+import { Licznik, Ocena, Pierscien } from "@/components/bruno/statystyki";
 
 export const dynamic = "force-dynamic";
-
-function Kafelek({ liczba, opis, uwaga }: { liczba: string; opis: string; uwaga?: string }) {
-  return (
-    <div className="bruno-szklo rounded-2xl p-4 sm:p-5">
-      <div className="bruno-h2 text-[1.9rem] bruno-gradient-tekst leading-none">{liczba}</div>
-      <div className="text-sm text-slate-700 mt-1.5">{opis}</div>
-      {uwaga && <div className="text-[11px] text-slate-400 mt-1">{uwaga}</div>}
-    </div>
-  );
-}
 
 export default async function BrunoPanelPage() {
   const email = await zalogowanyEmail();
@@ -64,24 +55,16 @@ export default async function BrunoPanelPage() {
   const planZrobiony = zostaloDzis === 0;
   const linkRozmowy = pierwszaKarta ? `/bruno/rozmowa?karta=${pierwszaKarta.id}` : "/bruno/rozmowa";
 
+  const moznaRozmawiac = !planZrobiony && minutZostalo >= 1;
+  const dniUplynelo = Math.max(0, konto.dni - stan.dniZostalo);
+
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
-          {konto.imie ? `Cześć, ${konto.imie}.` : "Cześć."}{" "}
-          {planZrobiony ? <span className="bruno-gradient-tekst">Plan na dziś zrobiony.</span> : <span className="bruno-gradient-tekst">Dziś: {zostaloDzis} {zostaloDzis === 1 ? "rozmowa" : "rozmowy"}.</span>}
-        </h1>
-      </div>
-
-      {/* Statystyki testu (USER_001 1.10): dostęp, próby dziś, co zostało. */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <Kafelek liczba={`${stan.dniZostalo}`} opis={stan.dniZostalo === 1 ? "dzień dostępu" : "dni dostępu"} uwaga={stan.koniec ? `do ${stan.koniec.toLocaleDateString("pl-PL")}` : `z ${konto.dni}, liczone od pierwszego logowania`} />
-        <Kafelek liczba={`${dzis}/${ROZMOW_DZIENNIE}`} opis="rozmów dziś" uwaga={planZrobiony ? "plan dnia zrobiony" : `zostało ${zostaloDzis}, każda ${ROZMOWA_SEKUND / 60} min`} />
-        <Kafelek liczba={`${minutZostalo}`} opis="minut zostało" uwaga={`z ${minutLimit} w teście`} />
-        <Kafelek liczba={`${ocenione.length}`} opis={ocenione.length === 1 ? "rozmowa oceniona" : "rozmów ocenionych"} uwaga="w całym teście" />
-        <Kafelek liczba={srednia !== null ? `${srednia}/10` : "–"} opis="średnia ocena" />
-        <Kafelek liczba={ostatnia?.ocena ? `${ostatnia.ocena}/10` : "–"} opis="ostatnia ocena" uwaga={ostatnia ? new Date(ostatnia.start).toLocaleDateString("pl-PL") : undefined} />
-      </div>
+      {/* Układ v3 (USER_001 1.10): nagłówek na środku, lewa połowa = wykresy, prawa = pulsująca kula jako następna rozmowa. */}
+      <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem] text-center">
+        {konto.imie ? `Cześć, ${konto.imie}.` : "Cześć."}{" "}
+        {planZrobiony ? <span className="bruno-gradient-tekst">Plan na dziś zrobiony.</span> : <span className="bruno-gradient-tekst">Dziś: {zostaloDzis} {zostaloDzis === 1 ? "rozmowa" : "rozmowy"}.</span>}
+      </h1>
 
       {!skonfigurowany && (
         <div className="bruno-szklo rounded-2xl p-5 border-amber-200/80 bg-amber-50/70">
@@ -91,28 +74,45 @@ export default async function BrunoPanelPage() {
         </div>
       )}
 
-      <div className="bruno-szklo rounded-3xl p-6 sm:p-8 text-center">
-        <div className="text-xs font-semibold text-slate-500 tracking-wide uppercase mb-2">Następna rozmowa</div>
-        <div className="bruno-h2 text-xl sm:text-2xl mb-1">{POSTACIE[postac].nazwa}</div>
-        <p className="text-sm text-slate-600 mb-5">
-          {pierwszaKarta
-            ? pierwszaKarta.typ === "obiekcja"
-              ? <>Powtórka obiekcji: <b className="text-slate-900">„{pierwszaKarta.tresc}”</b></>
-              : <>Powtórka: <b className="text-slate-900">{NAZWY[pierwszaKarta.tresc as keyof typeof NAZWY] ?? pierwszaKarta.tresc}</b></>
-            : POSTACIE[postac].opis}
-        </p>
-        {planZrobiony ? (
-          <p className="text-slate-500 text-sm">Wróć jutro. Przypomnimy mailem rano.</p>
-        ) : minutZostalo < 1 ? (
-          <p className="text-slate-500 text-sm">Limit minut testu wyczerpany.</p>
-        ) : (
-          <Link href={linkRozmowy} className="bruno-przycisk text-base px-8 py-4">Rozmawiaj z Bruno</Link>
-        )}
-        <div className="mt-4 text-xs text-slate-400">
-          Inna postać? <Link href="/bruno/rozmowa" className="underline">Wybierz przed rozmową</Link>
+      <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-3 content-start">
+          <Pierscien wartosc={dniUplynelo} max={konto.dni} liczba={`${stan.dniZostalo}`} opis={stan.dniZostalo === 1 ? "dzień dostępu" : "dni dostępu"} uwaga={stan.koniec ? `do ${stan.koniec.toLocaleDateString("pl-PL")}` : `z ${konto.dni}, od pierwszego logowania`} />
+          <Pierscien wartosc={dzis} max={ROZMOW_DZIENNIE} liczba={`${dzis}/${ROZMOW_DZIENNIE}`} opis="rozmów dziś" uwaga={planZrobiony ? "plan dnia zrobiony" : `zostało ${zostaloDzis}, każda ${ROZMOWA_SEKUND / 60} min`} />
+          <Pierscien wartosc={minutLimit - minutZostalo} max={minutLimit} liczba={`${minutZostalo}`} opis="minut zostało" uwaga={`z ${minutLimit} w teście`} />
+          <Licznik liczba={`${ocenione.length}`} opis={ocenione.length === 1 ? "rozmowa oceniona" : "rozmów ocenionych"} uwaga="w całym teście" />
+          <Ocena wartosc={srednia} opis="średnia ocena" />
+          <Ocena wartosc={ostatnia?.ocena ?? null} opis="ostatnia ocena" uwaga={ostatnia ? new Date(ostatnia.start).toLocaleDateString("pl-PL") : undefined} />
+        </div>
+
+        <div className="bruno-szklo rounded-3xl p-6 sm:p-8 text-center flex flex-col items-center justify-center gap-3">
+          <div className="text-xs font-semibold text-slate-500 tracking-wide uppercase">Następna rozmowa</div>
+          {moznaRozmawiac ? (
+            <Link href={linkRozmowy} aria-label={`Rozmawiaj z Bruno: ${POSTACIE[postac].nazwa}`} className="relative size-44 sm:size-52 grid place-items-center group">
+              <span className="bruno-kula absolute inset-0 rounded-full blur-2xl transition-transform duration-200 group-hover:scale-105" style={{ background: "radial-gradient(circle at 45% 40%, #67e8f9 0%, #0e7490 48%, rgba(14,116,144,0) 74%)" }} aria-hidden />
+              <span className="relative text-white bruno-h2 text-base sm:text-lg drop-shadow-[0_2px_8px_rgba(14,116,144,0.6)]">Rozmawiaj</span>
+            </Link>
+          ) : (
+            <div className="relative size-44 sm:size-52 grid place-items-center">
+              <span className="bruno-kula bruno-kula-czeka absolute inset-0 rounded-full blur-2xl" style={{ background: "radial-gradient(circle at 45% 40%, #a5f3fc 0%, #64748b 48%, rgba(100,116,139,0) 74%)" }} aria-hidden />
+              <span className="relative text-sm text-slate-600 max-w-[9rem]">{planZrobiony ? "Wróć jutro. Przypomnimy mailem rano." : "Limit minut testu wyczerpany."}</span>
+            </div>
+          )}
+          <div className="bruno-h2 text-xl sm:text-2xl">{POSTACIE[postac].nazwa}</div>
+          <p className="text-sm text-slate-600">
+            {pierwszaKarta
+              ? pierwszaKarta.typ === "obiekcja"
+                ? <>Powtórka obiekcji: <b className="text-slate-900">„{pierwszaKarta.tresc}”</b></>
+                : <>Powtórka: <b className="text-slate-900">{NAZWY[pierwszaKarta.tresc as keyof typeof NAZWY] ?? pierwszaKarta.tresc}</b></>
+              : POSTACIE[postac].opis}
+          </p>
+          {moznaRozmawiac && <Link href={linkRozmowy} className="bruno-przycisk text-base px-8 py-3.5 mt-1">Rozmawiaj z Bruno</Link>}
+          <div className="text-xs text-slate-400">
+            Inna postać? <Link href="/bruno/rozmowa" className="underline">Wybierz przed rozmową</Link>
+          </div>
         </div>
       </div>
 
+      <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-start">
       <section className="bruno-szklo rounded-3xl p-6">
         <div className="flex items-baseline justify-between mb-3">
           <h2 className="bruno-h2 text-lg">Do powtórki</h2>
@@ -137,16 +137,18 @@ export default async function BrunoPanelPage() {
         )}
       </section>
 
-      {rozmowy.length > 0 && (
-        <section className="bruno-szklo rounded-3xl p-6">
-          <div className="flex items-baseline justify-between mb-3">
-            <h2 className="bruno-h2 text-lg">Ostatnie rozmowy</h2>
-            <Link href="/bruno/historia" className="text-sm text-cyan-800 hover:underline">Cała historia</Link>
-          </div>
+      <section className="bruno-szklo rounded-3xl p-6">
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="bruno-h2 text-lg">Ostatnie rozmowy</h2>
+          <Link href="/bruno/historia" className="text-sm text-cyan-800 hover:underline">Cała historia</Link>
+        </div>
+        {rozmowy.length === 0 ? (
+          <p className="text-sm text-slate-600">Jeszcze nic. Pierwsza rozmowa pojawi się tutaj z oceną.</p>
+        ) : (
           <ul className="divide-y divide-slate-200/70">
             {rozmowy.map((r) => (
               <li key={r.id} className="py-2.5 flex items-center gap-3 text-sm">
-                <span className="text-slate-500 w-28 shrink-0">{new Date(r.start).toLocaleString("pl-PL", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
+                <span className="text-slate-500 w-24 shrink-0">{new Date(r.start).toLocaleString("pl-PL", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
                 <span className="flex-1 text-slate-800 truncate">{POSTACIE[postacLubDomyslna(r.postac)].nazwa}{r.sekundy ? `, ${Math.round(r.sekundy / 60)} min` : ""}</span>
                 {r.status === "zakonczona" && r.ocena ? (
                   <Link href={`/bruno/historia/${r.id}`} className="font-semibold bruno-gradient-tekst">{r.ocena}/10</Link>
@@ -156,8 +158,9 @@ export default async function BrunoPanelPage() {
               </li>
             ))}
           </ul>
-        </section>
-      )}
+        )}
+      </section>
+      </div>
     </div>
   );
 }

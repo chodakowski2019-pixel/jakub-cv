@@ -34,7 +34,7 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
         {email && <BrunoPasek />}
         <div className="flex-1 min-w-0 flex flex-col">
           <BrunoNav zalogowany={Boolean(email)} />
-          <main className="flex-1 px-4 sm:px-6 pb-28 pt-6 sm:pt-10 max-w-3xl w-full mx-auto">{children}</main>
+          <main className="flex-1 px-4 sm:px-6 pb-28 pt-6 sm:pt-10 max-w-5xl w-full mx-auto overflow-x-hidden">{children}</main>
         </div>
         {email && <CzatDymek />}
       </div>

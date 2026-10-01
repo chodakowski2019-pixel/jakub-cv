@@ -224,11 +224,36 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
+/* Przejście ekranu: wjazd z prawej (USER_001 1.10). */
+@keyframes bruno-ekran {
+  from {
+    opacity: 0;
+    transform: translateX(48px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.bruno-ekran {
+  animation: bruno-ekran 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Pierścień postępu: wypełnienie rysuje się po wejściu. */
+@keyframes bruno-pierscien {
+  from {
+    stroke-dasharray: 0 1000;
+  }
+}
+.bruno-pierscien-wypelnienie {
+  animation: bruno-pierscien 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* Dymek czatu w prawym dolnym rogu: ogonek + delikatny pierścień. */
 .bruno-dymek {
   position: relative;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 999px;
   color: #fff;
   background: linear-gradient(135deg, #22d3ee 0%, var(--b-akcent) 55%, var(--b-akcent-2) 100%);
@@ -239,21 +264,14 @@
   place-items: center;
   transition: transform 150ms;
 }
-.bruno-dymek::before {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: inherit;
-  border: 2px solid rgba(14, 116, 144, 0.35);
-  animation: bruno-dymek-pierscien 2.6s ease-out infinite;
-}
+/* Bez pulsu (USER_001 1.10): sam ogonek. */
 .bruno-dymek::after {
   content: "";
   position: absolute;
-  right: 6px;
-  bottom: -4px;
-  width: 14px;
-  height: 14px;
+  right: 5px;
+  bottom: -3px;
+  width: 11px;
+  height: 11px;
   background: var(--b-akcent-2);
   border-radius: 2px 2px 10px 2px;
   transform: rotate(45deg);
@@ -264,20 +282,8 @@
 .bruno-dymek:active {
   transform: scale(0.95);
 }
-.bruno-dymek-otwarty::after,
-.bruno-dymek-otwarty::before {
+.bruno-dymek-otwarty::after {
   display: none;
-}
-@keyframes bruno-dymek-pierscien {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  70%,
-  100% {
-    transform: scale(1.45);
-    opacity: 0;
-  }
 }
 
 /* Pulsujące kółko podczas rozmowy: skala zamiast zmiany koloru, żeby nie migało. */
@@ -337,7 +343,8 @@
   .bruno-puls,
   .bruno-kula,
   .bruno-zegar-alarm,
-  .bruno-dymek::before {
+  .bruno-ekran,
+  .bruno-pierscien-wypelnienie {
     animation: none;
   }
   .bruno-przycisk,
