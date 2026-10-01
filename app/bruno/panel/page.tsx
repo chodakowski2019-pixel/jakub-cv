@@ -15,7 +15,7 @@ import {
 } from "@/lib/bruno/db";
 import { NAZWY } from "@/lib/bruno/kryteria";
 import { POSTACIE, postacLubDomyslna } from "@/lib/bruno/postacie";
-import { Licznik, Ocena, Pierscien } from "@/components/bruno/statystyki";
+import { Pierscien, Slupki, rozmowyNaDni } from "@/components/bruno/statystyki";
 
 export const dynamic = "force-dynamic";
 
@@ -43,20 +43,17 @@ export default async function BrunoPanelPage() {
     pobierzRozmowy(email, 200),
   ]);
   const rozmowy = wszystkie.slice(0, 5);
-  const ocenione = wszystkie.filter((r) => r.status === "zakonczona" && r.ocena);
-  const srednia = ocenione.length ? Math.round((ocenione.reduce((s, r) => s + (r.ocena ?? 0), 0) / ocenione.length) * 10) / 10 : null;
   const minutZostalo = Math.max(0, Math.floor((konto.limit_sekund - zuzyte) / 60));
-  const minutLimit = Math.round(konto.limit_sekund / 60);
   const postac = postacLubDomyslna(konfig.postac);
   const skonfigurowany = Boolean(konfig.produkt.trim() || konfig.klient.trim());
   const pierwszaKarta = karty[0] ?? null;
-  const ostatnia = ocenione[0];
   const zostaloDzis = Math.max(0, ROZMOW_DZIENNIE - dzis);
   const planZrobiony = zostaloDzis === 0;
   const linkRozmowy = pierwszaKarta ? `/bruno/rozmowa?karta=${pierwszaKarta.id}` : "/bruno/rozmowa";
 
   const moznaRozmawiac = !planZrobiony && minutZostalo >= 1;
   const dniUplynelo = Math.max(0, konto.dni - stan.dniZostalo);
+  const slupki = rozmowyNaDni(wszystkie, 7);
 
   return (
     <div className="flex flex-col gap-6">
@@ -75,17 +72,15 @@ export default async function BrunoPanelPage() {
       )}
 
       <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-stretch">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-3 content-start">
-          <Pierscien wartosc={dniUplynelo} max={konto.dni} liczba={`${stan.dniZostalo}`} opis={stan.dniZostalo === 1 ? "dzień dostępu" : "dni dostępu"} uwaga={stan.koniec ? `do ${stan.koniec.toLocaleDateString("pl-PL")}` : `z ${konto.dni}, od pierwszego logowania`} />
-          <Pierscien wartosc={dzis} max={ROZMOW_DZIENNIE} liczba={`${dzis}/${ROZMOW_DZIENNIE}`} opis="rozmów dziś" uwaga={planZrobiony ? "plan dnia zrobiony" : `zostało ${zostaloDzis}, każda ${ROZMOWA_SEKUND / 60} min`} />
-          <Pierscien wartosc={minutLimit - minutZostalo} max={minutLimit} liczba={`${minutZostalo}`} opis="minut zostało" uwaga={`z ${minutLimit} w teście`} />
-          <Licznik liczba={`${ocenione.length}`} opis={ocenione.length === 1 ? "rozmowa oceniona" : "rozmów ocenionych"} uwaga="w całym teście" />
-          <Ocena wartosc={srednia} opis="średnia ocena" />
-          <Ocena wartosc={ostatnia?.ocena ?? null} opis="ostatnia ocena" uwaga={ostatnia ? new Date(ostatnia.start).toLocaleDateString("pl-PL") : undefined} />
+        <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-3">
+            <Pierscien wartosc={dniUplynelo} max={konto.dni} liczba={`${stan.dniZostalo}`} opis={stan.dniZostalo === 1 ? "dzień dostępu" : "dni dostępu"} uwaga={stan.koniec ? `do ${stan.koniec.toLocaleDateString("pl-PL")}` : `z ${konto.dni}, od pierwszego logowania`} />
+            <Pierscien wartosc={dzis} max={ROZMOW_DZIENNIE} liczba={`${dzis}/${ROZMOW_DZIENNIE}`} opis="rozmów dziś" uwaga={planZrobiony ? "plan dnia zrobiony" : `zostało ${zostaloDzis}, każda ${ROZMOWA_SEKUND / 60} min`} />
+          </div>
+          <Slupki dni={slupki} cel={ROZMOW_DZIENNIE} tytul="Rozmowy w ostatnich 7 dniach" />
         </div>
 
         <div className="bruno-szklo rounded-3xl p-6 sm:p-8 text-center flex flex-col items-center justify-center gap-3">
-          <div className="text-xs font-semibold text-slate-500 tracking-wide uppercase">Następna rozmowa</div>
           {moznaRozmawiac ? (
             <Link href={linkRozmowy} aria-label={`Rozmawiaj z Bruno: ${POSTACIE[postac].nazwa}`} className="relative size-44 sm:size-52 grid place-items-center group">
               <span className="bruno-kula absolute inset-0 rounded-full blur-2xl transition-transform duration-200 group-hover:scale-105" style={{ background: "radial-gradient(circle at 45% 40%, #67e8f9 0%, #0e7490 48%, rgba(14,116,144,0) 74%)" }} aria-hidden />

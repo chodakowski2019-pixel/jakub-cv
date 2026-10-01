@@ -1,6 +1,8 @@
-// Statystyki panelu jako wykresy (USER_001 1.10): pierścienie postępu dla
-// „ile zostało z ilu" i kafelki z paskiem /10 dla ocen. Jeden kolor marki
-// (sekwencyjny), tekst w kolorach tekstu, nie serii.
+import type { Rozmowa } from "@/lib/bruno/db";
+
+// Statystyki jako wykresy (USER_001 1.10): pierścienie postępu dla „ile
+// zostało z ilu", słupki na 7 dni, kafelki z paskiem /10 dla ocen. Jeden
+// kolor marki (sekwencyjny), tekst w kolorach tekstu, nie serii.
 
 export function Pierscien({ wartosc, max, liczba, opis, uwaga }: { wartosc: number; max: number; liczba: string; opis: string; uwaga?: string }) {
   const r = 30;
@@ -55,6 +57,88 @@ export function Ocena({ wartosc, opis, uwaga }: { wartosc: number | null; opis: 
         <div className="text-sm font-semibold text-slate-800 leading-tight">{opis}</div>
         {uwaga && <div className="text-[11px] text-slate-400 mt-0.5">{uwaga}</div>}
       </div>
+    </div>
+  );
+}
+
+export type Slupek = { etykieta: string; wartosc: number; podpis: string; dzis?: boolean };
+
+const DNI_TYG = ["nd", "pn", "wt", "śr", "cz", "pt", "sb"];
+
+/** Rozmowy (bez przerwanych) na każdy z ostatnich N dni, liczone po polskim czasie. */
+export function rozmowyNaDni(rozmowy: Pick<Rozmowa, "start" | "status">[], n: number): Slupek[] {
+  const kluczPL = (d: Date) => d.toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
+  const licznik = new Map<string, number>();
+  for (const r of rozmowy) {
+    if (r.status === "przerwana") continue;
+    const k = kluczPL(new Date(r.start));
+    licznik.set(k, (licznik.get(k) ?? 0) + 1);
+  }
+  const dzis = kluczPL(new Date());
+  const wynik: Slupek[] = [];
+  for (let i = n - 1; i >= 0; i--) {
+    const k = kluczPL(new Date(Date.now() - i * 86_400_000));
+    const [, m, dd] = k.split("-");
+    wynik.push({ etykieta: DNI_TYG[new Date(`${k}T12:00:00`).getDay()], podpis: `${dd}.${m}`, wartosc: licznik.get(k) ?? 0, dzis: k === dzis });
+  }
+  return wynik;
+}
+
+/**
+ * Słupki na 7 dni (USER_001 1.10): jedna seria (rozmowy dziennie), cienkie
+ * słupki z zaokrągloną górą od linii bazowej, cienka linia celu, etykieta
+ * tylko nad słupkiem z wartością. Tooltip = <title> na każdym słupku.
+ */
+export function Slupki({ dni, cel, tytul }: { dni: Slupek[]; cel: number; tytul: string }) {
+  const W = 320;
+  const H = 150;
+  const gora = 18;
+  const dol = 28;
+  const max = Math.max(cel, ...dni.map((d) => d.wartosc), 1);
+  const szer = W / dni.length;
+  const slupekSzer = Math.min(26, szer * 0.5);
+  const y = (v: number) => gora + (H - gora - dol) * (1 - v / max);
+  return (
+    <div className="bruno-szklo rounded-2xl p-4 sm:p-5">
+      <div className="flex items-baseline justify-between mb-2">
+        <h2 className="bruno-h2 text-base">{tytul}</h2>
+        <span className="text-[11px] text-slate-400">cel: {cel} dziennie</span>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-label={`${tytul}: ${dni.map((d) => `${d.etykieta} ${d.wartosc}`).join(", ")}`}>
+        <line x1="0" x2={W} y1={y(cel)} y2={y(cel)} stroke="rgba(14,116,144,0.35)" strokeWidth="1" strokeDasharray="3 4" />
+        <line x1="0" x2={W} y1={y(0)} y2={y(0)} stroke="rgba(15,23,42,0.12)" strokeWidth="1" />
+        {dni.map((d, i) => {
+          const x = i * szer + (szer - slupekSzer) / 2;
+          const h = Math.max(0, y(0) - y(d.wartosc));
+          return (
+            <g key={d.etykieta}>
+              <title>{`${d.podpis}: ${d.wartosc} ${d.wartosc === 1 ? "rozmowa" : d.wartosc >= 2 && d.wartosc <= 4 ? "rozmowy" : "rozmów"}`}</title>
+              <rect x={x} y={y(0) - 2} width={slupekSzer} height="2" fill="rgba(14,116,144,0.15)" />
+              {h > 0 && (
+                <path
+                  d={`M${x},${y(0)} v${-(h - 4)} a4,4 0 0 1 4,-4 h${slupekSzer - 8} a4,4 0 0 1 4,4 v${h - 4} z`}
+                  fill={d.wartosc >= cel ? "url(#bruno-slupek)" : "rgba(14,116,144,0.55)"}
+                  className="bruno-slupek"
+                />
+              )}
+              {d.wartosc > 0 && (
+                <text x={x + slupekSzer / 2} y={y(d.wartosc) - 6} textAnchor="middle" className="fill-slate-700" style={{ fontSize: 11, fontWeight: 600 }}>
+                  {d.wartosc}
+                </text>
+              )}
+              <text x={x + slupekSzer / 2} y={H - 8} textAnchor="middle" className={d.dzis ? "fill-cyan-800" : "fill-slate-400"} style={{ fontSize: 11, fontWeight: d.dzis ? 700 : 500 }}>
+                {d.etykieta}
+              </text>
+            </g>
+          );
+        })}
+        <defs>
+          <linearGradient id="bruno-slupek" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stopColor="#0e7490" />
+            <stop offset="1" stopColor="#14b8a6" />
+          </linearGradient>
+        </defs>
+      </svg>
     </div>
   );
 }

@@ -157,7 +157,17 @@
   color: var(--b-akcent);
   font-weight: 600;
 }
-/* Pasek boczny (USER_001 1.10): zakładki pionowo z ikonami. */
+/* Pasek boczny (USER_001 1.10): przyklejony do lewej na całą wysokość ekranu.
+   Osobna reguła, bo .bruno-szklo ustawia position: relative i wygrywa z Tailwindem. */
+.bruno-pasek-boczny {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  height: 100dvh;
+  z-index: 20;
+}
+/* Zakładki pionowo z ikonami. */
 .bruno-pasek a {
   display: flex;
   align-items: center;
@@ -247,6 +257,16 @@
 }
 .bruno-pierscien-wypelnienie {
   animation: bruno-pierscien 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes bruno-slupek {
+  from {
+    transform: scaleY(0);
+  }
+}
+.bruno-slupek {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: bruno-slupek 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Dymek czatu w prawym dolnym rogu: ogonek + delikatny pierścień. */
@@ -344,6 +364,7 @@
   .bruno-kula,
   .bruno-zegar-alarm,
   .bruno-ekran,
+  .bruno-slupek,
   .bruno-pierscien-wypelnienie {
     animation: none;
   }

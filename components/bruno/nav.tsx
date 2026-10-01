@@ -11,6 +11,7 @@ import { usePathname, useRouter } from "next/navigation";
 const LINKI = [
   { href: "/bruno/panel", nazwa: "Panel", ikona: "panel" },
   { href: "/bruno/historia", nazwa: "Historia", ikona: "historia" },
+  { href: "/bruno/statystyki", nazwa: "Statystyki", ikona: "statystyki" },
   { href: "/bruno/dostosuj", nazwa: "Dostosuj Bruno", ikona: "dostosuj" },
   { href: "/bruno/ustawienia", nazwa: "Ustawienia", ikona: "ustawienia" },
 ] as const;
@@ -22,6 +23,8 @@ function Ikona({ nazwa }: { nazwa: (typeof LINKI)[number]["ikona"] | "klodka" | 
       return <svg {...wspolne}><rect x="3" y="3" width="8" height="8" rx="2" /><rect x="13" y="3" width="8" height="5" rx="2" /><rect x="13" y="11" width="8" height="10" rx="2" /><rect x="3" y="14" width="8" height="7" rx="2" /></svg>;
     case "historia":
       return <svg {...wspolne}><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>;
+    case "statystyki":
+      return <svg {...wspolne}><path d="M4 20h16" /><rect x="6" y="11" width="3.5" height="9" rx="1" /><rect x="12" y="6" width="3.5" height="14" rx="1" /><rect x="18" y="14" width="3.5" height="6" rx="1" transform="translate(-3 0)" /></svg>;
     case "dostosuj":
       return <svg {...wspolne}><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2.2" /><circle cx="10" cy="17" r="2.2" /></svg>;
     case "ustawienia":
@@ -45,7 +48,7 @@ function Logo({ zalogowany }: { zalogowany: boolean }) {
 export function BrunoPasek() {
   const sciezka = usePathname();
   return (
-    <aside className="hidden sm:flex flex-col w-52 shrink-0 sticky top-0 h-screen bruno-szklo rounded-none border-y-0 border-l-0 px-3 py-4 gap-6">
+    <aside className="bruno-pasek-boczny hidden sm:flex flex-col w-52 bruno-szklo rounded-none border-y-0 border-l-0 px-3 py-4 gap-6">
       <div className="px-2">
         <Logo zalogowany />
       </div>
