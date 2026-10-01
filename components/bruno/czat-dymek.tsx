@@ -30,49 +30,55 @@ export default function CzatDymek() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 flex flex-col items-end gap-3">
+    <div className="fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-20 flex flex-col items-end gap-3">
       {otwarty && (
-        <form onSubmit={wyslij} className="bruno-szklo rounded-3xl p-4 sm:p-5 w-[calc(100vw-2rem)] max-w-sm flex flex-col gap-3 shadow-xl">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="bruno-h2 text-base">Napisz do nas</div>
-              <p className="text-xs text-slate-500 mt-0.5">Odpowiemy mailem na adres Twojego konta.</p>
+        <div className="bruno-szklo rounded-3xl overflow-hidden w-[calc(100vw-2.5rem)] max-w-sm shadow-[0_24px_60px_rgba(14,116,144,0.22)]">
+          <div className="px-5 py-4 bg-gradient-to-r from-cyan-700 to-teal-700 text-white flex items-center gap-3">
+            <span className="size-9 rounded-full bg-white/15 grid place-items-center bruno-h2 text-sm">B</span>
+            <div className="min-w-0 flex-1">
+              <div className="bruno-h2 text-[15px] leading-tight">Napisz do nas</div>
+              <div className="text-[12px] text-white/80">Odpowiemy mailem na adres Twojego konta.</div>
             </div>
-            <button type="button" onClick={() => setOtwarty(false)} aria-label="Zamknij" className="text-slate-400 hover:text-slate-700 text-xl leading-none px-1">×</button>
+            <button type="button" onClick={() => setOtwarty(false)} aria-label="Zamknij" className="text-white/80 hover:text-white text-2xl leading-none px-1">×</button>
           </div>
-          {stan === "ok" ? (
-            <p className="text-sm text-teal-800 py-2">Wiadomość wysłana. Odpowiedź przyjdzie mailem.</p>
-          ) : (
-            <>
-              <textarea
-                className="bruno-pole text-[14px]"
-                rows={4}
-                placeholder="Pytanie, problem, pomysł..."
-                value={tekst}
-                onChange={(e) => setTekst(e.target.value)}
-                maxLength={3000}
-                autoFocus
-              />
-              {stan === "blad" && <p className="text-xs text-red-700">Nie udało się wysłać. Napisz na hello@jakubchodakowski.com</p>}
-              <button type="submit" disabled={stan === "wysylanie" || tekst.trim().length < 2} className="bruno-przycisk w-full py-2.5 text-sm">
-                {stan === "wysylanie" ? "Wysyłam..." : "Wyślij"}
-              </button>
-            </>
-          )}
-        </form>
+          <form onSubmit={wyslij} className="p-4 sm:p-5 flex flex-col gap-3">
+            {stan === "ok" ? (
+              <p className="text-sm text-teal-800 py-2">Wiadomość wysłana. Odpowiedź przyjdzie mailem.</p>
+            ) : (
+              <>
+                <textarea
+                  className="bruno-pole text-[14px]"
+                  rows={4}
+                  placeholder="Pytanie, problem, pomysł..."
+                  value={tekst}
+                  onChange={(e) => setTekst(e.target.value)}
+                  maxLength={3000}
+                  autoFocus
+                />
+                {stan === "blad" && <p className="text-xs text-red-700">Nie udało się wysłać. Napisz na hello@jakubchodakowski.com</p>}
+                <button type="submit" disabled={stan === "wysylanie" || tekst.trim().length < 2} className="bruno-przycisk w-full py-2.5 text-sm">
+                  {stan === "wysylanie" ? "Wysyłam..." : "Wyślij"}
+                </button>
+              </>
+            )}
+          </form>
+        </div>
       )}
       <button
         type="button"
         onClick={() => { setOtwarty((o) => !o); if (stan === "ok") setStan("idle"); }}
         aria-label={otwarty ? "Zamknij czat" : "Napisz do nas"}
         aria-expanded={otwarty}
-        className="size-14 rounded-full bg-gradient-to-br from-cyan-700 to-teal-700 text-white shadow-[0_10px_30px_rgba(14,116,144,0.35)] flex items-center justify-center transition-transform duration-150 hover:scale-105 active:scale-95"
+        className={`bruno-dymek ${otwarty ? "bruno-dymek-otwarty" : ""}`}
       >
         {otwarty ? (
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>
         ) : (
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12z" />
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden>
+            <path d="M12 3C7 3 3 6.4 3 10.6c0 2.3 1.2 4.3 3.1 5.7L5.4 20l4-1.9c.8.2 1.7.3 2.6.3 5 0 9-3.4 9-7.6S17 3 12 3z" />
+            <circle cx="8.5" cy="10.8" r="1.1" fill="#0e7490" />
+            <circle cx="12" cy="10.8" r="1.1" fill="#0e7490" />
+            <circle cx="15.5" cy="10.8" r="1.1" fill="#0e7490" />
           </svg>
         )}
       </button>

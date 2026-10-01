@@ -157,16 +157,127 @@
   color: var(--b-akcent);
   font-weight: 600;
 }
-/* „Odblokuj pełen dostęp" z kłódką: wyróżniona pastylka (USER_001 1.10). */
-.bruno-nav a.bruno-nav-klodka {
-  border: 1px solid rgba(14, 116, 144, 0.35);
+/* Pasek boczny (USER_001 1.10): zakładki pionowo z ikonami. */
+.bruno-pasek a {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.8rem;
+  font-size: 14px;
+  color: #475569;
+  transition:
+    background 120ms,
+    color 120ms;
+}
+.bruno-pasek a:hover {
+  background: rgba(14, 116, 144, 0.08);
+  color: var(--b-tekst);
+}
+.bruno-pasek a[aria-current="page"] {
+  background: rgba(14, 116, 144, 0.12);
   color: var(--b-akcent);
   font-weight: 600;
 }
-.bruno-nav a.bruno-nav-klodka[aria-current="page"] {
+
+/* „Odblokuj pełen dostęp" na górze po środku: pastylka z kłódką. */
+.bruno-odblokuj {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--b-akcent);
+  border: 1px solid rgba(14, 116, 144, 0.35);
+  background: rgba(255, 255, 255, 0.6);
+  transition:
+    background 120ms,
+    color 120ms,
+    box-shadow 120ms;
+}
+.bruno-odblokuj:hover {
+  background: rgba(14, 116, 144, 0.1);
+  box-shadow: 0 6px 18px rgba(14, 116, 144, 0.18);
+}
+.bruno-odblokuj-aktywny,
+.bruno-odblokuj-aktywny:hover {
   background: linear-gradient(90deg, var(--b-akcent), var(--b-akcent-2));
   color: #fff;
   border-color: transparent;
+}
+
+/* „Wyloguj" z prawej: cicha pastylka, ikona wyjścia. */
+.bruno-wyloguj {
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  font-size: 13px;
+  color: #64748b;
+  border: 1px solid rgba(100, 116, 139, 0.25);
+  background: rgba(255, 255, 255, 0.5);
+  transition:
+    background 120ms,
+    color 120ms,
+    border-color 120ms;
+}
+.bruno-wyloguj:hover {
+  color: var(--b-tekst);
+  border-color: rgba(100, 116, 139, 0.5);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Dymek czatu w prawym dolnym rogu: ogonek + delikatny pierścień. */
+.bruno-dymek {
+  position: relative;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, #22d3ee 0%, var(--b-akcent) 55%, var(--b-akcent-2) 100%);
+  box-shadow:
+    0 12px 30px rgba(14, 116, 144, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  display: grid;
+  place-items: center;
+  transition: transform 150ms;
+}
+.bruno-dymek::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid rgba(14, 116, 144, 0.35);
+  animation: bruno-dymek-pierscien 2.6s ease-out infinite;
+}
+.bruno-dymek::after {
+  content: "";
+  position: absolute;
+  right: 6px;
+  bottom: -4px;
+  width: 14px;
+  height: 14px;
+  background: var(--b-akcent-2);
+  border-radius: 2px 2px 10px 2px;
+  transform: rotate(45deg);
+}
+.bruno-dymek:hover {
+  transform: translateY(-2px) scale(1.04);
+}
+.bruno-dymek:active {
+  transform: scale(0.95);
+}
+.bruno-dymek-otwarty::after,
+.bruno-dymek-otwarty::before {
+  display: none;
+}
+@keyframes bruno-dymek-pierscien {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  70%,
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
 }
 
 /* Pulsujące kółko podczas rozmowy: skala zamiast zmiany koloru, żeby nie migało. */
@@ -225,7 +336,8 @@
 @media (prefers-reduced-motion: reduce) {
   .bruno-puls,
   .bruno-kula,
-  .bruno-zegar-alarm {
+  .bruno-zegar-alarm,
+  .bruno-dymek::before {
     animation: none;
   }
   .bruno-przycisk,

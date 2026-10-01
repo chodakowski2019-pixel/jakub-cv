@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins, Open_Sans } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import BrunoNav from "@/components/bruno/nav";
+import BrunoNav, { BrunoPasek } from "@/components/bruno/nav";
 import CzatDymek from "@/components/bruno/czat-dymek";
 import "./bruno.css";
 
@@ -30,9 +30,12 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
         <i style={{ top: "33%", right: -140, width: 560, height: 560, opacity: 0.6, background: "radial-gradient(closest-side, #99f6e4, transparent)" }} />
         <i style={{ bottom: -160, left: "25%", width: 640, height: 520, opacity: 0.5, background: "radial-gradient(closest-side, #bae6fd, transparent)" }} />
       </div>
-      <div className="relative z-[1] min-h-screen flex flex-col">
-        <BrunoNav zalogowany={Boolean(email)} />
-        <main className="flex-1 px-4 sm:px-6 pb-28 pt-6 sm:pt-10 max-w-3xl w-full mx-auto">{children}</main>
+      <div className="relative z-[1] min-h-screen flex">
+        {email && <BrunoPasek />}
+        <div className="flex-1 min-w-0 flex flex-col">
+          <BrunoNav zalogowany={Boolean(email)} />
+          <main className="flex-1 px-4 sm:px-6 pb-28 pt-6 sm:pt-10 max-w-3xl w-full mx-auto">{children}</main>
+        </div>
         {email && <CzatDymek />}
       </div>
     </div>
