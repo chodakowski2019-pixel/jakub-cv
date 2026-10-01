@@ -10,6 +10,7 @@ import {
   pobierzRozmowy,
   rozmowyDzis,
   stanDostepu,
+  zamknijPorzucone,
   zuzyteSekundy,
 } from "@/lib/bruno/db";
 import { NAZWY } from "@/lib/bruno/kryteria";
@@ -42,6 +43,7 @@ export default async function BrunoPanelPage() {
     );
   }
 
+  await zamknijPorzucone(email);
   const [zuzyte, dzis, karty, konfig, wszystkie] = await Promise.all([
     zuzyteSekundy(email),
     rozmowyDzis(email),

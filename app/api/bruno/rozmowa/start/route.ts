@@ -8,6 +8,7 @@ import {
   pobierzKonto,
   rozmowyDzis,
   stanDostepu,
+  zamknijPorzucone,
   zuzyteSekundy,
   type Karta,
 } from "@/lib/bruno/db";
@@ -33,6 +34,7 @@ export async function POST(req: Request) {
   const stan = stanDostepu(konto);
   if (!konto || !stan.aktywny) return NextResponse.json({ ok: false, blad: "Dostęp testowy wygasł." }, { status: 403 });
 
+  await zamknijPorzucone(email);
   const zuzyte = await zuzyteSekundy(email);
   const zostalo = konto.limit_sekund - zuzyte;
   if (zostalo < 60) {

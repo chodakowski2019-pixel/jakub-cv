@@ -41,7 +41,10 @@ export default function Rozmowa({ postacDomyslna, karta, rozmowyDzis, rozmowDzie
   const [limit, setLimit] = useState(sekundRozmowy);
   const [mowi, setMowi] = useState<"bruno" | "ty" | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
-  const [rozmowaId, setRozmowaId] = useState<string | null>(null);
+  // Id rozmowy trzymane w ref, nie tylko w stanie: timer odcięcia na limicie
+  // powstaje w zamknięciu z pierwszego renderu i widział tam null, przez co
+  // koniec rozmowy po 3 minutach leciał bez id („Brak id rozmowy", 1.10).
+  const rozmowaIdRef = useRef<string | null>(null);
   const [etap, setEtap] = useState<string>("");
 
   const pc = useRef<RTCPeerConnection | null>(null);
@@ -132,6 +135,7 @@ export default function Rozmowa({ postacDomyslna, karta, rozmowyDzis, rozmowDzie
     const nagranie = await zatrzymajNagrywanie();
     posprzataj();
 
+    const rozmowaId = rozmowaIdRef.current;
     let sciezka: string | null = null;
     if (nagranie && rozmowaId && nagranie.size > 1000) {
       try {
@@ -181,6 +185,7 @@ export default function Rozmowa({ postacDomyslna, karta, rozmowyDzis, rozmowDzie
   const zacznij = async () => {
     setBlad(null);
     konczenie.current = false;
+    rozmowaIdRef.current = null;
     transkrypcja.current = [];
     setStan("laczenie");
     setEtap("Proszę o mikrofon...");
@@ -211,7 +216,7 @@ export default function Rozmowa({ postacDomyslna, karta, rozmowyDzis, rozmowDzie
       setStan("blad");
       return;
     }
-    setRozmowaId(dane.rozmowa_id);
+    rozmowaIdRef.current = dane.rozmowa_id;
     setLimit(dane.sekundy);
 
     setEtap("Łączę...");

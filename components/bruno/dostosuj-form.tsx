@@ -59,14 +59,30 @@ export default function DostosujForm({ start }: { start: Konfig }) {
         <textarea id="skrypt" rows={6} className="bruno-pole text-[14px]" placeholder="Wklej skrypt, jeśli masz. Trener sprawdzi, czy się go trzymasz tam, gdzie warto." value={f.skrypt} onChange={pole("skrypt")} maxLength={8000} />
       </div>
 
-      <div>
-        <label className="bruno-etykieta" htmlFor="postac">Domyślna postać Bruno</label>
-        <select id="postac" className="bruno-pole" value={f.postac} onChange={pole("postac")}>
-          {(Object.keys(POSTACIE) as PostacId[]).map((id) => (
-            <option key={id} value={id}>{POSTACIE[id].nazwa}: {POSTACIE[id].opis}</option>
-          ))}
-        </select>
-      </div>
+      <fieldset>
+        <legend className="bruno-etykieta mb-2">Domyślna postać Bruno <span className="font-normal text-slate-400">(przed każdą rozmową możesz wybrać inną)</span></legend>
+        <div className="grid sm:grid-cols-2 gap-3">
+          {(Object.keys(POSTACIE) as PostacId[]).map((id) => {
+            const p = POSTACIE[id];
+            const wybrany = f.postac === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                aria-pressed={wybrany}
+                onClick={() => setF((x) => ({ ...x, postac: id }))}
+                className={`bruno-szklo rounded-2xl p-4 text-left transition-[transform,border-color,box-shadow] duration-100 active:scale-[0.98] ${wybrany ? "border-cyan-700/60 ring-2 ring-cyan-700/20" : "hover:border-slate-300"}`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div className="bruno-h2 text-base">{p.nazwa}</div>
+                  <span className={`size-4 rounded-full border-2 shrink-0 ${wybrany ? "border-cyan-700 bg-cyan-700" : "border-slate-300"}`} aria-hidden />
+                </div>
+                <div className="text-sm text-slate-600 mt-1">{p.opis}</div>
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
 
       <div className="flex items-center gap-4">
         <button type="submit" disabled={stan === "zapis"} className="bruno-przycisk">{stan === "zapis" ? "Zapisuję..." : "Zapisz"}</button>

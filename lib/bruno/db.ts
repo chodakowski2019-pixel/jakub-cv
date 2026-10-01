@@ -142,6 +142,21 @@ export async function zuzyteSekundy(email: string): Promise<number> {
   return Math.round(suma);
 }
 
+/**
+ * Rozmowy „trwa" starsze niż 2× limit = porzucone (zamknięta karta, błąd przy
+ * kończeniu). Oznaczamy „przerwana", żeby nie liczyły się do planu dnia
+ * i nie wisiały w historii jako „w toku" (1.10).
+ */
+export async function zamknijPorzucone(email: string): Promise<void> {
+  const granica = new Date(Date.now() - ROZMOWA_SEKUND_MAX * 2 * 1000).toISOString();
+  await supabaseAdmin
+    .from("bruno_rozmowy")
+    .update({ status: "przerwana", koniec: new Date().toISOString() })
+    .eq("email", email)
+    .eq("status", "trwa")
+    .lt("start", granica);
+}
+
 export async function rozmowyDzis(email: string): Promise<number> {
   const { count } = await supabaseAdmin
     .from("bruno_rozmowy")
