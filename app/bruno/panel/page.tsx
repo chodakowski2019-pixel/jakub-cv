@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import {
   ROZMOWA_SEKUND,
-  ROZMOW_DZIENNIE,
   kartyDoPowtorki,
+  limitDzienny,
   pobierzKonfig,
   pobierzKonto,
   pobierzRozmowy,
@@ -46,7 +46,8 @@ export default async function BrunoPanelPage() {
   const postac = postacLubDomyslna(konfig.postac);
   const skonfigurowany = Boolean(konfig.produkt.trim() || konfig.klient.trim());
   const pierwszaKarta = karty[0] ?? null;
-  const zostaloDzis = Math.max(0, ROZMOW_DZIENNIE - dzis);
+  const dziennie = limitDzienny(konto);
+  const zostaloDzis = Math.max(0, dziennie - dzis);
   const planZrobiony = zostaloDzis === 0;
   const linkRozmowy = pierwszaKarta ? `/bruno/rozmowa?karta=${pierwszaKarta.id}` : "/bruno/rozmowa";
 
@@ -75,9 +76,9 @@ export default async function BrunoPanelPage() {
         <div className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-4 min-h-[30rem]">
           <div className="grid grid-cols-2 gap-3">
             <Pierscien goly wartosc={dniUplynelo} max={konto.dni} liczba={`${stan.dniZostalo}`} opis={stan.dniZostalo === 1 ? "dzień dostępu" : "dni dostępu"} uwaga={stan.koniec ? `do ${stan.koniec.toLocaleDateString("pl-PL")}` : `z ${konto.dni}, od pierwszego logowania`} />
-            <Pierscien goly wartosc={dzis} max={ROZMOW_DZIENNIE} liczba={`${dzis}/${ROZMOW_DZIENNIE}`} opis="rozmów dziś" uwaga={planZrobiony ? "plan dnia zrobiony" : `zostało ${zostaloDzis}, każda ${ROZMOWA_SEKUND / 60} min`} />
+            <Pierscien goly wartosc={dzis} max={dziennie} liczba={`${dzis}/${dziennie}`} opis="rozmów dziś" uwaga={planZrobiony ? "plan dnia zrobiony" : `zostało ${zostaloDzis}, każda ${ROZMOWA_SEKUND / 60} min`} />
           </div>
-          <Slupki goly wysoki dni={slupki} cel={ROZMOW_DZIENNIE} tytul="Rozmowy w ostatnich 7 dniach" />
+          <Slupki goly wysoki dni={slupki} cel={dziennie} tytul="Rozmowy w ostatnich 7 dniach" />
         </div>
 
         <div className="bruno-szklo rounded-3xl p-6 sm:p-8 text-center flex flex-col items-center justify-center gap-3 min-h-[30rem]">

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { ROZMOW_DZIENNIE, pobierzKonto, pobierzRozmowy, stanDostepu, zuzyteSekundy, type Kryterium } from "@/lib/bruno/db";
+import { limitDzienny, pobierzKonto, pobierzRozmowy, stanDostepu, zuzyteSekundy, type Kryterium } from "@/lib/bruno/db";
 import { NAZWY } from "@/lib/bruno/kryteria";
 import { Licznik, Ocena, Pierscien, Slupki, rozmowyNaDni } from "@/components/bruno/statystyki";
 
@@ -46,7 +46,7 @@ export default async function BrunoStatystykiPage() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-start">
-        <Slupki dni={rozmowyNaDni(wszystkie, dniTestu)} cel={ROZMOW_DZIENNIE} tytul={`Rozmowy w ostatnich ${dniTestu} dniach`} />
+        <Slupki dni={rozmowyNaDni(wszystkie, dniTestu)} cel={limitDzienny(konto)} tytul={`Rozmowy w ostatnich ${dniTestu} dniach`} />
 
         <section className="bruno-szklo rounded-2xl p-4 sm:p-5">
           <div className="flex items-baseline justify-between mb-3">

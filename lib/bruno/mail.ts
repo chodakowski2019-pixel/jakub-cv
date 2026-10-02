@@ -53,9 +53,9 @@ export function htmlDostep(args: { imie: string | null; kod: string; dni: number
   `);
 }
 
-export function htmlPrzypomnienie(args: { imie: string | null; kart: number; rozmowyDzis: number; dniZostalo: number }) {
+export function htmlPrzypomnienie(args: { imie: string | null; kart: number; rozmowyDzis: number; dniZostalo: number; dziennie?: number }) {
   const link = `${bazaUrl()}/bruno/panel`;
-  const zostalo = Math.max(0, ROZMOW_DZIENNIE - args.rozmowyDzis);
+  const zostalo = Math.max(0, (args.dziennie ?? ROZMOW_DZIENNIE) - args.rozmowyDzis);
   const minuty = ROZMOWA_SEKUND / 60;
   return ramka(`
     <p style="font-size:15px">${args.imie ? `${args.imie}, ` : ""}plan na dziś: <b>${zostalo === 0 ? "zrobione" : `${zostalo} ${zostalo === 1 ? "rozmowa" : "rozmowy"} po ${minuty} ${minuty === 1 ? "minutę" : minuty < 5 ? "minuty" : "minut"}`}</b>.</p>

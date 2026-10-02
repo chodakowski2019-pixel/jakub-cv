@@ -9,8 +9,12 @@ export { listaObiekcji };
 export const ROZMOWA_SEKUND = 180;
 /** Zapas na łączenie i pożegnanie: powyżej tego serwer i tak liczy tylko tyle. */
 export const ROZMOWA_SEKUND_MAX = ROZMOWA_SEKUND + 30;
-/** Plan dnia: 3 rozmowy (USER_001 30.09). */
+/** Plan dnia: 3 rozmowy (USER_001 30.09). Per konto nadpisuje to `bruno_konta.rozmow_dziennie`. */
 export const ROZMOW_DZIENNIE = 3;
+export function limitDzienny(konto: Pick<Konto, "rozmow_dziennie"> | null | undefined): number {
+  const n = Number(konto?.rozmow_dziennie);
+  return Number.isFinite(n) && n > 0 ? n : ROZMOW_DZIENNIE;
+}
 /** Fiszki w Treningu: 5 dziennie, twardy limit na serwerze (USER_001 2.10). */
 export const FISZEK_DZIENNIE = 5;
 
@@ -22,6 +26,8 @@ export type Konto = {
   dni: number;
   limit_sekund: number;
   aktywne: boolean;
+  /** Limit rozmów dziennie per konto (2.10). Domyślnie ROZMOW_DZIENNIE = 3; USER_001 ma 30. */
+  rozmow_dziennie?: number | null;
   /** Skrót scrypt stałego kodu logowania (sól:skrót). Nigdy nie wychodzi poza serwer. */
   kod_hash: string | null;
   nieudane: number | null;

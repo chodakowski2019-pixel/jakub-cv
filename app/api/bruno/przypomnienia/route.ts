@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { ROZMOWA_SEKUND, ROZMOW_DZIENNIE, kartyDoPowtorki, rozmowyDzis, stanDostepu, type Konto } from "@/lib/bruno/db";
+import { ROZMOWA_SEKUND, kartyDoPowtorki, limitDzienny, rozmowyDzis, stanDostepu, type Konto } from "@/lib/bruno/db";
 import { htmlPrzypomnienie, wyslij } from "@/lib/bruno/mail";
 
 export const dynamic = "force-dynamic";
@@ -31,13 +31,14 @@ export async function GET(req: Request) {
     const godzina = godziny.get(konto.email) ?? 8;
     if (!wymus && godzina !== godzinaPL) continue;
     const dzis = await rozmowyDzis(konto.email);
-    if (dzis >= ROZMOW_DZIENNIE) continue;
+    const dziennie = limitDzienny(konto);
+    if (dzis >= dziennie) continue;
     const karty = await kartyDoPowtorki(konto.email, 50);
     try {
       await wyslij({
         do: konto.email,
-        temat: dzis === 0 ? `Bruno czeka: ${ROZMOW_DZIENNIE} rozmowy po ${ROZMOWA_SEKUND / 60} minuty` : `Bruno czeka: zostały ${ROZMOW_DZIENNIE - dzis} rozmowy`,
-        html: htmlPrzypomnienie({ imie: konto.imie, kart: karty.length, rozmowyDzis: dzis, dniZostalo: stan.dniZostalo }),
+        temat: dzis === 0 ? `Bruno czeka: ${dziennie} rozmowy po ${ROZMOWA_SEKUND / 60} minuty` : `Bruno czeka: zostały ${dziennie - dzis} rozmowy`,
+        html: htmlPrzypomnienie({ imie: konto.imie, kart: karty.length, rozmowyDzis: dzis, dniZostalo: stan.dniZostalo, dziennie }),
       });
       wyslane.push(konto.email);
     } catch (e) {

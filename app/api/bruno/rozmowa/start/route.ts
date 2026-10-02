@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import {
   ROZMOWA_SEKUND,
-  ROZMOW_DZIENNIE,
+  limitDzienny,
   pobierzKonfig,
   pobierzKonto,
   rozmowyDzis,
@@ -45,9 +45,10 @@ export async function POST(req: Request) {
     );
   }
   const dzis = await rozmowyDzis(email);
-  if (dzis >= ROZMOW_DZIENNIE) {
+  const dziennie = limitDzienny(konto);
+  if (dzis >= dziennie) {
     return NextResponse.json(
-      { ok: false, blad: `Plan na dziś zrobiony: ${ROZMOW_DZIENNIE} rozmowy. Wróć jutro.`, kod: "plan" },
+      { ok: false, blad: `Plan na dziś zrobiony: ${dziennie} rozmowy. Wróć jutro.`, kod: "plan" },
       { status: 403 },
     );
   }
