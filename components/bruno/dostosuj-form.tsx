@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Konfig } from "@/lib/bruno/db";
-import { POSTACIE, type PostacId } from "@/lib/bruno/postacie";
 
 // „Dostosuj Bruno" (USER_001 30.09): pula obiekcji i opis klienta, które
 // Bruno czyta przed rozmową. Na start wypełnia USER_001 z ankiety, tester edytuje.
 // Układ 2.10 (USER_001): każde pole = osobna sekcja z numerem, dużym pogrubionym
-// nagłówkiem i podpowiedzią pod nim, zamiast małej szarej etykiety.
+// nagłówkiem i podpowiedzią pod nim. Bez „udanej rozmowy" (cel wybiera się przed
+// każdym testem) i bez „domyślnego typu klienta" (też wybierany przed testem).
+// Zapis częściowy: pola nieobecne w formularzu zostają w bazie bez zmian.
 
 function Sekcja({ nr, tytul, podpowiedz, htmlFor, children }: { nr: number; tytul: string; podpowiedz?: React.ReactNode; htmlFor?: string; children: React.ReactNode }) {
   return (
@@ -35,9 +36,7 @@ export default function DostosujForm({ start }: { start: Konfig }) {
     produkt: start.produkt,
     klient: start.klient,
     obiekcje: start.obiekcje,
-    udana_rozmowa: start.udana_rozmowa,
     skrypt: start.skrypt,
-    postac: start.postac as PostacId,
   });
   const [stan, setStan] = useState<"idle" | "zapis" | "ok" | "blad">("idle");
 
@@ -78,41 +77,8 @@ export default function DostosujForm({ start }: { start: Konfig }) {
         <textarea id="obiekcje" rows={6} className="bruno-pole font-mono text-[14px]" placeholder={"Za drogo\nMuszę to przemyśleć\nMamy już prawnika\nTo nie ma sensu, nic nie wygramy"} value={f.obiekcje} onChange={pole("obiekcje")} maxLength={3000} />
       </Sekcja>
 
-      <Sekcja nr={4} tytul="Co znaczy udana rozmowa" htmlFor="udana" podpowiedz="Jedno zdanie. Na to Bruno zgodzi się dopiero, gdy na to zasłużysz.">
-        <input id="udana" className="bruno-pole" placeholder="np. klient zgadza się na spotkanie z pełnomocnikiem w tym tygodniu" value={f.udana_rozmowa} onChange={pole("udana_rozmowa")} maxLength={1000} />
-      </Sekcja>
-
-      <Sekcja nr={5} tytul="Skrypt rozmowy" htmlFor="skrypt" podpowiedz="Opcjonalnie. Trener sprawdzi, czy się go trzymasz tam, gdzie warto.">
+      <Sekcja nr={4} tytul="Skrypt rozmowy" htmlFor="skrypt" podpowiedz="Opcjonalnie. Trener sprawdzi, czy się go trzymasz tam, gdzie warto.">
         <textarea id="skrypt" rows={6} className="bruno-pole text-[14px]" placeholder="Wklej skrypt, jeśli masz." value={f.skrypt} onChange={pole("skrypt")} maxLength={8000} />
-      </Sekcja>
-
-      <Sekcja nr={6} tytul="Domyślny typ klienta" podpowiedz="Cztery kolory DISC. Przed każdą rozmową możesz wybrać inny.">
-        <div className="grid sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Domyślny typ klienta">
-          {(Object.keys(POSTACIE) as PostacId[]).map((id) => {
-            const p = POSTACIE[id];
-            const wybrany = f.postac === id;
-            return (
-              <button
-                key={id}
-                type="button"
-                role="radio"
-                aria-checked={wybrany}
-                onClick={() => setF((x) => ({ ...x, postac: id }))}
-                className={`bruno-szklo rounded-2xl p-4 text-left transition-[transform,border-color,box-shadow] duration-100 active:scale-[0.98] ${wybrany ? "bruno-wybrany" : "hover:border-slate-300"}`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="size-3.5 rounded-full shrink-0" style={{ background: p.kolor }} aria-hidden />
-                    <div className="bruno-h2 text-base">{p.nazwa}</div>
-                    <span className="text-xs text-slate-400">{p.krotko}</span>
-                  </div>
-                  <span className={`size-4 rounded-full border-2 shrink-0 ${wybrany ? "border-cyan-700 bg-cyan-700" : "border-slate-300"}`} aria-hidden />
-                </div>
-                <div className="text-sm text-slate-600 mt-1">{p.opis}</div>
-              </button>
-            );
-          })}
-        </div>
       </Sekcja>
 
       <div className="flex items-center gap-4 sm:pl-12">

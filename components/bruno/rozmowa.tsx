@@ -450,7 +450,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     `bruno-szklo rounded-2xl p-4 text-left h-full transition-[border-color,box-shadow] duration-100 ${wybrany ? "bruno-wybrany" : "hover:border-slate-300"} ${extra}`;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className={`flex flex-col ${stan === "wybor" ? "gap-9 sm:gap-11" : "gap-6"}`}>
       <audio ref={audioEl} autoPlay playsInline className="hidden" />
 
       {stan === "wybor" && (
