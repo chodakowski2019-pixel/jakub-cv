@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { FISZEK_DZIENNIE, pobierzKonfig, pobierzKonto, poczatekDniaPL, stanDostepu, wszystkieKarty } from "@/lib/bruno/db";
+import { limitFiszek, pobierzKonfig, pobierzKonto, poczatekDniaPL, stanDostepu, wszystkieKarty } from "@/lib/bruno/db";
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import Fiszki, { type FiszkaKarta } from "@/components/bruno/fiszki";
 
@@ -82,7 +82,7 @@ export default async function BrunoTreningPage({ searchParams }: { searchParams:
     <Fiszki
       karty={obiekcje}
       dzis={dzis}
-      dziennie={FISZEK_DZIENNIE}
+      dziennie={limitFiszek(konto)}
       seria={seria}
       razem={razem}
       sredniWerdykt={sredniWerdykt}

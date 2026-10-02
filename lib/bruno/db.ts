@@ -17,6 +17,10 @@ export function limitDzienny(konto: Pick<Konto, "rozmow_dziennie"> | null | unde
 }
 /** Fiszki w Treningu: 5 dziennie, twardy limit na serwerze (USER_001 2.10). */
 export const FISZEK_DZIENNIE = 5;
+export function limitFiszek(konto: Pick<Konto, "fiszek_dziennie"> | null | undefined): number {
+  const n = Number(konto?.fiszek_dziennie);
+  return Number.isFinite(n) && n > 0 ? n : FISZEK_DZIENNIE;
+}
 
 export type Konto = {
   email: string;
@@ -28,6 +32,8 @@ export type Konto = {
   aktywne: boolean;
   /** Limit rozmów dziennie per konto (2.10). Domyślnie ROZMOW_DZIENNIE = 3; USER_001 ma 30. */
   rozmow_dziennie?: number | null;
+  /** Limit fiszek dziennie per konto (2.10). Domyślnie FISZEK_DZIENNIE = 5; USER_001 ma 50. */
+  fiszek_dziennie?: number | null;
   /** Skrót scrypt stałego kodu logowania (sól:skrót). Nigdy nie wychodzi poza serwer. */
   kod_hash: string | null;
   nieudane: number | null;

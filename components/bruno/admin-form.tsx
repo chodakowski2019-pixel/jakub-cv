@@ -10,7 +10,7 @@ export default function AdminForm({ klucz }: { klucz: string }) {
   const [konta, setKonta] = useState<Konto[]>([]);
   const [rozmowy, setRozmowy] = useState<RozmowaSkrot[]>([]);
   const [zaint, setZaint] = useState<{ email: string; wiadomosc: string; utworzono: string }[]>([]);
-  const [f, setF] = useState({ email: "", imie: "", firma: "", kod: "", dni: 7, limit_min: 63, rozmow_dziennie: 3, produkt: "", klient: "", obiekcje: "", udana_rozmowa: "", skrypt: "", postac: "czerwony" as PostacId });
+  const [f, setF] = useState({ email: "", imie: "", firma: "", kod: "", dni: 7, limit_min: 63, rozmow_dziennie: 3, fiszek_dziennie: 5, produkt: "", klient: "", obiekcje: "", udana_rozmowa: "", skrypt: "", postac: "czerwony" as PostacId });
   const [stan, setStan] = useState<string>("");
 
   const odswiez = async () => {
@@ -43,6 +43,7 @@ export default function AdminForm({ klucz }: { klucz: string }) {
         dni: f.dni,
         limit_sekund: f.limit_min * 60,
         rozmow_dziennie: f.rozmow_dziennie,
+        fiszek_dziennie: f.fiszek_dziennie,
         konfig: { produkt: f.produkt, klient: f.klient, obiekcje: f.obiekcje, udana_rozmowa: f.udana_rozmowa, skrypt: f.skrypt, postac: f.postac },
       }),
     });
@@ -76,6 +77,7 @@ export default function AdminForm({ klucz }: { klucz: string }) {
           <label className="text-sm text-slate-600">dni <input className="bruno-pole mt-1" type="number" min={1} value={f.dni} onChange={(e) => setF((x) => ({ ...x, dni: Number(e.target.value) }))} /></label>
           <label className="text-sm text-slate-600">limit minut <input className="bruno-pole mt-1" type="number" min={5} value={f.limit_min} onChange={(e) => setF((x) => ({ ...x, limit_min: Number(e.target.value) }))} /></label>
           <label className="text-sm text-slate-600">rozmów dziennie <input className="bruno-pole mt-1" type="number" min={1} value={f.rozmow_dziennie} onChange={(e) => setF((x) => ({ ...x, rozmow_dziennie: Number(e.target.value) }))} /></label>
+          <label className="text-sm text-slate-600">fiszek dziennie <input className="bruno-pole mt-1" type="number" min={1} value={f.fiszek_dziennie} onChange={(e) => setF((x) => ({ ...x, fiszek_dziennie: Number(e.target.value) }))} /></label>
           <label className="text-sm text-slate-600">typ klienta
             <select className="bruno-pole mt-1" value={f.postac} onChange={pole("postac")}>
               {(Object.keys(POSTACIE) as PostacId[]).map((id) => <option key={id} value={id}>{POSTACIE[id].nazwa}</option>)}

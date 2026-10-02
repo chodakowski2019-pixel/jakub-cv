@@ -148,7 +148,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
     <div className="flex flex-col gap-6">
       <div className="text-center">
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
-          <span className="bruno-gradient-tekst">Trening</span> obiekcji
+          <span className="bruno-gradient-tekst">Trening</span>
         </h1>
         <p className="text-slate-600 mt-2">Obiekcje, sytuacje z Twoich rozmów i wiedza o klientach. Ty odpowiadasz.</p>
       </div>

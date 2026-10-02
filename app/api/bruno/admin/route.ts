@@ -46,6 +46,7 @@ export async function POST(req: Request) {
     dni: Math.min(90, Math.max(1, Number(b.dni) || 7)),
     limit_sekund: Math.min(36_000, Math.max(180, Number(b.limit_sekund) || 3780)),
     rozmow_dziennie: Math.min(100, Math.max(1, Number(b.rozmow_dziennie) || 3)),
+    fiszek_dziennie: Math.min(200, Math.max(1, Number(b.fiszek_dziennie) || 5)),
     aktywne: b.aktywne === undefined ? true : Boolean(b.aktywne),
     ...(kod ? { kod_hash: zaszyfrujKod(kod), nieudane: 0, blokada_do: null } : {}),
   };
