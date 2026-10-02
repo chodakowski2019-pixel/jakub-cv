@@ -92,10 +92,8 @@ export default function TourPopup({ src }: { src: string }) {
           </div>
         </header>
 
-        <main className="flex-1 min-h-0 flex flex-col items-center justify-center gap-4 px-4 sm:px-6 py-5">
-          <h1 className="bruno-h2 text-xl sm:text-2xl text-center">Cześć, tu Bruno. Pokażę ci, jak zacząć ze mną trening.</h1>
-
-          <div className="relative mx-auto h-[62vh] aspect-[16/10] max-w-full rounded-3xl overflow-hidden bg-white shadow-[0_24px_60px_-20px_rgba(15,23,42,0.25)] border border-white/80">
+        <main className="flex-1 min-h-0 flex flex-col items-center justify-center gap-5 px-4 sm:px-6 py-5">
+          <div className="relative mx-auto h-[68vh] aspect-[16/10] max-w-full rounded-3xl overflow-hidden bg-white shadow-[0_24px_60px_-20px_rgba(15,23,42,0.25)] border border-white/80">
             <video
               ref={video}
               src={src}
