@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 
 // Film oprowadzający przy pierwszym logowaniu (USER_001 2.10, wzór z OMG
@@ -14,6 +15,10 @@ import { useRouter } from "next/navigation";
 export default function TourPopup({ src }: { src: string }) {
   const router = useRouter();
   const [otwarty, setOtwarty] = useState(true);
+  // Portal do <body>: rodzic ma backdrop-filter, a to łamie `position: fixed`
+  // (ta sama pułapka co w OMG tour-popup). Bez portalu popup siedzi w panelu.
+  const [zamontowany, setZamontowany] = useState(false);
+  useEffect(() => setZamontowany(true), []);
   const [gra, setGra] = useState(false);
   const [koniec, setKoniec] = useState(false);
   const video = useRef<HTMLVideoElement | null>(null);
@@ -59,8 +64,8 @@ export default function TourPopup({ src }: { src: string }) {
       .catch(() => {});
   };
 
-  if (!otwarty) return null;
-  return (
+  if (!otwarty || !zamontowany) return null;
+  return createPortal(
     <div className="fixed inset-0 z-50 bg-white flex flex-col" role="dialog" aria-modal="true" aria-label="Film oprowadzający">
       {/* Tło jak w panelu: białe z rozmytymi plamami. */}
       <div className="bruno-plamy" aria-hidden>
@@ -88,7 +93,7 @@ export default function TourPopup({ src }: { src: string }) {
         <main className="flex-1 min-h-0 flex flex-col items-center justify-center gap-4 px-4 sm:px-6 py-5">
           <h1 className="bruno-h2 text-xl sm:text-2xl text-center">Cześć, tu Bruno. Pokażę ci, jak zacząć ze mną trening.</h1>
 
-          <div className="relative w-full max-w-5xl rounded-3xl overflow-hidden bg-slate-900 aspect-[16/10] max-h-[62vh] shadow-[0_24px_60px_-20px_rgba(15,23,42,0.35)]">
+          <div className="relative w-full max-w-5xl rounded-3xl overflow-hidden bg-white aspect-[16/10] max-h-[62vh] shadow-[0_24px_60px_-20px_rgba(15,23,42,0.25)] border border-white/80">
             <video
               ref={video}
               src={src}
@@ -119,6 +124,7 @@ export default function TourPopup({ src }: { src: string }) {
           </div>
         </main>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
