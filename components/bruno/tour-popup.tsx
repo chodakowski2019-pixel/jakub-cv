@@ -15,10 +15,12 @@ import { useRouter } from "next/navigation";
 export default function TourPopup({ src }: { src: string }) {
   const router = useRouter();
   const [otwarty, setOtwarty] = useState(true);
-  // Portal do <body>: rodzic ma backdrop-filter, a to łamie `position: fixed`
-  // (ta sama pułapka co w OMG tour-popup). Bez portalu popup siedzi w panelu.
-  const [zamontowany, setZamontowany] = useState(false);
-  useEffect(() => setZamontowany(true), []);
+  // Portal do kontenera `.bruno`, nie do <body>: popup siedział w `.bruno-ekran`,
+  // który ma animację z `transform`, a transform tworzy nowy układ odniesienia
+  // dla `position: fixed` (ta sama pułapka co w OMG tour-popup). `.bruno` trzyma
+  // zmienne kolorów i fontów, więc portal do body gubi style.
+  const [cel, setCel] = useState<Element | null>(null);
+  useEffect(() => setCel(document.querySelector(".bruno") ?? document.body), []);
   const [gra, setGra] = useState(false);
   const [koniec, setKoniec] = useState(false);
   const video = useRef<HTMLVideoElement | null>(null);
@@ -64,7 +66,7 @@ export default function TourPopup({ src }: { src: string }) {
       .catch(() => {});
   };
 
-  if (!otwarty || !zamontowany) return null;
+  if (!otwarty || !cel) return null;
   return createPortal(
     <div className="fixed inset-0 z-50 bg-white flex flex-col" role="dialog" aria-modal="true" aria-label="Film oprowadzający">
       {/* Tło jak w panelu: białe z rozmytymi plamami. */}
@@ -93,7 +95,7 @@ export default function TourPopup({ src }: { src: string }) {
         <main className="flex-1 min-h-0 flex flex-col items-center justify-center gap-4 px-4 sm:px-6 py-5">
           <h1 className="bruno-h2 text-xl sm:text-2xl text-center">Cześć, tu Bruno. Pokażę ci, jak zacząć ze mną trening.</h1>
 
-          <div className="relative w-full max-w-5xl rounded-3xl overflow-hidden bg-white aspect-[16/10] max-h-[62vh] shadow-[0_24px_60px_-20px_rgba(15,23,42,0.25)] border border-white/80">
+          <div className="relative mx-auto h-[62vh] aspect-[16/10] max-w-full rounded-3xl overflow-hidden bg-white shadow-[0_24px_60px_-20px_rgba(15,23,42,0.25)] border border-white/80">
             <video
               ref={video}
               src={src}
@@ -125,6 +127,6 @@ export default function TourPopup({ src }: { src: string }) {
         </main>
       </div>
     </div>,
-    document.body,
+    cel,
   );
 }
