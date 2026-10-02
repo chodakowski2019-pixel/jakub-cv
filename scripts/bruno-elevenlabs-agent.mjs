@@ -14,12 +14,8 @@ const BAZA = "https://api.elevenlabs.io";
 const H = { "xi-api-key": K, "Content-Type": "application/json" };
 
 // Głosy z biblioteki (shared): [voice_id, public_owner_id, nazwa w koncie]
-const GLOSY = [
-  ["hIssydxXZ1WuDorjx6Ic", null, "Bruno czerwony (Adam serious)"],
-  ["mr1ubFaLs5xVrh1EqWtc", null, "Bruno zolty (Kamil joyful)"],
-  ["EmspiS7CSUabPeqBcrAP", null, "Bruno zielony (Mikolaj calm)"],
-  ["bhehD3jAYQsch18622NF", null, "Bruno niebieski (Michal cold)"],
-];
+// Jeden głos (USER_001 2.10): Adam „Serious, Rich, Smoky", polski, męski.
+const GLOSY = [["hIssydxXZ1WuDorjx6Ic", null, "Bruno (Adam, polski)"]];
 
 async function dodajGlosy() {
   const moje = await (await fetch(`${BAZA}/v2/voices?page_size=100`, { headers: H })).json();

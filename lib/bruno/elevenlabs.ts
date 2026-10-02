@@ -16,17 +16,11 @@ export function elevenlabsWlaczone(): boolean {
   return process.env.BRUNO_DOSTAWCA === "elevenlabs" && Boolean(process.env.ELEVENLABS_API_KEY) && Boolean(process.env.ELEVENLABS_AGENT_ID);
 }
 
-/** Głosy per kolor: z env (ELEVENLABS_GLOS_CZERWONY itd.) albo domyślne id z biblioteki ElevenLabs (polskie, męskie). */
-export function glosElevenlabs(postac: PostacId): string {
-  const zEnv = process.env[`ELEVENLABS_GLOS_${postac.toUpperCase()}`];
-  if (zEnv) return zEnv;
-  const domyslne: Record<PostacId, string> = {
-    czerwony: "hIssydxXZ1WuDorjx6Ic", // Adam: serious, rich, smoky (mazowiecki)
-    zolty: "mr1ubFaLs5xVrh1EqWtc", // Kamil: expressive, joyful, call center
-    zielony: "EmspiS7CSUabPeqBcrAP", // Mikołaj: calm, steady
-    niebieski: "bhehD3jAYQsch18622NF", // Michał: calm, cold
-  };
-  return domyslne[postac];
+/** JEDEN polski męski głos dla wszystkich typów (USER_001 2.10): Adam „Serious, Rich, Smoky" z biblioteki ElevenLabs.
+ *  Różnica między kolorami DISC siedzi w prompcie (sposób mówienia), nie w barwie głosu. Nadpisanie: ELEVENLABS_GLOS. */
+export const GLOS_BRUNO = "hIssydxXZ1WuDorjx6Ic";
+export function glosElevenlabs(_postac: PostacId): string {
+  return process.env.ELEVENLABS_GLOS || GLOS_BRUNO;
 }
 
 /** Token WebRTC dla prywatnego agenta (ważny krótko, tylko do nawiązania sesji z przeglądarki). */
