@@ -66,6 +66,28 @@ export async function podpisanyUrlEl(): Promise<string> {
   return d.signed_url;
 }
 
+/**
+ * Nagranie rozmowy z konta ElevenLabs (mp3, 16 kHz mono). Ścieżka ElevenLabs nie
+ * nagrywa w przeglądarce, więc bez tego audio zostawałoby tylko u nich (2.10).
+ * Zwraca null, gdy pliku jeszcze nie ma (przetwarzanie po rozmowie), klucz nie ma
+ * uprawnienia History albo rozmowa jest za krótka, żeby plik miał sens.
+ */
+export async function audioRozmowyEl(conversationId: string): Promise<{ bajty: ArrayBuffer; typ: string } | null> {
+  const klucz = process.env.ELEVENLABS_API_KEY;
+  if (!klucz || !conversationId) return null;
+  const odp = await fetch(`${BAZA_EL}/v1/convai/conversations/${encodeURIComponent(conversationId)}/audio`, {
+    headers: { "xi-api-key": klucz },
+    cache: "no-store",
+  });
+  if (!odp.ok) {
+    console.warn(`[bruno] audio ElevenLabs ${conversationId}: ${odp.status} ${(await odp.text()).slice(0, 200)}`);
+    return null;
+  }
+  const bajty = await odp.arrayBuffer();
+  if (bajty.byteLength < 2000) return null;
+  return { bajty, typ: odp.headers.get("content-type") || "audio/mpeg" };
+}
+
 /** Rodzaj połączenia z ElevenLabs: BRUNO_EL_POLACZENIE = websocket (domyślnie od 2.10, TCP, odporne na słabe UDP) albo webrtc. */
 export function polaczenieEl(): "websocket" | "webrtc" {
   return process.env.BRUNO_EL_POLACZENIE === "webrtc" ? "webrtc" : "websocket";

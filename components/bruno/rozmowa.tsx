@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Feedback, Wypowiedz } from "@/lib/bruno/db";
+import { podpowiedzFazy } from "@/lib/bruno/fazy";
 import { CELE, CELE_TRYBU, POSTACIE, TRYBY, type CelId, type PostacId, type TrybId } from "@/lib/bruno/postacie";
 import FeedbackWidok from "./feedback";
 
@@ -199,6 +200,49 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     transkrypcja.current.push(w);
   };
 
+  // Bramki faz (2.10): co 0,5 s liczymy z transkrypcji, czy warunek fazy się
+  // domknął, i raz na klucz wysyłamy Brunowi cichą instrukcję. Prompt sam jest
+  // prośbą, bramka jest wymuszeniem: bez tego Bruno ustępował, kiedy chciał.
+  const szepnieta = useRef<Set<string>>(new Set());
+
+  /** Cicha instrukcja do Bruno. Handlowiec jej nie słyszy, Bruno jej nie komentuje. */
+  const szepnij = (tekst: string) => {
+    if (el.current) {
+      try {
+        el.current.sendContextualUpdate(tekst);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    if (dc.current?.readyState === "open") {
+      try {
+        dc.current.send(
+          JSON.stringify({
+            type: "conversation.item.create",
+            item: { type: "message", role: "system", content: [{ type: "input_text", text: `[${tekst}]` }] },
+          }),
+        );
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  };
+
+  const sprawdzFazy = (s: number) => {
+    const p = podpowiedzFazy({
+      tryb,
+      transkrypcja: transkrypcja.current,
+      sekundy: s,
+      limit: limitRef.current,
+      wyslane: szepnieta.current,
+      obiekcja: wybraneObiekcje.find((o) => o !== "__losowa__") ?? null,
+    });
+    if (p && szepnij(p.tekst)) szepnieta.current.add(p.klucz);
+  };
+
   const posprzataj = () => {
     if (timer.current) clearInterval(timer.current);
     timer.current = null;
@@ -351,17 +395,10 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     timer.current = setInterval(() => {
       const s = Math.round((Date.now() - start.current) / 1000);
       setSekundy(s);
+      sprawdzFazy(s);
       // 30 s przed końcem Bruno dostaje cichą instrukcję, żeby zmierzał do końca (2.10: odcięcie w pół zdania).
-      if (!ostrzezonoBruno && limitRef.current - s <= 30 && dc.current?.readyState === "open") {
-        ostrzezonoBruno = true;
-        try {
-          dc.current.send(
-            JSON.stringify({
-              type: "conversation.item.create",
-              item: { type: "message", role: "system", content: [{ type: "input_text", text: "[Zostało 30 sekund rozmowy. Odpowiadaj już bardzo krótko i zmierzaj do zakończenia: decyzja albo pożegnanie.]" }] },
-            }),
-          );
-        } catch {}
+      if (!ostrzezonoBruno && limitRef.current - s <= 30) {
+        ostrzezonoBruno = szepnij("Zostało 30 sekund rozmowy. Odpowiadaj już bardzo krótko i zmierzaj do zakończenia: decyzja albo pożegnanie.");
       }
       if (s >= limitRef.current) void zakoncz("limit");
     }, 500);
@@ -416,11 +453,9 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           timer.current = setInterval(() => {
             const s = Math.round((Date.now() - start.current) / 1000);
             setSekundy(s);
-            if (!ostrzezonoBruno && limitRef.current - s <= 30 && el.current) {
-              ostrzezonoBruno = true;
-              try {
-                el.current.sendContextualUpdate("Zostało 30 sekund rozmowy. Odpowiadaj już bardzo krótko i zmierzaj do zakończenia: decyzja albo pożegnanie.");
-              } catch {}
+            sprawdzFazy(s);
+            if (!ostrzezonoBruno && limitRef.current - s <= 30) {
+              ostrzezonoBruno = szepnij("Zostało 30 sekund rozmowy. Odpowiadaj już bardzo krótko i zmierzaj do zakończenia: decyzja albo pożegnanie.");
             }
             if (s >= limitRef.current) void zakoncz("limit");
           }, 500);
@@ -456,6 +491,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     odliczono.current = false;
     wystartowano.current = false;
     transkrypcja.current = [];
+    szepnieta.current = new Set();
     setEtap("Proszę o mikrofon...");
     try {
       mic.current = await navigator.mediaDevices.getUserMedia({

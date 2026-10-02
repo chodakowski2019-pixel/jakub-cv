@@ -7,10 +7,10 @@ import type { Wypowiedz } from "./db";
 const WYPELNIACZE = /\b(y{2,}|e{2,}|hmm+|mmm+|no więc|jakby|w sensie|znaczy się|znaczy|tak jakby|no i)\b/giu;
 const OSLABIACZE = /\b(chyba|może|wydaje mi się|spróbuję|spróbujemy|trochę|myślę,? że|nie wiem czy|w sumie|jakoś|właściwie)\b/giu;
 const PRZEPROSINY = /\b(przepraszam|niestety|przeszkadzam|nie zajmę)\b/giu;
-const OTWARTE = /^\s*(jak|co|ile|kiedy|dlaczego|gdzie|kto|w jaki sposób|czym|który|która|od jak dawna)\b/iu;
+export const OTWARTE = /^\s*(jak|co|ile|kiedy|dlaczego|gdzie|kto|w jaki sposób|czym|który|która|od jak dawna)\b/iu;
 const OBIEKCJA = /(za drog|drogo|pomyśl|zastanow|przemyśl|nie teraz|mamy już|budżet|nie mam czasu|prześlij|proszę wysłać|wyślij|nie jestem zainteresowan|nie potrzeb|zapytam|skonsultuj|wspólnik|szef)/iu;
 const RABAT = /(rabat|taniej|zejść|zejdę|obniż|zniżk|promocj|upust)/iu;
-const PROSBA_O_DECYZJE = /(zaczynamy|umówmy|umówimy|od kiedy|podpis|startujemy|możemy zacząć|kiedy możemy|wchodzimy|zróbmy tak|proponuję termin|pasuje panu|pasuje pani|spotkajmy się)/iu;
+export const PROSBA_O_DECYZJE = /(zaczynamy|umówmy|umówimy|od kiedy|podpis|startujemy|możemy zacząć|kiedy możemy|wchodzimy|zróbmy tak|proponuję termin|pasuje panu|pasuje pani|spotkajmy się)/iu;
 const KWOTA = /(\d[\d\s.,]*\s*(zł|złotych|tys|tysięcy|procent|%|euro|eur|dolar))/iu;
 const DATA = /(poniedziałek|wtorek|środ|czwartek|piątek|sobot|niedziel|jutro|pojutrze|o \d{1,2}(:\d{2})?|godzin|w przyszłym tygodniu|za tydzień)/iu;
 

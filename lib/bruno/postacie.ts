@@ -1,4 +1,5 @@
 import type { Karta, Konfig } from "./db";
+import { opisFaz } from "./fazy";
 import { listaObiekcji } from "./obiekcje";
 
 // Bruno-KLIENT (OpenAI Realtime). Od 2.10 (USER_001): przed rozmową handlowiec
@@ -140,6 +141,8 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
       );
       break;
   }
+
+  czesci.push(opisFaz(u.tryb));
 
   if (obiekcja) {
     czesci.push(

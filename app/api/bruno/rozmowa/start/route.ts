@@ -15,6 +15,7 @@ import {
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import { POSTACIE, celLubDomyslny, instrukcjeKlienta, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
 import { listaObiekcji } from "@/lib/bruno/obiekcje";
+import { zapewnijScenariusz } from "@/lib/bruno/scenariusze";
 import { MIN_KREDYTOW_EL, elevenlabsWlaczone, glosElevenlabs, pierwszaWypowiedz, podpisanyUrlEl, polaczenieEl, tokenRozmowyEl, wolneKredytyEl } from "@/lib/bruno/elevenlabs";
 
 export const dynamic = "force-dynamic";
@@ -98,9 +99,12 @@ export async function POST(req: Request) {
   }
 
   const sekundyTejRozmowy = Math.min(ROZMOWA_SEKUND, zostalo);
+  // Scenariusz = powtarzalny egzamin (tryb + typ klienta + cel + obiekcje). Powstaje
+  // sam z wyborów w kreatorze, żeby dwie rozmowy z tym samym wsadem dały się porównać.
+  const scenariuszId = await zapewnijScenariusz(email, { tryb, postac, cel, celWlasny, obiekcje: wybrane });
   const { data: rozmowa, error } = await supabaseAdmin
     .from("bruno_rozmowy")
-    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa", tryb, cel, cel_wlasny: celWlasny, obiekcja, dostawca })
+    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa", tryb, cel, cel_wlasny: celWlasny, obiekcja, dostawca, scenariusz_id: scenariuszId })
     .select("id")
     .single();
   if (error || !rozmowa) {

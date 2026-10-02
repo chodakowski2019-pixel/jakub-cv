@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { limitDzienny, pobierzKonto, pobierzRozmowy, stanDostepu, zuzyteSekundy, type Kryterium } from "@/lib/bruno/db";
 import { NAZWY } from "@/lib/bruno/kryteria";
+import { postepScenariuszy } from "@/lib/bruno/scenariusze";
 import { Licznik, Ocena, Pierscien, Slupki, rozmowyNaDni } from "@/components/bruno/statystyki";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +17,7 @@ export default async function BrunoStatystykiPage() {
   const konto = await pobierzKonto(email);
   if (!konto) redirect("/bruno");
   const stan = stanDostepu(konto);
-  const [zuzyte, wszystkie] = await Promise.all([zuzyteSekundy(email), pobierzRozmowy(email, 500)]);
+  const [zuzyte, wszystkie, scenariusze] = await Promise.all([zuzyteSekundy(email), pobierzRozmowy(email, 500), postepScenariuszy(email)]);
 
   const ocenione = wszystkie.filter((r) => r.status === "zakonczona" && r.ocena);
   const srednia = ocenione.length ? Math.round((ocenione.reduce((s, r) => s + (r.ocena ?? 0), 0) / ocenione.length) * 10) / 10 : null;
@@ -72,6 +73,47 @@ export default async function BrunoStatystykiPage() {
           )}
         </section>
       </div>
+
+      {/* Ten sam scenariusz = ten sam egzamin (2.10). Dowód postępu, nie średnia ze wszystkiego. */}
+      <section className="bruno-szklo rounded-2xl p-4 sm:p-5">
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="bruno-h2 text-base">Ten sam scenariusz</h2>
+          <span className="text-[11px] text-slate-400">pierwsza → ostatnia próba</span>
+        </div>
+        {scenariusze.length === 0 ? (
+          <p className="text-sm text-slate-600">
+            Pojawi się, gdy powtórzysz rozmowę z tym samym ustawieniem kreatora (ten sam tryb, typ klienta, cel i obiekcje). Dopiero dwa podejścia do tego samego
+            egzaminu pokazują postęp.
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {scenariusze.map((s) => (
+              <li key={s.id} className="flex items-center justify-between gap-3 border-b border-cyan-900/10 last:border-0 pb-3 last:pb-0">
+                <div className="min-w-0">
+                  <p className="text-sm text-slate-800 font-medium truncate">{s.nazwa}</p>
+                  <p className="text-[11px] text-slate-500">
+                    {s.proby} {s.proby === 1 ? "próba" : s.proby < 5 ? "próby" : "prób"} · najlepsza {s.najlepsza}/10
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 tabular-nums">
+                  <span className="text-sm text-slate-500">{s.pierwsza}</span>
+                  <span className="text-slate-400" aria-hidden>
+                    →
+                  </span>
+                  <span className="text-lg font-semibold text-slate-900">{s.ostatnia}</span>
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded-full ${
+                      s.zmiana > 0 ? "bg-teal-900/10 text-teal-800" : s.zmiana < 0 ? "bg-rose-900/10 text-rose-800" : "bg-slate-900/5 text-slate-600"
+                    }`}
+                  >
+                    {s.zmiana > 0 ? `+${s.zmiana}` : s.zmiana}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }

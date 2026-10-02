@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ROZMOWA_SEKUND, kartyDoPowtorki, limitDzienny, rozmowyDzis, stanDostepu, type Konto } from "@/lib/bruno/db";
 import { htmlPrzypomnienie, wyslij } from "@/lib/bruno/mail";
+import { dociagnijNagraniaEl } from "@/lib/bruno/nagrania";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -45,5 +46,14 @@ export async function GET(req: Request) {
       console.error("[bruno przypomnienia]", konto.email, e);
     }
   }
-  return NextResponse.json({ ok: true, godzinaPL, wyslane });
+  // Przy okazji jednego dziennego przejazdu: dobieramy nagrania rozmów, które
+  // zostały na koncie ElevenLabs (gdy ściąganie po rozmowie się nie udało).
+  let nagrania: { sprawdzone: number; sciagniete: string[] } = { sprawdzone: 0, sciagniete: [] };
+  try {
+    nagrania = await dociagnijNagraniaEl(25);
+  } catch (e) {
+    console.error("[bruno przypomnienia] nagrania", e);
+  }
+
+  return NextResponse.json({ ok: true, godzinaPL, wyslane, nagrania });
 }

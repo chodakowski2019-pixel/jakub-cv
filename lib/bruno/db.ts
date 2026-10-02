@@ -94,6 +94,8 @@ export type Rozmowa = {
   cel?: string | null;
   cel_wlasny?: string | null;
   obiekcja?: string | null;
+  /** Od 2.10: powtarzalny egzamin (patrz lib/bruno/scenariusze.ts). Łączy rozmowy o tym samym wsadzie z kreatora. */
+  scenariusz_id?: string | null;
 };
 
 export type Karta = {

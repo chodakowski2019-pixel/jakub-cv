@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
+import { sciagnijNagranieEl } from "@/lib/bruno/nagrania";
 import { ROZMOWA_SEKUND_MAX, pobierzKonfig, type Wypowiedz } from "@/lib/bruno/db";
 import { dodajKartyPoprawek, zaktualizujKarty } from "@/lib/bruno/fsrs";
 import { kartyZFeedbacku } from "@/lib/bruno/fiszka";
@@ -41,6 +42,15 @@ export async function POST(req: Request) {
   const nagranie = typeof b?.nagranie_sciezka === "string" ? b.nagranie_sciezka.slice(0, 300) : null;
   // ElevenLabs trzyma nagranie i transkrypcję u siebie pod id rozmowy (2.10).
   const elId = typeof b?.el_conversation_id === "string" ? b.el_conversation_id.slice(0, 120) : null;
+
+  // Ścieżka ElevenLabs nie nagrywa w przeglądarce: audio ściągamy z ich konta po
+  // odpowiedzi (`after`), bo plik bywa gotowy kilka sekund po rozłączeniu. Gdy się
+  // nie uda, dobierze je cron (`dociagnijNagraniaEl`).
+  if (elId && !nagranie) {
+    after(async () => {
+      await sciagnijNagranieEl({ email, rozmowaId: id, elId, proby: 3 });
+    });
+  }
 
   const metrykiCzyste = policzMetryki(transkrypcja, sekundy);
   // Diagnostyka jakości dźwięku (2.10): statystyki WebRTC i błędy Realtime z przeglądarki, zapisywane obok metryk.
