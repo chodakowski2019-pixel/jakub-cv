@@ -23,8 +23,8 @@ export default function UstawieniaForm({ godzina }: { godzina: number }) {
   return (
     <form onSubmit={zapisz} className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-5">
       <div>
-        <h2 className="bruno-h2 text-lg">Przypomnienie mailem</h2>
-        <p className="text-sm text-slate-600 mt-1">Dostajesz je tylko w dni, w których plan rozmów nie jest jeszcze zrobiony.</p>
+        <h2 className="bruno-h2 text-lg">Przypomnienia o treningu</h2>
+        <p className="text-sm text-slate-600 mt-1">Jeżeli jeszcze nie zrobiłeś treningu, otrzymasz przypomnienie na e-mail. Powtórki są kluczowe dla skuteczności handlowca.</p>
       </div>
       <div className="max-w-xs">
         <label className="bruno-etykieta" htmlFor="godzina">Godzina <span className="font-normal text-slate-400">(w teście: rano ok. 8:00)</span></label>
