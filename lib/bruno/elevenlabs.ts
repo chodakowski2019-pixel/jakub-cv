@@ -16,9 +16,10 @@ export function elevenlabsWlaczone(): boolean {
   return process.env.BRUNO_DOSTAWCA === "elevenlabs" && Boolean(process.env.ELEVENLABS_API_KEY) && Boolean(process.env.ELEVENLABS_AGENT_ID);
 }
 
-/** JEDEN polski męski głos dla wszystkich typów (USER_001 2.10): Adam „Serious, Rich, Smoky" z biblioteki ElevenLabs.
- *  Różnica między kolorami DISC siedzi w prompcie (sposób mówienia), nie w barwie głosu. Nadpisanie: ELEVENLABS_GLOS. */
-export const GLOS_BRUNO = "hIssydxXZ1WuDorjx6Ic";
+/** JEDEN polski męski głos dla wszystkich typów (USER_001 2.10, wybór uchem z 4 próbek: „B najlepszy, potem D"):
+ *  Adam „Approachable and Raspy" (rozmowny), zapas D = Kamil `mr1ubFaLs5xVrh1EqWtc`. Odrzucone: Adam Serious (lektorski), Maciej.
+ *  Różnica między kolorami DISC siedzi w prompcie, nie w barwie głosu. Nadpisanie: ELEVENLABS_GLOS. */
+export const GLOS_BRUNO = "o11yegU3CL24TZ1qcm6b";
 export function glosElevenlabs(_postac: PostacId): string {
   return process.env.ELEVENLABS_GLOS || GLOS_BRUNO;
 }

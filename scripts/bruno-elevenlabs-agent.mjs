@@ -15,7 +15,7 @@ const H = { "xi-api-key": K, "Content-Type": "application/json" };
 
 // Głosy z biblioteki (shared): [voice_id, public_owner_id, nazwa w koncie]
 // Jeden głos (USER_001 2.10): Adam „Serious, Rich, Smoky", polski, męski.
-const GLOSY = [["hIssydxXZ1WuDorjx6Ic", null, "Bruno (Adam, polski)"]];
+const GLOSY = [["o11yegU3CL24TZ1qcm6b", null, "Bruno B (Adam approachable)"]];
 
 async function dodajGlosy() {
   const moje = await (await fetch(`${BAZA}/v2/voices?page_size=100`, { headers: H })).json();
@@ -53,10 +53,12 @@ const KONFIG = {
       },
     },
     tts: {
-      model_id: "eleven_flash_v2_5",
+      // multilingual_v2 = naturalniej niż flash (+0,3 s opóźnienia); stability 0.35 / style 0.3 = więcej emocji (USER_001 2.10).
+      model_id: "eleven_multilingual_v2",
       voice_id: GLOSY[0][0],
-      stability: 0.45,
+      stability: 0.35,
       similarity_boost: 0.8,
+      style: 0.3,
       speed: 1.0,
     },
     asr: { quality: "high", provider: "scribe_realtime", user_input_audio_format: "pcm_16000", keywords: [] },
