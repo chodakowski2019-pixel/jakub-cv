@@ -99,11 +99,10 @@ export default function BrunoNav({ zalogowany }: { zalogowany: boolean }) {
         <div className="sm:hidden">
           <Logo zalogowany />
         </div>
-        {/* Środek całej szerokości strony, nie obszaru obok paska: na sm+ przesunięcie o pół szerokości paska (13rem / 2). */}
         <Link
           href="/bruno/odblokuj"
           aria-current={odblokuj ? "page" : undefined}
-          className={`bruno-odblokuj inline-flex items-center gap-2 whitespace-nowrap sm:-translate-x-[6.5rem] ${odblokuj ? "bruno-odblokuj-aktywny" : ""}`}
+          className={`bruno-odblokuj inline-flex items-center gap-2 whitespace-nowrap ${odblokuj ? "bruno-odblokuj-aktywny" : ""}`}
         >
           <Ikona nazwa="klodka" />
           Odblokuj pełen dostęp

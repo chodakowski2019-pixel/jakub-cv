@@ -205,7 +205,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
                 <textarea id="odp" className="bruno-pole text-[15px]" rows={4} placeholder="Powiedz to tak, jak powiedziałbyś klientowi. 1-3 zdania." value={odp} onChange={(e) => setOdp(e.target.value)} maxLength={1500} disabled={stan === "ocena"} />
                 {blad && <p className="text-sm text-red-700">{blad}</p>}
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-xs text-slate-400">{slow} {slow === 1 ? "słowo" : slow >= 2 && slow <= 4 ? "słowa" : "słów"}</span>
+                  <span />
                   <button type="button" onClick={sprawdz} disabled={stan === "ocena" || slow < 3} className="bruno-przycisk px-8 inline-flex items-center gap-2">
                     {stan === "ocena" && <span className="bruno-kolko-ladowania" aria-hidden />}
                     {stan === "ocena" ? "Trener czyta…" : "Sprawdź"}
@@ -255,9 +255,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         </div>
       ) : null}
 
-      <p className="text-center text-xs text-slate-400">
-        {naCzas} {naCzas === 1 ? "karta czeka" : naCzas >= 2 && naCzas <= 4 ? "karty czekają" : "kart czeka"} na powtórkę · {karty.length} obiekcji w talii · algorytm FSRS
-      </p>
+
     </div>
   );
 }
