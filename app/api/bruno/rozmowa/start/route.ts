@@ -105,7 +105,9 @@ export async function POST(req: Request) {
       audio: {
         input: {
           transcription: { model: "gpt-4o-mini-transcribe", language: "pl" },
-          turn_detection: { type: "semantic_vad", eagerness: "medium", create_response: true, interrupt_response: true },
+          // interrupt_response: false (2.10): bez słuchawek głos Bruno z głośnika wracał do mikrofonu i przerywał mu w pół zdania.
+          // Bruno mówi max 2-3 zdania, więc brak możliwości wejścia mu w słowo kosztuje mało, a kończy problem urywania.
+          turn_detection: { type: "semantic_vad", eagerness: "medium", create_response: true, interrupt_response: false },
         },
         output: { voice: POSTACIE[postac].glos },
       },

@@ -11,6 +11,7 @@ export type PostacId = "czerwony" | "zolty" | "zielony" | "niebieski";
 export type TrybId = "cold" | "zywo" | "online";
 export type CelId = "spotkanie" | "prezentacja" | "sprzedaz" | "decyzja" | "decydent" | "wlasny";
 
+// Głosy TYLKO MĘSKIE (USER_001 2.10): cedar, ballad, ash, echo. Nigdy marin, sage, coral, shimmer, alloy (damskie/neutralne).
 export const POSTACIE: Record<PostacId, { nazwa: string; krotko: string; opis: string; glos: string; kolor: string; charakter: string }> = {
   czerwony: {
     nazwa: "Czerwony",
@@ -25,7 +26,7 @@ export const POSTACIE: Record<PostacId, { nazwa: string; krotko: string; opis: s
     nazwa: "Żółty",
     krotko: "towarzyski",
     opis: "Gadatliwy, ciepły, odbiega od tematu. Kupuje emocją, ale łatwo odkłada decyzję.",
-    glos: "marin",
+    glos: "ballad",
     kolor: "#f59e0b",
     charakter:
       "Jesteś typem TOWARZYSKIM (żółty): ciepły, rozmowny, lubisz ludzi i opowiadanie. Łatwo odbiegasz od tematu (anegdota, pytanie o handlowca, dygresja). Kupujesz emocją i relacją, nie tabelką. Unikasz konfliktu: zamiast twardego „nie” mówisz „super, pogadam z zespołem”, „odezwę się”. Handlowiec musi Cię sprowadzać do tematu i dopinać konkret: datę, decyzję, osobę. Jeśli tego nie robi, rozmowa jest miła i kończy się niczym.",
@@ -34,7 +35,7 @@ export const POSTACIE: Record<PostacId, { nazwa: string; krotko: string; opis: s
     nazwa: "Zielony",
     krotko: "stabilny",
     opis: "Ostrożny, spokojny, nie lubi zmian. „Muszę to przemyśleć”. Trzeba go otworzyć pytaniami.",
-    glos: "sage",
+    glos: "ash",
     kolor: "#16a34a",
     charakter:
       "Jesteś typem STABILNYM (zielony): spokojny, ostrożny, lojalny wobec tego, co masz. Boisz się zmiany i ryzyka. Odpowiadasz krótko, nie zadajesz pytań, nie mówisz, co myślisz, dopóki handlowiec nie zada dobrego, otwartego pytania o Twoją sytuację. Twoje naturalne obiekcje: „muszę to przemyśleć”, „muszę się skonsultować”, „nie teraz”, „mamy już sprawdzone rozwiązanie”. Otwierasz się, gdy czujesz bezpieczeństwo: gwarancje, czas, brak presji, przykład kogoś podobnego do Ciebie.",

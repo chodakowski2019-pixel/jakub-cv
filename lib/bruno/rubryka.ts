@@ -59,7 +59,8 @@ const SCHEMAT = `Odpowiedz WYŁĄCZNIE JSON-em (bez markdownu) o kształcie:
   "mila_bez_tresci": true/false,
   "obiekcje_ocena": [{"obiekcja":"tekst obiekcji z listy firmy, która padła","ocena":1-4}]
 }
-Skala obiekcje_ocena: 1 = handlowiec poległ, 2 = słabo, 3 = dobrze, 4 = wzorowo. Uwzględnij tylko obiekcje z listy firmy, które realnie padły.`;
+Skala obiekcje_ocena: 1 = handlowiec poległ, 2 = słabo, 3 = dobrze, 4 = wzorowo. Uwzględnij tylko obiekcje z listy firmy, które realnie padły.
+FORMAT: to musi być poprawny JSON. Wewnątrz tekstów NIE używaj prostego cudzysłowu " ani znaków nowej linii; cytaty zapisuj w „ ” albo w apostrofach. Żadnego tekstu przed ani po JSON-ie.`;
 
 function formatCzas(s: number) {
   const m = Math.floor(s / 60);
@@ -109,7 +110,50 @@ function wyciagnijJson(t: string): unknown {
   const s = t.indexOf("{");
   const e = t.lastIndexOf("}");
   if (s < 0 || e < 0) throw new Error("Trener nie zwrócił JSON");
-  return JSON.parse(t.slice(s, e + 1));
+  const surowy = t.slice(s, e + 1);
+  try {
+    return JSON.parse(surowy);
+  } catch {
+    // Najczęstszy błąd (1-2.10): prosty cudzysłów " wewnątrz cytatu albo surowa nowa linia.
+    // Naprawa: w obrębie wartości tekstowych zamieniamy niezabezpieczone " na „ i \n na spację.
+    return JSON.parse(naprawJson(surowy));
+  }
+}
+
+/** Prosty automat: przechodzi po znakach, śledzi czy jesteśmy w stringu, i neutralizuje cudzysłowy, po których nie następuje separator JSON. */
+export function naprawJson(t: string): string {
+  let out = "";
+  let wStringu = false;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (!wStringu) {
+      if (c === '"') wStringu = true;
+      out += c;
+      continue;
+    }
+    if (c === "\\") {
+      out += c + (t[i + 1] ?? "");
+      i++;
+      continue;
+    }
+    if (c === "\n" || c === "\r") {
+      out += " ";
+      continue;
+    }
+    if (c === '"') {
+      // koniec stringa tylko, jeśli dalej (po spacjach) jest : , } ]
+      const dalej = t.slice(i + 1).match(/^\s*([:,}\]])/);
+      if (dalej) {
+        wStringu = false;
+        out += c;
+      } else {
+        out += "„";
+      }
+      continue;
+    }
+    out += c;
+  }
+  return out;
 }
 
 export async function ocenRozmowe(args: {

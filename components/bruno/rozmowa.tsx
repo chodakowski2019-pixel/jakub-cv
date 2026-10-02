@@ -293,9 +293,22 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     // Gwar restauracji WYŁĄCZONY (USER_001 2.10): leciał z głośnika, mikrofon go
     // łapał, a Bruno ma interrupt_response, więc urywał się co 2 s. Funkcja
     // startGwar zostaje w kodzie na wersję ze słuchawkami / wykrywaniem słuchawek.
+    let ostrzezonoBruno = false;
     timer.current = setInterval(() => {
       const s = Math.round((Date.now() - start.current) / 1000);
       setSekundy(s);
+      // 30 s przed końcem Bruno dostaje cichą instrukcję, żeby zmierzał do końca (2.10: odcięcie w pół zdania).
+      if (!ostrzezonoBruno && limitRef.current - s <= 30 && dc.current?.readyState === "open") {
+        ostrzezonoBruno = true;
+        try {
+          dc.current.send(
+            JSON.stringify({
+              type: "conversation.item.create",
+              item: { type: "message", role: "system", content: [{ type: "input_text", text: "[Zostało 30 sekund rozmowy. Odpowiadaj już bardzo krótko i zmierzaj do zakończenia: decyzja albo pożegnanie.]" }] },
+            }),
+          );
+        } catch {}
+      }
       if (s >= limitRef.current) void zakoncz("limit");
     }, 500);
   };
