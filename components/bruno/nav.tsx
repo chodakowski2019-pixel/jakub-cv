@@ -12,8 +12,8 @@ import { usePathname, useRouter } from "next/navigation";
 // TEST = rozmowa z Bruno (egzamin). FEEDBACK = oceny rozmów (dawniej Historia).
 const LINKI = [
   { href: "/bruno/panel", nazwa: "Panel", ikona: "panel" },
-  { href: "/bruno/trening", nazwa: "Trening", ikona: "trening" },
   { href: "/bruno/rozmowa", nazwa: "Test", ikona: "test" },
+  { href: "/bruno/trening", nazwa: "Trening", ikona: "trening" },
   { href: "/bruno/feedback", nazwa: "Feedback", ikona: "feedback" },
   { href: "/bruno/statystyki", nazwa: "Statystyki", ikona: "statystyki" },
   { href: "/bruno/dostosuj", nazwa: "Dostosuj Bruno", ikona: "dostosuj" },
@@ -30,7 +30,7 @@ function Ikona({ nazwa }: { nazwa: (typeof LINKI)[number]["ikona"] | "klodka" | 
     case "test":
       return <svg {...wspolne}><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" /></svg>;
     case "feedback":
-      return <svg {...wspolne}><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12z" /><path d="M9 11l2 2 4-4" /></svg>;
+      return <svg {...wspolne}><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 4.5V3h6v1.5" /><path d="M9 11l2 2 4-4" /><path d="M9 16h6" /></svg>;
     case "statystyki":
       return <svg {...wspolne}><path d="M4 20h16" /><rect x="6" y="11" width="3.5" height="9" rx="1" /><rect x="12" y="6" width="3.5" height="14" rx="1" /><rect x="18" y="14" width="3.5" height="6" rx="1" transform="translate(-3 0)" /></svg>;
     case "dostosuj":

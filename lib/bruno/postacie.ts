@@ -86,6 +86,8 @@ export type UstawieniaRozmowy = {
   cel: CelId;
   celWlasny?: string | null;
   obiekcja?: string | null;
+  /** Kilka obiekcji wybranych przed rozmową (2.10). Pierwsza idzie na start, reszta w trakcie. */
+  obiekcje?: string[];
   karta?: Karta | null;
 };
 
@@ -100,7 +102,9 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
   const obiekcje = listaObiekcji(konfig.obiekcje);
   const produkt = konfig.produkt.trim();
   const cel = opisCelu(u.cel, u.celWlasny);
-  const obiekcja = u.obiekcja?.trim() || (u.karta?.typ === "obiekcja" ? u.karta.tresc : "");
+  const wybrane = (u.obiekcje?.length ? u.obiekcje : u.obiekcja ? u.obiekcja.split(" · ") : []).map((o) => o.trim()).filter(Boolean);
+  const obiekcja = wybrane[0] || (u.karta?.typ === "obiekcja" ? u.karta.tresc : "");
+  const pozostale = wybrane.slice(1);
   const czesci: string[] = [];
 
   czesci.push(
@@ -134,8 +138,14 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
       `OBIEKCJA DO PRZETRENOWANIA: „${obiekcja}”. ${u.tryb === "cold" ? "Podnieś ją w pierwszej minucie, gdy tylko handlowiec powie, o co chodzi." : "Zaczynasz od niej."} Jeśli handlowiec zbije ją słabo (argument, obrona, rabat od razu, ogólnik), wróć do niej raz jeszcze innymi słowami. Jeśli zbije ją dobrze (pytanie, etykieta, dowód z liczbą), odpuść ją i idź dalej.`,
     );
   }
-  if (obiekcje.length) {
-    czesci.push(`INNE OBIEKCJE, KTÓRE MOŻESZ UŻYĆ (1-2, naturalnie, własnymi słowami):\n- ${obiekcje.filter((o) => o !== obiekcja).join("\n- ")}`);
+  if (pozostale.length) {
+    czesci.push(
+      `KOLEJNE OBIEKCJE DO PRZETRENOWANIA (MUSISZ podnieść KAŻDĄ z nich w trakcie rozmowy, po jednej, własnymi słowami, w naturalnym momencie):\n- ${pozostale.join("\n- ")}`,
+    );
+  }
+  const inne = obiekcje.filter((o) => o !== obiekcja && !pozostale.includes(o));
+  if (inne.length && !pozostale.length) {
+    czesci.push(`INNE OBIEKCJE, KTÓRE MOŻESZ UŻYĆ (1-2, naturalnie, własnymi słowami):\n- ${inne.join("\n- ")}`);
   }
 
   if (u.karta?.typ === "kryterium") {

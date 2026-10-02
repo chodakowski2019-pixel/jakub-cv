@@ -61,20 +61,29 @@ export async function POST(req: Request) {
   const cel = celLubDomyslny(b.cel);
   const celWlasny = cel === "wlasny" ? String(b.cel_wlasny ?? "").trim().slice(0, 300) || null : null;
   const dostepne = listaObiekcji(konfig.obiekcje);
-  let obiekcja: string | null = typeof b.obiekcja === "string" && b.obiekcja.trim() ? b.obiekcja.trim().slice(0, 300) : null;
-  if (obiekcja === "__losowa__") obiekcja = dostepne.length ? dostepne[Math.floor(Math.random() * dostepne.length)] : null;
+  // Kilka obiekcji naraz (2.10): tablica `obiekcje`, "__losowa__" = jedna losowa z konfiguracji. Stare `obiekcja` dalej działa.
+  let wybrane: string[] = Array.isArray(b.obiekcje)
+    ? b.obiekcje.filter((o: unknown): o is string => typeof o === "string" && o.trim().length > 0).map((o: string) => o.trim().slice(0, 300)).slice(0, 6)
+    : typeof b.obiekcja === "string" && b.obiekcja.trim()
+      ? [b.obiekcja.trim().slice(0, 300)]
+      : [];
+  if (wybrane.includes("__losowa__")) wybrane = dostepne.length ? [dostepne[Math.floor(Math.random() * dostepne.length)]] : [];
+  let obiekcja: string | null = wybrane.length ? wybrane.join(" · ") : null;
 
   let karta: Karta | null = null;
   if (typeof b.karta_id === "string" && b.karta_id) {
     const { data } = await supabaseAdmin.from("bruno_karty").select("*").eq("email", email).eq("id", b.karta_id).maybeSingle();
     karta = (data as Karta | null) ?? null;
   }
-  // Wybrana obiekcja = karta FSRS tej obiekcji, żeby ocena po rozmowie trafiła do właściwej karty.
-  if (!karta && obiekcja) {
-    const { data } = await supabaseAdmin.from("bruno_karty").select("*").eq("email", email).eq("typ", "obiekcja").eq("tresc", obiekcja).maybeSingle();
+  if (!obiekcja && karta?.typ === "obiekcja") {
+    obiekcja = karta.tresc;
+    wybrane = [karta.tresc];
+  }
+  // Karta FSRS = pierwsza z wybranych obiekcji.
+  if (!karta && wybrane.length) {
+    const { data } = await supabaseAdmin.from("bruno_karty").select("*").eq("email", email).eq("typ", "obiekcja").eq("tresc", wybrane[0]).maybeSingle();
     karta = (data as Karta | null) ?? null;
   }
-  if (!obiekcja && karta?.typ === "obiekcja") obiekcja = karta.tresc;
 
   const sekundyTejRozmowy = Math.min(ROZMOWA_SEKUND, zostalo);
   const { data: rozmowa, error } = await supabaseAdmin
@@ -92,7 +101,7 @@ export async function POST(req: Request) {
     session: {
       type: "realtime",
       model,
-      instructions: instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, obiekcja, karta }),
+      instructions: instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, obiekcja, obiekcje: wybrane, karta }),
       audio: {
         input: {
           transcription: { model: "gpt-4o-mini-transcribe", language: "pl" },

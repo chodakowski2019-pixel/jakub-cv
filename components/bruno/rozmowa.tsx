@@ -115,7 +115,12 @@ function startGwar(): { stop: () => void } {
 
 export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy }: Props) {
   const [tryb, setTryb] = useState<TrybId>("cold");
-  const [obiekcja, setObiekcja] = useState<string>(karta?.typ === "obiekcja" ? karta.tresc : obiekcje.length ? "__losowa__" : "");
+  // Kilka obiekcji naraz (USER_001 2.10). "__losowa__" i pusta lista są wyłączne.
+  const [wybraneObiekcje, setWybraneObiekcje] = useState<string[]>(karta?.typ === "obiekcja" ? [karta.tresc] : obiekcje.length ? ["__losowa__"] : []);
+  const losowa = wybraneObiekcje.includes("__losowa__");
+  const bezKonkretnej = wybraneObiekcje.length === 0;
+  const przelaczObiekcje = (o: string) =>
+    setWybraneObiekcje((w) => (w.includes(o) ? w.filter((x) => x !== o) : [...w.filter((x) => x !== "__losowa__"), o]));
   const [cel, setCel] = useState<CelId>("spotkanie");
   const [celWlasny, setCelWlasny] = useState("");
   const [postac, setPostac] = useState<PostacId>(postacDomyslna);
@@ -343,7 +348,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       const res = await fetch("/api/bruno/rozmowa/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ postac, tryb, cel, cel_wlasny: celWlasny, obiekcja: obiekcja || null, karta_id: karta?.typ === "kryterium" ? karta.id : null }),
+        body: JSON.stringify({ postac, tryb, cel, cel_wlasny: celWlasny, obiekcje: wybraneObiekcje, karta_id: karta?.typ === "kryterium" ? karta.id : null }),
       });
       const odp = await res.json();
       if (!res.ok) throw new Error(odp.blad ?? "Nie udało się zacząć.");
@@ -444,8 +449,9 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     );
   }
 
+  // Bez active:scale i bez zmian rozmiaru: wybór nie może przesuwać reszty kreatora (USER_001 2.10).
   const kafelek = (wybrany: boolean, extra = "") =>
-    `bruno-szklo rounded-2xl p-4 text-left transition-[transform,border-color,box-shadow] duration-100 active:scale-[0.98] ${wybrany ? "bruno-wybrany" : "hover:border-slate-300"} ${extra}`;
+    `bruno-szklo rounded-2xl p-4 text-left h-full transition-[border-color,box-shadow] duration-100 ${wybrany ? "bruno-wybrany" : "hover:border-slate-300"} ${extra}`;
 
   return (
     <div className="flex flex-col gap-6">
@@ -468,7 +474,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           {/* 1. Tryb */}
           <fieldset>
             <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">1.</span>Rodzaj rozmowy</legend>
-            <div className="grid sm:grid-cols-3 gap-3">
+            <div className="grid sm:grid-cols-3 gap-3 auto-rows-fr">
               {(Object.keys(TRYBY) as TrybId[]).map((id) => {
                 const t = TRYBY[id];
                 const wybrany = tryb === id;
@@ -485,18 +491,23 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
 
           {/* 2. Obiekcja */}
           <fieldset>
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">2.</span>Jaką obiekcję chcesz przetrenować</legend>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">2.</span>Jakie obiekcje chcesz przetrenować <span className="text-xs font-normal text-slate-400">(możesz zaznaczyć kilka)</span></legend>
             {obiekcje.length === 0 ? (
               <p className="text-sm text-slate-600 bruno-szklo rounded-2xl p-4">
                 Nie masz jeszcze listy obiekcji. <Link href="/bruno/dostosuj" className="underline">Dodaj je w „Dostosuj Bruno”</Link>, a Bruno użyje typowych dla Twojego klienta.
               </p>
             ) : (
               <div className="flex flex-wrap gap-2">
-                <button type="button" aria-pressed={obiekcja === "__losowa__"} onClick={() => setObiekcja("__losowa__")} className={`bruno-pastylka ${obiekcja === "__losowa__" ? "bruno-pastylka-wybrana" : ""}`}>Losowa</button>
-                <button type="button" aria-pressed={obiekcja === ""} onClick={() => setObiekcja("")} className={`bruno-pastylka ${obiekcja === "" ? "bruno-pastylka-wybrana" : ""}`}>Bez konkretnej</button>
-                {obiekcje.map((o) => (
-                  <button key={o} type="button" aria-pressed={obiekcja === o} onClick={() => setObiekcja(o)} className={`bruno-pastylka ${obiekcja === o ? "bruno-pastylka-wybrana" : ""}`}>„{o}”</button>
-                ))}
+                <button type="button" aria-pressed={losowa} onClick={() => setWybraneObiekcje(["__losowa__"])} className={`bruno-pastylka ${losowa ? "bruno-pastylka-wybrana" : ""}`}>Losowa</button>
+                <button type="button" aria-pressed={bezKonkretnej} onClick={() => setWybraneObiekcje([])} className={`bruno-pastylka ${bezKonkretnej ? "bruno-pastylka-wybrana" : ""}`}>Bez konkretnej</button>
+                {obiekcje.map((o) => {
+                  const w = wybraneObiekcje.includes(o);
+                  return (
+                    <button key={o} type="button" aria-pressed={w} onClick={() => przelaczObiekcje(o)} className={`bruno-pastylka ${w ? "bruno-pastylka-wybrana" : ""}`}>
+                      {w && <span className="mr-1" aria-hidden>✓</span>}„{o}”
+                    </button>
+                  );
+                })}
               </div>
             )}
           </fieldset>
@@ -504,7 +515,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           {/* 3. Cel */}
           <fieldset>
             <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">3.</span>Cel rozmowy</legend>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 auto-rows-fr">
               {(Object.keys(CELE) as CelId[]).map((id) => {
                 const c = CELE[id];
                 const wybrany = cel === id;
@@ -524,16 +535,16 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           {/* 4. Typ klienta */}
           <fieldset>
             <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">4.</span>Typ klienta</legend>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-fr">
               {(Object.keys(POSTACIE) as PostacId[]).map((id) => {
                 const k = POSTACIE[id];
                 const wybrany = postac === id;
                 return (
                   <button key={id} type="button" aria-pressed={wybrany} onClick={() => setPostac(id)} className={kafelek(wybrany)}>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="size-3.5 rounded-full shrink-0" style={{ background: k.kolor }} aria-hidden />
                       <div className="bruno-h2 text-base">{k.nazwa}</div>
-                      <span className="text-xs text-slate-400">{k.krotko}</span>
+                      <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: `${k.kolor}1a`, color: k.kolor }}>{k.krotko}</span>
                     </div>
                     <div className="text-sm text-slate-600 mt-1">{k.opis}</div>
                   </button>
@@ -549,7 +560,6 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           ) : (
             <div className="text-center">
               <button type="button" onClick={zacznij} disabled={!gotowy} className="bruno-przycisk text-base px-12 py-4">Start</button>
-              <p className="text-xs text-slate-400 mt-3">Rozmowa jest nagrywana i transkrybowana, żeby trener mógł ją ocenić. Dziś: {rozmowyDzis}/{rozmowDziennie}.</p>
             </div>
           )}
         </>
@@ -587,7 +597,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           </div>
 
           <div>
-            <div className="bruno-h2 text-xl">Klient {p.nazwa.toLowerCase()}{obiekcja && obiekcja !== "__losowa__" ? <span className="block text-sm font-normal text-slate-500 mt-1">obiekcja: „{obiekcja}”</span> : null}</div>
+            <div className="bruno-h2 text-xl">Klient {p.nazwa.toLowerCase()}{!losowa && wybraneObiekcje.length > 0 ? <span className="block text-sm font-normal text-slate-500 mt-1">{wybraneObiekcje.length === 1 ? "obiekcja" : "obiekcje"}: {wybraneObiekcje.map((o) => `„${o}”`).join(", ")}</span> : null}</div>
             <div className="text-sm mt-1 text-slate-600">
               {stan === "trwa" ? (mowi === "bruno" ? "Bruno mówi" : mowi === "ty" ? "Słucha Cię" : "Rozmowa trwa") : stan === "odliczanie" ? (tryb === "cold" ? "Za chwilę Bruno odbierze telefon." : "Za chwilę Bruno zacznie rozmowę.") : etap}
             </div>

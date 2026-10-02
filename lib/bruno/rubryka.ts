@@ -127,7 +127,13 @@ export async function ocenRozmowe(args: {
     `TYP KLIENTA (DISC): ${POSTACIE[postac].nazwa}, ${POSTACIE[postac].krotko}: ${POSTACIE[postac].opis}`,
     tryb && `TRYB ROZMOWY: ${TRYBY[tryb].nazwa}. ${tryb === "cold" ? "Klient nie znał oferty, otwarcie oceniaj w pełni." : "Klient znał ofertę i sam zaczął od obiekcji, więc OTWARCIE oceniaj łagodniej (liczy się reakcja na pierwszą obiekcję), a OBIEKCJE i ZAMKNIĘCIE surowiej."}`,
     cel && `CEL HANDLOWCA: ${cel}. W ZAMKNIĘCIU oceń wprost, czy ten cel został osiągnięty albo czy handlowiec o niego poprosił.`,
-    obiekcja && `OBIEKCJA DO PRZETRENOWANIA: „${obiekcja}”. Oceń jej zbicie w pierwszej kolejności i wpisz ją do obiekcje_ocena.`,
+    obiekcja &&
+      (obiekcja.includes(" · ")
+        ? `OBIEKCJE DO PRZETRENOWANIA (klient miał podnieść każdą): ${obiekcja
+            .split(" · ")
+            .map((o) => `„${o.trim()}”`)
+            .join(", ")}. Oceń zbicie każdej z nich w pierwszej kolejności i wpisz je do obiekcje_ocena.`
+        : `OBIEKCJA DO PRZETRENOWANIA: „${obiekcja}”. Oceń jej zbicie w pierwszej kolejności i wpisz ją do obiekcje_ocena.`),
     konfig.produkt && `PRODUKT HANDLOWCA: ${konfig.produkt}`,
     konfig.klient && `KLIENT WG FIRMY: ${konfig.klient}`,
     konfig.udana_rozmowa && `UDANA ROZMOWA WG FIRMY: ${konfig.udana_rozmowa}`,
