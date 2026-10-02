@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { ROZMOWA_SEKUND, ROZMOW_DZIENNIE } from "./db";
+import { akapit, kopertaBruno, kroki, przycisk, tabelaDostepu, tabelaParami } from "./szablon-mail.mjs";
 
 // Maile Bruno AI przez Resend z hello@jakubchodakowski.com (jak reszta repo).
 // Przypomnienia mailem, nie SMS: Twilio nie jest darmowy (USER_001 30.09).
@@ -35,34 +36,59 @@ export async function wyslij(args: { do: string; temat: string; html: string; re
   return { ok: true };
 }
 
-const ramka = (tresc: string) => `
-  <div style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;color:#0f172a;line-height:1.55">
-    ${tresc}
-    <p style="margin-top:28px;font-size:12px;color:#94a3b8">Bruno AI, Jakub Chodakowski, NIP 6711845485. <a href="${bazaUrl()}/polityka-prywatnosci" style="color:#94a3b8">Polityka prywatności</a></p>
-  </div>`;
+const minutaSlowo = (m: number) => (m === 1 ? "minutę" : m < 5 ? "minuty" : "minut");
 
-export function htmlDostep(args: { imie: string | null; kod: string; dni: number }) {
+/** Mail z dostępem: link, login i kod w jednej tabelce. */
+export function htmlDostep(args: {
+  imie: string | null;
+  email: string;
+  kod: string;
+  dni: number;
+  rozmowDziennie?: number;
+  fiszekDziennie?: number;
+}) {
   const link = `${bazaUrl()}/bruno`;
-  return ramka(`
-    <p style="font-size:15px">${args.imie ? `${args.imie}, ` : ""}Twój dostęp do Bruno AI jest gotowy. Masz <b>${args.dni} dni</b> od pierwszego logowania.</p>
-    <p style="font-size:15px;margin-top:18px">Adres: <b>${link}</b></p>
-    <p style="font-size:15px;margin:10px 0 4px">Kod logowania:</p>
-    <p style="font-size:34px;font-weight:700;letter-spacing:0.18em;margin:0 0 4px">${args.kod}</p>
-    <p style="font-size:13px;color:#64748b">Logujesz się tym samym kodem za każdym razem. Możesz go zmienić w panelu, w zakładce „Ustawienia”.</p>
-    <p style="margin:22px 0"><a href="${link}" style="display:inline-block;background:#0e7490;color:#fff;text-decoration:none;padding:12px 20px;border-radius:12px;font-weight:600">Zaloguj się</a></p>
-  `);
+  const minuty = ROZMOWA_SEKUND / 60;
+  const rozmow = args.rozmowDziennie ?? ROZMOW_DZIENNIE;
+  // Układ = wzorzec USER_001 z 2.10: powitanie, tabelka dostępu, warunki,
+  // wyśrodkowany przycisk, ponumerowane kroki, „Pozdrawiam".
+  return kopertaBruno({
+    naglowek: "Twój dostęp jest gotowy",
+    tresc: [
+      akapit(`${args.imie ? `Cześć ${args.imie}, p` : "P"}oniżej znajdziesz dane dostępu ⤵️`),
+      tabelaDostepu({ link, login: args.email, kod: args.kod }),
+      tabelaParami([
+        ["Dostęp", `${args.dni} dni od pierwszego logowania`],
+        ["Rozmowy", `${rozmow} dziennie po ${minuty} ${minutaSlowo(minuty)}`],
+        ...(args.fiszekDziennie ? [["Fiszki", `${args.fiszekDziennie} dziennie`] as [string, string]] : []),
+      ]),
+      przycisk({ tekst: "Zaloguj się", link }),
+      kroki([
+        "Otwórz stronę w Chrome i załóż słuchawki.",
+        'Przed pierwszą rozmową wejdź w „Dostosuj Bruno" i wpisz, co sprzedajesz, kim jest klient i jakie obiekcje najczęściej słyszysz. Bez tego Bruno nie wie, kogo udawać.',
+        "Po zalogowaniu włączy się krótki film, który oprowadza po panelu.",
+      ]),
+      akapit("Pozdrawiam"),
+    ].join("\n"),
+  });
 }
 
 export function htmlPrzypomnienie(args: { imie: string | null; kart: number; rozmowyDzis: number; dniZostalo: number; dziennie?: number }) {
   const link = `${bazaUrl()}/bruno/panel`;
   const zostalo = Math.max(0, (args.dziennie ?? ROZMOW_DZIENNIE) - args.rozmowyDzis);
   const minuty = ROZMOWA_SEKUND / 60;
-  return ramka(`
-    <p style="font-size:15px">${args.imie ? `${args.imie}, ` : ""}plan na dziś: <b>${zostalo === 0 ? "zrobione" : `${zostalo} ${zostalo === 1 ? "rozmowa" : "rozmowy"} po ${minuty} ${minuty === 1 ? "minutę" : minuty < 5 ? "minuty" : "minut"}`}</b>.</p>
-    ${args.kart ? `<p style="font-size:15px">Do powtórki czeka: <b>${args.kart}</b> ${args.kart === 1 ? "temat" : "tematów"}. Bruno zacznie od najsłabszego.</p>` : ""}
-    <p style="margin:22px 0"><a href="${link}" style="display:inline-block;background:#0e7490;color:#fff;text-decoration:none;padding:12px 20px;border-radius:12px;font-weight:600">Rozmawiaj z Bruno</a></p>
-    <p style="font-size:13px;color:#64748b">Dostęp testowy: ${args.dniZostalo} ${args.dniZostalo === 1 ? "dzień" : "dni"}.</p>
-  `);
+  return kopertaBruno({
+    naglowek: zostalo === 0 ? "Plan na dziś zrobiony" : `${args.imie ? `${args.imie}, p` : "P"}lan na dziś`,
+    tresc: [
+      tabelaParami([
+        ["Rozmowy", zostalo === 0 ? "zrobione" : `${zostalo} po ${minuty} ${minutaSlowo(minuty)}`],
+        ["Do powtórki", args.kart ? `${args.kart} ${args.kart === 1 ? "temat" : "tematów"}` : "nic"],
+        ["Dostęp", `${args.dniZostalo} ${args.dniZostalo === 1 ? "dzień" : "dni"}`],
+      ]),
+      args.kart ? akapit("Bruno zacznie od najsłabszego tematu.") : "",
+      przycisk({ tekst: "Rozmawiaj z Bruno", link }),
+    ].join("\n"),
+  });
 }
 
 export function htmlWiadomosc(args: { email: string; imie: string | null; firma: string | null; tekst: string }) {

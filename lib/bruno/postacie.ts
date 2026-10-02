@@ -11,6 +11,7 @@ import { listaObiekcji } from "./obiekcje";
 export type PostacId = "czerwony" | "zolty" | "zielony" | "niebieski";
 export type TrybId = "cold" | "zywo" | "online";
 export type CelId = "spotkanie" | "prezentacja" | "sprzedaz" | "decyzja" | "decydent" | "wlasny";
+export type PoziomId = "latwy" | "sredni" | "trudny";
 
 // Głosy TYLKO MĘSKIE (USER_001 2.10): cedar, ballad, ash, echo. Nigdy marin, sage, coral, shimmer, alloy (damskie/neutralne).
 export const POSTACIE: Record<PostacId, { nazwa: string; krotko: string; opis: string; glos: string; kolor: string; charakter: string }> = {
@@ -52,6 +53,36 @@ export const POSTACIE: Record<PostacId, { nazwa: string; krotko: string; opis: s
   },
 };
 
+/**
+ * POZIOM TRUDNOŚCI (USER_001 2.10, wzór SimSale: 3 poziomy).
+ * Poziom zmienia tylko ZACHOWANIE Bruno (ile ustępuje, jak szybko odpuszcza
+ * obiekcję, czy wraca do zbitej). Rubryka trenera jest ta sama na każdym
+ * poziomie, inaczej oceny z dwóch rozmów nie dałyby się porównać.
+ */
+export const POZIOMY: Record<PoziomId, { nazwa: string; krotko: string; opis: string; instrukcja: string }> = {
+  latwy: {
+    nazwa: "Łatwy",
+    krotko: "życzliwy",
+    opis: "Bruno chce rozmawiać. Obiekcję podnosi raz i odpuszcza po sensownej odpowiedzi.",
+    instrukcja:
+      "POZIOM TRUDNOŚCI: ŁATWY. Jesteś życzliwy i masz czas. Nie próbujesz zakończyć rozmowy. Na pytania odpowiadasz pełnym zdaniem, sam dodajesz jeden szczegół o swojej sytuacji. Obiekcję podnosisz RAZ i odpuszczasz ją, gdy handlowiec odpowie sensownie, nawet bez techniki sprzedaży. Nie wymyślasz obiekcji poza wskazanymi. Na cel rozmowy zgadzasz się, gdy handlowiec poprosi o niego wprost pierwszy raz. Nadal nie proponujesz następnego kroku sam.",
+  },
+  sredni: {
+    nazwa: "Średni",
+    krotko: "normalny",
+    opis: "Tak zachowuje się typowy klient. Wraca do obiekcji zbitej słabo.",
+    instrukcja:
+      "POZIOM TRUDNOŚCI: ŚREDNI. Zachowujesz się jak typowy klient: ani nie pomagasz, ani nie utrudniasz na siłę. Na pytania otwarte odpowiadasz normalnie, na zamknięte krótko. Obiekcję zbitą słabo podnosisz jeszcze raz innymi słowami, zbitą dobrze odpuszczasz.",
+  },
+  trudny: {
+    nazwa: "Trudny",
+    krotko: "wymagający",
+    opis: "Chce skończyć rozmowę, przerywa ogólniki, wraca do obiekcji dwa razy i dociska cenę.",
+    instrukcja:
+      "POZIOM TRUDNOŚCI: TRUDNY. Od pierwszej sekundy chcesz wrócić do swojej pracy: mówisz „mam mało czasu”, „proszę wysłać to mailem”, „już to mamy”. Nie odkładasz jednak słuchawki i nie wychodzisz ze spotkania: zostajesz do końca i uprzykrzasz. Przerywasz po dwóch zdaniach ogólników. Na pytania zamknięte odpowiadasz jednym słowem. Każdą obiekcję podnosisz DWA razy, także tę zbitą dobrze, za drugim razem z innej strony („dobrze, ale u nas to nie przejdzie, bo…”). Żądasz konkretów: liczb, nazw firm, terminów, i wytykasz brak odpowiedzi. Przy cenie próbujesz wytargować rabat i sprawdzasz, czy handlowiec się ugnie. Gdy handlowiec się tłumaczy, przeprasza albo usprawiedliwia cenę, naciskasz mocniej. Na cel rozmowy zgadzasz się dopiero wtedy, gdy handlowiec zbada Twoją sytuację pytaniami, zbije obiekcje techniką (pytanie, etykieta, dowód z liczbą) i poprosi o decyzję DRUGI raz. Jeśli tego nie zrobi, kończysz zdaniem „to ja się odezwę”.",
+  },
+};
+
 export const TRYBY: Record<TrybId, { nazwa: string; opis: string; ikona: string }> = {
   cold: { nazwa: "Cold calling", opis: "Bruno nie wie, kto dzwoni. Masz 3 minuty, żeby dojść do celu.", ikona: "telefon" },
   zywo: { nazwa: "Spotkanie 1:1 na żywo", opis: "Bruno zna ofertę i zaczyna od obiekcji. Twoim zadaniem jest je zbić.", ikona: "stolik" },
@@ -90,9 +121,16 @@ export function celLubDomyslny(id: string | null | undefined): CelId {
   return id && id in CELE ? (id as CelId) : "spotkanie";
 }
 
+/** Brak poziomu w bazie (rozmowy sprzed 2.10) = „średni", bo tak Bruno zachowywał się dotąd. */
+export function poziomLubDomyslny(id: string | null | undefined): PoziomId {
+  return id && id in POZIOMY ? (id as PoziomId) : "sredni";
+}
+
 export type UstawieniaRozmowy = {
   tryb: TrybId;
   cel: CelId;
+  /** Poziom trudności (2.10). Brak = średni. */
+  poziom?: PoziomId;
   celWlasny?: string | null;
   obiekcja?: string | null;
   /** Kilka obiekcji wybranych przed rozmową (2.10). Pierwsza idzie na start, reszta w trakcie. */
@@ -108,6 +146,7 @@ export function opisCelu(cel: CelId, celWlasny?: string | null): string {
 /** Instrukcje sesji Realtime dla Bruno-klienta. Czyta „Dostosuj Bruno" i ustawienia wybrane przed rozmową. */
 export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: UstawieniaRozmowy): string {
   const p = POSTACIE[postac];
+  const poziom = u.poziom && u.poziom in POZIOMY ? u.poziom : "sredni";
   const obiekcje = listaObiekcji(konfig.obiekcje);
   const produkt = konfig.produkt.trim();
   const cel = opisCelu(u.cel, u.celWlasny);
@@ -143,6 +182,7 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
   }
 
   czesci.push(opisFaz(u.tryb));
+  czesci.push(POZIOMY[poziom].instrukcja);
 
   if (obiekcja) {
     czesci.push(
@@ -171,7 +211,11 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
   }
 
   czesci.push(
-    `CEL HANDLOWCA W TEJ ROZMOWIE: ${cel}. Zgadzasz się na to DOPIERO, gdy handlowiec zbada Twoją sytuację, odpowie na obiekcje i wprost poprosi o decyzję${konfig.udana_rozmowa.trim() ? ` (firma uznaje rozmowę za udaną, gdy: ${konfig.udana_rozmowa.trim()})` : ""}. Nie wcześniej. Nie proponuj sam następnego kroku.`,
+    `CEL HANDLOWCA W TEJ ROZMOWIE: ${cel}. ${
+      poziom === "latwy"
+        ? "Zgadzasz się na to, gdy handlowiec odpowie na Twoją obiekcję i wprost poprosi o decyzję"
+        : "Zgadzasz się na to DOPIERO, gdy handlowiec zbada Twoją sytuację, odpowie na obiekcje i wprost poprosi o decyzję"
+    }${konfig.udana_rozmowa.trim() ? ` (firma uznaje rozmowę za udaną, gdy: ${konfig.udana_rozmowa.trim()})` : ""}. Nie wcześniej. Nie proponuj sam następnego kroku.`,
   );
   czesci.push(
     `STYL: mów jak człowiek${u.tryb === "cold" ? " przez telefon" : " przy stole"}: krótkie zdania, naturalne pauzy, czasem „mhm”, „no dobrze”. Maksymalnie 2-3 zdania na wypowiedź. Nie wygłaszaj monologów. Rozmowa trwa maksymalnie 3 minuty: gdy handlowiec się żegna, żegnasz się krótko.`,

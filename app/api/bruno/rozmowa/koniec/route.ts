@@ -83,6 +83,7 @@ export async function POST(req: Request) {
       tryb: trybLubDomyslny(rozmowa.tryb),
       cel: opisCelu(celLubDomyslny(rozmowa.cel), rozmowa.cel_wlasny),
       obiekcja: rozmowa.obiekcja ?? null,
+      poziom: rozmowa.poziom ?? null,
     });
     await supabaseAdmin.from("bruno_rozmowy").update({ feedback, ocena: feedback.ocena }).eq("id", id);
     await zaktualizujKarty(email, feedback);

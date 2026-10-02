@@ -34,7 +34,13 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
         {email && <BrunoPasek />}
         <div className={`flex-1 min-w-0 flex flex-col ${email ? "sm:ml-52" : ""}`}>
           <BrunoNav zalogowany={Boolean(email)} />
-          <main className="flex-1 px-4 sm:px-6 pb-28 pt-6 sm:pt-10 max-w-5xl w-full mx-auto overflow-x-hidden">{children}</main>
+          <main className="flex-1 px-4 sm:px-6 pb-10 pt-6 sm:pt-10 max-w-5xl w-full mx-auto overflow-x-hidden">{children}</main>
+          {/* Dokumenty muszą być dostępne z każdego ekranu panelu (2.10): rozmowy są nagrywane. */}
+          <footer className="px-4 sm:px-6 pb-24 pt-2 max-w-5xl w-full mx-auto text-xs text-slate-400 flex flex-wrap gap-x-4 gap-y-1 justify-center">
+            <span>Bruno AI, Jakub Chodakowski, NIP 6711845485</span>
+            <a className="hover:text-slate-600 underline underline-offset-2" href="/regulamin">Regulamin</a>
+            <a className="hover:text-slate-600 underline underline-offset-2" href="/polityka-prywatnosci">Polityka prywatności</a>
+          </footer>
         </div>
         {email && <CzatDymek />}
       </div>

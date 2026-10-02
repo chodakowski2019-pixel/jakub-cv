@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzRozmowe } from "@/lib/bruno/db";
-import { POSTACIE, TRYBY, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
+import { POSTACIE, POZIOMY, TRYBY, postacLubDomyslna, poziomLubDomyslny, trybLubDomyslny } from "@/lib/bruno/postacie";
 import FeedbackWidok from "@/components/bruno/feedback";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +29,7 @@ export default async function BrunoRozmowaSzczegoly({ params }: { params: Promis
         <p className="text-sm text-slate-500">
           {new Date(r.start).toLocaleString("pl-PL", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" })}
           {r.sekundy ? `, ${czas(r.sekundy)}` : ""}
+          {`, poziom ${POZIOMY[poziomLubDomyslny(r.poziom)].nazwa.toLowerCase()}`}
         </p>
       </div>
 

@@ -98,6 +98,8 @@ export type Rozmowa = {
   obiekcja?: string | null;
   /** Od 2.10: powtarzalny egzamin (patrz lib/bruno/scenariusze.ts). Łączy rozmowy o tym samym wsadzie z kreatora. */
   scenariusz_id?: string | null;
+  /** Od 2.10: poziom trudności klienta (latwy/sredni/trudny). Brak = średni. */
+  poziom?: string | null;
 };
 
 export type Karta = {

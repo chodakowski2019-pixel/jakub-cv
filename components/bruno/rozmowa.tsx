@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Feedback, Wypowiedz } from "@/lib/bruno/db";
 import { podpowiedzFazy } from "@/lib/bruno/fazy";
-import { CELE, CELE_TRYBU, POSTACIE, TRYBY, type CelId, type PostacId, type TrybId } from "@/lib/bruno/postacie";
+import { CELE, CELE_TRYBU, POSTACIE, POZIOMY, TRYBY, type CelId, type PostacId, type PoziomId, type TrybId } from "@/lib/bruno/postacie";
 import FeedbackWidok from "./feedback";
 
 // Rozmowa głosowa z Bruno przez OpenAI Realtime (WebRTC w przeglądarce).
@@ -150,6 +150,8 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
   const [cel, setCel] = useState<CelId>("spotkanie");
   const [celWlasny, setCelWlasny] = useState("");
   const [postac, setPostac] = useState<PostacId>(postacDomyslna);
+  // Poziom trudności (USER_001 2.10): domyślnie średni, czyli to, co Bruno robił dotąd.
+  const [poziom, setPoziom] = useState<PoziomId>("sredni");
 
   const [stan, setStan] = useState<Stan>("wybor");
   const [odliczanie, setOdliczanie] = useState(3);
@@ -512,7 +514,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       const res = await fetch("/api/bruno/rozmowa/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ postac, tryb, cel, cel_wlasny: celWlasny, obiekcje: wybraneObiekcje, karta_id: karta?.typ === "kryterium" ? karta.id : null }),
+        body: JSON.stringify({ postac, tryb, cel, cel_wlasny: celWlasny, poziom, obiekcje: wybraneObiekcje, karta_id: karta?.typ === "kryterium" ? karta.id : null }),
       });
       const odp = await res.json();
       if (!res.ok) throw new Error(odp.blad ?? "Nie udało się zacząć.");
@@ -743,6 +745,35 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
             </div>
           </fieldset>
 
+          {/* 5. Poziom trudności */}
+          <fieldset>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">5.</span>Poziom trudności <span className="text-xs font-normal text-slate-400">(ocena jest wg tej samej rubryki na każdym poziomie)</span></legend>
+            <div className="grid sm:grid-cols-3 gap-3 auto-rows-fr">
+              {(Object.keys(POZIOMY) as PoziomId[]).map((id, nr) => {
+                const z = POZIOMY[id];
+                const wybrany = poziom === id;
+                return (
+                  <button key={id} type="button" aria-pressed={wybrany} onClick={() => setPoziom(id)} className={kafelek(wybrany)}>
+                    <div className="flex items-center gap-2">
+                      <span className="flex items-end gap-0.5" aria-hidden>
+                        {[0, 1, 2].map((i) => (
+                          <span
+                            key={i}
+                            className={`w-1.5 rounded-sm ${i <= nr ? (wybrany ? "bg-cyan-700" : "bg-slate-400") : "bg-slate-200"}`}
+                            style={{ height: `${0.45 + i * 0.3}rem` }}
+                          />
+                        ))}
+                      </span>
+                      <div className="bruno-h2 text-base">{z.nazwa}</div>
+                      <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{z.krotko}</span>
+                    </div>
+                    <div className="text-sm text-slate-600 mt-1">{z.opis}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+
           {planZrobiony ? (
             <p className="text-center text-slate-600">Plan na dziś zrobiony ({rozmowDziennie} rozmowy). Wróć jutro.</p>
           ) : brakMinut ? (
@@ -770,6 +801,8 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           <div className="absolute top-4 left-4 sm:top-5 sm:left-5 flex items-center gap-2 text-xs text-slate-500">
             <span className="size-2.5 rounded-full" style={{ background: p.kolor }} aria-hidden />
             {TRYBY[tryb].nazwa}
+            <span className="text-slate-300" aria-hidden>·</span>
+            {POZIOMY[poziom].nazwa.toLowerCase()}
           </div>
 
           <div className="relative size-44 sm:size-56 grid place-items-center" aria-hidden={stan !== "odliczanie"}>

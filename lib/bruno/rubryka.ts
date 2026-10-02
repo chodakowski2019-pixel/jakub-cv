@@ -2,7 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { Feedback, Konfig, Kryterium, Wypowiedz } from "./db";
 import { listaObiekcji } from "./db";
 import type { Metryki } from "./metryki";
-import { POSTACIE, TRYBY, type PostacId, type TrybId } from "./postacie";
+import { POSTACIE, POZIOMY, TRYBY, poziomLubDomyslny, type PostacId, type PoziomId, type TrybId } from "./postacie";
 import { NAZWY, WAGI } from "./kryteria";
 
 // Bruno-TRENER. Ocenia rozmowę po jej zakończeniu wg SalesAI/BRUNO-RUBRYKA.md
@@ -164,8 +164,10 @@ export async function ocenRozmowe(args: {
   tryb?: TrybId;
   cel?: string;
   obiekcja?: string | null;
+  poziom?: PoziomId | string | null;
 }): Promise<Feedback> {
   const { transkrypcja, metryki, konfig, postac, tryb, cel, obiekcja } = args;
+  const poziom = poziomLubDomyslny(typeof args.poziom === "string" ? args.poziom : null);
   const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const model = process.env.BRUNO_TRENER_MODEL ?? "claude-sonnet-5";
 
@@ -173,6 +175,14 @@ export async function ocenRozmowe(args: {
     `TYP KLIENTA (DISC): ${POSTACIE[postac].nazwa}, ${POSTACIE[postac].krotko}: ${POSTACIE[postac].opis}`,
     tryb && `TRYB ROZMOWY: ${TRYBY[tryb].nazwa}. ${tryb === "cold" ? "Klient nie znał oferty, otwarcie oceniaj w pełni." : "Klient znał ofertę i sam zaczął od obiekcji, więc OTWARCIE oceniaj łagodniej (liczy się reakcja na pierwszą obiekcję), a OBIEKCJE i ZAMKNIĘCIE surowiej."}`,
     cel && `CEL HANDLOWCA: ${cel}. W ZAMKNIĘCIU oceń wprost, czy ten cel został osiągnięty albo czy handlowiec o niego poprosił.`,
+    // Poziom to kontekst, nie taryfa: rubryka jest ta sama, inaczej oceny z dwóch poziomów nie dałyby się porównać.
+    `POZIOM TRUDNOŚCI KLIENTA: ${POZIOMY[poziom].nazwa} (${POZIOMY[poziom].krotko}). ${
+      poziom === "trudny"
+        ? "Klient miał wracać do obiekcji dwa razy i dociskać cenę. Jeśli handlowiec to wytrzymał, napisz to w PLUSACH."
+        : poziom === "latwy"
+          ? "Klient był życzliwy i odpuszczał szybko, więc wynik nie dowodzi jeszcze, że handlowiec zbije obiekcję u trudnego klienta. Jeśli rozmowa poszła gładko, w NASTĘPNYM RAZEM zaproponuj powtórkę tego samego scenariusza na wyższym poziomie."
+          : "Zachowanie klienta było typowe."
+    } OCENY NIE ZMIENIAJ ZE WZGLĘDU NA POZIOM: rubryka i skala 1-10 są te same na każdym poziomie.`,
     obiekcja &&
       (obiekcja.includes(" · ")
         ? `OBIEKCJE DO PRZETRENOWANIA (klient miał podnieść każdą): ${obiekcja

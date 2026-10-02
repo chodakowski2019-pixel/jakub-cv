@@ -1,5 +1,18 @@
 import { supabaseAdmin } from "@/lib/supabase";
-import { CELE, POSTACIE, TRYBY, celLubDomyslny, postacLubDomyslna, trybLubDomyslny, type CelId, type PostacId, type TrybId } from "./postacie";
+import {
+  CELE,
+  POSTACIE,
+  POZIOMY,
+  TRYBY,
+  celLubDomyslny,
+  postacLubDomyslna,
+  poziomLubDomyslny,
+  trybLubDomyslny,
+  type CelId,
+  type PostacId,
+  type PoziomId,
+  type TrybId,
+} from "./postacie";
 
 // SCENARIUSZE (2.10). Problem: ta sama konfiguracja kreatora dawała co rozmowę
 // inny przebieg, więc ocen z dwóch rozmów nie można było porównać, a produkt
@@ -18,6 +31,7 @@ export type Scenariusz = {
   cel: string;
   cel_wlasny: string | null;
   obiekcje: string[];
+  poziom?: string | null;
   utworzono: string;
 };
 
@@ -27,20 +41,29 @@ export type DaneScenariusza = {
   cel: CelId;
   celWlasny?: string | null;
   obiekcje: string[];
+  /** Poziom trudności (2.10). Inny poziom = inny egzamin, bo klient ustępuje inaczej. */
+  poziom?: PoziomId;
 };
 
-/** Podpis = tożsamość scenariusza. Kolejność obiekcji i wielkość liter nie tworzą nowego egzaminu. */
+/**
+ * Podpis = tożsamość scenariusza. Kolejność obiekcji i wielkość liter nie tworzą nowego egzaminu.
+ * Poziom „średni" NIE wchodzi do podpisu, żeby rozmowy sprzed 2.10 (bez poziomu w bazie)
+ * dalej liczyły się do tego samego egzaminu i nie zgubiły postępu.
+ */
 export function podpisScenariusza(d: DaneScenariusza): string {
   const obiekcje = [...d.obiekcje].map((o) => o.trim().toLowerCase()).filter(Boolean).sort();
   const cel = d.cel === "wlasny" ? `wlasny:${(d.celWlasny ?? "").trim().toLowerCase()}` : d.cel;
-  return [d.tryb, d.postac, cel, obiekcje.join("|")].join("::");
+  const poziom = poziomLubDomyslny(d.poziom);
+  return [d.tryb, d.postac, cel, obiekcje.join("|"), ...(poziom === "sredni" ? [] : [poziom])].join("::");
 }
 
 /** Nazwa dla człowieka, widoczna w Statystykach. */
 export function nazwaScenariusza(d: DaneScenariusza): string {
   const cel = d.cel === "wlasny" && d.celWlasny?.trim() ? d.celWlasny.trim() : CELE[d.cel].nazwa.toLowerCase();
+  const poziom = poziomLubDomyslny(d.poziom);
   const czesci = [TRYBY[d.tryb].nazwa, `klient ${POSTACIE[d.postac].krotko}`, cel];
   if (d.obiekcje.length) czesci.push(d.obiekcje.length === 1 ? `obiekcja: „${d.obiekcje[0]}”` : `${d.obiekcje.length} obiekcje`);
+  if (poziom !== "sredni") czesci.push(`poziom ${POZIOMY[poziom].nazwa.toLowerCase()}`);
   return czesci.join(" · ");
 }
 
@@ -67,6 +90,7 @@ export async function zapewnijScenariusz(email: string, d: DaneScenariusza): Pro
         cel: d.cel,
         cel_wlasny: d.celWlasny ?? null,
         obiekcje: d.obiekcje,
+        poziom: poziomLubDomyslny(d.poziom),
       })
       .select("id")
       .single();
@@ -141,12 +165,13 @@ export async function postepScenariuszy(email: string): Promise<PostepScenariusz
 }
 
 /** Pomocnik dla widoków: scenariusz rozmowy bez drugiego zapytania w pętli. */
-export function zbierzDane(r: { tryb?: string | null; postac?: string | null; cel?: string | null; cel_wlasny?: string | null; obiekcja?: string | null }): DaneScenariusza {
+export function zbierzDane(r: { tryb?: string | null; postac?: string | null; cel?: string | null; cel_wlasny?: string | null; obiekcja?: string | null; poziom?: string | null }): DaneScenariusza {
   return {
     tryb: trybLubDomyslny(r.tryb),
     postac: postacLubDomyslna(r.postac),
     cel: celLubDomyslny(r.cel),
     celWlasny: r.cel_wlasny ?? null,
     obiekcje: r.obiekcja ? r.obiekcja.split(" · ").map((o) => o.trim()).filter(Boolean) : [],
+    poziom: poziomLubDomyslny(r.poziom),
   };
 }

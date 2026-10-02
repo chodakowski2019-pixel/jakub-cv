@@ -79,7 +79,14 @@ export async function POST(req: Request) {
       await wyslij({
         do: email,
         temat: "Twój dostęp do Bruno AI",
-        html: htmlDostep({ imie: konto.imie, kod, dni: konto.dni }),
+        html: htmlDostep({
+          imie: konto.imie,
+          email,
+          kod,
+          dni: konto.dni,
+          rozmowDziennie: konto.rozmow_dziennie,
+          fiszekDziennie: konto.fiszek_dziennie,
+        }),
       });
       mail = "wyslany";
     } catch (e) {

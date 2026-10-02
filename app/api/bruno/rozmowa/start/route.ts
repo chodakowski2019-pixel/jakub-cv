@@ -13,7 +13,7 @@ import {
   type Karta,
 } from "@/lib/bruno/db";
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
-import { POSTACIE, celLubDomyslny, instrukcjeKlienta, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
+import { POSTACIE, celLubDomyslny, instrukcjeKlienta, postacLubDomyslna, poziomLubDomyslny, trybLubDomyslny } from "@/lib/bruno/postacie";
 import { listaObiekcji } from "@/lib/bruno/obiekcje";
 import { zapewnijScenariusz } from "@/lib/bruno/scenariusze";
 import { MIN_KREDYTOW_EL, elevenlabsWlaczone, glosElevenlabs, pierwszaWypowiedz, podpisanyUrlEl, polaczenieEl, tokenRozmowyEl, wolneKredytyEl } from "@/lib/bruno/elevenlabs";
@@ -72,6 +72,8 @@ export async function POST(req: Request) {
   // Ustawienia wybrane przed rozmową (2.10): tryb, cel, obiekcja.
   const tryb = trybLubDomyslny(b.tryb);
   const cel = celLubDomyslny(b.cel);
+  // Poziom trudności (2.10): zmienia tylko zachowanie Bruno, nie rubrykę trenera.
+  const poziom = poziomLubDomyslny(b.poziom);
   const celWlasny = cel === "wlasny" ? String(b.cel_wlasny ?? "").trim().slice(0, 300) || null : null;
   const dostepne = listaObiekcji(konfig.obiekcje);
   // Kilka obiekcji naraz (2.10): tablica `obiekcje`, "__losowa__" = jedna losowa z konfiguracji. Stare `obiekcja` dalej działa.
@@ -101,10 +103,10 @@ export async function POST(req: Request) {
   const sekundyTejRozmowy = Math.min(ROZMOWA_SEKUND, zostalo);
   // Scenariusz = powtarzalny egzamin (tryb + typ klienta + cel + obiekcje). Powstaje
   // sam z wyborów w kreatorze, żeby dwie rozmowy z tym samym wsadem dały się porównać.
-  const scenariuszId = await zapewnijScenariusz(email, { tryb, postac, cel, celWlasny, obiekcje: wybrane });
+  const scenariuszId = await zapewnijScenariusz(email, { tryb, postac, cel, celWlasny, obiekcje: wybrane, poziom });
   const { data: rozmowa, error } = await supabaseAdmin
     .from("bruno_rozmowy")
-    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa", tryb, cel, cel_wlasny: celWlasny, obiekcja, dostawca, scenariusz_id: scenariuszId })
+    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa", tryb, cel, cel_wlasny: celWlasny, obiekcja, poziom, dostawca, scenariusz_id: scenariuszId })
     .select("id")
     .single();
   if (error || !rozmowa) {
@@ -112,7 +114,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, blad: "Nie udało się zapisać rozmowy." }, { status: 500 });
   }
 
-  const instrukcje = instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, obiekcja, obiekcje: wybrane, karta });
+  const instrukcje = instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, poziom, obiekcja, obiekcje: wybrane, karta });
 
   // ElevenLabs Agents (2.10): token WebRTC + nadpisania per rozmowa. Prompt idzie przez przeglądarkę
   // (tak działają nadpisania w SDK), więc nie ma w nim nic tajnego: to opis klienta z „Dostosuj Bruno".
@@ -137,6 +139,7 @@ export async function POST(req: Request) {
         postac_nazwa: POSTACIE[postac].nazwa,
         tryb,
         cel,
+        poziom,
         obiekcja,
         karta: karta ? { typ: karta.typ, tresc: karta.tresc } : null,
       });
@@ -199,6 +202,7 @@ export async function POST(req: Request) {
     postac_nazwa: POSTACIE[postac].nazwa,
     tryb,
     cel,
+    poziom,
     obiekcja,
     karta: karta ? { typ: karta.typ, tresc: karta.tresc } : null,
   });

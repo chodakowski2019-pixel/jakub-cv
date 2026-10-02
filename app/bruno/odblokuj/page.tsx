@@ -10,12 +10,26 @@ export const dynamic = "force-dynamic";
 
 const KAFELKI = [
   { tytul: "Konto dla każdego handlowca", opis: "Każdy w zespole ma swoje rozmowy, oceny i plan powtórek." },
-  { tytul: "Panel szefa sprzedaży", opis: "Widzisz, kto trenuje, kto rośnie, kto od 2 tygodni nie odbył rozmowy." },
+  {
+    tytul: "Panel szefa: raport zespołu",
+    opis: "Kto trenował i ile rozmów odbył, trend oceny w czasie, najsłabsze kryterium zespołu i każdego handlowca, kto od 2 tygodni nie wszedł.",
+  },
+  {
+    tytul: "Ocena prawdziwych nagrań",
+    opis: "Wgrywasz nagranie realnej rozmowy z klientem, Bruno ocenia ją tą samą rubryką co trening. Widzisz, czy to, co handlowiec ćwiczy, robi też u klienta.",
+  },
+  { tytul: "Ranking zespołu", opis: "Punkty z Treningu i oceny rozmów w jednej tabeli. Widać, kto ciągnie w górę, a kto stoi." },
+  {
+    tytul: "Analiza mowy",
+    opis: "Tempo, przerywniki („yyy”, „tak jakby”), ile mówił handlowiec, a ile klient, najdłuższy monolog i czas do pierwszego pytania.",
+  },
   { tytul: "Bruno pod Wasz produkt", opis: "Konfigurujemy razem: klient, obiekcje, skrypt, definicja udanej rozmowy. Nie robisz tego sam." },
   { tytul: "Więcej odsłon Bruno", opis: "Nowe postacie i scenariusze pod Wasze etapy: pierwszy kontakt, negocjacja ceny, domykanie." },
-  { tytul: "Raport miesięczny", opis: "Średnia zespołu, najsłabsze kryterium, statystyki handlowców." },
   { tytul: "Bez ograniczeń", opis: "Pełen dostęp trwa na czas zawartej umowy." },
-  { tytul: "Bezpieczeństwo danych", opis: "Produkt, obiekcje, skrypt i nagrania widzi tylko Wasz zespół. Modele nie uczą się na Waszych danych. Usuwamy wszystko na życzenie." },
+  {
+    tytul: "Bezpieczeństwo danych",
+    opis: "Produkt, obiekcje, skrypt i nagrania widzi tylko Wasz zespół. U dostawców modeli dane kasują się po 30 dniach, umowa powierzenia jest w regulaminie, a nagrania usuwamy na żądanie.",
+  },
   { tytul: "Polskie głosy Bruno", opis: "Bruno mówi natywnym polskim głosem, bez obcego akcentu. Do wyboru kilka głosów męskich i damskich." },
 ];
 
