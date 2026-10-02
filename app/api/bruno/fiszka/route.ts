@@ -31,11 +31,11 @@ export async function POST(req: Request) {
 
   const { data } = await supabaseAdmin.from("bruno_karty").select("*").eq("email", email).eq("id", kartaId).maybeSingle();
   const karta = (data as Karta | null) ?? null;
-  if (!karta || karta.typ !== "obiekcja") return NextResponse.json({ ok: false, blad: "Nie ma takiej karty." }, { status: 404 });
+  if (!karta || karta.typ === "kryterium") return NextResponse.json({ ok: false, blad: "Nie ma takiej karty." }, { status: 404 });
 
   try {
     const konfig = await pobierzKonfig(email);
-    const w = await ocenFiszke({ obiekcja: karta.tresc, odpowiedz, konfig });
+    const w = await ocenFiszke({ obiekcja: karta.tresc, odpowiedz, konfig, typ: karta.typ as "obiekcja" | "poprawka" | "wiedza", pytanie: karta.pytanie, wzor: karta.wzor });
     const due = await ocenKarte(email, karta.id, ocenaObiekcjiNaGrade(w.werdykt));
     const { error } = await supabaseAdmin.from("bruno_fiszki").insert({
       email,

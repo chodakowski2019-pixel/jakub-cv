@@ -8,7 +8,13 @@ import Link from "next/link";
 // darmowe) albo tekstem, tył = werdykt 1-4 + komentarz + wzór. Seria dni
 // i punkty. FSRS po stronie serwera decyduje, kiedy karta wraca.
 
-export type FiszkaKarta = { id: string; tresc: string; due: string; naCzas: boolean; reps: number; lapses: number };
+export type FiszkaKarta = { id: string; typ: "obiekcja" | "poprawka" | "wiedza"; tresc: string; pytanie: string | null; kategoria: string | null; due: string; naCzas: boolean; reps: number; lapses: number };
+
+const RODZAJ: Record<FiszkaKarta["typ"], { nazwa: string; kolor: string; naglowek: string }> = {
+  obiekcja: { nazwa: "Obiekcja", kolor: "#0e7490", naglowek: "Klient mówi" },
+  poprawka: { nazwa: "Do poprawy z Twojej rozmowy", kolor: "#d97706", naglowek: "Sytuacja z rozmowy" },
+  wiedza: { nazwa: "Wiedza", kolor: "#7c3aed", naglowek: "Pytanie" },
+};
 
 type Wynik = { werdykt: 1 | 2 | 3 | 4; komentarz: string; wzor: string; technika: string; due: string | null };
 
@@ -144,7 +150,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
           <span className="bruno-gradient-tekst">Trening</span> obiekcji
         </h1>
-        <p className="text-slate-600 mt-2">Klient mówi, Ty odpowiadasz.</p>
+        <p className="text-slate-600 mt-2">Obiekcje, sytuacje z Twoich rozmów i wiedza o klientach. Ty odpowiadasz.</p>
       </div>
 
       {/* Pasek gry: seria, dziś, punkty sesji */}
@@ -195,12 +201,24 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         <div className="bruno-fiszka-scena">
           <div key={`${karta.id}-${stan === "wynik" ? "tyl" : "przod"}`} className="bruno-szklo rounded-3xl p-6 sm:p-8 bruno-fiszka">
             <div className="flex items-center justify-between mb-4">
-              <span className="inline-flex items-center rounded-full bg-cyan-700/10 text-cyan-800 text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1">Karta {postep + 1} z {dziennie}</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center rounded-full bg-cyan-700/10 text-cyan-800 text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1">Karta {postep + 1} z {dziennie}</span>
+                <span className="inline-flex items-center rounded-full text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1" style={{ background: `${RODZAJ[karta.typ].kolor}1a`, color: RODZAJ[karta.typ].kolor }}>
+                  {RODZAJ[karta.typ].nazwa}{karta.typ === "wiedza" && karta.kategoria === "typy" ? ": typy klientów" : karta.typ === "wiedza" ? ": technika" : ""}
+                </span>
+              </div>
               {karta.lapses > 0 && <span className="text-[11px] text-slate-400">wpadek: {karta.lapses}</span>}
             </div>
 
-            <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Klient mówi</div>
-            <blockquote className="bruno-h2 text-2xl sm:text-3xl text-slate-900 leading-snug">„{karta.tresc}”</blockquote>
+            <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">{RODZAJ[karta.typ].naglowek}</div>
+            {karta.typ === "obiekcja" ? (
+              <blockquote className="bruno-h2 text-2xl sm:text-3xl text-slate-900 leading-snug">„{karta.tresc}”</blockquote>
+            ) : (
+              <>
+                <div className="bruno-h2 text-xl sm:text-2xl text-slate-900 leading-snug">{karta.tresc}</div>
+                <p className="mt-2 text-[15px] sm:text-base text-slate-800 leading-relaxed">{karta.pytanie}</p>
+              </>
+            )}
 
             {stan !== "wynik" ? (
               <div className="mt-6 flex flex-col gap-3">
@@ -213,7 +231,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
                     </button>
                   )}
                 </div>
-                <textarea id="odp" className="bruno-pole text-[15px]" rows={4} placeholder="Powiedz to tak, jak powiedziałbyś klientowi. 1-3 zdania." value={odp} onChange={(e) => setOdp(e.target.value)} maxLength={1500} disabled={stan === "ocena"} />
+                <textarea id="odp" className="bruno-pole text-[15px]" rows={4} placeholder={karta.typ === "obiekcja" ? "Powiedz to tak, jak powiedziałbyś klientowi. 1-3 zdania." : "Odpowiedz własnymi słowami. 1-3 zdania."} value={odp} onChange={(e) => setOdp(e.target.value)} maxLength={1500} disabled={stan === "ocena"} />
                 {blad && <p className="text-sm text-red-700">{blad}</p>}
                 <div className="flex items-center justify-between gap-3">
                   <span />

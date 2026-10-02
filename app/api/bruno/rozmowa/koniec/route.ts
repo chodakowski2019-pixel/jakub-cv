@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { ROZMOWA_SEKUND_MAX, pobierzKonfig, type Wypowiedz } from "@/lib/bruno/db";
-import { zaktualizujKarty } from "@/lib/bruno/fsrs";
+import { dodajKartyPoprawek, zaktualizujKarty } from "@/lib/bruno/fsrs";
+import { kartyZFeedbacku } from "@/lib/bruno/fiszka";
 import { policzMetryki } from "@/lib/bruno/metryki";
 import { celLubDomyslny, opisCelu, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
 import { ocenRozmowe } from "@/lib/bruno/rubryka";
@@ -75,6 +76,13 @@ export async function POST(req: Request) {
     });
     await supabaseAdmin.from("bruno_rozmowy").update({ feedback, ocena: feedback.ocena }).eq("id", id);
     await zaktualizujKarty(email, feedback);
+    // Minusy z tej rozmowy → fiszki „do poprawy" w Treningu (USER_001 2.10).
+    try {
+      const nowe = await kartyZFeedbacku({ feedback, produkt: konfig.produkt });
+      await dodajKartyPoprawek(email, nowe, id);
+    } catch (e) {
+      console.error("[bruno koniec] karty poprawek", e);
+    }
     return NextResponse.json({ ok: true, id, feedback, ocena: feedback.ocena });
   } catch (e) {
     console.error("[bruno koniec] trener", e);

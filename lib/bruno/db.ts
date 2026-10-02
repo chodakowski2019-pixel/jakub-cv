@@ -93,8 +93,13 @@ export type Rozmowa = {
 export type Karta = {
   id: string;
   email: string;
-  typ: "kryterium" | "obiekcja";
+  /** kryterium = umiejętność (do Testu), obiekcja / poprawka / wiedza = fiszki w Treningu (2.10). */
+  typ: "kryterium" | "obiekcja" | "poprawka" | "wiedza";
   tresc: string;
+  pytanie?: string | null;
+  wzor?: string | null;
+  kategoria?: string | null;
+  zrodlo?: string | null;
   due: string;
   stability: number;
   difficulty: number;

@@ -45,7 +45,8 @@ export default async function BrunoPanelPage() {
   const minutZostalo = Math.max(0, Math.floor((konto.limit_sekund - zuzyte) / 60));
   const postac = postacLubDomyslna(konfig.postac);
   const skonfigurowany = Boolean(konfig.produkt.trim() || konfig.klient.trim());
-  const pierwszaKarta = karty[0] ?? null;
+  // Do Testu tylko karty umiejętności i obiekcji; poprawki i wiedza żyją w Treningu (2.10).
+  const pierwszaKarta = karty.find((k) => k.typ === "kryterium" || k.typ === "obiekcja") ?? null;
   const dziennie = limitDzienny(konto);
   const zostaloDzis = Math.max(0, dziennie - dzis);
   const planZrobiony = zostaloDzis === 0;

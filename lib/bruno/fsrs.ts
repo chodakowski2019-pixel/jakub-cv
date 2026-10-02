@@ -2,6 +2,7 @@ import { createEmptyCard, fsrs, Rating, type Card, type Grade } from "ts-fsrs";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Feedback, Karta, Konfig, Kryterium } from "./db";
 import { listaObiekcji } from "./db";
+import { WIEDZA } from "./wiedza";
 
 // Harmonogram powtórek (decyzja 26.09: FSRS, ten sam algorytm co Anki od 2023).
 // Karta = jedna obiekcja z „Dostosuj Bruno" albo jedno z 5 kryteriów rubryki.
@@ -62,14 +63,38 @@ export function ocenaObiekcjiNaGrade(ocena: number): Grade {
 export async function zapewnijKarty(email: string, konfig: Konfig): Promise<void> {
   const { data } = await supabaseAdmin.from("bruno_karty").select("typ, tresc").eq("email", email);
   const istnieja = new Set((data ?? []).map((k) => `${k.typ}:${k.tresc}`));
-  const nowe: { email: string; typ: string; tresc: string }[] = [];
+  const nowe: { email: string; typ: string; tresc: string; pytanie?: string; wzor?: string; kategoria?: string }[] = [];
   for (const k of KRYTERIA) if (!istnieja.has(`kryterium:${k}`)) nowe.push({ email, typ: "kryterium", tresc: k });
   for (const o of listaObiekcji(konfig.obiekcje)) if (!istnieja.has(`obiekcja:${o}`)) nowe.push({ email, typ: "obiekcja", tresc: o });
+  // Stała talia wiedzy (2.10): typy klientów + techniki. Dokładana każdemu kontu raz.
+  for (const w of WIEDZA) if (!istnieja.has(`wiedza:${w.tresc}`)) nowe.push({ email, typ: "wiedza", tresc: w.tresc, pytanie: w.pytanie, wzor: w.wzor, kategoria: w.kategoria });
   if (nowe.length) {
     const pusta = naWiersz(createEmptyCard(new Date()));
     const { error } = await supabaseAdmin.from("bruno_karty").insert(nowe.map((n) => ({ ...n, ...pusta })));
     if (error) console.error("bruno_karty insert", error.code, error.message);
   }
+}
+
+/**
+ * Karty „do poprawy" z feedbacku po rozmowie (USER_001 2.10): każdy minus =
+ * fiszka z sytuacją z TEJ rozmowy i wzorem od trenera. Max 3 na rozmowę, bez duplikatów treści.
+ */
+export async function dodajKartyPoprawek(email: string, karty: { tresc: string; pytanie: string; wzor: string }[], zrodlo: string): Promise<number> {
+  if (!karty.length) return 0;
+  const { data } = await supabaseAdmin.from("bruno_karty").select("tresc").eq("email", email).eq("typ", "poprawka");
+  const istnieja = new Set((data ?? []).map((k) => k.tresc.toLowerCase()));
+  const pusta = naWiersz(createEmptyCard(new Date()));
+  const nowe = karty
+    .filter((k) => k.tresc.trim() && k.pytanie.trim() && k.wzor.trim() && !istnieja.has(k.tresc.trim().toLowerCase()))
+    .slice(0, 3)
+    .map((k) => ({ email, typ: "poprawka", tresc: k.tresc.trim().slice(0, 80), pytanie: k.pytanie.trim().slice(0, 500), wzor: k.wzor.trim().slice(0, 600), kategoria: "rozmowa", zrodlo, ...pusta }));
+  if (!nowe.length) return 0;
+  const { error } = await supabaseAdmin.from("bruno_karty").insert(nowe);
+  if (error) {
+    console.error("bruno_karty poprawki", error.code, error.message);
+    return 0;
+  }
+  return nowe.length;
 }
 
 /** Jedna karta, jedna ocena FSRS (fiszki w „Trening", 2.10). Zwraca nową datę powrotu albo null. */
