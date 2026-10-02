@@ -38,6 +38,31 @@ function czas(s: number) {
   return `${m}:${String(r).padStart(2, "0")}`;
 }
 
+/** Wyciąga z getStats to, co mówi o jakości dźwięku przychodzącego: pakiety, straty, jitter, bufor, RTT. */
+async function zbierzStatyRtc(p: RTCPeerConnection | null): Promise<Record<string, unknown> | null> {
+  if (!p) return null;
+  const wynik: Record<string, unknown> = {};
+  const stats = await p.getStats();
+  stats.forEach((s) => {
+    const r = s as unknown as Record<string, unknown>;
+    if (r.type === "inbound-rtp" && r.kind === "audio") {
+      Object.assign(wynik, {
+        pakiety_odebrane: r.packetsReceived,
+        pakiety_utracone: r.packetsLost,
+        jitter_s: r.jitter,
+        bufor_jittera_s: r.jitterBufferDelay,
+        bufor_jittera_emisje: r.jitterBufferEmittedCount,
+        ukrycia_strat: r.concealedSamples,
+        probki_odebrane: r.totalSamplesReceived,
+        audio_poziom: r.audioLevel,
+      });
+    }
+    if (r.type === "outbound-rtp" && r.kind === "audio") Object.assign(wynik, { pakiety_wyslane: r.packetsSent });
+    if (r.type === "candidate-pair" && r.state === "succeeded") Object.assign(wynik, { rtt_s: r.currentRoundTripTime, bitrate_in: r.availableIncomingBitrate });
+  });
+  return wynik;
+}
+
 function IkonaTrybu({ nazwa }: { nazwa: string }) {
   const w = { viewBox: "0 0 24 24", width: 22, height: 22, fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
   if (nazwa === "telefon") return <svg {...w}><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" /></svg>;
@@ -150,6 +175,9 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const konczenie = useRef(false);
   const zdalny = useRef<MediaStream | null>(null);
+  // Diagnostyka jakości (2.10): statystyki WebRTC z końca rozmowy + błędy z kanału danych, lecą do metryki.rtc.
+  const bledyRealtime = useRef<string[]>([]);
+  const statyRtc = useRef<Record<string, unknown> | null>(null);
   const limitRef = useRef(sekundRozmowy);
   // Start rozmowy = kanał otwarty I odliczanie skończone. Oba warunki w refach.
   const kanalOtwarty = useRef(false);
@@ -202,7 +230,9 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       ctx.current = c;
       const cel = c.createMediaStreamDestination();
       if (mic.current) c.createMediaStreamSource(mic.current).connect(cel);
-      if (zdalny.current) c.createMediaStreamSource(zdalny.current).connect(cel);
+      // Klon ścieżki: ta sama ścieżka w <audio> i w WebAudio potrafi w Chrome
+      // dawać porwany dźwięk (2.10: „Bruno się zacina"). Nagrywamy z klonu.
+      if (zdalny.current) c.createMediaStreamSource(new MediaStream(zdalny.current.getAudioTracks().map((t) => t.clone()))).connect(cel);
       const typ = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/webm";
       const r = new MediaRecorder(cel.stream, { mimeType: typ, audioBitsPerSecond: 48_000 });
       kawalki.current = [];
@@ -230,6 +260,9 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     setStan("konczenie");
     setEtap(powod === "limit" ? "Czas minął. Kończę rozmowę..." : "Kończę rozmowę...");
     const trwalo = Math.round((Date.now() - start.current) / 1000);
+    try {
+      statyRtc.current = await zbierzStatyRtc(pc.current);
+    } catch {}
     const nagranie = await zatrzymajNagrywanie();
     posprzataj();
 
@@ -258,7 +291,13 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       const res = await fetch("/api/bruno/rozmowa/koniec", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rozmowa_id: rozmowaId, transkrypcja: transkrypcja.current, sekundy: trwalo, nagranie_sciezka: sciezka }),
+        body: JSON.stringify({
+          rozmowa_id: rozmowaId,
+          transkrypcja: transkrypcja.current,
+          sekundy: trwalo,
+          nagranie_sciezka: sciezka,
+          rtc: { ...(statyRtc.current ?? {}), bledy: bledyRealtime.current.slice(0, 20), sluchawki: null, przegladarka: navigator.userAgent.slice(0, 120) },
+        }),
       });
       const odp = await res.json();
       if (!res.ok) throw new Error(odp.blad ?? "błąd");
@@ -378,6 +417,10 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       pc.current = p;
       p.ontrack = (e) => {
         zdalny.current = e.streams[0];
+        // Większy bufor jittera (250 ms) wygładza porwany dźwięk na słabszym łączu.
+        try {
+          (e.receiver as RTCRtpReceiver & { jitterBufferTarget?: number }).jitterBufferTarget = 250;
+        } catch {}
         if (audioEl.current) {
           audioEl.current.srcObject = e.streams[0];
           audioEl.current.play().catch(() => {});
@@ -423,6 +466,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
             break;
           case "error":
             console.error("realtime error", ev);
+            bledyRealtime.current.push(JSON.stringify(ev).slice(0, 300));
             break;
         }
       });

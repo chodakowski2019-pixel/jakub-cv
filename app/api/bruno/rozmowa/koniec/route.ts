@@ -39,11 +39,14 @@ export async function POST(req: Request) {
   const sekundy = Math.round(Math.min(ROZMOWA_SEKUND_MAX, Math.max(0, Math.min(odStartu, zPrzegladarki || odStartu))));
   const nagranie = typeof b?.nagranie_sciezka === "string" ? b.nagranie_sciezka.slice(0, 300) : null;
 
-  const metryki = policzMetryki(transkrypcja, sekundy);
+  const metrykiCzyste = policzMetryki(transkrypcja, sekundy);
+  // Diagnostyka jakości dźwięku (2.10): statystyki WebRTC i błędy Realtime z przeglądarki, zapisywane obok metryk.
+  const rtc = b?.rtc && typeof b.rtc === "object" ? JSON.parse(JSON.stringify(b.rtc).slice(0, 4000)) : undefined;
+  const metryki = rtc ? { ...metrykiCzyste, rtc } : metrykiCzyste;
   const koniec = new Date().toISOString();
 
   // Za krótka albo pusta rozmowa: zapisujemy, nie wołamy trenera, nie liczymy do planu dnia.
-  const slowaH = metryki.slowa_handlowca;
+  const slowaH = metrykiCzyste.slowa_handlowca;
   if (sekundy < 20 || slowaH < 5) {
     await supabaseAdmin
       .from("bruno_rozmowy")
@@ -61,7 +64,7 @@ export async function POST(req: Request) {
     const konfig = await pobierzKonfig(email);
     const feedback = await ocenRozmowe({
       transkrypcja,
-      metryki,
+      metryki: metrykiCzyste,
       konfig,
       postac: postacLubDomyslna(rozmowa.postac),
       tryb: trybLubDomyslny(rozmowa.tryb),
