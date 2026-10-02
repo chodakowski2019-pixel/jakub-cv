@@ -39,7 +39,7 @@ export default async function BrunoStatystykiPage() {
         Twoje <span className="bruno-gradient-tekst">statystyki</span>
       </h1>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <Pierscien wartosc={minutLimit - minutZostalo} max={minutLimit} liczba={`${minutZostalo}`} opis="minut zostało" uwaga={`z ${minutLimit} w teście`} />
         <Licznik liczba={`${ocenione.length}`} opis={ocenione.length === 1 ? "rozmowa oceniona" : "rozmów ocenionych"} uwaga={`${stan.dniZostalo} ${stan.dniZostalo === 1 ? "dzień" : "dni"} dostępu zostało`} />
         <Ocena wartosc={srednia} opis="średnia ocena" uwaga="ze wszystkich ocenionych" />

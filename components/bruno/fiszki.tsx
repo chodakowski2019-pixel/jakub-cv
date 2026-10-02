@@ -165,7 +165,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         </div>
         <div className="bruno-szklo rounded-2xl p-3 text-center">
           <div className="bruno-h2 text-xl leading-none"><span className="bruno-gradient-tekst">{sesja.punkty}</span><span className="text-sm text-slate-400">/{dziennie * WERDYKTY[4].punkty}</span></div>
-          <div className="text-[11px] text-slate-500 mt-1">punktów w tej sesji</div>
+          <div className="text-[11px] text-slate-500 mt-1 leading-tight">punktów<span className="hidden min-[400px]:inline"> w tej sesji</span></div>
         </div>
       </div>
 

@@ -82,7 +82,7 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
       {/* Dwa symetryczne panele (USER_001 2.10): lewy = statystyki w jednej karcie, prawy = kula. Bez list pod spodem. */}
       <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-stretch">
         <div className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-4 min-h-[30rem]">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Pierscien goly wartosc={dniUplynelo} max={konto.dni} liczba={`${stan.dniZostalo}`} opis={stan.dniZostalo === 1 ? "dzień dostępu" : "dni dostępu"} uwaga={stan.koniec ? `do ${stan.koniec.toLocaleDateString("pl-PL")}` : `z ${konto.dni}, od pierwszego logowania`} />
             <Pierscien goly wartosc={dzis} max={dziennie} liczba={`${dzis}/${dziennie}`} opis="rozmów dziś" uwaga={planZrobiony ? "plan dnia zrobiony" : `zostało ${zostaloDzis}, każda ${ROZMOWA_SEKUND / 60} min`} />
           </div>

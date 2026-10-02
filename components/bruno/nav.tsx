@@ -105,7 +105,8 @@ export default function BrunoNav({ zalogowany }: { zalogowany: boolean }) {
           className={`bruno-odblokuj inline-flex items-center gap-2 whitespace-nowrap ${odblokuj ? "bruno-odblokuj-aktywny" : ""}`}
         >
           <Ikona nazwa="klodka" />
-          Odblokuj pełen dostęp
+          <span className="sm:hidden">Odblokuj</span>
+          <span className="hidden sm:inline">Odblokuj pełen dostęp</span>
         </Link>
         <button type="button" onClick={wyloguj} className="bruno-wyloguj sm:absolute sm:right-6 inline-flex items-center gap-1.5">
           <Ikona nazwa="wyjscie" />
