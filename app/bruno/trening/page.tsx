@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { pobierzKonfig, pobierzKonto, poczatekDniaPL, stanDostepu, wszystkieKarty } from "@/lib/bruno/db";
+import { FISZEK_DZIENNIE, pobierzKonfig, pobierzKonto, poczatekDniaPL, stanDostepu, wszystkieKarty } from "@/lib/bruno/db";
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import Fiszki, { type FiszkaKarta } from "@/components/bruno/fiszki";
 
@@ -11,8 +11,6 @@ export const dynamic = "force-dynamic";
 // „Trening" (USER_001 2.10): fiszki z obiekcjami na FSRS. Handlowiec odpowiada
 // na obiekcję (głosem albo tekstem), trener daje werdykt i wzór, FSRS planuje,
 // kiedy obiekcja wróci. To jest nauka. „Test" (rozmowa z Bruno) to egzamin.
-
-const FISZEK_DZIENNIE = 5;
 
 /** Seria dni: ile kolejnych dni (licząc od dziś albo wczoraj) miało ≥1 fiszkę. */
 function seriaDni(daty: string[]): number {

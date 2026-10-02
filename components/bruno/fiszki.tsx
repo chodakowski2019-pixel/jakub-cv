@@ -119,7 +119,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
     setOdp("");
     setWynik(null);
     setPokazOdp(false);
-    if (sesja.karty >= dziennie || i + 1 >= karty.length) {
+    if (sesja.karty >= dziennie || zrobioneDzis >= dziennie || i + 1 >= karty.length) {
       setStan("koniec");
       return;
     }
@@ -163,7 +163,14 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         </div>
       </div>
 
-      {stan === "koniec" ? (
+      {stan === "pytanie" && zrobioneDzis >= dziennie && sesja.karty === 0 ? (
+        <div className="bruno-szklo rounded-3xl p-8 text-center flex flex-col items-center gap-3">
+          <div className="text-4xl">✅</div>
+          <h2 className="bruno-h2 text-2xl">Plan fiszek na dziś zrobiony</h2>
+          <p className="text-sm text-slate-600">W teście masz {dziennie} fiszek dziennie. Następne jutro.</p>
+          <Link href="/bruno/rozmowa" className="bruno-przycisk-2 mt-2">Sprawdź się w teście z Bruno</Link>
+        </div>
+      ) : stan === "koniec" ? (
         <div className="bruno-szklo rounded-3xl p-8 text-center flex flex-col items-center gap-4">
           <div className="text-5xl">{sesja.werdykty.every((w) => w >= 3) ? "🏆" : sesja.punkty >= 30 ? "💪" : "🧠"}</div>
           <h2 className="bruno-h2 text-2xl">Sesja zrobiona: {sesja.punkty} pkt</h2>
@@ -173,10 +180,14 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
             ))}
           </div>
           <p className="text-sm text-slate-600 max-w-md">
-            {razem + sesja.karty} fiszek łącznie{sredniWerdykt ? `, średni werdykt ${sredniWerdykt}/4` : ""}. Karty wracają wtedy, kiedy zaczynasz je zapominać. Najsłabsze szybciej.
+            {razem + sesja.karty} fiszek łącznie{sredniWerdykt ? `, średni werdykt ${sredniWerdykt}/4` : ""}.
           </p>
           <div className="flex flex-wrap gap-3 justify-center pt-2">
-            <button type="button" onClick={jeszcze} className="bruno-przycisk">Jeszcze 5</button>
+            {zrobioneDzis < dziennie ? (
+              <button type="button" onClick={jeszcze} className="bruno-przycisk">Jeszcze {Math.min(dziennie, dziennie - zrobioneDzis)}</button>
+            ) : (
+              <span className="text-sm text-slate-500 self-center">Limit fiszek na dziś wykorzystany. Wróć jutro.</span>
+            )}
             <Link href="/bruno/rozmowa" className="bruno-przycisk-2">Sprawdź się w teście z Bruno</Link>
           </div>
         </div>

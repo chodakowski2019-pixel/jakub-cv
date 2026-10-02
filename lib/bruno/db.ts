@@ -11,6 +11,8 @@ export const ROZMOWA_SEKUND = 180;
 export const ROZMOWA_SEKUND_MAX = ROZMOWA_SEKUND + 30;
 /** Plan dnia: 3 rozmowy (USER_001 30.09). */
 export const ROZMOW_DZIENNIE = 3;
+/** Fiszki w Treningu: 5 dziennie, twardy limit na serwerze (USER_001 2.10). */
+export const FISZEK_DZIENNIE = 5;
 
 export type Konto = {
   email: string;

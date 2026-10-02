@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { pobierzKonfig, pobierzKonto, stanDostepu, type Karta } from "@/lib/bruno/db";
+import { FISZEK_DZIENNIE, pobierzKonfig, pobierzKonto, poczatekDniaPL, stanDostepu, type Karta } from "@/lib/bruno/db";
 import { ocenFiszke } from "@/lib/bruno/fiszka";
 import { ocenKarte, ocenaObiekcjiNaGrade } from "@/lib/bruno/fsrs";
 
@@ -16,6 +16,12 @@ export async function POST(req: Request) {
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
   const konto = await pobierzKonto(email);
   if (!konto || !stanDostepu(konto).aktywny) return NextResponse.json({ ok: false, blad: "Dostęp testowy wygasł." }, { status: 403 });
+
+  // Twardy limit dzienny po stronie serwera (USER_001 2.10): konto testowe ma FISZEK_DZIENNIE fiszek, nie nieskończoność.
+  const { count } = await supabaseAdmin.from("bruno_fiszki").select("id", { count: "exact", head: true }).eq("email", email).gte("utworzono", poczatekDniaPL());
+  if ((count ?? 0) >= FISZEK_DZIENNIE) {
+    return NextResponse.json({ ok: false, blad: `Limit ${FISZEK_DZIENNIE} fiszek na dziś wykorzystany. Wróć jutro.`, kod: "limit" }, { status: 403 });
+  }
 
   const b = await req.json().catch(() => ({}));
   const kartaId = String(b.karta_id ?? "");
