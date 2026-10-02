@@ -16,10 +16,15 @@ import {
 import { NAZWY } from "@/lib/bruno/kryteria";
 import { POSTACIE, postacLubDomyslna } from "@/lib/bruno/postacie";
 import { Pierscien, Slupki, rozmowyNaDni } from "@/components/bruno/statystyki";
+import TourPopup from "@/components/bruno/tour-popup";
+
+/** Film oprowadzający (2.10): plik statyczny w public/. Wersja w nazwie = nowy plik przy zmianie filmu. */
+const FILM_OPROWADZAJACY = "/bruno/oprowadzanie-v1.mp4";
 
 export const dynamic = "force-dynamic";
 
-export default async function BrunoPanelPage() {
+export default async function BrunoPanelPage({ searchParams }: { searchParams: Promise<{ tour?: string }> }) {
+  const { tour } = await searchParams;
   const email = await zalogowanyEmail();
   if (!email) redirect("/bruno");
   const konto = await pobierzKonto(email);
@@ -56,8 +61,12 @@ export default async function BrunoPanelPage() {
   const dniUplynelo = Math.max(0, konto.dni - stan.dniZostalo);
   const slupki = rozmowyNaDni(wszystkie, 7);
 
+  // Popup z filmem: przy pierwszym wejściu (tour_obejrzany_at puste) albo na życzenie (?tour=1 z Ustawień).
+  const pokazTour = tour === "1" || !konto.tour_obejrzany_at;
+
   return (
     <div className="flex flex-col gap-6">
+      {pokazTour && <TourPopup src={FILM_OPROWADZAJACY} />}
       {/* Układ v3 (USER_001 1.10): nagłówek na środku, lewa połowa = wykresy, prawa = pulsująca kula jako następna rozmowa. */}
       <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem] text-center">
         {konto.imie ? `Cześć, ${konto.imie}.` : "Cześć."}{" "}

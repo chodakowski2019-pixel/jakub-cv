@@ -34,6 +34,8 @@ export type Konto = {
   rozmow_dziennie?: number | null;
   /** Limit fiszek dziennie per konto (2.10). Domyślnie FISZEK_DZIENNIE = 5; USER_001 ma 50. */
   fiszek_dziennie?: number | null;
+  /** Film oprowadzający obejrzany/pominięty (2.10). Puste = pokaż popup na panelu. */
+  tour_obejrzany_at?: string | null;
   /** Skrót scrypt stałego kodu logowania (sól:skrót). Nigdy nie wychodzi poza serwer. */
   kod_hash: string | null;
   nieudane: number | null;
