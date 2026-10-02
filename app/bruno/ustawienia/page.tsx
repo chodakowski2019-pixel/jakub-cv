@@ -3,7 +3,7 @@ import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonfig, pobierzKonto } from "@/lib/bruno/db";
 import UstawieniaForm from "@/components/bruno/ustawienia-form";
 import KodForm from "@/components/bruno/kod-form";
-import { FILM_DLUGOSC, FILM_OPROWADZAJACY } from "@/lib/bruno/film";
+import { FILM_OPROWADZAJACY } from "@/lib/bruno/film";
 
 export const dynamic = "force-dynamic";
 
@@ -26,10 +26,7 @@ export default async function BrunoUstawieniaPage() {
       <KodForm />
       {/* Instrukcja (USER_001 2.10): ten sam film, co w popupie przy pierwszym logowaniu, do odtworzenia na miejscu. */}
       <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-4">
-        <div>
-          <h2 className="bruno-h2 text-lg">Instrukcja</h2>
-          <p className="text-sm text-slate-600 mt-1">{FILM_DLUGOSC}: jak zacząć trening z Bruno. Ten sam film, który widzisz przy pierwszym logowaniu.</p>
-        </div>
+        <h2 className="bruno-h2 text-lg">Instrukcja</h2>
         <video
           src={FILM_OPROWADZAJACY}
           controls
