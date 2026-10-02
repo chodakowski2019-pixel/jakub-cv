@@ -66,9 +66,12 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
     <div className="flex flex-col gap-6">
       {pokazTour && <TourPopup src={FILM_OPROWADZAJACY} okladka={FILM_OKLADKA} />}
       {/* Układ v3 (USER_001 1.10): nagłówek na środku, lewa połowa = wykresy, prawa = pulsująca kula jako następna rozmowa. */}
+      {/* Na telefonie w dwóch liniach: powitanie i plan dnia osobno (USER_001 2.10). */}
       <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem] text-center">
-        {konto.imie ? `Cześć, ${konto.imie}.` : "Cześć."}{" "}
-        {planZrobiony ? <span className="bruno-gradient-tekst">Plan na dziś zrobiony.</span> : <span className="bruno-gradient-tekst">Dziś: {zostaloDzis} {zostaloDzis === 1 ? "rozmowa" : "rozmowy"}.</span>}
+        <span className="block sm:inline">{konto.imie ? `Cześć, ${konto.imie}.` : "Cześć."}</span>{" "}
+        <span className="bruno-gradient-tekst block sm:inline">
+          {planZrobiony ? "Plan na dziś zrobiony." : `Dziś: ${zostaloDzis} ${zostaloDzis === 1 ? "rozmowa" : "rozmowy"}.`}
+        </span>
       </h1>
 
       {!skonfigurowany && (
