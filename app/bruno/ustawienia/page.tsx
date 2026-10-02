@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonfig, pobierzKonto } from "@/lib/bruno/db";
 import UstawieniaForm from "@/components/bruno/ustawienia-form";
 import KodForm from "@/components/bruno/kod-form";
+import { FILM_DLUGOSC, FILM_OPROWADZAJACY } from "@/lib/bruno/film";
 
 export const dynamic = "force-dynamic";
 
@@ -24,12 +24,19 @@ export default async function BrunoUstawieniaPage() {
       </div>
       <UstawieniaForm godzina={konfig.godzina_przypomnienia} />
       <KodForm />
-      <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex items-center justify-between gap-4 flex-wrap">
+      {/* Instrukcja (USER_001 2.10): ten sam film, co w popupie przy pierwszym logowaniu, do odtworzenia na miejscu. */}
+      <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-4">
         <div>
-          <h2 className="bruno-h2 text-lg">Film oprowadzający</h2>
-          <p className="text-sm text-slate-600 mt-1">Półtorej minuty: jak zacząć trening. Ten sam, który widzisz przy pierwszym logowaniu.</p>
+          <h2 className="bruno-h2 text-lg">Instrukcja</h2>
+          <p className="text-sm text-slate-600 mt-1">{FILM_DLUGOSC}: jak zacząć trening z Bruno. Ten sam film, który widzisz przy pierwszym logowaniu.</p>
         </div>
-        <Link href="/bruno/panel?tour=1" className="bruno-przycisk-2">Obejrzyj jeszcze raz</Link>
+        <video
+          src={FILM_OPROWADZAJACY}
+          controls
+          preload="metadata"
+          playsInline
+          className="w-full rounded-2xl bg-slate-900 aspect-[16/10]"
+        />
       </section>
     </div>
   );

@@ -72,7 +72,7 @@ export default function TourPopup({ src }: { src: string }) {
             )}
           </div>
           <div className="px-6 py-4 flex items-center justify-between gap-3 flex-wrap">
-            <span className="text-sm text-slate-500">{koniec ? "Gotowe. Zacznij od „Dostosuj Bruno”, potem pierwszy test." : "Możesz pominąć i wrócić do filmu w Ustawieniach."}</span>
+            <span className="text-sm text-slate-500">{koniec ? "Gotowe. Zacznij od „Dostosuj Bruno”, potem pierwszy test." : "Możesz pominąć. Film znajdziesz w Ustawieniach, w sekcji Instrukcja."}</span>
             <button type="button" onClick={zamknij} className="bruno-przycisk px-6 py-2.5 text-sm">
               {koniec ? "Zaczynam" : "Pomiń"}
             </button>

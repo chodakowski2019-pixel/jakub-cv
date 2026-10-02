@@ -17,9 +17,7 @@ import { NAZWY } from "@/lib/bruno/kryteria";
 import { POSTACIE, postacLubDomyslna } from "@/lib/bruno/postacie";
 import { Pierscien, Slupki, rozmowyNaDni } from "@/components/bruno/statystyki";
 import TourPopup from "@/components/bruno/tour-popup";
-
-/** Film oprowadzający (2.10): plik statyczny w public/. Wersja w nazwie = nowy plik przy zmianie filmu. */
-const FILM_OPROWADZAJACY = "/bruno/oprowadzanie-v9.mp4";
+import { FILM_OPROWADZAJACY } from "@/lib/bruno/film";
 
 export const dynamic = "force-dynamic";
 
