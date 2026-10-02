@@ -9,12 +9,12 @@ export const dynamic = "force-dynamic";
 // i dzwoni. Bez ceny i bez pola tekstowego na stronie.
 
 const KAFELKI = [
-  { tytul: "Bez limitu dni", opis: "Test kończy się po 7 dniach. Pełen dostęp trwa, dopóki trenujesz." },
   { tytul: "Konto dla każdego handlowca", opis: "Każdy w zespole ma swoje rozmowy, oceny i plan powtórek." },
   { tytul: "Panel szefa sprzedaży", opis: "Widzisz, kto trenuje, kto rośnie, kto od 2 tygodni nie odbył rozmowy." },
   { tytul: "Bruno pod Wasz produkt", opis: "Konfigurujemy razem: klient, obiekcje, skrypt, definicja udanej rozmowy. Nie robisz tego sam." },
   { tytul: "Więcej odsłon Bruno", opis: "Nowe postacie i scenariusze pod Wasze etapy: pierwszy kontakt, negocjacja ceny, domykanie." },
   { tytul: "Raport miesięczny", opis: "Średnia zespołu, najsłabsze kryterium, statystyki handlowców." },
+  { tytul: "Bez ograniczeń", opis: "Test kończy się po 7 dniach. Pełen dostęp trwa na czas zawartej umowy." },
 ];
 
 export default async function BrunoOdblokujPage() {
