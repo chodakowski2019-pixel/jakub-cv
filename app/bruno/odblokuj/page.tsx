@@ -14,7 +14,8 @@ const KAFELKI = [
   { tytul: "Bruno pod Wasz produkt", opis: "Konfigurujemy razem: klient, obiekcje, skrypt, definicja udanej rozmowy. Nie robisz tego sam." },
   { tytul: "Więcej odsłon Bruno", opis: "Nowe postacie i scenariusze pod Wasze etapy: pierwszy kontakt, negocjacja ceny, domykanie." },
   { tytul: "Raport miesięczny", opis: "Średnia zespołu, najsłabsze kryterium, statystyki handlowców." },
-  { tytul: "Bez ograniczeń", opis: "Test kończy się po 7 dniach. Pełen dostęp trwa na czas zawartej umowy." },
+  { tytul: "Bez ograniczeń", opis: "Pełen dostęp trwa na czas zawartej umowy." },
+  { tytul: "Bezpieczeństwo danych", opis: "Produkt, obiekcje, skrypt i nagrania widzi tylko Wasz zespół. Modele nie uczą się na Waszych danych. Usuwamy wszystko na życzenie." },
 ];
 
 export default async function BrunoOdblokujPage() {
@@ -28,7 +29,7 @@ export default async function BrunoOdblokujPage() {
       </div>
       <ul className="grid sm:grid-cols-2 gap-4">
         {KAFELKI.map((k, i) => (
-          <li key={k.tytul} className="bruno-szklo rounded-2xl p-5 relative overflow-hidden">
+          <li key={k.tytul} className={`bruno-szklo rounded-2xl p-5 relative overflow-hidden ${i === KAFELKI.length - 1 && KAFELKI.length % 2 === 1 ? "sm:col-span-2" : ""}`}>
             <span aria-hidden className="pointer-events-none select-none absolute -top-4 right-3 text-[7rem] leading-none font-extrabold font-[var(--font-poppins)] tracking-[-0.06em] text-cyan-700/10">{i + 1}</span>
             <div className="relative bruno-h2 text-base mb-1">{k.tytul}</div>
             <p className="relative text-sm text-slate-600">{k.opis}</p>
