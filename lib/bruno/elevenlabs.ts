@@ -35,6 +35,23 @@ export async function tokenRozmowyEl(): Promise<string> {
   return d.token;
 }
 
+/** Podpisany URL WebSocket (TCP) dla prywatnego agenta: zapas, gdy UDP/WebRTC rwie dźwięk (2.10). */
+export async function podpisanyUrlEl(): Promise<string> {
+  const agent = process.env.ELEVENLABS_AGENT_ID!;
+  const odp = await fetch(`${BAZA_EL}/v1/convai/conversation/get-signed-url?agent_id=${encodeURIComponent(agent)}`, {
+    headers: { "xi-api-key": process.env.ELEVENLABS_API_KEY! },
+  });
+  if (!odp.ok) throw new Error(`ElevenLabs signed-url ${odp.status}: ${(await odp.text()).slice(0, 300)}`);
+  const d = (await odp.json()) as { signed_url?: string };
+  if (!d.signed_url) throw new Error("ElevenLabs: pusty signed_url");
+  return d.signed_url;
+}
+
+/** Rodzaj połączenia z ElevenLabs: BRUNO_EL_POLACZENIE = websocket (domyślnie od 2.10, TCP, odporne na słabe UDP) albo webrtc. */
+export function polaczenieEl(): "websocket" | "webrtc" {
+  return process.env.BRUNO_EL_POLACZENIE === "webrtc" ? "webrtc" : "websocket";
+}
+
 /**
  * Pierwsza wypowiedź Bruno. Cold call = odbiera telefon. Na żywo / online =
  * sam zaczyna: podsumowanie oferty + pierwsza obiekcja. Generowane Haiku

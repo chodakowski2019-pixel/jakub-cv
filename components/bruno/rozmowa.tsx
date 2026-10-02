@@ -188,6 +188,12 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
 
   const planZrobiony = rozmowyDzis >= rozmowDziennie;
   const brakMinut = minutZostalo < 1;
+  // Safari rwie i rozciąga dźwięk WebRTC (2.10: ten sam objaw przy OpenAI i ElevenLabs). Podpowiedź: Chrome.
+  const [safari, setSafari] = useState(false);
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    setSafari(/Safari/.test(ua) && !/Chrome|Chromium|CriOS|Edg|OPR/.test(ua));
+  }, []);
 
   const dodaj = (w: Wypowiedz) => {
     transkrypcja.current.push(w);
@@ -378,7 +384,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
   };
 
   /** Ścieżka ElevenLabs Agents (2.10): polskie głosy, SDK obsługuje mikrofon, odtwarzanie i przerywanie. */
-  const startElevenlabs = async (dane: { token: string; prompt: string; pierwsza_wypowiedz: string; glos: string }) => {
+  const startElevenlabs = async (dane: { token: string; polaczenie?: "websocket" | "webrtc"; prompt: string; pierwsza_wypowiedz: string; glos: string }) => {
     setEtap("Łączę z Bruno...");
     // SDK bierze własny mikrofon: zwalniamy nasz, żeby nie było podwójnego nagrywania.
     mic.current?.getTracks().forEach((t) => t.stop());
@@ -388,9 +394,13 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     if (konczenie.current) return;
     try {
       const { Conversation } = await import("@elevenlabs/client");
+      // websocket (TCP, domyślnie od 2.10) albo webrtc (UDP). Przy słabym UDP WebRTC „rozciąga" głos (maskowanie strat).
+      const polaczenie =
+        dane.polaczenie === "webrtc"
+          ? ({ conversationToken: dane.token, connectionType: "webrtc" } as const)
+          : ({ signedUrl: dane.token, connectionType: "websocket" } as const);
       const sesja = await Conversation.startSession({
-        conversationToken: dane.token,
-        connectionType: "webrtc",
+        ...polaczenie,
         overrides: {
           agent: { prompt: { prompt: dane.prompt }, firstMessage: dane.pierwsza_wypowiedz, language: "pl" },
           tts: { voiceId: dane.glos },
@@ -482,7 +492,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     setLimit(dane.sekundy);
 
     if (dane.dostawca === "elevenlabs") {
-      await startElevenlabs(dane as { token: string; prompt: string; pierwsza_wypowiedz: string; glos: string });
+      await startElevenlabs(dane as { token: string; polaczenie?: "websocket" | "webrtc"; prompt: string; pierwsza_wypowiedz: string; glos: string });
       return;
     }
 
@@ -591,6 +601,12 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
             <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Rozmowa z <span className="bruno-gradient-tekst">Bruno</span></h1>
             <p className="text-slate-600 mt-2">{sekundRozmowy / 60} minuty. Ustaw rozmowę i naciśnij Start.</p>
           </div>
+
+          {safari && (
+            <div className="bruno-szklo rounded-2xl p-4 border-amber-200/80 bg-amber-50/70 text-sm text-amber-900 text-center">
+              Używasz Safari. Rozmowy głosowe działają w nim gorzej (głos się zacina). Otwórz Bruno w <b>Chrome</b> i załóż słuchawki.
+            </div>
+          )}
 
           {karta?.typ === "kryterium" && (
             <div className="bruno-szklo rounded-2xl p-4 text-sm text-slate-800">

@@ -15,7 +15,7 @@ import {
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import { POSTACIE, celLubDomyslny, instrukcjeKlienta, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
 import { listaObiekcji } from "@/lib/bruno/obiekcje";
-import { elevenlabsWlaczone, glosElevenlabs, pierwszaWypowiedz, tokenRozmowyEl } from "@/lib/bruno/elevenlabs";
+import { elevenlabsWlaczone, glosElevenlabs, pierwszaWypowiedz, podpisanyUrlEl, polaczenieEl, tokenRozmowyEl } from "@/lib/bruno/elevenlabs";
 
 export const dynamic = "force-dynamic";
 
@@ -105,13 +105,15 @@ export async function POST(req: Request) {
   // (tak działają nadpisania w SDK), więc nie ma w nim nic tajnego: to opis klienta z „Dostosuj Bruno".
   if (dostawca === "elevenlabs") {
     try {
+      const polaczenie = polaczenieEl();
       const [token, pierwsza] = await Promise.all([
-        tokenRozmowyEl(),
+        polaczenie === "webrtc" ? tokenRozmowyEl() : podpisanyUrlEl(),
         pierwszaWypowiedz({ tryb, postac, konfig, obiekcja: wybrane[0] ?? obiekcja }),
       ]);
       return NextResponse.json({
         ok: true,
         dostawca,
+        polaczenie,
         rozmowa_id: rozmowa.id,
         token,
         prompt: instrukcje,
