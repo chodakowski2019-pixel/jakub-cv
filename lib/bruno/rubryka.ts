@@ -190,17 +190,67 @@ export async function ocenRozmowe(args: {
 
   const tresc = `${kontekst}\n\nMETRYKI (policzone z transkrypcji, ufaj im):\n${JSON.stringify(metryki, null, 0)}\n\nTRANSKRYPCJA:\n${transkrypcjaDoTekstu(transkrypcja)}\n\n${SCHEMAT}`;
 
+  // Wymuszony format (2.10): odpowiedź jako wywołanie narzędzia ze schematem.
+  // API oddaje gotowy obiekt, więc znika cała klasa błędów „niepoprawny JSON"
+  // (cudzysłowy w cytatach, ucięty tekst), która wywalała trenera 1-2.10.
   const odp = await klient.messages.create({
     model,
-    max_tokens: 2000,
+    max_tokens: 3000,
     system: RUBRYKA,
     messages: [{ role: "user", content: tresc }],
+    tools: [
+      {
+        name: "ocena_rozmowy",
+        description: "Zapisuje ocenę rozmowy sprzedażowej wg rubryki.",
+        input_schema: {
+          type: "object",
+          properties: {
+            kryteria: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  nazwa: { type: "string", enum: ["otwarcie", "pytania", "obiekcje", "zamkniecie", "pewnosc"] },
+                  ocena: { type: "integer", minimum: 1, maximum: 10 },
+                  cytat: { type: "string" },
+                  czas: { type: "string" },
+                  komentarz: { type: "string" },
+                },
+                required: ["nazwa", "ocena", "cytat", "czas", "komentarz"],
+              },
+            },
+            liczba_z_audio: { type: "string" },
+            wygrana: { type: "string" },
+            poprawka: { type: "string" },
+            plusy: { type: "array", items: { type: "string" } },
+            minusy: { type: "array", items: { type: "string" } },
+            reguly: { type: "array", items: { type: "string" } },
+            bonus: { type: "integer", minimum: 0, maximum: 1 },
+            kary: { type: "integer", minimum: 0 },
+            brak_prosby_o_decyzje: { type: "boolean" },
+            mila_bez_tresci: { type: "boolean" },
+            obiekcje_ocena: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: { obiekcja: { type: "string" }, ocena: { type: "integer", minimum: 1, maximum: 4 } },
+                required: ["obiekcja", "ocena"],
+              },
+            },
+          },
+          required: ["kryteria", "liczba_z_audio", "wygrana", "poprawka", "plusy", "minusy", "brak_prosby_o_decyzje", "mila_bez_tresci"],
+        },
+      },
+    ],
+    tool_choice: { type: "tool", name: "ocena_rozmowy" },
   });
+  const blok = odp.content.find((c) => c.type === "tool_use");
   const tekst = odp.content
     .map((c) => (c.type === "text" ? c.text : ""))
     .join("")
     .trim();
-  const raw = wyciagnijJson(tekst) as {
+  // Zapasowo (gdyby model mimo wymuszenia odpowiedział tekstem): stara ścieżka z naprawą JSON.
+  const raw = (blok && blok.type === "tool_use" ? (blok.input as unknown) : wyciagnijJson(tekst)) as {
     kryteria?: Kryterium[];
     liczba_z_audio?: string;
     wygrana?: string;
