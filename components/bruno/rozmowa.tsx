@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Feedback, Wypowiedz } from "@/lib/bruno/db";
-import { CELE, POSTACIE, TRYBY, type CelId, type PostacId, type TrybId } from "@/lib/bruno/postacie";
+import { CELE, CELE_TRYBU, POSTACIE, TRYBY, type CelId, type PostacId, type TrybId } from "@/lib/bruno/postacie";
 import FeedbackWidok from "./feedback";
 
 // Rozmowa głosowa z Bruno przez OpenAI Realtime (WebRTC w przeglądarce).
@@ -475,7 +475,16 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
                 const t = TRYBY[id];
                 const wybrany = tryb === id;
                 return (
-                  <button key={id} type="button" aria-pressed={wybrany} onClick={() => setTryb(id)} className={kafelek(wybrany)}>
+                  <button
+                    key={id}
+                    type="button"
+                    aria-pressed={wybrany}
+                    onClick={() => {
+                      setTryb(id);
+                      if (!CELE_TRYBU[id].includes(cel)) setCel(CELE_TRYBU[id][0]);
+                    }}
+                    className={kafelek(wybrany, "min-h-[9.5rem]")}
+                  >
                     <div className={`mb-2 ${wybrany ? "text-cyan-800" : "text-slate-500"}`}><IkonaTrybu nazwa={t.ikona} /></div>
                     <div className="bruno-h2 text-base">{t.nazwa}</div>
                     <div className="text-sm text-slate-600 mt-1">{t.opis}</div>
@@ -511,8 +520,9 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           {/* 3. Cel */}
           <fieldset>
             <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">3.</span>Cel rozmowy</legend>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 auto-rows-fr">
-              {(Object.keys(CELE) as CelId[]).map((id) => {
+            {/* Lista celów zależy od trybu; stała wysokość siatki, żeby zmiana trybu nie przesuwała kroku 4. */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 auto-rows-fr min-h-[11rem] sm:min-h-[8.5rem]">
+              {CELE_TRYBU[tryb].map((id) => {
                 const c = CELE[id];
                 const wybrany = cel === id;
                 return (

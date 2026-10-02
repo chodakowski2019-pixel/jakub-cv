@@ -280,6 +280,12 @@
   transform-origin: center;
 }
 
+/* Stałe miejsce na pasek przewijania: zmiana wysokości strony (np. inna lista celów)
+   nie zmienia szerokości treści i nie przesuwa układu (USER_001 2.10). */
+html {
+  scrollbar-gutter: stable;
+}
+
 /* Pastylki wyboru obiekcji przed rozmową (2.10). */
 .bruno-pastylka {
   padding: 0.45rem 0.9rem;

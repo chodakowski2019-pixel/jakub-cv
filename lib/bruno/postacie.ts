@@ -56,8 +56,15 @@ export const TRYBY: Record<TrybId, { nazwa: string; opis: string; ikona: string 
   online: { nazwa: "Spotkanie 1:1 online", opis: "Po Twojej prezentacji. Bruno podsumowuje i przechodzi do obiekcji.", ikona: "kamera" },
 };
 
+/** Cele dostępne w danym trybie (USER_001 2.10): cold call nie domyka sprzedaży w 3 minuty, spotkanie nie „umawia spotkania". */
+export const CELE_TRYBU: Record<TrybId, CelId[]> = {
+  cold: ["spotkanie", "prezentacja", "decydent", "decyzja", "wlasny"],
+  zywo: ["sprzedaz", "decyzja", "prezentacja", "decydent", "wlasny"],
+  online: ["sprzedaz", "decyzja", "spotkanie", "decydent", "wlasny"],
+};
+
 export const CELE: Record<CelId, { nazwa: string; opis: string }> = {
-  spotkanie: { nazwa: "Umówić spotkanie", opis: "konkretna data i godzina" },
+  spotkanie: { nazwa: "Umówić spotkanie na żywo", opis: "konkretna data i godzina" },
   prezentacja: { nazwa: "Umówić prezentację online", opis: "termin + kto będzie" },
   sprzedaz: { nazwa: "Domknąć sprzedaż", opis: "zgoda na zakup albo umowę" },
   decyzja: { nazwa: "Dostać decyzję tak albo nie", opis: "bez „odezwę się”" },
