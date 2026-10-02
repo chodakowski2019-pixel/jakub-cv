@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 // Autoodtwarzanie z dźwiękiem blokują przeglądarki, więc najpierw przycisk
 // „Odtwórz". „Pomiń" albo „Zaczynam" oznacza film jako obejrzany.
 
-export default function TourPopup({ src }: { src: string }) {
+export default function TourPopup({ src, okladka }: { src: string; okladka?: string }) {
   const router = useRouter();
   const [otwarty, setOtwarty] = useState(true);
   // Portal do kontenera `.bruno`, nie do <body>: popup siedział w `.bruno-ekran`,
@@ -97,6 +97,7 @@ export default function TourPopup({ src }: { src: string }) {
             <video
               ref={video}
               src={src}
+              poster={okladka}
               playsInline
               preload="metadata"
               controls={gra}

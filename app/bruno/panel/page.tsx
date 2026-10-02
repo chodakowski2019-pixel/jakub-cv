@@ -17,7 +17,7 @@ import { NAZWY } from "@/lib/bruno/kryteria";
 import { POSTACIE, postacLubDomyslna } from "@/lib/bruno/postacie";
 import { Pierscien, Slupki, rozmowyNaDni } from "@/components/bruno/statystyki";
 import TourPopup from "@/components/bruno/tour-popup";
-import { FILM_OPROWADZAJACY } from "@/lib/bruno/film";
+import { FILM_OKLADKA, FILM_OPROWADZAJACY } from "@/lib/bruno/film";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +64,7 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
 
   return (
     <div className="flex flex-col gap-6">
-      {pokazTour && <TourPopup src={FILM_OPROWADZAJACY} />}
+      {pokazTour && <TourPopup src={FILM_OPROWADZAJACY} okladka={FILM_OKLADKA} />}
       {/* Układ v3 (USER_001 1.10): nagłówek na środku, lewa połowa = wykresy, prawa = pulsująca kula jako następna rozmowa. */}
       <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem] text-center">
         {konto.imie ? `Cześć, ${konto.imie}.` : "Cześć."}{" "}

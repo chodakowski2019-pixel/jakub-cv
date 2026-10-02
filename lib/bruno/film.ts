@@ -5,3 +5,5 @@
  */
 export const FILM_OPROWADZAJACY = "/bruno/oprowadzanie-v9.mp4";
 export const FILM_DLUGOSC = "1 minuta 16 sekund";
+/** Okładka = pierwsza plansza filmu (USER_001 2.10). Ta sama wersja co plik wideo. */
+export const FILM_OKLADKA = "/bruno/oprowadzanie-v9.jpg";

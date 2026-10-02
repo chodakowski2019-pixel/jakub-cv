@@ -3,7 +3,7 @@ import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonfig, pobierzKonto } from "@/lib/bruno/db";
 import UstawieniaForm from "@/components/bruno/ustawienia-form";
 import KodForm from "@/components/bruno/kod-form";
-import { FILM_OPROWADZAJACY } from "@/lib/bruno/film";
+import { FILM_OKLADKA, FILM_OPROWADZAJACY } from "@/lib/bruno/film";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +29,7 @@ export default async function BrunoUstawieniaPage() {
         <h2 className="bruno-h2 text-lg">Instrukcja</h2>
         <video
           src={FILM_OPROWADZAJACY}
+          poster={FILM_OKLADKA}
           controls
           preload="metadata"
           playsInline
