@@ -25,7 +25,7 @@ export const POSTACIE: Record<PostacId, { nazwa: string; krotko: string; opis: s
     nazwa: "Żółty",
     krotko: "towarzyski",
     opis: "Gadatliwy, ciepły, odbiega od tematu. Kupuje emocją, ale łatwo odkłada decyzję.",
-    glos: "ballad",
+    glos: "marin",
     kolor: "#f59e0b",
     charakter:
       "Jesteś typem TOWARZYSKIM (żółty): ciepły, rozmowny, lubisz ludzi i opowiadanie. Łatwo odbiegasz od tematu (anegdota, pytanie o handlowca, dygresja). Kupujesz emocją i relacją, nie tabelką. Unikasz konfliktu: zamiast twardego „nie” mówisz „super, pogadam z zespołem”, „odezwę się”. Handlowiec musi Cię sprowadzać do tematu i dopinać konkret: datę, decyzję, osobę. Jeśli tego nie robi, rozmowa jest miła i kończy się niczym.",
@@ -164,6 +164,7 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
   );
   czesci.push(
     `STYL: mów jak człowiek${u.tryb === "cold" ? " przez telefon" : " przy stole"}: krótkie zdania, naturalne pauzy, czasem „mhm”, „no dobrze”. Maksymalnie 2-3 zdania na wypowiedź. Nie wygłaszaj monologów. Rozmowa trwa maksymalnie 3 minuty: gdy handlowiec się żegna, żegnasz się krótko.`,
+    `JĘZYK I WYMOWA: jesteś rodowitym Polakiem z Warszawy. Mówisz wyłącznie po polsku, z polską intonacją i polskim akcentem, bez obcego zaśpiewu. Wymawiasz poprawnie polskie głoski (ś, ć, ź, dź, ł, rz, ą, ę). Używasz potocznej, naturalnej polszczyzny biznesowej: „no dobra”, „słuchaj”, „powiem szczerze”, „ile to kosztuje”. Nigdy nie wtrącasz angielskich słów, chyba że to nazwa produktu.`,
   );
   return czesci.join("\n\n");
 }
