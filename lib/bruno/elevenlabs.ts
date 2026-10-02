@@ -23,6 +23,25 @@ export function glosElevenlabs(_postac: PostacId): string {
   return process.env.ELEVENLABS_GLOS || GLOS_BRUNO;
 }
 
+/** Minimalny zapas kredytów na jedną rozmowę 3 min (pomiar 2.10: 289 kredytów za 37 s ≈ 1 400 za 3 min). */
+export const MIN_KREDYTOW_EL = Number(process.env.ELEVENLABS_MIN_KREDYTOW) || 1500;
+
+/**
+ * Czy ElevenLabs ma jeszcze kredyty na rozmowę (2.10, pytanie USER_001 o automatyczne
+ * przełączenie na OpenAI). Zwraca liczbę wolnych kredytów albo null, gdy nie da się sprawdzić.
+ */
+export async function wolneKredytyEl(): Promise<number | null> {
+  try {
+    const odp = await fetch(`${BAZA_EL}/v1/user/subscription`, { headers: { "xi-api-key": process.env.ELEVENLABS_API_KEY! }, cache: "no-store" });
+    if (!odp.ok) return null;
+    const d = (await odp.json()) as { character_count?: number; character_limit?: number };
+    if (typeof d.character_count !== "number" || typeof d.character_limit !== "number") return null;
+    return Math.max(0, d.character_limit - d.character_count);
+  } catch {
+    return null;
+  }
+}
+
 /** Token WebRTC dla prywatnego agenta (ważny krótko, tylko do nawiązania sesji z przeglądarki). */
 export async function tokenRozmowyEl(): Promise<string> {
   const agent = process.env.ELEVENLABS_AGENT_ID!;

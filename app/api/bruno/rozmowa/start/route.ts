@@ -15,7 +15,7 @@ import {
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import { POSTACIE, celLubDomyslny, instrukcjeKlienta, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
 import { listaObiekcji } from "@/lib/bruno/obiekcje";
-import { elevenlabsWlaczone, glosElevenlabs, pierwszaWypowiedz, podpisanyUrlEl, polaczenieEl, tokenRozmowyEl } from "@/lib/bruno/elevenlabs";
+import { MIN_KREDYTOW_EL, elevenlabsWlaczone, glosElevenlabs, pierwszaWypowiedz, podpisanyUrlEl, polaczenieEl, tokenRozmowyEl, wolneKredytyEl } from "@/lib/bruno/elevenlabs";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +28,16 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false, blad: "Zaloguj się." }, { status: 401 });
-  const dostawca: "elevenlabs" | "openai" = elevenlabsWlaczone() ? "elevenlabs" : "openai";
+  // Dostawca głosu (2.10): ElevenLabs, a gdy kredyty się kończą albo ElevenLabs nie odpowiada → OpenAI automatycznie.
+  let dostawca: "elevenlabs" | "openai" = elevenlabsWlaczone() ? "elevenlabs" : "openai";
+  let powodZmiany: string | null = null;
+  if (dostawca === "elevenlabs") {
+    const wolne = await wolneKredytyEl();
+    if (wolne !== null && wolne < MIN_KREDYTOW_EL) {
+      dostawca = "openai";
+      powodZmiany = `ElevenLabs: zostało ${wolne} kredytów (< ${MIN_KREDYTOW_EL})`;
+    }
+  }
   if (dostawca === "openai" && !process.env.OPENAI_API_KEY) {
     return NextResponse.json({ ok: false, blad: "Brak OPENAI_API_KEY na serwerze." }, { status: 500 });
   }
@@ -128,11 +137,17 @@ export async function POST(req: Request) {
         karta: karta ? { typ: karta.typ, tresc: karta.tresc } : null,
       });
     } catch (e) {
-      console.error("[bruno start] elevenlabs", e);
-      await supabaseAdmin.from("bruno_rozmowy").update({ status: "przerwana", koniec: new Date().toISOString(), sekundy: 0 }).eq("id", rozmowa.id);
-      return NextResponse.json({ ok: false, blad: "ElevenLabs nie wydało tokenu sesji." }, { status: 502 });
+      console.error("[bruno start] elevenlabs → OpenAI", e);
+      powodZmiany = `ElevenLabs nie wydało tokenu: ${String((e as Error)?.message ?? e).slice(0, 120)}`;
+      dostawca = "openai";
+      if (!process.env.OPENAI_API_KEY) {
+        await supabaseAdmin.from("bruno_rozmowy").update({ status: "przerwana", koniec: new Date().toISOString(), sekundy: 0 }).eq("id", rozmowa.id);
+        return NextResponse.json({ ok: false, blad: "ElevenLabs nie wydało tokenu sesji, a OpenAI nie jest skonfigurowane." }, { status: 502 });
+      }
+      await supabaseAdmin.from("bruno_rozmowy").update({ dostawca: "openai" }).eq("id", rozmowa.id);
     }
   }
+  if (powodZmiany) console.warn("[bruno start] dostawca → openai:", powodZmiany);
 
   const model = process.env.BRUNO_REALTIME_MODEL ?? "gpt-realtime-2.1";
   const sesja = {
@@ -171,6 +186,7 @@ export async function POST(req: Request) {
   return NextResponse.json({
     ok: true,
     dostawca,
+    powod_zmiany: powodZmiany,
     rozmowa_id: rozmowa.id,
     klucz,
     model,
