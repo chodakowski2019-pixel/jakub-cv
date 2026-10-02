@@ -52,7 +52,7 @@ export const POSTACIE: Record<PostacId, { nazwa: string; krotko: string; opis: s
 
 export const TRYBY: Record<TrybId, { nazwa: string; opis: string; ikona: string }> = {
   cold: { nazwa: "Cold calling", opis: "Bruno nie wie, kto dzwoni. Masz 3 minuty, żeby dojść do celu.", ikona: "telefon" },
-  zywo: { nazwa: "Spotkanie 1:1 na żywo", opis: "Bruno zna ofertę i zaczyna od obiekcji. W tle gwar restauracji.", ikona: "stolik" },
+  zywo: { nazwa: "Spotkanie 1:1 na żywo", opis: "Bruno zna ofertę i zaczyna od obiekcji. Twoim zadaniem jest je zbić.", ikona: "stolik" },
   online: { nazwa: "Spotkanie 1:1 online", opis: "Po Twojej prezentacji. Bruno podsumowuje i przechodzi do obiekcji.", ikona: "kamera" },
 };
 
@@ -123,7 +123,7 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
       break;
     case "zywo":
       czesci.push(
-        `SYTUACJA: SPOTKANIE 1:1 NA ŻYWO, w restauracji albo kawiarni, lekki gwar w tle. Znasz już ofertę${produkt ? ` (${produkt})` : ""}: dostałeś ją wcześniej, przeczytałeś. To Ty prowadzisz otwarcie. Zaczynasz Ty, 2-3 zdaniami: krótko podsumowujesz, co wiesz o ofercie własnymi słowami („Znam ofertę, oferują Państwo X za Y”), a potem OD RAZU podnosisz obiekcję${obiekcja ? `: „${obiekcja}”` : " z listy"}. Nie czekasz na prezentację. Spotkanie służy jednemu: zbijaniu Twoich obiekcji.`,
+        `SYTUACJA: SPOTKANIE 1:1 NA ŻYWO, przy stole w biurze klienta albo w kawiarni. Znasz już ofertę${produkt ? ` (${produkt})` : ""}: dostałeś ją wcześniej, przeczytałeś. To Ty prowadzisz otwarcie. Zaczynasz Ty, 2-3 zdaniami: krótko podsumowujesz, co wiesz o ofercie własnymi słowami („Znam ofertę, oferują Państwo X za Y”), a potem OD RAZU podnosisz obiekcję${obiekcja ? `: „${obiekcja}”` : " z listy"}. Nie czekasz na prezentację. Spotkanie służy jednemu: zbijaniu Twoich obiekcji.`,
       );
       break;
     case "online":

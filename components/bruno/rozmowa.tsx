@@ -17,8 +17,8 @@ import FeedbackWidok from "./feedback";
 // po 3 minutach albo po „Zakończ" wgrywa nagranie do Supabase i wysyła
 // transkrypcję do /rozmowa/koniec, skąd wraca feedback trenera.
 // Transkrypcja NIE jest pokazywana w trakcie rozmowy (1.10).
-// Gwar restauracji (tryb „na żywo") jest syntezowany w WebAudio i gra tylko
-// w głośniku: nie wchodzi do mikrofonu ani do nagrania.
+// Gwar restauracji (tryb „na żywo") był syntezowany w WebAudio, ale wyłączony
+// 2.10: z głośnika wracał do mikrofonu i przerywał Bruno (patrz niżej).
 
 type Stan = "wybor" | "odliczanie" | "laczenie" | "trwa" | "konczenie" | "feedback" | "blad";
 
@@ -290,13 +290,9 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     setStan("trwa");
     setEtap("");
     zacznijNagrywanie();
-    if (tryb === "zywo") {
-      try {
-        gwar.current = startGwar();
-      } catch (e) {
-        console.warn("gwar niedostępny", e);
-      }
-    }
+    // Gwar restauracji WYŁĄCZONY (USER_001 2.10): leciał z głośnika, mikrofon go
+    // łapał, a Bruno ma interrupt_response, więc urywał się co 2 s. Funkcja
+    // startGwar zostaje w kodzie na wersję ze słuchawkami / wykrywaniem słuchawek.
     timer.current = setInterval(() => {
       const s = Math.round((Date.now() - start.current) / 1000);
       setSekundy(s);

@@ -58,6 +58,9 @@ export type Feedback = {
   najslabsze: Kryterium["nazwa"];
   obiekcje_ocena?: { obiekcja: string; ocena: number }[];
   reguly?: string[];
+  /** Od 2.10: punkty do widoku PLUSY / MINUSY. Starsze feedbacki ich nie mają (widok liczy je z kryteriów). */
+  plusy?: string[];
+  minusy?: string[];
 };
 
 export type Rozmowa = {

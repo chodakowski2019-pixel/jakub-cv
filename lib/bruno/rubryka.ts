@@ -50,6 +50,8 @@ const SCHEMAT = `Odpowiedz WYŁĄCZNIE JSON-em (bez markdownu) o kształcie:
   "liczba_z_audio": "np. 7 wypełniaczy na minutę",
   "wygrana": "...",
   "poprawka": "...",
+  "plusy": ["2-4 krótkie punkty (max 12 słów każdy): co konkretnie zagrało, z cytatem albo liczbą"],
+  "minusy": ["2-4 krótkie punkty (max 12 słów każdy): co konkretnie nie zagrało"],
   "reguly": ["nazwy reguł twardych, które zadziałały, albo pusta lista"],
   "bonus": 0 lub 1,
   "kary": liczba całkowita ≥ 0 (suma punktów do odjęcia z reguł: 3 za cenę przed bólem, 2 za każdą fałszywą technikę),
@@ -159,6 +161,8 @@ export async function ocenRozmowe(args: {
     liczba_z_audio?: string;
     wygrana?: string;
     poprawka?: string;
+    plusy?: string[];
+    minusy?: string[];
     reguly?: string[];
     bonus?: number;
     kary?: number;
@@ -197,5 +201,7 @@ export async function ocenRozmowe(args: {
       .filter((o) => o && typeof o.obiekcja === "string")
       .map((o) => ({ obiekcja: o.obiekcja.slice(0, 200), ocena: Math.min(4, Math.max(1, Math.round(Number(o.ocena) || 2))) })),
     reguly: [...(raw.reguly ?? []).map(String), ...reguly],
+    plusy: (raw.plusy ?? []).filter((p) => typeof p === "string" && p.trim()).map((p) => p.trim().slice(0, 160)).slice(0, 5),
+    minusy: (raw.minusy ?? []).filter((m) => typeof m === "string" && m.trim()).map((m) => m.trim().slice(0, 160)).slice(0, 5),
   };
 }
