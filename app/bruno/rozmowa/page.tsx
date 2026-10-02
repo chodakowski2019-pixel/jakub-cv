@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { supabaseAdmin } from "@/lib/supabase";
-import { ROZMOWA_SEKUND, ROZMOW_DZIENNIE, pobierzKonfig, pobierzKonto, rozmowyDzis, stanDostepu, zuzyteSekundy, type Karta } from "@/lib/bruno/db";
+import { ROZMOWA_SEKUND, ROZMOW_DZIENNIE, listaObiekcji, pobierzKonfig, pobierzKonto, rozmowyDzis, stanDostepu, zuzyteSekundy, type Karta } from "@/lib/bruno/db";
 import { NAZWY } from "@/lib/bruno/kryteria";
 import { postacLubDomyslna } from "@/lib/bruno/postacie";
 import Rozmowa from "@/components/bruno/rozmowa";
@@ -28,6 +28,7 @@ export default async function BrunoRozmowaPage({ searchParams }: { searchParams:
     <Rozmowa
       postacDomyslna={postacLubDomyslna(konfig.postac)}
       karta={karta ? { id: karta.id, typ: karta.typ, tresc: karta.typ === "kryterium" ? NAZWY[karta.tresc as keyof typeof NAZWY] ?? karta.tresc : karta.tresc } : null}
+      obiekcje={listaObiekcji(konfig.obiekcje)}
       rozmowyDzis={dzis}
       rozmowDziennie={ROZMOW_DZIENNIE}
       minutZostalo={minutZostalo}

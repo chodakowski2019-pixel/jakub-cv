@@ -2,7 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { Feedback, Konfig, Kryterium, Wypowiedz } from "./db";
 import { listaObiekcji } from "./db";
 import type { Metryki } from "./metryki";
-import { POSTACIE, type PostacId } from "./postacie";
+import { POSTACIE, TRYBY, type PostacId, type TrybId } from "./postacie";
 import { NAZWY, WAGI } from "./kryteria";
 
 // Bruno-TRENER. Ocenia rozmowę po jej zakończeniu wg SalesAI/BRUNO-RUBRYKA.md
@@ -115,13 +115,19 @@ export async function ocenRozmowe(args: {
   metryki: Metryki;
   konfig: Konfig;
   postac: PostacId;
+  tryb?: TrybId;
+  cel?: string;
+  obiekcja?: string | null;
 }): Promise<Feedback> {
-  const { transkrypcja, metryki, konfig, postac } = args;
+  const { transkrypcja, metryki, konfig, postac, tryb, cel, obiekcja } = args;
   const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const model = process.env.BRUNO_TRENER_MODEL ?? "claude-sonnet-5";
 
   const kontekst = [
-    `POSTAĆ KLIENTA: ${POSTACIE[postac].nazwa}: ${POSTACIE[postac].opis}`,
+    `TYP KLIENTA (DISC): ${POSTACIE[postac].nazwa}, ${POSTACIE[postac].krotko}: ${POSTACIE[postac].opis}`,
+    tryb && `TRYB ROZMOWY: ${TRYBY[tryb].nazwa}. ${tryb === "cold" ? "Klient nie znał oferty, otwarcie oceniaj w pełni." : "Klient znał ofertę i sam zaczął od obiekcji, więc OTWARCIE oceniaj łagodniej (liczy się reakcja na pierwszą obiekcję), a OBIEKCJE i ZAMKNIĘCIE surowiej."}`,
+    cel && `CEL HANDLOWCA: ${cel}. W ZAMKNIĘCIU oceń wprost, czy ten cel został osiągnięty albo czy handlowiec o niego poprosił.`,
+    obiekcja && `OBIEKCJA DO PRZETRENOWANIA: „${obiekcja}”. Oceń jej zbicie w pierwszej kolejności i wpisz ją do obiekcje_ocena.`,
     konfig.produkt && `PRODUKT HANDLOWCA: ${konfig.produkt}`,
     konfig.klient && `KLIENT WG FIRMY: ${konfig.klient}`,
     konfig.udana_rozmowa && `UDANA ROZMOWA WG FIRMY: ${konfig.udana_rozmowa}`,

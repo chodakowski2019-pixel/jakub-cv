@@ -234,6 +234,49 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
+/* Pastylki wyboru obiekcji przed rozmową (2.10). */
+.bruno-pastylka {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-size: 14px;
+  color: #334155;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  transition:
+    background 120ms,
+    color 120ms,
+    border-color 120ms;
+}
+.bruno-pastylka:hover {
+  border-color: rgba(14, 116, 144, 0.5);
+}
+.bruno-pastylka-wybrana,
+.bruno-pastylka-wybrana:hover {
+  background: linear-gradient(90deg, var(--b-akcent), var(--b-akcent-2));
+  color: #fff;
+  border-color: transparent;
+  font-weight: 600;
+}
+
+/* Odliczanie 3, 2, 1 przed rozmową: cyfra wskakuje i gaśnie. */
+@keyframes bruno-odliczanie {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  25% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.bruno-odliczanie {
+  animation: bruno-odliczanie 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* Przejście ekranu: wjazd z prawej (USER_001 1.10). */
 @keyframes bruno-ekran {
   from {

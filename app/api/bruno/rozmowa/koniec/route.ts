@@ -4,7 +4,7 @@ import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { ROZMOWA_SEKUND_MAX, pobierzKonfig, type Wypowiedz } from "@/lib/bruno/db";
 import { zaktualizujKarty } from "@/lib/bruno/fsrs";
 import { policzMetryki } from "@/lib/bruno/metryki";
-import { postacLubDomyslna } from "@/lib/bruno/postacie";
+import { celLubDomyslny, opisCelu, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
 import { ocenRozmowe } from "@/lib/bruno/rubryka";
 
 export const dynamic = "force-dynamic";
@@ -59,7 +59,15 @@ export async function POST(req: Request) {
 
   try {
     const konfig = await pobierzKonfig(email);
-    const feedback = await ocenRozmowe({ transkrypcja, metryki, konfig, postac: postacLubDomyslna(rozmowa.postac) });
+    const feedback = await ocenRozmowe({
+      transkrypcja,
+      metryki,
+      konfig,
+      postac: postacLubDomyslna(rozmowa.postac),
+      tryb: trybLubDomyslny(rozmowa.tryb),
+      cel: opisCelu(celLubDomyslny(rozmowa.cel), rozmowa.cel_wlasny),
+      obiekcja: rozmowa.obiekcja ?? null,
+    });
     await supabaseAdmin.from("bruno_rozmowy").update({ feedback, ocena: feedback.ocena }).eq("id", id);
     await zaktualizujKarty(email, feedback);
     return NextResponse.json({ ok: true, id, feedback, ocena: feedback.ocena });

@@ -13,7 +13,8 @@ import {
   type Karta,
 } from "@/lib/bruno/db";
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
-import { POSTACIE, instrukcjeKlienta, postacLubDomyslna } from "@/lib/bruno/postacie";
+import { POSTACIE, celLubDomyslny, instrukcjeKlienta, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
+import { listaObiekcji } from "@/lib/bruno/obiekcje";
 
 export const dynamic = "force-dynamic";
 
@@ -55,17 +56,30 @@ export async function POST(req: Request) {
   const konfig = await pobierzKonfig(email);
   await zapewnijKarty(email, konfig);
   const postac = postacLubDomyslna(b.postac ?? konfig.postac);
+  // Ustawienia wybrane przed rozmową (2.10): tryb, cel, obiekcja.
+  const tryb = trybLubDomyslny(b.tryb);
+  const cel = celLubDomyslny(b.cel);
+  const celWlasny = cel === "wlasny" ? String(b.cel_wlasny ?? "").trim().slice(0, 300) || null : null;
+  const dostepne = listaObiekcji(konfig.obiekcje);
+  let obiekcja: string | null = typeof b.obiekcja === "string" && b.obiekcja.trim() ? b.obiekcja.trim().slice(0, 300) : null;
+  if (obiekcja === "__losowa__") obiekcja = dostepne.length ? dostepne[Math.floor(Math.random() * dostepne.length)] : null;
 
   let karta: Karta | null = null;
   if (typeof b.karta_id === "string" && b.karta_id) {
     const { data } = await supabaseAdmin.from("bruno_karty").select("*").eq("email", email).eq("id", b.karta_id).maybeSingle();
     karta = (data as Karta | null) ?? null;
   }
+  // Wybrana obiekcja = karta FSRS tej obiekcji, żeby ocena po rozmowie trafiła do właściwej karty.
+  if (!karta && obiekcja) {
+    const { data } = await supabaseAdmin.from("bruno_karty").select("*").eq("email", email).eq("typ", "obiekcja").eq("tresc", obiekcja).maybeSingle();
+    karta = (data as Karta | null) ?? null;
+  }
+  if (!obiekcja && karta?.typ === "obiekcja") obiekcja = karta.tresc;
 
   const sekundyTejRozmowy = Math.min(ROZMOWA_SEKUND, zostalo);
   const { data: rozmowa, error } = await supabaseAdmin
     .from("bruno_rozmowy")
-    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa" })
+    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa", tryb, cel, cel_wlasny: celWlasny, obiekcja })
     .select("id")
     .single();
   if (error || !rozmowa) {
@@ -78,7 +92,7 @@ export async function POST(req: Request) {
     session: {
       type: "realtime",
       model,
-      instructions: instrukcjeKlienta(konfig, postac, karta),
+      instructions: instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, obiekcja, karta }),
       audio: {
         input: {
           transcription: { model: "gpt-4o-mini-transcribe", language: "pl" },
@@ -113,6 +127,9 @@ export async function POST(req: Request) {
     sekundy: sekundyTejRozmowy,
     postac,
     postac_nazwa: POSTACIE[postac].nazwa,
+    tryb,
+    cel,
+    obiekcja,
     karta: karta ? { typ: karta.typ, tresc: karta.tresc } : null,
   });
 }

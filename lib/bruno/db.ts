@@ -72,6 +72,11 @@ export type Rozmowa = {
   ocena: number | null;
   nagranie_sciezka: string | null;
   status: "trwa" | "zakonczona" | "przerwana";
+  /** Od 2.10: tryb (cold/zywo/online), cel, własny cel, obiekcja wybrana przed rozmową. */
+  tryb?: string | null;
+  cel?: string | null;
+  cel_wlasny?: string | null;
+  obiekcja?: string | null;
 };
 
 export type Karta = {
@@ -177,7 +182,7 @@ export async function pobierzKonfig(email: string): Promise<Konfig> {
       obiekcje: "",
       udana_rozmowa: "",
       skrypt: "",
-      postac: "twardy",
+      postac: "czerwony",
       godzina_przypomnienia: 8,
     }
   );
@@ -186,7 +191,7 @@ export async function pobierzKonfig(email: string): Promise<Konfig> {
 export async function pobierzRozmowy(email: string, limit = 50): Promise<Rozmowa[]> {
   const { data } = await supabaseAdmin
     .from("bruno_rozmowy")
-    .select("id, email, postac, karta_id, start, koniec, sekundy, ocena, status, feedback, nagranie_sciezka")
+    .select("id, email, postac, karta_id, start, koniec, sekundy, ocena, status, feedback, nagranie_sciezka, tryb, cel, cel_wlasny, obiekcja")
     .eq("email", email)
     .order("start", { ascending: false })
     .limit(limit);

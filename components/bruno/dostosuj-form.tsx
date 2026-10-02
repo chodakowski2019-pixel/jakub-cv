@@ -86,8 +86,8 @@ export default function DostosujForm({ start }: { start: Konfig }) {
         <textarea id="skrypt" rows={6} className="bruno-pole text-[14px]" placeholder="Wklej skrypt, jeśli masz." value={f.skrypt} onChange={pole("skrypt")} maxLength={8000} />
       </Sekcja>
 
-      <Sekcja nr={6} tytul="Domyślna postać Bruno" podpowiedz="Przed każdą rozmową możesz wybrać inną.">
-        <div className="grid sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Domyślna postać Bruno">
+      <Sekcja nr={6} tytul="Domyślny typ klienta" podpowiedz="Cztery kolory DISC. Przed każdą rozmową możesz wybrać inny.">
+        <div className="grid sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Domyślny typ klienta">
           {(Object.keys(POSTACIE) as PostacId[]).map((id) => {
             const p = POSTACIE[id];
             const wybrany = f.postac === id;
@@ -101,7 +101,11 @@ export default function DostosujForm({ start }: { start: Konfig }) {
                 className={`bruno-szklo rounded-2xl p-4 text-left transition-[transform,border-color,box-shadow] duration-100 active:scale-[0.98] ${wybrany ? "border-cyan-700/60 ring-2 ring-cyan-700/20" : "hover:border-slate-300"}`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <div className="bruno-h2 text-base">{p.nazwa}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="size-3.5 rounded-full shrink-0" style={{ background: p.kolor }} aria-hidden />
+                    <div className="bruno-h2 text-base">{p.nazwa}</div>
+                    <span className="text-xs text-slate-400">{p.krotko}</span>
+                  </div>
                   <span className={`size-4 rounded-full border-2 shrink-0 ${wybrany ? "border-cyan-700 bg-cyan-700" : "border-slate-300"}`} aria-hidden />
                 </div>
                 <div className="text-sm text-slate-600 mt-1">{p.opis}</div>

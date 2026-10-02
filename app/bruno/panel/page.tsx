@@ -92,7 +92,10 @@ export default async function BrunoPanelPage() {
               <span className="relative text-sm text-slate-600 max-w-[9rem]">{planZrobiony ? "Wróć jutro. Przypomnimy mailem rano." : "Limit minut testu wyczerpany."}</span>
             </div>
           )}
-          <div className="bruno-h2 text-xl sm:text-2xl">{POSTACIE[postac].nazwa}</div>
+          <div className="bruno-h2 text-xl sm:text-2xl flex items-center justify-center gap-2">
+            <span className="size-3.5 rounded-full shrink-0" style={{ background: POSTACIE[postac].kolor }} aria-hidden />
+            Klient {POSTACIE[postac].nazwa.toLowerCase()}
+          </div>
           <p className="text-sm text-slate-600">
             {pierwszaKarta
               ? pierwszaKarta.typ === "obiekcja"
@@ -101,9 +104,7 @@ export default async function BrunoPanelPage() {
               : POSTACIE[postac].opis}
           </p>
           {moznaRozmawiac && <Link href={linkRozmowy} className="bruno-przycisk text-base px-8 py-3.5 mt-1">Rozmawiaj z Bruno</Link>}
-          <div className="text-xs text-slate-400">
-            Inna postać? <Link href="/bruno/rozmowa" className="underline">Wybierz przed rozmową</Link>
-          </div>
+          <div className="text-xs text-slate-400">Rodzaj rozmowy, obiekcję, cel i typ klienta wybierasz przed startem.</div>
         </div>
       </div>
 
