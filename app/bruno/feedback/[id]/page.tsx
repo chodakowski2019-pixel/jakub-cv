@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzRozmowe } from "@/lib/bruno/db";
-import { KUBELEK_BRUNO } from "@/lib/bruno/nagrania";
 import { POSTACIE, TRYBY, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
 import FeedbackWidok from "@/components/bruno/feedback";
 
@@ -20,12 +18,6 @@ export default async function BrunoRozmowaSzczegoly({ params }: { params: Promis
   const r = await pobierzRozmowe(email, id);
   if (!r) notFound();
 
-  let nagranieUrl: string | null = null;
-  if (r.nagranie_sciezka) {
-    const { data } = await supabaseAdmin.storage.from(KUBELEK_BRUNO).createSignedUrl(r.nagranie_sciezka, 60 * 60);
-    nagranieUrl = data?.signedUrl ?? null;
-  }
-
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -41,13 +33,6 @@ export default async function BrunoRozmowaSzczegoly({ params }: { params: Promis
       </div>
 
       {r.feedback ? <FeedbackWidok feedback={r.feedback} /> : <div className="bruno-szklo rounded-2xl p-5 text-slate-600">Trener nie zostawił jeszcze oceny.</div>}
-
-      {nagranieUrl && (
-        <section className="bruno-szklo rounded-2xl p-5">
-          <h2 className="bruno-h2 text-base mb-3">Nagranie</h2>
-          <audio controls preload="none" src={nagranieUrl} className="w-full" />
-        </section>
-      )}
 
       {r.transkrypcja && r.transkrypcja.length > 0 && (
         <section className="bruno-szklo rounded-2xl p-5">

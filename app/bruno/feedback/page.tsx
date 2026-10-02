@@ -2,17 +2,29 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzRozmowy } from "@/lib/bruno/db";
-import { NAZWY } from "@/lib/bruno/kryteria";
-import { POSTACIE, TRYBY, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
 
 export const dynamic = "force-dynamic";
 
-// „Feedback" (USER_001 2.10, dawniej „Historia"): każda rozmowa = kafelek
-// z oceną, trybem, kolorem klienta, trenowaną obiekcją i poprawką. Klik
-// prowadzi do szczegółów: pełny feedback, nagranie, transkrypcja.
+// „Feedback" (USER_001 2.10, dawniej „Historia"): każda rozmowa = mały kafelek
+// TYLKO z datą i oceną w kółku. Reszta (tryb, klient, obiekcja, plusy/minusy,
+// transkrypcja) dopiero po kliknięciu. Bez odtwarzacza nagrania.
 
-function czas(s: number) {
-  return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+/** Ocena w kółku (pierścień). Bez oceny = szare kółko z kreską. */
+function OcenaKolko({ ocena }: { ocena: number | null }) {
+  const r = 26;
+  const obwod = 2 * Math.PI * r;
+  const udzial = ocena ? Math.min(1, Math.max(0, ocena / 10)) : 0;
+  return (
+    <svg viewBox="0 0 64 64" width="72" height="72" role="img" aria-label={ocena ? `Ocena ${ocena} na 10` : "Bez oceny"}>
+      <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(14,116,144,0.12)" strokeWidth="6" />
+      {ocena ? (
+        <circle cx="32" cy="32" r={r} fill="none" stroke="#0e7490" strokeWidth="6" strokeLinecap="round" strokeDasharray={`${obwod * udzial} ${obwod}`} transform="rotate(-90 32 32)" />
+      ) : null}
+      <text x="32" y="37" textAnchor="middle" className={ocena ? "fill-slate-900" : "fill-slate-400"} style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-poppins)" }}>
+        {ocena ?? "–"}
+      </text>
+    </svg>
+  );
 }
 
 export default async function BrunoFeedbackPage() {
@@ -44,53 +56,25 @@ export default async function BrunoFeedbackPage() {
           Jeszcze nic. <Link href="/bruno/rozmowa" className="underline">Zrób pierwszy test z Bruno</Link>.
         </div>
       ) : (
-        <ul className="grid sm:grid-cols-2 gap-4">
+        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {rozmowy.map((r) => {
-            const p = POSTACIE[postacLubDomyslna(r.postac)];
             const ocena = r.status === "zakonczona" ? r.ocena : null;
+            const data = new Date(r.start);
             const tresc = (
               <>
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="text-xs text-slate-500">
-                      {new Date(r.start).toLocaleString("pl-PL", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
-                      {r.sekundy ? ` · ${czas(r.sekundy)}` : ""}
-                    </div>
-                    <div className="bruno-h2 text-base mt-1 flex items-center gap-2">
-                      <span className="size-3 rounded-full shrink-0" style={{ background: p.kolor }} aria-hidden />
-                      <span className="truncate">{r.tryb ? TRYBY[trybLubDomyslny(r.tryb)].nazwa : "Rozmowa"}, klient {p.nazwa.toLowerCase()}</span>
-                    </div>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    {ocena ? (
-                      <div className="bruno-h2 text-2xl leading-none bruno-gradient-tekst">{ocena}<span className="text-xs text-slate-400">/10</span></div>
-                    ) : (
-                      <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 bg-slate-200/60 px-2 py-0.5 rounded-md">{r.status === "zakonczona" ? "bez oceny" : "przerwana"}</span>
-                    )}
-                  </div>
-                </div>
-                {r.obiekcja && <div className="mt-2 text-xs text-cyan-800 truncate">obiekcja: „{r.obiekcja}”</div>}
-                {r.feedback?.poprawka ? (
-                  <div className="mt-3 text-sm text-slate-800 line-clamp-2">
-                    <span className="text-[11px] font-semibold uppercase tracking-wide text-cyan-800 mr-1.5">Następnym razem</span>
-                    {r.feedback.poprawka}
-                  </div>
-                ) : r.status === "przerwana" ? (
-                  <div className="mt-3 text-sm text-slate-500">Za krótka do oceny (poniżej 20 s albo prawie bez słów).</div>
-                ) : null}
-                {r.feedback?.najslabsze && (
-                  <div className="mt-2 text-[11px] text-slate-400">najsłabsze: {NAZWY[r.feedback.najslabsze]}</div>
-                )}
+                <div className="text-sm font-semibold text-slate-800">{data.toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric" })}</div>
+                <div className="text-[11px] text-slate-400 mb-3">{data.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" })}</div>
+                <OcenaKolko ocena={ocena} />
               </>
             );
             return (
               <li key={r.id}>
-                {r.status === "zakonczona" ? (
-                  <Link href={`/bruno/feedback/${r.id}`} className="block bruno-szklo rounded-2xl p-5 h-full transition-[transform,border-color] duration-100 hover:border-cyan-700/40 active:scale-[0.99]">
+                {r.status === "zakonczona" && ocena ? (
+                  <Link href={`/bruno/feedback/${r.id}`} className="bruno-szklo rounded-2xl p-5 h-full flex flex-col items-center text-center transition-[border-color] duration-100 hover:border-cyan-700/40">
                     {tresc}
                   </Link>
                 ) : (
-                  <div className="bruno-szklo rounded-2xl p-5 h-full opacity-70">{tresc}</div>
+                  <div className="bruno-szklo rounded-2xl p-5 h-full flex flex-col items-center text-center opacity-60">{tresc}</div>
                 )}
               </li>
             );
