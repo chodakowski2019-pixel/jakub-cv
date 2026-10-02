@@ -116,11 +116,12 @@ export default function TourPopup({ src }: { src: string }) {
             )}
           </div>
 
-          <div className="flex items-center gap-4 flex-wrap justify-center">
-            <span className="text-sm text-slate-500">
+          {/* Tekst, pod nim przycisk w stylu „Wyloguj" (USER_001 2.10). */}
+          <div className="flex flex-col items-center gap-2.5">
+            <span className="text-sm text-slate-500 text-center">
               {koniec ? "Gotowe. Zacznij od „Dostosuj Bruno”, potem pierwszy test." : "Film znajdziesz zawsze w Ustawieniach, w sekcji Instrukcja."}
             </span>
-            <button type="button" onClick={zamknij} className="bruno-przycisk px-7 py-2.5 text-sm">
+            <button type="button" onClick={zamknij} className="bruno-wyloguj">
               {koniec ? "Zaczynam" : "Pomiń"}
             </button>
           </div>
