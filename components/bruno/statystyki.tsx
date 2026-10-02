@@ -4,12 +4,12 @@ import type { Rozmowa } from "@/lib/bruno/db";
 // zostało z ilu", słupki na 7 dni, kafelki z paskiem /10 dla ocen. Jeden
 // kolor marki (sekwencyjny), tekst w kolorach tekstu, nie serii.
 
-export function Pierscien({ wartosc, max, liczba, opis, uwaga }: { wartosc: number; max: number; liczba: string; opis: string; uwaga?: string }) {
+export function Pierscien({ wartosc, max, liczba, opis, uwaga, goly }: { wartosc: number; max: number; liczba: string; opis: string; uwaga?: string; goly?: boolean }) {
   const r = 30;
   const obwod = 2 * Math.PI * r;
   const udzial = max > 0 ? Math.min(1, Math.max(0, wartosc / max)) : 0;
   return (
-    <div className="bruno-szklo rounded-2xl p-4 flex items-center gap-4">
+    <div className={`${goly ? "rounded-2xl bg-white/50 border border-white/80" : "bruno-szklo rounded-2xl"} p-4 flex items-center gap-4`}>
       <svg viewBox="0 0 72 72" width="72" height="72" className="shrink-0" role="img" aria-label={`${opis}: ${liczba}`}>
         <circle cx="36" cy="36" r={r} fill="none" stroke="rgba(14,116,144,0.12)" strokeWidth="7" />
         <circle
@@ -89,9 +89,9 @@ export function rozmowyNaDni(rozmowy: Pick<Rozmowa, "start" | "status">[], n: nu
  * słupki z zaokrągloną górą od linii bazowej, cienka linia celu, etykieta
  * tylko nad słupkiem z wartością. Tooltip = <title> na każdym słupku.
  */
-export function Slupki({ dni, cel, tytul }: { dni: Slupek[]; cel: number; tytul: string }) {
+export function Slupki({ dni, cel, tytul, goly, wysoki }: { dni: Slupek[]; cel: number; tytul: string; goly?: boolean; wysoki?: boolean }) {
   const W = 320;
-  const H = 150;
+  const H = wysoki ? 210 : 150;
   const gora = 18;
   const dol = 28;
   const max = Math.max(cel, ...dni.map((d) => d.wartosc), 1);
@@ -99,7 +99,7 @@ export function Slupki({ dni, cel, tytul }: { dni: Slupek[]; cel: number; tytul:
   const slupekSzer = Math.min(26, szer * 0.5);
   const y = (v: number) => gora + (H - gora - dol) * (1 - v / max);
   return (
-    <div className="bruno-szklo rounded-2xl p-4 sm:p-5">
+    <div className={goly ? "flex-1 flex flex-col" : "bruno-szklo rounded-2xl p-4 sm:p-5"}>
       <div className="flex items-baseline justify-between mb-2">
         <h2 className="bruno-h2 text-base">{tytul}</h2>
         <span className="text-[11px] text-slate-400">cel: {cel} dziennie</span>
