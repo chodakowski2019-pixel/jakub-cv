@@ -177,6 +177,8 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
   const zdalny = useRef<MediaStream | null>(null);
   // Diagnostyka jakości (2.10): statystyki WebRTC z końca rozmowy + błędy z kanału danych, lecą do metryki.rtc.
   const bledyRealtime = useRef<string[]>([]);
+  // Sesja ElevenLabs (2.10): SDK sam obsługuje mikrofon i odtwarzanie. Null = ścieżka OpenAI.
+  const el = useRef<{ endSession: () => Promise<void>; getId: () => string; sendContextualUpdate: (t: string) => void } | null>(null);
   const statyRtc = useRef<Record<string, unknown> | null>(null);
   const limitRef = useRef(sekundRozmowy);
   // Start rozmowy = kanał otwarty I odliczanie skończone. Oba warunki w refach.
@@ -194,6 +196,11 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
   const posprzataj = () => {
     if (timer.current) clearInterval(timer.current);
     timer.current = null;
+    if (el.current) {
+      const sesja = el.current;
+      el.current = null;
+      sesja.endSession().catch(() => {});
+    }
     try {
       dc.current?.close();
     } catch {}
@@ -263,7 +270,8 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     try {
       statyRtc.current = await zbierzStatyRtc(pc.current);
     } catch {}
-    const nagranie = await zatrzymajNagrywanie();
+    const elId = el.current ? el.current.getId() : null;
+    const nagranie = el.current ? null : await zatrzymajNagrywanie();
     posprzataj();
 
     const rozmowaId = rozmowaIdRef.current;
@@ -296,6 +304,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           transkrypcja: transkrypcja.current,
           sekundy: trwalo,
           nagranie_sciezka: sciezka,
+          el_conversation_id: elId,
           rtc: { ...(statyRtc.current ?? {}), bledy: bledyRealtime.current.slice(0, 20), sluchawki: null, przegladarka: navigator.userAgent.slice(0, 120) },
         }),
       });
@@ -368,6 +377,67 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     }, 1000);
   };
 
+  /** Ścieżka ElevenLabs Agents (2.10): polskie głosy, SDK obsługuje mikrofon, odtwarzanie i przerywanie. */
+  const startElevenlabs = async (dane: { token: string; prompt: string; pierwsza_wypowiedz: string; glos: string }) => {
+    setEtap("Łączę z Bruno...");
+    // SDK bierze własny mikrofon: zwalniamy nasz, żeby nie było podwójnego nagrywania.
+    mic.current?.getTracks().forEach((t) => t.stop());
+    mic.current = null;
+    // Pierwsza wypowiedź Bruno gra od razu po połączeniu, więc czekamy na koniec odliczania.
+    while (!odliczono.current) await new Promise((r) => setTimeout(r, 100));
+    if (konczenie.current) return;
+    try {
+      const { Conversation } = await import("@elevenlabs/client");
+      const sesja = await Conversation.startSession({
+        conversationToken: dane.token,
+        connectionType: "webrtc",
+        overrides: {
+          agent: { prompt: { prompt: dane.prompt }, firstMessage: dane.pierwsza_wypowiedz, language: "pl" },
+          tts: { voiceId: dane.glos },
+        },
+        onConnect: () => {
+          if (wystartowano.current) return;
+          wystartowano.current = true;
+          start.current = Date.now();
+          setSekundy(0);
+          setStan("trwa");
+          setEtap("");
+          let ostrzezonoBruno = false;
+          timer.current = setInterval(() => {
+            const s = Math.round((Date.now() - start.current) / 1000);
+            setSekundy(s);
+            if (!ostrzezonoBruno && limitRef.current - s <= 30 && el.current) {
+              ostrzezonoBruno = true;
+              try {
+                el.current.sendContextualUpdate("Zostało 30 sekund rozmowy. Odpowiadaj już bardzo krótko i zmierzaj do zakończenia: decyzja albo pożegnanie.");
+              } catch {}
+            }
+            if (s >= limitRef.current) void zakoncz("limit");
+          }, 500);
+        },
+        onMessage: ({ message, role }) => {
+          const t = Math.max(0, Math.round((Date.now() - start.current) / 1000));
+          if (message?.trim()) dodaj({ rola: role === "agent" ? "klient" : "handlowiec", tekst: message.trim(), t });
+        },
+        onModeChange: ({ mode }) => setMowi(mode === "speaking" ? "bruno" : null),
+        onError: (msg) => {
+          console.error("elevenlabs", msg);
+          bledyRealtime.current.push(String(msg).slice(0, 300));
+        },
+        onDisconnect: (d) => {
+          bledyRealtime.current.push(`disconnect: ${JSON.stringify(d).slice(0, 200)}`);
+          // Rozłączenie z zewnątrz (limit agenta, sieć): kończymy jak „Zakończ", żeby nie stracić transkrypcji.
+          if (!konczenie.current && wystartowano.current) void zakoncz("recznie");
+        },
+      });
+      el.current = sesja;
+    } catch (e) {
+      posprzataj();
+      setBlad(e instanceof Error ? e.message : "Nie udało się połączyć z ElevenLabs.");
+      setStan("blad");
+    }
+  };
+
   const zacznij = async () => {
     setBlad(null);
     konczenie.current = false;
@@ -391,7 +461,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     odliczaj();
 
     setEtap("Sprawdzam limit i budzę Bruno...");
-    let dane: { rozmowa_id: string; klucz: string; model: string; sekundy: number };
+    let dane: { dostawca?: "openai" | "elevenlabs"; rozmowa_id: string; klucz: string; model: string; sekundy: number; token?: string; prompt?: string; pierwsza_wypowiedz?: string; glos?: string };
     try {
       const res = await fetch("/api/bruno/rozmowa/start", {
         method: "POST",
@@ -410,6 +480,11 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     rozmowaIdRef.current = dane.rozmowa_id;
     limitRef.current = dane.sekundy;
     setLimit(dane.sekundy);
+
+    if (dane.dostawca === "elevenlabs") {
+      await startElevenlabs(dane as { token: string; prompt: string; pierwsza_wypowiedz: string; glos: string });
+      return;
+    }
 
     setEtap("Łączę...");
     try {

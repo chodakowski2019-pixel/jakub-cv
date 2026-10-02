@@ -1,0 +1,85 @@
+import Anthropic from "@anthropic-ai/sdk";
+import type { Konfig } from "./db";
+import { POSTACIE, type PostacId, type TrybId } from "./postacie";
+
+// Bruno-klient na ElevenLabs Agents (decyzja USER_001 2.10: natywne polskie
+// głosy, OpenAI mówił po polsku z akcentem i rwał się). Jeden agent „Bruno AI"
+// w koncie ElevenLabs, a per rozmowa nadpisujemy: prompt, pierwszą wypowiedź
+// i głos (4 polskie męskie głosy, po jednym na kolor DISC).
+//
+// Włączenie: BRUNO_DOSTAWCA=elevenlabs + ELEVENLABS_API_KEY + ELEVENLABS_AGENT_ID
+// na Vercelu. Bez tego start rozmowy idzie starą ścieżką (OpenAI Realtime).
+
+export const BAZA_EL = "https://api.elevenlabs.io";
+
+export function elevenlabsWlaczone(): boolean {
+  return process.env.BRUNO_DOSTAWCA === "elevenlabs" && Boolean(process.env.ELEVENLABS_API_KEY) && Boolean(process.env.ELEVENLABS_AGENT_ID);
+}
+
+/** Głosy per kolor: z env (ELEVENLABS_GLOS_CZERWONY itd.) albo domyślne id z biblioteki ElevenLabs (polskie, męskie). */
+export function glosElevenlabs(postac: PostacId): string {
+  const zEnv = process.env[`ELEVENLABS_GLOS_${postac.toUpperCase()}`];
+  if (zEnv) return zEnv;
+  const domyslne: Record<PostacId, string> = {
+    czerwony: "hIssydxXZ1WuDorjx6Ic", // Adam: serious, rich, smoky (mazowiecki)
+    zolty: "mr1ubFaLs5xVrh1EqWtc", // Kamil: expressive, joyful, call center
+    zielony: "EmspiS7CSUabPeqBcrAP", // Mikołaj: calm, steady
+    niebieski: "bhehD3jAYQsch18622NF", // Michał: calm, cold
+  };
+  return domyslne[postac];
+}
+
+/** Token WebRTC dla prywatnego agenta (ważny krótko, tylko do nawiązania sesji z przeglądarki). */
+export async function tokenRozmowyEl(): Promise<string> {
+  const agent = process.env.ELEVENLABS_AGENT_ID!;
+  const odp = await fetch(`${BAZA_EL}/v1/convai/conversation/token?agent_id=${encodeURIComponent(agent)}`, {
+    headers: { "xi-api-key": process.env.ELEVENLABS_API_KEY! },
+  });
+  if (!odp.ok) throw new Error(`ElevenLabs token ${odp.status}: ${(await odp.text()).slice(0, 300)}`);
+  const d = (await odp.json()) as { token?: string };
+  if (!d.token) throw new Error("ElevenLabs: pusty token");
+  return d.token;
+}
+
+/**
+ * Pierwsza wypowiedź Bruno. Cold call = odbiera telefon. Na żywo / online =
+ * sam zaczyna: podsumowanie oferty + pierwsza obiekcja. Generowane Haiku
+ * w 1-2 s, z awaryjnym szablonem, gdy model nie odpowie.
+ */
+export async function pierwszaWypowiedz(args: { tryb: TrybId; postac: PostacId; konfig: Konfig; obiekcja: string | null }): Promise<string> {
+  const { tryb, postac, konfig, obiekcja } = args;
+  if (tryb === "cold") {
+    const warianty = ["Halo, słucham?", "Tak, Bruno, słucham.", "Halo? Kto mówi?", "Słucham, Bruno przy telefonie."];
+    return warianty[Math.floor(Math.random() * warianty.length)];
+  }
+  const produkt = konfig.produkt.trim() || "Państwa ofertę";
+  const szablon =
+    tryb === "zywo"
+      ? `Dzień dobry. Znam już ${produkt}, przeczytałem wszystko. Powiem wprost: ${obiekcja ? obiekcja.toLowerCase() : "mam wątpliwości"}.`
+      : `Dziękuję za prezentację. Jeśli dobrze rozumiem, proponują Państwo ${produkt}. Mam jedno pytanie: ${obiekcja ? obiekcja.toLowerCase() : "czy to na pewno dla nas"}.`;
+  if (!process.env.ANTHROPIC_API_KEY) return szablon;
+  try {
+    const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const odp = await klient.messages.create({
+      model: process.env.BRUNO_FISZKA_MODEL ?? "claude-haiku-4-5-20251001",
+      max_tokens: 200,
+      system: `Piszesz JEDNĄ pierwszą wypowiedź klienta w treningowej rozmowie sprzedażowej, po polsku, 2-3 krótkie zdania, mówione, naturalne, bez cudzysłowów i bez didaskaliów. Klient to typ ${POSTACIE[postac].krotko} (${POSTACIE[postac].opis}). Zwróć tylko tekst wypowiedzi.`,
+      messages: [
+        {
+          role: "user",
+          content:
+            tryb === "zywo"
+              ? `Sytuacja: spotkanie 1:1 na żywo. Klient zna ofertę: ${produkt}. Zaczyna rozmowę: krótko podsumowuje własnymi słowami, co wie o ofercie, i OD RAZU podnosi obiekcję: „${obiekcja ?? "mam wątpliwości co do ceny"}”.`
+              : `Sytuacja: spotkanie online tuż po prezentacji handlowca. Klient widział prezentację oferty: ${produkt}. Zaczyna: podsumowuje, co zrozumiał („jeśli dobrze rozumiem…”), i podnosi obiekcję albo trudne pytanie: „${obiekcja ?? "czy to na pewno dla nas"}”.`,
+        },
+      ],
+    });
+    const tekst = odp.content
+      .map((c) => (c.type === "text" ? c.text : ""))
+      .join("")
+      .trim();
+    return tekst.length > 10 ? tekst.slice(0, 400) : szablon;
+  } catch {
+    return szablon;
+  }
+}

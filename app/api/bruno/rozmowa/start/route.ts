@@ -15,6 +15,7 @@ import {
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import { POSTACIE, celLubDomyslny, instrukcjeKlienta, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
 import { listaObiekcji } from "@/lib/bruno/obiekcje";
+import { elevenlabsWlaczone, glosElevenlabs, pierwszaWypowiedz, tokenRozmowyEl } from "@/lib/bruno/elevenlabs";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,8 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false, blad: "Zaloguj się." }, { status: 401 });
-  if (!process.env.OPENAI_API_KEY) {
+  const dostawca: "elevenlabs" | "openai" = elevenlabsWlaczone() ? "elevenlabs" : "openai";
+  if (dostawca === "openai" && !process.env.OPENAI_API_KEY) {
     return NextResponse.json({ ok: false, blad: "Brak OPENAI_API_KEY na serwerze." }, { status: 500 });
   }
 
@@ -89,7 +91,7 @@ export async function POST(req: Request) {
   const sekundyTejRozmowy = Math.min(ROZMOWA_SEKUND, zostalo);
   const { data: rozmowa, error } = await supabaseAdmin
     .from("bruno_rozmowy")
-    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa", tryb, cel, cel_wlasny: celWlasny, obiekcja })
+    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa", tryb, cel, cel_wlasny: celWlasny, obiekcja, dostawca })
     .select("id")
     .single();
   if (error || !rozmowa) {
@@ -97,12 +99,45 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, blad: "Nie udało się zapisać rozmowy." }, { status: 500 });
   }
 
+  const instrukcje = instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, obiekcja, obiekcje: wybrane, karta });
+
+  // ElevenLabs Agents (2.10): token WebRTC + nadpisania per rozmowa. Prompt idzie przez przeglądarkę
+  // (tak działają nadpisania w SDK), więc nie ma w nim nic tajnego: to opis klienta z „Dostosuj Bruno".
+  if (dostawca === "elevenlabs") {
+    try {
+      const [token, pierwsza] = await Promise.all([
+        tokenRozmowyEl(),
+        pierwszaWypowiedz({ tryb, postac, konfig, obiekcja: wybrane[0] ?? obiekcja }),
+      ]);
+      return NextResponse.json({
+        ok: true,
+        dostawca,
+        rozmowa_id: rozmowa.id,
+        token,
+        prompt: instrukcje,
+        pierwsza_wypowiedz: pierwsza,
+        glos: glosElevenlabs(postac),
+        sekundy: sekundyTejRozmowy,
+        postac,
+        postac_nazwa: POSTACIE[postac].nazwa,
+        tryb,
+        cel,
+        obiekcja,
+        karta: karta ? { typ: karta.typ, tresc: karta.tresc } : null,
+      });
+    } catch (e) {
+      console.error("[bruno start] elevenlabs", e);
+      await supabaseAdmin.from("bruno_rozmowy").update({ status: "przerwana", koniec: new Date().toISOString(), sekundy: 0 }).eq("id", rozmowa.id);
+      return NextResponse.json({ ok: false, blad: "ElevenLabs nie wydało tokenu sesji." }, { status: 502 });
+    }
+  }
+
   const model = process.env.BRUNO_REALTIME_MODEL ?? "gpt-realtime-2.1";
   const sesja = {
     session: {
       type: "realtime",
       model,
-      instructions: instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, obiekcja, obiekcje: wybrane, karta }),
+      instructions: instrukcje,
       audio: {
         input: {
           transcription: { model: "gpt-4o-mini-transcribe", language: "pl" },
@@ -133,6 +168,7 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     ok: true,
+    dostawca,
     rozmowa_id: rozmowa.id,
     klucz,
     model,

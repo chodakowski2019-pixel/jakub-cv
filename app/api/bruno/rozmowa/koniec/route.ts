@@ -38,6 +38,8 @@ export async function POST(req: Request) {
   const zPrzegladarki = Number(b?.sekundy) || 0;
   const sekundy = Math.round(Math.min(ROZMOWA_SEKUND_MAX, Math.max(0, Math.min(odStartu, zPrzegladarki || odStartu))));
   const nagranie = typeof b?.nagranie_sciezka === "string" ? b.nagranie_sciezka.slice(0, 300) : null;
+  // ElevenLabs trzyma nagranie i transkrypcję u siebie pod id rozmowy (2.10).
+  const elId = typeof b?.el_conversation_id === "string" ? b.el_conversation_id.slice(0, 120) : null;
 
   const metrykiCzyste = policzMetryki(transkrypcja, sekundy);
   // Diagnostyka jakości dźwięku (2.10): statystyki WebRTC i błędy Realtime z przeglądarki, zapisywane obok metryk.
@@ -50,14 +52,14 @@ export async function POST(req: Request) {
   if (sekundy < 20 || slowaH < 5) {
     await supabaseAdmin
       .from("bruno_rozmowy")
-      .update({ status: "przerwana", koniec, sekundy, transkrypcja, metryki, nagranie_sciezka: nagranie })
+      .update({ status: "przerwana", koniec, sekundy, transkrypcja, metryki, nagranie_sciezka: nagranie, ...(elId ? { el_conversation_id: elId } : {}) })
       .eq("id", id);
     return NextResponse.json({ ok: true, przerwana: true, id });
   }
 
   await supabaseAdmin
     .from("bruno_rozmowy")
-    .update({ status: "zakonczona", koniec, sekundy, transkrypcja, metryki, nagranie_sciezka: nagranie })
+    .update({ status: "zakonczona", koniec, sekundy, transkrypcja, metryki, nagranie_sciezka: nagranie, ...(elId ? { el_conversation_id: elId } : {}) })
     .eq("id", id);
 
   try {
