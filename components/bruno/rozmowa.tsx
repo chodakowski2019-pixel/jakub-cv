@@ -777,7 +777,8 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
               className={`bruno-kula absolute inset-0 rounded-full blur-2xl transition-transform duration-200 ${
                 stan !== "trwa" ? "bruno-kula-czeka" : mowi === "bruno" ? "bruno-kula-mowi" : mowi === "ty" ? "scale-90" : ""
               }`}
-              style={{ background: "radial-gradient(circle at 45% 40%, #67e8f9 0%, #0e7490 48%, rgba(14,116,144,0) 74%)" }}
+              // Kula w kolorze wybranego typu klienta (USER_001 2.10), nazwa zawsze „Bruno".
+              style={{ background: `radial-gradient(circle at 45% 40%, ${p.kolor}cc 0%, ${p.kolor} 48%, ${p.kolor}00 74%)` }}
             />
             {stan === "odliczanie" && (
               <span key={odliczanie} className="relative bruno-h2 text-7xl text-white drop-shadow-[0_2px_12px_rgba(14,116,144,0.7)] bruno-odliczanie" aria-live="assertive">
@@ -787,7 +788,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           </div>
 
           <div>
-            <div className="bruno-h2 text-xl">Klient {p.nazwa.toLowerCase()}{!losowa && wybraneObiekcje.length > 0 ? <span className="block text-sm font-normal text-slate-500 mt-1">{wybraneObiekcje.length === 1 ? "obiekcja" : "obiekcje"}: {wybraneObiekcje.map((o) => `„${o}”`).join(", ")}</span> : null}</div>
+            <div className="bruno-h2 text-xl">Bruno</div>
             <div className="text-sm mt-1 text-slate-600">
               {stan === "trwa" ? (mowi === "bruno" ? "Bruno mówi" : mowi === "ty" ? "Słucha Cię" : "Rozmowa trwa") : stan === "odliczanie" ? (tryb === "cold" ? "Za chwilę Bruno odbierze telefon." : "Za chwilę Bruno zacznie rozmowę.") : etap}
             </div>
