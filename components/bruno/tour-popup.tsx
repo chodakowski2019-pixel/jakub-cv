@@ -51,7 +51,7 @@ export default function TourPopup({ src }: { src: string }) {
         </button>
         <div className="bruno-szklo rounded-3xl overflow-hidden bg-white">
           <div className="px-6 pt-5 pb-3 text-center">
-            <div className="bruno-h2 text-xl sm:text-2xl">Cześć, tu Bruno. Pokażę ci w dwie minuty, co tu gdzie jest.</div>
+            <div className="bruno-h2 text-xl sm:text-2xl">Cześć, tu Bruno. Pokażę ci, jak zacząć ze mną trening.</div>
           </div>
           <div className="relative bg-slate-900 aspect-[16/10]">
             <video

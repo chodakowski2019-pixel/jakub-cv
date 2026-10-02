@@ -27,7 +27,7 @@ export default async function BrunoUstawieniaPage() {
       <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h2 className="bruno-h2 text-lg">Film oprowadzający</h2>
-          <p className="text-sm text-slate-600 mt-1">Dwie minuty: co gdzie jest w panelu. Ten sam, który widzisz przy pierwszym logowaniu.</p>
+          <p className="text-sm text-slate-600 mt-1">Półtorej minuty: jak zacząć trening. Ten sam, który widzisz przy pierwszym logowaniu.</p>
         </div>
         <Link href="/bruno/panel?tour=1" className="bruno-przycisk-2">Obejrzyj jeszcze raz</Link>
       </section>
