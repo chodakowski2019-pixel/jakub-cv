@@ -16,6 +16,7 @@ const KAFELKI = [
   { tytul: "Raport miesięczny", opis: "Średnia zespołu, najsłabsze kryterium, statystyki handlowców." },
   { tytul: "Bez ograniczeń", opis: "Pełen dostęp trwa na czas zawartej umowy." },
   { tytul: "Bezpieczeństwo danych", opis: "Produkt, obiekcje, skrypt i nagrania widzi tylko Wasz zespół. Modele nie uczą się na Waszych danych. Usuwamy wszystko na życzenie." },
+  { tytul: "Polskie głosy Bruno", opis: "Bruno mówi natywnym polskim głosem, bez obcego akcentu. Do wyboru kilka głosów męskich i damskich." },
 ];
 
 export default async function BrunoOdblokujPage() {
