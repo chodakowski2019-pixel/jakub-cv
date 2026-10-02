@@ -100,10 +100,7 @@ export function Slupki({ dni, cel, tytul, goly, wysoki }: { dni: Slupek[]; cel: 
   const y = (v: number) => gora + (H - gora - dol) * (1 - v / max);
   return (
     <div className={goly ? "flex-1 flex flex-col" : "bruno-szklo rounded-2xl p-4 sm:p-5"}>
-      <div className="flex items-baseline justify-between mb-2">
-        <h2 className="bruno-h2 text-base">{tytul}</h2>
-        <span className="text-[11px] text-slate-400">cel: {cel} dziennie</span>
-      </div>
+      <h2 className="bruno-h2 text-base text-center mb-2">{tytul}</h2>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-label={`${tytul}: ${dni.map((d) => `${d.etykieta} ${d.wartosc}`).join(", ")}`}>
         <line x1="0" x2={W} y1={y(cel)} y2={y(cel)} stroke="rgba(14,116,144,0.35)" strokeWidth="1" strokeDasharray="3 4" />
         <line x1="0" x2={W} y1={y(0)} y2={y(0)} stroke="rgba(15,23,42,0.12)" strokeWidth="1" />

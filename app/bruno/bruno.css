@@ -245,6 +245,22 @@
   background: rgba(255, 255, 255, 0.85);
 }
 
+/* Kręcące się kółko w przycisku (np. „Trener czyta…"). */
+@keyframes bruno-kolko {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.bruno-kolko-ladowania {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: bruno-kolko 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
 /* Fiszka (Trening, 2.10): karta obraca się przy zmianie przód/tył. */
 .bruno-fiszka-scena {
   perspective: 1200px;

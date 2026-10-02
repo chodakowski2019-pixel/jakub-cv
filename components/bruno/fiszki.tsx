@@ -142,7 +142,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
           <span className="bruno-gradient-tekst">Trening</span> obiekcji
         </h1>
-        <p className="text-slate-600 mt-2">Klient mówi, Ty odpowiadasz. Krótko, pewnie, bez obrony.</p>
+        <p className="text-slate-600 mt-2">Klient mówi, Ty odpowiadasz.</p>
       </div>
 
       {/* Pasek gry: seria, dziś, punkty sesji */}
@@ -184,9 +184,9 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
       ) : karta ? (
         <div className="bruno-fiszka-scena">
           <div key={`${karta.id}-${stan === "wynik" ? "tyl" : "przod"}`} className="bruno-szklo rounded-3xl p-6 sm:p-8 bruno-fiszka">
-            <div className="flex items-center justify-between text-[11px] text-slate-400 mb-4">
-              <span>Karta {postep + 1} z {dziennie}</span>
-              <span>{karta.naCzas ? "do powtórki" : `jeszcze nie na czas · ${kiedyWraca(karta.due)}`}{karta.lapses > 0 ? ` · wpadek: ${karta.lapses}` : ""}</span>
+            <div className="flex items-center justify-between mb-4">
+              <span className="inline-flex items-center rounded-full bg-cyan-700/10 text-cyan-800 text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1">Karta {postep + 1} z {dziennie}</span>
+              {karta.lapses > 0 && <span className="text-[11px] text-slate-400">wpadek: {karta.lapses}</span>}
             </div>
 
             <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Klient mówi</div>
@@ -207,7 +207,8 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
                 {blad && <p className="text-sm text-red-700">{blad}</p>}
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-xs text-slate-400">{slow} {slow === 1 ? "słowo" : slow >= 2 && slow <= 4 ? "słowa" : "słów"}</span>
-                  <button type="button" onClick={sprawdz} disabled={stan === "ocena" || slow < 3} className="bruno-przycisk px-8">
+                  <button type="button" onClick={sprawdz} disabled={stan === "ocena" || slow < 3} className="bruno-przycisk px-8 inline-flex items-center gap-2">
+                    {stan === "ocena" && <span className="bruno-kolko-ladowania" aria-hidden />}
                     {stan === "ocena" ? "Trener czyta…" : "Sprawdź"}
                   </button>
                 </div>
@@ -218,18 +219,32 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
                   <span className="text-3xl" aria-hidden>{WERDYKTY[wynik.werdykt].emoji}</span>
                   <div>
                     <div className="bruno-h2 text-xl" style={{ color: WERDYKTY[wynik.werdykt].kolor }}>{WERDYKTY[wynik.werdykt].nazwa}</div>
-                    <div className="text-xs text-slate-500">+{WERDYKTY[wynik.werdykt].punkty} pkt{wynik.technika ? ` · technika: ${wynik.technika}` : ""} · {kiedyWraca(wynik.due)}</div>
+                    <div className="text-xs text-slate-500">+{WERDYKTY[wynik.werdykt].punkty} pkt · {kiedyWraca(wynik.due)}</div>
                   </div>
                 </div>
-                <p className="text-[15px] text-slate-800">{wynik.komentarz}</p>
-                <div className="rounded-2xl bg-cyan-700/5 border border-cyan-700/15 p-4">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-cyan-800 mb-1.5">Wzór</div>
-                  <p className="text-[15px] text-slate-900 leading-relaxed">„{wynik.wzor}”</p>
-                </div>
-                <details className="text-sm text-slate-500">
-                  <summary className="cursor-pointer">Twoja odpowiedź</summary>
-                  <p className="mt-1 text-slate-700">„{odp}”</p>
-                </details>
+                {/* Odpowiedź trenera jako tabela (USER_001 2.10). */}
+                <table className="w-full text-[15px] border-separate border-spacing-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/60">
+                  <tbody>
+                    <tr className="align-top">
+                      <th scope="row" className="w-32 sm:w-40 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 px-4 py-3 border-b border-slate-200/80 bg-slate-50/60">Twoja odpowiedź</th>
+                      <td className="px-4 py-3 border-b border-slate-200/80 text-slate-700">„{odp}”</td>
+                    </tr>
+                    <tr className="align-top">
+                      <th scope="row" className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500 px-4 py-3 border-b border-slate-200/80 bg-slate-50/60">Co zrobiłeś</th>
+                      <td className="px-4 py-3 border-b border-slate-200/80 text-slate-800">{wynik.komentarz}</td>
+                    </tr>
+                    {wynik.technika && (
+                      <tr className="align-top">
+                        <th scope="row" className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500 px-4 py-3 border-b border-slate-200/80 bg-slate-50/60">Technika</th>
+                        <td className="px-4 py-3 border-b border-slate-200/80 text-slate-800">{wynik.technika}</td>
+                      </tr>
+                    )}
+                    <tr className="align-top">
+                      <th scope="row" className="text-left text-xs font-semibold uppercase tracking-wide text-cyan-800 px-4 py-3 bg-cyan-700/5">Wzór</th>
+                      <td className="px-4 py-3 text-slate-900 font-medium leading-relaxed bg-cyan-700/5">„{wynik.wzor}”</td>
+                    </tr>
+                  </tbody>
+                </table>
                 <div className="text-right">
                   <button type="button" onClick={dalej} className="bruno-przycisk px-8">{sesja.karty >= dziennie || i + 1 >= karty.length ? "Podsumowanie" : "Następna"}</button>
                 </div>
