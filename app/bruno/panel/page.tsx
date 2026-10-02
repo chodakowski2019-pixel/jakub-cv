@@ -19,7 +19,7 @@ import { Pierscien, Slupki, rozmowyNaDni } from "@/components/bruno/statystyki";
 import TourPopup from "@/components/bruno/tour-popup";
 
 /** Film oprowadzający (2.10): plik statyczny w public/. Wersja w nazwie = nowy plik przy zmianie filmu. */
-const FILM_OPROWADZAJACY = "/bruno/oprowadzanie-v3.mp4";
+const FILM_OPROWADZAJACY = "/bruno/oprowadzanie-v5.mp4";
 
 export const dynamic = "force-dynamic";
 
