@@ -48,6 +48,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
   const [sesja, setSesja] = useState<{ punkty: number; karty: number; werdykty: number[] }>({ punkty: 0, karty: 0, werdykty: [] });
   const [zrobioneDzis, setZrobioneDzis] = useState(dzis);
   const [nagrywa, setNagrywa] = useState(false);
+  const [pokazOdp, setPokazOdp] = useState(false);
   const [mowaOk, setMowaOk] = useState(false);
   const rozp = useRef<Rozpoznawanie | null>(null);
   const bazaTekstu = useRef("");
@@ -117,6 +118,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
   const dalej = () => {
     setOdp("");
     setWynik(null);
+    setPokazOdp(false);
     if (sesja.karty >= dziennie || i + 1 >= karty.length) {
       setStan("koniec");
       return;
@@ -154,12 +156,9 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         <div className="bruno-szklo rounded-2xl p-3 text-center">
           <div className="bruno-h2 text-xl leading-none">{Math.min(zrobioneDzis, dziennie)}/{dziennie}</div>
           <div className="text-[11px] text-slate-500 mt-1">fiszek dziś</div>
-          <div className="h-1 mt-2 rounded-full bg-cyan-900/10 overflow-hidden" aria-hidden>
-            <div className="h-full rounded-full bg-gradient-to-r from-cyan-700 to-teal-700 transition-[width] duration-500" style={{ width: `${Math.min(100, (zrobioneDzis / dziennie) * 100)}%` }} />
-          </div>
         </div>
         <div className="bruno-szklo rounded-2xl p-3 text-center">
-          <div className="bruno-h2 text-xl leading-none bruno-gradient-tekst">{sesja.punkty}</div>
+          <div className="bruno-h2 text-xl leading-none"><span className="bruno-gradient-tekst">{sesja.punkty}</span><span className="text-sm text-slate-400">/{dziennie * WERDYKTY[4].punkty}</span></div>
           <div className="text-[11px] text-slate-500 mt-1">punktów w tej sesji</div>
         </div>
       </div>
@@ -226,11 +225,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
                 <table className="w-full text-[15px] border-separate border-spacing-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/60">
                   <tbody>
                     <tr className="align-top">
-                      <th scope="row" className="w-32 sm:w-40 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 px-4 py-3 border-b border-slate-200/80 bg-slate-50/60">Twoja odpowiedź</th>
-                      <td className="px-4 py-3 border-b border-slate-200/80 text-slate-700">„{odp}”</td>
-                    </tr>
-                    <tr className="align-top">
-                      <th scope="row" className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500 px-4 py-3 border-b border-slate-200/80 bg-slate-50/60">Co zrobiłeś</th>
+                      <th scope="row" className="w-32 sm:w-40 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 px-4 py-3 border-b border-slate-200/80 bg-slate-50/60">Co zrobiłeś</th>
                       <td className="px-4 py-3 border-b border-slate-200/80 text-slate-800">{wynik.komentarz}</td>
                     </tr>
                     {wynik.technika && (
@@ -245,7 +240,13 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
                     </tr>
                   </tbody>
                 </table>
-                <div className="text-right">
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <div className="flex flex-col gap-2 min-w-0 flex-1">
+                    <button type="button" onClick={() => setPokazOdp((p) => !p)} aria-expanded={pokazOdp} className="bruno-przycisk-2 py-1.5 px-3 text-[13px] self-start">
+                      {pokazOdp ? "Ukryj moją odpowiedź" : "Twoja odpowiedź"}
+                    </button>
+                    {pokazOdp && <p className="text-sm text-slate-700 bg-white/60 border border-slate-200/80 rounded-xl px-4 py-3">„{odp}”</p>}
+                  </div>
                   <button type="button" onClick={dalej} className="bruno-przycisk px-8">{sesja.karty >= dziennie || i + 1 >= karty.length ? "Podsumowanie" : "Następna"}</button>
                 </div>
               </div>
