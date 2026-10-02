@@ -234,6 +234,17 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
+/* Zaznaczony kafelek wyboru (2.10). Osobna reguła, bo .bruno-szklo ustawia
+   border i box-shadow i wygrywa z klasami ring i border Tailwinda. */
+.bruno-szklo.bruno-wybrany {
+  border-color: rgba(14, 116, 144, 0.65);
+  box-shadow:
+    0 0 0 3px rgba(14, 116, 144, 0.18),
+    0 24px 60px -20px rgba(15, 23, 42, 0.22),
+    0 2px 10px -4px rgba(15, 23, 42, 0.1);
+  background: rgba(255, 255, 255, 0.85);
+}
+
 /* Pastylki wyboru obiekcji przed rozmową (2.10). */
 .bruno-pastylka {
   padding: 0.45rem 0.9rem;

@@ -445,7 +445,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
   }
 
   const kafelek = (wybrany: boolean, extra = "") =>
-    `bruno-szklo rounded-2xl p-4 text-left transition-[transform,border-color,box-shadow] duration-100 active:scale-[0.98] ${wybrany ? "border-cyan-700/60 ring-2 ring-cyan-700/20" : "hover:border-slate-300"} ${extra}`;
+    `bruno-szklo rounded-2xl p-4 text-left transition-[transform,border-color,box-shadow] duration-100 active:scale-[0.98] ${wybrany ? "bruno-wybrany" : "hover:border-slate-300"} ${extra}`;
 
   return (
     <div className="flex flex-col gap-6">

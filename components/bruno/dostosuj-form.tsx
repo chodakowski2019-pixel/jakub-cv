@@ -98,7 +98,7 @@ export default function DostosujForm({ start }: { start: Konfig }) {
                 role="radio"
                 aria-checked={wybrany}
                 onClick={() => setF((x) => ({ ...x, postac: id }))}
-                className={`bruno-szklo rounded-2xl p-4 text-left transition-[transform,border-color,box-shadow] duration-100 active:scale-[0.98] ${wybrany ? "border-cyan-700/60 ring-2 ring-cyan-700/20" : "hover:border-slate-300"}`}
+                className={`bruno-szklo rounded-2xl p-4 text-left transition-[transform,border-color,box-shadow] duration-100 active:scale-[0.98] ${wybrany ? "bruno-wybrany" : "hover:border-slate-300"}`}
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
