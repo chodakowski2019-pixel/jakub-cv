@@ -8,9 +8,13 @@ import { usePathname, useRouter } from "next/navigation";
 // „Odblokuj pełen dostęp" z kłódką, z prawej „Wyloguj". Na telefonie pasek
 // boczny chowa się, zakładki idą poziomo pod górną belką.
 
+// Dwie najważniejsze zakładki (USER_001 2.10): TRENING = fiszki (nauka),
+// TEST = rozmowa z Bruno (egzamin). FEEDBACK = oceny rozmów (dawniej Historia).
 const LINKI = [
   { href: "/bruno/panel", nazwa: "Panel", ikona: "panel" },
-  { href: "/bruno/historia", nazwa: "Historia", ikona: "historia" },
+  { href: "/bruno/trening", nazwa: "Trening", ikona: "trening" },
+  { href: "/bruno/rozmowa", nazwa: "Test", ikona: "test" },
+  { href: "/bruno/feedback", nazwa: "Feedback", ikona: "feedback" },
   { href: "/bruno/statystyki", nazwa: "Statystyki", ikona: "statystyki" },
   { href: "/bruno/dostosuj", nazwa: "Dostosuj Bruno", ikona: "dostosuj" },
   { href: "/bruno/ustawienia", nazwa: "Ustawienia", ikona: "ustawienia" },
@@ -21,8 +25,12 @@ function Ikona({ nazwa }: { nazwa: (typeof LINKI)[number]["ikona"] | "klodka" | 
   switch (nazwa) {
     case "panel":
       return <svg {...wspolne}><rect x="3" y="3" width="8" height="8" rx="2" /><rect x="13" y="3" width="8" height="5" rx="2" /><rect x="13" y="11" width="8" height="10" rx="2" /><rect x="3" y="14" width="8" height="7" rx="2" /></svg>;
-    case "historia":
-      return <svg {...wspolne}><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>;
+    case "trening":
+      return <svg {...wspolne}><rect x="3" y="5" width="13" height="15" rx="2" /><path d="M8 3h11a2 2 0 0 1 2 2v11" /><path d="M7 12h5M7 15.5h3" /></svg>;
+    case "test":
+      return <svg {...wspolne}><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" /></svg>;
+    case "feedback":
+      return <svg {...wspolne}><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12z" /><path d="M9 11l2 2 4-4" /></svg>;
     case "statystyki":
       return <svg {...wspolne}><path d="M4 20h16" /><rect x="6" y="11" width="3.5" height="9" rx="1" /><rect x="12" y="6" width="3.5" height="14" rx="1" /><rect x="18" y="14" width="3.5" height="6" rx="1" transform="translate(-3 0)" /></svg>;
     case "dostosuj":

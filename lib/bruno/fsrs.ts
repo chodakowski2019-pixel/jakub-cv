@@ -72,6 +72,19 @@ export async function zapewnijKarty(email: string, konfig: Konfig): Promise<void
   }
 }
 
+/** Jedna karta, jedna ocena FSRS (fiszki w „Trening", 2.10). Zwraca nową datę powrotu albo null. */
+export async function ocenKarte(email: string, kartaId: string, grade: Grade): Promise<Date | null> {
+  const { data } = await supabaseAdmin.from("bruno_karty").select("*").eq("email", email).eq("id", kartaId).maybeSingle();
+  if (!data) return null;
+  const wynik = f.next(naKarteFsrs(data as Karta), new Date(), grade);
+  const { error } = await supabaseAdmin.from("bruno_karty").update(naWiersz(wynik.card)).eq("id", kartaId);
+  if (error) {
+    console.error("bruno_karty update", error.code, error.message);
+    return null;
+  }
+  return wynik.card.due;
+}
+
 /** Po feedbacku: ocenia karty kryteriów i obiekcji, które padły. Zwraca liczbę zaktualizowanych. */
 export async function zaktualizujKarty(email: string, feedback: Feedback): Promise<number> {
   const { data } = await supabaseAdmin.from("bruno_karty").select("*").eq("email", email);

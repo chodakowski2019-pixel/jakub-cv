@@ -29,7 +29,7 @@ export default async function BrunoRozmowaSzczegoly({ params }: { params: Promis
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <Link href="/bruno/historia" className="text-sm text-slate-500 hover:text-slate-900">← Historia</Link>
+        <Link href="/bruno/feedback" className="text-sm text-slate-500 hover:text-slate-900">← Feedback</Link>
         <h1 className="bruno-h1 text-[1.7rem] sm:text-[2.2rem] mt-2">
           {r.tryb ? TRYBY[trybLubDomyslny(r.tryb)].nazwa : "Rozmowa"}, klient <span className="bruno-gradient-tekst">{POSTACIE[postacLubDomyslna(r.postac)].nazwa.toLowerCase()}</span>
         </h1>

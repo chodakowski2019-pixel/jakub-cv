@@ -74,7 +74,8 @@ export default function FeedbackWidok({ feedback, dalej }: { feedback: Feedback;
       {dalej && (
         <div className="flex flex-wrap gap-3 justify-center pt-2">
           <Link href="/bruno/panel" className="bruno-przycisk">Wróć do panelu</Link>
-          <Link href="/bruno/rozmowa" className="bruno-przycisk-2">Jeszcze jedna rozmowa</Link>
+          <Link href="/bruno/trening" className="bruno-przycisk-2">Przećwicz obiekcje w Treningu</Link>
+          <Link href="/bruno/rozmowa" className="bruno-przycisk-2">Jeszcze jeden test</Link>
         </div>
       )}
     </div>

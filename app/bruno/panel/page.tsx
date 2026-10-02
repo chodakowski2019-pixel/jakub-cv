@@ -124,9 +124,12 @@ export default async function BrunoPanelPage() {
                   {k.typ === "obiekcja" ? "obiekcja" : "umiejętność"}
                 </span>
                 <span className="text-sm text-slate-800 flex-1 truncate">{k.typ === "kryterium" ? NAZWY[k.tresc as keyof typeof NAZWY] ?? k.tresc : k.tresc}</span>
-                {!planZrobiony && minutZostalo >= 1 && (
-                  <Link href={`/bruno/rozmowa?karta=${k.id}`} className="bruno-przycisk-2 py-1.5 px-3 text-[13px]">Trenuj</Link>
-                )}
+                {/* Obiekcja → fiszka w Treningu. Umiejętność → test z Bruno (2.10). */}
+                {k.typ === "obiekcja" ? (
+                  <Link href={`/bruno/trening?karta=${k.id}`} className="bruno-przycisk-2 py-1.5 px-3 text-[13px]">Trenuj</Link>
+                ) : !planZrobiony && minutZostalo >= 1 ? (
+                  <Link href={`/bruno/rozmowa?karta=${k.id}`} className="bruno-przycisk-2 py-1.5 px-3 text-[13px]">Test</Link>
+                ) : null}
               </li>
             ))}
           </ul>
@@ -136,7 +139,7 @@ export default async function BrunoPanelPage() {
       <section className="bruno-szklo rounded-3xl p-6">
         <div className="flex items-baseline justify-between mb-3">
           <h2 className="bruno-h2 text-lg">Ostatnie rozmowy</h2>
-          <Link href="/bruno/historia" className="text-sm text-cyan-800 hover:underline">Cała historia</Link>
+          <Link href="/bruno/feedback" className="text-sm text-cyan-800 hover:underline">Wszystkie rozmowy</Link>
         </div>
         {rozmowy.length === 0 ? (
           <p className="text-sm text-slate-600">Jeszcze nic. Pierwsza rozmowa pojawi się tutaj z oceną.</p>
@@ -147,7 +150,7 @@ export default async function BrunoPanelPage() {
                 <span className="text-slate-500 w-24 shrink-0">{new Date(r.start).toLocaleString("pl-PL", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
                 <span className="flex-1 text-slate-800 truncate">{POSTACIE[postacLubDomyslna(r.postac)].nazwa}{r.sekundy ? `, ${Math.round(r.sekundy / 60)} min` : ""}</span>
                 {r.status === "zakonczona" && r.ocena ? (
-                  <Link href={`/bruno/historia/${r.id}`} className="font-semibold bruno-gradient-tekst">{r.ocena}/10</Link>
+                  <Link href={`/bruno/feedback/${r.id}`} className="font-semibold bruno-gradient-tekst">{r.ocena}/10</Link>
                 ) : (
                   <span className="text-slate-400 text-xs">{r.status === "trwa" ? "w toku" : "przerwana"}</span>
                 )}
