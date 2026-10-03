@@ -128,9 +128,8 @@ export default function PolitykaPrywatnosciPage() {
               Warszawie; przetwarzanie może odbywać się w USA, Unii Europejskiej lub Singapurze. Okres
               przechowywania rozmów po stronie ElevenLabs jest ustawiony na 30 dni. Zgodnie z polityką ElevenLabs
               treści przesyłane w planach innych niż enterprise mogą służyć doskonaleniu jego modeli, dopóki nie
-              wyłączy się tego w ustawieniach konta. Na dzień tej aktualizacji wyłączenie jest w trakcie
-              wprowadzania, więc do czasu potwierdzenia nie przesyłaj przez Bruno treści, których nie chcesz
-              przekazać dostawcy.
+              wyłączy się tego w ustawieniach konta. Na naszym koncie to ustawienie jest wyłączone od 3 października
+              2026 r., więc rozmowy prowadzone od tego dnia nie są używane do uczenia modeli ElevenLabs.
             </li>
             <li>
               <b>OpenAI, L.L.C.</b> (zapasowy dostawca rozmowy głosowej, używany, gdy ElevenLabs jest niedostępny),

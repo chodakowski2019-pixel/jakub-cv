@@ -28,7 +28,7 @@ const KAFELKI = [
   { tytul: "Bez ograniczeń", opis: "Pełen dostęp trwa na czas zawartej umowy." },
   {
     tytul: "Bezpieczeństwo danych",
-    opis: "Produkt, obiekcje, skrypt i nagrania widzi tylko Wasz zespół. U dostawców modeli dane kasują się po 30 dniach, umowa powierzenia jest w regulaminie, a nagrania usuwamy na żądanie.",
+    opis: "Produkt, obiekcje, skrypt i nagrania widzi tylko Wasz zespół. Dostawcy modeli nie uczą się na Waszych danych i kasują je po 30 dniach, umowa powierzenia jest w regulaminie, a nagrania usuwamy na żądanie.",
   },
   { tytul: "Polskie głosy Bruno", opis: "Bruno mówi natywnym polskim głosem, bez obcego akcentu. Do wyboru kilka głosów męskich i damskich." },
 ];
