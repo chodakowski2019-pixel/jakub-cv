@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Feedback, Konfig, Kryterium, Wypowiedz } from "./db";
 import { listaObiekcji } from "./db";
-import type { Metryki } from "./metryki";
+import { plecZTranskrypcji, type Metryki } from "./metryki";
 import { POSTACIE, POZIOMY, TRYBY, poziomLubDomyslny, type PostacId, type PoziomId, type TrybId } from "./postacie";
 import { NAZWY, WAGI } from "./kryteria";
 
@@ -20,7 +20,7 @@ KRYTERIA (każde 1-10):
 2. PYTANIA: udział słów handlowca <50 % (dobrze), >60 % (źle); ≥5 pytań otwartych („jak”, „co”, „ile”, „kiedy”) przed prezentacją; SPIN: pytania o problem (P), jego skutki (I) i o to, czego klient chce (N) ważniejsze niż pytania o sytuację (S); brak pytania implikacyjnego = max 5; pytanie o koszt problemu; pytanie o budżet i decydenta; lustro (powtórzenie 1-3 słów klienta); handlowiec NIE odpowiada sam na swoje pytania; podsumowanie „powiedział Pan, że…”.
 3. OBIEKCJE (po „za drogo”, „muszę pomyśleć”, „nie teraz”, „mamy już”): następna wypowiedź = etykieta („wygląda na to”), lustro albo pytanie („w porównaniu do czego?”, „co nie gra?”) = dobrze; argument, obrona, rabat od razu = źle; rabat bez niczego w zamian = źle; nowa informacja + ponowna prośba o decyzję (pętla) = dobrze; dowód z nazwą firmy i liczbą = dobrze, „wielu klientów jest zadowolonych” = źle; poddanie się po pierwszym „przemyślę” = źle; cena przed pytaniem o ból = czerwona flaga.
 4. ZAMKNIĘCIE (ostatnie 20 %): 1-2 prośby o decyzję (0 albo ≥3 = źle); postęp = data + osoba + działanie klienta; kontynuacja („odezwę się”, „prześlę ofertę”, „proszę pomyśleć”) = źle; kwota wprost = dobrze; cena z „tylko”, „jedynie”, „niestety” = źle; klient sam wypowiada datę/krok = dobrze; pytanie „co może stanąć na drodze” = plus; limit tylko z prawdziwym powodem; po kwocie cisza, klient odzywa się pierwszy (handlowiec dopowiada >15 słów = usprawiedliwianie).
-5. PEWNOŚĆ SIEBIE (głos, z liczb): wypełniacze/min 0-2 dobrze, 3-5 średnio, >5 źle; osłabiacze na 100 słów ≤1 dobrze, >3 źle; „przepraszam”/„niestety” >2 = źle; spadek tempa >15 % = siadanie po odmowie; przyspieszenie przy cenie = nerwy; przerywanie klienta; zdania >25 słów; energia rosnąca przy „nie” klienta = źle. To jest kryterium główne wg Mazura: handlowiec ma twierdzić, nie sugerować.
+5. PEWNOŚĆ SIEBIE (głos, z liczb): wypełniacze/min 0-2 dobrze, 3-5 średnio, >5 źle; osłabiacze na 100 słów ≤1 dobrze, >3 źle; „przepraszam”/„niestety” >2 = źle; zmiana_tempa_proc to zmiana tempa ostatniej minuty względem pierwszej (plus = przyspieszył, minus = zwolnił): ≤ -15 = siadanie po odmowie, ≥ +15 przy cenie = nerwy; w komentarzu pisz po ludzku „przyspieszyłeś o X %” albo „zwolniłeś o X %”; przerywanie klienta; zdania >25 słów; energia rosnąca przy „nie” klienta = źle. To jest kryterium główne wg Mazura: handlowiec ma twierdzić, nie sugerować.
 
 REGUŁY TWARDE (zastosuj i wypisz, które zadziałały):
 - brak prośby o decyzję → ocena ogólna max 5
@@ -72,38 +72,52 @@ export function transkrypcjaDoTekstu(tr: Wypowiedz[]): string {
   return tr.map((w) => `[${formatCzas(w.t)}] ${w.rola === "handlowiec" ? "HANDLOWIEC" : "KLIENT"}: ${w.tekst}`).join("\n");
 }
 
-/** Średnia ważona + reguły twarde. Liczone tu, nie przez model, żeby wynik był powtarzalny. */
+/** Poniżej tej oceny kara z reguł już nie spycha: słaba rozmowa ma niskie kryteria i bez kary. */
+const PODLOGA_KARY = 3;
+
+/**
+ * Średnia ważona + reguły twarde. Liczone tu, nie przez model, żeby wynik był powtarzalny.
+ * 6.10: działa JEDNA, najcięższa reguła, a nie wszystkie po kolei. Wcześniej kary się
+ * sumowały i każda słabsza rozmowa lądowała na 1/10 (Aleksandra: kryteria 5/1/2/2/4,
+ * po karze -3 wynik 1). Kara z reguł nie spycha też poniżej 3.
+ */
 export function policzOcene(
   kryteria: Kryterium[],
   reguly: { bonus?: number; kary?: number; brak_prosby_o_decyzje?: boolean; mila_bez_tresci?: boolean },
 ): { ocena: number; reguly: string[] } {
   const z = (n: Kryterium["nazwa"]) => Math.min(10, Math.max(1, Number(kryteria.find((k) => k.nazwa === n)?.ocena ?? 1)));
-  let ocena = 0;
-  for (const n of Object.keys(WAGI) as Kryterium["nazwa"][]) ocena += z(n) * WAGI[n];
+  let baza = 0;
+  for (const n of Object.keys(WAGI) as Kryterium["nazwa"][]) baza += z(n) * WAGI[n];
   const uzyte: string[] = [];
-  const kary = Math.max(0, Math.min(6, Number(reguly.kary ?? 0)));
-  if (kary) {
-    ocena -= kary;
-    uzyte.push(`kary z reguł: -${kary}`);
-  }
   if (reguly.bonus) {
-    ocena += 1;
+    baza += 1;
     uzyte.push("przeramowanie: +1");
   }
-  if (reguly.brak_prosby_o_decyzje && ocena > 5) {
-    ocena = 5;
-    uzyte.push("brak prośby o decyzję: max 5");
-  }
-  if (reguly.mila_bez_tresci && ocena > 5) {
-    ocena = 5;
-    uzyte.push("miło bez treści: max 5");
-  }
+
+  // Kandydaci: każda reguła osobno liczy, ile zostaje z bazy. Wygrywa najniższy wynik.
+  const kandydaci: { wynik: number; opis: string }[] = [];
+  const kary = Math.max(0, Math.min(6, Number(reguly.kary ?? 0)));
+  if (kary && baza > PODLOGA_KARY) kandydaci.push({ wynik: Math.max(PODLOGA_KARY, baza - kary), opis: `kara z reguł: -${kary} (nie poniżej ${PODLOGA_KARY})` });
+  if (reguly.brak_prosby_o_decyzje && baza > 5) kandydaci.push({ wynik: 5, opis: "brak prośby o decyzję: max 5" });
+  if (reguly.mila_bez_tresci && baza > 5) kandydaci.push({ wynik: 5, opis: "miło bez treści: max 5" });
   const sufit = z("pewnosc") + 2;
-  if (ocena > sufit) {
-    ocena = sufit;
-    uzyte.push("nie wyżej niż pewność siebie + 2");
+  if (baza > sufit) kandydaci.push({ wynik: sufit, opis: "nie wyżej niż pewność siebie + 2" });
+
+  let ocena = baza;
+  if (kandydaci.length) {
+    const najciezsza = kandydaci.reduce((a, b) => (b.wynik < a.wynik ? b : a));
+    ocena = najciezsza.wynik;
+    uzyte.push(najciezsza.opis);
   }
   return { ocena: Math.min(10, Math.max(1, Math.round(ocena))), reguly: uzyte };
+}
+
+/** Rodzaj gramatyczny z imienia konta. Polskie imiona żeńskie kończą się na „a" (wyjątki męskie poniżej). */
+export function czyKobieta(imie: string | null | undefined): boolean | null {
+  const i = (imie ?? "").trim().split(/\s+/)[0]?.toLowerCase();
+  if (!i) return null;
+  if (["kuba", "barnaba", "bonawentura", "kosma", "jarema", "dyzma", "boryna", "zawisza"].includes(i)) return false;
+  return i.endsWith("a");
 }
 
 function wyciagnijJson(t: string): unknown {
@@ -165,13 +179,24 @@ export async function ocenRozmowe(args: {
   cel?: string;
   obiekcja?: string | null;
   poziom?: PoziomId | string | null;
+  imie?: string | null;
+  ucieta_limitem?: boolean;
 }): Promise<Feedback> {
   const { transkrypcja, metryki, konfig, postac, tryb, cel, obiekcja } = args;
+  // Płeć: najpierw z własnych słów handlowca w transkrypcji, potem z imienia.
+  const kobieta = plecZTranskrypcji(transkrypcja) ?? czyKobieta(args.imie);
   const poziom = poziomLubDomyslny(typeof args.poziom === "string" ? args.poziom : null);
   const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const model = process.env.BRUNO_TRENER_MODEL ?? "claude-sonnet-5";
 
   const kontekst = [
+    // 6.10: ta sama osoba dostawała raz „podałaś", raz „podałeś".
+    kobieta === true && `HANDLOWIEC TO KOBIETA${args.imie ? ` (${args.imie})` : ""}. Wszystkie teksty pisz w rodzaju żeńskim: „zrobiłaś”, „podałaś”, „zapytałaś”.`,
+    kobieta === false && `HANDLOWIEC TO MĘŻCZYZNA${args.imie ? ` (${args.imie})` : ""}. Wszystkie teksty pisz w rodzaju męskim: „zrobiłeś”, „podałeś”, „zapytałeś”.`,
+    kobieta === null && "PŁEĆ HANDLOWCA NIEZNANA. Unikaj form z końcówką rodzajową: zamiast „zrobiłeś” pisz „tu zabrakło…”, „następnym razem zapytaj…”, „dobrze, że padła liczba”.",
+    // 6.10: limit 3 min ucinał rozmowę tuż po sygnale kupna klienta, a trener karał za „urwanie" rozmowy.
+    args.ucieta_limitem &&
+      "ROZMOWĘ ZAKOŃCZYŁ LIMIT CZASU APLIKACJI (3 min + 45 s dogrywki na domknięcie). Nie karz za to, że handlowiec nie odpowiedział na OSTATNIĄ wypowiedź klienta, ani za to, że rozmowa „urywa się”: to zrobiła aplikacja. Brak prośby o decyzję w całej rozmowie nadal jest błędem handlowca, bo w dogrywce widział na ekranie „Dogrywka: domknij”. Jeśli klient dał sygnał kupna, a handlowiec go nie wykorzystał, napisz to w MINUSACH i w POPRAWCE podpowiedz, jak domknąć wcześniej.",
     `TYP KLIENTA (DISC): ${POSTACIE[postac].nazwa}, ${POSTACIE[postac].krotko}: ${POSTACIE[postac].opis}`,
     tryb && `TRYB ROZMOWY: ${TRYBY[tryb].nazwa}. ${tryb === "cold" ? "Klient nie znał oferty, otwarcie oceniaj w pełni." : "Klient znał ofertę i sam zaczął od obiekcji, więc OTWARCIE oceniaj łagodniej (liczy się reakcja na pierwszą obiekcję), a OBIEKCJE i ZAMKNIĘCIE surowiej."}`,
     cel && `CEL HANDLOWCA: ${cel}. W ZAMKNIĘCIU oceń wprost, czy ten cel został osiągnięty albo czy handlowiec o niego poprosił.`,
@@ -292,6 +317,12 @@ export async function ocenRozmowe(args: {
     brak_prosby_o_decyzje: raw.brak_prosby_o_decyzje ?? metryki.prosby_o_decyzje === 0,
     mila_bez_tresci: raw.mila_bez_tresci,
   });
+  // Lista reguł = to, co naprawdę zadziałało w policzOcene. Z listy modelu zostają tylko powody kary
+  // (cena przed bólem, fałszywa technika), i tylko wtedy, gdy kara faktycznie obniżyła ocenę.
+  const karaZadzialala = reguly.some((r) => r.startsWith("kara z reguł"));
+  const powodyKary = karaZadzialala
+    ? (raw.reguly ?? []).map(String).filter((r) => /minus|cen[aęy]|prezentac|fałszyw|technik|limit bez/i.test(r) && !/max 5|pewno/i.test(r))
+    : [];
   const najslabsze = [...kryteria].sort((a, b) => a.ocena - b.ocena)[0].nazwa;
 
   return {
@@ -304,7 +335,7 @@ export async function ocenRozmowe(args: {
     obiekcje_ocena: (raw.obiekcje_ocena ?? [])
       .filter((o) => o && typeof o.obiekcja === "string")
       .map((o) => ({ obiekcja: o.obiekcja.slice(0, 200), ocena: Math.min(4, Math.max(1, Math.round(Number(o.ocena) || 2))) })),
-    reguly: [...(raw.reguly ?? []).map(String), ...reguly],
+    reguly: [...reguly, ...powodyKary].slice(0, 6),
     plusy: (raw.plusy ?? []).filter((p) => typeof p === "string" && p.trim()).map((p) => p.trim().slice(0, 160)).slice(0, 5),
     minusy: (raw.minusy ?? []).filter((m) => typeof m === "string" && m.trim()).map((m) => m.trim().slice(0, 160)).slice(0, 5),
   };

@@ -2,7 +2,7 @@ import { NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { sciagnijNagranieEl } from "@/lib/bruno/nagrania";
-import { ROZMOWA_SEKUND_MAX, pobierzKonfig, type Wypowiedz } from "@/lib/bruno/db";
+import { ROZMOWA_SEKUND, ROZMOWA_SEKUND_MAX, listaObiekcji, pobierzKonfig, pobierzKonto, type Wypowiedz } from "@/lib/bruno/db";
 import { dodajKartyPoprawek, zaktualizujKarty } from "@/lib/bruno/fsrs";
 import { kartyZFeedbacku } from "@/lib/bruno/fiszka";
 import { policzMetryki } from "@/lib/bruno/metryki";
@@ -52,7 +52,10 @@ export async function POST(req: Request) {
     });
   }
 
-  const metrykiCzyste = policzMetryki(transkrypcja, sekundy);
+  const [konfig, konto] = await Promise.all([pobierzKonfig(email), pobierzKonto(email)]);
+  const metrykiCzyste = policzMetryki(transkrypcja, sekundy, listaObiekcji(konfig.obiekcje));
+  // Koniec przez limit czasu aplikacji (przeglądarka mówi „limit" albo czas doszedł do sufitu rozmowy).
+  const ucietaLimitem = b?.powod === "limit" || sekundy >= ROZMOWA_SEKUND;
   // Diagnostyka jakości dźwięku (2.10): statystyki WebRTC i błędy Realtime z przeglądarki, zapisywane obok metryk.
   const rtc = b?.rtc && typeof b.rtc === "object" ? JSON.parse(JSON.stringify(b.rtc).slice(0, 4000)) : undefined;
   const metryki = rtc ? { ...metrykiCzyste, rtc } : metrykiCzyste;
@@ -74,7 +77,6 @@ export async function POST(req: Request) {
     .eq("id", id);
 
   try {
-    const konfig = await pobierzKonfig(email);
     const feedback = await ocenRozmowe({
       transkrypcja,
       metryki: metrykiCzyste,
@@ -84,6 +86,8 @@ export async function POST(req: Request) {
       cel: opisCelu(celLubDomyslny(rozmowa.cel), rozmowa.cel_wlasny),
       obiekcja: rozmowa.obiekcja ?? null,
       poziom: rozmowa.poziom ?? null,
+      imie: konto?.imie ?? null,
+      ucieta_limitem: ucietaLimitem,
     });
     await supabaseAdmin.from("bruno_rozmowy").update({ feedback, ocena: feedback.ocena }).eq("id", id);
     await zaktualizujKarty(email, feedback);

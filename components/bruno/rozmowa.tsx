@@ -31,6 +31,7 @@ type Props = {
   rozmowDziennie: number;
   minutZostalo: number;
   sekundRozmowy: number;
+  sekundDogrywki: number;
 };
 
 function czas(s: number) {
@@ -139,7 +140,7 @@ function startGwar(): { stop: () => void } {
   };
 }
 
-export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy }: Props) {
+export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki }: Props) {
   const [tryb, setTryb] = useState<TrybId>("cold");
   // Kilka obiekcji naraz (USER_001 2.10). "__losowa__" i pusta lista są wyłączne.
   const [wybraneObiekcje, setWybraneObiekcje] = useState<string[]>(karta?.typ === "obiekcja" ? [karta.tresc] : obiekcje.length ? ["__losowa__"] : []);
@@ -184,6 +185,10 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
   const el = useRef<{ endSession: () => Promise<void>; getId: () => string; sendContextualUpdate: (t: string) => void } | null>(null);
   const statyRtc = useRef<Record<string, unknown> | null>(null);
   const limitRef = useRef(sekundRozmowy);
+  // Dogrywka (6.10): po limicie rozmowa trwa jeszcze sekundDogrywki, żeby handlowiec mógł domknąć.
+  const ostrzezonoRef = useRef(false);
+  const dogrywkaRef = useRef(false);
+  const [dogrywka, setDogrywka] = useState(false);
   // Start rozmowy = kanał otwarty I odliczanie skończone. Oba warunki w refach.
   const kanalOtwarty = useRef(false);
   const odliczono = useRef(false);
@@ -313,6 +318,27 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       r.stop();
     });
 
+  /**
+   * Zegar rozmowy, wołany co 0,5 s. 30 s przed limitem Bruno ma mówić krócej, ale NIE kończyć sam
+   * (6.10: „zmierzaj do zakończenia" kończyło się jego „muszę przemyśleć" tuż przed odcięciem).
+   * Na limicie zaczyna się dogrywka na prośbę o decyzję, po niej twarde odcięcie.
+   */
+  const pilnujCzasu = (s: number) => {
+    if (!ostrzezonoRef.current && limitRef.current - s <= 30) {
+      ostrzezonoRef.current = szepnij(
+        "Zostało 30 sekund rozmowy. Odpowiadaj krótko. Nie kończ rozmowy sam i nie żegnaj się: daj handlowcowi szansę poprosić o decyzję.",
+      );
+    }
+    if (!dogrywkaRef.current && s >= limitRef.current) {
+      dogrywkaRef.current = true;
+      setDogrywka(true);
+      szepnij(
+        `Czas rozmowy minął, trwa ${sekundDogrywki}-sekundowa dogrywka. Jeśli handlowiec prosi o decyzję albo proponuje następny krok, odpowiedz mu zgodnie ze swoją postacią, potem krótko się pożegnaj. Nie podnoś już nowych obiekcji. Jeśli przez kilkanaście sekund o nic nie poprosi, pożegnaj się zdawkowo: „to ja się odezwę”.`,
+      );
+    }
+    if (s >= limitRef.current + sekundDogrywki) void zakoncz("limit");
+  };
+
   const zakoncz = async (powod: "recznie" | "limit") => {
     if (konczenie.current) return;
     konczenie.current = true;
@@ -355,6 +381,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           rozmowa_id: rozmowaId,
           transkrypcja: transkrypcja.current,
           sekundy: trwalo,
+          powod: powod === "limit" || dogrywkaRef.current ? "limit" : "recznie",
           nagranie_sciezka: sciezka,
           el_conversation_id: elId,
           rtc: { ...(statyRtc.current ?? {}), bledy: bledyRealtime.current.slice(0, 20), sluchawki: null, przegladarka: navigator.userAgent.slice(0, 120) },
@@ -363,7 +390,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       const odp = await res.json();
       if (!res.ok) throw new Error(odp.blad ?? "błąd");
       if (odp.przerwana) {
-        setBlad("Rozmowa była za krótka, żeby ją ocenić (poniżej 20 s albo prawie nic nie powiedziałeś). Nie liczy się do planu dnia.");
+        setBlad("Rozmowa była za krótka, żeby ją ocenić (poniżej 20 s albo prawie bez Twoich słów). Nie liczy się do planu dnia.");
         setStan("blad");
         return;
       }
@@ -393,16 +420,11 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     // Gwar restauracji WYŁĄCZONY (USER_001 2.10): leciał z głośnika, mikrofon go
     // łapał, a Bruno ma interrupt_response, więc urywał się co 2 s. Funkcja
     // startGwar zostaje w kodzie na wersję ze słuchawkami / wykrywaniem słuchawek.
-    let ostrzezonoBruno = false;
     timer.current = setInterval(() => {
       const s = Math.round((Date.now() - start.current) / 1000);
       setSekundy(s);
       sprawdzFazy(s);
-      // 30 s przed końcem Bruno dostaje cichą instrukcję, żeby zmierzał do końca (2.10: odcięcie w pół zdania).
-      if (!ostrzezonoBruno && limitRef.current - s <= 30) {
-        ostrzezonoBruno = szepnij("Zostało 30 sekund rozmowy. Odpowiadaj już bardzo krótko i zmierzaj do zakończenia: decyzja albo pożegnanie.");
-      }
-      if (s >= limitRef.current) void zakoncz("limit");
+      pilnujCzasu(s);
     }, 500);
   };
 
@@ -451,15 +473,11 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           setSekundy(0);
           setStan("trwa");
           setEtap("");
-          let ostrzezonoBruno = false;
           timer.current = setInterval(() => {
             const s = Math.round((Date.now() - start.current) / 1000);
             setSekundy(s);
             sprawdzFazy(s);
-            if (!ostrzezonoBruno && limitRef.current - s <= 30) {
-              ostrzezonoBruno = szepnij("Zostało 30 sekund rozmowy. Odpowiadaj już bardzo krótko i zmierzaj do zakończenia: decyzja albo pożegnanie.");
-            }
-            if (s >= limitRef.current) void zakoncz("limit");
+            pilnujCzasu(s);
           }, 500);
         },
         onMessage: ({ message, role }) => {
@@ -492,6 +510,9 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     kanalOtwarty.current = false;
     odliczono.current = false;
     wystartowano.current = false;
+    ostrzezonoRef.current = false;
+    dogrywkaRef.current = false;
+    setDogrywka(false);
     transkrypcja.current = [];
     szepnieta.current = new Set();
     setEtap("Proszę o mikrofon...");
@@ -611,8 +632,8 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     }
   };
 
-  const zostalo = Math.max(0, limit - sekundy);
-  const ostrzezenie = stan === "trwa" && zostalo <= 15;
+  const zostalo = dogrywka ? Math.max(0, limit + sekundDogrywki - sekundy) : Math.max(0, limit - sekundy);
+  const ostrzezenie = stan === "trwa" && (dogrywka || zostalo <= 15);
   const gotowy = Boolean(tryb && postac && cel && (cel !== "wlasny" || celWlasny.trim().length >= 3));
   const p = POSTACIE[postac];
 
@@ -795,7 +816,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
               }`}
               aria-live={ostrzezenie ? "assertive" : "off"}
             >
-              {czas(zostalo)}
+              {dogrywka ? `Dogrywka: domknij · ${czas(zostalo)}` : czas(zostalo)}
             </div>
           )}
           <div className="absolute top-4 left-4 sm:top-5 sm:left-5 flex items-center gap-2 text-xs text-slate-500">

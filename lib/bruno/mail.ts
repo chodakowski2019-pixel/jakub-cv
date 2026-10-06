@@ -91,6 +91,24 @@ export function htmlPrzypomnienie(args: { imie: string | null; kart: number; roz
   });
 }
 
+/** Przypomnienie dla konta bez pierwszego logowania (6.10). Kodu nie wysyłamy ponownie: w bazie jest tylko jego skrót. */
+export function htmlNieZalogowany(args: { imie: string | null; dni: number }) {
+  const link = `${bazaUrl()}/bruno`;
+  const minuty = ROZMOWA_SEKUND / 60;
+  return kopertaBruno({
+    naglowek: `${args.imie ? `${args.imie}, B` : "B"}runo czeka na pierwszą rozmowę`,
+    tresc: [
+      tabelaParami([
+        ["Pierwsza rozmowa", `${minuty} ${minutaSlowo(minuty)}`],
+        ["Dostęp", `${args.dni} dni, liczone od pierwszego logowania`],
+        ["Kod logowania", "w pierwszym mailu „Twój dostęp do Bruno AI”"],
+      ]),
+      przycisk({ tekst: "Zaloguj się", link }),
+      akapit("Nie możesz znaleźć kodu? Odpisz na tego maila, wyślę nowy."),
+    ].join("\n"),
+  });
+}
+
 export function htmlWiadomosc(args: { email: string; imie: string | null; firma: string | null; tekst: string }) {
   return `
     <h2>Bruno AI: wiadomość z dymka w panelu</h2>

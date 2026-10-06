@@ -7,8 +7,13 @@ export { listaObiekcji };
 
 /** Jedna rozmowa treningowa: 3 minuty (USER_001 1.10, 5 min to za dużo), twarde odcięcie w przeglądarce i na serwerze. */
 export const ROZMOWA_SEKUND = 180;
+/**
+ * Dogrywka po limicie (6.10): rozmowa nie urywa się w pół zamknięcia. Bruno dostaje sygnał
+ * „czas minął", handlowiec ma jeszcze tyle sekund na prośbę o decyzję. Potem twarde odcięcie.
+ */
+export const DOGRYWKA_SEKUND = 45;
 /** Zapas na łączenie i pożegnanie: powyżej tego serwer i tak liczy tylko tyle. */
-export const ROZMOWA_SEKUND_MAX = ROZMOWA_SEKUND + 30;
+export const ROZMOWA_SEKUND_MAX = ROZMOWA_SEKUND + DOGRYWKA_SEKUND + 30;
 /** Plan dnia: 3 rozmowy (USER_001 30.09). Per konto nadpisuje to `bruno_konta.rozmow_dziennie`. */
 export const ROZMOW_DZIENNIE = 3;
 export function limitDzienny(konto: Pick<Konto, "rozmow_dziennie"> | null | undefined): number {
@@ -30,6 +35,8 @@ export type Konto = {
   dni: number;
   limit_sekund: number;
   aktywne: boolean;
+  /** Data założenia konta (domyślna kolumny). Liczymy od niej przypomnienia przed 1. logowaniem. */
+  utworzono: string;
   /** Limit rozmów dziennie per konto (2.10). Domyślnie ROZMOW_DZIENNIE = 3; USER_001 ma 30. */
   rozmow_dziennie?: number | null;
   /** Limit fiszek dziennie per konto (2.10). Domyślnie FISZEK_DZIENNIE = 5; USER_001 ma 50. */

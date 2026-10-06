@@ -132,7 +132,7 @@ export function podpowiedzFazy(args: {
     return {
       klucz: "brak_prosby",
       tekst:
-        "Zostało mało czasu, a handlowiec nie poprosił o decyzję ani nie zaproponował terminu. Nie proponuj niczego sam. Jeśli do końca nie poprosi, zakończ rozmowę zdawkowo: „to ja się odezwę”.",
+        "Zostało mało czasu, a handlowiec nie poprosił o decyzję ani nie zaproponował terminu. Nie proponuj niczego sam, ale też nie kończ rozmowy przed czasem: odpowiadaj normalnie, żeby miał szansę poprosić. Jeśli do samego końca nie poprosi, pożegnaj się zdawkowo: „to ja się odezwę”.",
     };
   }
 

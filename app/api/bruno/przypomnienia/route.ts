@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ROZMOWA_SEKUND, kartyDoPowtorki, limitDzienny, rozmowyDzis, stanDostepu, type Konto } from "@/lib/bruno/db";
-import { htmlPrzypomnienie, wyslij } from "@/lib/bruno/mail";
+import { htmlNieZalogowany, htmlPrzypomnienie, wyslij } from "@/lib/bruno/mail";
 import { dociagnijNagraniaEl } from "@/lib/bruno/nagrania";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
+
+const DNI_PRZYPOMNIEN_BEZ_LOGOWANIA = [1, 3, 6];
 
 // GET /api/bruno/przypomnienia: cron z vercel.json. Plan Hobby Vercela
 // dopuszcza cron raz dziennie, więc biegnie o 6:00 UTC (8:00 PL latem, 7:00
@@ -26,9 +28,27 @@ export async function GET(req: Request) {
   const godziny = new Map((konfigi ?? []).map((k) => [k.email, k.godzina_przypomnienia as number]));
 
   const wyslane: string[] = [];
+  const niezalogowani: string[] = [];
   for (const konto of (konta ?? []) as Konto[]) {
     const stan = stanDostepu(konto);
-    if (!stan.aktywny || !konto.start_dostepu) continue;
+    if (!stan.aktywny) continue;
+    // Bez pierwszego logowania (6.10: dj_qb nie dostawał nic). Trzy razy: 1., 3. i 6. dzień po założeniu konta, potem cisza.
+    if (!konto.start_dostepu) {
+      const dniOdZalozenia = Math.round((Date.now() - new Date(konto.utworzono).getTime()) / 86_400_000);
+      if (!DNI_PRZYPOMNIEN_BEZ_LOGOWANIA.includes(dniOdZalozenia)) continue;
+      try {
+        await wyslij({
+          do: konto.email,
+          temat: "Bruno AI: Twoja pierwsza rozmowa czeka",
+          html: htmlNieZalogowany({ imie: konto.imie, dni: konto.dni }),
+          replyTo: "hello@jakubchodakowski.com",
+        });
+        niezalogowani.push(konto.email);
+      } catch (e) {
+        console.error("[bruno przypomnienia] niezalogowany", konto.email, e);
+      }
+      continue;
+    }
     const godzina = godziny.get(konto.email) ?? 8;
     if (!wymus && godzina !== godzinaPL) continue;
     const dzis = await rozmowyDzis(konto.email);
@@ -55,5 +75,5 @@ export async function GET(req: Request) {
     console.error("[bruno przypomnienia] nagrania", e);
   }
 
-  return NextResponse.json({ ok: true, godzinaPL, wyslane, nagrania });
+  return NextResponse.json({ ok: true, godzinaPL, wyslane, niezalogowani, nagrania });
 }
