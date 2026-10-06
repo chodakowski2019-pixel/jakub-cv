@@ -63,7 +63,8 @@ const KONFIG = {
     },
     asr: { quality: "high", provider: "scribe_realtime", user_input_audio_format: "pcm_16000", keywords: [] },
     turn: { turn_timeout: 8.0, mode: "turn", turn_eagerness: "normal" },
-    conversation: { max_duration_seconds: 270, // 180 s + 45 s dogrywki + zapas (6.10) client_events: ["audio", "interruption", "user_transcript", "agent_response", "agent_response_correction"] },
+    // 270 = 180 s rozmowy + 45 s dogrywki + zapas (6.10).
+    conversation: { max_duration_seconds: 270, client_events: ["audio", "interruption", "user_transcript", "agent_response", "agent_response_correction"] },
   },
   platform_settings: {
     overrides: {
@@ -72,7 +73,8 @@ const KONFIG = {
         tts: { voice_id: true, stability: true, speed: true, similarity_boost: true },
       },
     },
-    privacy: { record_voice: true, retention_days: -1 },
+    // 30 dni (P2, 2.10): pełny PATCH tym skryptem nie może cofnąć retencji na -1.
+    privacy: { record_voice: true, retention_days: 30 },
   },
 };
 
