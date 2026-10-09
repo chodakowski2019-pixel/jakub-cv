@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
+import { pelnyDostep, pobierzKonto } from "@/lib/bruno/db";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,7 @@ const przytnij = (v: unknown) => JSON.parse(JSON.stringify(v ?? {}).slice(0, MAX
 export async function POST(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
+  if (!pelnyDostep(await pobierzKonto(email))) return NextResponse.json({ ok: false, blad: "Ogień jest w pełnym dostępie." }, { status: 403 });
   const b = await req.json().catch(() => ({}));
   let dane: unknown;
   try {
@@ -30,6 +32,7 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
+  if (!pelnyDostep(await pobierzKonto(email))) return NextResponse.json({ ok: false, blad: "Ogień jest w pełnym dostępie." }, { status: 403 });
   const b = await req.json().catch(() => ({}));
   const id = String(b.id ?? "");
   if (!id) return NextResponse.json({ ok: false, blad: "Brak id." }, { status: 400 });

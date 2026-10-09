@@ -14,13 +14,16 @@ const LINKI = [
   { href: "/bruno/panel", nazwa: "Panel", ikona: "panel" },
   { href: "/bruno/rozmowa", nazwa: "Test", ikona: "test" },
   // „Ogień przed rozmową" (USER_001 9.10): 5-minutowy rytuał przed prawdziwym telefonem.
-  { href: "/bruno/ogien", nazwa: "Ogień", ikona: "ogien" },
+  { href: "/bruno/ogien", nazwa: "Ogień", ikona: "ogien", pelny: true },
   { href: "/bruno/trening", nazwa: "Trening", ikona: "trening" },
   { href: "/bruno/feedback", nazwa: "Feedback", ikona: "feedback" },
   { href: "/bruno/statystyki", nazwa: "Statystyki", ikona: "statystyki" },
   { href: "/bruno/dostosuj", nazwa: "Dostosuj Bruno", ikona: "dostosuj" },
   { href: "/bruno/ustawienia", nazwa: "Ustawienia", ikona: "ustawienia" },
 ] as const;
+
+/** Linki widoczne dla konta: „Ogień" tylko przy pełnym dostępie (9.10). */
+const linkiDla = (pelny: boolean) => LINKI.filter((l) => !("pelny" in l) || pelny);
 
 function Ikona({ nazwa }: { nazwa: (typeof LINKI)[number]["ikona"] | "klodka" | "wyjscie" }) {
   const wspolne = { viewBox: "0 0 24 24", width: 18, height: 18, fill: "none", stroke: "currentColor", strokeWidth: 1.9, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true, className: "shrink-0" };
@@ -57,7 +60,7 @@ function Logo({ zalogowany }: { zalogowany: boolean }) {
 }
 
 /** Wąski pasek boczny (tylko od szerokości sm). */
-export function BrunoPasek() {
+export function BrunoPasek({ pelny }: { pelny: boolean }) {
   const sciezka = usePathname();
   return (
     <aside className="bruno-pasek-boczny hidden sm:flex flex-col w-52 bruno-szklo rounded-none border-y-0 border-l-0 px-3 py-4 gap-6">
@@ -65,7 +68,7 @@ export function BrunoPasek() {
         <Logo zalogowany />
       </div>
       <nav className="bruno-pasek flex flex-col gap-1" aria-label="Panel">
-        {LINKI.map((l) => (
+        {linkiDla(pelny).map((l) => (
           <Link key={l.href} href={l.href} aria-current={sciezka?.startsWith(l.href) ? "page" : undefined}>
             <Ikona nazwa={l.ikona} />
             {l.nazwa}
@@ -77,7 +80,7 @@ export function BrunoPasek() {
 }
 
 /** Górna belka: po środku „Odblokuj pełen dostęp", z prawej „Wyloguj". Na telefonie dodatkowo logo i zakładki. */
-export default function BrunoNav({ zalogowany }: { zalogowany: boolean }) {
+export default function BrunoNav({ zalogowany, pelny }: { zalogowany: boolean; pelny: boolean }) {
   const sciezka = usePathname();
   const router = useRouter();
   const wyloguj = async () => {
@@ -118,7 +121,7 @@ export default function BrunoNav({ zalogowany }: { zalogowany: boolean }) {
         </button>
       </div>
       <nav className="sm:hidden bruno-nav flex items-center gap-1 overflow-x-auto px-3 pb-2" aria-label="Panel">
-        {LINKI.map((l) => (
+        {linkiDla(pelny).map((l) => (
           <Link key={l.href} href={l.href} aria-current={sciezka?.startsWith(l.href) ? "page" : undefined} className="whitespace-nowrap">
             {l.nazwa}
           </Link>

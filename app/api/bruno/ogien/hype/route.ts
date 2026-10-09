@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { pobierzKonto } from "@/lib/bruno/db";
+import { pelnyDostep, pobierzKonto } from "@/lib/bruno/db";
 import { BAZA_EL, GLOS_BRUNO } from "@/lib/bruno/elevenlabs";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +18,7 @@ const MAX_ZNAKOW = 350;
 export async function POST(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
+  if (!pelnyDostep(await pobierzKonto(email))) return NextResponse.json({ ok: false, blad: "Ogień jest w pełnym dostępie." }, { status: 403 });
   if (!process.env.ANTHROPIC_API_KEY || !process.env.ELEVENLABS_API_KEY) return NextResponse.json({ ok: false, blad: "Brak kluczy na serwerze." }, { status: 500 });
   const b = await req.json().catch(() => ({}));
   const konto = await pobierzKonto(email);

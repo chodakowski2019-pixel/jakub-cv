@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { pobierzKonfig, pobierzKonto, pobierzRozmowy, stanDostepu, type Karta } from "@/lib/bruno/db";
+import { pelnyDostep, pobierzKonfig, pobierzKonto, pobierzRozmowy, stanDostepu, type Karta } from "@/lib/bruno/db";
 import { NAZWY } from "@/lib/bruno/kryteria";
 import { obiekcjeZWyjasnieniem } from "@/lib/bruno/obiekcje";
 import { cytatDnia } from "@/lib/bruno/cytaty";
@@ -19,6 +19,8 @@ export default async function BrunoOgienPage() {
   const konto = await pobierzKonto(email);
   const stan = stanDostepu(konto);
   if (!konto || !stan.aktywny) redirect("/bruno/panel");
+  // Tylko pełny dostęp (USER_001 9.10): trial nie widzi zakładki ani strony.
+  if (!pelnyDostep(konto)) redirect("/bruno/panel");
 
   const [konfig, rozmowy] = await Promise.all([pobierzKonfig(email), pobierzRozmowy(email, 5)]);
   const ostatnia = rozmowy.find((r) => r.status === "zakonczona" && r.feedback) ?? null;

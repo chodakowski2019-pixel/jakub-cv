@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins, Open_Sans } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
+import { pelnyDostep, pobierzKonto } from "@/lib/bruno/db";
 import BrunoNav, { BrunoPasek } from "@/components/bruno/nav";
 import CzatDymek from "@/components/bruno/czat-dymek";
 import "./bruno.css";
@@ -23,6 +24,8 @@ const openSans = Open_Sans({ variable: "--font-open-sans", subsets: ["latin", "l
 
 export default async function BrunoLayout({ children }: { children: React.ReactNode }) {
   const email = await zalogowanyEmail();
+  // 9.10: zakładka „Ogień" tylko w pełnym dostępie (USER_001: tester w trialu ma jej nie widzieć).
+  const pelny = email ? pelnyDostep(await pobierzKonto(email)) : false;
   return (
     <div className={`bruno ${poppins.variable} ${openSans.variable} font-[var(--font-open-sans)]`}>
       <div className="bruno-plamy" aria-hidden>
@@ -31,9 +34,9 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
         <i style={{ bottom: -160, left: "25%", width: 640, height: 520, opacity: 0.5, background: "radial-gradient(closest-side, #bae6fd, transparent)" }} />
       </div>
       <div className="relative z-[1] min-h-screen flex">
-        {email && <BrunoPasek />}
+        {email && <BrunoPasek pelny={pelny} />}
         <div className={`flex-1 min-w-0 flex flex-col ${email ? "sm:ml-52" : ""}`}>
-          <BrunoNav zalogowany={Boolean(email)} />
+          <BrunoNav zalogowany={Boolean(email)} pelny={pelny} />
           <main className="flex-1 px-4 sm:px-6 pb-10 pt-6 sm:pt-10 max-w-5xl w-full mx-auto overflow-x-hidden">{children}</main>
           {/* Dokumenty muszą być dostępne z każdego ekranu panelu (2.10): rozmowy są nagrywane. */}
           <footer className="px-4 sm:px-6 pb-24 pt-2 max-w-5xl w-full mx-auto text-xs text-slate-400 flex flex-wrap gap-x-4 gap-y-1 justify-center">
