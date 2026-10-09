@@ -4,14 +4,75 @@ import { useState } from "react";
 import { track } from "@vercel/analytics";
 import AuroraShell from "./aurora-shell";
 import s from "./aurora.module.css";
+import { useJezyk } from "./jezyk";
 
 // Zgłoszenie o dostęp do Bruno w wyglądzie Aurora. Logika 1:1 z app/aisaleskontakt/page.tsx:
 // te same pola, ta sama walidacja (lib/firmowy-email.ts), ten sam POST /api/aisaleskontakt,
 // ten sam ekran „Trwa weryfikacja” po wysłaniu.
 
-const ZAWODY = ["Dyrektor sprzedaży", "Kierownik zespołu sprzedaży", "Właściciel firmy", "Handlowiec", "Inne"];
+// 9.10 (USER_001): EN domyślnie, PL z ?pl.
+const T = {
+  en: {
+    tytul: "Get access",
+    panel: "Steps to join Bruno AI",
+    kroki: ["Fill in the form", "Log in", "Practice with Bruno"],
+    okH: "Check your inbox",
+    ok1: "We sent a code to",
+    ok2: "Enter it when you log in and start your first call.",
+    h2: "Sign up",
+    lead: "Fill in the form",
+    imie: "First name",
+    imiePh: "Adam",
+    email: "Email",
+    emailPh: "adam@gmail.com",
+    tel: "Phone number",
+    telPh: "+1 555 000 0000",
+    opt: "(optional)",
+    rola: "Choose your role",
+    zawody: ["Sales Director", "Sales Team Lead", "Business Owner", "Sales Rep", "Other"],
+    handl: "How many sales reps work at your company?",
+    handlPh: "e.g. 8",
+    produkt: "What do you sell?",
+    produktPh: "e.g. life insurance for businesses",
+    zgoda: "I accept the",
+    polityka: "Privacy Policy",
+    blad: "Something went wrong. Email hello@jakubchodakowski.com",
+    wysylam: "Sending...",
+    wyslij: "Send →",
+  },
+  pl: {
+    tytul: "Otrzymaj dostęp",
+    panel: "Kroki zgłoszenia do Bruno AI",
+    kroki: ["Wypełnij formularz", "Zaloguj się", "Trenuj z Bruno"],
+    okH: "Sprawdź skrzynkę",
+    ok1: "Wysłaliśmy kod na",
+    ok2: "Wpisz go przy logowaniu i zacznij pierwszą rozmowę.",
+    h2: "Zarejestruj się",
+    lead: "Wypełnij formularz",
+    imie: "Imię",
+    imiePh: "Adam",
+    email: "Adres e-mail",
+    emailPh: "adam@gmail.com",
+    tel: "Numer telefonu",
+    telPh: "+48 600 000 000",
+    opt: "(opcjonalnie)",
+    rola: "Wybierz swoją rolę",
+    zawody: ["Dyrektor sprzedaży", "Kierownik zespołu sprzedaży", "Właściciel firmy", "Handlowiec", "Inne"],
+    handl: "Ilu handlowców jest w Twojej firmie?",
+    handlPh: "np. 8",
+    produkt: "Jaki produkt sprzedajecie?",
+    produktPh: "np. ubezpieczenia na życie dla firm",
+    zgoda: "Akceptuję",
+    polityka: "Politykę prywatności",
+    blad: "Coś poszło nie tak. Napisz na hello@jakubchodakowski.com",
+    wysylam: "Wysyłam...",
+    wyslij: "Wyślij →",
+  },
+} as const;
 
 export default function RejestracjaForm() {
+  const jezyk = useJezyk();
+  const x = T[jezyk];
   const [form, setForm] = useState({
     imie: "",
     email: "",
@@ -36,7 +97,7 @@ export default function RejestracjaForm() {
       const res = await fetch("/api/aisaleskontakt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, typ: "handlowiec", handlowcy: Number(form.handlowcy) || 1 }),
+        body: JSON.stringify({ ...form, jezyk, typ: "handlowiec", handlowcy: Number(form.handlowcy) || 1 }),
       });
       if (res.ok) {
         setStatus("ok");
@@ -44,7 +105,7 @@ export default function RejestracjaForm() {
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         const body = (await res.json().catch(() => null)) as { blad?: string } | null;
-        setBlad(body?.blad ?? null);
+        setBlad(jezyk === "pl" ? (body?.blad ?? null) : null);
         setStatus("error");
       }
     } catch {
@@ -56,14 +117,10 @@ export default function RejestracjaForm() {
 
   return (
     <AuroraShell
-      tytul="Otrzymaj dostęp"
-      etykietaPanelu="Kroki zgłoszenia do Bruno AI"
+      tytul={x.tytul}
+      etykietaPanelu={x.panel}
       aktywny={wyslane ? 1 : 0}
-      kroki={[
-        { etykieta: "Wypełnij formularz" },
-        { etykieta: "Zaloguj się" },
-        { etykieta: "Trenuj z Bruno" },
-      ]}
+      kroki={x.kroki.map((etykieta) => ({ etykieta }))}
     >
       {wyslane ? (
         <div key="ok" className={`${s.pane} ${s.enter} ${s.done2}`}>
@@ -73,35 +130,35 @@ export default function RejestracjaForm() {
               <path d="M8 14l16 12 16-12" />
             </svg>
           </div>
-          <h2>Sprawdź skrzynkę</h2>
+          <h2>{x.okH}</h2>
           <p className={s.txt}>
-            Wysłaliśmy kod na <b>{form.email}</b>.
+            {x.ok1} <b>{form.email}</b>.
           </p>
           <p className={s.txt} style={{ marginTop: 6 }}>
-            Wpisz go przy logowaniu i zacznij pierwszą rozmowę.
+            {x.ok2}
           </p>
         </div>
       ) : (
         <form key="form" onSubmit={submit} className={`${s.pane} ${s.enter}`}>
-          <h2>Zarejestruj się</h2>
-          <p className={s.lead}>Wypełnij formularz</p>
+          <h2>{x.h2}</h2>
+          <p className={s.lead}>{x.lead}</p>
 
           <div className={s.f}>
-            <label htmlFor="imie">Imię *</label>
+            <label htmlFor="imie">{x.imie} *</label>
             <div className={s.in}>
-              <input id="imie" required autoComplete="given-name" placeholder="Adam" value={form.imie} onChange={set("imie")} />
+              <input id="imie" required autoComplete="given-name" placeholder={x.imiePh} value={form.imie} onChange={set("imie")} />
             </div>
           </div>
 
           <div className={s.f}>
-            <label htmlFor="email">Adres e-mail *</label>
+            <label htmlFor="email">{x.email} *</label>
             <div className={s.in}>
               <input
                 id="email"
                 required
                 type="email"
                 autoComplete="email"
-                placeholder="adam@gmail.com"
+                placeholder={x.emailPh}
                 value={form.email}
                 onChange={set("email")}
               />
@@ -110,17 +167,17 @@ export default function RejestracjaForm() {
 
           <div className={s.f}>
             <label htmlFor="telefon">
-              Numer telefonu <span className={s.opt}>(opcjonalnie)</span>
+              {x.tel} <span className={s.opt}>{x.opt}</span>
             </label>
             <div className={s.in}>
-              <input id="telefon" type="tel" autoComplete="tel" placeholder="+48 600 000 000" value={form.telefon} onChange={set("telefon")} />
+              <input id="telefon" type="tel" autoComplete="tel" placeholder={x.telPh} value={form.telefon} onChange={set("telefon")} />
             </div>
           </div>
 
           <fieldset className={s.f}>
-            <legend>Wybierz swoją rolę *</legend>
+            <legend>{x.rola} *</legend>
             <div className={s.chips}>
-              {ZAWODY.map((z) => (
+              {x.zawody.map((z) => (
                 <button
                   key={z}
                   type="button"
@@ -135,7 +192,7 @@ export default function RejestracjaForm() {
           </fieldset>
 
           <div className={s.f}>
-            <label htmlFor="handlowcy">Ilu handlowców jest w Twojej firmie? <span className={s.opt}>(opcjonalnie)</span></label>
+            <label htmlFor="handlowcy">{x.handl} <span className={s.opt}>{x.opt}</span></label>
             <div className={s.in}>
               <input
                 id="handlowcy"
@@ -144,7 +201,7 @@ export default function RejestracjaForm() {
                 min={1}
                 max={9999}
                 step={1}
-                placeholder="np. 8"
+                placeholder={x.handlPh}
                 value={form.handlowcy}
                 onChange={set("handlowcy")}
               />
@@ -152,13 +209,13 @@ export default function RejestracjaForm() {
           </div>
 
           <div className={s.f}>
-            <label htmlFor="produkt">Jaki produkt sprzedajecie? *</label>
+            <label htmlFor="produkt">{x.produkt} *</label>
             <div className={s.in}>
               <input
                 id="produkt"
                 required
                 maxLength={200}
-                placeholder="np. ubezpieczenia na życie dla firm"
+                placeholder={x.produktPh}
                 value={form.produkt}
                 onChange={set("produkt")}
               />
@@ -173,21 +230,21 @@ export default function RejestracjaForm() {
               onChange={(e) => setForm((f) => ({ ...f, zgoda: e.target.checked }))}
             />
             <span>
-              Akceptuję{" "}
+              {x.zgoda}{" "}
               <a href="/polityka-prywatnosci" target="_blank" rel="noopener">
-                Politykę prywatności
+                {x.polityka}
               </a>
             </span>
           </label>
 
           {(blad || status === "error") && (
             <p className={s.err} role="alert">
-              {blad ?? "Coś poszło nie tak. Napisz na hello@jakubchodakowski.com"}
+              {blad ?? x.blad}
             </p>
           )}
 
           <button type="submit" disabled={status === "sending" || !form.zawod} className={s.btnW}>
-            {status === "sending" ? "Wysyłam..." : "Wyślij →"}
+            {status === "sending" ? x.wysylam : x.wyslij}
           </button>
         </form>
       )}

@@ -5,7 +5,7 @@ import RejestracjaForm from "@/components/podglad/aurora/rejestracja-form";
 // B2B się nie rejestruje: konta firm zakładamy i wysyłamy sami.
 // noindex do czasu podpięcia zakładania konta i maila z kodem.
 export const metadata: Metadata = {
-  title: "Bruno AI: zarejestruj się",
+  title: "Bruno AI: sign up",
   robots: { index: false, follow: false },
 };
 

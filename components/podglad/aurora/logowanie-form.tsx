@@ -5,6 +5,45 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AuroraShell from "./aurora-shell";
 import s from "./aurora.module.css";
+import { useJezyk } from "./jezyk";
+
+// 9.10 (USER_001): EN domyślnie, PL z ?pl.
+const T = {
+  en: {
+    nieUdalo: "Could not log in.",
+    tytul: "Training panel",
+    podtytul: "Sales call practice with Bruno AI.",
+    panel: "Steps to log in to Bruno AI",
+    kroki: ["Enter your email", "Enter your 6-digit code", "Open your panel"],
+    h2: "Log in",
+    lead: "Enter your email and 6-digit code.",
+    email: "Email",
+    emailPh: "you@company.com",
+    kod: "Code",
+    zaloguj: "Log in",
+    loguje: "Logging in...",
+    brak: "No account yet?",
+    rejestracja: "Sign up",
+    rejHref: "/brunorejestracja",
+  },
+  pl: {
+    nieUdalo: "Nie udało się zalogować.",
+    tytul: "Panel treningowy",
+    podtytul: "Trening rozmów sprzedażowych z Bruno AI.",
+    panel: "Kroki logowania do Bruno AI",
+    kroki: ["Podaj email", "Wpisz swój 6-cyfrowy kod", "Wejdź do panelu"],
+    h2: "Zaloguj się",
+    lead: "Podaj adres i 6-cyfrowy kod.",
+    email: "Adres e-mail",
+    emailPh: "ty@twojafirma.pl",
+    kod: "Kod",
+    zaloguj: "Zaloguj się",
+    loguje: "Loguję...",
+    brak: "Nie masz dostępu?",
+    rejestracja: "Zarejestruj się",
+    rejHref: "/brunorejestracja?pl",
+  },
+} as const;
 
 // Logowanie Bruno w wyglądzie Aurora. Logika 1:1 z components/bruno/login-form.tsx:
 // adres + stały 6-cyfrowy kod konta, POST /api/bruno/login, sukces = /bruno/panel.
@@ -13,6 +52,7 @@ const wygladaJakEmail = (v: string) => /^\S+@\S+\.\S+$/.test(v.trim());
 
 export default function LogowanieForm() {
   const router = useRouter();
+  const x = T[useJezyk()];
   const [email, setEmail] = useState("");
   const [kod, setKod] = useState("");
   const [stan, setStan] = useState<"idle" | "wysylanie" | "ok">("idle");
@@ -36,7 +76,7 @@ export default function LogowanieForm() {
       router.refresh();
     } else {
       setStan("idle");
-      setBlad((await res.json().catch(() => null))?.blad ?? "Nie udało się zalogować.");
+      setBlad((await res.json().catch(() => null))?.blad ?? x.nieUdalo);
     }
   };
 
@@ -46,22 +86,22 @@ export default function LogowanieForm() {
 
   return (
     <AuroraShell
-      tytul="Panel treningowy"
-      podtytul="Trening rozmów sprzedażowych z Bruno AI."
-      etykietaPanelu="Kroki logowania do Bruno AI"
+      tytul={x.tytul}
+      podtytul={x.podtytul}
+      etykietaPanelu={x.panel}
       aktywny={aktywny}
       kroki={[
-        { etykieta: "Podaj email", onClick: () => emailRef.current?.focus() },
-        { etykieta: "Wpisz swój 6-cyfrowy kod", onClick: () => kodRef.current?.focus() },
-        { etykieta: "Wejdź do panelu" },
+        { etykieta: x.kroki[0], onClick: () => emailRef.current?.focus() },
+        { etykieta: x.kroki[1], onClick: () => kodRef.current?.focus() },
+        { etykieta: x.kroki[2] },
       ]}
     >
       <form onSubmit={zaloguj} className={`${s.pane} ${s.enter}`}>
-        <h2>Zaloguj się</h2>
-        <p className={s.lead}>Podaj adres i 6-cyfrowy kod.</p>
+        <h2>{x.h2}</h2>
+        <p className={s.lead}>{x.lead}</p>
 
         <div className={s.f}>
-          <label htmlFor="email">Adres e-mail</label>
+          <label htmlFor="email">{x.email}</label>
           <div className={s.in}>
             <input
               ref={emailRef}
@@ -69,7 +109,7 @@ export default function LogowanieForm() {
               type="email"
               required
               autoComplete="email"
-              placeholder="ty@twojafirma.pl"
+              placeholder={x.emailPh}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -77,7 +117,7 @@ export default function LogowanieForm() {
         </div>
 
         <div className={s.f} style={{ marginBottom: 0 }}>
-          <label htmlFor="kod">Kod</label>
+          <label htmlFor="kod">{x.kod}</label>
           <div className={s.in}>
             <input
               ref={kodRef}
@@ -104,11 +144,11 @@ export default function LogowanieForm() {
         )}
 
         <button type="submit" disabled={stan !== "idle" || kod.length !== 6} className={s.btnW}>
-          {stan === "idle" ? "Zaloguj się" : "Loguję..."}
+          {stan === "idle" ? x.zaloguj : x.loguje}
         </button>
 
         <p className={s.login}>
-          Nie masz dostępu? <Link href="/brunorejestracja">Zarejestruj się</Link>
+          {x.brak} <Link href={x.rejHref}>{x.rejestracja}</Link>
         </p>
       </form>
     </AuroraShell>
