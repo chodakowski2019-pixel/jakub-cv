@@ -40,9 +40,12 @@ function withLocaleHeader(request: NextRequest, locale: "pl" | "en") {
 export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
-  // --- Strona główna = sprzedaż + AI (public/home.html, 5.10), jedna wersja EN dla / i /en ---
-  if (pathname === "/" || pathname === "/en") {
+  // --- Strona główna (9.10): / = app/page.tsx (nowa, PL). /en = public/home.html (5.10, EN) ---
+  if (pathname === "/en") {
     return NextResponse.rewrite(new URL("/home.html", request.url));
+  }
+  if (pathname === "/") {
+    return NextResponse.next();
   }
 
   // --- Język strony głównej (nieużywane od 5.10, zostaje na powrót) ---

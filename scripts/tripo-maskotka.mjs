@@ -15,7 +15,7 @@ import path from "node:path";
 import os from "node:os";
 
 const BAZA = "https://openapi.tripo3d.ai/v3";
-const MODEL = "tripo-v3.1";
+const MODEL = "v3.1-20260211";
 const CEL = path.join(os.homedir(), "Moje-Życie/Biznes/Projekty/SalesAI/grafiki/maskotki");
 
 // Wspólny trzon: okrągła, włochata postać ze słuchawkami call center (Bruno dzwoni).
