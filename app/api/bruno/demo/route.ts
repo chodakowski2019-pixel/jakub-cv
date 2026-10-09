@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { firmowyEmail } from "@/lib/firmowy-email";
 import { SKRZYNKA_JAKUBA } from "@/lib/bruno/mail";
 import { DEMO_MINUT, slotyMiesiaca, zaproszenieIcs } from "@/lib/bruno/demo-terminy";
+import { mailPotwierdzenieDemo } from "@/lib/bruno/mail-demo";
 
 export const dynamic = "force-dynamic";
 
@@ -116,19 +117,17 @@ export async function PATCH(req: Request) {
       const link = process.env.BRUNO_DEMO_LINK || "";
       const kiedyUK = new Intl.DateTimeFormat(pl ? "pl-PL" : "en-GB", { timeZone: "Europe/London", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(start);
       const kiedyPL = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(start);
-      const tytul = T("Bruno AI demo with Jakub Chodakowski", "Demo Bruno AI z Jakubem Chodakowskim");
-      const opis = T(
-        `${DEMO_MINUT}-minute call. I will ask about your team, then show you Bruno playing your own customer. ${link ? `Join: ${link}` : "I will send the video call link before the call."}`,
-        `Rozmowa ${DEMO_MINUT} minut. Zapytam o Twój zespół, potem pokażę, jak Bruno gra Waszego klienta. ${link ? `Link: ${link}` : "Link do rozmowy wideo wyślę przed spotkaniem."}`,
-      );
-      const ics = zaproszenieIcs({ start: start.toISOString(), tytul, opis, organizator: "hello@jakubchodakowski.com", uczestnik: data.email, uid: data.id });
+      // 9.10: mail do klienta = szablon w stylu LP (lib/bruno/mail-demo.ts).
+      const m = mailPotwierdzenieDemo({ imie: data.imie, start: start.toISOString(), jezyk: pl ? "pl" : "en", link });
+      const ics = zaproszenieIcs({ start: start.toISOString(), tytul: m.tytulKal, opis: m.opisKal, organizator: "hello@jakubchodakowski.com", uczestnik: data.email, uid: data.id });
       const zalacznik = [{ filename: "bruno-demo.ics", content: Buffer.from(ics).toString("base64") }];
       await r.emails.send({
         from: "Jakub Chodakowski <hello@jakubchodakowski.com>",
         to: data.email,
         replyTo: "hello@jakubchodakowski.com",
-        subject: T(`Booked: Bruno AI demo, ${kiedyUK} (UK time)`, `Umówione: demo Bruno AI, ${kiedyUK} (czas UK)`),
-        html: `<p>${T("Hi", "Cześć")} ${data.imie},</p><p>${T("Your call is booked", "Rozmowa umówiona")}: <b>${kiedyUK}</b> ${T("(UK time)", "(czas UK)")}, ${DEMO_MINUT} ${T("minutes", "minut")}.</p><p>${opis}</p><p>${T("The calendar invite is attached. Need another time? Just reply to this email.", "Zaproszenie do kalendarza jest w załączniku. Potrzebujesz innej godziny? Odpisz na tego maila.")}</p><p>Jakub Chodakowski<br/>Bruno AI</p>`,
+        subject: m.temat,
+        html: m.html,
+        text: m.text,
         attachments: zalacznik,
       });
       await r.emails.send({
