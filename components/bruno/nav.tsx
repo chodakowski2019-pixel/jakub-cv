@@ -13,6 +13,8 @@ import { usePathname, useRouter } from "next/navigation";
 const LINKI = [
   { href: "/bruno/panel", nazwa: "Panel", ikona: "panel" },
   { href: "/bruno/rozmowa", nazwa: "Test", ikona: "test" },
+  // „Ogień przed rozmową" (USER_001 9.10): 5-minutowy rytuał przed prawdziwym telefonem.
+  { href: "/bruno/ogien", nazwa: "Ogień", ikona: "ogien" },
   { href: "/bruno/trening", nazwa: "Trening", ikona: "trening" },
   { href: "/bruno/feedback", nazwa: "Feedback", ikona: "feedback" },
   { href: "/bruno/statystyki", nazwa: "Statystyki", ikona: "statystyki" },
@@ -27,6 +29,8 @@ function Ikona({ nazwa }: { nazwa: (typeof LINKI)[number]["ikona"] | "klodka" | 
       return <svg {...wspolne}><rect x="3" y="3" width="8" height="8" rx="2" /><rect x="13" y="3" width="8" height="5" rx="2" /><rect x="13" y="11" width="8" height="10" rx="2" /><rect x="3" y="14" width="8" height="7" rx="2" /></svg>;
     case "trening":
       return <svg {...wspolne}><rect x="3" y="5" width="13" height="15" rx="2" /><path d="M8 3h11a2 2 0 0 1 2 2v11" /><path d="M7 12h5M7 15.5h3" /></svg>;
+    case "ogien":
+      return <svg {...wspolne}><path d="M12 3c1 3 4 4.5 4 8.5a4 4 0 0 1-8 0c0-1.5.5-2.5 1.5-3.5.2 1.2.8 2 1.5 2.5C11.5 8 11 5.5 12 3z" /><path d="M8.5 13.5C7 15 6 16.5 6 18a6 6 0 0 0 12 0c0-1.5-.6-3-1.5-4" /></svg>;
     case "test":
       return <svg {...wspolne}><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" /></svg>;
     case "feedback":
