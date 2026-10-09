@@ -65,7 +65,7 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
     linkInny: { href: "/brunobusiness", tekst: "For teams" },
     navCta: "I want to test it",
     menuCta: "I want free access",
-    hero: ["Start selling", "more."],
+    hero: ["Start selling", "MORE."],
     treningDol: "Bruno AI coaches you every day",
     kroki: [
       { maly: "Step 1", tytul: "You practice\nreal sales calls", opis: "Bruno plays a tough customer. Your product, your market, your objections. Any time, on your own." },

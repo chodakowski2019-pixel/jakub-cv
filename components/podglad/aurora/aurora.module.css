@@ -1,0 +1,552 @@
+/* Podgląd: ekran Aurora (wzór SalesAI/lp/motionsites-wzory/aurora-onboard.html).
+   Wszystko zawieszone pod .root, żeby nic nie wyciekło na resztę strony. */
+.root {
+  --bg: #000;
+  --field: #1c1c1c;
+  --field-h: #242424;
+  --line: #262626;
+  --text: #fafafa;
+  --muted: #8a8a8a;
+  --dim: #5e5e5e;
+  --green: #3ddc97;
+  --mint: #a7f3d0;
+  --radius: 24px;
+  position: relative;
+  z-index: 0;
+  flex: 1;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-aurora), Inter, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.root *,
+.root *::before,
+.root *::after {
+  box-sizing: border-box;
+}
+.root button,
+.root input {
+  font: inherit;
+  color: inherit;
+}
+.root button {
+  cursor: pointer;
+  border: 0;
+  background: none;
+}
+.root :focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 2px;
+}
+
+.wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 51%) minmax(0, 1fr);
+  gap: 12px;
+  min-height: 100vh;
+  padding: 14px 12px;
+}
+
+/* LEWY PANEL */
+.art {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  min-height: calc(100vh - 28px);
+  isolation: isolate;
+  background: #04140f;
+}
+.art canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: -2;
+}
+.artFallback {
+  background: linear-gradient(180deg, #dffbee 0%, #3ddc97 30%, #0f5a40 55%, #04140f 80%, #000 100%);
+}
+.grain {
+  position: absolute;
+  inset: -50%;
+  z-index: -1;
+  opacity: 0.32;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain 1.2s steps(6) infinite;
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -1%); }
+  80% { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+.artInner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 24px 15.5%;
+  text-align: center;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 0 0 28px;
+}
+.logo i {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 22px rgba(167, 243, 208, 0.55);
+}
+.art h1 {
+  margin: 0;
+  font-size: clamp(28px, 2.95vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.sub {
+  color: #a3b3ac;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 22px auto 32px;
+  max-width: 320px;
+}
+/* Bez podtytułu (rejestracja 9.10): więcej powietrza pod nagłówkiem. */
+.art h1 + .steps {
+  margin-top: 40px;
+}
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  width: min(311px, 100%);
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 52px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: rgba(32, 32, 32, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  width: 100%;
+  transition: background 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.45s, transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.n {
+  flex: none;
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  background: #363636;
+  color: #a5a5a5;
+  transition: background 0.45s, color 0.45s;
+}
+.root .active {
+  background: #fff;
+  color: #0a0a0a;
+}
+.root .active .n {
+  background: #0a0a0a;
+  color: #fff;
+}
+.root .done {
+  color: #e6efe9;
+}
+.root .done .n {
+  background: var(--green);
+  color: #04140f;
+}
+.root button.done:hover {
+  transform: translateX(3px);
+}
+.root .step:not(button) {
+  cursor: default;
+}
+
+/* PRAWA STRONA */
+.side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.stage {
+  position: relative;
+  width: min(440px, 100%);
+}
+.pane {
+  width: 100%;
+}
+.enter {
+  animation: enter 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes enter {
+  from { opacity: 0; transform: translateX(24px); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.pane h2 {
+  margin: 0;
+  font-size: clamp(26px, 2.5vw, 30px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-align: center;
+}
+.lead {
+  color: var(--dim);
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  margin: 12px 0 33px;
+}
+
+.f {
+  margin: 0 0 18px;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.f label,
+.f legend {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  padding: 0;
+}
+.opt {
+  color: var(--dim);
+  font-weight: 400;
+}
+.in input {
+  width: 100%;
+  height: 43px;
+  background: var(--field);
+  border: 1px solid transparent;
+  border-radius: 9px;
+  padding: 0 15px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.in input::placeholder {
+  color: #575757;
+}
+.in input:hover {
+  background: var(--field-h);
+}
+.in input:focus {
+  border-color: #4a4a4a;
+  background: var(--field-h);
+}
+.in input.bad {
+  border-color: #7a3434;
+}
+.kod {
+  height: 54px !important;
+  text-align: center;
+  font-size: 24px !important;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  font-variant-numeric: tabular-nums;
+}
+.hint {
+  font-size: 12px;
+  color: var(--dim);
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+.hintBad {
+  color: #e0a86f;
+}
+.err {
+  color: #f0a0a0;
+  font-size: 14px;
+  text-align: center;
+  margin: 4px 0 0;
+}
+
+/* role = przyciski jak .btn-o z wzoru */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.root .chip {
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #050505;
+  font-size: 13px;
+  font-weight: 500;
+  color: #c9c9c9;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+}
+.root .chip:hover {
+  background: #121212;
+  border-color: #383838;
+  color: #fff;
+}
+.root .chip:active {
+  transform: scale(0.97);
+}
+.root .chip[aria-pressed="true"] {
+  background: #fff;
+  border-color: #fff;
+  color: #0a0a0a;
+}
+
+.zgoda {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.zgoda input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  border-radius: 5px;
+  border: 1px solid #3a3a3a;
+  background: var(--field);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.zgoda input:checked {
+  background: var(--green);
+  border-color: var(--green);
+}
+.zgoda input:checked::after {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid #04140f;
+  border-bottom: 2px solid #04140f;
+  transform: translateY(-1px) rotate(-45deg);
+}
+.zgoda span {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.zgoda a,
+.foot a {
+  color: #d4d4d4;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.zgoda a:hover,
+.foot a:hover {
+  color: #fff;
+}
+
+.root .btnW {
+  width: 100%;
+  height: 54px;
+  border-radius: 10px;
+  background: #fff;
+  color: #0a0a0a;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 22px;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s, opacity 0.2s;
+}
+.root .btnW:hover {
+  box-shadow: 0 0 0 4px rgba(61, 220, 151, 0.18), 0 10px 40px -10px rgba(61, 220, 151, 0.45);
+}
+.root .btnW:active {
+  transform: scale(0.985);
+}
+.root .btnW:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.login {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin: 28px 0 0;
+}
+.login a {
+  color: #fff;
+  font-weight: 500;
+  text-decoration: none;
+}
+.login a:hover {
+  text-decoration: underline;
+}
+
+/* ekran po wysłaniu (orb z wzoru) */
+.done2 {
+  text-align: center;
+}
+/* 9.10 (USER_001): ekran po wysłaniu wyżej i na równi z lewym panelem:
+   obie strony wyśrodkowane w pionie na tej samej wysokości. */
+.wrap:has(.done2) .artInner {
+  justify-content: center;
+  padding: 0 24px;
+}
+.side:has(.done2) {
+  justify-content: center;
+  padding: 0 20px;
+}
+.done2 .txt + .txt {
+  margin-bottom: 0;
+}
+.orb {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 10px auto 48px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: #04140f;
+  background: radial-gradient(circle at 35% 30%, #d9fbe9 0%, #3ddc97 28%, #0f5a40 62%, #04140f 100%);
+  box-shadow: 0 0 80px -10px rgba(61, 220, 151, 0.6);
+  animation: breathe 2.4s ease-in-out infinite;
+}
+.orb::before,
+.orb::after {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1px solid rgba(167, 243, 208, 0.35);
+  animation: ring 2.4s ease-out infinite;
+}
+.orb::after {
+  animation-delay: 1.2s;
+}
+.orb svg {
+  width: 44px;
+  height: 44px;
+}
+@keyframes breathe {
+  50% { transform: scale(1.05); }
+}
+@keyframes ring {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(1.7); opacity: 0; }
+}
+.txt {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+}
+.txt b {
+  color: var(--mint);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.foot {
+  width: min(440px, 100%);
+  margin-top: 40px;
+  font-size: 12px;
+  color: var(--dim);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 16px;
+}
+
+/* Desktop: panel stoi w miejscu na wysokość ekranu, treść na środku (długi formularz go nie rozciąga) */
+/* Desktop: lewa strona stoi, przewija się tylko prawa kolumna z formularzem */
+@media (min-width: 901px) {
+  .wrap {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .art {
+    height: 100%;
+    min-height: 0;
+  }
+  .side {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    justify-content: flex-start;
+    scrollbar-width: thin;
+    scrollbar-color: #333 transparent;
+  }
+  /* 9.10: stopka usunięta, więc treść sama trzyma środek (wcześniej spadała na dół). */
+  .side > .stage {
+    margin-block: auto;
+  }
+  .artInner {
+    justify-content: center;
+    padding: 24px;
+  }
+}
+
+@media (max-width: 900px) {
+  .wrap {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+  .art {
+    min-height: 540px;
+  }
+  .artInner {
+    padding-bottom: 36px;
+  }
+  .side {
+    padding: 36px 4px 48px;
+  }
+}
+@media (max-width: 480px) {
+  .art {
+    min-height: 500px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .root *,
+  .root *::before,
+  .root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

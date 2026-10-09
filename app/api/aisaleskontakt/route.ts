@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   const { imie, email, telefon, zawod, zgoda, produkt } = data;
   // 9.10: LP dla handlowca (/brunoai) wysyła typ „handlowiec”: każdy e-mail, handlowcy = 1.
   const handlowiec = data.typ === "handlowiec";
-  const handlowcy = handlowiec ? 1 : Number(data.handlowcy);
+  const handlowcy = handlowiec ? Math.max(1, Math.round(Number(data.handlowcy)) || 1) : Number(data.handlowcy);
 
   // Telefon jest opcjonalny (decyzja USER_001 28.09): przy ruchu z reklamy
   // to pole o najwyzszym oporze, a do odpisania wystarczy mail.
