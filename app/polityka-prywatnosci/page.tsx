@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const AKTUALIZACJA = "2 października 2026";
+const AKTUALIZACJA = "9 października 2026";
 
 function Sekcja({ tytul, children }: { tytul: string; children: React.ReactNode }) {
   return (
@@ -58,7 +58,9 @@ export default function PolitykaPrywatnosciPage() {
             </li>
             <li>
               <b>Panel Bruno AI (konto testowe i pełne):</b> imię, adres e-mail, nazwa firmy, zaszyfrowany skrót kodu
-              logowania, ustawienia konta i godzina przypomnień.
+              logowania, ustawienia konta i godzina przypomnień. Przy rejestracji lub logowaniu przez Google
+              dostaję z Twojego konta Google tylko imię i adres e-mail (z informacją, że adres jest potwierdzony).
+              Nie dostaję hasła ani dostępu do skrzynki, kontaktów czy plików.
             </li>
             <li>
               <b>Rozmowy treningowe w Bruno AI:</b> nagranie dźwiękowe rozmowy (Twój głos i głos Bruno), transkrypcja,
@@ -118,7 +120,7 @@ export default function PolitykaPrywatnosciPage() {
             <li>Vercel Inc. (hosting strony i aplikacji), USA</li>
             <li>Supabase Inc. (baza danych i magazyn nagrań), USA</li>
             <li>Resend Inc. (wysyłka powiadomień e-mail), USA</li>
-            <li>Google LLC (skrzynka pocztowa), USA</li>
+            <li>Google LLC (skrzynka pocztowa, logowanie przez Google), USA</li>
           </ul>
           <p>Rozmowę głosową i jej ocenę obsługują dostawcy modeli AI:</p>
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
@@ -210,7 +212,9 @@ export default function PolitykaPrywatnosciPage() {
           <p>
             Panel Bruno AI używa jednego ciasteczka niezbędnego do działania: <code>bruno_sesja</code>. Trzyma
             podpisany token sesji, jest niedostępne dla skryptów w przeglądarce (httpOnly) i wygasa po 30 dniach albo
-            po wylogowaniu. Bez niego logowanie nie działa, dlatego nie wymaga zgody.
+            po wylogowaniu. Bez niego logowanie nie działa, dlatego nie wymaga zgody. Przy logowaniu przez Google
+            na 10 minut powstaje drugie niezbędne ciasteczko, <code>bruno_google_stan</code>: chroni logowanie
+            przed podszyciem się i znika po powrocie z Google.
           </p>
         </Sekcja>
 

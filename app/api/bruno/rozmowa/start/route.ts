@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import {
+  PLAN_FREE,
   ROZMOWA_SEKUND,
+  ROZMOW_ZA_DARMO,
   limitDzienny,
   pelnyDostep,
   pobierzKonfig,
@@ -56,6 +58,16 @@ export async function POST(req: Request) {
       { ok: false, blad: "Limit minut testu wyczerpany.", kod: "limit" },
       { status: 403 },
     );
+  }
+  // 9.10: plan „free” (rejestracja B2C) = 3 rozmowy łącznie, liczone od założenia konta.
+  if (konto.plan === PLAN_FREE) {
+    const { count } = await supabaseAdmin.from("bruno_rozmowy").select("id", { count: "exact", head: true }).eq("email", email);
+    if ((count ?? 0) >= ROZMOW_ZA_DARMO) {
+      return NextResponse.json(
+        { ok: false, blad: `Wykorzystane ${ROZMOW_ZA_DARMO} bezpłatne rozmowy.`, kod: "limit" },
+        { status: 403 },
+      );
+    }
   }
   const dzis = await rozmowyDzis(email);
   const dziennie = limitDzienny(konto);

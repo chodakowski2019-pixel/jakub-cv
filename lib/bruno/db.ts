@@ -16,6 +16,9 @@ export const DOGRYWKA_SEKUND = 45;
 export const ROZMOWA_SEKUND_MAX = ROZMOWA_SEKUND + DOGRYWKA_SEKUND + 30;
 /** Plan dnia: 3 rozmowy (USER_001 30.09). Per konto nadpisuje to `bruno_konta.rozmow_dziennie`. */
 export const ROZMOW_DZIENNIE = 3;
+/** 9.10 (USER_001): konto z rejestracji B2C (plan „free”) = 3 bezpłatne rozmowy łącznie. */
+export const ROZMOW_ZA_DARMO = 3;
+export const PLAN_FREE = "free";
 export function limitDzienny(konto: Pick<Konto, "rozmow_dziennie"> | null | undefined): number {
   const n = Number(konto?.rozmow_dziennie);
   return Number.isFinite(n) && n > 0 ? n : ROZMOW_DZIENNIE;

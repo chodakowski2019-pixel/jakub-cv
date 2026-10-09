@@ -67,6 +67,32 @@ export async function wyslij(args: { do: string; temat: string; html: string; re
 
 const minutaSlowo = (m: number) => (m === 1 ? "minutę" : m < 5 ? "minuty" : "minut");
 
+/**
+ * 9.10 (USER_001): mail po rejestracji B2C (/brunorejestracja). 3 bezpłatne rozmowy,
+ * EN domyślnie, PL dla rejestracji z ?pl. Link do logowania z językiem i źródłem.
+ */
+export function htmlRejestracja(a: { imie: string | null; email: string; kod: string; jezyk: "en" | "pl"; rozmow: number }) {
+  const en = a.jezyk === "en";
+  const link = `${bazaUrl()}/bruno${en ? "" : "?pl"}`;
+  const linkSrc = linkZeZrodlem(link, "dostep");
+  return kopertaBruno({
+    naglowek: en ? "Your access is ready" : "Twój dostęp jest gotowy",
+    tresc: [
+      akapit(en ? `${a.imie ? `Hi ${a.imie}, here` : "Here"} are your login details ⤵️` : `${a.imie ? `Cześć ${a.imie}, p` : "P"}oniżej znajdziesz dane dostępu ⤵️`),
+      tabelaDostepu({ link, login: a.email, kod: a.kod, etykiety: en ? ["Page", "Login", "Login code"] : undefined }),
+      tabelaParami([[en ? "Free calls" : "Bezpłatne rozmowy", String(a.rozmow)]]),
+      przycisk({ tekst: en ? "Log in" : "Zaloguj się", link: linkSrc }),
+      kroki(
+        en
+          ? ["Open the page in Chrome and put on headphones.", "Before your first call, open “Customize Bruno” and write what you sell, who your customer is and the objections you hear most.", "Start a call. Bruno plays your customer."]
+          : ["Otwórz stronę w Chrome i załóż słuchawki.", "Przed pierwszą rozmową wejdź w „Dostosuj Bruno” i wpisz, co sprzedajesz, kim jest klient i jakie obiekcje najczęściej słyszysz.", "Zacznij rozmowę. Bruno gra Twojego klienta."],
+      ),
+      akapit(en ? "Best," : "Pozdrawiam"),
+    ].join("\n"),
+    drobny: en ? `Bruno AI, Jakub Chodakowski. <a href="https://jakubchodakowski.com/polityka-prywatnosci" style="color:#8a8f98">Privacy Policy</a>` : undefined,
+  });
+}
+
 /** Mail z dostępem: link, login i kod w jednej tabelce. */
 export function htmlDostep(args: {
   imie: string | null;

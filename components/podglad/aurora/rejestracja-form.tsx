@@ -5,6 +5,7 @@ import { track } from "@vercel/analytics";
 import AuroraShell from "./aurora-shell";
 import s from "./aurora.module.css";
 import { useJezyk } from "./jezyk";
+import GooglePrzycisk from "./google-przycisk";
 
 // Zgłoszenie o dostęp do Bruno w wyglądzie Aurora. Logika 1:1 z app/aisaleskontakt/page.tsx:
 // te same pola, ta sama walidacja (lib/firmowy-email.ts), ten sam POST /api/aisaleskontakt,
@@ -70,7 +71,7 @@ const T = {
   },
 } as const;
 
-export default function RejestracjaForm() {
+export default function RejestracjaForm({ google = false }: { google?: boolean }) {
   const jezyk = useJezyk();
   const x = T[jezyk];
   const [form, setForm] = useState({
@@ -94,7 +95,7 @@ export default function RejestracjaForm() {
     setBlad(null);
     setStatus("sending");
     try {
-      const res = await fetch("/api/aisaleskontakt", {
+      const res = await fetch("/api/bruno/rejestracja", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, jezyk, typ: "handlowiec", handlowcy: Number(form.handlowcy) || 1 }),
@@ -105,7 +106,7 @@ export default function RejestracjaForm() {
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         const body = (await res.json().catch(() => null)) as { blad?: string } | null;
-        setBlad(jezyk === "pl" ? (body?.blad ?? null) : null);
+        setBlad(body?.blad ?? null);
         setStatus("error");
       }
     } catch {
@@ -142,6 +143,7 @@ export default function RejestracjaForm() {
         <form key="form" onSubmit={submit} className={`${s.pane} ${s.enter}`}>
           <h2>{x.h2}</h2>
           <p className={s.lead}>{x.lead}</p>
+          {google && <GooglePrzycisk jezyk={jezyk} />}
 
           <div className={s.f}>
             <label htmlFor="imie">{x.imie} *</label>

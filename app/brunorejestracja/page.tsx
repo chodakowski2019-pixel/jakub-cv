@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import RejestracjaForm from "@/components/podglad/aurora/rejestracja-form";
+import { googleSkonfigurowany } from "@/lib/bruno/google";
+
+export const dynamic = "force-dynamic";
 
 // 9.10 (USER_001): rejestracja B2C dla handlowca (3 bezpłatne rozmowy).
 // B2B się nie rejestruje: konta firm zakładamy i wysyłamy sami.
@@ -10,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <RejestracjaForm />;
+  return <RejestracjaForm google={googleSkonfigurowany()} />;
 }

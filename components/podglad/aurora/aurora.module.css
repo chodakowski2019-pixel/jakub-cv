@@ -550,3 +550,46 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* 9.10 (USER_001): „Continue with Google” nad formularzem + kreska „or”. */
+.root .google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 54px;
+  border-radius: 10px;
+  background: #fff;
+  color: #0a0a0a;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s;
+}
+.root .google:hover {
+  box-shadow: 0 0 0 4px rgba(61, 220, 151, 0.18), 0 10px 40px -10px rgba(61, 220, 151, 0.45);
+}
+.root .google:active {
+  transform: scale(0.985);
+}
+.root .google svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.lub {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0;
+  color: var(--dim);
+  font-size: 13px;
+}
+.lub::before,
+.lub::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}

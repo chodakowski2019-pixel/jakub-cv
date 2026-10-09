@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AuroraShell from "./aurora-shell";
 import s from "./aurora.module.css";
+import { useEffect } from "react";
 import { useJezyk } from "./jezyk";
+import GooglePrzycisk from "./google-przycisk";
 
 // 9.10 (USER_001): EN domyślnie, PL z ?pl.
 const T = {
@@ -25,6 +27,8 @@ const T = {
     brak: "No account yet?",
     rejestracja: "Sign up",
     rejHref: "/brunorejestracja",
+    bladGoogle: "Google sign-in failed. Try again or use your code.",
+    wygasl: "Your free access has ended.",
   },
   pl: {
     nieUdalo: "Nie udało się zalogować.",
@@ -42,6 +46,8 @@ const T = {
     brak: "Nie masz dostępu?",
     rejestracja: "Zarejestruj się",
     rejHref: "/brunorejestracja?pl",
+    bladGoogle: "Logowanie przez Google nie wyszło. Spróbuj ponownie albo użyj kodu.",
+    wygasl: "Twój bezpłatny dostęp się skończył.",
   },
 } as const;
 
@@ -50,10 +56,16 @@ const T = {
 
 const wygladaJakEmail = (v: string) => /^\S+@\S+\.\S+$/.test(v.trim());
 
-export default function LogowanieForm() {
+export default function LogowanieForm({ google = false }: { google?: boolean }) {
   const router = useRouter();
   const jezyk = useJezyk();
   const x = T[jezyk];
+  // Błąd z powrotu z Google (?blad=google / ?blad=wygasl).
+  useEffect(() => {
+    const b = new URLSearchParams(window.location.search).get("blad");
+    if (b === "google") setBlad(x.bladGoogle);
+    if (b === "wygasl") setBlad(x.wygasl);
+  }, [x]);
   const [email, setEmail] = useState("");
   const [kod, setKod] = useState("");
   const [stan, setStan] = useState<"idle" | "wysylanie" | "ok">("idle");
@@ -103,6 +115,7 @@ export default function LogowanieForm() {
       <form onSubmit={zaloguj} className={`${s.pane} ${s.enter}`}>
         <h2>{x.h2}</h2>
         <p className={s.lead}>{x.lead}</p>
+        {google && <GooglePrzycisk jezyk={jezyk} />}
 
         <div className={s.f}>
           <label htmlFor="email">{x.email}</label>
