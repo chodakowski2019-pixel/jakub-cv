@@ -27,6 +27,8 @@ type Teksty = {
   krokiCta: string;
   korzysciOpis: [string, string, string];
   korzysciH: string;
+  /** 9.10: własny 3. kafelek (handlowcy: zamiast „Trening się zwraca” o firmach). */
+  korzysc3?: { liczba: string; tytul: string; zrodlo: string };
   ctaH: [string, string];
   ctaBtn: string;
   ctaBok: string;
@@ -61,9 +63,9 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
   },
   reps: {
     linkInny: { href: "/brunobusiness", tekst: "For teams" },
-    navCta: "Try it free",
-    menuCta: "Get free access",
-    hero: ["Practice your next call", "before it counts."],
+    navCta: "I want to test it",
+    menuCta: "I want free access",
+    hero: ["Start selling", "more."],
     treningDol: "Bruno AI coaches you every day",
     kroki: [
       { maly: "Step 1", tytul: "You practice\nreal sales calls", opis: "Bruno plays a tough customer. Your product, your market, your objections. Any time, on your own." },
@@ -72,14 +74,15 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
     ],
     krokiCta: "Try Bruno free",
     korzysciH: "What sales training gives you",
+    korzysc3: { liczba: "17%", tytul: "Join the top reps", zrodlo: "Ebsta x Pavilion, GTM Benchmarks 2025" },
     korzysciOpis: [
       "Reps coached regularly, on a plan, win 32% more forecast deals than reps coached only by chance.",
       "Regular, structured coaching lifts quota attainment by 28% compared with coaching that happens only now and then.",
-      "Companies that invest the most in training earn 218% more income per employee than those that invest the least. Pick a company that invests in you.",
+      "17% of sales reps bring in 81% of the revenue. Practice is the shortest way into that group.",
     ],
-    ctaH: ["Practice with Bruno.", "Free for 3 days."],
-    ctaBtn: "Get free access",
-    ctaBok: "One account, 3 days, no card. We send you the login within 24 hours.",
+    ctaH: ["Practice with Bruno.", "3 calls free."],
+    ctaBtn: "I want free access",
+    ctaBok: "Your first 3 calls with Bruno are free. No card.",
     stopka: "AI sales practice for reps",
   },
 };
@@ -110,9 +113,9 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
   },
   reps: {
     linkInny: { href: "/brunobusiness", tekst: "Dla firm" },
-    navCta: "Wypróbuj za darmo",
-    menuCta: "Odbierz darmowy dostęp",
-    hero: ["Przećwicz kolejną rozmowę,", "zanim zacznie się liczyć."],
+    navCta: "Chcę przetestować",
+    menuCta: "Chcę bezpłatny dostęp",
+    hero: ["Zacznij więcej", "sprzedawać."],
     treningDol: "Bruno AI trenuje Cię codziennie",
     kroki: [
       { maly: "Krok 1", tytul: "Ćwiczysz\nprawdziwe rozmowy", opis: "Bruno gra trudnego klienta. Twój produkt, Twój rynek, Twoje obiekcje. O każdej porze, sam." },
@@ -121,14 +124,15 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
     ],
     krokiCta: "Wypróbuj Bruno za darmo",
     korzysciH: "Co daje trening sprzedaży?",
+    korzysc3: { liczba: "17%", tytul: "Dołącz do najlepszych", zrodlo: "Ebsta x Pavilion, GTM Benchmarks 2025" },
     korzysciOpis: [
       "Handlowcy trenowani regularnie, według planu, wygrywają o 32% więcej szans sprzedaży niż trenowani od przypadku do przypadku.",
       "Regularny trening według planu podnosi realizację planu o 28% w porównaniu z treningiem od czasu do czasu.",
-      "Firmy, które najwięcej inwestują w szkolenia, mają o 218% wyższy dochód na pracownika niż te, które inwestują najmniej. Wybieraj firmę, która inwestuje w Ciebie.",
+      "17% handlowców przynosi 81% przychodu. Trening to najkrótsza droga do tej grupy.",
     ],
-    ctaH: ["Ćwicz z Bruno.", "3 dni za darmo."],
-    ctaBtn: "Odbierz darmowy dostęp",
-    ctaBok: "Jedno konto, 3 dni, bez karty. Login wysyłamy w ciągu 24 godzin.",
+    ctaH: ["Ćwicz z Bruno.", "3 rozmowy za darmo."],
+    ctaBtn: "Chcę bezpłatny dostęp",
+    ctaBok: "Pierwsze 3 rozmowy z Bruno są za darmo. Bez karty.",
     stopka: "Trening sprzedaży z AI dla handlowców",
   },
 };
@@ -165,6 +169,129 @@ const PASEK: Record<"en" | "pl", { liczba: string; tekst: string; zrodlo: string
   ],
 };
 
+// 9.10 (USER_001): sekcje tylko dla handlowców (/brunoai): zarobki najlepszych, „Pokaż szefowi”, FAQ.
+// Zarobki: BLS, Occupational Employment and Wages, maj 2024, „Sales Representatives, Wholesale and
+// Manufacturing, Technical and Scientific Products” (41-4011): mediana 100 070 $, górne 10% od 194 890 $.
+const REPS = {
+  en: {
+    zarH: "How much do the best reps earn?",
+    sredni: "Typical sales rep",
+    najlepsi: "Top 10% of sales reps",
+    rocznie: "a year",
+    zarTekst: "The best reps are not born that way. They practice more calls than everyone else.",
+    zarZrodlo: "U.S. Bureau of Labor Statistics, May 2024, technical and scientific sales reps",
+    szefH: "Want Bruno for your whole team?",
+    szefTekst: "Send this page to your manager. Bruno for teams has team plans and a demo call.",
+    szefMail: "Email it to my manager",
+    szefKopiuj: "Copy the link",
+    szefSkopiowane: "Link copied",
+    szefTemat: "Bruno AI for our sales team",
+    szefTresc: "Hi,\n\nI found Bruno AI. It is an AI customer our reps can practice sales calls with before real ones. Every call gets a score and a practice plan.\n\nHere is the page for teams, you can book a 30-minute demo there:\n",
+    faqH: "Questions",
+    faq: [
+      ["What is Bruno?", "An AI customer you talk to out loud. Bruno plays a buyer for your product, raises real objections and tries to end the call. After every call you get a score and a practice plan."],
+      ["What do I need?", "A computer with Chrome, a microphone and headphones. Nothing to install."],
+      ["How long is one call?", "3 minutes, plus 45 seconds to close the deal."],
+      ["Can my company pay for it?", "Yes. Send your manager jakubchodakowski.com/brunobusiness, the page for teams."],
+    ],
+  },
+  pl: {
+    zarH: "Ile zarabiają najlepsi handlowcy?",
+    sredni: "Przeciętny handlowiec",
+    najlepsi: "Najlepsze 10% handlowców",
+    rocznie: "rocznie",
+    zarTekst: "Najlepsi nie rodzą się najlepsi. Ćwiczą więcej rozmów niż wszyscy inni.",
+    zarZrodlo: "U.S. Bureau of Labor Statistics, maj 2024, handlowcy techniczni i naukowi (USA)",
+    szefH: "Chcesz Bruno dla całego zespołu?",
+    szefTekst: "Wyślij tę stronę szefowi. Bruno dla firm ma plany dla zespołów i rozmowę z demo.",
+    szefMail: "Wyślij szefowi mailem",
+    szefKopiuj: "Kopiuj link",
+    szefSkopiowane: "Skopiowano",
+    szefTemat: "Bruno AI dla naszego zespołu sprzedaży",
+    szefTresc: "Cześć,\n\nznalazłem Bruno AI. To klient AI, z którym nasi handlowcy mogą ćwiczyć rozmowy, zanim zadzwonią do prawdziwego. Każda rozmowa dostaje ocenę i plan ćwiczeń.\n\nTu jest strona dla firm, można umówić 30-minutowe demo:\n",
+    faqH: "Pytania",
+    faq: [
+      ["Czym jest Bruno?", "Klientem AI, z którym rozmawiasz na głos. Bruno gra kupującego Twój produkt, zgłasza prawdziwe obiekcje i próbuje skończyć rozmowę. Po każdej rozmowie dostajesz ocenę i plan ćwiczeń."],
+      ["Czego potrzebuję?", "Komputera z Chrome, mikrofonu i słuchawek. Nic nie instalujesz."],
+      ["Ile trwa jedna rozmowa?", "3 minuty plus 45 sekund na domknięcie."],
+      ["Czy firma może za to zapłacić?", "Tak. Wyślij szefowi stronę dla firm: jakubchodakowski.com/brunobusiness."],
+    ],
+  },
+} as const;
+
+// 9.10 (USER_001): cennik dla handlowców = JEDEN pakiet, 250 $ / mies. albo 2 500 $ z góry za rok
+// (2 miesiące gratis). Bez Jakuba w pakiecie („Bruno jest trenerem, nie ja”). 5 rozmów dziennie (USER_001 9.10, było 6).
+const CENNIK = {
+  en: {
+    h: "One plan. Everything in it.",
+    mies: "Monthly",
+    rok: "Yearly",
+    gratis: "2 months free",
+    cenaMies: "$250",
+    okresMies: "/ month",
+    cenaRok: "$2,500",
+    okresRok: "/ year",
+    podRok: "That is $208 a month, paid once a year.",
+    podMies: "Cancel any time.",
+    nazwa: "Bruno Pro",
+    lista: [
+      "5 calls with Bruno every day",
+      "Feedback after every call",
+      "Practice and review plan",
+      "Recording and transcript of every call",
+      "Bruno knows your product",
+      "Your objections, your script, your customer",
+      "3 call types: cold call, in-person meeting, online meeting",
+      "4 customer types: dominant, social, steady, analytical",
+      "3 levels: easy, medium, hard",
+      "Practice tomorrow's real call today",
+      "Warm-up before a real call",
+      "Stats and progress over time",
+      "Daily reminders",
+    ],
+    cta: "I start for free",
+    pod: "No card for the free calls.",
+  },
+  pl: {
+    h: "Jeden plan. Wszystko w środku.",
+    mies: "Miesięcznie",
+    rok: "Rocznie",
+    gratis: "2 miesiące gratis",
+    cenaMies: "250 $",
+    okresMies: "/ mies.",
+    cenaRok: "2 500 $",
+    okresRok: "/ rok",
+    podRok: "To 208 $ miesięcznie, płatne raz w roku.",
+    podMies: "Rezygnujesz w każdej chwili.",
+    nazwa: "Bruno Pro",
+    lista: [
+      "5 rozmów z Bruno każdego dnia",
+      "Feedback po każdej rozmowie",
+      "Plan ćwiczeń i powtórek",
+      "Nagranie i transkrypcja każdej rozmowy",
+      "Bruno zna Twój produkt",
+      "Twoje obiekcje, Twój skrypt, Twój klient",
+      "3 rodzaje rozmów: zimny telefon, spotkanie na żywo, spotkanie online",
+      "4 typy klientów: dominujący, towarzyski, stabilny, analityczny",
+      "3 poziomy trudności: łatwy, średni, trudny",
+      "Przećwicz dziś prawdziwą rozmowę, którą masz jutro",
+      "Ćwiczenia przed prawdziwą rozmową",
+      "Statystyki i postęp",
+      "Codzienne przypomnienia",
+    ],
+    cta: "Zaczynam za darmo",
+    pod: "Do darmowych rozmów nie potrzebujesz karty.",
+  },
+} as const;
+
+// 9.10 (USER_001): sekcja „Zobacz Bruno w środku”: 3 zrzuty ekranu (panel, rozmowa, feedback).
+// Zrzuty wchodzą po poprawie designu panelu (zadanie 3 na 10.10); do tego czasu ramki z podpisem.
+const ZRZUTY = {
+  en: { h: "See Bruno inside", pod: [["Your panel", "Today's plan, your calls, your progress"], ["A call with Bruno", "Bruno talks back, raises objections, pushes to end the call"], ["Feedback", "Score, what worked, what to fix next time"]] },
+  pl: { h: "Zobacz Bruno w środku", pod: [["Twój panel", "Plan dnia, Twoje rozmowy, Twój postęp"], ["Rozmowa z Bruno", "Bruno odpowiada, zgłasza obiekcje, próbuje skończyć rozmowę"], ["Feedback", "Ocena, co zagrało, co poprawić następnym razem"]] },
+} as const;
+const ZRZUTY_PLIKI = ["/bruno-zrzut-panel.png", "/bruno-zrzut-rozmowa.png", "/bruno-zrzut-feedback.png"];
+
 // \n w tytule = łamanie wiersza tylko na szerokim ekranie.
 function Tytul({ t }: { t: string }) {
   const [a, b] = t.split("\n");
@@ -191,12 +318,41 @@ export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [pokazFormularz, setPokazFormularz] = useState(false);
   const [menu, setMenu] = useState(false);
+  const [skopiowane, setSkopiowane] = useState(false);
+  const [roczny, setRoczny] = useState(false);
+  // 9.10 (USER_001): sekcja „Zobacz Bruno w środku” jak scrollytelling: 3 punkty po lewej, laptop po prawej
+  // stoi w miejscu, obraz w laptopie zmienia się, gdy kolejny punkt wjeżdża na środek ekranu.
+  const [aktywnyZrzut, setAktywnyZrzut] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (wersja !== "reps" || pokazFormularz) return;
+    const licz = () => {
+      const el = scrollRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const droga = el.offsetHeight - window.innerHeight;
+      const postep = droga > 0 ? Math.min(1, Math.max(0, -r.top / droga)) : 0;
+      setAktywnyZrzut(Math.min(2, Math.floor(postep * 3)));
+    };
+    licz();
+    window.addEventListener("scroll", licz, { passive: true });
+    window.addEventListener("resize", licz);
+    return () => {
+      window.removeEventListener("scroll", licz);
+      window.removeEventListener("resize", licz);
+    };
+  }, [wersja, pokazFormularz]);
 
   // Numer przycisku leci do Analytics: 1 = pod krokami, 2 = pod korzyściami, 3 = nawigacja.
   const otworzFormularz = (przycisk: number) => () => {
     setMenu(false);
-    setPokazFormularz(true);
     track("salesai_cta", { przycisk, wersja });
+    // 9.10 (USER_001): na stronie dla handlowców każdy przycisk prowadzi do /bruno (założenie darmowego konta albo logowanie).
+    if (wersja === "reps") {
+      window.location.href = "/bruno";
+      return;
+    }
+    setPokazFormularz(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -334,14 +490,45 @@ export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
               {KORZYSCI.map((k, i) => (
                 <li className={`${s.benefit} ${s.rv} ${i === 1 ? s.d1 : i === 2 ? s.d2 : ""}`} key={i}>
                   <span className={s.idx}>0{i + 1}</span>
-                  <div className={s.benefitNum}>{k.liczba}</div>
-                  <h3>{u.korzysci[i][0]}</h3>
+                  <div className={s.benefitNum}>{i === 2 && t.korzysc3 ? t.korzysc3.liczba : k.liczba}</div>
+                  <h3>{i === 2 && t.korzysc3 ? t.korzysc3.tytul : u.korzysci[i][0]}</h3>
                   <p>{t.korzysciOpis[i]}</p>
-                  <span className={s.src}>{u.zrodlo} {u.korzysci[i][1]}</span>
+                  <span className={s.src}>{u.zrodlo} {i === 2 && t.korzysc3 ? t.korzysc3.zrodlo : u.korzysci[i][1]}</span>
                 </li>
               ))}
             </ul>
           </section>
+
+          {wersja === "reps" && (
+            <>
+              {/* Zarobki najlepszych (BLS, maj 2024). */}
+              <section className={s.block} id="zarobki">
+                <div className={`${s.blockHead} ${s.blockHeadPelny}`}>
+                  <h2 className={s.rv}>{REPS[jezyk].zarH}</h2>
+                </div>
+                <div className={s.zarobki}>
+                  <div className={`${s.zarobek} ${s.rv}`}>
+                    <span className={s.zarEtykieta}>{REPS[jezyk].sredni}</span>
+                    <span className={s.zarKwota}>$100,070</span>
+                    <span className={s.zarRok}>{REPS[jezyk].rocznie}</span>
+                  </div>
+                  <div className={`${s.zarobek} ${s.zarobekTop} ${s.rv} ${s.d1}`}>
+                    <span className={s.zarEtykieta}>{REPS[jezyk].najlepsi}</span>
+                    <span className={s.zarKwota}>$194,890+</span>
+                    <span className={s.zarRok}>{REPS[jezyk].rocznie}</span>
+                  </div>
+                </div>
+                <p className={`${s.zarTekst} ${s.rv}`}>{REPS[jezyk].zarTekst}</p>
+                <span className={s.src}>{u.zrodlo} {REPS[jezyk].zarZrodlo}</span>
+                {/* 9.10 (USER_001): przycisk zapisu pod zarobkami. */}
+                <div className={`${s.panelCta} ${s.rv}`}>
+                  <button type="button" className={`${s.btnDark} ${s.btnBig}`} onClick={otworzFormularz(6)}>
+                    {t.ctaBtn}
+                  </button>
+                </div>
+              </section>
+            </>
+          )}
 
           <div className={s.panelWrap} id="kroki">
             {/* 9.10 (USER_001): nagłówek jak „Co daje trening sprzedaży?”. */}
@@ -363,12 +550,97 @@ export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
                 </div>
               ))}
             </div>
-            <div className={`${s.panelCta} ${s.rv}`}>
-              <button type="button" className={`${s.btnDark} ${s.btnBig}`} onClick={otworzFormularz(1)}>
-                {t.krokiCta}
-              </button>
-            </div>
+            {/* 9.10 (USER_001): na stronie dla handlowców przycisk jest pod laptopem, nie pod krokami. */}
+            {wersja !== "reps" && (
+              <div className={`${s.panelCta} ${s.rv}`}>
+                <button type="button" className={`${s.btnDark} ${s.btnBig}`} onClick={otworzFormularz(1)}>
+                  {t.krokiCta}
+                </button>
+              </div>
+            )}
           </div>
+
+          {wersja === "reps" && (
+            <>
+              {/* Zobacz Bruno w środku: 3 punkty po lewej, laptop po prawej (sticky), obraz zmienia się przy przewijaniu. */}
+              <section className={`${s.block} ${s.zrzutyBlok}`} id="zrzuty" aria-label={ZRZUTY[jezyk].h}>
+                <div className={s.scrollTor} ref={scrollRef}>
+                  <div className={s.scroll}>
+                    <ol className={s.scrollPunkty}>
+                      {ZRZUTY[jezyk].pod.map(([tytul, opis], i) => (
+                        <li key={tytul} className={`${s.scrollPunkt} ${aktywnyZrzut === i ? s.scrollPunktOn : ""} ${aktywnyZrzut > i ? s.scrollPunktZrob : ""}`}>
+                          <button type="button" className={s.scrollPunktBtn} onClick={() => setAktywnyZrzut(i)}>
+                            <span className={s.scrollNr}>{aktywnyZrzut > i ? "✓" : i + 1}</span>
+                            <span className={s.scrollTxt}>
+                              <b>{tytul}</b>
+                              <span>{opis}</span>
+                            </span>
+                          </button>
+                          {i < 2 && <span className={s.scrollLinia} aria-hidden />}
+                        </li>
+                      ))}
+                    </ol>
+                    <div className={s.scrollLaptop}>
+                      <div className={s.laptop}>
+                        <div className={s.laptopEkran} data-brak={jezyk === "pl" ? "zrzut ekranu wkrótce" : "screenshot coming soon"}>
+                          {ZRZUTY_PLIKI.map((src, i) => (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img key={src} src={src} alt={ZRZUTY[jezyk].pod[i][0]} loading="lazy" className={aktywnyZrzut === i ? s.laptopObrazOn : ""} onError={(e) => (e.currentTarget.style.display = "none")} />
+                          ))}
+                        </div>
+                        <div className={s.laptopPodstawa} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Cennik: jeden pakiet, miesięcznie albo rocznie. */}
+              <section className={`${s.block} ${s.cennikBlok}`} id="cennik">
+                <div className={`${s.blockHead} ${s.blockHeadPelny}`}>
+                  <h2 className={s.rv}>{CENNIK[jezyk].h}</h2>
+                </div>
+                <div className={s.cennikPrzelacznik} role="group" aria-label={jezyk === "pl" ? "Okres płatności" : "Billing period"}>
+                  <button type="button" aria-pressed={!roczny} className={!roczny ? s.cennikOn : ""} onClick={() => setRoczny(false)}>{CENNIK[jezyk].mies}</button>
+                  <button type="button" aria-pressed={roczny} className={roczny ? s.cennikOn : ""} onClick={() => setRoczny(true)}>
+                    {CENNIK[jezyk].rok} <span className={s.cennikGratis}>{CENNIK[jezyk].gratis}</span>
+                  </button>
+                </div>
+                <div className={s.cennikKarta}>
+                  <div className={s.cennikNazwa}>{CENNIK[jezyk].nazwa}</div>
+                  <div className={s.cennikCena}>
+                    <span>{roczny ? CENNIK[jezyk].cenaRok : CENNIK[jezyk].cenaMies}</span>
+                    <small>{roczny ? CENNIK[jezyk].okresRok : CENNIK[jezyk].okresMies}</small>
+                  </div>
+                  <p className={s.cennikPod}>{roczny ? CENNIK[jezyk].podRok : CENNIK[jezyk].podMies}</p>
+                  <ul className={s.cennikLista}>
+                    {CENNIK[jezyk].lista.map((l) => (
+                      <li key={l}>{l}</li>
+                    ))}
+                  </ul>
+                  <button type="button" className={`${s.btnDark} ${s.btnBig} ${s.cennikCta}`} onClick={otworzFormularz(4)}>
+                    {CENNIK[jezyk].cta}
+                  </button>
+                  <p className={s.cennikPod}>{CENNIK[jezyk].pod}</p>
+                </div>
+              </section>
+
+              {/* FAQ */}
+              <section className={`${s.block} ${s.faqBlok}`} id="faq">
+                <div className={s.blockHead}>
+                  <h2 className={s.rv}>{REPS[jezyk].faqH}</h2>
+                </div>
+                <div className={s.faq}>
+                  {REPS[jezyk].faq.map(([p, o]) => (
+                    <details key={p} className={s.faqItem}>
+                      <summary>{p}</summary>
+                      <p>{o}</p>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            </>
+          )}
 
           <div className={s.cta}>
             <div>
@@ -394,6 +666,13 @@ export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* 9.10 (USER_001): przyklejony przycisk zapisu na telefonie. */}
+          <div className={s.lepki}>
+            <button type="button" className={`${s.btnDark} ${s.btnBig}`} onClick={otworzFormularz(5)}>
+              {t.ctaBtn}
+            </button>
           </div>
 
           <footer className={s.footer}>
