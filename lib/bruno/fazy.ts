@@ -1,5 +1,5 @@
 import type { Wypowiedz } from "./db";
-import { OTWARTE, PROSBA_O_DECYZJE } from "./metryki";
+import { PROSBA_O_DECYZJE, czyPytanieOtwarte, pytaniaZ } from "./metryki";
 import type { TrybId } from "./postacie";
 
 // FAZY ROZMOWY (2.10, USER_001: „Bruno leci z palca"). Bruno-klient miał typ,
@@ -79,7 +79,7 @@ export type Podpowiedz = { klucz: string; tekst: string };
 function pytania(tr: Wypowiedz[]) {
   const h = tr.filter((w) => w.rola === "handlowiec");
   const zPytaniem = h.filter((w) => w.tekst.includes("?"));
-  const otwarte = zPytaniem.filter((w) => w.tekst.split(/[.!?]/).some((z) => OTWARTE.test(z))).length;
+  const otwarte = zPytaniem.filter((w) => pytaniaZ(w.tekst).some(czyPytanieOtwarte)).length;
   return { wszystkie: zPytaniem.length, otwarte, prosbaODecyzje: h.some((w) => PROSBA_O_DECYZJE.test(w.tekst)) };
 }
 

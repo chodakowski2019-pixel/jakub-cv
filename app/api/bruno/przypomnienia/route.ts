@@ -39,6 +39,7 @@ export async function GET(req: Request) {
       try {
         await wyslij({
           do: konto.email,
+          rodzaj: "niezalogowany",
           temat: "Bruno AI: Twoja pierwsza rozmowa czeka",
           html: htmlNieZalogowany({ imie: konto.imie, dni: konto.dni }),
           replyTo: "hello@jakubchodakowski.com",
@@ -58,6 +59,7 @@ export async function GET(req: Request) {
     try {
       await wyslij({
         do: konto.email,
+        rodzaj: "przypomnienie",
         temat: dzis === 0 ? `Bruno czeka: ${dziennie} rozmowy po ${ROZMOWA_SEKUND / 60} minuty` : `Bruno czeka: zostały ${dziennie - dzis} rozmowy`,
         html: htmlPrzypomnienie({ imie: konto.imie, kart: karty.length, rozmowyDzis: dzis, dniZostalo: stan.dniZostalo, dziennie }),
       });

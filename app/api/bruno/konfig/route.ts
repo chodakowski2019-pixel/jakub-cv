@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonfig } from "@/lib/bruno/db";
+import { etapLubDomyslny, rejestrLubDomyslny } from "@/lib/bruno/etapy";
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import { postacLubDomyslna } from "@/lib/bruno/postacie";
 
@@ -34,6 +35,9 @@ export async function POST(req: Request) {
       udana_rozmowa: tekst("udana_rozmowa"),
       skrypt: tekst("skrypt"),
       postac: b.postac === undefined ? postacLubDomyslna(stare.postac) : postacLubDomyslna(b.postac),
+      // 9.10: etap relacji i forma zwracania się (Bruno trzyma się etapu, mówi per pan/pani albo na ty).
+      etap: etapLubDomyslny(b.etap === undefined ? stare.etap : b.etap),
+      rejestr: rejestrLubDomyslny(b.rejestr === undefined ? stare.rejestr : b.rejestr),
       godzina_przypomnienia:
         b.godzina_przypomnienia === undefined ? stare.godzina_przypomnienia : Math.min(22, Math.max(5, Number(b.godzina_przypomnienia) || 8)),
       zaktualizowano: new Date().toISOString(),

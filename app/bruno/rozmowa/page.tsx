@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { supabaseAdmin } from "@/lib/supabase";
-import { DOGRYWKA_SEKUND, ROZMOWA_SEKUND, limitDzienny, listaObiekcji, pobierzKonfig, pobierzKonto, rozmowyDzis, stanDostepu, zuzyteSekundy, type Karta } from "@/lib/bruno/db";
+import { DOGRYWKA_SEKUND, ROZMOWA_SEKUND, limitDzienny, listaObiekcji, pelnyDostep, pobierzKonfig, pobierzKonto, rozmowyDzis, stanDostepu, zuzyteSekundy, type Karta } from "@/lib/bruno/db";
 import { NAZWY } from "@/lib/bruno/kryteria";
 import { postacLubDomyslna } from "@/lib/bruno/postacie";
 import Rozmowa from "@/components/bruno/rozmowa";
@@ -34,6 +34,7 @@ export default async function BrunoRozmowaPage({ searchParams }: { searchParams:
       minutZostalo={minutZostalo}
       sekundRozmowy={ROZMOWA_SEKUND}
       sekundDogrywki={DOGRYWKA_SEKUND}
+      pelny={pelnyDostep(konto)}
     />
   );
 }

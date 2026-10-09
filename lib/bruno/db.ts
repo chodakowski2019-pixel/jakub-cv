@@ -47,7 +47,16 @@ export type Konto = {
   kod_hash: string | null;
   nieudane: number | null;
   blokada_do: string | null;
+  /** 9.10: „trial" (darmowy test) albo „pelny" (płacąca firma). Moduły płatne: oferta z PDF/strony, „Rozmowa, którą masz jutro". */
+  plan?: "trial" | "pelny" | string | null;
 };
+
+/** Czy konto ma moduły płatne (9.10, USER_001: tester w trialu ich nie widzi). */
+export function pelnyDostep(konto: Pick<Konto, "plan"> | null | undefined): boolean {
+  return konto?.plan === "pelny";
+}
+
+export { ETAPY, REJESTRY, etapLubDomyslny, rejestrLubDomyslny, type EtapId, type RejestrId } from "./etapy";
 
 export type Konfig = {
   email: string;
@@ -58,6 +67,10 @@ export type Konfig = {
   skrypt: string;
   postac: string;
   godzina_przypomnienia: number;
+  /** 9.10: etap relacji z klientem (patrz ETAPY). Brak = cold. */
+  etap?: string | null;
+  /** 9.10: pan/pani albo na ty. Brak = pan. */
+  rejestr?: string | null;
 };
 
 export type Wypowiedz = { rola: "handlowiec" | "klient"; tekst: string; t: number };
@@ -107,6 +120,8 @@ export type Rozmowa = {
   scenariusz_id?: string | null;
   /** Od 2.10: poziom trudności klienta (latwy/sredni/trudny). Brak = średni. */
   poziom?: string | null;
+  /** 9.10 (moduł płatny): „Rozmowa, którą masz jutro": wklejona sytuacja z życia, nadrzędna wobec konfiguracji. */
+  sytuacja?: string | null;
 };
 
 export type Karta = {
@@ -219,6 +234,8 @@ export async function pobierzKonfig(email: string): Promise<Konfig> {
       skrypt: "",
       postac: "czerwony",
       godzina_przypomnienia: 8,
+      etap: "cold",
+      rejestr: "pan",
     }
   );
 }

@@ -21,11 +21,19 @@ export async function GET(req: Request) {
   if (!autoryzowany(req)) return NextResponse.json({ ok: false }, { status: 401 });
   const { data: konta } = await supabaseAdmin
     .from("bruno_konta")
-    .select("email, imie, firma, start_dostepu, dni, limit_sekund, aktywne, utworzono")
+    .select("email, imie, firma, start_dostepu, dni, limit_sekund, aktywne, utworzono, plan")
     .order("utworzono", { ascending: false });
   const { data: rozmowy } = await supabaseAdmin.from("bruno_rozmowy").select("email, status, sekundy, ocena, start");
   const { data: zaint } = await supabaseAdmin.from("bruno_zainteresowani").select("*").order("utworzono", { ascending: false });
-  return NextResponse.json({ ok: true, konta, rozmowy, zainteresowani: zaint });
+  // 9.10 (USER_001: „chcę mieć wgląd w fiszki"): karty FSRS per konto, z liczbą powtórek i datą ostatniej.
+  const { data: karty } = await supabaseAdmin
+    .from("bruno_karty")
+    .select("email, typ, tresc, pytanie, reps, lapses, last_review, due")
+    .order("last_review", { ascending: false, nullsFirst: false });
+  // 9.10 (E18): maile wysłane i wejścia (logowania + wejścia z linków w mailach), ostatnie 300.
+  const { data: maile } = await supabaseAdmin.from("bruno_maile").select("email, rodzaj, temat, wyslano, wynik, blad").order("wyslano", { ascending: false }).limit(300);
+  const { data: wejscia } = await supabaseAdmin.from("bruno_wejscia").select("email, rodzaj, zrodlo, kiedy").order("kiedy", { ascending: false }).limit(300);
+  return NextResponse.json({ ok: true, konta, rozmowy, zainteresowani: zaint, karty: karty ?? [], maile: maile ?? [], wejscia: wejscia ?? [] });
 }
 
 export async function POST(req: Request) {
@@ -48,6 +56,8 @@ export async function POST(req: Request) {
     rozmow_dziennie: Math.min(100, Math.max(1, Number(b.rozmow_dziennie) || 3)),
     fiszek_dziennie: Math.min(200, Math.max(1, Number(b.fiszek_dziennie) || 5)),
     aktywne: b.aktywne === undefined ? true : Boolean(b.aktywne),
+    // 9.10: plan „trial" (test) albo „pelny" (płacąca firma: oferta z PDF/strony, „Rozmowa, którą masz jutro").
+    plan: b.plan === "pelny" ? "pelny" : "trial",
     ...(kod ? { kod_hash: zaszyfrujKod(kod), nieudane: 0, blokada_do: null } : {}),
   };
   const { error } = await supabaseAdmin.from("bruno_konta").upsert(konto, { onConflict: "email" });
@@ -78,6 +88,7 @@ export async function POST(req: Request) {
     try {
       await wyslij({
         do: email,
+        rodzaj: "dostep",
         temat: "Twój dostęp do Bruno AI",
         html: htmlDostep({
           imie: konto.imie,

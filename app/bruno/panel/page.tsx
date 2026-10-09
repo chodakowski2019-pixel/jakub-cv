@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
+import { zapiszWejscie, zrodloZParametru } from "@/lib/bruno/wejscia";
 import {
   ROZMOWA_SEKUND,
   kartyDoPowtorki,
@@ -21,10 +23,14 @@ import { FILM_OKLADKA, FILM_OPROWADZAJACY } from "@/lib/bruno/film";
 
 export const dynamic = "force-dynamic";
 
-export default async function BrunoPanelPage({ searchParams }: { searchParams: Promise<{ tour?: string }> }) {
-  const { tour } = await searchParams;
+export default async function BrunoPanelPage({ searchParams }: { searchParams: Promise<{ tour?: string; src?: string }> }) {
+  const { tour, src } = await searchParams;
   const email = await zalogowanyEmail();
-  if (!email) redirect("/bruno");
+  // Niezalogowany z linku w mailu: źródło jedzie na stronę logowania, formularz odda je do logu (E18).
+  if (!email) redirect(src ? `/bruno?src=${encodeURIComponent(src)}` : "/bruno");
+  // Zalogowany wszedł z linku w mailu: zapis wejścia (E18, „czy ktoś wchodzi z przypomnień").
+  const zrodlo = zrodloZParametru(src);
+  if (zrodlo) await zapiszWejscie({ email, rodzaj: "wejscie", zrodlo, agent: (await headers()).get("user-agent") });
   const konto = await pobierzKonto(email);
   const stan = stanDostepu(konto);
   if (!konto || !stan.aktywny) {

@@ -17,10 +17,12 @@ export default function LoginForm() {
     e.preventDefault();
     setBlad(null);
     setStan("wysylanie");
+    // 9.10 (E18): źródło wejścia z linku w mailu (`/bruno?src=mail-dostep`) idzie do logu logowań.
+    const src = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("src") : null;
     const res = await fetch("/api/bruno/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, kod }),
+      body: JSON.stringify({ email, kod, src }),
     });
     setStan("idle");
     if (res.ok) {

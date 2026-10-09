@@ -7,13 +7,42 @@ import type { Wypowiedz } from "./db";
 const WYPELNIACZE = /\b(y{2,}|e{2,}|hmm+|mmm+|no więc|jakby|w sensie|znaczy się|znaczy|tak jakby|no i)\b/giu;
 const OSLABIACZE = /\b(chyba|może|wydaje mi się|spróbuję|spróbujemy|trochę|myślę,? że|nie wiem czy|w sumie|jakoś|właściwie)\b/giu;
 const PRZEPROSINY = /\b(przepraszam|niestety|przeszkadzam|nie zajmę)\b/giu;
+// 9.10: słowo pytajne gdziekolwiek w zdaniu, nie tylko na początku. Aleksandra pytała
+// „Czego pan się boi?", „A co miałoby się nie udać?", „Konkretnie jaki model?" i miała 0 otwartych.
+// Zdanie zaczynające się od „czy" to pytanie zamknięte, nawet gdy dalej jest „jak".
+const SLOWO_PYTAJNE = /(^|[\s,„"(])(jak|co|czego|czemu|ile|kiedy|dlaczego|gdzie|skąd|dokąd|kto|kogo|komu|czym|który|która|które|którego|jaki|jaka|jakie|jakiego|jakich|jakim|w jaki sposób|od jak dawna|po co|na czym|z czego|o co|w czym)(?=[\s?,.!]|$)/iu;
+const ZAMKNIETE_START = /^\s*(a\s+)?(czy|może|mogę|mógłbym|mogłabym|możemy|chce|chciałby|chciałaby|ma|mają|macie|jest|są|zgadza|pasuje|ok|okej|dobrze|tak|prawda)\b/iu;
+/** Czy fragment zdania (z „?") jest pytaniem otwartym. Eksport dla fazy.ts. */
+export function czyPytanieOtwarte(zdanie: string): boolean {
+  const z = zdanie.trim();
+  if (!z) return false;
+  if (ZAMKNIETE_START.test(z)) return false;
+  // „co z tego będę miał?" jest pytaniem klienta, nie handlowca, ale u handlowca „co z tego?" bywa retoryczne: wymagamy ≥3 słów.
+  if (z.split(/\s+/).length < 3) return false;
+  return SLOWO_PYTAJNE.test(z);
+}
+/** Zdania-pytania z wypowiedzi (po „?"). */
+export function pytaniaZ(tekst: string): string[] {
+  return tekst
+    .split(/(?<=\?)/)
+    .map((s) => s.split(/[.!]/).pop() ?? "")
+    .filter((s) => s.includes("?"));
+}
+/** Zachowane dla zgodności (fazy.ts): to samo co czyPytanieOtwarte na początku zdania. */
 export const OTWARTE = /^\s*(jak|co|ile|kiedy|dlaczego|gdzie|kto|w jaki sposób|czym|który|która|od jak dawna)\b/iu;
 // 6.10: dopisane obiekcje o zaufaniu, dowodzie i koszcie (rozmowy Aleksandry: „stoją od zawsze",
 // „nikt nic nie zrobił", „ile to kosztuje" liczyły się jako 0 obiekcji).
 const OBIEKCJA =
   /(za drog|drogo|pomyśl|zastanow|przemyśl|nie teraz|mamy już|budżet|nie mam czasu|prześlij|proszę wysłać|wyślij|nie jestem zainteresowan|nie jestem przekonan|nie potrzeb|zapytam|skonsultuj|wspólnik|szef|od zawsze|nikt (z tym )?(nigdy )?nic|ile (to )?(wszystko )?(kosztuj|będzie kosztow|muszę wło)|kosztować|ryzyk|nie wierzę|nie ufam|obietnic|gwarancj|wygran|nie przejdzie|dlaczego (teraz|miałbym|miałabym)|co (z tego )?będę miał|poważna decyzja|nie stać|nie mam pieniędzy)/iu;
 const RABAT = /(rabat|taniej|zejść|zejdę|obniż|zniżk|promocj|upust)/iu;
-export const PROSBA_O_DECYZJE = /(zaczynamy|umówmy|umówimy|od kiedy|podpis|startujemy|możemy zacząć|kiedy możemy|wchodzimy|zróbmy tak|proponuję termin|pasuje panu|pasuje pani|spotkajmy się)/iu;
+// 9.10: dopisane „następny krok z datą" (Negacz: w sprzedaży wieloetapowej zamknięcie = umówiony konkret).
+// Aleksandra 8.10: „kiedy możemy pełnomocnictwo podpisać u notariusza?", „mogę panią umówić na poniedziałek" = 0 próśb.
+export const PROSBA_O_DECYZJE =
+  /(zaczynamy|umówmy|umówimy|umawiamy|od kiedy|podpis|startujemy|możemy zacząć|kiedy możemy|kiedy może (pan|pani)|wchodzimy|zróbmy tak|proponuję termin|pasuje (panu|pani|państwu)|spotkajmy się|mogę (pana|panią|państwa) umówić|ustalmy|ustalamy|decydujemy|decyduje się (pan|pani)|jaka godzina|która godzina|przed południem czy|rano czy|wtorek czy|poniedziałek czy|czy (możemy|może pan|może pani) (dziś|dzisiaj|jutro|w tym tygodniu)|w (poniedziałek|wtorek|środę|czwartek|piątek) o)/iu;
+/** Klient sam prosi o liczbę: odpowiedź kwotą nie jest wtedy „ceną przed bólem" (9.10, rozmowa 4 Aleksandry: „ile zostanie mi w kieszeni?"). */
+const PROSBA_O_LICZBE = /(ile|koszt|cen[aęy]|kwot|zarobi|zostan|opłat|procent|stawk|prowizj|zwrot)/iu;
+/** Minimum słów handlowca w oknie, żeby tempo coś znaczyło (9.10: 27 słów w 1. minucie, bo mówił głównie Bruno, dawało „+107 %, nerwy"). */
+const MIN_SLOW_TEMPO = 30;
 // Transkrypcja ElevenLabs pisze liczby słowami („sześć tysięcy pięćdziesiąt złotych"), więc
 // sama cyfra nie wystarcza (6.10: `kwota_padla: false` mimo 6 050 zł w rozmowie).
 const LICZEBNIK =
@@ -77,9 +106,13 @@ export type Metryki = {
   obiekcje_z_pytaniem: number;
   obiekcje_z_rabatem: number;
   prosby_o_decyzje: number;
+  /** 9.10: prośba o decyzję albo następny krok Z DATĄ w końcówce: to liczy się jako zamknięcie. */
+  nastepny_krok_z_data: boolean;
   kwota_padla: boolean;
   slowa_po_kwocie: number | null;
   cena_przed_pytaniem: boolean;
+  /** 9.10: kwota padła w odpowiedzi na pytanie klienta o liczbę. Wtedy nie karzemy za „cenę przed bólem". */
+  kwota_na_prosbe_klienta: boolean;
   data_w_koncowce: boolean;
   tempo_pierwsza_min: number | null;
   tempo_ostatnia_min: number | null;
@@ -112,11 +145,7 @@ export function policzMetryki(tr: Wypowiedz[], sekundy: number, obiekcjeFirmy: s
   // Pytania
   const wypowiedziZPytaniem = h.filter((w) => w.tekst.includes("?"));
   const pytaniaHandlowca = h.reduce((s, w) => s + ile(/\?/g, w.tekst), 0);
-  const pytaniaOtwarte = wypowiedziZPytaniem.filter((w) =>
-    w.tekst
-      .split(/[.!?]/)
-      .some((z) => OTWARTE.test(z)),
-  ).length;
+  const pytaniaOtwarte = wypowiedziZPytaniem.filter((w) => pytaniaZ(w.tekst).some(czyPytanieOtwarte)).length;
 
   // Sam odpowiada: po wypowiedzi handlowca z „?" znów mówi handlowiec.
   let samOdpowiada = 0;
@@ -142,13 +171,16 @@ export function policzMetryki(tr: Wypowiedz[], sekundy: number, obiekcjeFirmy: s
   let kwotaPadla = false;
   let slowaPoKwocie: number | null = null;
   let cenaPrzedPytaniem = false;
+  let kwotaNaProsbe = false;
   for (let i = 0; i < tr.length; i++) {
     const w = tr[i];
     if (w.rola !== "handlowiec") continue;
     const m = w.tekst.match(KWOTA);
     if (!m || m.index === undefined) continue;
     kwotaPadla = true;
-    cenaPrzedPytaniem = sekundyDoPytania === null || w.t < sekundyDoPytania;
+    const poprzedniaKlienta = [...tr.slice(0, i)].reverse().find((x) => x.rola === "klient");
+    kwotaNaProsbe = Boolean(poprzedniaKlienta && poprzedniaKlienta.tekst.includes("?") && PROSBA_O_LICZBE.test(poprzedniaKlienta.tekst));
+    cenaPrzedPytaniem = !kwotaNaProsbe && (sekundyDoPytania === null || w.t < sekundyDoPytania);
     let licznik = slowa(w.tekst.slice(m.index + m[0].length)).length;
     for (let j = i + 1; j < tr.length && tr[j].rola === "handlowiec"; j++) licznik += slowa(tr[j].tekst).length;
     slowaPoKwocie = licznik;
@@ -159,11 +191,14 @@ export function policzMetryki(tr: Wypowiedz[], sekundy: number, obiekcjeFirmy: s
   const prosbyODecyzje = h.filter((w) => PROSBA_O_DECYZJE.test(w.tekst)).length;
   const odKiedy = sekundy * 0.8;
   const dataWKoncowce = tr.some((w) => w.t >= odKiedy && DATA.test(w.tekst));
+  // Następny krok z datą: handlowiec w końcówce (ostatnie 40 %) prosi o decyzję ALBO proponuje termin, a w rozmowie pada data.
+  const nastepnyKrokZData = h.some((w) => w.t >= sekundy * 0.6 && PROSBA_O_DECYZJE.test(w.tekst)) && tr.some((w) => w.t >= sekundy * 0.6 && DATA.test(w.tekst));
 
-  // Tempo: słowa handlowca w pierwszej i ostatniej pełnej minucie
+  // Tempo: słowa handlowca w pierwszej i ostatniej pełnej minucie. Okno z mniej niż MIN_SLOW_TEMPO
+  // słów handlowca nie mówi nic o tempie (mówił głównie klient), więc zwracamy null.
   const tempoW = (od: number, doS: number) => {
     const s = h.filter((w) => w.t >= od && w.t < doS).reduce((a, w) => a + slowa(w.tekst).length, 0);
-    return s;
+    return s >= MIN_SLOW_TEMPO ? s : null;
   };
   const tempoPierwsza = sekundy >= 60 ? tempoW(0, 60) : null;
   const tempoOstatnia = sekundy >= 120 ? tempoW(Math.max(60, sekundy - 60), sekundy + 1) : null;
@@ -197,9 +232,11 @@ export function policzMetryki(tr: Wypowiedz[], sekundy: number, obiekcjeFirmy: s
     obiekcje_z_pytaniem: obiekcjeZPytaniem,
     obiekcje_z_rabatem: obiekcjeZRabatem,
     prosby_o_decyzje: prosbyODecyzje,
+    nastepny_krok_z_data: nastepnyKrokZData,
     kwota_padla: kwotaPadla,
     slowa_po_kwocie: slowaPoKwocie,
     cena_przed_pytaniem: cenaPrzedPytaniem,
+    kwota_na_prosbe_klienta: kwotaNaProsbe,
     data_w_koncowce: dataWKoncowce,
     tempo_pierwsza_min: tempoPierwsza,
     tempo_ostatnia_min: tempoOstatnia,

@@ -1,6 +1,7 @@
 import type { Karta, Konfig } from "./db";
+import { ETAPY, REJESTRY, etapLubDomyslny, rejestrLubDomyslny } from "./etapy";
 import { opisFaz } from "./fazy";
-import { listaObiekcji } from "./obiekcje";
+import { listaObiekcji, obiekcjeZWyjasnieniem } from "./obiekcje";
 
 // Bruno-KLIENT (OpenAI Realtime). Od 2.10 (USER_001): przed rozmową handlowiec
 // wybiera TRYB (cold calling / spotkanie na żywo / spotkanie online), OBIEKCJĘ
@@ -72,7 +73,7 @@ export const POZIOMY: Record<PoziomId, { nazwa: string; krotko: string; opis: st
     krotko: "normalny",
     opis: "Tak zachowuje się typowy klient. Wraca do obiekcji zbitej słabo.",
     instrukcja:
-      "POZIOM TRUDNOŚCI: ŚREDNI. Zachowujesz się jak typowy klient: ani nie pomagasz, ani nie utrudniasz na siłę. Na pytania otwarte odpowiadasz normalnie, na zamknięte krótko. Obiekcję zbitą słabo podnosisz jeszcze raz innymi słowami, zbitą dobrze odpuszczasz.",
+      "POZIOM TRUDNOŚCI: ŚREDNI. Zachowujesz się jak typowy klient: ani nie pomagasz, ani nie utrudniasz na siłę. Na pytania otwarte odpowiadasz normalnie, na zamknięte krótko. Obiekcję zbitą słabo podnosisz jeszcze raz innymi słowami, zbitą dobrze odpuszczasz. Gdy chcesz odłożyć decyzję, mówisz „muszę to przemyśleć” NAJWYŻEJ RAZ. Za drugim razem zamiast powtarzać to samo podajesz WARUNEK, przy którym się zgodzisz („jeśli zmieścicie ten kocioł w mojej kotłowni, podpisuję”, „jeśli pokaże mi pan dwie wygrane sprawy z mojej okolicy, wchodzę”), albo nazywasz prawdziwy powód. Typowy klient nie jest automatem, który trzy razy mówi to samo zdanie.",
   },
   trudny: {
     nazwa: "Trudny",
@@ -136,6 +137,8 @@ export type UstawieniaRozmowy = {
   /** Kilka obiekcji wybranych przed rozmową (2.10). Pierwsza idzie na start, reszta w trakcie. */
   obiekcje?: string[];
   karta?: Karta | null;
+  /** 9.10 (moduł płatny): „Rozmowa, którą masz jutro". Wklejona sytuacja z życia, nadrzędna wobec „Dostosuj Bruno". */
+  sytuacja?: string | null;
 };
 
 export function opisCelu(cel: CelId, celWlasny?: string | null): string {
@@ -160,8 +163,25 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
   );
   czesci.push(`TYP KLIENTA: ${p.charakter}`);
 
+  // 9.10 (moduł płatny): sytuacja z życia jest ważniejsza niż ogólna konfiguracja firmy.
+  const sytuacja = u.sytuacja?.trim();
+  if (sytuacja) {
+    czesci.push(
+      `SYTUACJA TEJ ROZMOWY (NAJWAŻNIEJSZE, nadrzędne wobec reszty opisu): ${sytuacja}\nTo jest prawdziwa rozmowa, którą handlowiec ma przed sobą. Grasz DOKŁADNIE tę osobę w DOKŁADNIE tej sytuacji: te same fakty, ten sam etap, te same powody wahania. Nie zmieniasz faktów i nie dokładasz własnych wątków, które przeczą opisowi.`,
+    );
+  }
+
   if (produkt) czesci.push(`CO HANDLOWIEC SPRZEDAJE: ${produkt}`);
   if (konfig.klient.trim()) czesci.push(`KIM JESTEŚ (opis klienta od firmy): ${konfig.klient.trim()}`);
+  // 9.10: Bruno zmyślał ofertę (rozmowa 5 Aleksandry: „pompa ciepła", w konfigu kocioł zgazowujący).
+  czesci.push(
+    `FAKTY O OFERCIE: wiesz o ofercie TYLKO to, co wyżej${sytuacja ? " i w sytuacji tej rozmowy" : ""}. Nie wymyślasz innych produktów, modeli, cen ani warunków. Jeśli czegoś nie wiesz, PYTASZ handlowca („a jaki to dokładnie model?”, „ile to wychodzi miesięcznie?”) zamiast zgadywać. Gdy handlowiec poda fakt, zapamiętujesz go i nie przeczysz mu później.`,
+  );
+  // 9.10: etap relacji. Bruno grał „dopiero wybieram", gdy w opisie była podpisana umowa.
+  const etap = ETAPY[etapLubDomyslny(konfig.etap)];
+  if (u.tryb !== "cold" || etapLubDomyslny(konfig.etap) !== "cold") {
+    czesci.push(`ETAP RELACJI: ${etap.nazwa}. ${etap.bruno} Trzymasz się tego etapu przez całą rozmowę.`);
+  }
 
   switch (u.tryb) {
     case "cold":
@@ -184,19 +204,25 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
   czesci.push(opisFaz(u.tryb));
   czesci.push(POZIOMY[poziom].instrukcja);
 
+  // 9.10: obiekcja z wyjaśnieniem („co klient ma na myśli"), żeby Bruno nie zgadywał (8.10: „oddawać pieniądze" = podatki zamiast zwrotu dotacji).
+  const wyjasnienia = new Map(obiekcjeZWyjasnieniem(konfig.obiekcje).map((o) => [o.nazwa, o.wyjasnienie]));
+  const zWyjasnieniem = (o: string) => {
+    const w = wyjasnienia.get(o);
+    return w ? `„${o}” (co masz na myśli: ${w})` : `„${o}”`;
+  };
   if (obiekcja) {
     czesci.push(
-      `OBIEKCJA DO PRZETRENOWANIA: „${obiekcja}”. ${u.tryb === "cold" ? "Podnieś ją w pierwszej minucie, gdy tylko handlowiec powie, o co chodzi." : "Zaczynasz od niej."} Jeśli handlowiec zbije ją słabo (argument, obrona, rabat od razu, ogólnik), wróć do niej raz jeszcze innymi słowami. Jeśli zbije ją dobrze (pytanie, etykieta, dowód z liczbą), odpuść ją i idź dalej.`,
+      `OBIEKCJA DO PRZETRENOWANIA: ${zWyjasnieniem(obiekcja)}. ${u.tryb === "cold" ? "Podnieś ją w pierwszej minucie, gdy tylko handlowiec powie, o co chodzi." : "Zaczynasz od niej."} Jeśli handlowiec zbije ją słabo (argument, obrona, rabat od razu, ogólnik), wróć do niej raz jeszcze innymi słowami. Jeśli zbije ją dobrze (pytanie, etykieta, dowód z liczbą), odpuść ją i idź dalej.`,
     );
   }
   if (pozostale.length) {
     czesci.push(
-      `KOLEJNE OBIEKCJE DO PRZETRENOWANIA (MUSISZ podnieść KAŻDĄ z nich w trakcie rozmowy, po jednej, własnymi słowami, w naturalnym momencie):\n- ${pozostale.join("\n- ")}`,
+      `KOLEJNE OBIEKCJE DO PRZETRENOWANIA (MUSISZ podnieść KAŻDĄ z nich w trakcie rozmowy, po jednej, własnymi słowami, w naturalnym momencie):\n- ${pozostale.map(zWyjasnieniem).join("\n- ")}`,
     );
   }
   const inne = obiekcje.filter((o) => o !== obiekcja && !pozostale.includes(o));
   if (inne.length && !pozostale.length) {
-    czesci.push(`INNE OBIEKCJE, KTÓRE MOŻESZ UŻYĆ (1-2, naturalnie, własnymi słowami):\n- ${inne.join("\n- ")}`);
+    czesci.push(`INNE OBIEKCJE, KTÓRE MOŻESZ UŻYĆ (1-2, naturalnie, własnymi słowami):\n- ${inne.map(zWyjasnieniem).join("\n- ")}`);
   }
 
   if (u.karta?.typ === "kryterium") {
@@ -217,9 +243,11 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
         : "Zgadzasz się na to DOPIERO, gdy handlowiec zbada Twoją sytuację, odpowie na obiekcje i wprost poprosi o decyzję"
     }${konfig.udana_rozmowa.trim() ? ` (firma uznaje rozmowę za udaną, gdy: ${konfig.udana_rozmowa.trim()})` : ""}. Nie wcześniej. Nie proponuj sam następnego kroku.`,
   );
+  const rejestr = REJESTRY[rejestrLubDomyslny(konfig.rejestr)];
   czesci.push(
     `STYL: mów jak człowiek${u.tryb === "cold" ? " przez telefon" : " przy stole"}: krótkie zdania, naturalne pauzy, czasem „mhm”, „no dobrze”. Maksymalnie 2-3 zdania na wypowiedź. Nie wygłaszaj monologów. Rozmowa trwa maksymalnie 3 minuty: gdy handlowiec się żegna, żegnasz się krótko.`,
-    `JĘZYK I WYMOWA: jesteś rodowitym Polakiem z Warszawy. Mówisz wyłącznie po polsku, z polską intonacją i polskim akcentem, bez obcego zaśpiewu. Wymawiasz poprawnie polskie głoski (ś, ć, ź, dź, ł, rz, ą, ę). Używasz potocznej, naturalnej polszczyzny biznesowej: „no dobra”, „słuchaj”, „powiem szczerze”, „ile to kosztuje”. Nigdy nie wtrącasz angielskich słów, chyba że to nazwa produktu.`,
+    `FORMA ZWRACANIA SIĘ: ${rejestr.bruno}`,
+    `JĘZYK I WYMOWA: jesteś rodowitym Polakiem z Warszawy. Mówisz wyłącznie po polsku, z polską intonacją i polskim akcentem, bez obcego zaśpiewu. Wymawiasz poprawnie polskie głoski (ś, ć, ź, dź, ł, rz, ą, ę). Używasz potocznej, naturalnej polszczyzny biznesowej: „no dobra”, „powiem szczerze”, „ile to kosztuje”. Nigdy nie wtrącasz angielskich słów, chyba że to nazwa produktu.`,
   );
   return czesci.join("\n\n");
 }

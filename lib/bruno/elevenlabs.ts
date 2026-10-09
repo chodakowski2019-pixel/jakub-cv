@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Konfig } from "./db";
+import { ETAPY, REJESTRY, etapLubDomyslny, rejestrLubDomyslny } from "./etapy";
 import { POSTACIE, type PostacId, type TrybId } from "./postacie";
 
 // Bruno-klient na ElevenLabs Agents (decyzja USER_001 2.10: natywne polskie
@@ -99,13 +100,16 @@ export function polaczenieEl(): "websocket" | "webrtc" {
  * sam zaczyna: podsumowanie oferty + pierwsza obiekcja. Generowane Haiku
  * w 1-2 s, z awaryjnym szablonem, gdy model nie odpowie.
  */
-export async function pierwszaWypowiedz(args: { tryb: TrybId; postac: PostacId; konfig: Konfig; obiekcja: string | null }): Promise<string> {
+export async function pierwszaWypowiedz(args: { tryb: TrybId; postac: PostacId; konfig: Konfig; obiekcja: string | null; sytuacja?: string | null }): Promise<string> {
   const { tryb, postac, konfig, obiekcja } = args;
   if (tryb === "cold") {
     const warianty = ["Halo, słucham?", "Tak, Bruno, słucham.", "Halo? Kto mówi?", "Słucham, Bruno przy telefonie."];
     return warianty[Math.floor(Math.random() * warianty.length)];
   }
   const produkt = konfig.produkt.trim() || "Państwa ofertę";
+  const rejestr = REJESTRY[rejestrLubDomyslny(konfig.rejestr)];
+  const etap = ETAPY[etapLubDomyslny(konfig.etap)];
+  const sytuacja = args.sytuacja?.trim();
   const szablon =
     tryb === "zywo"
       ? `Dzień dobry. Znam już ${produkt}, przeczytałem wszystko. Powiem wprost: ${obiekcja ? obiekcja.toLowerCase() : "mam wątpliwości"}.`
@@ -116,14 +120,16 @@ export async function pierwszaWypowiedz(args: { tryb: TrybId; postac: PostacId; 
     const odp = await klient.messages.create({
       model: process.env.BRUNO_FISZKA_MODEL ?? "claude-haiku-4-5-20251001",
       max_tokens: 200,
-      system: `Piszesz JEDNĄ pierwszą wypowiedź klienta w treningowej rozmowie sprzedażowej, po polsku, 2-3 krótkie zdania, mówione, naturalne, bez cudzysłowów i bez didaskaliów. Klient to typ ${POSTACIE[postac].krotko} (${POSTACIE[postac].opis}). Zwróć tylko tekst wypowiedzi.`,
+      // 9.10: etap, forma zwracania się i sytuacja z życia, żeby pierwsze zdanie nie zmyślało oferty ani nie mówiło „słuchaj".
+      system: `Piszesz JEDNĄ pierwszą wypowiedź klienta w treningowej rozmowie sprzedażowej, po polsku, 2-3 krótkie zdania, mówione, naturalne, bez cudzysłowów i bez didaskaliów. Klient to typ ${POSTACIE[postac].krotko} (${POSTACIE[postac].opis}). ${rejestr.bruno} Etap relacji: ${etap.nazwa}: ${etap.bruno} Mówisz TYLKO o tym, co jest w opisie oferty; nie wymyślasz innych produktów ani cen. Zwróć tylko tekst wypowiedzi.`,
       messages: [
         {
           role: "user",
           content:
-            tryb === "zywo"
+            (sytuacja ? `SYTUACJA TEJ ROZMOWY (nadrzędna, trzymaj się faktów): ${sytuacja}\n\n` : "") +
+            (tryb === "zywo"
               ? `Sytuacja: spotkanie 1:1 na żywo. Klient zna ofertę: ${produkt}. Zaczyna rozmowę: krótko podsumowuje własnymi słowami, co wie o ofercie, i OD RAZU podnosi obiekcję: „${obiekcja ?? "mam wątpliwości co do ceny"}”.`
-              : `Sytuacja: spotkanie online tuż po prezentacji handlowca. Klient widział prezentację oferty: ${produkt}. Zaczyna: podsumowuje, co zrozumiał („jeśli dobrze rozumiem…”), i podnosi obiekcję albo trudne pytanie: „${obiekcja ?? "czy to na pewno dla nas"}”.`,
+              : `Sytuacja: spotkanie online tuż po prezentacji handlowca. Klient widział prezentację oferty: ${produkt}. Zaczyna: podsumowuje, co zrozumiał („jeśli dobrze rozumiem…”), i podnosi obiekcję albo trudne pytanie: „${obiekcja ?? "czy to na pewno dla nas"}”.`),
         },
       ],
     });

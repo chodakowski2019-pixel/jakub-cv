@@ -88,6 +88,7 @@ export async function POST(req: Request) {
       poziom: rozmowa.poziom ?? null,
       imie: konto?.imie ?? null,
       ucieta_limitem: ucietaLimitem,
+      sytuacja: rozmowa.sytuacja ?? null,
     });
     await supabaseAdmin.from("bruno_rozmowy").update({ feedback, ocena: feedback.ocena }).eq("id", id);
     await zaktualizujKarty(email, feedback);

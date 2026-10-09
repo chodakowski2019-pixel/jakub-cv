@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { supabaseAdmin } from "@/lib/supabase";
+import { zapiszWejscie, zrodloZParametru } from "@/lib/bruno/wejscia";
 import {
   BLOKADA_MS,
   CIASTECZKO,
@@ -64,6 +65,8 @@ export async function POST(req: Request) {
 
     // Karty powtórek od pierwszego dnia, żeby panel od razu miał co pokazać.
     await zapewnijKarty(email, await pobierzKonfig(email));
+    // 9.10 (E18): log logowania ze źródłem (`?src=` z linku w mailu, przekazane przez formularz).
+    await zapiszWejscie({ email, rodzaj: "logowanie", zrodlo: zrodloZParametru(typeof b.src === "string" ? b.src : null), agent: req.headers.get("user-agent") });
 
     const c = await cookies();
     c.set(CIASTECZKO, nowyToken(email), {

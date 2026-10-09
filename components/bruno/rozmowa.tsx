@@ -32,6 +32,8 @@ type Props = {
   minutZostalo: number;
   sekundRozmowy: number;
   sekundDogrywki: number;
+  /** 9.10: pełny dostęp (płacąca firma) odblokowuje „Rozmowę, którą masz jutro". Trial widzi kafelek z kłódką. */
+  pelny: boolean;
 };
 
 function czas(s: number) {
@@ -140,8 +142,11 @@ function startGwar(): { stop: () => void } {
   };
 }
 
-export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki }: Props) {
+export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny }: Props) {
   const [tryb, setTryb] = useState<TrybId>("cold");
+  // „Rozmowa, którą masz jutro" (9.10, moduł płatny): sytuacja z życia wklejona przed rozmową.
+  const [sytuacja, setSytuacja] = useState("");
+  const [sytuacjaOtwarta, setSytuacjaOtwarta] = useState(false);
   // Kilka obiekcji naraz (USER_001 2.10). "__losowa__" i pusta lista są wyłączne.
   const [wybraneObiekcje, setWybraneObiekcje] = useState<string[]>(karta?.typ === "obiekcja" ? [karta.tresc] : obiekcje.length ? ["__losowa__"] : []);
   const losowa = wybraneObiekcje.includes("__losowa__");
@@ -481,8 +486,16 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           }, 500);
         },
         onMessage: ({ message, role }) => {
-          const t = Math.max(0, Math.round((Date.now() - start.current) / 1000));
-          if (message?.trim()) dodaj({ rola: role === "agent" ? "klient" : "handlowiec", tekst: message.trim(), t });
+          const teraz = Math.max(0, Math.round((Date.now() - start.current) / 1000));
+          const tekst = message?.trim();
+          if (!tekst) return;
+          // 9.10: ElevenLabs oddaje tekst handlowca PO jego wypowiedzi, a tekst Bruno PRZED
+          // (obie w tej samej sekundzie, więc trener cytował złe czasy). Początek wypowiedzi
+          // handlowca szacujemy z liczby słów (ok. 2,3 słowa/s), nie wcześniej niż poprzednia kwestia.
+          const slow = tekst.split(/\s+/).length;
+          const poprzednia = transkrypcja.current[transkrypcja.current.length - 1];
+          const t = role === "agent" ? teraz : Math.max(poprzednia ? poprzednia.t + 1 : 0, teraz - Math.round(slow / 2.3));
+          dodaj({ rola: role === "agent" ? "klient" : "handlowiec", tekst, t });
         },
         onModeChange: ({ mode }) => setMowi(mode === "speaking" ? "bruno" : null),
         onError: (msg) => {
@@ -535,7 +548,16 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       const res = await fetch("/api/bruno/rozmowa/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ postac, tryb, cel, cel_wlasny: celWlasny, poziom, obiekcje: wybraneObiekcje, karta_id: karta?.typ === "kryterium" ? karta.id : null }),
+        body: JSON.stringify({
+          postac,
+          tryb,
+          cel,
+          cel_wlasny: celWlasny,
+          poziom,
+          obiekcje: wybraneObiekcje,
+          karta_id: karta?.typ === "kryterium" ? karta.id : null,
+          sytuacja: pelny && sytuacjaOtwarta ? sytuacja.trim() || null : null,
+        }),
       });
       const odp = await res.json();
       if (!res.ok) throw new Error(odp.blad ?? "Nie udało się zacząć.");
@@ -793,6 +815,46 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
                 );
               })}
             </div>
+          </fieldset>
+
+          {/* 6. Rozmowa, którą masz jutro (moduł płatny, 9.10). W trialu: kafelek z kłódką i opisem. */}
+          <fieldset>
+            <legend className="bruno-h2 text-base mb-2">
+              <span className="bruno-gradient-tekst mr-1.5">6.</span>Rozmowa, którą masz jutro{" "}
+              <span className="text-xs font-normal text-slate-400">{pelny ? "(opcjonalnie)" : "(pełny dostęp)"}</span>
+            </legend>
+            {pelny ? (
+              <div className="bruno-szklo rounded-2xl p-4 flex flex-col gap-3">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input id="sytuacja-wlacz" type="checkbox" className="mt-1" checked={sytuacjaOtwarta} onChange={(e) => setSytuacjaOtwarta(e.target.checked)} />
+                  <span className="text-sm text-slate-700">
+                    <b>Wklej prawdziwą sytuację</b>, a Bruno zagra dokładnie tego klienta: kto to jest, na jakim jest etapie, co już ustaliliście, czego się boi. Opis z „Dostosuj Bruno” zostaje tłem.
+                  </span>
+                </label>
+                {sytuacjaOtwarta && (
+                  <textarea
+                    id="sytuacja"
+                    rows={5}
+                    className="bruno-pole"
+                    maxLength={3000}
+                    placeholder="np. Narzeczeństwo 35 lat, najwyższy próg dofinansowania. Audyt zrobiony, umowa podpisana. Dziś chcą zrezygnować: ona boi się zwrotu dotacji, on chce większy kocioł, a kotłownia jest za mała."
+                    value={sytuacja}
+                    onChange={(e) => setSytuacja(e.target.value)}
+                    autoFocus
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="bruno-szklo rounded-2xl p-4 text-sm text-slate-600 flex items-start gap-3">
+                <span className="shrink-0 grid size-8 place-items-center rounded-full bg-slate-100 text-slate-500" aria-hidden>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+                </span>
+                <span>
+                  Wklejasz prawdziwą rozmowę, którą masz jutro (kto, etap, co ustalone, czego się boi), a Bruno gra dokładnie tego klienta. Dostępne w pełnym dostępie.{" "}
+                  <Link href="/bruno/odblokuj" className="underline">Odblokuj</Link>.
+                </span>
+              </div>
+            )}
           </fieldset>
 
           {planZrobiony ? (

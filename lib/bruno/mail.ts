@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { supabaseAdmin } from "@/lib/supabase";
 import { ROZMOWA_SEKUND, ROZMOW_DZIENNIE } from "./db";
 import { akapit, kopertaBruno, kroki, przycisk, tabelaDostepu, tabelaParami } from "./szablon-mail.mjs";
 
@@ -16,23 +17,51 @@ export function mailDziala() {
   return Boolean(process.env.RESEND_API_KEY);
 }
 
-export async function wyslij(args: { do: string; temat: string; html: string; replyTo?: string }) {
+/**
+ * Rodzaj maila = klucz w `bruno_maile` i w `?src=` linku (9.10, E18: „nie wiemy, czy
+ * przypomnienia dochodzą i czy ktoś z nich wchodzi"). Wejście z linku ląduje w `bruno_wejscia`.
+ */
+export type RodzajMaila = "dostep" | "przypomnienie" | "niezalogowany" | "inny";
+
+/** Dopisuje `?src=mail-<rodzaj>` do linku, żeby wejście dało się przypisać do maila. */
+export function linkZeZrodlem(link: string, rodzaj: RodzajMaila): string {
+  return `${link}${link.includes("?") ? "&" : "?"}src=mail-${rodzaj}`;
+}
+
+/** Zapis do `bruno_maile` nigdy nie wywraca wysyłki: błąd logowania tylko do konsoli. */
+async function zapiszMail(w: { email: string; rodzaj: RodzajMaila; temat: string; wynik: "wyslany" | "blad" | "pominiety"; resend_id?: string | null; blad?: string | null }) {
+  try {
+    const { error } = await supabaseAdmin.from("bruno_maile").insert(w);
+    if (error) console.error("[bruno mail] log", error.message);
+  } catch (e) {
+    console.error("[bruno mail] log", e);
+  }
+}
+
+export async function wyslij(args: { do: string; temat: string; html: string; replyTo?: string; rodzaj?: RodzajMaila }) {
+  const rodzaj = args.rodzaj ?? "inny";
   if (!mailDziala()) {
     if (process.env.NODE_ENV === "development") {
       console.warn("[bruno mail] RESEND_API_KEY brak, mail pominięty:", args.temat, "→", args.do);
+      await zapiszMail({ email: args.do, rodzaj, temat: args.temat, wynik: "pominiety", blad: "brak RESEND_API_KEY" });
       return { ok: true, pominiety: true };
     }
+    await zapiszMail({ email: args.do, rodzaj, temat: args.temat, wynik: "blad", blad: "brak RESEND_API_KEY" });
     throw new Error("Brak RESEND_API_KEY");
   }
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const { error } = await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: NADAWCA,
     to: args.do,
     replyTo: args.replyTo,
     subject: args.temat,
     html: args.html,
   });
-  if (error) throw new Error(`Resend: ${error.message}`);
+  if (error) {
+    await zapiszMail({ email: args.do, rodzaj, temat: args.temat, wynik: "blad", blad: String(error.message).slice(0, 300) });
+    throw new Error(`Resend: ${error.message}`);
+  }
+  await zapiszMail({ email: args.do, rodzaj, temat: args.temat, wynik: "wyslany", resend_id: data?.id ?? null });
   return { ok: true };
 }
 
@@ -47,7 +76,9 @@ export function htmlDostep(args: {
   rozmowDziennie?: number;
   fiszekDziennie?: number;
 }) {
+  // Tabelka pokazuje czysty adres (do przepisania), przycisk niesie źródło.
   const link = `${bazaUrl()}/bruno`;
+  const linkSrc = linkZeZrodlem(link, "dostep");
   const minuty = ROZMOWA_SEKUND / 60;
   const rozmow = args.rozmowDziennie ?? ROZMOW_DZIENNIE;
   // Układ = wzorzec USER_001 z 2.10: powitanie, tabelka dostępu, warunki,
@@ -62,7 +93,7 @@ export function htmlDostep(args: {
         ["Rozmowy", `${rozmow} dziennie po ${minuty} ${minutaSlowo(minuty)}`],
         ...(args.fiszekDziennie ? [["Fiszki", `${args.fiszekDziennie} dziennie`] as [string, string]] : []),
       ]),
-      przycisk({ tekst: "Zaloguj się", link }),
+      przycisk({ tekst: "Zaloguj się", link: linkSrc }),
       kroki([
         "Otwórz stronę w Chrome i załóż słuchawki.",
         'Przed pierwszą rozmową wejdź w „Dostosuj Bruno" i wpisz, co sprzedajesz, kim jest klient i jakie obiekcje najczęściej słyszysz. Bez tego Bruno nie wie, kogo udawać.',
@@ -74,7 +105,7 @@ export function htmlDostep(args: {
 }
 
 export function htmlPrzypomnienie(args: { imie: string | null; kart: number; rozmowyDzis: number; dniZostalo: number; dziennie?: number }) {
-  const link = `${bazaUrl()}/bruno/panel`;
+  const link = linkZeZrodlem(`${bazaUrl()}/bruno/panel`, "przypomnienie");
   const zostalo = Math.max(0, (args.dziennie ?? ROZMOW_DZIENNIE) - args.rozmowyDzis);
   const minuty = ROZMOWA_SEKUND / 60;
   return kopertaBruno({
@@ -93,7 +124,7 @@ export function htmlPrzypomnienie(args: { imie: string | null; kart: number; roz
 
 /** Przypomnienie dla konta bez pierwszego logowania (6.10). Kodu nie wysyłamy ponownie: w bazie jest tylko jego skrót. */
 export function htmlNieZalogowany(args: { imie: string | null; dni: number }) {
-  const link = `${bazaUrl()}/bruno`;
+  const link = linkZeZrodlem(`${bazaUrl()}/bruno`, "niezalogowany");
   const minuty = ROZMOWA_SEKUND / 60;
   return kopertaBruno({
     naglowek: `${args.imie ? `${args.imie}, B` : "B"}runo czeka na pierwszą rozmowę`,

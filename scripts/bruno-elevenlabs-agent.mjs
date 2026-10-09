@@ -73,8 +73,8 @@ const KONFIG = {
         tts: { voice_id: true, stability: true, speed: true, similarity_boost: true },
       },
     },
-    // 30 dni (P2, 2.10): pełny PATCH tym skryptem nie może cofnąć retencji na -1.
-    privacy: { record_voice: true, retention_days: 30 },
+    // 1 dzień (USER_001 9.10, było 30 od 2.10): pełny PATCH tym skryptem nie może cofnąć retencji na -1.
+    privacy: { record_voice: true, retention_days: 1 },
   },
 };
 

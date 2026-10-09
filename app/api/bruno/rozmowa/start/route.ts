@@ -4,6 +4,7 @@ import { zalogowanyEmail } from "@/lib/bruno/auth";
 import {
   ROZMOWA_SEKUND,
   limitDzienny,
+  pelnyDostep,
   pobierzKonfig,
   pobierzKonto,
   rozmowyDzis,
@@ -101,12 +102,15 @@ export async function POST(req: Request) {
   }
 
   const sekundyTejRozmowy = Math.min(ROZMOWA_SEKUND, zostalo);
+  // „Rozmowa, którą masz jutro" (9.10, moduł płatny): sytuacja z życia, TYLKO dla kont z pełnym dostępem.
+  // Trial ją ignoruje po stronie serwera, nawet gdy ktoś wyśle pole ręcznie.
+  const sytuacja = pelnyDostep(konto) && typeof b.sytuacja === "string" ? b.sytuacja.trim().slice(0, 3000) || null : null;
   // Scenariusz = powtarzalny egzamin (tryb + typ klienta + cel + obiekcje). Powstaje
   // sam z wyborów w kreatorze, żeby dwie rozmowy z tym samym wsadem dały się porównać.
   const scenariuszId = await zapewnijScenariusz(email, { tryb, postac, cel, celWlasny, obiekcje: wybrane, poziom });
   const { data: rozmowa, error } = await supabaseAdmin
     .from("bruno_rozmowy")
-    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa", tryb, cel, cel_wlasny: celWlasny, obiekcja, poziom, dostawca, scenariusz_id: scenariuszId })
+    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa", tryb, cel, cel_wlasny: celWlasny, obiekcja, poziom, dostawca, scenariusz_id: scenariuszId, sytuacja })
     .select("id")
     .single();
   if (error || !rozmowa) {
@@ -114,7 +118,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, blad: "Nie udało się zapisać rozmowy." }, { status: 500 });
   }
 
-  const instrukcje = instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, poziom, obiekcja, obiekcje: wybrane, karta });
+  const instrukcje = instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, poziom, obiekcja, obiekcje: wybrane, karta, sytuacja });
 
   // ElevenLabs Agents (2.10): token WebRTC + nadpisania per rozmowa. Prompt idzie przez przeglądarkę
   // (tak działają nadpisania w SDK), więc nie ma w nim nic tajnego: to opis klienta z „Dostosuj Bruno".
@@ -123,7 +127,7 @@ export async function POST(req: Request) {
       const polaczenie = polaczenieEl();
       const [token, pierwsza] = await Promise.all([
         polaczenie === "webrtc" ? tokenRozmowyEl() : podpisanyUrlEl(),
-        pierwszaWypowiedz({ tryb, postac, konfig, obiekcja: wybrane[0] ?? obiekcja }),
+        pierwszaWypowiedz({ tryb, postac, konfig, obiekcja: wybrane[0] ?? obiekcja, sytuacja }),
       ]);
       return NextResponse.json({
         ok: true,

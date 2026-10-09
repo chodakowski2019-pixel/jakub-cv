@@ -19,12 +19,13 @@ KRYTERIA (każde 1-10):
 1. OTWARCIE (pierwsze 90 s): cel rozmowy w ≤30 s; ≤6 zdań przed pierwszym pytaniem; kontrakt wstępny (cel, czas, wynik); zero „przepraszam, że przeszkadzam”, „tylko”, „nie zajmę dużo”; zero „nasza firma”, „oferujemy”, nazwy produktu przed pierwszym pytaniem klienta; plus za tezę lub liczbę z rynku.
 2. PYTANIA: udział słów handlowca <50 % (dobrze), >60 % (źle); ≥5 pytań otwartych („jak”, „co”, „ile”, „kiedy”) przed prezentacją; SPIN: pytania o problem (P), jego skutki (I) i o to, czego klient chce (N) ważniejsze niż pytania o sytuację (S); brak pytania implikacyjnego = max 5; pytanie o koszt problemu; pytanie o budżet i decydenta; lustro (powtórzenie 1-3 słów klienta); handlowiec NIE odpowiada sam na swoje pytania; podsumowanie „powiedział Pan, że…”.
 3. OBIEKCJE (po „za drogo”, „muszę pomyśleć”, „nie teraz”, „mamy już”): następna wypowiedź = etykieta („wygląda na to”), lustro albo pytanie („w porównaniu do czego?”, „co nie gra?”) = dobrze; argument, obrona, rabat od razu = źle; rabat bez niczego w zamian = źle; nowa informacja + ponowna prośba o decyzję (pętla) = dobrze; dowód z nazwą firmy i liczbą = dobrze, „wielu klientów jest zadowolonych” = źle; poddanie się po pierwszym „przemyślę” = źle; cena przed pytaniem o ból = czerwona flaga.
-4. ZAMKNIĘCIE (ostatnie 20 %): 1-2 prośby o decyzję (0 albo ≥3 = źle); postęp = data + osoba + działanie klienta; kontynuacja („odezwę się”, „prześlę ofertę”, „proszę pomyśleć”) = źle; kwota wprost = dobrze; cena z „tylko”, „jedynie”, „niestety” = źle; klient sam wypowiada datę/krok = dobrze; pytanie „co może stanąć na drodze” = plus; limit tylko z prawdziwym powodem; po kwocie cisza, klient odzywa się pierwszy (handlowiec dopowiada >15 słów = usprawiedliwianie).
-5. PEWNOŚĆ SIEBIE (głos, z liczb): wypełniacze/min 0-2 dobrze, 3-5 średnio, >5 źle; osłabiacze na 100 słów ≤1 dobrze, >3 źle; „przepraszam”/„niestety” >2 = źle; zmiana_tempa_proc to zmiana tempa ostatniej minuty względem pierwszej (plus = przyspieszył, minus = zwolnił): ≤ -15 = siadanie po odmowie, ≥ +15 przy cenie = nerwy; w komentarzu pisz po ludzku „przyspieszyłeś o X %” albo „zwolniłeś o X %”; przerywanie klienta; zdania >25 słów; energia rosnąca przy „nie” klienta = źle. To jest kryterium główne wg Mazura: handlowiec ma twierdzić, nie sugerować.
+4. ZAMKNIĘCIE (ostatnie 20 %). PROŚBA O DECYZJĘ to KAŻDA z tych form: (a) pytanie o decyzję wprost („podpisujemy?”, „wchodzimy w to?”), (b) NASTĘPNY KROK Z DATĄ zaproponowany przez handlowca („kiedy możemy podpisać pełnomocnictwo u notariusza?”, „mogę panią umówić na poniedziałek”, „spotkajmy się we wtorek o 10”), (c) pytanie o termin do wyboru („przed południem czy po?”). W sprzedaży wieloetapowej (b) JEST zamknięciem i NIE wolno pisać „brak prośby o decyzję”, gdy padło. 1-2 prośby = dobrze, 0 albo ≥3 = źle; postęp = data + osoba + działanie klienta; kontynuacja bez daty („odezwę się”, „prześlę ofertę”, „proszę pomyśleć”) = źle; kwota wprost = dobrze; cena z „tylko”, „jedynie”, „niestety” = źle; klient sam wypowiada datę/krok = dobrze; pytanie „co może stanąć na drodze” = plus; limit tylko z prawdziwym powodem; po kwocie cisza, klient odzywa się pierwszy (handlowiec dopowiada >15 słów = usprawiedliwianie).
+   TECHNIKI ZAMYKANIA, które oceniasz osobno w komentarzu (po jednym słowie: padła / nie padła): PRÓBA ZAMKNIĘCIA (próbne „jak to brzmi?”, „co pan o tym myśli?”), PYTANIE O DECYZJĘ, OBSŁUGA „MUSZĘ POMYŚLEĆ” (pytanie „co konkretnie chce pan przemyśleć?”, warunek „jeśli X, to podpisujemy?”, a nie samo czekanie), NASTĘPNY KROK Z DATĄ. Sygnał kupna klienta („co mam zrobić, żeby ruszyć?”, „to daje mi lepszy obraz”) niewykorzystany od razu = minus w komentarzu.
+5. PEWNOŚĆ SIEBIE (głos, z liczb): wypełniacze/min 0-2 dobrze, 3-5 średnio, >5 źle; osłabiacze na 100 słów ≤1 dobrze, >3 źle; „przepraszam”/„niestety” >2 = źle; zmiana_tempa_proc to zmiana tempa ostatniej minuty względem pierwszej (plus = przyspieszył, minus = zwolnił): ≤ -15 = siadanie po odmowie, ≥ +15 przy cenie = nerwy; w komentarzu pisz po ludzku „przyspieszyłeś o X %” albo „zwolniłeś o X %”. Jeśli zmiana_tempa_proc = null, NIE pisz nic o tempie ani o nerwach z tempa (za mało słów handlowca w oknie, tempo nieznane). Przerywanie klienta; zdania >25 słów; energia rosnąca przy „nie” klienta = źle. To jest kryterium główne wg Mazura: handlowiec ma twierdzić, nie sugerować.
 
 REGUŁY TWARDE (zastosuj i wypisz, które zadziałały):
-- brak prośby o decyzję → ocena ogólna max 5
-- prezentacja lub cena przed pytaniem o ból → ocena ogólna minus 3
+- brak prośby o decyzję (żadna z form a/b/c) → ocena ogólna max 5
+- prezentacja lub cena przed pytaniem o ból → ocena ogólna minus 3. WYJĄTEK: gdy kwota_na_prosbe_klienta = true (klient sam zapytał o liczbę), odpowiedź kwotą NIE jest karana; oceń tylko, czy po liczbie handlowiec zadał pytanie, zamiast dalej tłumaczyć
 - ocena ogólna nie wyższa niż pewność siebie + 2
 - rozmowa „miła”, bez tezy, liczby i następnego kroku → max 5
 - klient powiedział „nie myślałem o tym w ten sposób” → +1
@@ -181,6 +182,8 @@ export async function ocenRozmowe(args: {
   poziom?: PoziomId | string | null;
   imie?: string | null;
   ucieta_limitem?: boolean;
+  /** 9.10: „Rozmowa, którą masz jutro" (moduł płatny). */
+  sytuacja?: string | null;
 }): Promise<Feedback> {
   const { transkrypcja, metryki, konfig, postac, tryb, cel, obiekcja } = args;
   // Płeć: najpierw z własnych słów handlowca w transkrypcji, potem z imienia.
@@ -215,6 +218,9 @@ export async function ocenRozmowe(args: {
             .map((o) => `„${o.trim()}”`)
             .join(", ")}. Oceń zbicie każdej z nich w pierwszej kolejności i wpisz je do obiekcje_ocena.`
         : `OBIEKCJA DO PRZETRENOWANIA: „${obiekcja}”. Oceń jej zbicie w pierwszej kolejności i wpisz ją do obiekcje_ocena.`),
+    args.sytuacja?.trim() && `SYTUACJA TEJ ROZMOWY (wklejona przez handlowca, prawdziwa): ${args.sytuacja.trim()}. Oceń, czy handlowiec poradził sobie z TĄ sytuacją.`,
+    metryki.nastepny_krok_z_data && "METRYKI WYKRYŁY NASTĘPNY KROK Z DATĄ w końcówce: to jest prośba o decyzję w formie (b). Nie pisz „brak prośby o decyzję”.",
+    metryki.kwota_na_prosbe_klienta && "KWOTA PADŁA NA PROŚBĘ KLIENTA (sam zapytał o liczbę): nie karz za „cenę przed bólem”.",
     konfig.produkt && `PRODUKT HANDLOWCA: ${konfig.produkt}`,
     konfig.klient && `KLIENT WG FIRMY: ${konfig.klient}`,
     konfig.udana_rozmowa && `UDANA ROZMOWA WG FIRMY: ${konfig.udana_rozmowa}`,
@@ -311,10 +317,16 @@ export async function ocenRozmowe(args: {
       komentarz: String(k?.komentarz ?? "").slice(0, 400),
     };
   });
+  // 9.10: metryki mają głos rozstrzygający. Gdy wykryły prośbę o decyzję albo następny krok z datą,
+  // model nie może orzec „brak prośby" (8.10: „kiedy podpiszemy pełnomocnictwo?" + poniedziałek = max 5).
+  const prosbaWgMetryk = metryki.prosby_o_decyzje > 0 || metryki.nastepny_krok_z_data;
+  const brakProsby = prosbaWgMetryk ? false : (raw.brak_prosby_o_decyzje ?? metryki.prosby_o_decyzje === 0);
+  // Kwota na prośbę klienta: kara „cena przed bólem" (3 pkt) nie obowiązuje.
+  const kary = metryki.kwota_na_prosbe_klienta ? Math.max(0, Number(raw.kary ?? 0) - 3) : raw.kary;
   const { ocena, reguly } = policzOcene(kryteria, {
     bonus: raw.bonus,
-    kary: raw.kary,
-    brak_prosby_o_decyzje: raw.brak_prosby_o_decyzje ?? metryki.prosby_o_decyzje === 0,
+    kary,
+    brak_prosby_o_decyzje: brakProsby,
     mila_bez_tresci: raw.mila_bez_tresci,
   });
   // Lista reguł = to, co naprawdę zadziałało w policzOcene. Z listy modelu zostają tylko powody kary
