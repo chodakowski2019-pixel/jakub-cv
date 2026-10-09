@@ -18,8 +18,8 @@ const ZAWODY_PL: Record<string, string> = {
   Other: "Inna rola",
 };
 const T = {
-  en: { okH: "We are checking your request", okA: "This takes up to", okA2: "24 hours", okB: "Then we send your free 3-day access to Bruno AI to", okBFirma: "Then we email you to set up the start for your team at", h1a: "Fill in the form", h1b: "to get free access", h1bFirma: "to start with your team", imie: "First name *", emailFirma: "Work email *", email: "Email *", warn: "Use an email on your company domain. Personal mailboxes do not pass the check.", tel: "Phone", opc: "(optional)", rola: "Your role *", ilu: "How many sales reps do you have? *", np: "e.g. 12", co: "What do you sell? *", coNp: "e.g. recruitment services for tech companies", zgoda: "I agree to be contacted by email and phone about the trial. Data controller: Jakub Chodakowski, Poland, VAT ID PL6711845485. You can withdraw consent at any time.", blad: "Something went wrong. Email hello@jakubchodakowski.com", bladEmail: "Please use your work email (not Gmail, Yahoo, Outlook.com, etc.).", wysylam: "Sending...", wyslij: "Send →", wroc: "← Back to Bruno AI" },
-  pl: { okH: "Sprawdzamy Twoje zgłoszenie", okA: "To trwa do", okA2: "24 godzin", okB: "Potem wysyłamy darmowy 3-dniowy dostęp do Bruno AI na adres", okBFirma: "Potem piszemy do Ciebie, żeby ustalić start Twojego zespołu, na adres", h1a: "Wypełnij formularz", h1b: "i odbierz darmowy dostęp", h1bFirma: "i zacznij z zespołem", imie: "Imię *", emailFirma: "Firmowy e-mail *", email: "E-mail *", warn: "Podaj e-mail w domenie firmy. Prywatne skrzynki nie przechodzą weryfikacji.", tel: "Telefon", opc: "(opcjonalnie)", rola: "Twoja rola *", ilu: "Ilu handlowców masz w zespole? *", np: "np. 12", co: "Co sprzedajesz? *", coNp: "np. usługi rekrutacyjne dla firm IT", zgoda: "Zgadzam się na kontakt mailowy i telefoniczny w sprawie testu. Administrator danych: Jakub Chodakowski, Polska, NIP 6711845485. Zgodę możesz wycofać w każdej chwili.", blad: "Coś poszło nie tak. Napisz na hello@jakubchodakowski.com", bladEmail: "Podaj firmowy e-mail (nie Gmail, Yahoo, Outlook.com itp.).", wysylam: "Wysyłam...", wyslij: "Wyślij →", wroc: "← Wróć do Bruno AI" },
+  en: { okH: "We are checking your request", okA: "This takes up to", okA2: "24 hours", okB: "Then we send your free 3-day access to Bruno AI to", okBFirma: "Then we email you to set up the start for your team at", h1a: "Fill in the form", h1b: "to get free access", h1bFirma: "to start with your team", imie: "First name *", emailFirma: "Work email *", email: "Email *", warn: "Use an email on your company domain. Personal mailboxes do not pass the check.", tel: "Phone", opc: "(optional)", rola: "Your role *", ilu: "How many sales reps do you have? *", np: "e.g. 12", co: "What do you sell? *", coNp: "e.g. recruitment services for tech companies", zgoda: "I agree to be contacted by email and phone about the trial. Details in the privacy policy.", blad: "Something went wrong. Email hello@jakubchodakowski.com", bladEmail: "Please use your work email (not Gmail, Yahoo, Outlook.com, etc.).", wysylam: "Sending...", wyslij: "Send →", wroc: "← Back to Bruno AI" },
+  pl: { okH: "Sprawdzamy Twoje zgłoszenie", okA: "To trwa do", okA2: "24 godzin", okB: "Potem wysyłamy darmowy 3-dniowy dostęp do Bruno AI na adres", okBFirma: "Potem piszemy do Ciebie, żeby ustalić start Twojego zespołu, na adres", h1a: "Wypełnij formularz", h1b: "i odbierz darmowy dostęp", h1bFirma: "i zacznij z zespołem", imie: "Imię *", emailFirma: "Firmowy e-mail *", email: "E-mail *", warn: "Podaj e-mail w domenie firmy. Prywatne skrzynki nie przechodzą weryfikacji.", tel: "Telefon", opc: "(opcjonalnie)", rola: "Twoja rola *", ilu: "Ilu handlowców masz w zespole? *", np: "np. 12", co: "Co sprzedajesz? *", coNp: "np. usługi rekrutacyjne dla firm IT", zgoda: "Zgadzam się na kontakt mailowy i telefoniczny w sprawie testu. Szczegóły w polityce prywatności.", blad: "Coś poszło nie tak. Napisz na hello@jakubchodakowski.com", bladEmail: "Podaj firmowy e-mail (nie Gmail, Yahoo, Outlook.com itp.).", wysylam: "Wysyłam...", wyslij: "Wyślij →", wroc: "← Wróć do Bruno AI" },
 } as const;
 
 export default function Formularz({ onWstecz, wersja = "business", jezyk = "en" }: { onWstecz: () => void; wersja?: "business" | "reps"; jezyk?: "en" | "pl" }) {
@@ -74,7 +74,6 @@ export default function Formularz({ onWstecz, wersja = "business", jezyk = "en" 
 
   return (
     <section className={s.formView}>
-      <div className={s.miniRing} aria-hidden />
 
       {status === "ok" ? (
         <div className={s.formCard} style={{ marginTop: 40 }}>
@@ -97,8 +96,7 @@ export default function Formularz({ onWstecz, wersja = "business", jezyk = "en" 
       ) : (
         <>
           <div className={s.formHead}>
-            <div className={s.eyebrow}>Bruno AI</div>
-            <h1>
+                <h1>
               <span className={s.g}>{x.h1a}</span>
               <br />
               {rep ? x.h1b : x.h1bFirma}
@@ -219,7 +217,10 @@ export default function Formularz({ onWstecz, wersja = "business", jezyk = "en" 
                   checked={form.zgoda}
                   onChange={(e) => setForm((f) => ({ ...f, zgoda: e.target.checked }))}
                 />
-                <span>{x.zgoda}</span>
+                <span>
+              {x.zgoda.replace(/(privacy policy|polityce prywatności)\.$/, "")}
+              <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>{x.zgoda.match(/(privacy policy|polityce prywatności)/)?.[0]}</a>.
+            </span>
               </label>
 
               {(blad || status === "error") && (
@@ -235,9 +236,6 @@ export default function Formularz({ onWstecz, wersja = "business", jezyk = "en" 
               </button>
             </form>
           </div>
-          <button type="button" className={s.back} onClick={onWstecz}>
-            {x.wroc}
-          </button>
         </>
       )}
     </section>

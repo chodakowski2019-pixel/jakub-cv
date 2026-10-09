@@ -56,7 +56,7 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Give your team Bruno.", "Start with one month."],
     ctaBtn: "Book a demo call",
-    ctaBok: "For the first month you test Bruno with your own team. If you stay, we sign a contract from 3 months.",
+    ctaBok: "30-minute call. I will show you Bruno playing your own customer, live.",
     stopka: "AI sales practice for teams",
   },
   reps: {
@@ -105,7 +105,7 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Daj zespołowi Bruno.", "Zacznij od jednego miesiąca."],
     ctaBtn: "Umów rozmowę z demo",
-    ctaBok: "Pierwszy miesiąc sprawdzasz Bruno na swoim zespole. Jeśli zostajecie, podpisujemy umowę od 3 miesięcy.",
+    ctaBok: "30 minut rozmowy. Pokażę Ci na żywo, jak Bruno gra Waszego klienta.",
     stopka: "Trening sprzedaży z AI dla zespołów",
   },
   reps: {
@@ -182,6 +182,8 @@ export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
     if (q.has("pl") || q.get("lang") === "pl") setJezyk("pl");
+    // 9.10: link prosto do zapisu (np. w cold mailu): /brunobusiness#demo
+    if (window.location.hash.startsWith("#demo")) setPokazFormularz(true);
   }, []);
   const t = TEKSTY[jezyk][wersja];
   const u = UI[jezyk];
@@ -250,19 +252,11 @@ export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
 
   return (
     <div className={s.root} ref={rootRef}>
-      <nav className={s.nav}>
+      <nav className={`${s.nav} ${pokazFormularz ? s.navFormularz : ""}`}>
         <div className={s.navL}>
           <a className={s.logo} href="#top" onClick={doSekcji("top")}>
             Bruno AI
           </a>
-          <button
-            type="button"
-            className={`${s.pill} ${s.pillBlack}`}
-            aria-expanded={menu}
-            onClick={() => setMenu((m) => !m)}
-          >
-            <span className={`${s.dot} ${menu ? s.dotOpen : ""}`}>+</span>Menu
-          </button>
           <div className={`${s.pill} ${s.pillLight}`}>
             <a href="#kroki" onClick={doSekcji("kroki")}>
               {u.jak}
@@ -272,22 +266,9 @@ export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
             </a>
             <a href={t.linkInny.href}>{t.linkInny.tekst}</a>
           </div>
-          {menu && (
-            <div className={s.menu}>
-              <a href="#kroki" onClick={doSekcji("kroki")}>
-                {u.jakBruno}
-              </a>
-              <a href="#korzysci" onClick={doSekcji("korzysci")}>
-                {u.wyniki}
-              </a>
-              <button type="button" onClick={otworzFormularz(3)}>
-                {t.menuCta}
-              </button>
-              <a href={t.linkInny.href}>{t.linkInny.tekst}</a>
-            </div>
-          )}
         </div>
-        <button type="button" className={`${s.pill} ${s.pillRight}`} onClick={otworzFormularz(3)}>
+        {/* 9.10 (USER_001): bez przycisku „Menu”; przycisk zapisu w stylu dawnego „Menu” (czarny, biała kropka). */}
+        <button type="button" className={`${s.pill} ${s.pillBlack}`} onClick={otworzFormularz(3)}>
           <span className={s.dot}>+</span>{t.navCta}
         </button>
       </nav>

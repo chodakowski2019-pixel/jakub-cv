@@ -31,23 +31,41 @@ function wStrefie(rok: number, miesiac: number, dzien: number, h: number, strefa
   return off2 === off ? wynik : new Date(zgrubnie.getTime() - off2 * 60000);
 }
 
-/** Wszystkie sloty od teraz do końca bieżącego miesiąca (czas UK), bez filtra zajętości. */
-export function slotyMiesiaca(teraz = new Date()): string[] {
-  const c = Object.fromEntries(
-    new Intl.DateTimeFormat("en-CA", { timeZone: STREFA_DEMO, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(teraz).map((p) => [p.type, p.value]),
-  );
-  const rok = Number(c.year);
-  const miesiac = Number(c.month) - 1;
+/** Ile dni przed końcem miesiąca otwieramy następny (USER_001 9.10). */
+export const DNI_PRZED_KONCEM = 7;
+
+/** Sloty jednego miesiąca (czas UK) od „granica” wzwyż. */
+function slotyJednegoMiesiaca(rok: number, miesiac: number, odDnia: number, granica: number): string[] {
   const ostatni = new Date(Date.UTC(rok, miesiac + 1, 0)).getUTCDate();
-  const granica = teraz.getTime() + MIN_GODZIN_WCZESNIEJ * 3600_000;
   const sloty: string[] = [];
-  for (let d = Number(c.day); d <= ostatni; d++) {
+  for (let d = odDnia; d <= ostatni; d++) {
     const dzienTyg = new Date(Date.UTC(rok, miesiac, d)).getUTCDay();
     if (!DNI_TYGODNIA.includes(dzienTyg)) continue;
     for (const h of GODZINY_UK) {
       const t = wStrefie(rok, miesiac, d, h, STREFA_DEMO);
       if (t.getTime() >= granica) sloty.push(t.toISOString());
     }
+  }
+  return sloty;
+}
+
+/**
+ * Wolne sloty, bez filtra zajętości: bieżący miesiąc (czas UK), a w ostatnich
+ * DNI_PRZED_KONCEM dniach miesiąca także cały następny miesiąc.
+ */
+export function slotyMiesiaca(teraz = new Date()): string[] {
+  const c = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", { timeZone: STREFA_DEMO, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(teraz).map((p) => [p.type, p.value]),
+  );
+  const rok = Number(c.year);
+  const miesiac = Number(c.month) - 1;
+  const dzien = Number(c.day);
+  const ostatni = new Date(Date.UTC(rok, miesiac + 1, 0)).getUTCDate();
+  const granica = teraz.getTime() + MIN_GODZIN_WCZESNIEJ * 3600_000;
+  const sloty = slotyJednegoMiesiaca(rok, miesiac, dzien, granica);
+  if (ostatni - dzien < DNI_PRZED_KONCEM) {
+    const nast = new Date(Date.UTC(rok, miesiac + 1, 1));
+    sloty.push(...slotyJednegoMiesiaca(nast.getUTCFullYear(), nast.getUTCMonth(), 1, granica));
   }
   return sloty;
 }

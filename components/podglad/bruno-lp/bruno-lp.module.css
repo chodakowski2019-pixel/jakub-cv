@@ -1369,3 +1369,765 @@
   max-width: 1380px;
   margin: 72px auto 24px;
 }
+/* 9.10 (USER_001): logo trochę większe. */
+.logo {
+  font-size: 16px;
+}
+
+/* 9.10: kreator 3 kroków (dane → dzień → godzina), jak w Gabi, w stylu LP. */
+.kroki3 {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 560px;
+  margin: 0 auto 18px;
+  padding: 0;
+}
+.krok3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.krok3Btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  background: none;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+}
+.krok3Btn:disabled {
+  cursor: default;
+}
+.krok3Nr {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--muted);
+}
+.krok3Teraz {
+  background: #000;
+  color: #fff;
+}
+.krok3Zrob {
+  background: var(--orange);
+  color: #fff;
+}
+.krok3Txt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.krok3Txt b {
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.krok3TytulTeraz {
+  color: var(--ink);
+  font-weight: 600;
+}
+.krok3Linia {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  min-width: 12px;
+}
+.kal {
+  max-width: 420px;
+  margin: 0 auto;
+}
+.kalMiesiac {
+  font-family: var(--head);
+  font-size: 20px;
+  text-transform: capitalize;
+  margin-bottom: 12px;
+}
+.kalSiatka {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.kalTyg {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 4px 0;
+}
+.kalDzien {
+  aspect-ratio: 1 / 1;
+  max-width: 100%;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: none;
+  font-size: 15px;
+  color: rgba(0, 0, 0, 0.28);
+  cursor: default;
+}
+.kalWolny {
+  color: var(--ink);
+  font-weight: 600;
+  border-color: var(--line);
+  background: #fff;
+  cursor: pointer;
+}
+.kalWolny:hover {
+  border-color: #000;
+}
+.kalWybrany {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+.kalPoza {
+  visibility: hidden;
+}
+.kalGodziny {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+/* 9.10 (USER_001): nazwy wszystkich kroków widoczne zawsze; na wąskim ekranie krótsze kreski. */
+@media (max-width: 560px) {
+  .krok3Linia {
+    width: 20px;
+  }
+}
+/* 9.10 (USER_001): kroki 1-2-3 wyśrodkowane nad formularzem. */
+.kroki3 {
+  justify-content: center;
+  width: 100%;
+  max-width: none;
+  margin: 24px auto 20px;
+}
+.krok3 {
+  flex: none;
+}
+.krok3Linia {
+  flex: none;
+  width: 56px;
+}
+/* 9.10 (USER_001): kroki blisko siebie (2 blisko 3). */
+.krok3Linia {
+  width: 20px;
+}
+/* 9.10 (USER_001): pasek na szerokość formularza; 1 po lewej, 2 i 3 blisko siebie po prawej. */
+.kroki3 {
+  max-width: 460px;
+  justify-content: flex-start;
+}
+.krok3:first-child {
+  flex: 1;
+}
+.krok3:first-child .krok3Linia {
+  flex: 1;
+  width: auto;
+}
+/* 9.10 (USER_001): pasek kroków trochę węższy. */
+.kroki3 {
+  max-width: 380px;
+}
+
+/* 9.10: telefon z flagą kraju (domyślnie USA). */
+.tel {
+  position: relative;
+  display: flex;
+  gap: 8px;
+}
+.telKraj {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 15px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.telKraj:hover {
+  border-color: #000;
+}
+.telFlaga {
+  width: 22px;
+  height: auto;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+  flex: none;
+}
+.telStrzalka {
+  font-size: 11px;
+  color: var(--muted);
+}
+.telNumer {
+  flex: 1;
+  min-width: 0;
+}
+.telLista {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  width: 280px;
+  max-width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.3);
+}
+.telOpcja {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+}
+.telOpcja:hover,
+.telOpcjaOn {
+  background: rgba(0, 0, 0, 0.05);
+}
+.telNazwa {
+  flex: 1;
+  min-width: 0;
+}
+.telPref {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+/* 9.10 (USER_001): telefon jako JEDNO pole (kraj w środku), okrągłe flagi. */
+.tel {
+  gap: 0;
+  height: 48px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 12px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.tel:focus-within {
+  border-color: #000;
+}
+.telKraj {
+  border: 0;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px 0 0 12px;
+  background: none;
+  padding: 0 10px 0 14px;
+}
+.telKraj:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+.telFlaga {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+.telNumer {
+  border: 0;
+  background: none;
+  outline: none;
+  height: 100%;
+  padding: 0 14px;
+  font-size: 16px;
+  font-family: var(--body);
+  color: var(--ink);
+  border-radius: 0 12px 12px 0;
+}
+/* 9.10 (USER_001): flagi prostokątne, jak wcześniej. */
+.telFlaga {
+  width: 24px;
+  height: auto;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+.telPlaceholder::placeholder,
+.telNumer::placeholder {
+  color: #a8a8a8;
+}
+/* 9.10 (USER_001): mniej pustego miejsca nad krokami (pusty nagłówek nie zajmuje miejsca) i większa strzałka przy fladze. */
+.formView {
+  padding-top: 96px;
+}
+.formHead:empty {
+  display: none;
+}
+.kroki3 {
+  margin-top: 0;
+}
+.telStrzalka {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* 9.10 (USER_001: „ładniejszy kalendarz, większe kółka, lepsze czcionki”). */
+.kal {
+  max-width: none;
+}
+.kalNaglowek {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.kalMiesiac {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  text-transform: capitalize;
+  margin: 0;
+  color: var(--ink);
+}
+.kalInfo {
+  font-size: 12.5px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+.kalSiatka {
+  gap: 6px 4px;
+}
+.kalTyg {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 0 8px;
+}
+.kalDzien {
+  position: relative;
+  width: 100%;
+  max-width: 52px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 0;
+  background: none;
+  font-family: var(--head);
+  font-size: 17px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.22);
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+.kalWolny {
+  background: #fff;
+  color: var(--ink);
+  font-weight: 500;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+}
+.kalWolny:hover {
+  box-shadow: inset 0 0 0 1.5px #000;
+  transform: translateY(-1px);
+}
+.kalWybrany {
+  background: #000;
+  color: #fff;
+  box-shadow: none;
+}
+.kalDzis span {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.kalKropka {
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+.kalWybrany .kalKropka {
+  background: #fff;
+}
+.kalGodziny {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.kalGodzina {
+  height: 58px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+  font-family: var(--head);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.15s;
+}
+.kalGodzina:hover {
+  border-color: #000;
+  transform: translateY(-1px);
+}
+.kalGodzinaOn,
+.kalGodzinaOn:hover {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+}
+.kalGodzina:disabled {
+  cursor: default;
+}
+/* 9.10 (USER_001): zrobione kroki szare z ✓, czarny tylko bieżący. Rozciąganie kresek sterowane klasą. */
+.krok3Zrob {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink);
+}
+.krok3:first-child {
+  flex: none;
+}
+.krok3:first-child .krok3Linia {
+  flex: none;
+  width: 20px;
+}
+.krok3Rozciagniety,
+.krok3:first-child.krok3Rozciagniety {
+  flex: 1;
+}
+.krok3Rozciagniety .krok3Linia,
+.krok3:first-child.krok3Rozciagniety .krok3Linia {
+  flex: 1;
+  width: auto;
+}
+
+/* 9.10 (USER_001: „weź jakiś szablon”): kalendarz w stylu Cal.com / Calendly.
+   Wolne dni = pełne jasne kółko + pogrubiona cyfra, zajęte = sama szara cyfra, wybrany = czarny. */
+.kal {
+  max-width: 360px;
+  margin: 0 auto;
+}
+.kalNaglowek {
+  display: block;
+  margin-bottom: 14px;
+}
+.kalMiesiac {
+  font-family: var(--body);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.kalInfo {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+}
+.kalSiatka {
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.kalTyg {
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 0 0 6px;
+}
+.kalDzien,
+.kalWolny,
+.kalWybrany {
+  max-width: 44px;
+  font-family: var(--body);
+  font-size: 14px;
+  box-shadow: none;
+  transform: none;
+}
+.kalDzien {
+  color: rgba(0, 0, 0, 0.28);
+  font-weight: 400;
+}
+.kalWolny {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink);
+  font-weight: 600;
+}
+.kalWolny:hover {
+  background: rgba(0, 0, 0, 0.12);
+  box-shadow: none;
+  transform: none;
+}
+.kalWybrany,
+.kalWybrany:hover {
+  background: #000;
+  color: #fff;
+}
+.kalDzis span {
+  text-decoration: none;
+}
+.kalKropka {
+  display: none;
+}
+.kalGodziny {
+  max-width: 360px;
+  margin: 0 auto;
+}
+.kalGodzina {
+  height: 52px;
+  border-radius: 12px;
+  font-family: var(--body);
+  font-size: 16px;
+  font-weight: 600;
+}
+.kal,
+.kalGodziny {
+  width: 100%;
+}
+.kalDzien {
+  width: 100%;
+  height: auto;
+}
+/* 9.10 (USER_001): nazwa miesiąca wyśrodkowana. */
+.kalNaglowek {
+  text-align: center;
+}
+/* 9.10 (USER_001): dzisiejszy dzień w kółku (obwódka). Liczony z daty na urządzeniu klienta, więc jutro sam przeskoczy na jutro. */
+.kalDzis,
+.kalDzis:hover {
+  box-shadow: inset 0 0 0 1.5px #000;
+  color: var(--ink);
+}
+.kalDzis.kalWybrany {
+  box-shadow: none;
+}
+.kalDzis,
+.kalDzis:hover {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55);
+}
+.kalDzis.kalWybrany {
+  box-shadow: none;
+}
+/* 9.10: strzałki miesięcy (pokazują się tylko, gdy następny miesiąc ma terminy). */
+.kalNaglowek {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.kalNav {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(0, 0, 0, 0.06);
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+}
+.kalNav:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+.kalNav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+/* 9.10 (USER_001): każdy dzień w lekko widocznym kółku. Dziś mocniej, wybrany czarny. */
+.kalDzien {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.07);
+}
+.kalDzis,
+.kalDzis:hover {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55);
+}
+.kalWybrany,
+.kalWybrany:hover,
+.kalDzis.kalWybrany {
+  box-shadow: none;
+}
+/* 9.10 (USER_001): bieżący krok z nazwą dokładnie na środku: kreski po obu stronach równe. */
+.krok3Rozciagniety,
+.krok3:first-child.krok3Rozciagniety {
+  flex: 1 1 auto;
+}
+/* 9.10 (USER_001): w kroku 3 data i „Times in your time zone” pod sobą, wyśrodkowane. */
+.kalNaglowekKolumna {
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+/* 9.10: ekran po umówieniu rozmowy: zdjęcie Jakuba i podkreślona data. */
+.okZdjecie {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+}
+.okZdjecie img {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.35);
+}
+.okData {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1.5px;
+}
+/* 9.10: krok 3: okrągły „wstecz” po lewej + szeroki czarny „Book”. */
+.kalAkcje {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+}
+.kalWstecz {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: #fff;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+}
+.kalWstecz:hover {
+  border-color: #000;
+}
+.kalBook {
+  flex: 1;
+  margin-top: 0;
+}
+.kalBook:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+/* 9.10 (USER_001): na kalendarzu i formularzu w nawigacji tylko „BRUNO AI”, na środku. */
+.navFormularz {
+  justify-content: center;
+}
+.navFormularz .pillLight,
+.navFormularz > button {
+  display: none;
+}
+.navFormularz .navL {
+  margin: 0 auto;
+}
+.kalWstecz {
+  display: grid;
+  place-items: center;
+}
+/* 9.10 (USER_001): zdjęcie podświetlone jak w Gabi, tylko na pomarańczowo. */
+.okZdjecie img {
+  box-shadow: 0 0 0 4px rgba(240, 138, 43, 0.35), 0 12px 34px rgba(240, 138, 43, 0.4);
+}
+/* 9.10 (USER_001): imię pod zdjęciem szarą, cienką czcionką. */
+.okImie {
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+/* 9.10 (USER_001): data bez podkreślenia, z emoji kalendarza. */
+.okData {
+  text-decoration: none;
+}
+/* 9.10 (USER_001): bez twardego pomarańczowego pierścienia, tylko miękka pomarańczowa poświata. */
+.okZdjecie img {
+  box-shadow: 0 10px 40px rgba(240, 138, 43, 0.45), 0 0 24px rgba(240, 138, 43, 0.25);
+}
+.okData {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+.okIkona {
+  flex: none;
+}
+.okImie {
+  margin-top: 8px;
+}
+/* 9.10 (USER_001): więcej miejsca między zdjęciem a „Your call is booked”. */
+.okZdjecie {
+  margin-bottom: 30px;
+}
+/* 9.10: przycisk LinkedIn pod potwierdzeniem rozmowy. */
+.linkedin {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 10px;
+  margin: 26px auto 0;
+  height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: #0a66c2;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.15s;
+}
+.linkedin:hover {
+  background: #004182;
+  transform: translateY(-1px);
+}
+/* 9.10 (USER_001): „BRUNO AI” dokładnie nad środkiem formularza (bez wpływu paddingu paska i odstępu liter). */
+.navFormularz .navL {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+}
+.navFormularz .logo {
+  margin-right: -0.17em;
+}
+/* 9.10 (USER_001): na kalendarzu pasek z „BRUNO AI” nie jedzie za przewijaniem (na LP zostaje przyklejony). */
+.navFormularz {
+  position: absolute;
+}
