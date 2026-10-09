@@ -13,7 +13,7 @@ const PHOTO = "/profilowe_jakub.png";
 const EMAIL = "hello@jakubchodakowski.com";
 const LINKEDIN = "https://www.linkedin.com/in/jakub-chodakowski";
 // 9.10 (USER_001): przyciski prowadzą na podstrony. Adresy podglądu, do podmiany przy przenosinach na prawdziwe adresy.
-const BRUNO_LP = "/podglad/bruno-lp";
+const BRUNO_LP = "/brunobusiness";
 const PRACA = "/praca";
 const HANDLOWCY = "/handlowcy";
 

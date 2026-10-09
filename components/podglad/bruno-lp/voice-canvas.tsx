@@ -33,8 +33,9 @@ export default function VoiceCanvas({ className }: { className?: string }) {
     const draw = (t: number) => {
       ctx.clearRect(0, 0, w, h);
       const mobile = w < 760;
-      const szer = mobile ? w * 0.86 : Math.min(w * 0.34, 520);
-      const x0 = (w - szer) / 2;
+      // 9.10 (USER_001): na komputerze fala węższa i przesunięta w prawo, żeby był odstęp od nagłówka i od prawej kolumny.
+      const szer = mobile ? w * 0.86 : Math.min(w * 0.33, 500);
+      const x0 = (w - szer) / 2 + (mobile ? 0 : w * 0.03);
       const n = mobile ? 46 : 64;
       const krok = szer / n;
       const bar = Math.max(2, krok * 0.34);
