@@ -10,9 +10,9 @@ import { useJezyk } from "./jezyk";
 // 9.10 (USER_001): EN domyślnie, PL z ?pl.
 const T = {
   en: {
-    nieUdalo: "Could not log in.",
+    nieUdalo: "Wrong email or code.",
     tytul: "Training panel",
-    podtytul: "Sales call practice with Bruno AI.",
+    podtytul: "Sell more.",
     panel: "Steps to log in to Bruno AI",
     kroki: ["Enter your email", "Enter your 6-digit code", "Open your panel"],
     h2: "Log in",
@@ -29,7 +29,7 @@ const T = {
   pl: {
     nieUdalo: "Nie udało się zalogować.",
     tytul: "Panel treningowy",
-    podtytul: "Trening rozmów sprzedażowych z Bruno AI.",
+    podtytul: "Sprzedawaj więcej.",
     panel: "Kroki logowania do Bruno AI",
     kroki: ["Podaj email", "Wpisz swój 6-cyfrowy kod", "Wejdź do panelu"],
     h2: "Zaloguj się",
@@ -52,7 +52,8 @@ const wygladaJakEmail = (v: string) => /^\S+@\S+\.\S+$/.test(v.trim());
 
 export default function LogowanieForm() {
   const router = useRouter();
-  const x = T[useJezyk()];
+  const jezyk = useJezyk();
+  const x = T[jezyk];
   const [email, setEmail] = useState("");
   const [kod, setKod] = useState("");
   const [stan, setStan] = useState<"idle" | "wysylanie" | "ok">("idle");
@@ -68,7 +69,8 @@ export default function LogowanieForm() {
     const res = await fetch("/api/bruno/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, kod }),
+      // E18: źródło wejścia z linku w mailu (`/bruno?src=mail-dostep`) idzie do logu logowań.
+      body: JSON.stringify({ email, kod, src: new URLSearchParams(window.location.search).get("src") }),
     });
     if (res.ok) {
       setStan("ok");
@@ -76,7 +78,9 @@ export default function LogowanieForm() {
       router.refresh();
     } else {
       setStan("idle");
-      setBlad((await res.json().catch(() => null))?.blad ?? x.nieUdalo);
+      const komunikat: string = (await res.json().catch(() => null))?.blad ?? x.nieUdalo;
+      // Serwer odpowiada po polsku, więc w wersji EN pokazujemy własny komunikat.
+      setBlad(jezyk === "pl" ? komunikat : x.nieUdalo);
     }
   };
 

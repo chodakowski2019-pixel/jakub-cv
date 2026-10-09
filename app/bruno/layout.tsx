@@ -26,6 +26,8 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   const email = await zalogowanyEmail();
   // 9.10: zakładka „Ogień" tylko w pełnym dostępie (USER_001: tester w trialu ma jej nie widzieć).
   const pelny = email ? pelnyDostep(await pobierzKonto(email)) : false;
+  // 9.10 (USER_001): niezalogowany widzi logowanie Aurora na cały ekran, bez paska, tła i stopki panelu.
+  if (!email) return <div className={`${poppins.variable} ${openSans.variable}`}>{children}</div>;
   return (
     <div className={`bruno ${poppins.variable} ${openSans.variable} font-[var(--font-open-sans)]`}>
       <div className="bruno-plamy" aria-hidden>
