@@ -2760,3 +2760,14 @@
   letter-spacing: 0.16em;
   color: var(--ink);
 }
+
+/* 10.10 (USER_001): podgląd ze złotym akcentem zamiast pomarańczowego (/podglad/bruno-lp/zloto). */
+.zloto {
+  --orange: #c39b45;
+}
+.zloto .trening li:last-child::before {
+  background: #c39b45;
+}
+.zloto .okZdjecie img {
+  box-shadow: 0 10px 40px rgba(195, 155, 69, 0.45), 0 0 24px rgba(195, 155, 69, 0.25);
+}

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 // Spokojna fala głosu w miejscu helisy: cienkie słupki, wolny ruch, mało kontrastu.
-export default function VoiceCanvas({ className }: { className?: string }) {
+export default function VoiceCanvas({ className, akcentRgb = "232, 140, 70", bazaRgb = "20, 20, 20", bazaMnoznik = 1 }: { className?: string; akcentRgb?: string; bazaRgb?: string; bazaMnoznik?: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function VoiceCanvas({ className }: { className?: string }) {
         const bh = Math.max(bar, amp * maks);
         const x = x0 + i * krok + (krok - bar) / 2;
 
-        ctx.fillStyle = akcent(i) ? `rgba(232, 140, 70, ${0.35 + 0.35 * obw})` : `rgba(20, 20, 20, ${0.07 + 0.13 * obw})`;
+        ctx.fillStyle = akcent(i) ? `rgba(${akcentRgb}, ${0.35 + 0.35 * obw})` : `rgba(${bazaRgb}, ${(0.07 + 0.13 * obw) * bazaMnoznik})`;
         ctx.beginPath();
         ctx.roundRect(x, srodek - bh, bar, bh * 2, bar / 2);
         ctx.fill();
@@ -79,7 +79,7 @@ export default function VoiceCanvas({ className }: { className?: string }) {
       window.removeEventListener("resize", resize);
       io.disconnect();
     };
-  }, []);
+  }, [akcentRgb, bazaRgb, bazaMnoznik]);
 
   return <canvas ref={ref} className={className} aria-hidden="true" />;
 }

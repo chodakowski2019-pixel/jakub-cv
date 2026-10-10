@@ -1,0 +1,684 @@
+/* Wersja A panelu Bruno: układ z fitness-dashboard.html, kafelki/przyciski/pasek w stylu wersji B (szkło).
+   Wszystko pod .bpa, nic nie wycieka. */
+.bpa{
+  --ink:#ffffff;--muted:rgba(255,255,255,.72);--glass:rgba(255,255,255,.1);--glass-hi:rgba(255,255,255,.2);--stroke:rgba(255,255,255,.22);
+  --green:#3ddc97;--green-2:#1fae73;--mint:#a7f3d0;--teal:#5eead4;--deep:#04140f;--r:24px;
+  flex:1;width:100%;min-height:100vh;color:var(--ink);position:relative;isolation:isolate;
+  background:
+    radial-gradient(55% 45% at 78% 18%,rgba(61,220,151,.34),transparent 62%),
+    radial-gradient(45% 45% at 12% 88%,rgba(94,234,212,.2),transparent 60%),
+    radial-gradient(40% 35% at 45% 55%,rgba(167,243,208,.1),transparent 70%),
+    linear-gradient(160deg,#0d3326 0%,#072019 45%,#03110c 100%);
+  background-attachment:fixed;
+  font-family:var(--font-bpa),"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+/* wolno płynące plamy światła, żeby szkło miało co rozmywać */
+.bpa::before,.bpa::after{content:"";position:fixed;z-index:-1;border-radius:50%;filter:blur(70px);pointer-events:none}
+.bpa::before{width:520px;height:520px;right:6%;top:-8%;background:rgba(61,220,151,.28);animation:bpa-plama 18s ease-in-out infinite alternate}
+.bpa::after{width:440px;height:440px;left:10%;bottom:-12%;background:rgba(94,234,212,.18);animation:bpa-plama 22s ease-in-out infinite alternate-reverse}
+@keyframes bpa-plama{to{transform:translate(-60px,50px) scale(1.12)}}
+
+.bpa *{box-sizing:border-box;margin:0;padding:0}
+.bpa button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.bpa a{text-decoration:none;color:inherit}
+.bpa .app{display:flex;min-height:100vh}
+.bpa .glass{background:linear-gradient(160deg,var(--glass-hi),var(--glass) 60%);border:1px solid var(--stroke);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%)}
+.bpa .glass.hi{background:linear-gradient(165deg,rgba(255,255,255,.3),rgba(255,255,255,.14) 45%,rgba(255,255,255,.08))}
+
+/* pasek boczny (jak w B) */
+.bpa .side{width:62px;flex:0 0 62px;margin:10px 0 10px 10px;border-radius:32px;display:flex;flex-direction:column;align-items:center;padding:12px 0 14px;gap:12px;position:sticky;top:10px;height:calc(100vh - 20px);
+  background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.06) 50%,rgba(255,255,255,.14));border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.bpa .logo{width:46px;height:46px;border-radius:50%;background:rgba(4,20,15,.75);display:grid;place-items:center;margin-bottom:30px}
+.bpa .logo i{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--mint),var(--green) 55%,#0d8a5c);box-shadow:0 0 16px var(--green);animation:bpa-pulse 3s ease-in-out infinite}
+@keyframes bpa-pulse{50%{box-shadow:0 0 26px var(--green),0 0 6px var(--mint)}}
+.bpa .nav{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:rgba(255,255,255,.85);position:relative;transition:background .25s,transform .25s}
+.bpa .nav:hover{background:rgba(255,255,255,.14);transform:scale(1.06)}
+.bpa .nav.on{color:#fff}
+.bpa .nav.on::before{content:"";position:absolute;left:-11px;top:9px;bottom:9px;width:3px;border-radius:3px;background:#fff;box-shadow:0 0 10px #fff}
+.bpa .sep{width:30px;height:1px;background:rgba(255,255,255,.18);margin:4px 0}
+.bpa .side .grow{flex:1}
+.bpa .me{width:42px;height:42px;border-radius:50%;border:2px solid rgba(255,255,255,.7);display:grid;place-items:center;font-weight:600;background:rgba(4,20,15,.55)}
+
+/* główna */
+.bpa main{flex:1;min-width:0;padding:22px 26px 26px}
+.bpa .top{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.bpa .hello h1{font-size:30px;font-weight:600;letter-spacing:-.02em;text-shadow:0 4px 30px rgba(0,0,0,.3)}
+.bpa .hello p{font-size:13px;color:var(--muted);margin-top:4px;max-width:520px}
+.bpa .top .sp{flex:1}
+.bpa .rings{display:flex;gap:10px}
+.bpa .chip{display:flex;align-items:center;gap:12px;border-radius:20px;padding:10px 16px 10px 12px;transition:transform .25s,background .25s}
+.bpa .chip:hover{transform:translateY(-2px);background:rgba(255,255,255,.26)}
+.bpa .chip b{font-size:26px;font-weight:400;letter-spacing:-.03em;min-width:34px;text-align:center}
+.bpa .chip > span{font-size:13px;font-weight:600;line-height:1.25;white-space:nowrap}
+.bpa .chip small{display:block;font-size:11.5px;font-weight:400;color:var(--muted)}
+.bpa .btn{height:44px;padding:0 20px;border-radius:99px;display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:600;white-space:nowrap;transition:transform .25s,box-shadow .25s,background .25s}
+.bpa .btn.pri{background:var(--green);color:var(--deep);border:0;box-shadow:0 10px 30px -10px rgba(61,220,151,.9)}
+.bpa .btn.pri:hover{transform:translateY(-2px);box-shadow:0 16px 36px -10px rgba(61,220,151,1)}
+.bpa .btn.sec:hover{background:rgba(255,255,255,.28);transform:translateY(-2px)}
+.bpa .btn.sec svg{color:var(--mint)}
+.bpa .upgrade .krotki{display:none}
+.bpa .wyl{display:none;width:44px;height:44px;border-radius:50%;place-items:center;flex:0 0 auto;transition:background .25s}
+.bpa .wyl:hover{background:rgba(255,255,255,.28)}
+.bpa .mnav{display:none}
+.bpa .probka{display:inline-block;margin:0 0 14px;padding:5px 12px;border-radius:99px;background:#fde68a;color:#713f12;font-size:11px;font-weight:700;letter-spacing:.08em}
+.bpa .uwaga{margin-bottom:16px;padding:12px 16px;border-radius:16px;font-size:13.5px}
+.bpa .uwaga a{font-weight:600;text-decoration:underline}
+
+.bpa .grid-top{display:grid;grid-template-columns:1.34fr 1fr;gap:16px;margin-bottom:16px}
+.bpa .grid-bot{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.bpa .card{border-radius:var(--r);position:relative;overflow:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),background .35s,box-shadow .35s}
+.bpa .card:hover{transform:translateY(-3px);box-shadow:0 20px 40px -20px rgba(0,0,0,.6)}
+
+/* karta z kulą */
+.bpa .hero{height:386px}
+.bpa .hero canvas{position:absolute;inset:0;width:100%;height:100%}
+.bpa .hero h2{position:absolute;left:32px;top:28px;font-size:40px;line-height:1.18;font-weight:500;letter-spacing:-.025em;max-width:430px;z-index:2;text-shadow:0 4px 30px rgba(0,0,0,.35)}
+.bpa .listen{position:absolute;left:74%;top:47%;transform:translate(-50%,-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:10px}
+.bpa .listen .mic{width:54px;height:54px;border-radius:50%;border:1px solid rgba(255,255,255,.6);color:#fff;background:rgba(4,20,15,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:grid;place-items:center;transition:transform .25s,background .25s,color .25s}
+.bpa .listen .mic:hover{transform:scale(1.08)}
+.bpa .listen.live .mic{background:var(--green);color:var(--deep);border-color:var(--green);box-shadow:0 0 30px rgba(61,220,151,.8)}
+.bpa .listen .mic.off{opacity:.6}
+.bpa .listen .lab{font-size:13.5px;font-weight:600;color:#fff;background:rgba(4,20,15,.4);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);padding:5px 12px;border-radius:99px;white-space:nowrap}
+.bpa .join{position:absolute;left:30px;bottom:28px;z-index:2;max-width:46%}
+.bpa .join small{display:block;font-size:12.5px;color:var(--muted);margin-bottom:10px}
+.bpa .join .row{display:flex;align-items:center;gap:12px}
+.bpa .faces{display:flex}
+.bpa .faces b{width:34px;height:34px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.75);margin-left:-8px;transition:transform .25s}
+.bpa .faces b:first-child{margin-left:0}
+.bpa .faces b:hover{transform:translateY(-4px)}
+.bpa .join strong{font-size:17px;font-weight:600;line-height:1.1;display:block}
+.bpa .join em{font-style:normal;font-size:13px;color:var(--muted);display:block;margin-top:2px}
+.bpa .cta{position:absolute;right:18px;bottom:22px;z-index:3;height:48px;padding:0 22px}
+.bpa .cta i{display:grid;place-items:center;transition:transform .3s}
+.bpa .cta:hover i{transform:translateX(3px)}
+.bpa span.cta.stat{display:inline-flex;align-items:center;border-radius:99px;font-size:13.5px;font-weight:500;cursor:default}
+
+/* karta planu dnia */
+.bpa .mins{height:386px;padding:26px 24px 24px}
+.bpa .mins h3{font-size:15.5px;font-weight:500}
+.bpa .mins p{font-size:12.5px;line-height:1.5;color:var(--muted);margin-top:10px;max-width:190px}
+.bpa .badge{margin-top:24px;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:99px;font-size:13.5px;font-weight:600;white-space:nowrap;transition:transform .25s}
+.bpa .badge i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.bpa .badge:hover{transform:scale(1.04)}
+.bpa .blocks{position:absolute;right:24px;top:26px;display:grid;grid-template-columns:repeat(5,28px);gap:8px}
+.bpa .blk{height:26px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);position:relative;overflow:hidden;transition:transform .2s}
+.bpa .blk::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 40% 35%,#eafff5,var(--mint) 40%,var(--green));transform:translateY(102%);transition:transform .55s cubic-bezier(.2,.8,.2,1);transition-delay:inherit}
+.bpa .blk.f{box-shadow:0 0 12px rgba(61,220,151,.45)}
+.bpa .blk.f::after{transform:none}
+.bpa .blk:hover{transform:translateY(-3px)}
+.bpa .toggle{position:absolute;left:20px;bottom:22px;display:flex;gap:8px}
+.bpa .toggle button{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid var(--stroke);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:15px;font-weight:600;text-align:center;transition:background .25s,color .25s,transform .2s}
+.bpa .toggle button:hover{transform:scale(1.06);background:rgba(255,255,255,.22)}
+.bpa .toggle button.on{background:#fff;color:var(--deep);border-color:#fff}
+.bpa .big{position:absolute;right:24px;bottom:20px;text-align:right}
+.bpa .big .n{font-size:64px;font-weight:300;letter-spacing:-.04em;line-height:1;white-space:nowrap;text-shadow:0 0 30px rgba(167,243,208,.35)}
+.bpa .big .u{font-size:20px;font-weight:300;color:var(--muted);margin-top:6px}
+
+/* dolne karty */
+.bpa .bc{padding:22px 22px 20px;height:348px;display:flex;flex-direction:column}
+.bpa .chips{display:flex}
+.bpa .chips b{width:30px;height:30px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.7);margin-left:-7px;display:grid;place-items:center;font-size:10.5px;font-weight:600;color:#fff}
+.bpa .chips b:first-child{margin-left:0}
+.bpa .persona h3{font-size:20px;font-weight:500;line-height:1.35;margin-top:4px;letter-spacing:-.01em}
+.bpa .persona h3 span{display:block;filter:brightness(1.7) saturate(.85)}
+.bpa .tip{margin-top:18px;border-radius:16px;padding:12px 12px 14px;transition:background .3s}
+.bpa .tip:hover{background:rgba(255,255,255,.2)}
+.bpa .tip .lab{display:inline-flex;align-items:center;gap:6px;background:rgba(4,20,15,.45);color:var(--mint);border-radius:99px;padding:4px 10px;font-size:11.5px;font-weight:600}
+.bpa .tip .kropka{width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.6)}
+.bpa .tip p{font-size:12.5px;line-height:1.6;color:rgba(255,255,255,.88);margin-top:10px;min-height:60px}
+.bpa .pager{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:14px}
+.bpa .pager .c{font-size:22px;font-weight:400}
+.bpa .pager .c small{font-size:12px;color:var(--muted)}
+.bpa .pager .arr{display:flex;gap:8px}
+.bpa .pager .arr button{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid var(--stroke);display:grid;place-items:center;transition:background .25s,color .25s,transform .25s}
+.bpa .pager .arr button:hover{background:#fff;color:var(--deep);transform:translateY(-2px)}
+.bpa .fade{transition:opacity .25s,transform .25s}
+.bpa .fade.out{opacity:0;transform:translateY(6px)}
+
+.bpa .hd{display:flex;align-items:center;gap:12px}
+.bpa .ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:0 0 auto;color:var(--mint)}
+.bpa .hd h3{font-size:19px;font-weight:500;letter-spacing:-.01em;white-space:nowrap}
+.bpa .hd .r{margin-left:auto;font-size:21px;font-weight:400}
+.bpa .hd .r small{font-size:12px;color:var(--muted);font-weight:400;margin-left:4px}
+.bpa .sub{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--muted);margin-top:12px}
+.bpa .seg{display:inline-flex;border-radius:99px;padding:3px}
+.bpa .seg button{font-size:11.5px;font-weight:500;padding:4px 10px;border-radius:99px;color:var(--muted);transition:background .25s,color .25s}
+.bpa .seg button.on{background:#fff;color:var(--deep)}
+.bpa .score{font-size:64px;font-weight:500;letter-spacing:-.05em;margin-top:14px;line-height:1}
+.bpa .score small{font-size:18px;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:6px}
+.bpa .crit{margin-top:auto;display:grid;gap:9px}
+.bpa .crit .row{display:grid;grid-template-columns:104px 1fr 26px;align-items:center;gap:10px;font-size:11.5px;color:rgba(255,255,255,.8)}
+.bpa .ticks{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;height:14px}
+.bpa .ticks i{border-radius:4px;background:rgba(255,255,255,.12);transition:background .4s,transform .2s,box-shadow .4s}
+.bpa .ticks i.f{background:linear-gradient(180deg,var(--mint),var(--green));box-shadow:0 0 8px rgba(61,220,151,.5)}
+.bpa .crit .row:hover .ticks i.f{background:#fff}
+.bpa .crit .row b{font-weight:600;text-align:right}
+
+.bpa .wave{display:block;width:100%;height:120px;margin-top:14px;overflow:visible;touch-action:pan-y}
+.bpa .goal{position:absolute;right:0;transform:translateY(4px);font-size:11px;color:var(--mint);font-weight:600;pointer-events:none}
+.bpa .dni{display:flex;justify-content:space-between;padding:6px 2px 0;font-size:11.5px;color:rgba(255,255,255,.7)}
+.bpa .dni span{width:24px;text-align:center}
+.bpa .dni .on{color:#fff;font-weight:700}
+.bpa .prog .foot{margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between}
+.bpa .prog .pct{font-size:72px;font-weight:500;letter-spacing:-.05em;line-height:.85}
+.bpa .prog .note{text-align:right;font-size:12.5px;color:var(--muted);line-height:1.55}
+.bpa .prog .note b{display:block;color:#fff;font-weight:600;margin-top:8px}
+.bpa .tt{position:absolute;pointer-events:none;background:rgba(4,20,15,.8);border:1px solid var(--stroke);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:11.5px;padding:6px 10px;border-radius:10px;opacity:0;transform:translate(-50%,-130%);transition:opacity .2s;white-space:nowrap;z-index:2}
+.bpa .tt.on{opacity:1}
+
+.bpa .wygasl{padding:48px 32px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.bpa .wygasl h2{font-size:30px;font-weight:600;letter-spacing:-.02em}
+.bpa .wygasl p{color:var(--muted);font-size:14px}
+.bpa .wygasl .cta{position:static;margin-top:8px}
+
+@keyframes bpa-rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.bpa .card,.bpa .top{animation:bpa-rise .8s cubic-bezier(.2,.8,.2,1) both}
+.bpa .grid-top .card:nth-child(2){animation-delay:.08s}
+.bpa .grid-bot .card:nth-child(1){animation-delay:.16s}
+.bpa .grid-bot .card:nth-child(2){animation-delay:.24s}
+.bpa .grid-bot .card:nth-child(3){animation-delay:.32s}
+
+@media (max-width:1280px){
+  .bpa .chip small{display:none}
+}
+@media (max-width:1100px){
+  .bpa .grid-bot{grid-template-columns:1fr 1fr}
+  .bpa .grid-bot .prog{grid-column:span 2}
+  .bpa .rings{display:none}
+}
+@media (max-width:860px){
+  .bpa .side{display:none}
+  .bpa .grid-top{grid-template-columns:1fr}
+  .bpa .wyl{display:grid}
+  .bpa .mnav{display:flex;gap:6px;overflow-x:auto;margin:-6px -16px 18px;padding:0 16px 4px;scrollbar-width:none}
+  .bpa .mnav::-webkit-scrollbar{display:none}
+  .bpa .mnav a{flex:0 0 auto;height:36px;padding:0 14px;border-radius:99px;display:flex;align-items:center;font-size:13px;font-weight:500}
+  .bpa .mnav a.on{background:var(--green);border-color:var(--green);color:var(--deep)}
+  .bpa .rings{display:flex;order:5;width:100%}
+  .bpa .top{flex-wrap:wrap}
+  .bpa .chip{flex:1;min-width:0}
+  .bpa .chip small{display:block}
+  .bpa .chip > span{white-space:normal}
+}
+@media (max-width:620px){
+  .bpa main{padding:18px 16px}
+  .bpa .grid-bot{grid-template-columns:1fr}
+  .bpa .grid-bot .prog{grid-column:auto}
+  .bpa .hello{flex:1 1 100%;order:-1}
+  .bpa .hello h1{font-size:24px}
+  .bpa .top .sp{display:none}
+  .bpa .upgrade{flex:1;justify-content:center}
+  .bpa .upgrade .dlugi{display:none}
+  .bpa .upgrade .krotki{display:inline}
+  .bpa .chip b{font-size:22px;min-width:28px}
+  .bpa .hero{height:480px}
+  .bpa .hero h2{font-size:30px;left:22px;top:24px;max-width:300px}
+  .bpa .listen{left:50%;top:45%}
+  .bpa .join{left:22px;bottom:90px;max-width:none;right:22px}
+  .bpa .cta{left:14px;right:14px;justify-content:space-between}
+  .bpa span.cta.stat{justify-content:center;padding:0 16px;font-size:13px}
+  .bpa .mins{height:auto;padding-bottom:96px}
+  .bpa .blocks{position:static;margin-top:20px;grid-template-columns:repeat(5,1fr)}
+  .bpa .mins p{max-width:none;padding-right:130px}
+  .bpa .badge{position:absolute;right:20px;top:22px;margin:0}
+  .bpa .big .n{font-size:44px}
+  .bpa .bc{height:auto;min-height:330px}
+  .bpa .prog .pct{font-size:58px}
+  .bpa .hd{flex-wrap:wrap;row-gap:10px}
+  .bpa .hd h3{font-size:18px}
+}
+@media (prefers-reduced-motion:reduce){.bpa *,.bpa::before,.bpa::after{animation:none!important;transition:none!important}}
+
+/* ---------- Wariant: białe tło (podgląd /podglad/bruno-panel-a-biale) ---------- */
+.bpa.jasne{
+  --ink:#0d1714;--muted:#5f6d67;--glass:rgba(255,255,255,.72);--glass-hi:rgba(255,255,255,.95);--stroke:rgba(13,23,20,.08);
+  color:var(--ink);background:#ffffff;
+}
+.bpa.jasne::before{background:rgba(61,220,151,.12)}
+.bpa.jasne::after{background:rgba(94,234,212,.08)}
+.bpa.jasne .glass{box-shadow:0 1px 0 rgba(13,23,20,.03),0 18px 40px -30px rgba(13,23,20,.28)}
+.bpa.jasne .card:hover{box-shadow:0 26px 50px -30px rgba(13,23,20,.35)}
+.bpa.jasne .hello h1{text-shadow:none}
+
+/* pasek boczny */
+.bpa.jasne .side{background:#fff;border-color:rgba(13,23,20,.08);box-shadow:0 18px 40px -30px rgba(13,23,20,.3)}
+.bpa.jasne .logo{background:var(--deep)}
+.bpa.jasne .nav{color:#56645e}
+.bpa.jasne .nav:hover{background:#f1f6f3;color:var(--ink)}
+.bpa.jasne .nav.on{color:var(--ink)}
+.bpa.jasne .nav.on::before{background:var(--green);box-shadow:0 0 10px var(--green)}
+.bpa.jasne .sep{background:rgba(13,23,20,.1)}
+.bpa.jasne .me{border-color:var(--green);background:#e9fbf2;color:var(--deep)}
+
+/* przyciski i kafelki */
+.bpa.jasne .chip:hover,.bpa.jasne .btn.sec:hover,.bpa.jasne .wyl:hover{background:#f1f6f3}
+.bpa.jasne .btn.sec svg{color:var(--green-2)}
+.bpa.jasne .badge i{box-shadow:none}
+.bpa.jasne .toggle button{background:#f1f6f3;border-color:rgba(13,23,20,.06)}
+.bpa.jasne .toggle button:hover{background:#e3efe9}
+.bpa.jasne .toggle button.on{background:var(--deep);color:#fff;border-color:var(--deep)}
+.bpa.jasne .seg button.on{background:var(--deep);color:#fff}
+.bpa.jasne .pager .arr button{background:#f1f6f3;border-color:rgba(13,23,20,.06)}
+.bpa.jasne .pager .arr button:hover{background:var(--deep);color:#fff}
+.bpa.jasne .ico{color:var(--green-2)}
+.bpa.jasne .tip:hover{background:#f6faf8}
+.bpa.jasne .tip .lab{background:#e9fbf2;color:#11734c}
+.bpa.jasne .tip p{color:#2b3632}
+.bpa.jasne .persona h3 span{filter:none}
+.bpa.jasne .mnav a.on{color:var(--deep)}
+
+/* karta z kulą: miętowa, żeby kula i fala były widoczne */
+.bpa.jasne .hero{background:radial-gradient(120% 90% at 78% 55%,rgba(167,243,208,.6),transparent 60%),linear-gradient(135deg,#eafff5 0%,#d4f7e6 55%,#bdf0d8 100%);border-color:rgba(61,220,151,.25)}
+.bpa.jasne .hero h2{text-shadow:none;color:var(--deep)}
+.bpa.jasne .listen .mic{background:rgba(255,255,255,.7);color:var(--deep);border-color:rgba(13,23,20,.12)}
+.bpa.jasne .listen .lab{background:rgba(255,255,255,.75);color:var(--deep);border-color:rgba(13,23,20,.08)}
+.bpa.jasne .join small,.bpa.jasne .join em{color:#3f5a4f}
+.bpa.jasne .faces b{box-shadow:0 0 0 2px #fff}
+
+/* plan dnia */
+.bpa.jasne .blk{background:#eef4f1;border-color:rgba(13,23,20,.06)}
+.bpa.jasne .blk.f{box-shadow:0 0 10px rgba(61,220,151,.35)}
+.bpa.jasne .big .n{text-shadow:none}
+
+/* oceny i wykres */
+.bpa.jasne .crit .row{color:#4b5853}
+.bpa.jasne .ticks i{background:#eaf1ed}
+.bpa.jasne .ticks i.f{background:linear-gradient(180deg,#5fe3a8,#22b97c);box-shadow:none}
+.bpa.jasne .crit .row:hover .ticks i.f{background:var(--deep)}
+.bpa.jasne .goal{color:var(--green-2)}
+.bpa.jasne .dni{color:var(--muted)}
+.bpa.jasne .dni .on{color:var(--ink)}
+.bpa.jasne .prog .note b{color:var(--ink)}
+.bpa.jasne .tt{background:var(--deep);color:#fff}
+/* linia wykresu jest biała (styl B), na białym tle przyciemniamy ją na zieleń */
+.bpa.jasne .wave path.ln{stroke:var(--green-2)}
+.bpa.jasne .wave path[stroke="#fff"]{stroke:#9fb3aa}
+.bpa.jasne .wave circle[fill="#fff"]{stroke:var(--green-2)}
+
+/* Białe tło: wszystkie kafelki w tej samej mięcie co karta „Dziś: N rozmowy.” */
+.bpa.jasne .card.glass,
+.bpa.jasne .chip.glass{
+  background:radial-gradient(120% 90% at 85% 15%,rgba(167,243,208,.22),transparent 60%),linear-gradient(135deg,#fafffc 0%,#eefcf5 55%,#e4f9ee 100%);
+  border-color:rgba(61,220,151,.18);
+}
+.bpa.jasne .card.glass.hero{
+  background:radial-gradient(120% 90% at 78% 55%,rgba(167,243,208,.32),transparent 60%),linear-gradient(135deg,#f6fffa 0%,#e8fbf1 55%,#dbf7e9 100%);
+}
+/* elementy w środku kafelków jaśniejsze od mięty, żeby się odcinały */
+.bpa.jasne .tip,
+.bpa.jasne .badge,
+.bpa.jasne .seg,
+.bpa.jasne .ico,
+.bpa.jasne .toggle button,
+.bpa.jasne .pager .arr button{background:rgba(255,255,255,.75)}
+.bpa.jasne .blk{background:rgba(255,255,255,.7)}
+.bpa.jasne .ticks i{background:rgba(255,255,255,.75)}
+.bpa.jasne .ticks i.f{background:linear-gradient(180deg,#5fe3a8,#22b97c)}
+.bpa.jasne .toggle button.on,
+.bpa.jasne .pager .arr button:hover{background:var(--deep)}
+
+/* ---------- Wariant: ciemne kafelki jak w wersji A, tło strony białe (/podglad/bruno-panel-a-biale-tlo) ---------- */
+.bpa.bialetlo{background:#ffffff}
+.bpa.bialetlo::before{background:rgba(61,220,151,.14)}
+.bpa.bialetlo::after{background:rgba(94,234,212,.1)}
+/* szkło na białym byłoby białe, więc kafelki dostają własne ciemnozielone tło, jak szkło nad ciemną zielenią */
+.bpa.bialetlo .glass,
+.bpa.bialetlo .side{
+  background:radial-gradient(110% 80% at 85% 0%,rgba(61,220,151,.22),transparent 60%),linear-gradient(160deg,#245544 0%,#143a2e 55%,#0c271e 100%);
+  border-color:rgba(255,255,255,.14);
+  box-shadow:0 22px 44px -28px rgba(4,20,15,.55);
+}
+.bpa.bialetlo .glass.hi{
+  background:radial-gradient(110% 80% at 80% 40%,rgba(61,220,151,.3),transparent 62%),linear-gradient(165deg,#2c6250 0%,#183f32 50%,#0d2a20 100%);
+}
+.bpa.bialetlo .hello h1{color:#0d1714;text-shadow:none}
+.bpa.bialetlo .chip:hover,
+.bpa.bialetlo .btn.sec:hover,
+.bpa.bialetlo .wyl:hover{background:linear-gradient(160deg,#2c6250,#183f32)}
+.bpa.bialetlo .mnav a:not(.on){color:#fff}
+/* Białe tło: kafelki „dni dostępu” i „rozmów dziś” białe, jak „Odblokuj” */
+.bpa.jasne .chip.glass{background:#ffffff;border-color:rgba(13,23,20,.08)}
+.bpa.jasne .chip.glass:hover{background:#f6faf8}
+
+/* Nagłówki: Poppins (6.10) */
+.bpa h1,.bpa h2,.bpa h3{font-family:var(--font-bpa-head),"Poppins",var(--font-bpa),system-ui,sans-serif}
+/* Białe tło: kafelek „Dziś” zostaje miętowy, pozostałe jeszcze jaśniejsze */
+.bpa.jasne .card.glass:not(.hero){
+  background:radial-gradient(120% 90% at 85% 15%,rgba(167,243,208,.1),transparent 60%),linear-gradient(135deg,#ffffff 0%,#f7fdfa 55%,#f1fbf6 100%);
+  border-color:rgba(61,220,151,.14);
+}
+.bpa.jasne .card.glass:not(.hero) .tip,
+.bpa.jasne .card.glass:not(.hero) .badge,
+.bpa.jasne .card.glass:not(.hero) .seg,
+.bpa.jasne .card.glass:not(.hero) .ico,
+.bpa.jasne .card.glass:not(.hero) .toggle button:not(.on),
+.bpa.jasne .card.glass:not(.hero) .pager .arr button{background:#f1f7f4}
+.bpa.jasne .card.glass:not(.hero) .blk{background:#edf4f0}
+.bpa.jasne .card.glass:not(.hero) .ticks i{background:#eaf1ed}
+.bpa.jasne .card.glass:not(.hero) .ticks i.f{background:linear-gradient(180deg,#5fe3a8,#22b97c)}
+.bpa.jasne .card.glass:not(.hero) .pager .arr button:hover{background:var(--deep)}
+/* Bez przycisku „Rozmawiaj z Bruno”: na telefonie karta niższa, typ klienta na dole */
+@media (max-width:620px){
+  .bpa .hero{height:420px}
+  .bpa .join{bottom:24px}
+}
+@media (max-width:620px){.bpa .hero{height:400px}.bpa .listen{top:45%}}
+
+/* ---------- Wariant 10.10: kolory i styl strony /brunoai (/podglad/bruno-panel-lp) ----------
+   Szare tło #f6f6f5, białe kafelki z cienką ramką, czarne pigułki, pomarańczowy akcent #f08a2b. */
+.bpa.lp{
+  --ink:#0b0b0b;--muted:#6b6b6b;--stroke:rgba(0,0,0,.08);
+  --green:#f08a2b;--green-2:#d9741a;--mint:#f08a2b;--deep:#0b0b0b;
+  color:var(--ink);background:#f6f6f5;
+}
+.bpa.lp::before,.bpa.lp::after{display:none}
+.bpa.lp .glass,.bpa.lp .glass.hi{background:#ffffff;border:1px solid rgba(0,0,0,.07);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none}
+.bpa.lp .card:hover{box-shadow:0 24px 50px -32px rgba(0,0,0,.28)}
+.bpa.lp .hello h1{text-shadow:none;font-weight:500}
+.bpa.lp h1,.bpa.lp h2,.bpa.lp h3{font-weight:400}
+
+/* pasek boczny */
+.bpa.lp .side{background:#fff;border:1px solid rgba(0,0,0,.07);backdrop-filter:none;-webkit-backdrop-filter:none}
+.bpa.lp .logo{background:#0b0b0b}
+.bpa.lp .logo i{background:#f08a2b;box-shadow:none;animation:none}
+.bpa.lp .nav{color:#6b6b6b}
+.bpa.lp .nav:hover{background:#f1f1f0;color:#0b0b0b}
+.bpa.lp .nav.on{color:#0b0b0b}
+.bpa.lp .nav.on::before{background:#0b0b0b;box-shadow:none}
+.bpa.lp .sep{background:rgba(0,0,0,.08)}
+.bpa.lp .me{border:1.5px solid #0b0b0b;background:#fff;color:#0b0b0b}
+
+/* przyciski i drobne elementy */
+.bpa.lp .btn.pri{background:#0b0b0b;color:#fff;box-shadow:none}
+.bpa.lp .btn.pri:hover{box-shadow:0 12px 30px -14px rgba(0,0,0,.6)}
+.bpa.lp .btn.sec{background:#0b0b0b;color:#fff;border-color:#0b0b0b}
+.bpa.lp .btn.sec svg{color:#f08a2b}
+.bpa.lp .btn.sec:hover{background:#262626}
+.bpa.lp .chip:hover,.bpa.lp .wyl:hover{background:#f1f1f0}
+.bpa.lp .badge{background:#f6f6f5}
+.bpa.lp .badge i{background:#f08a2b;box-shadow:none}
+.bpa.lp .toggle button{background:#f6f6f5;border-color:rgba(0,0,0,.06)}
+.bpa.lp .toggle button:hover{background:#ececeb}
+.bpa.lp .toggle button.on{background:#0b0b0b;color:#fff;border-color:#0b0b0b}
+.bpa.lp .seg{background:#f6f6f5}
+.bpa.lp .seg button.on{background:#0b0b0b;color:#fff}
+.bpa.lp .pager .arr button{background:#f6f6f5;border-color:rgba(0,0,0,.06)}
+.bpa.lp .pager .arr button:hover{background:#0b0b0b;color:#fff}
+.bpa.lp .ico{background:#f6f6f5;color:#f08a2b}
+.bpa.lp .tip{background:#f6f6f5;border-color:transparent}
+.bpa.lp .tip:hover{background:#efefee}
+.bpa.lp .tip .lab{background:#fff;color:#0b0b0b}
+.bpa.lp .tip p{color:#2b2b2b}
+.bpa.lp .persona h3 span{filter:none}
+.bpa.lp .chips b,.bpa.lp .faces b{box-shadow:0 0 0 2px #fff}
+.bpa.lp .mnav a{background:#fff}
+.bpa.lp .mnav a.on{background:#0b0b0b;border-color:#0b0b0b;color:#fff}
+
+/* karta „Dziś”: jasnoszara jak panele strony, fala głosu zamiast kuli */
+.bpa.lp .card.hero{background:#ecebea;border-color:transparent}
+.bpa.lp .hero h2{text-shadow:none;color:#0b0b0b;font-weight:400;font-size:44px;letter-spacing:-.03em}
+.bpa.lp .fala-lp{position:absolute;top:0;right:0;bottom:0;width:52%}
+.bpa.lp .fala-lp canvas{position:absolute;inset:0;width:100%;height:100%}
+.bpa.lp .listen .mic{background:#fff;color:#0b0b0b;border:1px solid rgba(0,0,0,.12);backdrop-filter:none;-webkit-backdrop-filter:none}
+.bpa.lp .listen.live .mic{background:#f08a2b;color:#fff;border-color:#f08a2b;box-shadow:0 10px 30px -8px rgba(240,138,43,.7)}
+.bpa.lp .listen .lab{background:#0b0b0b;color:#fff;border-color:#0b0b0b;backdrop-filter:none;-webkit-backdrop-filter:none}
+.bpa.lp .join small,.bpa.lp .join em{color:#6b6b6b}
+
+/* plan dnia */
+.bpa.lp .blk{background:#f1f1f0;border-color:rgba(0,0,0,.05)}
+.bpa.lp .blk::after{background:#f08a2b}
+.bpa.lp .blk.f{box-shadow:none}
+.bpa.lp .big .n{text-shadow:none;font-family:var(--font-bpa-head),"Outfit",sans-serif}
+
+/* oceny */
+.bpa.lp .ticks i{background:#efefee}
+.bpa.lp .ticks i.f{background:#0b0b0b;box-shadow:none}
+.bpa.lp .crit .row{color:#4a4a4a}
+.bpa.lp .crit .row:hover .ticks i.f{background:#f08a2b}
+.bpa.lp .score,.bpa.lp .prog .pct,.bpa.lp .pager .c,.bpa.lp .hd .r{font-family:var(--font-bpa-head),"Outfit",sans-serif;font-weight:400}
+
+/* wykres 7 dni */
+.bpa.lp .wave path.ln{stroke:#0b0b0b}
+.bpa.lp .wave path.area{fill:rgba(240,138,43,.12)}
+.bpa.lp .wave path[stroke="#fff"]{stroke:#c9c9c7}
+.bpa.lp .wave circle[fill="#fff"]{stroke:#0b0b0b}
+.bpa.lp .goal{color:#f08a2b}
+.bpa.lp .dni{color:#8a8a8a}
+.bpa.lp .dni .on{color:#0b0b0b}
+.bpa.lp .prog .note b{color:#0b0b0b}
+.bpa.lp .tt{background:#0b0b0b;color:#fff;border-color:#0b0b0b}
+@media (max-width:620px){
+  .bpa.lp .hero h2{font-size:32px}
+  .bpa.lp .fala-lp{width:100%;top:30%;bottom:20%}
+}
+/* fala w trybie wąskim rysuje środek na 24% wysokości i małe wychylenie, więc płótno 2× wyższe = środek przy mikrofonie */
+.bpa.lp .fala-lp{top:-1%;bottom:auto;height:200%}
+.bpa.lp .wave path[stroke="#a7f3d0"]{stroke:rgba(240,138,43,.3)}
+.bpa.lp .wave line[stroke="#a7f3d0"]{stroke:#f08a2b}
+.bpa.lp .wave line[stroke="#fff"]{stroke:#9a9a9a}
+@media (max-width:620px){.bpa.lp .fala-lp{top:-1%;height:200%;width:100%}}
+
+/* ---------- 10.10: ten sam styl strony, akcent zielony (/podglad/bruno-panel-lp-zielony) ---------- */
+.bpa.lp.zielony{--green:#1fae73;--green-2:#168a5b;--mint:#1fae73}
+.bpa.lp.zielony .logo i{background:#1fae73;box-shadow:none;animation:none}
+.bpa.lp.zielony .btn.sec svg{color:#1fae73}
+.bpa.lp.zielony .badge i{background:#1fae73;box-shadow:none}
+.bpa.lp.zielony .ico{background:#f6f6f5;color:#1fae73}
+.bpa.lp.zielony .listen.live .mic{background:#1fae73;color:#fff;border-color:#1fae73;box-shadow:0 10px 30px -8px rgba(31,174,115,.7)}
+.bpa.lp.zielony .blk::after{background:#1fae73}
+.bpa.lp.zielony .crit .row:hover .ticks i.f{background:#1fae73}
+.bpa.lp.zielony .wave path.area{fill:rgba(31,174,115,.12)}
+.bpa.lp.zielony .goal{color:#1fae73}
+.bpa.lp.zielony .wave path[stroke="#a7f3d0"]{stroke:rgba(31,174,115,.3)}
+.bpa.lp.zielony .wave line[stroke="#a7f3d0"]{stroke:#1fae73}
+
+/* ---------- 10.10: styl strony + SZKŁO (/podglad/bruno-panel-szklo, ?zielony) ----------
+   Za szkłem wolno płynące plamy koloru, kafelki półprzezroczyste z rozmyciem i jasną krawędzią. */
+.bpa.lp.szklo{
+  --plama-1:rgba(240,138,43,.55);--plama-2:rgba(255,196,140,.6);--plama-3:rgba(255,226,196,.7);
+  background:
+    radial-gradient(40% 35% at 55% 40%,var(--plama-3),transparent 70%),
+    linear-gradient(160deg,#f7f6f4 0%,#f1efec 100%);
+  background-attachment:fixed;
+}
+.bpa.lp.szklo.zielony{--plama-1:rgba(31,174,115,.45);--plama-2:rgba(140,230,190,.55);--plama-3:rgba(205,245,225,.7)}
+.bpa.lp.szklo::before,.bpa.lp.szklo::after{display:block;filter:blur(90px)}
+.bpa.lp.szklo::before{width:640px;height:640px;right:2%;top:-14%;background:var(--plama-1)}
+.bpa.lp.szklo::after{width:560px;height:560px;left:6%;bottom:-18%;background:var(--plama-2)}
+
+.bpa.lp.szklo .glass,
+.bpa.lp.szklo .glass.hi,
+.bpa.lp.szklo .side{
+  background:linear-gradient(160deg,rgba(255,255,255,.72),rgba(255,255,255,.42));
+  border:1px solid rgba(255,255,255,.85);
+  backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 1px 2px rgba(0,0,0,.03),0 24px 60px -36px rgba(60,30,0,.28);
+}
+.bpa.lp.szklo.zielony .glass,.bpa.lp.szklo.zielony .side{box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 1px 2px rgba(0,0,0,.03),0 24px 60px -36px rgba(0,50,30,.28)}
+.bpa.lp.szklo .card{border-radius:28px}
+.bpa.lp.szklo .card:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 30px 70px -34px rgba(60,30,0,.35)}
+/* karta „Dziś” najbardziej przezroczysta: przez nią widać plamy */
+.bpa.lp.szklo .card.hero{background:linear-gradient(150deg,rgba(255,255,255,.5),rgba(255,255,255,.18))}
+/* elementy w kafelkach: mleczne szkło zamiast szarości */
+.bpa.lp.szklo .tip,
+.bpa.lp.szklo .badge,
+.bpa.lp.szklo .seg,
+.bpa.lp.szklo .ico,
+.bpa.lp.szklo .toggle button:not(.on),
+.bpa.lp.szklo .pager .arr button{background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.8)}
+.bpa.lp.szklo .tip:hover{background:rgba(255,255,255,.8)}
+.bpa.lp.szklo .blk{background:rgba(255,255,255,.55);border-color:rgba(255,255,255,.8)}
+.bpa.lp.szklo .ticks i{background:rgba(0,0,0,.06)}
+.bpa.lp.szklo .chip:hover,.bpa.lp.szklo .wyl:hover{background:rgba(255,255,255,.85)}
+.bpa.lp.szklo .listen .mic{background:rgba(255,255,255,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.bpa.lp.szklo .btn.sec{box-shadow:0 12px 30px -16px rgba(0,0,0,.55)}
+/* przycisk „Odblokuj” zostaje czarną pigułką (szkło dawało biały tekst na białym) */
+.bpa.lp.szklo .btn.sec.glass{background:#0b0b0b;border-color:#0b0b0b;color:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}
+.bpa.lp.szklo .btn.sec.glass:hover{background:#262626}
+.bpa.lp.szklo .mnav a.on{background:#0b0b0b;border-color:#0b0b0b;color:#fff}
+/* 10.10 (USER_001): tła kafelków bardziej białe */
+.bpa.lp.szklo .glass:not(.btn),
+.bpa.lp.szklo .glass.hi,
+.bpa.lp.szklo .side{background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.66))}
+.bpa.lp.szklo .card.hero{background:linear-gradient(150deg,rgba(255,255,255,.78),rgba(255,255,255,.5))}
+/* 10.10 (USER_001): wszystkie kafelki z tak małą ilością koloru jak „Ocena rozmowy” i „Rozmowy” */
+.bpa.lp.szklo .glass:not(.btn),
+.bpa.lp.szklo .glass.hi,
+.bpa.lp.szklo .side,
+.bpa.lp.szklo .card.hero{background:linear-gradient(160deg,rgba(255,255,255,.94),rgba(255,255,255,.84))}
+/* elementy w białych kafelkach: lekka szarość, żeby było je widać */
+.bpa.lp.szklo .tip,
+.bpa.lp.szklo .badge,
+.bpa.lp.szklo .seg,
+.bpa.lp.szklo .ico,
+.bpa.lp.szklo .toggle button:not(.on),
+.bpa.lp.szklo .pager .arr button,
+.bpa.lp.szklo .blk{background:rgba(0,0,0,.045);border-color:transparent}
+.bpa.lp.szklo .tip:hover{background:rgba(0,0,0,.065)}
+.bpa.lp.szklo .pager .arr button:hover,.bpa.lp.szklo .toggle button:not(.on):hover{background:rgba(0,0,0,.09)}
+.bpa.lp.szklo .card .glass.tip,
+.bpa.lp.szklo .card .glass.badge,
+.bpa.lp.szklo .card .glass.seg,
+.bpa.lp.szklo .card .glass.ico{background:rgba(0,0,0,.045);border-color:transparent;box-shadow:none}
+.bpa.lp.szklo .card .glass.tip:hover{background:rgba(0,0,0,.065)}
+/* 10.10 (USER_001): mniej koloru w tle */
+.bpa.lp.szklo{--plama-1:rgba(240,138,43,.28);--plama-2:rgba(255,196,140,.32);--plama-3:rgba(255,226,196,.4)}
+.bpa.lp.szklo.zielony{--plama-1:rgba(31,174,115,.22);--plama-2:rgba(140,230,190,.3);--plama-3:rgba(205,245,225,.4)}
+
+/* ---------- 10.10 (USER_001): CZARNY ZE ZŁOTYM (/podglad/bruno-panel-zloty) ----------
+   Czarne tło, ciemne szkło ze złotą krawędzią, złote akcenty i liczby. */
+.bpa.lp.szklo.czarny{
+  --ink:#f5f2ea;--muted:rgba(245,242,234,.58);--green:#d4af5a;--green-2:#b8913a;--mint:#d4af5a;--deep:#0b0b0b;
+  --plama-1:rgba(212,175,90,.16);--plama-2:rgba(212,175,90,.09);--plama-3:rgba(255,226,160,.05);
+  --zloto:linear-gradient(135deg,#f3dc9c 0%,#d4af5a 45%,#a8822f 100%);
+  color:var(--ink);
+  background:radial-gradient(40% 35% at 55% 40%,var(--plama-3),transparent 70%),linear-gradient(160deg,#131210 0%,#080807 100%);
+  background-attachment:fixed;
+}
+.bpa.lp.szklo.czarny .glass:not(.btn),
+.bpa.lp.szklo.czarny .glass.hi,
+.bpa.lp.szklo.czarny .side,
+.bpa.lp.szklo.czarny .card.hero{
+  background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  border:1px solid rgba(212,175,90,.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 30px 70px -36px rgba(0,0,0,.9);
+}
+.bpa.lp.szklo.czarny .card:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 30px 70px -30px rgba(0,0,0,1),0 0 0 1px rgba(212,175,90,.35)}
+.bpa.lp.szklo.czarny .hello h1,.bpa.lp.szklo.czarny .hero h2{color:var(--ink)}
+
+/* pasek boczny */
+.bpa.lp.szklo.czarny .logo{background:#000;border:1px solid rgba(212,175,90,.35)}
+.bpa.lp.szklo.czarny .logo i{background:var(--zloto)}
+.bpa.lp.szklo.czarny .nav{color:rgba(245,242,234,.55)}
+.bpa.lp.szklo.czarny .nav:hover{background:rgba(255,255,255,.06);color:#fff}
+.bpa.lp.szklo.czarny .nav.on{color:#f3dc9c}
+.bpa.lp.szklo.czarny .nav.on::before{background:#d4af5a;box-shadow:0 0 10px rgba(212,175,90,.6)}
+.bpa.lp.szklo.czarny .sep{background:rgba(212,175,90,.2)}
+.bpa.lp.szklo.czarny .me{border:1.5px solid #d4af5a;background:transparent;color:#f3dc9c}
+
+/* przyciski */
+.bpa.lp.szklo.czarny .btn.sec.glass,
+.bpa.lp.szklo.czarny .btn.pri{background:var(--zloto);border:0;color:#0b0b0b;box-shadow:0 12px 30px -14px rgba(212,175,90,.7)}
+.bpa.lp.szklo.czarny .btn.sec.glass svg{color:#0b0b0b}
+.bpa.lp.szklo.czarny .btn.sec.glass:hover{background:var(--zloto);filter:brightness(1.08)}
+.bpa.lp.szklo.czarny .chip:hover,.bpa.lp.szklo.czarny .wyl:hover{background:rgba(255,255,255,.1)}
+.bpa.lp.szklo.czarny .mnav a{background:rgba(255,255,255,.06);color:#f5f2ea}
+.bpa.lp.szklo.czarny .mnav a.on{background:var(--zloto);color:#0b0b0b;border-color:transparent}
+
+/* elementy w kafelkach */
+.bpa.lp.szklo.czarny .tip,
+.bpa.lp.szklo.czarny .badge,
+.bpa.lp.szklo.czarny .seg,
+.bpa.lp.szklo.czarny .ico,
+.bpa.lp.szklo.czarny .toggle button:not(.on),
+.bpa.lp.szklo.czarny .pager .arr button,
+.bpa.lp.szklo.czarny .blk,
+.bpa.lp.szklo.czarny .card .glass.tip,
+.bpa.lp.szklo.czarny .card .glass.badge,
+.bpa.lp.szklo.czarny .card .glass.seg,
+.bpa.lp.szklo.czarny .card .glass.ico{background:rgba(255,255,255,.06);border-color:transparent;box-shadow:none}
+.bpa.lp.szklo.czarny .card .glass.tip:hover{background:rgba(255,255,255,.09)}
+.bpa.lp.szklo.czarny .ico,.bpa.lp.szklo.czarny .card .glass.ico{color:#d4af5a}
+.bpa.lp.szklo.czarny .badge i{background:#d4af5a}
+.bpa.lp.szklo.czarny .toggle button.on,
+.bpa.lp.szklo.czarny .seg button.on,
+.bpa.lp.szklo.czarny .pager .arr button:hover{background:var(--zloto);color:#0b0b0b;border-color:transparent}
+.bpa.lp.szklo.czarny .tip .lab{background:rgba(0,0,0,.45);color:#f5f2ea}
+.bpa.lp.szklo.czarny .tip p{color:rgba(245,242,234,.82)}
+.bpa.lp.szklo.czarny .chips b,.bpa.lp.szklo.czarny .faces b{box-shadow:0 0 0 2px #131210}
+
+/* karta „Dziś” */
+.bpa.lp.szklo.czarny .listen .mic{background:rgba(255,255,255,.08);color:#f5f2ea;border:1px solid rgba(212,175,90,.45)}
+.bpa.lp.szklo.czarny .listen.live .mic{background:var(--zloto);color:#0b0b0b;border-color:transparent;box-shadow:0 0 34px rgba(212,175,90,.55)}
+.bpa.lp.szklo.czarny .listen .lab{background:var(--zloto);color:#0b0b0b;border:0}
+
+/* plan dnia, oceny, liczby w złocie */
+.bpa.lp.szklo.czarny .blk::after{background:var(--zloto)}
+.bpa.lp.szklo.czarny .ticks i{background:rgba(255,255,255,.07)}
+.bpa.lp.szklo.czarny .ticks i.f{background:linear-gradient(180deg,#f3dc9c,#c9a04a)}
+.bpa.lp.szklo.czarny .crit .row{color:rgba(245,242,234,.7)}
+.bpa.lp.szklo.czarny .crit .row:hover .ticks i.f{background:#fff}
+.bpa.lp.szklo.czarny .big .n,
+.bpa.lp.szklo.czarny .score,
+.bpa.lp.szklo.czarny .prog .pct{background:var(--zloto);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bpa.lp.szklo.czarny .score small,.bpa.lp.szklo.czarny .big .u{color:var(--muted);-webkit-text-fill-color:var(--muted)}
+
+/* wykres */
+.bpa.lp.szklo.czarny .wave path.ln{stroke:#e6c77a}
+.bpa.lp.szklo.czarny .wave path.area{fill:rgba(212,175,90,.14)}
+.bpa.lp.szklo.czarny .wave path[stroke="#a7f3d0"]{stroke:rgba(212,175,90,.35)}
+.bpa.lp.szklo.czarny .wave path[stroke="#fff"]{stroke:rgba(255,255,255,.25)}
+.bpa.lp.szklo.czarny .wave line[stroke="#a7f3d0"]{stroke:#d4af5a}
+.bpa.lp.szklo.czarny .wave line[stroke="#fff"]{stroke:rgba(255,255,255,.3)}
+.bpa.lp.szklo.czarny .wave circle[fill="#fff"]{fill:#0b0b0b;stroke:#e6c77a}
+.bpa.lp.szklo.czarny .goal{color:#d4af5a}
+.bpa.lp.szklo.czarny .dni{color:rgba(245,242,234,.5)}
+.bpa.lp.szklo.czarny .dni .on{color:#f3dc9c}
+.bpa.lp.szklo.czarny .prog .note b{color:#f5f2ea}
+.bpa.lp.szklo.czarny .tt{background:#f5f2ea;color:#0b0b0b;border-color:transparent}
+
+/* ---------- 10.10 (USER_001): BIAŁO-ZŁOTY (/podglad/bruno-panel-bialo-zloty) ----------
+   Szkło jak w wersji pomarańczowej, akcent złoty, przycisk „Odblokuj” złoty. */
+.bpa.lp.zlotyj{--green:#c39b45;--green-2:#a8822f;--mint:#c39b45;--zloto:linear-gradient(135deg,#f0d98f 0%,#d1aa52 45%,#a8822f 100%)}
+.bpa.lp.szklo.zlotyj{--plama-1:rgba(212,175,90,.26);--plama-2:rgba(240,215,150,.32);--plama-3:rgba(250,236,200,.45);background:radial-gradient(40% 35% at 55% 40%,var(--plama-3),transparent 70%),linear-gradient(160deg,#faf8f3 0%,#f3efe6 100%)}
+.bpa.lp.zlotyj .logo i{background:#c39b45;box-shadow:none;animation:none}
+.bpa.lp.zlotyj .btn.sec svg{color:#c39b45}
+.bpa.lp.zlotyj .badge i{background:#c39b45;box-shadow:none}
+.bpa.lp.zlotyj .ico{background:#f6f6f5;color:#c39b45}
+.bpa.lp.zlotyj .listen.live .mic{background:#c39b45;color:#fff;border-color:#c39b45;box-shadow:0 10px 30px -8px rgba(195,155,69,.7)}
+.bpa.lp.zlotyj .blk::after{background:#c39b45}
+.bpa.lp.zlotyj .crit .row:hover .ticks i.f{background:#c39b45}
+.bpa.lp.zlotyj .wave path.area{fill:rgba(195,155,69,.12)}
+.bpa.lp.zlotyj .goal{color:#c39b45}
+.bpa.lp.zlotyj .wave path[stroke="#a7f3d0"]{stroke:rgba(195,155,69,.3)}
+.bpa.lp.zlotyj .wave line[stroke="#a7f3d0"]{stroke:#c39b45}
+.bpa.lp.szklo.zlotyj .logo i{background:var(--zloto)}
+.bpa.lp.szklo.zlotyj .btn.sec.glass{background:var(--zloto);border:0;color:#0b0b0b;box-shadow:0 12px 30px -14px rgba(168,130,47,.7)}
+.bpa.lp.szklo.zlotyj .btn.sec.glass svg{color:#0b0b0b}
+.bpa.lp.szklo.zlotyj .btn.sec.glass:hover{background:var(--zloto);filter:brightness(1.05)}
+.bpa.lp.szklo.zlotyj .blk::after{background:var(--zloto)}
+.bpa.lp.szklo.zlotyj .ticks i.f{background:linear-gradient(180deg,#d9b866,#a8822f)}
+.bpa.lp.szklo.zlotyj .crit .row:hover .ticks i.f{background:#0b0b0b}
+.bpa.lp.szklo.zlotyj .glass:not(.btn),.bpa.lp.szklo.zlotyj .side,.bpa.lp.szklo.zlotyj .card.hero{border-color:rgba(195,155,69,.22)}
+.bpa.lp.szklo.zlotyj .nav.on::before{background:#c39b45}
+.bpa.lp.szklo.zlotyj .me{border-color:#c39b45}
+/* 10.10 (USER_001): czarno-złoty, fala głosu po lewej, mikrofon i przycisk zostają po prawej, większe */
+.bpa.lp.szklo.czarny .fala-lp{left:0;right:auto;width:58%}
+.bpa.lp.szklo.czarny .listen{gap:14px}
+.bpa.lp.szklo.czarny .listen .mic{width:84px;height:84px;background:rgba(255,255,255,.06);border:1.5px solid rgba(212,175,90,.6);box-shadow:0 0 0 8px rgba(212,175,90,.06)}
+.bpa.lp.szklo.czarny .listen .mic svg{width:32px;height:32px}
+.bpa.lp.szklo.czarny .listen .lab{font-size:16px;padding:10px 24px}
+@media (max-width:620px){
+  .bpa.lp.szklo.czarny .fala-lp{width:100%}
+  .bpa.lp.szklo.czarny .listen .mic{width:72px;height:72px}
+}
+/* 10.10 (USER_001): fala i mikrofon trochę niżej */
+.bpa.lp.szklo.czarny .listen{top:56%}
+.bpa.lp.szklo.czarny .fala-lp{top:8%}
+/* 10.10 (USER_001): fala i mikrofon trochę w prawo */
+.bpa.lp.szklo.czarny .listen{left:80%}
+.bpa.lp.szklo.czarny .fala-lp{left:6%}
+@media (max-width:620px){.bpa.lp.szklo.czarny .listen{left:50%}.bpa.lp.szklo.czarny .fala-lp{left:0}}
+/* kółko z inicjałem na górze paska (miejsce logo) */
+.bpa.lp.szklo.czarny .me.gora{width:46px;height:46px;margin-bottom:30px;font-size:17px;font-weight:600;flex:0 0 auto;transition:background .25s}
+.bpa.lp.szklo.czarny .me.gora:hover{background:rgba(212,175,90,.12)}

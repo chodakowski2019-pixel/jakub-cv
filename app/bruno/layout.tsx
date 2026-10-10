@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { Poppins, Open_Sans } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pelnyDostep, pobierzKonto } from "@/lib/bruno/db";
@@ -28,6 +29,15 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   const pelny = email ? pelnyDostep(await pobierzKonto(email)) : false;
   // 9.10 (USER_001): niezalogowany widzi logowanie Aurora na cały ekran, bez paska, tła i stopki panelu.
   if (!email) return <div className={`${poppins.variable} ${openSans.variable}`}>{children}</div>;
+  // 10.10 (USER_001): panel czarno-złoty ma własny pasek i tło. Czat zostaje.
+  if ((await headers()).get("x-sciezka") === "/bruno/panel") {
+    return (
+      <div className={`bruno ${poppins.variable} ${openSans.variable}`} style={{ background: "#080807" }}>
+        {children}
+        <CzatDymek />
+      </div>
+    );
+  }
   return (
     <div className={`bruno ${poppins.variable} ${openSans.variable} font-[var(--font-open-sans)]`}>
       <div className="bruno-plamy" aria-hidden>

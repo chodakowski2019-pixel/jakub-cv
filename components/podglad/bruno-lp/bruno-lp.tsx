@@ -304,7 +304,7 @@ function Tytul({ t }: { t: string }) {
   );
 }
 
-export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
+export default function BrunoLp({ wersja = "business", zloto = false }: { wersja?: Wersja; zloto?: boolean }) {
   const [jezyk, setJezyk] = useState<Jezyk>("en");
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
@@ -319,7 +319,7 @@ export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
   const [pokazFormularz, setPokazFormularz] = useState(false);
   const [menu, setMenu] = useState(false);
   const [skopiowane, setSkopiowane] = useState(false);
-  const [roczny, setRoczny] = useState(false);
+  const [roczny, setRoczny] = useState(true);
   // 9.10 (USER_001): sekcja „Zobacz Bruno w środku” jak scrollytelling: 3 punkty po lewej, laptop po prawej
   // stoi w miejscu, obraz w laptopie zmienia się, gdy kolejny punkt wjeżdża na środek ekranu.
   const [aktywnyZrzut, setAktywnyZrzut] = useState(0);
@@ -407,7 +407,7 @@ export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
   );
 
   return (
-    <div className={s.root} ref={rootRef}>
+    <div className={`${s.root} ${zloto ? s.zloto : ""}`} ref={rootRef}>
       <nav className={`${s.nav} ${pokazFormularz ? s.navFormularz : ""}`}>
         <div className={s.navL}>
           <a className={s.logo} href="#top" onClick={doSekcji("top")}>
@@ -439,7 +439,7 @@ export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
       ) : (
         <>
           <section className={s.intro} id="top">
-            <VoiceCanvas className={s.voice} />
+            <VoiceCanvas className={s.voice} akcentRgb={zloto ? "201, 160, 74" : undefined} />
             <div className={s.introInner}>
               <div className={s.introLeft}>
                 <h2 className={`${s.bigH} ${s.rv} ${s.d1}`}>
@@ -601,10 +601,11 @@ export default function BrunoLp({ wersja = "business" }: { wersja?: Wersja }) {
                   <h2 className={s.rv}>{CENNIK[jezyk].h}</h2>
                 </div>
                 <div className={s.cennikPrzelacznik} role="group" aria-label={jezyk === "pl" ? "Okres płatności" : "Billing period"}>
-                  <button type="button" aria-pressed={!roczny} className={!roczny ? s.cennikOn : ""} onClick={() => setRoczny(false)}>{CENNIK[jezyk].mies}</button>
+                  {/* 10.10 (USER_001): najpierw rocznie (domyślnie wybrane), potem miesięcznie. */}
                   <button type="button" aria-pressed={roczny} className={roczny ? s.cennikOn : ""} onClick={() => setRoczny(true)}>
                     {CENNIK[jezyk].rok} <span className={s.cennikGratis}>{CENNIK[jezyk].gratis}</span>
                   </button>
+                  <button type="button" aria-pressed={!roczny} className={!roczny ? s.cennikOn : ""} onClick={() => setRoczny(false)}>{CENNIK[jezyk].mies}</button>
                 </div>
                 <div className={s.cennikKarta}>
                   <div className={s.cennikNazwa}>{CENNIK[jezyk].nazwa}</div>

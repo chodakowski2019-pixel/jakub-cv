@@ -40,6 +40,13 @@ function withLocaleHeader(request: NextRequest, locale: "pl" | "en") {
 export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
+  // --- 10.10: /bruno/panel ma własny układ (czarny ze złotym), app/bruno/layout.tsx czyta ścieżkę z nagłówka ---
+  if (pathname === "/bruno/panel") {
+    const h = new Headers(request.headers);
+    h.set("x-sciezka", pathname);
+    return NextResponse.next({ request: { headers: h } });
+  }
+
   // --- Strona główna (9.10): / = app/page.tsx (nowa, PL). /en = public/home.html (5.10, EN) ---
   if (pathname === "/en") {
     return NextResponse.rewrite(new URL("/home.html", request.url));
@@ -75,5 +82,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/en", "/scamalertmiami/:path*"],
+  matcher: ["/", "/en", "/scamalertmiami/:path*", "/bruno/panel"],
 };
