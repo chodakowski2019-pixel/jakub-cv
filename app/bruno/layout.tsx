@@ -14,8 +14,8 @@ import "./bruno.css";
 // Na jakubchodakowski.com do czasu zakupu salesbruno.com.
 
 export const metadata: Metadata = {
-  title: "Bruno AI: panel treningowy",
-  description: "Trening rozmów sprzedażowych z Bruno AI.",
+  title: "Bruno AI: Sales Practice",
+  description: "Practice sales calls with Bruno AI.",
   robots: { index: false, follow: false },
 };
 
@@ -64,8 +64,8 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
           <main className="flex-1 px-4 sm:px-6 pb-10 pt-6 sm:pt-8 max-w-5xl w-full mx-auto overflow-x-hidden">{children}</main>
           {/* Dokumenty muszą być dostępne z każdego ekranu panelu (2.10): rozmowy są nagrywane. */}
           <footer className="bz-stopka">
-            <a href="/regulamin">Regulamin</a>
-            <a href="/polityka-prywatnosci">Polityka prywatności</a>
+            <a href="/regulamin">Terms</a>
+            <a href="/polityka-prywatnosci">Privacy Policy</a>
           </footer>
         </div>
       </div>

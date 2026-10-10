@@ -102,7 +102,7 @@ function Krzywa({ wartosci, cel, wybrany }: { wartosci: number[]; cel: number; w
         <>
           <path d={`${sciezka} L${w},${h + 140} L${-colW * 0.1},${h + 140} Z`} fill="url(#bpb-fill)" />
           <line x1="0" x2={w} y1={Y(cel)} y2={Y(cel)} stroke="#a7f3d0" strokeOpacity=".7" strokeWidth="1.2" strokeDasharray="4 6" />
-          <text x={w * 0.12} y={Y(cel) - 6} textAnchor="start" fill="#a7f3d0" style={{ fontSize: 11, fontWeight: 600 }}>cel {cel}</text>
+          <text x={w * 0.12} y={Y(cel) - 6} textAnchor="start" fill="#a7f3d0" style={{ fontSize: 11, fontWeight: 600 }}>goal {cel}</text>
           <path ref={blask} d={sciezka} fill="none" stroke="#a7f3d0" strokeWidth="8" opacity=".55" filter="url(#bpb-glow)" />
           <path ref={linia} d={sciezka} fill="none" stroke="url(#bpb-stroke)" strokeWidth="3" strokeLinecap="round" />
           <line ref={pion} x1="0" x2="0" y1="0" y2={h + 40} stroke="#fff" strokeOpacity=".35" strokeDasharray="2 5" />
@@ -119,13 +119,13 @@ function KulaLink({ d, nazwa }: { d: DanePanelu; nazwa: string }) {
   if (!d.moznaRozmawiac) {
     return (
       <div className="kula czeka" aria-hidden>
-        <span>{d.planZrobiony ? "Wróć jutro" : "Brak minut"}</span>
+        <span>{d.planZrobiony ? "Come back tomorrow" : "Out of minutes"}</span>
       </div>
     );
   }
   return (
-    <Link href={d.linkRozmowy} className="kula" aria-label={`Rozmawiaj z Bruno: klient ${nazwa}`}>
-      <span>Rozmawiaj</span>
+    <Link href={d.linkRozmowy} className="kula" aria-label={`Talk to Bruno: ${nazwa} customer`}>
+      <span>Talk</span>
     </Link>
   );
 }
@@ -152,17 +152,17 @@ export default function PanelB({ d }: { d: DanePanelu }) {
     const x = d.dni7[i];
     if (x.dzis) {
       return {
-        pill: "Plan dnia",
-        h1: d.planZrobiony ? <>Plan na dziś<br />zrobiony.</> : <>Dziś: {d.zostaloDzis} {rozmowy(d.zostaloDzis)}<br />po {d.rozmowaMin} minuty</>,
-        p: `${d.dzis} z ${d.dziennie} ${rozmowy(d.dziennie)} zrobione. ${d.powtorka ? `${d.powtorka}. ` : ""}Rodzaj rozmowy, obiekcję, cel i typ klienta wybierasz przed startem.`,
+        pill: "Today's plan",
+        h1: d.planZrobiony ? <>Today's plan<br />is done.</> : <>Today: {d.zostaloDzis} {rozmowy(d.zostaloDzis)}<br />{d.rozmowaMin} min each</>,
+        p: `${d.dzis} of ${d.dziennie} ${rozmowy(d.dziennie)} done. ${d.powtorka ? `${d.powtorka}. ` : ""}You pick the call type, objection, goal, and customer type before you start.`,
       };
     }
     return {
-      pill: "Rozmowy w ostatnich 7 dniach",
+      pill: "Calls in the last 7 days",
       h1: <>{x.nazwaPelna} {x.podpis}<br />{x.wartosc} {rozmowy(x.wartosc)}</>,
       p: x.wartosc === 0
-        ? `Tego dnia bez rozmów. Cel: ${d.dziennie} dziennie.`
-        : `${x.wartosc} z ${d.dziennie} ${rozmowy(d.dziennie)}, ${x.minuty} min treningu.${x.srednia !== null ? ` Średnia ocena: ${x.srednia.toFixed(1).replace(".", ",")}/10.` : ""}`,
+        ? `No calls this day. Goal: ${d.dziennie} a day.`
+        : `${x.wartosc} of ${d.dziennie} ${rozmowy(d.dziennie)}, ${x.minuty} min of practice.${x.srednia !== null ? ` Average score: ${x.srednia.toFixed(1)}/10.` : ""}`,
     };
   };
   const [pokazany, setPokazany] = useState(dzisIdx);
@@ -206,25 +206,25 @@ export default function PanelB({ d }: { d: DanePanelu }) {
             </Link>
           ))}
           <div className="grow" />
-          <button type="button" className="nav" aria-label="Wyloguj" title="Wyloguj" onClick={wyloguj}><Ikona nazwa="wyjscie" rozmiar={19} grubosc={1.8} /></button>
+          <button type="button" className="nav" aria-label="Log out" title="Log out" onClick={wyloguj}><Ikona nazwa="wyjscie" rozmiar={19} grubosc={1.8} /></button>
         </aside>
 
         <header className="hdr">
-          <div className="who"><small>Cześć,</small><b>{powitanie}</b></div>
+          <div className="who"><small>Hi,</small><b>{powitanie}</b></div>
           <div className="sp" />
           {d.moznaRozmawiac && (
-            <Link className="btn pri" href={d.linkRozmowy}>Rozmawiaj z Bruno <Ikona nazwa="strzalka" rozmiar={16} grubosc={2.4} /></Link>
+            <Link className="btn pri" href={d.linkRozmowy}>Talk to Bruno <Ikona nazwa="strzalka" rozmiar={16} grubosc={2.4} /></Link>
           )}
           <Link className="btn sec glass odb" href="/bruno/odblokuj">
             <Ikona nazwa="klodka" rozmiar={15} grubosc={2} />
-            <span className="dlugi">Odblokuj pełen dostęp</span>
-            <span className="krotki">Odblokuj</span>
+            <span className="dlugi">Unlock full access</span>
+            <span className="krotki">Unlock</span>
           </Link>
-          <button type="button" className="ib glass" aria-label="Wyloguj" title="Wyloguj" onClick={wyloguj}><Ikona nazwa="wyjscie" rozmiar={18} grubosc={2} /></button>
+          <button type="button" className="ib glass" aria-label="Log out" title="Log out" onClick={wyloguj}><Ikona nazwa="wyjscie" rozmiar={18} grubosc={2} /></button>
           <span className="av" aria-hidden>{d.inicjal}</span>
         </header>
 
-        <nav className="mnav" aria-label="Panel">
+        <nav className="mnav" aria-label="Main menu">
           {LINKI.map((l) => (
             <Link key={l.href} href={l.href} className={`glass ${l.ikona === "panel" ? "on" : ""}`} aria-current={l.ikona === "panel" ? "page" : undefined}>{l.nazwa}</Link>
           ))}
@@ -232,10 +232,10 @@ export default function PanelB({ d }: { d: DanePanelu }) {
 
         {d.wygasl ? (
           <section className="lead">
-            <span className="pill glass"><i />Dostęp testowy</span>
-            <h1>Dostęp testowy<br />wygasł</h1>
-            <p>{d.dni} dni minęło. Jeśli chcesz dalej trenować z Bruno, napisz do nas.</p>
-            <div className="acts"><Link className="btn pri" href="/bruno/odblokuj">Odblokuj pełen dostęp <Ikona nazwa="strzalka" rozmiar={16} grubosc={2.4} /></Link></div>
+            <span className="pill glass"><i />Trial</span>
+            <h1>Your trial<br />has ended</h1>
+            <p>Your {d.dni}-day trial is over. Want to keep practicing with Bruno? Get in touch.</p>
+            <div className="acts"><Link className="btn pri" href="/bruno/odblokuj">Unlock full access <Ikona nazwa="strzalka" rozmiar={16} grubosc={2.4} /></Link></div>
           </section>
         ) : (
           <>
@@ -246,19 +246,19 @@ export default function PanelB({ d }: { d: DanePanelu }) {
               <div className="rings">
                 <div className="chip glass">
                   <b><Licz do={d.dniZostalo} /></b>
-                  <span>{d.dniZostalo === 1 ? "dzień dostępu" : "dni dostępu"}<small>{d.koniec ? `do ${d.koniec}` : `z ${d.dni}, od pierwszego logowania`}</small></span>
+                  <span>{d.dniZostalo === 1 ? "day of access" : "days of access"}<small>{d.koniec ? `until ${d.koniec}` : `of ${d.dni}, from your first login`}</small></span>
                 </div>
                 <div className="chip glass">
                   <b>{d.dzis}/{d.dziennie}</b>
-                  <span>rozmów dziś<small>{d.planZrobiony ? "plan dnia zrobiony" : `zostało ${d.zostaloDzis}, każda ${d.rozmowaMin} min`}</small></span>
+                  <span>calls today<small>{d.planZrobiony ? "today's plan done" : `${d.zostaloDzis} left, ${d.rozmowaMin} min each`}</small></span>
                 </div>
               </div>
               {!d.skonfigurowany && (
-                <p className="uwaga glass">Bruno nie wie jeszcze, co sprzedajesz. <Link href="/bruno/dostosuj">Dostosuj Bruno</Link> (2 minuty), inaczej gra klienta ogólnego.</p>
+                <p className="uwaga glass">Bruno doesn't know what you sell yet. <Link href="/bruno/dostosuj">Customize Bruno</Link> (2 minutes), or he'll play a generic customer.</p>
               )}
             </section>
 
-            <section className="days" aria-label="Rozmowy w ostatnich 7 dniach">
+            <section className="days" aria-label="Calls in the last 7 days">
               <div className="cols scores">
                 {d.dni7.map((x, i) => (
                   <button type="button" key={x.podpis} className={`col ${wybrany === i ? "on" : ""}`} onClick={() => wybierz(i)} aria-label={`${x.nazwaPelna} ${x.podpis}: ${x.wartosc} ${rozmowy(x.wartosc)}`}>
@@ -271,8 +271,8 @@ export default function PanelB({ d }: { d: DanePanelu }) {
               <div className="cols labels">
                 {d.dni7.map((x, i) => (
                   <button type="button" key={x.podpis} className={`col ${wybrany === i ? "on" : ""}`} onClick={() => wybierz(i)} tabIndex={-1} aria-hidden>
-                    <span className="full">{x.dzis ? "Dziś" : x.nazwaPelna}</span>
-                    <span className="short">{x.dzis ? "dziś" : x.etykieta}</span>
+                    <span className="full">{x.dzis ? "Today" : x.nazwaPelna}</span>
+                    <span className="short">{x.dzis ? "today" : x.etykieta}</span>
                   </button>
                 ))}
               </div>
@@ -282,12 +282,12 @@ export default function PanelB({ d }: { d: DanePanelu }) {
               <article className="card glass main" key={`m${karta}`}>
                 <div className="tag">
                   <span className="kropka" style={{ background: glowna.kolor }} />
-                  <span>Klient {glowna.nazwa.toLowerCase()}</span>
-                  {glowna.id === d.postac && <em>Twój typ</em>}
+                  <span>{glowna.nazwa} customer</span>
+                  {glowna.id === d.postac && <em>Your type</em>}
                 </div>
                 <div className="num">
                   {glowna.srednia !== null ? <Licz do={glowna.srednia} dec={1} /> : "–"}
-                  <small>ocena</small>
+                  <small>score</small>
                 </div>
                 <div className="desc">{glowna.opis}</div>
                 <KulaLink d={d} nazwa={glowna.nazwa.toLowerCase()} />
@@ -298,12 +298,12 @@ export default function PanelB({ d }: { d: DanePanelu }) {
                 </div>
               </article>
               {kolejnosc.slice(1).map((p, i) => (
-                <button type="button" key={p.id} className="card glass mini" onClick={() => zamien(i + 1)} aria-label={`Pokaż klienta ${p.nazwa.toLowerCase()}`}>
-                  <small>Typ klienta</small>
-                  <b><span className="kropka" style={{ background: p.kolor }} />Klient {p.nazwa.toLowerCase()}</b>
-                  <em>{p.krotko}{p.id === d.postac ? ", twój typ" : ""}</em>
+                <button type="button" key={p.id} className="card glass mini" onClick={() => zamien(i + 1)} aria-label={`Show ${p.nazwa} customer`}>
+                  <small>Customer type</small>
+                  <b><span className="kropka" style={{ background: p.kolor }} />{p.nazwa} customer</b>
+                  <em>{p.krotko}{p.id === d.postac ? ", your type" : ""}</em>
                   <div className="sc">
-                    <span>{p.srednia !== null ? p.srednia.toFixed(1).replace(".", ",") : "–"}</span>
+                    <span>{p.srednia !== null ? p.srednia.toFixed(1) : "–"}</span>
                     <Pog p={p.srednia === null ? "cloud" : p.srednia >= 7 ? "sun" : p.srednia >= 5 ? "part" : "storm"} />
                   </div>
                 </button>

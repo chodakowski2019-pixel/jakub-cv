@@ -63,7 +63,7 @@ export function Ocena({ wartosc, opis, uwaga }: { wartosc: number | null; opis: 
 
 export type Slupek = { etykieta: string; wartosc: number; podpis: string; dzis?: boolean };
 
-const DNI_TYG = ["nd", "pn", "wt", "śr", "cz", "pt", "sb"];
+const DNI_TYG = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 /** Rozmowy (bez przerwanych) na każdy z ostatnich N dni, liczone po polskim czasie. */
 export function rozmowyNaDni(rozmowy: Pick<Rozmowa, "start" | "status">[], n: number): Slupek[] {
@@ -79,7 +79,7 @@ export function rozmowyNaDni(rozmowy: Pick<Rozmowa, "start" | "status">[], n: nu
   for (let i = n - 1; i >= 0; i--) {
     const k = kluczPL(new Date(Date.now() - i * 86_400_000));
     const [, m, dd] = k.split("-");
-    wynik.push({ etykieta: DNI_TYG[new Date(`${k}T12:00:00`).getDay()], podpis: `${dd}.${m}`, wartosc: licznik.get(k) ?? 0, dzis: k === dzis });
+    wynik.push({ etykieta: DNI_TYG[new Date(`${k}T12:00:00`).getDay()], podpis: `${m}/${dd}`, wartosc: licznik.get(k) ?? 0, dzis: k === dzis });
   }
   return wynik;
 }
@@ -109,7 +109,7 @@ export function Slupki({ dni, cel, tytul, goly, wysoki }: { dni: Slupek[]; cel: 
           const h = Math.max(0, y(0) - y(d.wartosc));
           return (
             <g key={`${d.podpis}-${i}`}>
-              <title>{`${d.podpis}: ${d.wartosc} ${d.wartosc === 1 ? "rozmowa" : d.wartosc >= 2 && d.wartosc <= 4 ? "rozmowy" : "rozmów"}`}</title>
+              <title>{`${d.podpis}: ${d.wartosc} ${d.wartosc === 1 ? "call" : "calls"}`}</title>
               <rect x={x} y={y(0) - 2} width={slupekSzer} height="2" fill="rgba(212,175,90,0.15)" />
               {h > 0 && (
                 <path

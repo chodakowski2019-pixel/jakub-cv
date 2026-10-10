@@ -68,7 +68,7 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
 
   if (!otwarty || !cel) return null;
   return createPortal(
-    <div className="fixed inset-0 z-50 bg-white bz-tour flex flex-col" role="dialog" aria-modal="true" aria-label="Film oprowadzający">
+    <div className="fixed inset-0 z-50 bg-white bz-tour flex flex-col" role="dialog" aria-modal="true" aria-label="Welcome video">
       {/* Tło jak w panelu: białe z rozmytymi plamami. */}
       <div className="bruno-plamy" aria-hidden>
         <i style={{ top: -140, left: -100, width: 620, height: 620, opacity: 0.7, background: "radial-gradient(closest-side, #3a3122, transparent)" }} />
@@ -87,7 +87,7 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
                 <path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4" />
                 <path d="M14 8l4 4-4 4M18 12H9" />
               </svg>
-              Wyloguj
+              Log out
             </button>
           </div>
         </header>
@@ -105,7 +105,7 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
               className="absolute inset-0 w-full h-full object-contain"
             />
             {!gra && (
-              <button type="button" onClick={odtworz} aria-label="Odtwórz film" className="absolute inset-0 grid place-items-center group">
+              <button type="button" onClick={odtworz} aria-label="Play video" className="absolute inset-0 grid place-items-center group">
                 <span className="size-20 rounded-full bg-gradient-to-br from-cyan-600 to-teal-700 grid place-items-center shadow-[0_12px_40px_rgba(212,175,90,0.5)] transition-transform group-hover:scale-105">
                   <svg viewBox="0 0 24 24" width="34" height="34" fill="#fff" aria-hidden>
                     <path d="M8 5v14l11-7z" />
@@ -118,10 +118,10 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
           {/* Tekst, pod nim przycisk w stylu „Wyloguj" (USER_001 2.10). */}
           <div className="flex flex-col items-center gap-2.5">
             <span className="text-sm text-slate-500 text-center">
-              {koniec ? "Gotowe. Zacznij od „Dostosuj Bruno”, potem pierwszy test." : "Film znajdziesz zawsze w Ustawieniach, w sekcji Instrukcja."}
+              {koniec ? "Done. Start with “Customize Bruno,” then your first Live Call." : "You can always find this video in Settings, under Guide."}
             </span>
             <button type="button" onClick={zamknij} className="bruno-wyloguj">
-              {koniec ? "Zaczynam" : "Pomiń"}
+              {koniec ? "Let's go" : "Skip"}
             </button>
           </div>
         </main>

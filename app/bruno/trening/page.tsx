@@ -70,9 +70,9 @@ export default async function BrunoTreningPage({ searchParams }: { searchParams:
   if (obiekcje.length === 0) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem] text-center">Trening</h1>
+        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem] text-center">Drills</h1>
         <div className="bruno-szklo rounded-3xl p-8 text-center text-slate-600">
-          Talia się buduje. <Link href="/bruno/dostosuj" className="underline">Dodaj obiekcje w „Dostosuj Bruno”</Link> i zrób pierwszy test, a karty pojawią się tutaj.
+          Your deck is being built. <Link href="/bruno/dostosuj" className="underline">Add objections in Customize Bruno</Link> and do your first Live Call. Your cards will show up here.
         </div>
       </div>
     );

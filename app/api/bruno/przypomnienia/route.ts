@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { ROZMOWA_SEKUND, kartyDoPowtorki, limitDzienny, rozmowyDzis, stanDostepu, type Konto } from "@/lib/bruno/db";
-import { htmlNieZalogowany, htmlPrzypomnienie, wyslij } from "@/lib/bruno/mail";
+import { ROZMOWA_SEKUND, kartyDoPowtorki, limitDzienny, planFree, rozmowyDzis, stanDostepu, stanFree, type Konto } from "@/lib/bruno/db";
+import { htmlNieZalogowany, htmlPrzypomnienie, htmlPrzypomnienieFree, wyslij } from "@/lib/bruno/mail";
 import { dociagnijNagraniaEl } from "@/lib/bruno/nagrania";
 
 export const dynamic = "force-dynamic";
@@ -29,9 +29,29 @@ export async function GET(req: Request) {
 
   const wyslane: string[] = [];
   const niezalogowani: string[] = [];
+  const free: string[] = [];
   for (const konto of (konta ?? []) as Konto[]) {
     const stan = stanDostepu(konto);
     if (!stan.aktywny) continue;
+    // 10.10 (USER_001): konto free = jedno przypomnienie DZIENNIE, dopóki nie skończy 3 bezpłatnych rozmów.
+    // Po trzeciej cisza (paywall jest w panelu). Niezależnie od pierwszego logowania.
+    if (planFree(konto)) {
+      const f = await stanFree(konto);
+      if (f.zablokowane) continue;
+      try {
+        await wyslij({
+          do: konto.email,
+          rodzaj: "przypomnienie",
+          temat: f.zuzyte === 0 ? "Bruno AI: Your first call is waiting" : `Bruno AI: you have ${f.zostalo} free ${f.zostalo === 1 ? "call" : "calls"} left`,
+          html: htmlPrzypomnienieFree({ imie: konto.imie, zuzyte: f.zuzyte, zostalo: f.zostalo, zalogowany: Boolean(konto.start_dostepu) }),
+          replyTo: "hello@jakubchodakowski.com",
+        });
+        free.push(konto.email);
+      } catch (e) {
+        console.error("[bruno przypomnienia] free", konto.email, e);
+      }
+      continue;
+    }
     // Bez pierwszego logowania (6.10: dj_qb nie dostawał nic). Trzy razy: 1., 3. i 6. dzień po założeniu konta, potem cisza.
     if (!konto.start_dostepu) {
       const dniOdZalozenia = Math.round((Date.now() - new Date(konto.utworzono).getTime()) / 86_400_000);
@@ -40,7 +60,7 @@ export async function GET(req: Request) {
         await wyslij({
           do: konto.email,
           rodzaj: "niezalogowany",
-          temat: "Bruno AI: Twoja pierwsza rozmowa czeka",
+          temat: "Bruno AI: Your first call is waiting",
           html: htmlNieZalogowany({ imie: konto.imie, dni: konto.dni }),
           replyTo: "hello@jakubchodakowski.com",
         });
@@ -60,7 +80,7 @@ export async function GET(req: Request) {
       await wyslij({
         do: konto.email,
         rodzaj: "przypomnienie",
-        temat: dzis === 0 ? `Bruno czeka: ${dziennie} rozmowy po ${ROZMOWA_SEKUND / 60} minuty` : `Bruno czeka: zostały ${dziennie - dzis} rozmowy`,
+        temat: dzis === 0 ? `Bruno is waiting: ${dziennie} ${dziennie === 1 ? "call" : "calls"}, ${ROZMOWA_SEKUND / 60} ${ROZMOWA_SEKUND / 60 === 1 ? "minute" : "minutes"} each` : `Bruno is waiting: ${dziennie - dzis} ${dziennie - dzis === 1 ? "call" : "calls"} left`,
         html: htmlPrzypomnienie({ imie: konto.imie, kart: karty.length, rozmowyDzis: dzis, dniZostalo: stan.dniZostalo, dziennie }),
       });
       wyslane.push(konto.email);
@@ -77,5 +97,5 @@ export async function GET(req: Request) {
     console.error("[bruno przypomnienia] nagrania", e);
   }
 
-  return NextResponse.json({ ok: true, godzinaPL, wyslane, niezalogowani, nagrania });
+  return NextResponse.json({ ok: true, godzinaPL, wyslane, niezalogowani, free, nagrania });
 }

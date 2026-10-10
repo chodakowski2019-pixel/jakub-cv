@@ -3,21 +3,24 @@ import type { Wypowiedz } from "./db";
 // Liczby z transkrypcji, liczone deterministycznie, zanim trener (Claude)
 // zobaczy rozmowę. Progi z SalesAI/BRUNO-RUBRYKA.md. Trener dostaje gotowe
 // liczby, żeby nie zgadywał ich z tekstu.
+//
+// 10.10 (USER_001, wariant A): rozmowy są PO ANGIELSKU (amerykańskim). Wszystkie
+// wzorce słów poniżej są angielskie; polskie poszły do archiwum razem z PL.
 
-const WYPELNIACZE = /\b(y{2,}|e{2,}|hmm+|mmm+|no więc|jakby|w sensie|znaczy się|znaczy|tak jakby|no i)\b/giu;
-const OSLABIACZE = /\b(chyba|może|wydaje mi się|spróbuję|spróbujemy|trochę|myślę,? że|nie wiem czy|w sumie|jakoś|właściwie)\b/giu;
-const PRZEPROSINY = /\b(przepraszam|niestety|przeszkadzam|nie zajmę)\b/giu;
-// 9.10: słowo pytajne gdziekolwiek w zdaniu, nie tylko na początku. Aleksandra pytała
-// „Czego pan się boi?", „A co miałoby się nie udać?", „Konkretnie jaki model?" i miała 0 otwartych.
-// Zdanie zaczynające się od „czy" to pytanie zamknięte, nawet gdy dalej jest „jak".
-const SLOWO_PYTAJNE = /(^|[\s,„"(])(jak|co|czego|czemu|ile|kiedy|dlaczego|gdzie|skąd|dokąd|kto|kogo|komu|czym|który|która|które|którego|jaki|jaka|jakie|jakiego|jakich|jakim|w jaki sposób|od jak dawna|po co|na czym|z czego|o co|w czym)(?=[\s?,.!]|$)/iu;
-const ZAMKNIETE_START = /^\s*(a\s+)?(czy|może|mogę|mógłbym|mogłabym|możemy|chce|chciałby|chciałaby|ma|mają|macie|jest|są|zgadza|pasuje|ok|okej|dobrze|tak|prawda)\b/iu;
+const WYPELNIACZE = /\b(u+m+|u+h+|e+r+|a+h+|hmm+|you know|i mean|kind of|sort of|basically|literally|okay so|so yeah|right\?)/giu;
+const OSLABIACZE = /\b(maybe|perhaps|i think|i guess|i feel like|i believe|a little|a bit|hopefully|probably|possibly|i'?m not sure if|just (wanted|calling|checking|reaching|following)|if that makes sense)\b/giu;
+const PRZEPROSINY = /\b(sorry|apolog(y|ies|ize)|unfortunately|bother(ing)? you|won'?t take (much|long|a lot)|take (up )?(too )?much of your time|quick (call|question))\b/giu;
+// 9.10: słowo pytajne gdziekolwiek w zdaniu, nie tylko na początku. Zdanie zaczynające się
+// od „do / is / can…" to pytanie zamknięte, nawet gdy dalej jest „how".
+const SLOWO_PYTAJNE = /(^|[\s,„"(])(what|how|why|when|where|who|which|how much|how many|how long|how often|what if|tell me|walk me through)(?=[\s?,.!']|$)/iu;
+const ZAMKNIETE_START =
+  /^\s*(and\s+|so\s+|but\s+|okay,?\s+|ok,?\s+)?(do|does|did|is|are|was|were|can|could|would|will|should|have|has|had|may|might|shall|isn'?t|aren'?t|don'?t|doesn'?t|won'?t|wouldn'?t|couldn'?t|right|correct|okay|ok|yes|sure)\b/iu;
 /** Czy fragment zdania (z „?") jest pytaniem otwartym. Eksport dla fazy.ts. */
 export function czyPytanieOtwarte(zdanie: string): boolean {
   const z = zdanie.trim();
   if (!z) return false;
   if (ZAMKNIETE_START.test(z)) return false;
-  // „co z tego będę miał?" jest pytaniem klienta, nie handlowca, ale u handlowca „co z tego?" bywa retoryczne: wymagamy ≥3 słów.
+  // „what?" albo „how so?" bywa retoryczne: wymagamy ≥3 słów.
   if (z.split(/\s+/).length < 3) return false;
   return SLOWO_PYTAJNE.test(z);
 }
@@ -29,33 +32,30 @@ export function pytaniaZ(tekst: string): string[] {
     .filter((s) => s.includes("?"));
 }
 /** Zachowane dla zgodności (fazy.ts): to samo co czyPytanieOtwarte na początku zdania. */
-export const OTWARTE = /^\s*(jak|co|ile|kiedy|dlaczego|gdzie|kto|w jaki sposób|czym|który|która|od jak dawna)\b/iu;
-// 6.10: dopisane obiekcje o zaufaniu, dowodzie i koszcie (rozmowy Aleksandry: „stoją od zawsze",
-// „nikt nic nie zrobił", „ile to kosztuje" liczyły się jako 0 obiekcji).
+export const OTWARTE = /^\s*(what|how|why|when|where|who|which|how much|how many|how long|tell me)\b/iu;
+// Obiekcje klienta: cena, czas, „już mamy", unik („think about it", „send me an email"), zaufanie, dowód, koszt.
 const OBIEKCJA =
-  /(za drog|drogo|pomyśl|zastanow|przemyśl|nie teraz|mamy już|budżet|nie mam czasu|prześlij|proszę wysłać|wyślij|nie jestem zainteresowan|nie jestem przekonan|nie potrzeb|zapytam|skonsultuj|wspólnik|szef|od zawsze|nikt (z tym )?(nigdy )?nic|ile (to )?(wszystko )?(kosztuj|będzie kosztow|muszę wło)|kosztować|ryzyk|nie wierzę|nie ufam|obietnic|gwarancj|wygran|nie przejdzie|dlaczego (teraz|miałbym|miałabym)|co (z tego )?będę miał|poważna decyzja|nie stać|nie mam pieniędzy)/iu;
-const RABAT = /(rabat|taniej|zejść|zejdę|obniż|zniżk|promocj|upust)/iu;
+  /(too expensive|expensive|pricey|cost(s)? too much|can'?t afford|no budget|budget|think (about it|it over)|let me think|sleep on it|not (right )?now|not the (right|best) time|bad timing|already (have|use|work with|got)|we have a (supplier|vendor|provider|guy|partner)|send (me|us|it) (an |some |the )?(email|info|information|something|details|over)|email (me|us|it)|put it in writing|not interested|not sure|not convinced|don'?t (really )?need|no need|talk to my (boss|partner|team|wife|husband|cfo|board)|run it by|check with|compare|other (offers|quotes|options|vendors)|competitor|risk|risky|don'?t trust|don'?t believe|guarantee|promises|won'?t work (for us|here)|why (now|would i|should i|should we)|what'?s in it for (me|us)|big decision|no time|too busy|call me (back )?(next|in|after)|get back to (you|me)|circle back|next quarter|after the (summer|holidays|quarter|new year)|how much (is it|does it cost|would it cost|are we talking)|what does (it|this) cost|never (worked|needed)|been fine (so far|without))/iu;
+const RABAT = /(discount|cheaper|lower the price|knock (something |a bit |\d+% )?off|bring the price down|price break|special (price|offer|deal|rate)|promo|markdown|\d+ ?% off|percent off|throw in|waive)/iu;
 // 9.10: dopisane „następny krok z datą" (Negacz: w sprzedaży wieloetapowej zamknięcie = umówiony konkret).
-// Aleksandra 8.10: „kiedy możemy pełnomocnictwo podpisać u notariusza?", „mogę panią umówić na poniedziałek" = 0 próśb.
 export const PROSBA_O_DECYZJE =
-  /(zaczynamy|umówmy|umówimy|umawiamy|od kiedy|podpis|startujemy|możemy zacząć|kiedy możemy|kiedy może (pan|pani)|wchodzimy|zróbmy tak|proponuję termin|pasuje (panu|pani|państwu)|spotkajmy się|mogę (pana|panią|państwa) umówić|ustalmy|ustalamy|decydujemy|decyduje się (pan|pani)|jaka godzina|która godzina|przed południem czy|rano czy|wtorek czy|poniedziałek czy|czy (możemy|może pan|może pani) (dziś|dzisiaj|jutro|w tym tygodniu)|w (poniedziałek|wtorek|środę|czwartek|piątek) o)/iu;
-/** Klient sam prosi o liczbę: odpowiedź kwotą nie jest wtedy „ceną przed bólem" (9.10, rozmowa 4 Aleksandry: „ile zostanie mi w kieszeni?"). */
-const PROSBA_O_LICZBE = /(ile|koszt|cen[aęy]|kwot|zarobi|zostan|opłat|procent|stawk|prowizj|zwrot)/iu;
-/** Minimum słów handlowca w oknie, żeby tempo coś znaczyło (9.10: 27 słów w 1. minucie, bo mówił głównie Bruno, dawało „+107 %, nerwy"). */
+  /(let'?s (get started|get going|start|do it|do this|move forward|go ahead|book|schedule|set (it|that|this) up|lock (it|that) in|put (it|that) on the calendar|get you (set up|started|signed up))|shall we|can we (start|get started|get going|book|schedule|set (it|that|this) up|lock (it|that) in|go ahead|move forward|sign|get you)|when (can|could|would|do|should) (we|you) (start|sign|begin|meet|talk|kick (this|it) off|get started)|are you (ready|in|on board|good to go)|sign (the |this |that )?(agreement|contract|paperwork|proposal|order)|(does|would|is|will) (monday|tuesday|wednesday|thursday|friday|tomorrow|next week|this week|(this |tomorrow )?(morning|afternoon)|\d{1,2}(:\d{2})? ?([ap]\.?m\.?)?) work|morning or afternoon|(monday|tuesday|wednesday|thursday|friday) or (monday|tuesday|wednesday|thursday|friday)|what time works|(i'?ll|i will|let me) (put|pencil) you (in|down)|send you (a |the )?(calendar )?invite|put you down for|how about (monday|tuesday|wednesday|thursday|friday|tomorrow|next week|\d{1,2})|(are we|is that|is this) a (go|yes|deal)|do we have a deal|ready to (move|get started|sign|go|roll)|move forward with|(the )?next step (is|would be|here is)|get (this|you|everything) (set up|started|signed|rolling)|(so |then )?(we|you) (start|begin|kick off) (on |next |this )?(monday|tuesday|wednesday|thursday|friday|week|month)|which (day|time|date) works|does that work for you|(monday|tuesday|wednesday|thursday|friday|tomorrow|next week|this week)[^.?!]{0,30}\b(work|suit)s?\b|\b(work|suit)s? (for )?you (on|at) (monday|tuesday|wednesday|thursday|friday|tomorrow|\d))/iu;
+/** Klient sam prosi o liczbę: odpowiedź kwotą nie jest wtedy „ceną przed bólem" (9.10). */
+const PROSBA_O_LICZBE = /(how much|cost|price|pricing|fee|rate|percent|commission|refund|return|roi|payback|what (do|would|will) (i|we) (get|save|make|pay|earn)|save|number|ballpark|figure)/iu;
+/** Minimum słów handlowca w oknie, żeby tempo coś znaczyło (9.10: za mało słów dawało „+107 %, nerwy"). */
 const MIN_SLOW_TEMPO = 30;
-// Transkrypcja ElevenLabs pisze liczby słowami („sześć tysięcy pięćdziesiąt złotych"), więc
-// sama cyfra nie wystarcza (6.10: `kwota_padla: false` mimo 6 050 zł w rozmowie).
+// Transkrypcja ElevenLabs bywa słowna („six thousand dollars"), więc sama cyfra nie wystarcza.
 const LICZEBNIK =
-  "(?:jeden|jedna|jednego|dwa|dwie|dwóch|trzy|trzech|cztery|czterech|pięć|pięciu|sześć|sześciu|siedem|siedmiu|osiem|ośmiu|dziewięć|dziewięciu|\\p{L}*dzie[sś]\\p{L}*|\\p{L}+na[sś][tć]\\p{L}*|sto|stu|dwieście|dwustu|trzysta|trzystu|czterysta|czterystu|\\p{L}+set|\\p{L}+uset|półtora)";
-const TYSIAC = "(?:tysiąc\\p{L}*|tysięcy|milion\\p{L}*)";
+  "(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|a couple|a few|half a|several)";
+const TYSIAC = "(?:thousand|million|grand|k|hundred)";
 const KWOTA = new RegExp(
   [
-    `\\d[\\d\\s.,]*\\s*(zł|złotych|tys|tysięcy|procent|%|euro|eur|dolar)`,
-    // „sześć tysięcy złotych", „pięćdziesięciu tysięcy", „dwa miliony"
-    `(?<!\\p{L})${LICZEBNIK}(\\s+${TYSIAC})?\\s+(zł|złotych|złote|złoty|procent|euro|dolar\\p{L}*)`,
-    `(?<!\\p{L})${LICZEBNIK}\\s+${TYSIAC}(?!\\p{L})`,
-    // „tysiąc złotych" bez liczebnika z przodu; samo „tysiące klientów" to nie kwota
-    `(?<!\\p{L})${TYSIAC}\\s+(zł|złotych|euro|dolar\\p{L}*)`,
+    `[$£€]\\s?\\d[\\d,.]*(\\s?(k|m|thousand|million|grand))?`,
+    `\\d[\\d,.]*\\s?(k|grand|dollars?|bucks|pounds|quid|euros?|percent|%|per (month|year|seat|user|head|rep)|a (month|year|seat|user|head|rep))\\b`,
+    // „six thousand dollars", „twenty grand", „fifty k"
+    `(?<![a-z])${LICZEBNIK}(\\s+${TYSIAC})?\\s+(dollars?|bucks|pounds|quid|euros?|percent|grand|k)\\b`,
+    `(?<![a-z])${LICZEBNIK}\\s+${TYSIAC}(?![a-z])`,
+    `(?<![a-z])(a|one) (thousand|million|grand)\\b`,
   ].join("|"),
   "iu",
 );
@@ -64,21 +64,18 @@ const KWOTA = new RegExp(
 function rdzenie(t: string): string[] {
   return [...new Set((t.toLowerCase().match(/\p{L}{4,}/gu) ?? []).map((s) => s.slice(0, 5)))];
 }
-/** Wypowiedź klienta trafia w obiekcję firmy, gdy zawiera ≥60 % jej rdzeni („macie jakieś pytania?" nie łapie „macie jakieś wygrane sprawy?"). */
+/** Wypowiedź klienta trafia w obiekcję firmy, gdy zawiera ≥60 % jej rdzeni. */
 function trafiaWObiekcjeFirmy(tekst: string, firmy: string[][]): boolean {
   const moje = new Set(rdzenie(tekst));
   return firmy.some((r) => r.length > 0 && r.filter((x) => moje.has(x)).length >= Math.ceil(r.length * 0.6));
 }
 
-/** Płeć handlowca z jego własnych słów: „-łam/-łabym" = kobieta, „-łem/-łbym" = mężczyzna. Pewniejsze niż imię. */
-export function plecZTranskrypcji(tr: Wypowiedz[]): boolean | null {
-  const t = tr.filter((w) => w.rola === "handlowiec").map((w) => w.tekst).join(" ").toLowerCase();
-  const k = (t.match(/\p{L}+(łam|łabym)(?!\p{L})/gu) ?? []).length;
-  const m = (t.match(/\p{L}+(łem|łbym)(?!\p{L})/gu) ?? []).length;
-  if (k === m) return null;
-  return k > m;
+/** Po angielsku czasowniki nie mają rodzaju: trener pisze „you", płeć nie jest potrzebna. Zostaje dla zgodności, zawsze null. */
+export function plecZTranskrypcji(_tr: Wypowiedz[]): boolean | null {
+  return null;
 }
-const DATA = /(poniedziałek|wtorek|środ|czwartek|piątek|sobot|niedziel|jutro|pojutrze|o \d{1,2}(:\d{2})?|godzin|w przyszłym tygodniu|za tydzień)/iu;
+const DATA =
+  /(monday|tuesday|wednesday|thursday|friday|saturday|sunday|tomorrow|day after tomorrow|next week|this week|end of (the )?week|next month|at \d{1,2}(:\d{2})?( ?[ap]\.?m\.?)?|\d{1,2}(:\d{2})? ?[ap]\.?m\.?|o'?clock|noon|midday|(january|february|march|april|may|june|july|august|september|october|november|december) \d{1,2}|\d{1,2}(st|nd|rd|th)\b)/iu;
 
 function slowa(t: string) {
   return t.trim().split(/\s+/).filter(Boolean);

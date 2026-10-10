@@ -4,19 +4,26 @@ import { useRouter } from "next/navigation";
 
 // Zakładki prawdziwego panelu (components/bruno/nav.tsx), te same adresy i nazwy.
 export const LINKI = [
-  { href: "/bruno/panel", nazwa: "Panel", ikona: "panel" },
-  { href: "/bruno/rozmowa", nazwa: "Test", ikona: "test" },
+  { href: "/bruno/panel", nazwa: "Home", ikona: "panel" },
+  { href: "/bruno/rozmowa", nazwa: "Live Call", ikona: "test" },
   // „Ogień” tylko przy pełnym dostępie (jak components/bruno/nav.tsx, 9.10).
-  { href: "/bruno/ogien", nazwa: "Ogień", ikona: "ogien", pelny: true },
-  { href: "/bruno/trening", nazwa: "Trening", ikona: "trening" },
+  { href: "/bruno/ogien", nazwa: "Fire Up", ikona: "ogien", pelny: true },
+  { href: "/bruno/trening", nazwa: "Drills", ikona: "trening" },
   { href: "/bruno/feedback", nazwa: "Feedback", ikona: "feedback" },
-  { href: "/bruno/statystyki", nazwa: "Statystyki", ikona: "statystyki" },
-  { href: "/bruno/dostosuj", nazwa: "Dostosuj Bruno", ikona: "dostosuj" },
-  { href: "/bruno/ustawienia", nazwa: "Ustawienia", ikona: "ustawienia" },
+  { href: "/bruno/statystyki", nazwa: "Stats", ikona: "statystyki" },
+  { href: "/bruno/dostosuj", nazwa: "Customize Bruno", ikona: "dostosuj" },
+  { href: "/bruno/ustawienia", nazwa: "Settings", ikona: "ustawienia" },
 ] as const;
 
-/** Linki widoczne dla konta: „Ogień” tylko przy pełnym dostępie. */
-export const linkiDla = (pelny: boolean) => LINKI.filter((l) => !("pelny" in l) || pelny);
+/**
+ * Linki widoczne dla konta: „Ogień” tylko przy pełnym dostępie; „Statystyki” nie dla konta free (10.10).
+ * Przyjmuje stare `pelny: boolean` albo obiekt dostępu z `dostepKonta`.
+ */
+export const linkiDla = (d: boolean | { ogien: boolean; statystyki: boolean }) => {
+  const ogien = typeof d === "boolean" ? d : d.ogien;
+  const statystyki = typeof d === "boolean" ? true : d.statystyki;
+  return LINKI.filter((l) => ("pelny" in l ? ogien : true) && (l.href === "/bruno/statystyki" ? statystyki : true));
+};
 
 export type NazwaIkony = (typeof LINKI)[number]["ikona"] | "klodka" | "wyjscie" | "mikrofon" | "strzalka";
 
@@ -63,7 +70,7 @@ export function useWyloguj() {
 export const odmiana = (n: number, jeden: string, kilka: string, wiele: string) =>
   n === 1 ? jeden : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? kilka : wiele;
 
-export const rozmowy = (n: number) => odmiana(n, "rozmowa", "rozmowy", "rozmów");
+export const rozmowy = (n: number) => odmiana(n, "call", "calls", "calls");
 
 /** Czy użytkownik prosi o mniej ruchu. */
 export function malaAnimacja(): boolean {

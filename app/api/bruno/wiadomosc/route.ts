@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
   const b = await req.json().catch(() => ({}));
   const tekst = String(b.tekst ?? "").trim().slice(0, 3000);
-  if (tekst.length < 2) return NextResponse.json({ ok: false, blad: "Pusta wiadomość." }, { status: 400 });
+  if (tekst.length < 2) return NextResponse.json({ ok: false, blad: "Your message is empty." }, { status: 400 });
   try {
     const konto = await pobierzKonto(email);
     await wyslij({
@@ -24,6 +24,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[bruno wiadomosc]", e);
-    return NextResponse.json({ ok: false, blad: "Nie udało się wysłać." }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: "Couldn't send. Try again." }, { status: 500 });
   }
 }

@@ -40,7 +40,7 @@ export async function POST(req: Request) {
   if (!autoryzowany(req)) return NextResponse.json({ ok: false }, { status: 401 });
   const b = await req.json().catch(() => ({}));
   const email = normalizujEmail(b.email);
-  if (!email) return NextResponse.json({ ok: false, blad: "Zły e-mail." }, { status: 400 });
+  if (!email) return NextResponse.json({ ok: false, blad: "Invalid email." }, { status: 400 });
 
   const istnieje = await pobierzKonto(email);
   // Kod: podany ręcznie, wylosowany dla nowego konta, albo zostaje stary.
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     fiszek_dziennie: Math.min(200, Math.max(1, Number(b.fiszek_dziennie) || 5)),
     aktywne: b.aktywne === undefined ? true : Boolean(b.aktywne),
     // 9.10: plan „trial" (test) albo „pelny" (płacąca firma: oferta z PDF/strony, „Rozmowa, którą masz jutro").
-    plan: b.plan === "pelny" ? "pelny" : "trial",
+    plan: b.plan === "pelny" ? "pelny" : b.plan === "free" ? "free" : "trial",
     ...(kod ? { kod_hash: zaszyfrujKod(kod), nieudane: 0, blokada_do: null } : {}),
   };
   const { error } = await supabaseAdmin.from("bruno_konta").upsert(konto, { onConflict: "email" });
@@ -89,7 +89,7 @@ export async function POST(req: Request) {
       await wyslij({
         do: email,
         rodzaj: "dostep",
-        temat: "Twój dostęp do Bruno AI",
+        temat: "Your Bruno AI access",
         html: htmlDostep({
           imie: konto.imie,
           email,

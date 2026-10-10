@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   const id = String(b?.rozmowa_id ?? "");
   const rozmiar = Number(b?.rozmiar);
   if (!id || !Number.isFinite(rozmiar) || rozmiar <= 0 || rozmiar > MAX_BAJTOW) {
-    return NextResponse.json({ ok: false, blad: "Zły rozmiar albo brak id." }, { status: 400 });
+    return NextResponse.json({ ok: false, blad: "Wrong size or missing ID." }, { status: 400 });
   }
   const { data: rozmowa } = await supabaseAdmin.from("bruno_rozmowy").select("id").eq("id", id).eq("email", email).maybeSingle();
   if (!rozmowa) return NextResponse.json({ ok: false }, { status: 404 });

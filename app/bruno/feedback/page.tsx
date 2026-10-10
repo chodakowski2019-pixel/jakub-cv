@@ -15,7 +15,7 @@ function OcenaKolko({ ocena }: { ocena: number | null }) {
   const obwod = 2 * Math.PI * r;
   const udzial = ocena ? Math.min(1, Math.max(0, ocena / 10)) : 0;
   return (
-    <svg viewBox="0 0 64 64" width="72" height="72" role="img" aria-label={ocena ? `Ocena ${ocena} na 10` : "Bez oceny"}>
+    <svg viewBox="0 0 64 64" width="72" height="72" role="img" aria-label={ocena ? `Score ${ocena} out of 10` : "No score"}>
       <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(212,175,90,0.12)" strokeWidth="6" />
       {ocena ? (
         <circle cx="32" cy="32" r={r} fill="none" stroke="#d4af5a" strokeWidth="6" strokeLinecap="round" strokeDasharray={`${obwod * udzial} ${obwod}`} transform="rotate(-90 32 32)" />
@@ -38,22 +38,22 @@ export default async function BrunoFeedbackPage() {
     <div className="flex flex-col gap-6">
       <div className="text-center">
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
-          Twój <span className="bruno-gradient-tekst">feedback</span>
+          Your <span className="bruno-gradient-tekst">feedback</span>
         </h1>
         <p className="text-slate-600 mt-2">
           {srednia !== null ? (
             <>
-              Średnia <b className="text-slate-900">{srednia}/10</b> z {ocenione.length} {ocenione.length === 1 ? "ocenionej rozmowy" : ocenione.length < 5 ? "ocenionych rozmów" : "ocenionych rozmów"}. Kliknij rozmowę, żeby zobaczyć, co poprawić.
+              Average <b className="text-slate-900">{srednia}/10</b> from {ocenione.length} scored {ocenione.length === 1 ? "call" : "calls"}. Click a call to see what to fix.
             </>
           ) : (
-            "Po każdej rozmowie testowej Bruno-trener zostawia tu ocenę, cytaty i jedną rzecz do poprawy."
+            "After every Live Call, Bruno the coach leaves a score, quotes, and one thing to fix here."
           )}
         </p>
       </div>
 
       {rozmowy.length === 0 ? (
         <div className="bruno-szklo rounded-3xl p-8 text-center text-slate-600">
-          Jeszcze nic. <Link href="/bruno/rozmowa" className="underline">Zrób pierwszy test z Bruno</Link>.
+          Nothing yet. <Link href="/bruno/rozmowa" className="underline">Do your first Live Call with Bruno</Link>.
         </div>
       ) : (
         <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -62,8 +62,8 @@ export default async function BrunoFeedbackPage() {
             const data = new Date(r.start);
             const tresc = (
               <>
-                <div className="text-sm font-semibold text-slate-800">{data.toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric" })}</div>
-                <div className="text-[11px] text-slate-400 mb-3">{data.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" })}</div>
+                <div className="text-sm font-semibold text-slate-800">{data.toLocaleDateString("en-US", { day: "2-digit", month: "2-digit", year: "numeric" })}</div>
+                <div className="text-[11px] text-slate-400 mb-3">{data.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}</div>
                 <OcenaKolko ocena={ocena} />
               </>
             );

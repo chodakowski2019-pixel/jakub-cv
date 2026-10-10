@@ -11,15 +11,15 @@ import { usePathname, useRouter } from "next/navigation";
 // Dwie najważniejsze zakładki (USER_001 2.10): TRENING = fiszki (nauka),
 // TEST = rozmowa z Bruno (egzamin). FEEDBACK = oceny rozmów (dawniej Historia).
 const LINKI = [
-  { href: "/bruno/panel", nazwa: "Panel", ikona: "panel" },
-  { href: "/bruno/rozmowa", nazwa: "Test", ikona: "test" },
+  { href: "/bruno/panel", nazwa: "Home", ikona: "panel" },
+  { href: "/bruno/rozmowa", nazwa: "Live Call", ikona: "test" },
   // „Ogień przed rozmową" (USER_001 9.10): 5-minutowy rytuał przed prawdziwym telefonem.
-  { href: "/bruno/ogien", nazwa: "Ogień", ikona: "ogien", pelny: true },
-  { href: "/bruno/trening", nazwa: "Trening", ikona: "trening" },
+  { href: "/bruno/ogien", nazwa: "Fire Up", ikona: "ogien", pelny: true },
+  { href: "/bruno/trening", nazwa: "Drills", ikona: "trening" },
   { href: "/bruno/feedback", nazwa: "Feedback", ikona: "feedback" },
-  { href: "/bruno/statystyki", nazwa: "Statystyki", ikona: "statystyki" },
-  { href: "/bruno/dostosuj", nazwa: "Dostosuj Bruno", ikona: "dostosuj" },
-  { href: "/bruno/ustawienia", nazwa: "Ustawienia", ikona: "ustawienia" },
+  { href: "/bruno/statystyki", nazwa: "Stats", ikona: "statystyki" },
+  { href: "/bruno/dostosuj", nazwa: "Customize Bruno", ikona: "dostosuj" },
+  { href: "/bruno/ustawienia", nazwa: "Settings", ikona: "ustawienia" },
 ] as const;
 
 /** Linki widoczne dla konta: „Ogień" tylko przy pełnym dostępie (9.10). */
@@ -67,7 +67,7 @@ export function BrunoPasek({ pelny }: { pelny: boolean }) {
       <div className="px-2">
         <Logo zalogowany />
       </div>
-      <nav className="bruno-pasek flex flex-col gap-1" aria-label="Panel">
+      <nav className="bruno-pasek flex flex-col gap-1" aria-label="Main menu">
         {linkiDla(pelny).map((l) => (
           <Link key={l.href} href={l.href} aria-current={sciezka?.startsWith(l.href) ? "page" : undefined}>
             <Ikona nazwa={l.ikona} />
@@ -112,15 +112,15 @@ export default function BrunoNav({ zalogowany, pelny }: { zalogowany: boolean; p
           className={`bruno-odblokuj inline-flex items-center gap-2 whitespace-nowrap ${odblokuj ? "bruno-odblokuj-aktywny" : ""}`}
         >
           <Ikona nazwa="klodka" />
-          <span className="sm:hidden">Odblokuj</span>
-          <span className="hidden sm:inline">Odblokuj pełen dostęp</span>
+          <span className="sm:hidden">Unlock</span>
+          <span className="hidden sm:inline">Unlock full access</span>
         </Link>
         <button type="button" onClick={wyloguj} className="bruno-wyloguj sm:absolute sm:right-6 inline-flex items-center gap-1.5">
           <Ikona nazwa="wyjscie" />
-          <span className="hidden sm:inline">Wyloguj</span>
+          <span className="hidden sm:inline">Log out</span>
         </button>
       </div>
-      <nav className="sm:hidden bruno-nav flex items-center gap-1 overflow-x-auto px-3 pb-2" aria-label="Panel">
+      <nav className="sm:hidden bruno-nav flex items-center gap-1 overflow-x-auto px-3 pb-2" aria-label="Main menu">
         {linkiDla(pelny).map((l) => (
           <Link key={l.href} href={l.href} aria-current={sciezka?.startsWith(l.href) ? "page" : undefined} className="whitespace-nowrap">
             {l.nazwa}

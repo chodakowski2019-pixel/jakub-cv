@@ -123,15 +123,15 @@ function Minuty({ d }: { d: DanePanelu }) {
   const gotowe = useGotowe();
   const r7 = d.dni7.reduce((a, x) => a + x.wartosc, 0);
   const dane = {
-    d: { n: d.minDzis, sufiks: " min", u: "/dziś", udzial: d.dziennie ? d.dzis / d.dziennie : 0, txt: `Dziś ${d.dzis} z ${d.dziennie} ${rozmowy(d.dziennie)}. Każda trwa ${d.rozmowaMin} min.`, badge: d.planZrobiony ? "Plan dnia zrobiony" : `Zostało ${d.zostaloDzis}` },
-    t: { n: d.min7, sufiks: " min", u: "/7 dni", udzial: d.dziennie ? r7 / (d.dziennie * 7) : 0, txt: `Ostatnie 7 dni: ${r7} ${rozmowy(r7)} i ${d.min7} min treningu.`, badge: `${r7} ${rozmowy(r7)}` },
-    m: { n: d.minutZostalo, sufiks: ` / ${d.limitMinut}`, u: "min zostało", udzial: d.limitMinut ? d.minutZostalo / d.limitMinut : 0, txt: d.minutZostalo >= 1 ? "Limit minut na cały test." : "Limit minut testu wyczerpany.", badge: d.koniec ? `do ${d.koniec}` : `${d.dniZostalo} dni dostępu` },
+    d: { n: d.minDzis, sufiks: " min", u: "/today", udzial: d.dziennie ? d.dzis / d.dziennie : 0, txt: `Today: ${d.dzis} of ${d.dziennie} ${rozmowy(d.dziennie)}. Each one is ${d.rozmowaMin} min.`, badge: d.planZrobiony ? "Today's plan done" : `${d.zostaloDzis} left` },
+    t: { n: d.min7, sufiks: " min", u: "/7 days", udzial: d.dziennie ? r7 / (d.dziennie * 7) : 0, txt: `Last 7 days: ${r7} ${rozmowy(r7)} and ${d.min7} min of practice.`, badge: `${r7} ${rozmowy(r7)}` },
+    m: { n: d.minutZostalo, sufiks: ` / ${d.limitMinut}`, u: "min left", udzial: d.limitMinut ? d.minutZostalo / d.limitMinut : 0, txt: d.minutZostalo >= 1 ? "Minute limit for your whole trial." : "You've used all your trial minutes.", badge: d.koniec ? `until ${d.koniec}` : `${d.dniZostalo} ${d.dniZostalo === 1 ? "day" : "days"} of access` },
   }[k];
   const pelne = Math.round(Math.min(1, dane.udzial) * 25);
-  const opisy: Record<Tryb, string> = { d: "Dziś", t: "Ostatnie 7 dni", m: "Minuty testu" };
+  const opisy: Record<Tryb, string> = { d: "Today", t: "Last 7 days", m: "Trial minutes" };
   return (
     <article className="card glass mins">
-      <h3>Plan dnia</h3>
+      <h3>Today's plan</h3>
       <p>{dane.txt}</p>
       <span className="badge glass"><i />{dane.badge}</span>
       <div className="blocks" aria-hidden>
@@ -170,8 +170,8 @@ function TypKlienta({ d }: { d: DanePanelu }) {
   return (
     <article className="card glass bc persona">
       <h3 className={`fade ${znika ? "out" : ""}`}>
-        {i === 0 ? "Twój typ klienta" : "Inny typ klienta"}
-        <span style={{ color: p.kolor }}>Klient {p.nazwa.toLowerCase()}</span>
+        {i === 0 ? "Your customer type" : "Other customer type"}
+        <span style={{ color: p.kolor }}>{p.nazwa} customer</span>
       </h3>
       <div className="tip glass">
         <span className="lab"><span className="kropka" style={{ background: p.kolor }} />{p.krotko}</span>
@@ -180,8 +180,8 @@ function TypKlienta({ d }: { d: DanePanelu }) {
       <div className="pager">
         <div className="c">{i + 1}<small>/{d.postacie.length}</small></div>
         <div className="arr">
-          <button type="button" aria-label="Poprzedni" onClick={() => zmien(-1)}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M15 6l-6 6 6 6" /></svg></button>
-          <button type="button" aria-label="Następny" onClick={() => zmien(1)}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg></button>
+          <button type="button" aria-label="Previous" onClick={() => zmien(-1)}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M15 6l-6 6 6 6" /></svg></button>
+          <button type="button" aria-label="Next" onClick={() => zmien(1)}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg></button>
         </div>
       </div>
     </article>
@@ -197,16 +197,16 @@ function Ocena({ d }: { d: DanePanelu }) {
     <article className="card glass bc">
       <div className="hd">
         <span className="ico glass"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" fill="currentColor" /></svg></span>
-        <h3>Ocena rozmowy</h3>
+        <h3>Call score</h3>
         <div className="seg glass" style={{ marginLeft: "auto" }}>
-          <button type="button" className={k === "ost" ? "on" : ""} onClick={() => setK("ost")}>Ostatnia</button>
-          <button type="button" className={k === "sr" ? "on" : ""} onClick={() => setK("sr")}>Średnia</button>
+          <button type="button" className={k === "ost" ? "on" : ""} onClick={() => setK("ost")}>Last</button>
+          <button type="button" className={k === "sr" ? "on" : ""} onClick={() => setK("sr")}>Average</button>
         </div>
       </div>
-      <div className="sub"><span>{o ? "" : "Brak ocenionych rozmów"}</span><span>Na 10</span></div>
+      <div className="sub"><span>{o ? "" : "No scored calls yet"}</span><span>Out of 10</span></div>
       <div className="score">{o ? <Licz key={k} do={o.ocena} dec={1} /> : "–"}<small>/10</small></div>
       <div className="crit">
-        {(o?.kryteria ?? ["Otwarcie", "Pytania", "Obiekcje", "Zamknięcie", "Pewność siebie"].map((nazwa) => ({ nazwa, ocena: 0 }))).map((c, ri) => (
+        {(o?.kryteria ?? ["Opening", "Questions", "Objections", "Closing", "Confidence"].map((nazwa) => ({ nazwa, ocena: 0 }))).map((c, ri) => (
           <div className="row" key={c.nazwa}>
             <span>{c.nazwa}</span>
             <div className="ticks">
@@ -214,7 +214,7 @@ function Ocena({ d }: { d: DanePanelu }) {
                 <i key={ti} className={gotowe && ti < Math.round(c.ocena) ? "f" : ""} style={{ transitionDelay: `${ri * 70 + ti * 35}ms` }} />
               ))}
             </div>
-            <b>{o ? String(c.ocena).replace(".", ",") : "–"}</b>
+            <b>{o ? String(c.ocena) : "–"}</b>
           </div>
         ))}
       </div>
@@ -270,10 +270,10 @@ function Fala({ d }: { d: DanePanelu }) {
     <article className="card glass bc prog">
       <div className="hd">
         <span className="ico glass"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6" /></svg></span>
-        <h3>Rozmowy</h3>
+        <h3>Calls</h3>
         <div className="r"><Licz do={r7} czas={1200} /><small>{rozmowy(r7)}</small></div>
       </div>
-      <div className="sub"><span>W ostatnich 7 dniach</span></div>
+      <div className="sub"><span>In the last 7 days</span></div>
       <div style={{ position: "relative" }}>
         <svg
           ref={svgRef}
@@ -281,7 +281,7 @@ function Fala({ d }: { d: DanePanelu }) {
           viewBox="0 0 300 120"
           preserveAspectRatio="none"
           role="img"
-          aria-label={`Rozmowy w ostatnich 7 dniach: ${d.dni7.map((x) => `${x.etykieta} ${x.wartosc}`).join(", ")}`}
+          aria-label={`Calls in the last 7 days: ${d.dni7.map((x) => `${x.etykieta} ${x.wartosc}`).join(", ")}`}
           onPointerMove={ruch}
           onPointerLeave={() => setHover(null)}
         >
@@ -298,9 +298,9 @@ function Fala({ d }: { d: DanePanelu }) {
           <line x1={pTeraz[h][0]} x2={pTeraz[h][0]} y1="0" y2="120" stroke="#fff" strokeOpacity=".35" strokeDasharray="2 5" opacity={hover === null ? 0 : 1} />
           <circle r="6" fill="#fff" stroke="#3ddc97" strokeWidth="3" cx={pTeraz[h][0]} cy={pTeraz[h][1]} />
         </svg>
-        <span className="goal" style={{ top: `${(Y(d.dziennie) / 120) * 100}%` }}>cel {d.dziennie}</span>
+        <span className="goal" style={{ top: `${(Y(d.dziennie) / 120) * 100}%` }}>goal {d.dziennie}</span>
         <div className={`tt ${hover !== null ? "on" : ""}`} style={{ left: `${(pTeraz[h][0] / 300) * 100}%`, top: `calc(${(pTeraz[h][1] / 120) * 100}% + 10px)` }}>
-          {dzien.podpis}: {dzien.wartosc} {rozmowy(dzien.wartosc)} (tydzień wcześniej {d.dniPoprzednie[h]})
+          {dzien.podpis}: {dzien.wartosc} {rozmowy(dzien.wartosc)} (week before: {d.dniPoprzednie[h]})
         </div>
       </div>
       <div className="dni">
@@ -308,20 +308,21 @@ function Fala({ d }: { d: DanePanelu }) {
       </div>
       <div className="foot">
         <div className="pct"><Licz do={proc} po="%" czas={1600} /></div>
-        <div className="note">celu na 7 dni<b>{r7} z {celTyg} {rozmowy(celTyg)}</b></div>
+        <div className="note">of your 7-day goal<b>{r7} of {celTyg} {rozmowy(celTyg)}</b></div>
       </div>
     </article>
   );
 }
 
 /* ---------- Strona ---------- */
-export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false, zielony = false, szklo = false, zloty = false, bialoZloty = false, pelny = false }: { d: DanePanelu; jasne?: boolean; bialeTlo?: boolean; lp?: boolean; zielony?: boolean; szklo?: boolean; zloty?: boolean; bialoZloty?: boolean; pelny?: boolean }) {
-  const linki = linkiDla(pelny);
+export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false, zielony = false, szklo = false, zloty = false, bialoZloty = false, pelny = false, dostep, free }: { d: DanePanelu; jasne?: boolean; bialeTlo?: boolean; lp?: boolean; zielony?: boolean; szklo?: boolean; zloty?: boolean; bialoZloty?: boolean; pelny?: boolean; dostep?: { ogien: boolean; statystyki: boolean }; free?: { zuzyte: number; zostalo: number } | null }) {
+  // 10.10: prawdziwy panel podaje `dostep` (free bez Statystyk); podglądy dalej `pelny`.
+  const linki = linkiDla(dostep ?? pelny);
   const wyloguj = useWyloguj();
   const [glosniej, setGlosniej] = useState(false);
   const p = d.postacie.find((x) => x.id === d.postac) ?? d.postacie[0];
-  const powitanie = d.imie ? `Cześć, ${d.imie}!` : "Cześć!";
-  const plan = d.planZrobiony ? "Plan na dziś zrobiony" : `Dziś: ${d.zostaloDzis} ${rozmowy(d.zostaloDzis)}`;
+  const powitanie = d.imie ? `Hi, ${d.imie}!` : "Hi!";
+  const plan = d.planZrobiony ? "Today's plan is done" : `Today: ${d.zostaloDzis} ${rozmowy(d.zostaloDzis)}`;
 
   return (
     <div className={`bpa ${jasne ? "jasne" : ""} ${bialeTlo ? "bialetlo" : ""} ${lp ? "lp" : ""} ${zielony ? "zielony" : ""} ${szklo ? "szklo" : ""} ${zloty ? "czarny" : ""} ${bialoZloty ? "zlotyj" : ""}`}>
@@ -329,7 +330,7 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
         <aside className="side">
           {/* 10.10 (USER_001): w czarno-złotym kółko z inicjałem na górze zamiast kropki logo, na dole go nie ma. */}
           {zloty ? (
-            <Link href="/bruno/panel" className="me gora" title="Panel" aria-label="Panel">{d.inicjal}</Link>
+            <Link href="/bruno/panel" className="me gora" title="Home" aria-label="Home">{d.inicjal}</Link>
           ) : (
             <Link href="/bruno/panel" className="logo" title="Bruno AI" aria-label="Bruno AI"><i /></Link>
           )}
@@ -342,7 +343,7 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
             </span>
           ))}
           <div className="grow" />
-          <button type="button" className="nav" aria-label="Wyloguj" title="Wyloguj" onClick={wyloguj}><Ikona nazwa="wyjscie" /></button>
+          <button type="button" className="nav" aria-label="Log out" title="Log out" onClick={wyloguj}><Ikona nazwa="wyjscie" /></button>
           {!zloty && <div className="me" aria-hidden>{d.inicjal}</div>}
         </aside>
 
@@ -354,19 +355,28 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
             <div className="sp" />
             {!d.wygasl && (
               <div className="rings">
-                <Pierscien liczba={`${d.dniZostalo}`} opis={d.dniZostalo === 1 ? "dzień dostępu" : "dni dostępu"} uwaga={d.koniec ? `do ${d.koniec}` : `z ${d.dni}, od pierwszego logowania`} />
-                <Pierscien liczba={`${d.dzis}/${d.dziennie}`} opis="rozmów dziś" uwaga={d.planZrobiony ? "plan dnia zrobiony" : `zostało ${d.zostaloDzis}`} />
+                <Pierscien liczba={`${d.dniZostalo}`} opis={d.dniZostalo === 1 ? "day of access" : "days of access"} uwaga={d.koniec ? `until ${d.koniec}` : `of ${d.dni}, from your first login`} />
+                <Pierscien liczba={`${d.dzis}/${d.dziennie}`} opis="calls today" uwaga={d.planZrobiony ? "today's plan done" : `${d.zostaloDzis} left`} />
               </div>
             )}
             <Link className="btn sec glass upgrade" href="/bruno/odblokuj">
               <Ikona nazwa="klodka" rozmiar={15} grubosc={2} />
-              <span className="dlugi">Odblokuj pełen dostęp</span>
-              <span className="krotki">Odblokuj</span>
+              {free ? (
+                <>
+                  <span className="dlugi">Free calls: {free.zuzyte} / {free.zuzyte + free.zostalo} · Bruno Pro</span>
+                  <span className="krotki">{free.zuzyte} / {free.zuzyte + free.zostalo} · Pro</span>
+                </>
+              ) : (
+                <>
+                  <span className="dlugi">Unlock full access</span>
+                  <span className="krotki">Unlock</span>
+                </>
+              )}
             </Link>
-            <button type="button" className="wyl glass" onClick={wyloguj} aria-label="Wyloguj"><Ikona nazwa="wyjscie" rozmiar={18} /></button>
+            <button type="button" className="wyl glass" onClick={wyloguj} aria-label="Log out"><Ikona nazwa="wyjscie" rozmiar={18} /></button>
           </header>
 
-          <nav className="mnav" aria-label="Panel">
+          <nav className="mnav" aria-label="Main menu">
             {linki.map((l) => (
               <Link key={l.href} href={l.href} className={`glass ${l.ikona === "panel" ? "on" : ""}`} aria-current={l.ikona === "panel" ? "page" : undefined}>{l.nazwa}</Link>
             ))}
@@ -375,15 +385,15 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
 
           {!d.skonfigurowany && !d.wygasl && (
             <div className="uwaga glass">
-              Bruno nie wie jeszcze, co sprzedajesz. <Link href="/bruno/dostosuj">Dostosuj Bruno</Link> (2 minuty), inaczej gra klienta ogólnego.
+              Bruno doesn't know what you sell yet. <Link href="/bruno/dostosuj">Customize Bruno</Link> (2 minutes), or he'll play a generic customer.
             </div>
           )}
 
           {d.wygasl ? (
             <section className="card glass wygasl">
-              <h2>Dostęp testowy wygasł</h2>
-              <p>{d.dni} dni minęło. Jeśli chcesz dalej trenować z Bruno, napisz do nas.</p>
-              <Link href="/bruno/odblokuj" className="cta btn pri">Odblokuj pełen dostęp <i><Ikona nazwa="strzalka" rozmiar={16} grubosc={2.2} /></i></Link>
+              <h2>Your trial has ended</h2>
+              <p>Your {d.dni}-day trial is over. Want to keep practicing with Bruno? Get in touch.</p>
+              <Link href="/bruno/odblokuj" className="cta btn pri">Unlock full access <i><Ikona nazwa="strzalka" rozmiar={16} grubosc={2.2} /></i></Link>
             </section>
           ) : (
             <>
@@ -393,16 +403,16 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
                   <h2>{plan}</h2>
                   <div className={`listen ${glosniej ? "live" : ""}`}>
                     {d.moznaRozmawiac ? (
-                      <Link href={d.linkRozmowy} className="mic" aria-label={`Rozmawiaj z Bruno: klient ${p.nazwa.toLowerCase()}`} onPointerEnter={() => setGlosniej(true)} onPointerLeave={() => setGlosniej(false)} onFocus={() => setGlosniej(true)} onBlur={() => setGlosniej(false)}>
+                      <Link href={d.linkRozmowy} className="mic" aria-label={`Talk to Bruno: ${p.nazwa} customer`} onPointerEnter={() => setGlosniej(true)} onPointerLeave={() => setGlosniej(false)} onFocus={() => setGlosniej(true)} onBlur={() => setGlosniej(false)}>
                         <Ikona nazwa="mikrofon" grubosc={2} />
                       </Link>
                     ) : (
                       <span className="mic off" aria-hidden><Ikona nazwa="mikrofon" grubosc={2} /></span>
                     )}
-                    <span className="lab">{d.moznaRozmawiac ? "Rozmawiaj" : d.planZrobiony ? "Wróć jutro" : "Limit minut wyczerpany"}</span>
+                    <span className="lab">{d.moznaRozmawiac ? "Talk" : d.planZrobiony ? "Come back tomorrow" : "Out of minutes"}</span>
                   </div>
                   {!d.moznaRozmawiac && (
-                    <span className="cta stat glass">{d.planZrobiony ? "Wróć jutro. Przypomnimy mailem rano." : "Limit minut testu wyczerpany."}</span>
+                    <span className="cta stat glass">{d.planZrobiony ? "Come back tomorrow. We'll email you a reminder in the morning." : "You've used all your trial minutes."}</span>
                   )}
                 </article>
                 <Minuty d={d} />

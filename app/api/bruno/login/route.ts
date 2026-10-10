@@ -22,21 +22,21 @@ export const dynamic = "force-dynamic";
 //
 // Komunikat o błędzie jest jeden dla złego adresu i złego kodu: formularz nie
 // może być sprawdzarką, kto ma dostęp do testu.
-const ZLE = "Zły adres albo kod.";
+const ZLE = "Wrong email or code.";
 
 export async function POST(req: Request) {
   try {
     const b = await req.json();
     const email = normalizujEmail(b.email);
     const kod = poprawnyKod(b.kod);
-    if (!email || !kod) return NextResponse.json({ ok: false, blad: "Podaj adres i 6-cyfrowy kod." }, { status: 400 });
+    if (!email || !kod) return NextResponse.json({ ok: false, blad: "Enter your email and 6-digit code." }, { status: 400 });
 
     const konto = await pobierzKonto(email);
     if (!konto || !konto.kod_hash) return NextResponse.json({ ok: false, blad: ZLE }, { status: 401 });
 
     if (konto.blokada_do && new Date(konto.blokada_do).getTime() > Date.now()) {
       const minut = Math.ceil((new Date(konto.blokada_do).getTime() - Date.now()) / 60_000);
-      return NextResponse.json({ ok: false, blad: `Za dużo prób. Spróbuj za ${minut} min.` }, { status: 429 });
+      return NextResponse.json({ ok: false, blad: `Too many tries. Try again in ${minut} min.` }, { status: 429 });
     }
 
     if (!kodPasuje(kod, konto.kod_hash)) {
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     }
 
     const stan = stanDostepu(konto);
-    if (!stan.aktywny) return NextResponse.json({ ok: false, blad: "Dostęp testowy wygasł." }, { status: 403 });
+    if (!stan.aktywny) return NextResponse.json({ ok: false, blad: "Your trial access has expired." }, { status: 403 });
 
     await supabaseAdmin
       .from("bruno_konta")
@@ -79,6 +79,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[bruno login]", e);
-    return NextResponse.json({ ok: false, blad: "Nie udało się zalogować." }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: "Couldn't log you in. Try again." }, { status: 500 });
   }
 }

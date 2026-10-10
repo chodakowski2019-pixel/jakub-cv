@@ -65,31 +65,31 @@ export async function wyslij(args: { do: string; temat: string; html: string; re
   return { ok: true };
 }
 
-const minutaSlowo = (m: number) => (m === 1 ? "minutę" : m < 5 ? "minuty" : "minut");
+const minutaSlowo = (m: number) => (m === 1 ? "minute" : "minutes");
 
 /**
- * 9.10 (USER_001): mail po rejestracji B2C (/brunorejestracja). 3 bezpłatne rozmowy,
- * EN domyślnie, PL dla rejestracji z ?pl. Link do logowania z językiem i źródłem.
+ * 9.10 (USER_001): mail po rejestracji B2C (/brunorejestracja). 3 bezpłatne rozmowy.
+ * 10.10: treść zawsze EN (parametr jezyk zostaje, steruje tylko linkiem ?pl).
  */
 export function htmlRejestracja(a: { imie: string | null; email: string; kod: string; jezyk: "en" | "pl"; rozmow: number }) {
   const en = a.jezyk === "en";
   const link = `${bazaUrl()}/bruno${en ? "" : "?pl"}`;
   const linkSrc = linkZeZrodlem(link, "dostep");
   return kopertaBruno({
-    naglowek: en ? "Your access is ready" : "Twój dostęp jest gotowy",
+    naglowek: "Your access is ready",
     tresc: [
-      akapit(en ? `${a.imie ? `Hi ${a.imie}, here` : "Here"} are your login details ⤵️` : `${a.imie ? `Cześć ${a.imie}, p` : "P"}oniżej znajdziesz dane dostępu ⤵️`),
-      tabelaDostepu({ link, login: a.email, kod: a.kod, etykiety: en ? ["Page", "Login", "Login code"] : undefined }),
-      tabelaParami([[en ? "Free calls" : "Bezpłatne rozmowy", String(a.rozmow)]]),
-      przycisk({ tekst: en ? "Log in" : "Zaloguj się", link: linkSrc }),
-      kroki(
-        en
-          ? ["Open the page in Chrome and put on headphones.", "Before your first call, open “Customize Bruno” and write what you sell, who your customer is and the objections you hear most.", "Start a call. Bruno plays your customer."]
-          : ["Otwórz stronę w Chrome i załóż słuchawki.", "Przed pierwszą rozmową wejdź w „Dostosuj Bruno” i wpisz, co sprzedajesz, kim jest klient i jakie obiekcje najczęściej słyszysz.", "Zacznij rozmowę. Bruno gra Twojego klienta."],
-      ),
-      akapit(en ? "Best," : "Pozdrawiam"),
+      akapit(`${a.imie ? `Hi ${a.imie}, here` : "Here"} are your login details ⤵️`),
+      tabelaDostepu({ link, login: a.email, kod: a.kod, etykiety: ["Page", "Login", "Login code"] }),
+      tabelaParami([["Free calls", String(a.rozmow)]]),
+      przycisk({ tekst: "Log in", link: linkSrc }),
+      kroki([
+        "Open the page in Chrome and put on headphones.",
+        "Before your first call, open “Customize Bruno” and write what you sell, who your customer is and the objections you hear most.",
+        "Start a call. Bruno plays your customer.",
+      ]),
+      akapit("Best,"),
     ].join("\n"),
-    drobny: en ? `Bruno AI, Jakub Chodakowski. <a href="https://jakubchodakowski.com/polityka-prywatnosci" style="color:#8a8f98">Privacy Policy</a>` : undefined,
+    drobny: `Bruno AI, Jakub Chodakowski. <a href="https://jakubchodakowski.com/polityka-prywatnosci" style="color:#8a8f98">Privacy Policy</a>`,
   });
 }
 
@@ -110,22 +110,22 @@ export function htmlDostep(args: {
   // Układ = wzorzec USER_001 z 2.10: powitanie, tabelka dostępu, warunki,
   // wyśrodkowany przycisk, ponumerowane kroki, „Pozdrawiam".
   return kopertaBruno({
-    naglowek: "Twój dostęp jest gotowy",
+    naglowek: "Your access is ready",
     tresc: [
-      akapit(`${args.imie ? `Cześć ${args.imie}, p` : "P"}oniżej znajdziesz dane dostępu ⤵️`),
+      akapit(`${args.imie ? `Hi ${args.imie}, here` : "Here"} are your login details ⤵️`),
       tabelaDostepu({ link, login: args.email, kod: args.kod }),
       tabelaParami([
-        ["Dostęp", `${args.dni} dni od pierwszego logowania`],
-        ["Rozmowy", `${rozmow} dziennie po ${minuty} ${minutaSlowo(minuty)}`],
-        ...(args.fiszekDziennie ? [["Fiszki", `${args.fiszekDziennie} dziennie`] as [string, string]] : []),
+        ["Access", `${args.dni} ${args.dni === 1 ? "day" : "days"} from your first login`],
+        ["Calls", `${rozmow} a day, ${minuty} ${minutaSlowo(minuty)} each`],
+        ...(args.fiszekDziennie ? [["Flashcards", `${args.fiszekDziennie} a day`] as [string, string]] : []),
       ]),
-      przycisk({ tekst: "Zaloguj się", link: linkSrc }),
+      przycisk({ tekst: "Log in", link: linkSrc }),
       kroki([
-        "Otwórz stronę w Chrome i załóż słuchawki.",
-        'Przed pierwszą rozmową wejdź w „Dostosuj Bruno" i wpisz, co sprzedajesz, kim jest klient i jakie obiekcje najczęściej słyszysz. Bez tego Bruno nie wie, kogo udawać.',
-        "Po zalogowaniu włączy się krótki film, który oprowadza po panelu.",
+        "Open the page in Chrome and put on headphones.",
+        "Before your first call, open “Customize Bruno” and write what you sell, who your customer is and the objections you hear most. Without this, Bruno doesn't know who to play.",
+        "After you log in, a short video shows you around your dashboard.",
       ]),
-      akapit("Pozdrawiam"),
+      akapit("Best,"),
     ].join("\n"),
   });
 }
@@ -135,15 +135,59 @@ export function htmlPrzypomnienie(args: { imie: string | null; kart: number; roz
   const zostalo = Math.max(0, (args.dziennie ?? ROZMOW_DZIENNIE) - args.rozmowyDzis);
   const minuty = ROZMOWA_SEKUND / 60;
   return kopertaBruno({
-    naglowek: zostalo === 0 ? "Plan na dziś zrobiony" : `${args.imie ? `${args.imie}, p` : "P"}lan na dziś`,
+    naglowek: zostalo === 0 ? "Today's plan is done" : `${args.imie ? `${args.imie}, here's t` : "T"}oday's plan`,
     tresc: [
       tabelaParami([
-        ["Rozmowy", zostalo === 0 ? "zrobione" : `${zostalo} po ${minuty} ${minutaSlowo(minuty)}`],
-        ["Do powtórki", args.kart ? `${args.kart} ${args.kart === 1 ? "temat" : "tematów"}` : "nic"],
-        ["Dostęp", `${args.dniZostalo} ${args.dniZostalo === 1 ? "dzień" : "dni"}`],
+        ["Calls", zostalo === 0 ? "done" : `${zostalo} ${zostalo === 1 ? "call" : "calls"}, ${minuty} ${minutaSlowo(minuty)} each`],
+        ["To review", args.kart ? `${args.kart} ${args.kart === 1 ? "topic" : "topics"}` : "nothing"],
+        ["Access", `${args.dniZostalo} ${args.dniZostalo === 1 ? "day" : "days"} left`],
       ]),
-      args.kart ? akapit("Bruno zacznie od najsłabszego tematu.") : "",
-      przycisk({ tekst: "Rozmawiaj z Bruno", link }),
+      args.kart ? akapit("Bruno will start with your weakest topic.") : "",
+      przycisk({ tekst: "Talk to Bruno", link }),
+    ].join("\n"),
+  });
+}
+
+/**
+ * 10.10 (USER_001): konto free dostaje RAZ DZIENNIE przypomnienie, dopóki nie zrobi do końca 3 bezpłatnych rozmów.
+ * Treść zależy od tego, ile zostało; link ze źródłem jak w zwykłym przypomnieniu.
+ */
+export function htmlPrzypomnienieFree(args: { imie: string | null; zuzyte: number; zostalo: number; zalogowany: boolean }) {
+  const link = linkZeZrodlem(`${bazaUrl()}${args.zalogowany ? "/bruno/rozmowa" : "/bruno"}`, "przypomnienie");
+  const minuty = ROZMOWA_SEKUND / 60;
+  const razem = args.zuzyte + args.zostalo;
+  const naglowek =
+    args.zuzyte === 0
+      ? `${args.imie ? `${args.imie}, y` : "Y"}our first call with Bruno is waiting`
+      : `${args.imie ? `${args.imie}, y` : "Y"}ou have ${args.zostalo} free ${args.zostalo === 1 ? "call" : "calls"} left`;
+  return kopertaBruno({
+    naglowek,
+    tresc: [
+      tabelaParami([
+        ["Free calls", `${args.zuzyte} of ${razem} done`],
+        ["One call", `${minuty} ${minutaSlowo(minuty)}`],
+        ["What you get", "a coach score, the recording, flashcards from your mistakes"],
+      ]),
+      akapit(args.zuzyte === 0 ? "Bruno plays your customer. You make the call, he pushes back, and the coach tells you what to fix." : "Every call is a different objection. Bruno remembers where you slipped."),
+      przycisk({ tekst: args.zalogowany ? "Talk to Bruno" : "Log in", link }),
+    ].join("\n"),
+  });
+}
+
+/** 10.10: potwierdzenie zakupu Bruno Pro (po webhooku Stripe). */
+export function htmlProAktywny(args: { imie: string | null; okres: "miesiac" | "rok" }) {
+  const link = linkZeZrodlem(`${bazaUrl()}/bruno/panel`, "inny");
+  return kopertaBruno({
+    naglowek: `${args.imie ? `${args.imie}, B` : "B"}runo Pro is active`,
+    tresc: [
+      tabelaParami([
+        ["Plan", args.okres === "rok" ? "Bruno Pro, yearly" : "Bruno Pro, monthly"],
+        ["Calls", "5 every day, weekends too"],
+        ["Features", "all of them: Stats, offer from your website, tomorrow's call, Fire Up"],
+        ["Cancel", "anytime, just reply to this email"],
+      ]),
+      przycisk({ tekst: "Open your dashboard", link }),
+      akapit("Best,"),
     ].join("\n"),
   });
 }
@@ -153,15 +197,15 @@ export function htmlNieZalogowany(args: { imie: string | null; dni: number }) {
   const link = linkZeZrodlem(`${bazaUrl()}/bruno`, "niezalogowany");
   const minuty = ROZMOWA_SEKUND / 60;
   return kopertaBruno({
-    naglowek: `${args.imie ? `${args.imie}, B` : "B"}runo czeka na pierwszą rozmowę`,
+    naglowek: `${args.imie ? `${args.imie}, B` : "B"}runo is waiting for your first call`,
     tresc: [
       tabelaParami([
-        ["Pierwsza rozmowa", `${minuty} ${minutaSlowo(minuty)}`],
-        ["Dostęp", `${args.dni} dni, liczone od pierwszego logowania`],
-        ["Kod logowania", "w pierwszym mailu „Twój dostęp do Bruno AI”"],
+        ["First call", `${minuty} ${minutaSlowo(minuty)}`],
+        ["Access", `${args.dni} ${args.dni === 1 ? "day" : "days"}, counted from your first login`],
+        ["Login code", "in the first email, “Your Bruno AI access”"],
       ]),
-      przycisk({ tekst: "Zaloguj się", link }),
-      akapit("Nie możesz znaleźć kodu? Odpisz na tego maila, wyślę nowy."),
+      przycisk({ tekst: "Log in", link }),
+      akapit("Can't find your code? Reply to this email and I'll send a new one."),
     ].join("\n"),
   });
 }

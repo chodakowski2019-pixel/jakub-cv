@@ -8,7 +8,7 @@ export default async function BrunoAdminPage({ searchParams }: { searchParams: P
   const { k } = await searchParams;
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="bruno-h1 text-[1.9rem]">Admin: konta testerów</h1>
+      <h1 className="bruno-h1 text-[1.9rem]">Admin: tester accounts</h1>
       <AdminForm klucz={k ?? ""} />
     </div>
   );

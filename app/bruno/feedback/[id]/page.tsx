@@ -23,26 +23,26 @@ export default async function BrunoRozmowaSzczegoly({ params }: { params: Promis
       <div>
         <Link href="/bruno/feedback" className="text-sm text-slate-500 hover:text-slate-900">← Feedback</Link>
         <h1 className="bruno-h1 text-[1.7rem] sm:text-[2.2rem] mt-2">
-          {r.tryb ? TRYBY[trybLubDomyslny(r.tryb)].nazwa : "Rozmowa"}, klient <span className="bruno-gradient-tekst">{POSTACIE[postacLubDomyslna(r.postac)].nazwa.toLowerCase()}</span>
+          {r.tryb ? TRYBY[trybLubDomyslny(r.tryb)].nazwa : "Call"}, customer <span className="bruno-gradient-tekst">{POSTACIE[postacLubDomyslna(r.postac)].nazwa.toLowerCase()}</span>
         </h1>
-        {r.obiekcja && <p className="text-sm text-cyan-800 mt-1">Trenowana obiekcja: „{r.obiekcja}”</p>}
+        {r.obiekcja && <p className="text-sm text-cyan-800 mt-1">Objection practiced: &ldquo;{r.obiekcja}&rdquo;</p>}
         <p className="text-sm text-slate-500">
-          {new Date(r.start).toLocaleString("pl-PL", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" })}
+          {new Date(r.start).toLocaleString("en-US", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" })}
           {r.sekundy ? `, ${czas(r.sekundy)}` : ""}
-          {`, poziom ${POZIOMY[poziomLubDomyslny(r.poziom)].nazwa.toLowerCase()}`}
+          {`, level ${POZIOMY[poziomLubDomyslny(r.poziom)].nazwa.toLowerCase()}`}
         </p>
       </div>
 
-      {r.feedback ? <FeedbackWidok feedback={r.feedback} /> : <div className="bruno-szklo rounded-2xl p-5 text-slate-600">Trener nie zostawił jeszcze oceny.</div>}
+      {r.feedback ? <FeedbackWidok feedback={r.feedback} /> : <div className="bruno-szklo rounded-2xl p-5 text-slate-600">The coach hasn't scored this call yet.</div>}
 
       {r.transkrypcja && r.transkrypcja.length > 0 && (
         <section className="bruno-szklo rounded-2xl p-5">
-          <h2 className="bruno-h2 text-base mb-3">Transkrypcja</h2>
+          <h2 className="bruno-h2 text-base mb-3">Transcript</h2>
           <ul className="flex flex-col gap-2 text-sm">
             {r.transkrypcja.map((w, i) => (
               <li key={i} className={w.rola === "klient" ? "text-slate-800" : "text-cyan-900"}>
                 <span className="text-[11px] text-slate-400 tabular-nums mr-2">[{czas(w.t)}]</span>
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 mr-2">{w.rola === "klient" ? "Bruno" : "Ty"}</span>
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 mr-2">{w.rola === "klient" ? "Bruno" : "You"}</span>
                 {w.tekst}
               </li>
             ))}

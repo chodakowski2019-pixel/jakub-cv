@@ -18,8 +18,8 @@ export default function PasekZloty({ dostep, inicjal, free }: { dostep: { ogien:
 
   return (
     <>
-      <aside className="bz-pasek" aria-label="Panel">
-        <Link href="/bruno/panel" className="bz-ja" title="Panel" aria-label="Panel">{inicjal}</Link>
+      <aside className="bz-pasek" aria-label="Main menu">
+        <Link href="/bruno/panel" className="bz-ja" title="Home" aria-label="Home">{inicjal}</Link>
         {linki.map((l) => (
           <span key={l.href} style={{ display: "contents" }}>
             {l.ikona === "dostosuj" && <div className="bz-sep" />}
@@ -29,27 +29,27 @@ export default function PasekZloty({ dostep, inicjal, free }: { dostep: { ogien:
           </span>
         ))}
         <div className="bz-rosnie" />
-        <button type="button" className="bz-nav" aria-label="Wyloguj" title="Wyloguj" onClick={wyloguj}><Ikona nazwa="wyjscie" /></button>
+        <button type="button" className="bz-nav" aria-label="Log out" title="Log out" onClick={wyloguj}><Ikona nazwa="wyjscie" /></button>
       </aside>
 
       <header className="bz-gora">
-        <Link href="/bruno/panel" className="bz-ja bz-ja-tel" aria-label="Panel">{inicjal}</Link>
+        <Link href="/bruno/panel" className="bz-ja bz-ja-tel" aria-label="Home">{inicjal}</Link>
         <Link href="/bruno/odblokuj" className="bz-odblokuj" aria-current={aktywny("/bruno/odblokuj") ? "page" : undefined}>
           <Ikona nazwa="klodka" rozmiar={15} grubosc={2} />
           {free ? (
             <>
-              <span className="bz-dlugi">Bezpłatne rozmowy: {free.zuzyte} / {free.zuzyte + free.zostalo} · Bruno Pro</span>
+              <span className="bz-dlugi">Free calls: {free.zuzyte} / {free.zuzyte + free.zostalo} · Bruno Pro</span>
               <span className="bz-krotki">{free.zuzyte} / {free.zuzyte + free.zostalo} · Pro</span>
             </>
           ) : (
             <>
-              <span className="bz-dlugi">Odblokuj pełen dostęp</span>
-              <span className="bz-krotki">Odblokuj</span>
+              <span className="bz-dlugi">Unlock full access</span>
+              <span className="bz-krotki">Unlock</span>
             </>
           )}
         </Link>
-        <button type="button" className="bz-wyl" onClick={wyloguj} aria-label="Wyloguj"><Ikona nazwa="wyjscie" rozmiar={18} /></button>
-        <nav className="bz-zakladki" aria-label="Panel">
+        <button type="button" className="bz-wyl" onClick={wyloguj} aria-label="Log out"><Ikona nazwa="wyjscie" rozmiar={18} /></button>
+        <nav className="bz-zakladki" aria-label="Main menu">
           {linki.map((l) => (
             <Link key={l.href} href={l.href} className={aktywny(l.href) ? "bz-on" : ""} aria-current={aktywny(l.href) ? "page" : undefined}>{l.nazwa}</Link>
           ))}

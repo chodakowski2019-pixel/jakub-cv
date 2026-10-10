@@ -13,28 +13,28 @@ export const dynamic = "force-dynamic";
 // 10.10: konto free (B2C) widzi zamiast tego cennik Bruno Pro ze Stripe.
 
 const KAFELKI = [
-  { tytul: "Konto dla każdego handlowca", opis: "Każdy w zespole ma swoje rozmowy, oceny i plan powtórek." },
+  { tytul: "An account for every rep", opis: "Everyone on the team gets their own calls, scores, and review plan." },
   {
-    tytul: "Panel szefa: raport zespołu",
-    opis: "Kto trenował i ile rozmów odbył, trend oceny w czasie, najsłabsze kryterium zespołu i każdego handlowca, kto od 2 tygodni nie wszedł.",
+    tytul: "Manager dashboard: team report",
+    opis: "Who practiced and how many calls they did, score trends over time, the weakest area for the team and each rep, and who hasn't logged in for 2 weeks.",
   },
   {
-    tytul: "Ocena prawdziwych nagrań",
-    opis: "Wgrywasz nagranie realnej rozmowy z klientem, Bruno ocenia ją tą samą rubryką co trening. Widzisz, czy to, co handlowiec ćwiczy, robi też u klienta.",
+    tytul: "Score real call recordings",
+    opis: "Upload a recording of a real customer call. Bruno scores it the same way as practice. You see if what a rep practices shows up with real customers.",
   },
-  { tytul: "Ranking zespołu", opis: "Punkty z Treningu i oceny rozmów w jednej tabeli. Widać, kto ciągnie w górę, a kto stoi." },
+  { tytul: "Team leaderboard", opis: "Drill points and call scores in one table. See who's moving up and who's stuck." },
   {
-    tytul: "Analiza mowy",
-    opis: "Tempo, przerywniki („yyy”, „tak jakby”), ile mówił handlowiec, a ile klient, najdłuższy monolog i czas do pierwszego pytania.",
+    tytul: "Speech analysis",
+    opis: "Pace, filler words (\"um\", \"like\"), how much the rep talked vs. the customer, the longest monologue, and time to the first question.",
   },
-  { tytul: "Bruno pod Wasz produkt", opis: "Konfigurujemy razem: klient, obiekcje, skrypt, definicja udanej rozmowy. Nie robisz tego sam." },
-  { tytul: "Więcej odsłon Bruno", opis: "Nowe postacie i scenariusze pod Wasze etapy: pierwszy kontakt, negocjacja ceny, domykanie." },
-  { tytul: "Bez ograniczeń", opis: "Pełen dostęp trwa na czas zawartej umowy." },
+  { tytul: "Bruno set up for your product", opis: "We set it up together: customer, objections, script, and what counts as a win. You don't do it alone." },
+  { tytul: "More Bruno characters", opis: "New characters and scenarios for your sales stages: first contact, price negotiation, closing." },
+  { tytul: "No limits", opis: "Full access lasts for the length of your contract." },
   {
-    tytul: "Bezpieczeństwo danych",
-    opis: "Produkt, obiekcje, skrypt i nagrania widzi tylko Wasz zespół. Dostawcy modeli nie uczą się na Waszych danych i kasują je po 30 dniach, umowa powierzenia jest w regulaminie, a nagrania usuwamy na żądanie.",
+    tytul: "Data security",
+    opis: "Only your team sees your product, objections, script, and recordings. AI providers don't train on your data, and the voice provider deletes it after 1 day. The data processing agreement is in our Terms, and we delete recordings on request.",
   },
-  { tytul: "Polskie głosy Bruno", opis: "Bruno mówi natywnym polskim głosem, bez obcego akcentu. Do wyboru kilka głosów męskich i damskich." },
+  { tytul: "Natural voices", opis: "Bruno speaks with a natural American voice. Pick from several male and female voices." },
 ];
 
 export default async function BrunoOdblokujPage({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
@@ -52,8 +52,8 @@ export default async function BrunoOdblokujPage({ searchParams }: { searchParams
   return (
     <div className="flex flex-col gap-8">
       <div className="text-center">
-        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Odblokuj <span className="bruno-gradient-tekst">pełen dostęp</span></h1>
-        <p className="text-slate-600 mt-2 max-w-xl mx-auto">Pełen dostęp to Bruno dla całego zespołu, skonfigurowany pod Wasz produkt.</p>
+        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Unlock <span className="bruno-gradient-tekst">full access</span></h1>
+        <p className="text-slate-600 mt-2 max-w-xl mx-auto">Full access means Bruno for your whole team, set up for your product.</p>
       </div>
       <ul className="grid sm:grid-cols-2 gap-4">
         {KAFELKI.map((k, i) => (

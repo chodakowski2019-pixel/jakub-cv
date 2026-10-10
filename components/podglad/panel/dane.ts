@@ -64,7 +64,7 @@ export type DanePanelu = {
   ocenionych: number;
 };
 
-const DNI_PELNE: Record<string, string> = { nd: "Niedziela", pn: "Poniedziałek", wt: "Wtorek", "śr": "Środa", cz: "Czwartek", pt: "Piątek", sb: "Sobota" };
+const DNI_PELNE: Record<string, string> = { Su: "Sunday", Mo: "Monday", Tu: "Tuesday", We: "Wednesday", Th: "Thursday", Fr: "Friday", Sa: "Saturday" };
 const KOLEJNOSC = Object.keys(NAZWY) as (keyof typeof NAZWY)[];
 
 const kluczPL = (d: Date) => d.toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
@@ -99,8 +99,8 @@ function zbuduj(w: Wejscie): DanePanelu {
   const linkRozmowy = w.powtorka ? `/bruno/rozmowa?karta=${w.powtorka.id}` : "/bruno/rozmowa";
   const powtorka = w.powtorka
     ? w.powtorka.typ === "obiekcja"
-      ? `Powtórka obiekcji: „${w.powtorka.tresc}”`
-      : `Powtórka: ${NAZWY[w.powtorka.tresc as keyof typeof NAZWY] ?? w.powtorka.tresc}`
+      ? `Objection review: "${w.powtorka.tresc}"`
+      : `Review: ${NAZWY[w.powtorka.tresc as keyof typeof NAZWY] ?? w.powtorka.tresc}`
     : null;
 
   const liczone = w.rozmowy.filter((r) => r.status !== "przerwana");
@@ -124,7 +124,7 @@ function zbuduj(w: Wejscie): DanePanelu {
   const ocenaZ = (r: (typeof ocenione)[number]): OcenaRozmowy => ({
     ocena: zaokr(r.ocena as number),
     kryteria: KOLEJNOSC.map((n) => ({ nazwa: NAZWY[n], ocena: r.feedback?.kryteria?.find((k) => k.nazwa === n)?.ocena ?? 0 })),
-    opis: `Klient ${POSTACIE[postacLubDomyslna(r.postac)].nazwa.toLowerCase()}, ${Math.max(1, Math.round((r.sekundy ?? 0) / 60))} min`,
+    opis: `Customer ${POSTACIE[postacLubDomyslna(r.postac)].nazwa.toLowerCase()}, ${Math.max(1, Math.round((r.sekundy ?? 0) / 60))} min`,
   });
   const ostatnia = ocenione[0] ? ocenaZ(ocenione[0]) : null;
   const sred = ocenione.length
@@ -134,7 +134,7 @@ function zbuduj(w: Wejscie): DanePanelu {
           nazwa: NAZWY[n],
           ocena: srednia(ocenione.map((r) => r.feedback?.kryteria?.find((k) => k.nazwa === n)?.ocena).filter((v): v is number => typeof v === "number")) ?? 0,
         })),
-        opis: `Z ${ocenione.length} ${ocenione.length === 1 ? "rozmowy" : "rozmów"}`,
+        opis: `From ${ocenione.length} ${ocenione.length === 1 ? "call" : "calls"}`,
       }
     : null;
 
@@ -167,7 +167,7 @@ function zbuduj(w: Wejscie): DanePanelu {
     dni: w.dni,
     dniZostalo: w.dniZostalo,
     dniUplynelo: Math.max(0, w.dni - w.dniZostalo),
-    koniec: w.koniec ? w.koniec.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw" }) : null,
+    koniec: w.koniec ? w.koniec.toLocaleDateString("en-US", { timeZone: "Europe/Warsaw" }) : null,
     minutZostalo,
     limitMinut: Math.round(w.limitSekund / 60),
     minDzis: dni7[6]?.minuty ?? 0,

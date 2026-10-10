@@ -21,10 +21,10 @@ export async function POST(req: Request) {
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
   const b = await req.json().catch(() => null);
   const id = String(b?.rozmowa_id ?? "");
-  if (!id) return NextResponse.json({ ok: false, blad: "Brak id rozmowy." }, { status: 400 });
+  if (!id) return NextResponse.json({ ok: false, blad: "Missing call ID." }, { status: 400 });
 
   const { data: rozmowa } = await supabaseAdmin.from("bruno_rozmowy").select("*").eq("id", id).eq("email", email).maybeSingle();
-  if (!rozmowa) return NextResponse.json({ ok: false, blad: "Nie ma takiej rozmowy." }, { status: 404 });
+  if (!rozmowa) return NextResponse.json({ ok: false, blad: "Call not found." }, { status: 404 });
   if (rozmowa.status === "zakonczona" && rozmowa.feedback) {
     return NextResponse.json({ ok: true, feedback: rozmowa.feedback, ocena: rozmowa.ocena, id });
   }
@@ -107,6 +107,6 @@ export async function POST(req: Request) {
     const err = e as { status?: number; message?: string };
     const trener_blad = `${err?.status ?? ""} ${String(err?.message ?? e).slice(0, 300)}`.trim();
     await supabaseAdmin.from("bruno_rozmowy").update({ metryki: { ...metryki, trener_blad } }).eq("id", id);
-    return NextResponse.json({ ok: true, id, feedback: null, blad: "Rozmowa zapisana, trener nie odpowiedział. Spróbuj odświeżyć historię.", trener_blad });
+    return NextResponse.json({ ok: true, id, feedback: null, blad: "Call saved, but the coach didn't respond. Try refreshing your history.", trener_blad });
   }
 }

@@ -40,8 +40,9 @@ function withLocaleHeader(request: NextRequest, locale: "pl" | "en") {
 export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
-  // --- 10.10: /bruno/panel ma własny układ (czarny ze złotym), app/bruno/layout.tsx czyta ścieżkę z nagłówka ---
-  if (pathname === "/bruno/panel") {
+  // --- 10.10: /bruno/panel ma własny układ (czarny ze złotym), app/bruno/layout.tsx czyta ścieżkę z nagłówka.
+  // 10.10 wieczór: nagłówek dla całego /bruno, bo układ blokuje konto free po 3 rozmowach (poza Odblokuj / Feedback / Ustawienia). ---
+  if (pathname === "/bruno" || pathname.startsWith("/bruno/")) {
     const h = new Headers(request.headers);
     h.set("x-sciezka", pathname);
     return NextResponse.next({ request: { headers: h } });
@@ -82,5 +83,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/en", "/scamalertmiami/:path*", "/bruno/panel"],
+  matcher: ["/", "/en", "/scamalertmiami/:path*", "/bruno", "/bruno/:path*"],
 };

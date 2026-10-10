@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { Feedback, Konfig, Kryterium, Wypowiedz } from "./db";
+import type { Feedback, Konfig, Kryterium, Wypowiedz, ZamkniecieTechniki } from "./db";
 import { listaObiekcji } from "./db";
-import { plecZTranskrypcji, type Metryki } from "./metryki";
+import type { Metryki } from "./metryki";
 import { POSTACIE, POZIOMY, TRYBY, poziomLubDomyslny, type PostacId, type PoziomId, type TrybId } from "./postacie";
 import { NAZWY, WAGI } from "./kryteria";
 
@@ -13,33 +13,40 @@ import { NAZWY, WAGI } from "./kryteria";
 export { WAGI, NAZWY };
 
 const RUBRYKA = `
-Oceniasz treningową rozmowę sprzedażową po polsku. Handlowiec ćwiczy, AI grało klienta. Oceniasz WYŁĄCZNIE handlowca.
+You grade a sales TRAINING call in English. A sales rep is practicing; an AI played the customer. You grade ONLY the rep.
 
-KRYTERIA (każde 1-10):
-1. OTWARCIE (pierwsze 90 s): cel rozmowy w ≤30 s; ≤6 zdań przed pierwszym pytaniem; kontrakt wstępny (cel, czas, wynik); zero „przepraszam, że przeszkadzam”, „tylko”, „nie zajmę dużo”; zero „nasza firma”, „oferujemy”, nazwy produktu przed pierwszym pytaniem klienta; plus za tezę lub liczbę z rynku.
-2. PYTANIA: udział słów handlowca <50 % (dobrze), >60 % (źle); ≥5 pytań otwartych („jak”, „co”, „ile”, „kiedy”) przed prezentacją; SPIN: pytania o problem (P), jego skutki (I) i o to, czego klient chce (N) ważniejsze niż pytania o sytuację (S); brak pytania implikacyjnego = max 5; pytanie o koszt problemu; pytanie o budżet i decydenta; lustro (powtórzenie 1-3 słów klienta); handlowiec NIE odpowiada sam na swoje pytania; podsumowanie „powiedział Pan, że…”.
-3. OBIEKCJE (po „za drogo”, „muszę pomyśleć”, „nie teraz”, „mamy już”): następna wypowiedź = etykieta („wygląda na to”), lustro albo pytanie („w porównaniu do czego?”, „co nie gra?”) = dobrze; argument, obrona, rabat od razu = źle; rabat bez niczego w zamian = źle; nowa informacja + ponowna prośba o decyzję (pętla) = dobrze; dowód z nazwą firmy i liczbą = dobrze, „wielu klientów jest zadowolonych” = źle; poddanie się po pierwszym „przemyślę” = źle; cena przed pytaniem o ból = czerwona flaga.
-4. ZAMKNIĘCIE (ostatnie 20 %). PROŚBA O DECYZJĘ to KAŻDA z tych form: (a) pytanie o decyzję wprost („podpisujemy?”, „wchodzimy w to?”), (b) NASTĘPNY KROK Z DATĄ zaproponowany przez handlowca („kiedy możemy podpisać pełnomocnictwo u notariusza?”, „mogę panią umówić na poniedziałek”, „spotkajmy się we wtorek o 10”), (c) pytanie o termin do wyboru („przed południem czy po?”). W sprzedaży wieloetapowej (b) JEST zamknięciem i NIE wolno pisać „brak prośby o decyzję”, gdy padło. 1-2 prośby = dobrze, 0 albo ≥3 = źle; postęp = data + osoba + działanie klienta; kontynuacja bez daty („odezwę się”, „prześlę ofertę”, „proszę pomyśleć”) = źle; kwota wprost = dobrze; cena z „tylko”, „jedynie”, „niestety” = źle; klient sam wypowiada datę/krok = dobrze; pytanie „co może stanąć na drodze” = plus; limit tylko z prawdziwym powodem; po kwocie cisza, klient odzywa się pierwszy (handlowiec dopowiada >15 słów = usprawiedliwianie).
-   TECHNIKI ZAMYKANIA, które oceniasz osobno w komentarzu (po jednym słowie: padła / nie padła): PRÓBA ZAMKNIĘCIA (próbne „jak to brzmi?”, „co pan o tym myśli?”), PYTANIE O DECYZJĘ, OBSŁUGA „MUSZĘ POMYŚLEĆ” (pytanie „co konkretnie chce pan przemyśleć?”, warunek „jeśli X, to podpisujemy?”, a nie samo czekanie), NASTĘPNY KROK Z DATĄ. Sygnał kupna klienta („co mam zrobić, żeby ruszyć?”, „to daje mi lepszy obraz”) niewykorzystany od razu = minus w komentarzu.
-5. PEWNOŚĆ SIEBIE (głos, z liczb): wypełniacze/min 0-2 dobrze, 3-5 średnio, >5 źle; osłabiacze na 100 słów ≤1 dobrze, >3 źle; „przepraszam”/„niestety” >2 = źle; zmiana_tempa_proc to zmiana tempa ostatniej minuty względem pierwszej (plus = przyspieszył, minus = zwolnił): ≤ -15 = siadanie po odmowie, ≥ +15 przy cenie = nerwy; w komentarzu pisz po ludzku „przyspieszyłeś o X %” albo „zwolniłeś o X %”. Jeśli zmiana_tempa_proc = null, NIE pisz nic o tempie ani o nerwach z tempa (za mało słów handlowca w oknie, tempo nieznane). Przerywanie klienta; zdania >25 słów; energia rosnąca przy „nie” klienta = źle. To jest kryterium główne wg Mazura: handlowiec ma twierdzić, nie sugerować.
+CRITERIA (each 1-10):
+1. OPENING (first 90 s): purpose of the call in ≤30 s; ≤6 sentences before the first question; upfront contract (goal, time, outcome); zero "sorry to bother you", "just", "I won't take much of your time"; zero "our company", "we offer", product name before the customer's first question; bonus for a thesis or a market number.
+2. QUESTIONS: rep's share of words <50 % (good), >60 % (bad); ≥5 open questions ("what", "how", "how much", "when") before the pitch; SPIN: problem (P), implication (I) and need-payoff (N) questions matter more than situation (S) questions; no implication question = max 5; a question about the cost of the problem; a question about budget and the decision maker; mirroring (repeating 1-3 of the customer's words); the rep does NOT answer their own questions; a summary "you said that…".
+3. OBJECTIONS (after "too expensive", "I need to think about it", "not now", "we already have"): the next line = a label ("sounds like"), a mirror or a question ("compared to what?", "what's not working?") = good; an argument, a defense, an instant discount = bad; a discount with nothing in return = bad; new information + a second ask for a decision (the loop) = good; proof with a company name and a number = good, "lots of clients are happy" = bad; giving up after the first "I'll think about it" = bad; price before the pain question = red flag.
+4. CLOSING (last 20 %). AN ASK FOR A DECISION is ANY of these: (a) a direct question for a decision ("do we have a deal?", "are you in?"), (b) A DATED NEXT STEP proposed by the rep ("when can we get the paperwork signed?", "I can put you down for Monday", "let's meet Tuesday at 10"), (c) a choice of time ("morning or afternoon?"). In multi-step sales (b) IS a close and you must NOT write "no ask for a decision" when it happened. 1-2 asks = good, 0 or ≥3 = bad; progress = date + person + an action by the customer; continuation with no date ("I'll follow up", "I'll send the proposal", "think it over") = bad; the amount stated plainly = good; price with "only", "just", "unfortunately" = bad; the customer saying the date/step themselves = good; "what could get in the way?" = bonus; scarcity only with a real reason; silence after the price, the customer speaks first (rep adds >15 words = justifying).
+   CLOSING TECHNIQUES: fill in zamkniecie_techniki (each technique separately; the CLOSING score is computed from them automatically, your number for "zamkniecie" is only a guide):
+   - proba_zamkniecia: a trial close before the ask ("how does that sound?", "what do you think?", "does that make sense for you?").
+   - pytanie_o_decyzje: a direct ask for a decision ("do we have a deal?", "are you in?", "shall we get started?").
+   - nastepny_krok_z_data: the rep proposed a concrete next step with a date or a choice of times.
+   - musze_pomyslec: how the rep handled a stall ("I need to think about it", "I'll run it by my boss", "I'll check with my partner", "let's circle back next quarter", "I'll compare"): nie_padlo (the customer didn't stall), poddal_sie ("I understand, I'll follow up"), czekal (did nothing, changed the subject), pytanie ("what exactly do you need to think about?", "what's missing for a decision?"), warunek ("if X, do we sign?").
+   - drugie_zamkniecie: after an objection at the close, a SECOND ask for a decision came (bylo), didn't (brak), there was no objection at the close (nie_dotyczy).
+   - sygnal_kupna: the customer gave a signal ("what would it take to get started?", "that gives me a clearer picture", "sounds interesting"): wykorzystany (the rep asked for a decision or a step right away), zmarnowany (kept talking), nie_bylo.
+   Every missing technique goes into MINUSES as its own bullet, in the rep's words to repeat next time (e.g. "No ask for a decision: after the numbers, ask 'so do we have a deal?'").
+5. CONFIDENCE (voice, from the numbers): fillers/min 0-2 good, 3-5 average, >5 bad; weakeners per 100 words ≤1 good, >3 bad; "sorry"/"unfortunately" >2 = bad; zmiana_tempa_proc is the change of pace in the last minute vs the first (plus = sped up, minus = slowed down): ≤ -15 = sagging after a no, ≥ +15 at the price = nerves; in the comment say it plainly: "you sped up by X %" or "you slowed down by X %". If zmiana_tempa_proc = null, say NOTHING about pace or nerves from pace (too few rep words in the window, pace unknown). Interrupting the customer; sentences >25 words; energy rising at the customer's "no" = bad. This is the master criterion: the rep should state, not suggest.
 
-REGUŁY TWARDE (zastosuj i wypisz, które zadziałały):
-- brak prośby o decyzję (żadna z form a/b/c) → ocena ogólna max 5
-- prezentacja lub cena przed pytaniem o ból → ocena ogólna minus 3. WYJĄTEK: gdy kwota_na_prosbe_klienta = true (klient sam zapytał o liczbę), odpowiedź kwotą NIE jest karana; oceń tylko, czy po liczbie handlowiec zadał pytanie, zamiast dalej tłumaczyć
-- ocena ogólna nie wyższa niż pewność siebie + 2
-- rozmowa „miła”, bez tezy, liczby i następnego kroku → max 5
-- klient powiedział „nie myślałem o tym w ten sposób” → +1
-- fałszywa technika (limit bez powodu, „klient” bez nazwy) → minus 2 za każdą
+HARD RULES (apply them and list the ones that fired):
+- no ask for a decision (none of a/b/c) → overall score max 5
+- a pitch or the price before the pain question → overall score minus 3. EXCEPTION: when kwota_na_prosbe_klienta = true (the customer asked for the number), answering with the amount is NOT penalized; only judge whether the rep asked a question after the number instead of explaining on
+- overall score no higher than confidence + 2
+- a "nice" call with no thesis, no number and no next step → max 5
+- the customer said "I hadn't thought of it that way" → +1
+- a fake technique (scarcity with no reason, "a client" with no name) → minus 2 each
 
-ZASADY FEEDBACKU:
-- Oceniasz czyny i liczby, nigdy osobę: „zrobiłeś X”, nie „jesteś Y”. Zero moralizowania. Zero ogólników.
-- Do każdego kryterium 1 cytat DOSŁOWNY z transkrypcji (może być fragment) + znacznik czasu z transkrypcji.
-- Jedna liczba z audio (z metryk), jedna wygrana (co poszło dobrze, konkretnie), jedna poprawka (co zrobić inaczej w NASTĘPNEJ rozmowie, jedno zdanie, wykonalne).
-- Komentarz do kryterium: max 2 zdania, po polsku, prosto, per „ty”.
-- Jeśli rozmowa była za krótka (poniżej 60 s) albo handlowiec prawie nic nie powiedział, oceń nisko i powiedz to wprost.
+FEEDBACK RULES:
+- You grade actions and numbers, never the person: "you did X", not "you are Y". Zero moralizing. Zero generalities.
+- For each criterion 1 VERBATIM quote from the transcript (a fragment is fine) + the timestamp from the transcript.
+- One number from the audio (from the metrics), one win (what went well, concretely), one fix (what to do differently in the NEXT call, one sentence, doable).
+- Comment per criterion: max 2 sentences, plain American English, addressed as "you". Reading level: a 12-year-old gets it.
+- If the call was too short (under 60 s) or the rep barely spoke, grade low and say so outright.
 `;
 
-const SCHEMAT = `Odpowiedz WYŁĄCZNIE JSON-em (bez markdownu) o kształcie:
+const SCHEMAT = `Reply ONLY with JSON (no markdown) shaped like this:
 {
   "kryteria": [
     {"nazwa":"otwarcie","ocena":1-10,"cytat":"...","czas":"m:ss","komentarz":"..."},
@@ -48,20 +55,21 @@ const SCHEMAT = `Odpowiedz WYŁĄCZNIE JSON-em (bez markdownu) o kształcie:
     {"nazwa":"zamkniecie", ...},
     {"nazwa":"pewnosc", ...}
   ],
-  "liczba_z_audio": "np. 7 wypełniaczy na minutę",
+  "liczba_z_audio": "e.g. 7 fillers per minute",
   "wygrana": "...",
   "poprawka": "...",
-  "plusy": ["2-4 krótkie punkty (max 12 słów każdy): co konkretnie zagrało, z cytatem albo liczbą"],
-  "minusy": ["2-4 krótkie punkty (max 12 słów każdy): co konkretnie nie zagrało"],
-  "reguly": ["nazwy reguł twardych, które zadziałały, albo pusta lista"],
-  "bonus": 0 lub 1,
-  "kary": liczba całkowita ≥ 0 (suma punktów do odjęcia z reguł: 3 za cenę przed bólem, 2 za każdą fałszywą technikę),
+  "plusy": ["2-4 short bullets (max 12 words each): what concretely worked, with a quote or a number"],
+  "minusy": ["2-4 short bullets (max 12 words each): what concretely didn't"],
+  "reguly": ["names of the hard rules that fired, or an empty list"],
+  "bonus": 0 or 1,
+  "kary": integer ≥ 0 (points to subtract from the rules: 3 for price before pain, 2 per fake technique),
   "brak_prosby_o_decyzje": true/false,
   "mila_bez_tresci": true/false,
-  "obiekcje_ocena": [{"obiekcja":"tekst obiekcji z listy firmy, która padła","ocena":1-4}]
+  "obiekcje_ocena": [{"obiekcja":"the objection from the company's list that came up","ocena":1-4}],
+  "zamkniecie_techniki": {"proba_zamkniecia":true/false,"pytanie_o_decyzje":true/false,"nastepny_krok_z_data":true/false,"musze_pomyslec":"nie_padlo|poddal_sie|czekal|pytanie|warunek","drugie_zamkniecie":"nie_dotyczy|brak|bylo","sygnal_kupna":"nie_bylo|wykorzystany|zmarnowany"}
 }
-Skala obiekcje_ocena: 1 = handlowiec poległ, 2 = słabo, 3 = dobrze, 4 = wzorowo. Uwzględnij tylko obiekcje z listy firmy, które realnie padły.
-FORMAT: to musi być poprawny JSON. Wewnątrz tekstów NIE używaj prostego cudzysłowu " ani znaków nowej linii; cytaty zapisuj w „ ” albo w apostrofach. Żadnego tekstu przed ani po JSON-ie.`;
+obiekcje_ocena scale: 1 = the rep lost it, 2 = weak, 3 = good, 4 = textbook. Include only objections from the company's list that actually came up.
+FORMAT: it must be valid JSON. Inside strings do NOT use the plain double quote " or newlines; write quotes with ' or “ ”. No text before or after the JSON.`;
 
 function formatCzas(s: number) {
   const m = Math.floor(s / 60);
@@ -70,7 +78,7 @@ function formatCzas(s: number) {
 }
 
 export function transkrypcjaDoTekstu(tr: Wypowiedz[]): string {
-  return tr.map((w) => `[${formatCzas(w.t)}] ${w.rola === "handlowiec" ? "HANDLOWIEC" : "KLIENT"}: ${w.tekst}`).join("\n");
+  return tr.map((w) => `[${formatCzas(w.t)}] ${w.rola === "handlowiec" ? "REP" : "CUSTOMER"}: ${w.tekst}`).join("\n");
 }
 
 /** Poniżej tej oceny kara z reguł już nie spycha: słaba rozmowa ma niskie kryteria i bez kary. */
@@ -92,17 +100,17 @@ export function policzOcene(
   const uzyte: string[] = [];
   if (reguly.bonus) {
     baza += 1;
-    uzyte.push("przeramowanie: +1");
+    uzyte.push("reframe: +1");
   }
 
   // Kandydaci: każda reguła osobno liczy, ile zostaje z bazy. Wygrywa najniższy wynik.
   const kandydaci: { wynik: number; opis: string }[] = [];
   const kary = Math.max(0, Math.min(6, Number(reguly.kary ?? 0)));
-  if (kary && baza > PODLOGA_KARY) kandydaci.push({ wynik: Math.max(PODLOGA_KARY, baza - kary), opis: `kara z reguł: -${kary} (nie poniżej ${PODLOGA_KARY})` });
-  if (reguly.brak_prosby_o_decyzje && baza > 5) kandydaci.push({ wynik: 5, opis: "brak prośby o decyzję: max 5" });
-  if (reguly.mila_bez_tresci && baza > 5) kandydaci.push({ wynik: 5, opis: "miło bez treści: max 5" });
+  if (kary && baza > PODLOGA_KARY) kandydaci.push({ wynik: Math.max(PODLOGA_KARY, baza - kary), opis: `rule penalty: -${kary} (not below ${PODLOGA_KARY})` });
+  if (reguly.brak_prosby_o_decyzje && baza > 5) kandydaci.push({ wynik: 5, opis: "no ask for a decision: max 5" });
+  if (reguly.mila_bez_tresci && baza > 5) kandydaci.push({ wynik: 5, opis: "nice but empty: max 5" });
   const sufit = z("pewnosc") + 2;
-  if (baza > sufit) kandydaci.push({ wynik: sufit, opis: "nie wyżej niż pewność siebie + 2" });
+  if (baza > sufit) kandydaci.push({ wynik: sufit, opis: "no higher than confidence + 2" });
 
   let ocena = baza;
   if (kandydaci.length) {
@@ -111,6 +119,43 @@ export function policzOcene(
     uzyte.push(najciezsza.opis);
   }
   return { ocena: Math.min(10, Math.max(1, Math.round(ocena))), reguly: uzyte };
+}
+
+/**
+ * 10.10 (E12): ocena ZAMKNIĘCIA liczona z technik, nie z wyczucia modelu. Punkty:
+ * start 0; próba zamknięcia +2; prośba o decyzję (pytanie wprost ALBO krok z datą) +3, obie formy +1;
+ * „muszę pomyśleć": pytanie / warunek +2, nie padło +1, czekał 0, poddał się -1;
+ * drugie zamknięcie po obiekcji: było +2, nie dotyczy +1, brak 0;
+ * sygnał kupna zmarnowany -1; ≥3 prośby (nacisk) -1. Bez żadnej prośby o decyzję: max 4.
+ * Metryki mają głos rozstrzygający przy prośbie i kroku z datą (jak w 9.10).
+ */
+export function policzZamkniecie(t: ZamkniecieTechniki, metryki: Pick<Metryki, "prosby_o_decyzje" | "nastepny_krok_z_data">): number {
+  const pytanie = t.pytanie_o_decyzje || metryki.prosby_o_decyzje > 0;
+  const krok = t.nastepny_krok_z_data || metryki.nastepny_krok_z_data;
+  let p = 0;
+  if (t.proba_zamkniecia) p += 2;
+  if (pytanie || krok) p += 3;
+  if (pytanie && krok) p += 1;
+  p += { pytanie: 2, warunek: 2, nie_padlo: 1, czekal: 0, poddal_sie: -1 }[t.musze_pomyslec] ?? 0;
+  p += { bylo: 2, nie_dotyczy: 1, brak: 0 }[t.drugie_zamkniecie] ?? 0;
+  if (t.sygnal_kupna === "zmarnowany") p -= 1;
+  if (metryki.prosby_o_decyzje >= 3) p -= 1;
+  if (!pytanie && !krok) p = Math.min(p, 4);
+  return Math.min(10, Math.max(1, Math.round(p)));
+}
+
+/** Techniki z odpowiedzi modelu, uzupełnione metrykami. Brak pola = technika nie padła. */
+export function technikiZOdpowiedzi(raw: unknown, metryki: Pick<Metryki, "prosby_o_decyzje" | "nastepny_krok_z_data">): ZamkniecieTechniki {
+  const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const wybor = <T extends string>(v: unknown, dozwolone: readonly T[], domyslne: T): T => (dozwolone.includes(v as T) ? (v as T) : domyslne);
+  return {
+    proba_zamkniecia: r.proba_zamkniecia === true,
+    pytanie_o_decyzje: r.pytanie_o_decyzje === true || metryki.prosby_o_decyzje > 0,
+    nastepny_krok_z_data: r.nastepny_krok_z_data === true || metryki.nastepny_krok_z_data,
+    musze_pomyslec: wybor(r.musze_pomyslec, ["nie_padlo", "poddal_sie", "czekal", "pytanie", "warunek"] as const, "nie_padlo"),
+    drugie_zamkniecie: wybor(r.drugie_zamkniecie, ["nie_dotyczy", "brak", "bylo"] as const, "nie_dotyczy"),
+    sygnal_kupna: wybor(r.sygnal_kupna, ["nie_bylo", "wykorzystany", "zmarnowany"] as const, "nie_bylo"),
+  };
 }
 
 /** Rodzaj gramatyczny z imienia konta. Polskie imiona żeńskie kończą się na „a" (wyjątki męskie poniżej). */
@@ -186,50 +231,45 @@ export async function ocenRozmowe(args: {
   sytuacja?: string | null;
 }): Promise<Feedback> {
   const { transkrypcja, metryki, konfig, postac, tryb, cel, obiekcja } = args;
-  // Płeć: najpierw z własnych słów handlowca w transkrypcji, potem z imienia.
-  const kobieta = plecZTranskrypcji(transkrypcja) ?? czyKobieta(args.imie);
+  // 10.10: po angielsku trener pisze „you", płeć nie jest potrzebna (plecZTranskrypcji / czyKobieta zostają nieużywane).
   const poziom = poziomLubDomyslny(typeof args.poziom === "string" ? args.poziom : null);
   const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const model = process.env.BRUNO_TRENER_MODEL ?? "claude-sonnet-5";
 
   const kontekst = [
-    // 6.10: ta sama osoba dostawała raz „podałaś", raz „podałeś".
-    kobieta === true && `HANDLOWIEC TO KOBIETA${args.imie ? ` (${args.imie})` : ""}. Wszystkie teksty pisz w rodzaju żeńskim: „zrobiłaś”, „podałaś”, „zapytałaś”.`,
-    kobieta === false && `HANDLOWIEC TO MĘŻCZYZNA${args.imie ? ` (${args.imie})` : ""}. Wszystkie teksty pisz w rodzaju męskim: „zrobiłeś”, „podałeś”, „zapytałeś”.`,
-    kobieta === null && "PŁEĆ HANDLOWCA NIEZNANA. Unikaj form z końcówką rodzajową: zamiast „zrobiłeś” pisz „tu zabrakło…”, „następnym razem zapytaj…”, „dobrze, że padła liczba”.",
     // 6.10: limit 3 min ucinał rozmowę tuż po sygnale kupna klienta, a trener karał za „urwanie" rozmowy.
     args.ucieta_limitem &&
-      "ROZMOWĘ ZAKOŃCZYŁ LIMIT CZASU APLIKACJI (3 min + 45 s dogrywki na domknięcie). Nie karz za to, że handlowiec nie odpowiedział na OSTATNIĄ wypowiedź klienta, ani za to, że rozmowa „urywa się”: to zrobiła aplikacja. Brak prośby o decyzję w całej rozmowie nadal jest błędem handlowca, bo w dogrywce widział na ekranie „Dogrywka: domknij”. Jeśli klient dał sygnał kupna, a handlowiec go nie wykorzystał, napisz to w MINUSACH i w POPRAWCE podpowiedz, jak domknąć wcześniej.",
-    `TYP KLIENTA (DISC): ${POSTACIE[postac].nazwa}, ${POSTACIE[postac].krotko}: ${POSTACIE[postac].opis}`,
-    tryb && `TRYB ROZMOWY: ${TRYBY[tryb].nazwa}. ${tryb === "cold" ? "Klient nie znał oferty, otwarcie oceniaj w pełni." : "Klient znał ofertę i sam zaczął od obiekcji, więc OTWARCIE oceniaj łagodniej (liczy się reakcja na pierwszą obiekcję), a OBIEKCJE i ZAMKNIĘCIE surowiej."}`,
-    cel && `CEL HANDLOWCA: ${cel}. W ZAMKNIĘCIU oceń wprost, czy ten cel został osiągnięty albo czy handlowiec o niego poprosił.`,
+      "THE APP'S TIME LIMIT ENDED THIS CALL (3 min + 45 s overtime to close). Don't penalize the rep for not answering the customer's LAST line or for the call 'cutting off': the app did that. No ask for a decision in the whole call is still the rep's fault, because during overtime they saw 'Overtime: close' on screen. If the customer gave a buying signal and the rep didn't use it, write that in MINUSES and in the FIX suggest how to close earlier.",
+    `CUSTOMER TYPE (DISC): ${POSTACIE[postac].nazwa}, ${POSTACIE[postac].krotko}: ${POSTACIE[postac].opis}`,
+    tryb && `CALL MODE: ${TRYBY[tryb].nazwa}. ${tryb === "cold" ? "The customer didn't know the offer; grade the opening in full." : "The customer knew the offer and opened with an objection, so grade the OPENING leniently (what counts is the reaction to the first objection) and OBJECTIONS and CLOSING more strictly."}`,
+    cel && `THE REP'S GOAL: ${cel}. In CLOSING say outright whether this goal was reached or whether the rep asked for it.`,
     // Poziom to kontekst, nie taryfa: rubryka jest ta sama, inaczej oceny z dwóch poziomów nie dałyby się porównać.
-    `POZIOM TRUDNOŚCI KLIENTA: ${POZIOMY[poziom].nazwa} (${POZIOMY[poziom].krotko}). ${
+    `CUSTOMER DIFFICULTY: ${POZIOMY[poziom].nazwa} (${POZIOMY[poziom].krotko}). ${
       poziom === "trudny"
-        ? "Klient miał wracać do obiekcji dwa razy i dociskać cenę. Jeśli handlowiec to wytrzymał, napisz to w PLUSACH."
+        ? "The customer was set to raise objections twice and push on price. If the rep held up, write it in PLUSES."
         : poziom === "latwy"
-          ? "Klient był życzliwy i odpuszczał szybko, więc wynik nie dowodzi jeszcze, że handlowiec zbije obiekcję u trudnego klienta. Jeśli rozmowa poszła gładko, w NASTĘPNYM RAZEM zaproponuj powtórkę tego samego scenariusza na wyższym poziomie."
-          : "Zachowanie klienta było typowe."
-    } OCENY NIE ZMIENIAJ ZE WZGLĘDU NA POZIOM: rubryka i skala 1-10 są te same na każdym poziomie.`,
+          ? "The customer was friendly and let go quickly, so the result doesn't prove the rep can handle a hard customer yet. If the call went smoothly, in NEXT TIME suggest the same scenario on a higher difficulty."
+          : "The customer's behavior was typical."
+    } DO NOT CHANGE THE SCORE BECAUSE OF DIFFICULTY: the rubric and the 1-10 scale are the same on every level.`,
     obiekcja &&
       (obiekcja.includes(" · ")
-        ? `OBIEKCJE DO PRZETRENOWANIA (klient miał podnieść każdą): ${obiekcja
+        ? `OBJECTIONS TO PRACTICE (the customer was set to raise each): ${obiekcja
             .split(" · ")
-            .map((o) => `„${o.trim()}”`)
-            .join(", ")}. Oceń zbicie każdej z nich w pierwszej kolejności i wpisz je do obiekcje_ocena.`
-        : `OBIEKCJA DO PRZETRENOWANIA: „${obiekcja}”. Oceń jej zbicie w pierwszej kolejności i wpisz ją do obiekcje_ocena.`),
-    args.sytuacja?.trim() && `SYTUACJA TEJ ROZMOWY (wklejona przez handlowca, prawdziwa): ${args.sytuacja.trim()}. Oceń, czy handlowiec poradził sobie z TĄ sytuacją.`,
-    metryki.nastepny_krok_z_data && "METRYKI WYKRYŁY NASTĘPNY KROK Z DATĄ w końcówce: to jest prośba o decyzję w formie (b). Nie pisz „brak prośby o decyzję”.",
-    metryki.kwota_na_prosbe_klienta && "KWOTA PADŁA NA PROŚBĘ KLIENTA (sam zapytał o liczbę): nie karz za „cenę przed bólem”.",
-    konfig.produkt && `PRODUKT HANDLOWCA: ${konfig.produkt}`,
-    konfig.klient && `KLIENT WG FIRMY: ${konfig.klient}`,
-    konfig.udana_rozmowa && `UDANA ROZMOWA WG FIRMY: ${konfig.udana_rozmowa}`,
-    listaObiekcji(konfig.obiekcje).length && `LISTA OBIEKCJI FIRMY:\n- ${listaObiekcji(konfig.obiekcje).join("\n- ")}`,
+            .map((o) => `"${o.trim()}"`)
+            .join(", ")}. Grade the handling of each first and put them in obiekcje_ocena.`
+        : `OBJECTION TO PRACTICE: "${obiekcja}". Grade its handling first and put it in obiekcje_ocena.`),
+    args.sytuacja?.trim() && `THIS CALL'S SITUATION (pasted by the rep, real): ${args.sytuacja.trim()}. Judge whether the rep handled THIS situation.`,
+    metryki.nastepny_krok_z_data && "THE METRICS DETECTED A DATED NEXT STEP at the end: that is an ask for a decision, form (b). Do not write 'no ask for a decision'.",
+    metryki.kwota_na_prosbe_klienta && "THE AMOUNT CAME AT THE CUSTOMER'S REQUEST (they asked for the number): don't penalize 'price before pain'.",
+    konfig.produkt && `WHAT THE REP SELLS: ${konfig.produkt}`,
+    konfig.klient && `CUSTOMER PER THE COMPANY: ${konfig.klient}`,
+    konfig.udana_rozmowa && `A WIN PER THE COMPANY: ${konfig.udana_rozmowa}`,
+    listaObiekcji(konfig.obiekcje).length && `THE COMPANY'S OBJECTION LIST:\n- ${listaObiekcji(konfig.obiekcje).join("\n- ")}`,
   ]
     .filter(Boolean)
     .join("\n\n");
 
-  const tresc = `${kontekst}\n\nMETRYKI (policzone z transkrypcji, ufaj im):\n${JSON.stringify(metryki, null, 0)}\n\nTRANSKRYPCJA:\n${transkrypcjaDoTekstu(transkrypcja)}\n\n${SCHEMAT}`;
+  const tresc = `${kontekst}\n\nMETRICS (computed from the transcript, trust them):\n${JSON.stringify(metryki, null, 0)}\n\nTRANSCRIPT:\n${transkrypcjaDoTekstu(transkrypcja)}\n\n${SCHEMAT}`;
 
   // Wymuszony format (2.10): odpowiedź jako wywołanie narzędzia ze schematem.
   // API oddaje gotowy obiekt, więc znika cała klasa błędów „niepoprawny JSON"
@@ -242,7 +282,7 @@ export async function ocenRozmowe(args: {
     tools: [
       {
         name: "ocena_rozmowy",
-        description: "Zapisuje ocenę rozmowy sprzedażowej wg rubryki.",
+        description: "Saves the grade of a sales call per the rubric.",
         input_schema: {
           type: "object",
           properties: {
@@ -278,8 +318,20 @@ export async function ocenRozmowe(args: {
                 required: ["obiekcja", "ocena"],
               },
             },
+            zamkniecie_techniki: {
+              type: "object",
+              properties: {
+                proba_zamkniecia: { type: "boolean" },
+                pytanie_o_decyzje: { type: "boolean" },
+                nastepny_krok_z_data: { type: "boolean" },
+                musze_pomyslec: { type: "string", enum: ["nie_padlo", "poddal_sie", "czekal", "pytanie", "warunek"] },
+                drugie_zamkniecie: { type: "string", enum: ["nie_dotyczy", "brak", "bylo"] },
+                sygnal_kupna: { type: "string", enum: ["nie_bylo", "wykorzystany", "zmarnowany"] },
+              },
+              required: ["proba_zamkniecia", "pytanie_o_decyzje", "nastepny_krok_z_data", "musze_pomyslec", "drugie_zamkniecie", "sygnal_kupna"],
+            },
           },
-          required: ["kryteria", "liczba_z_audio", "wygrana", "poprawka", "plusy", "minusy", "brak_prosby_o_decyzje", "mila_bez_tresci"],
+          required: ["kryteria", "liczba_z_audio", "wygrana", "poprawka", "plusy", "minusy", "brak_prosby_o_decyzje", "mila_bez_tresci", "zamkniecie_techniki"],
         },
       },
     ],
@@ -304,14 +356,18 @@ export async function ocenRozmowe(args: {
     brak_prosby_o_decyzje?: boolean;
     mila_bez_tresci?: boolean;
     obiekcje_ocena?: { obiekcja: string; ocena: number }[];
+    zamkniecie_techniki?: unknown;
   };
 
+  // 10.10: zamknięcie liczone z technik, liczba modelu zastąpiona.
+  const techniki = technikiZOdpowiedzi(raw.zamkniecie_techniki, metryki);
+  const ocenaZamkniecia = policzZamkniecie(techniki, metryki);
   const kolejnosc: Kryterium["nazwa"][] = ["otwarcie", "pytania", "obiekcje", "zamkniecie", "pewnosc"];
   const kryteria: Kryterium[] = kolejnosc.map((n) => {
     const k = raw.kryteria?.find((x) => x.nazwa === n);
     return {
       nazwa: n,
-      ocena: Math.min(10, Math.max(1, Math.round(Number(k?.ocena ?? 1)))),
+      ocena: n === "zamkniecie" ? ocenaZamkniecia : Math.min(10, Math.max(1, Math.round(Number(k?.ocena ?? 1)))),
       cytat: String(k?.cytat ?? "").slice(0, 300),
       czas: String(k?.czas ?? ""),
       komentarz: String(k?.komentarz ?? "").slice(0, 400),
@@ -331,16 +387,17 @@ export async function ocenRozmowe(args: {
   });
   // Lista reguł = to, co naprawdę zadziałało w policzOcene. Z listy modelu zostają tylko powody kary
   // (cena przed bólem, fałszywa technika), i tylko wtedy, gdy kara faktycznie obniżyła ocenę.
-  const karaZadzialala = reguly.some((r) => r.startsWith("kara z reguł"));
+  const karaZadzialala = reguly.some((r) => r.startsWith("rule penalty"));
   const powodyKary = karaZadzialala
-    ? (raw.reguly ?? []).map(String).filter((r) => /minus|cen[aęy]|prezentac|fałszyw|technik|limit bez/i.test(r) && !/max 5|pewno/i.test(r))
+    ? (raw.reguly ?? []).map(String).filter((r) => /minus|price|pitch|fake|technique|scarcity/i.test(r) && !/max 5|confidence/i.test(r))
     : [];
   const najslabsze = [...kryteria].sort((a, b) => a.ocena - b.ocena)[0].nazwa;
 
   return {
     ocena,
     kryteria,
-    liczba_z_audio: String(raw.liczba_z_audio ?? `${metryki.wypelniacze_na_min} wypełniaczy na minutę`).slice(0, 200),
+    zamkniecie_techniki: techniki,
+    liczba_z_audio: String(raw.liczba_z_audio ?? `${metryki.wypelniacze_na_min} fillers per minute`).slice(0, 200),
     wygrana: String(raw.wygrana ?? "").slice(0, 400),
     poprawka: String(raw.poprawka ?? "").slice(0, 400),
     najslabsze,

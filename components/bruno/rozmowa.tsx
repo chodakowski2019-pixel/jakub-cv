@@ -333,14 +333,14 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
   const pilnujCzasu = (s: number) => {
     if (!ostrzezonoRef.current && limitRef.current - s <= 30) {
       ostrzezonoRef.current = szepnij(
-        "Zostało 30 sekund rozmowy. Odpowiadaj krótko. Nie kończ rozmowy sam i nie żegnaj się: daj handlowcowi szansę poprosić o decyzję.",
+        "30 seconds left in the call. Keep your answers short. Don't end the call yourself and don't say goodbye: give the rep a chance to ask for a decision.",
       );
     }
     if (!dogrywkaRef.current && s >= limitRef.current) {
       dogrywkaRef.current = true;
       setDogrywka(true);
       szepnij(
-        `Czas rozmowy minął, trwa ${sekundDogrywki}-sekundowa dogrywka. Jeśli handlowiec prosi o decyzję albo proponuje następny krok, odpowiedz mu zgodnie ze swoją postacią, potem krótko się pożegnaj. Nie podnoś już nowych obiekcji. Jeśli przez kilkanaście sekund o nic nie poprosi, pożegnaj się zdawkowo: „to ja się odezwę”.`,
+        `Call time is up, this is a ${sekundDogrywki}-second overtime. If the rep asks for a decision or proposes a next step, answer in character, then say a short goodbye. Don't raise any new objections. If they don't ask for anything within about 15 seconds, sign off flatly: "I'll get back to you."`,
       );
     }
     if (s >= limitRef.current + sekundDogrywki) void zakoncz("limit");
@@ -350,7 +350,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     if (konczenie.current) return;
     konczenie.current = true;
     setStan("konczenie");
-    setEtap(powod === "limit" ? "Czas minął. Kończę rozmowę..." : "Kończę rozmowę...");
+    setEtap(powod === "limit" ? "Time's up. Ending the call..." : "Ending the call...");
     const trwalo = Math.round((Date.now() - start.current) / 1000);
     try {
       statyRtc.current = await zbierzStatyRtc(pc.current);
@@ -363,7 +363,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     let sciezka: string | null = null;
     if (nagranie && rozmowaId && nagranie.size > 1000) {
       try {
-        setEtap("Zapisuję nagranie...");
+        setEtap("Saving the recording...");
         const res = await fetch("/api/bruno/rozmowa/nagranie", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -379,7 +379,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       }
     }
 
-    setEtap("Bruno-trener ocenia rozmowę (do 30 s)...");
+    setEtap("Coach Bruno is scoring your call (up to 30 s)...");
     try {
       const res = await fetch("/api/bruno/rozmowa/koniec", {
         method: "POST",
@@ -395,21 +395,21 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
         }),
       });
       const odp = await res.json();
-      if (!res.ok) throw new Error(odp.blad ?? "błąd");
+      if (!res.ok) throw new Error(odp.blad ?? "Error");
       if (odp.przerwana) {
-        setBlad("Rozmowa była za krótka, żeby ją ocenić (poniżej 20 s albo prawie bez Twoich słów). Nie liczy się do planu dnia.");
+        setBlad("The call was too short to score (under 20 s, or you barely spoke). It doesn't count toward today's plan.");
         setStan("blad");
         return;
       }
       if (!odp.feedback) {
-        setBlad(odp.blad ?? "Trener nie odpowiedział. Rozmowa jest w historii.");
+        setBlad(odp.blad ?? "The coach didn't answer. Your call is saved in your history.");
         setStan("blad");
         return;
       }
       setFeedback(odp.feedback);
       setStan("feedback");
     } catch (e) {
-      setBlad(e instanceof Error ? e.message : "Nie udało się zapisać rozmowy.");
+      setBlad(e instanceof Error ? e.message : "Couldn't save the call.");
       setStan("blad");
     }
   };
@@ -453,7 +453,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
 
   /** Ścieżka ElevenLabs Agents (2.10): polskie głosy, SDK obsługuje mikrofon, odtwarzanie i przerywanie. */
   const startElevenlabs = async (dane: { token: string; polaczenie?: "websocket" | "webrtc"; prompt: string; pierwsza_wypowiedz: string; glos: string }) => {
-    setEtap("Łączę z Bruno...");
+    setEtap("Connecting to Bruno...");
     // SDK bierze własny mikrofon: zwalniamy nasz, żeby nie było podwójnego nagrywania.
     mic.current?.getTracks().forEach((t) => t.stop());
     mic.current = null;
@@ -470,7 +470,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       const sesja = await Conversation.startSession({
         ...polaczenie,
         overrides: {
-          agent: { prompt: { prompt: dane.prompt }, firstMessage: dane.pierwsza_wypowiedz, language: "pl" },
+          agent: { prompt: { prompt: dane.prompt }, firstMessage: dane.pierwsza_wypowiedz, language: "en" },
           tts: { voiceId: dane.glos },
         },
         onConnect: () => {
@@ -513,7 +513,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       el.current = sesja;
     } catch (e) {
       posprzataj();
-      setBlad(e instanceof Error ? e.message : "Nie udało się połączyć z ElevenLabs.");
+      setBlad(e instanceof Error ? e.message : "Couldn't connect to ElevenLabs.");
       setStan("blad");
     }
   };
@@ -530,13 +530,13 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     setDogrywka(false);
     transkrypcja.current = [];
     szepnieta.current = new Set();
-    setEtap("Proszę o mikrofon...");
+    setEtap("Asking for your mic...");
     try {
       mic.current = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
     } catch {
-      setBlad("Bez mikrofonu nie da się rozmawiać. Zezwól na mikrofon w przeglądarce i spróbuj ponownie.");
+      setBlad("You can't talk without a mic. Allow the mic in your browser and try again.");
       setStan("blad");
       return;
     }
@@ -544,7 +544,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     // Mikrofon jest, więc odliczamy, a równolegle łączymy.
     odliczaj();
 
-    setEtap("Sprawdzam limit i budzę Bruno...");
+    setEtap("Checking your limit and waking up Bruno...");
     let dane: { dostawca?: "openai" | "elevenlabs"; rozmowa_id: string; klucz: string; model: string; sekundy: number; token?: string; prompt?: string; pierwsza_wypowiedz?: string; glos?: string };
     try {
       const res = await fetch("/api/bruno/rozmowa/start", {
@@ -562,11 +562,11 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
         }),
       });
       const odp = await res.json();
-      if (!res.ok) throw new Error(odp.blad ?? "Nie udało się zacząć.");
+      if (!res.ok) throw new Error(odp.blad ?? "Couldn't start.");
       dane = odp;
     } catch (e) {
       posprzataj();
-      setBlad(e instanceof Error ? e.message : "Nie udało się zacząć.");
+      setBlad(e instanceof Error ? e.message : "Couldn't start.");
       setStan("blad");
       return;
     }
@@ -579,7 +579,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       return;
     }
 
-    setEtap("Łączę...");
+    setEtap("Connecting...");
     try {
       const p = new RTCPeerConnection();
       pc.current = p;
@@ -646,12 +646,12 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
         body: oferta.sdp,
         headers: { Authorization: `Bearer ${dane.klucz}`, "Content-Type": "application/sdp" },
       });
-      if (!odp.ok) throw new Error(`OpenAI odrzuciło połączenie (${odp.status}).`);
+      if (!odp.ok) throw new Error(`OpenAI rejected the connection (${odp.status}).`);
       const sdp = await odp.text();
       await p.setRemoteDescription({ type: "answer", sdp });
     } catch (e) {
       posprzataj();
-      setBlad(e instanceof Error ? e.message : "Nie udało się połączyć.");
+      setBlad(e instanceof Error ? e.message : "Couldn't connect.");
       setStan("blad");
     }
   };
@@ -664,7 +664,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
   if (stan === "feedback" && feedback) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="bruno-h1 text-2xl sm:text-3xl text-center">Feedback od Bruno</h1>
+        <h1 className="bruno-h1 text-2xl sm:text-3xl text-center">Feedback from Bruno</h1>
         <FeedbackWidok feedback={feedback} dalej />
       </div>
     );
@@ -681,26 +681,26 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       {stan === "wybor" && (
         <>
           <div className="text-center">
-            <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Rozmowa z <span className="bruno-gradient-tekst">Bruno</span></h1>
-            <p className="text-slate-600 mt-2">{sekundRozmowy / 60} minuty. Ustaw rozmowę i naciśnij Start.</p>
+            <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Call with <span className="bruno-gradient-tekst">Bruno</span></h1>
+            <p className="text-slate-600 mt-2">{sekundRozmowy / 60} {sekundRozmowy / 60 === 1 ? "minute" : "minutes"}. Set up your call and hit Start.</p>
           </div>
 
           {safari && (
             <div className="bruno-szklo rounded-2xl p-4 border-amber-200/80 bg-amber-50/70 text-sm text-amber-900 text-center">
-              Używasz Safari. Rozmowy głosowe działają w nim gorzej (głos się zacina). Otwórz Bruno w <b>Chrome</b> i załóż słuchawki.
+              You're using Safari. Voice calls work worse there (the voice cuts out). Open Bruno in <b>Chrome</b> and put on headphones.
             </div>
           )}
 
           {karta?.typ === "kryterium" && (
             <div className="bruno-szklo rounded-2xl p-4 text-sm text-slate-800">
-              <span className="text-xs font-semibold uppercase tracking-wide text-cyan-800 mr-2">Powtórka umiejętności</span>
-              Nacisk na: <b>{karta.tresc}</b>
+              <span className="text-xs font-semibold uppercase tracking-wide text-cyan-800 mr-2">Skill review</span>
+              Focus on: <b>{karta.tresc}</b>
             </div>
           )}
 
           {/* 1. Tryb */}
           <fieldset>
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">1.</span>Rodzaj rozmowy</legend>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">1.</span>Call type</legend>
             <div className="grid sm:grid-cols-3 gap-3 auto-rows-fr">
               {(Object.keys(TRYBY) as TrybId[]).map((id) => {
                 const t = TRYBY[id];
@@ -727,20 +727,20 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
 
           {/* 2. Obiekcja */}
           <fieldset>
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">2.</span>Jakie obiekcje chcesz przetrenować <span className="text-xs font-normal text-slate-400">(możesz zaznaczyć kilka)</span></legend>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">2.</span>Which objections do you want to practice? <span className="text-xs font-normal text-slate-400">(you can pick more than one)</span></legend>
             {obiekcje.length === 0 ? (
               <p className="text-sm text-slate-600 bruno-szklo rounded-2xl p-4">
-                Nie masz jeszcze listy obiekcji. <Link href="/bruno/dostosuj" className="underline">Dodaj je w „Dostosuj Bruno”</Link>, a Bruno użyje typowych dla Twojego klienta.
+                You don't have a list of objections yet. <Link href="/bruno/dostosuj" className="underline">Add them in “Customize Bruno”</Link>, and Bruno will use the ones your customers usually raise.
               </p>
             ) : (
               <div className="flex flex-wrap gap-2">
-                <button type="button" aria-pressed={losowa} onClick={() => setWybraneObiekcje(["__losowa__"])} className={`bruno-pastylka ${losowa ? "bruno-pastylka-wybrana" : ""}`}>Losowa</button>
-                <button type="button" aria-pressed={bezKonkretnej} onClick={() => setWybraneObiekcje([])} className={`bruno-pastylka ${bezKonkretnej ? "bruno-pastylka-wybrana" : ""}`}>Bez konkretnej</button>
+                <button type="button" aria-pressed={losowa} onClick={() => setWybraneObiekcje(["__losowa__"])} className={`bruno-pastylka ${losowa ? "bruno-pastylka-wybrana" : ""}`}>Random</button>
+                <button type="button" aria-pressed={bezKonkretnej} onClick={() => setWybraneObiekcje([])} className={`bruno-pastylka ${bezKonkretnej ? "bruno-pastylka-wybrana" : ""}`}>None in particular</button>
                 {obiekcje.map((o) => {
                   const w = wybraneObiekcje.includes(o);
                   return (
                     <button key={o} type="button" aria-pressed={w} onClick={() => przelaczObiekcje(o)} className={`bruno-pastylka ${w ? "bruno-pastylka-wybrana" : ""}`}>
-                      {w && <span className="mr-1" aria-hidden>✓</span>}„{o}”
+                      {w && <span className="mr-1" aria-hidden>✓</span>}“{o}”
                     </button>
                   );
                 })}
@@ -750,7 +750,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
 
           {/* 3. Cel */}
           <fieldset>
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">3.</span>Cel rozmowy</legend>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">3.</span>Call goal</legend>
             {/* Lista celów zależy od trybu; stała wysokość siatki, żeby zmiana trybu nie przesuwała kroku 4. */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 auto-rows-fr min-h-[11rem] sm:min-h-[8.5rem]">
               {CELE_TRYBU[tryb].map((id) => {
@@ -765,13 +765,13 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
               })}
             </div>
             {cel === "wlasny" && (
-              <input className="bruno-pole mt-3" placeholder="np. klient zgadza się na audyt w przyszłym tygodniu" value={celWlasny} onChange={(e) => setCelWlasny(e.target.value)} maxLength={300} autoFocus />
+              <input className="bruno-pole mt-3" placeholder="e.g. the customer agrees to an audit next week" value={celWlasny} onChange={(e) => setCelWlasny(e.target.value)} maxLength={300} autoFocus />
             )}
           </fieldset>
 
           {/* 4. Typ klienta */}
           <fieldset>
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">4.</span>Typ klienta</legend>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">4.</span>Customer type</legend>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-fr">
               {(Object.keys(POSTACIE) as PostacId[]).map((id) => {
                 const k = POSTACIE[id];
@@ -792,7 +792,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
 
           {/* 5. Poziom trudności */}
           <fieldset>
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">5.</span>Poziom trudności <span className="text-xs font-normal text-slate-400">(ocena jest wg tej samej rubryki na każdym poziomie)</span></legend>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">5.</span>Difficulty <span className="text-xs font-normal text-slate-400">(the score uses the same rules at every level)</span></legend>
             <div className="grid sm:grid-cols-3 gap-3 auto-rows-fr">
               {(Object.keys(POZIOMY) as PoziomId[]).map((id, nr) => {
                 const z = POZIOMY[id];
@@ -822,15 +822,15 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           {/* 6. Rozmowa, którą masz jutro (moduł płatny, 9.10). W trialu: kafelek z kłódką i opisem. */}
           <fieldset>
             <legend className="bruno-h2 text-base mb-2">
-              <span className="bruno-gradient-tekst mr-1.5">6.</span>Rozmowa, którą masz jutro{" "}
-              <span className="text-xs font-normal text-slate-400">{pelny ? "(opcjonalnie)" : "(pełny dostęp)"}</span>
+              <span className="bruno-gradient-tekst mr-1.5">6.</span>Tomorrow's call{" "}
+              <span className="text-xs font-normal text-slate-400">{pelny ? "(optional)" : "(full access)"}</span>
             </legend>
             {pelny ? (
               <div className="bruno-szklo rounded-2xl p-4 flex flex-col gap-3">
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input id="sytuacja-wlacz" type="checkbox" className="mt-1" checked={sytuacjaOtwarta} onChange={(e) => setSytuacjaOtwarta(e.target.checked)} />
                   <span className="text-sm text-slate-700">
-                    <b>Wklej prawdziwą sytuację</b>, a Bruno zagra dokładnie tego klienta: kto to jest, na jakim jest etapie, co już ustaliliście, czego się boi. Opis z „Dostosuj Bruno” zostaje tłem.
+                    <b>Paste a real situation</b>, and Bruno will play that exact customer: who they are, what stage they're at, what you already agreed on, what they're afraid of. Your “Customize Bruno” setup stays in the background.
                   </span>
                 </label>
                 {sytuacjaOtwarta && (
@@ -839,7 +839,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
                     rows={5}
                     className="bruno-pole"
                     maxLength={3000}
-                    placeholder="np. Narzeczeństwo 35 lat, najwyższy próg dofinansowania. Audyt zrobiony, umowa podpisana. Dziś chcą zrezygnować: ona boi się zwrotu dotacji, on chce większy kocioł, a kotłownia jest za mała."
+                    placeholder="e.g. Engaged couple, 35, top grant tier. Audit done, contract signed. Today they want to back out: she's afraid they'll have to pay the grant back, he wants a bigger boiler, but the boiler room is too small."
                     value={sytuacja}
                     onChange={(e) => setSytuacja(e.target.value)}
                     autoFocus
@@ -852,23 +852,23 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
                 </span>
                 <span>
-                  Wklejasz prawdziwą rozmowę, którą masz jutro (kto, etap, co ustalone, czego się boi), a Bruno gra dokładnie tego klienta. Dostępne w pełnym dostępie.{" "}
-                  <Link href="/bruno/odblokuj" className="underline">Odblokuj</Link>.
+                  Paste the real call you have tomorrow (who, what stage, what's agreed, what they fear), and Bruno plays that exact customer. Included with full access.{" "}
+                  <Link href="/bruno/odblokuj" className="underline">Unlock</Link>.
                 </span>
               </div>
             )}
           </fieldset>
 
           {free && free.zostalo === 0 ? (
-            <p className="text-center text-slate-600">Wykorzystane {free.zuzyte} bezpłatne rozmowy. <Link href="/bruno/odblokuj" className="underline">Odblokuj Bruno Pro</Link>.</p>
+            <p className="text-center text-slate-600">You've used {free.zuzyte} free {free.zuzyte === 1 ? "call" : "calls"}. <Link href="/bruno/odblokuj" className="underline">Unlock Bruno Pro</Link>.</p>
           ) : planZrobiony ? (
-            <p className="text-center text-slate-600">Plan na dziś zrobiony ({rozmowDziennie} rozmowy). Wróć jutro.</p>
+            <p className="text-center text-slate-600">Today's plan is done ({rozmowDziennie} {rozmowDziennie === 1 ? "call" : "calls"}). Come back tomorrow.</p>
           ) : brakMinut ? (
-            <p className="text-center text-slate-600">Limit minut testu wyczerpany. <Link href="/bruno/odblokuj" className="underline">Odblokuj pełen dostęp</Link>.</p>
+            <p className="text-center text-slate-600">You've used all your trial minutes. <Link href="/bruno/odblokuj" className="underline">Unlock full access</Link>.</p>
           ) : (
             <div className="text-center">
               <button type="button" onClick={zacznij} disabled={!gotowy} className="bruno-przycisk text-base px-12 py-4">Start</button>
-              {free && <p className="mt-3 text-sm text-slate-500">Bezpłatne rozmowy: {free.zuzyte} z {free.zuzyte + free.zostalo}. Ta będzie {free.zuzyte + 1}.</p>}
+              {free && <p className="mt-3 text-sm text-slate-500">Free calls: {free.zuzyte} of {free.zuzyte + free.zostalo}. This will be #{free.zuzyte + 1}.</p>}
             </div>
           )}
         </>
@@ -883,7 +883,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
               }`}
               aria-live={ostrzezenie ? "assertive" : "off"}
             >
-              {dogrywka ? `Dogrywka: domknij · ${czas(zostalo)}` : czas(zostalo)}
+              {dogrywka ? `Overtime: close it · ${czas(zostalo)}` : czas(zostalo)}
             </div>
           )}
           <div className="absolute top-4 left-4 sm:top-5 sm:left-5 flex items-center gap-2 text-xs text-slate-500">
@@ -911,12 +911,12 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           <div>
             <div className="bruno-h2 text-xl">Bruno</div>
             <div className="text-sm mt-1 text-slate-600">
-              {stan === "trwa" ? (mowi === "bruno" ? "Bruno mówi" : mowi === "ty" ? "Słucha Cię" : "Rozmowa trwa") : stan === "odliczanie" ? (tryb === "cold" ? "Za chwilę Bruno odbierze telefon." : "Za chwilę Bruno zacznie rozmowę.") : etap}
+              {stan === "trwa" ? (mowi === "bruno" ? "Bruno is talking" : mowi === "ty" ? "Listening to you" : "Call in progress") : stan === "odliczanie" ? (tryb === "cold" ? "Bruno will pick up the phone in a moment." : "Bruno will start the call in a moment.") : etap}
             </div>
           </div>
 
           {stan === "trwa" && (
-            <button type="button" onClick={() => zakoncz("recznie")} className="bruno-przycisk-2">Zakończ rozmowę</button>
+            <button type="button" onClick={() => zakoncz("recznie")} className="bruno-przycisk-2">End call</button>
           )}
         </div>
       )}
@@ -925,8 +925,8 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
         <div className="bruno-szklo rounded-3xl p-8 text-center flex flex-col gap-4 items-center">
           <p className="text-slate-800">{blad}</p>
           <div className="flex gap-3">
-            <button type="button" onClick={() => { setStan("wybor"); setBlad(null); }} className="bruno-przycisk">Spróbuj ponownie</button>
-            <Link href="/bruno/panel" className="bruno-przycisk-2">Panel</Link>
+            <button type="button" onClick={() => { setStan("wybor"); setBlad(null); }} className="bruno-przycisk">Try again</button>
+            <Link href="/bruno/panel" className="bruno-przycisk-2">Home</Link>
           </div>
         </div>
       )}

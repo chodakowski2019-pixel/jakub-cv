@@ -18,11 +18,11 @@ const MAX_ZNAKOW = 350;
 export async function POST(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
-  if (!pelnyDostep(await pobierzKonto(email))) return NextResponse.json({ ok: false, blad: "Ogień jest w pełnym dostępie." }, { status: 403 });
-  if (!process.env.ANTHROPIC_API_KEY || !process.env.ELEVENLABS_API_KEY) return NextResponse.json({ ok: false, blad: "Brak kluczy na serwerze." }, { status: 500 });
+  if (!pelnyDostep(await pobierzKonto(email))) return NextResponse.json({ ok: false, blad: "Fire Up is part of full access." }, { status: 403 });
+  if (!process.env.ANTHROPIC_API_KEY || !process.env.ELEVENLABS_API_KEY) return NextResponse.json({ ok: false, blad: "Keys are missing on the server." }, { status: 500 });
   const b = await req.json().catch(() => ({}));
   const konto = await pobierzKonto(email);
-  const imie = konto?.imie?.trim() || "mistrzu";
+  const imie = konto?.imie?.trim() || "champ";
   const cel = String(b.cel ?? "").slice(0, 200);
   const slabe = String(b.najslabsze ?? "").slice(0, 60);
   const cytat = String(b.cytat ?? "").slice(0, 200);
@@ -34,11 +34,11 @@ export async function POST(req: Request) {
       model: process.env.BRUNO_FISZKA_MODEL ?? "claude-haiku-4-5-20251001",
       max_tokens: 200,
       system:
-        "Jesteś Bruno, trener sprzedaży, który nakręca handlowca na 60 sekund przed prawdziwym telefonem. Mówisz po polsku, per „ty”, jak kumpel z zespołu, który wierzy w tego człowieka: energia, krótkie zdania, żadnego moralizowania, żadnego „pamiętaj, że”. Zero angielskich słów. Zero wulgaryzmów. Maksymalnie 3 zdania, razem do 300 znaków. Zwracasz TYLKO tekst do przeczytania na głos, bez cudzysłowów i didaskaliów.",
+        "You are Bruno, a sales coach who fires up a rep 60 seconds before a real call. Write in plain American English, address the rep as \"you\", like a teammate who believes in this person: energy, short sentences, no lecturing, no \"remember that\". No profanity. Max 3 sentences, 300 characters total. Return ONLY the text to be read out loud, with no quotes and no stage directions.",
       messages: [
         {
           role: "user",
-          content: `Handlowiec: ${imie}. Cel tej rozmowy: ${cel || "umówić następny krok z datą"}. Najsłabszy punkt z ostatnich rozmów: ${slabe || "zamknięcie"}. ${cytat ? `Możesz nawiązać do zdania: „${cytat}”.` : ""} Napisz hype: 1 zdanie o tym, że jest gotowy, 1 zdanie z konkretem na tę rozmowę (najsłabszy punkt), 1 zdanie na odpalenie.`,
+          content: `Rep: ${imie}. Goal of this call: ${cel || "book the next step with a date"}. Weakest spot from recent calls: ${slabe || "closing"}. ${cytat ? `You can refer to this line: \"${cytat}\".` : ""} Write the hype: 1 sentence that they are ready, 1 sentence with one specific tip for this call (the weakest spot), 1 sentence to get them going.`,
         },
       ],
     });
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
   } catch (e) {
     console.error("[bruno hype] model", e);
   }
-  if (tekst.length < 20) tekst = `${imie}, jesteś gotowy. Jedno pytanie otwarte na start, potem słuchasz. Na końcu prosisz o decyzję. Dzwoń.`;
+  if (tekst.length < 20) tekst = `${imie}, you're ready. Start with one open question, then listen. At the end, ask for the decision. Make the call.`;
 
   try {
     const odp = await fetch(`${BAZA_EL}/v1/text-to-speech/${encodeURIComponent(process.env.ELEVENLABS_GLOS || GLOS_BRUNO)}?output_format=mp3_44100_64`, {

@@ -41,7 +41,7 @@ const KONFIG = {
   name: "Bruno AI",
   conversation_config: {
     agent: {
-      language: "pl",
+      language: "en",
       first_message: "Halo, słucham?",
       disable_first_message_interruptions: true,
       prompt: {
@@ -55,7 +55,7 @@ const KONFIG = {
     tts: {
       // multilingual_v2 = naturalniej niż flash (+0,3 s opóźnienia); stability 0.35 / style 0.3 = więcej emocji (USER_001 2.10).
       model_id: "eleven_multilingual_v2",
-      voice_id: GLOSY[0][0],
+      voice_id: "iP95p4xoKVk53GoZ742B",
       stability: 0.35,
       similarity_boost: 0.8,
       style: 0.3,

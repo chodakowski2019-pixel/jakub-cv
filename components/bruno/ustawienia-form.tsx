@@ -23,11 +23,11 @@ export default function UstawieniaForm({ godzina }: { godzina: number }) {
   return (
     <form onSubmit={zapisz} className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-5">
       <div>
-        <h2 className="bruno-h2 text-lg">Przypomnienia o treningu</h2>
-        <p className="text-sm text-slate-600 mt-1">Jeżeli jeszcze nie zrobiłeś treningu, otrzymasz przypomnienie na e-mail. Powtórki są kluczowe dla skuteczności handlowca.</p>
+        <h2 className="bruno-h2 text-lg">Practice reminders</h2>
+        <p className="text-sm text-slate-600 mt-1">If you haven't practiced yet that day, we'll send you an email reminder. Reviews are what make a rep great.</p>
       </div>
       <div className="max-w-xs">
-        <label className="bruno-etykieta" htmlFor="godzina">Godzina <span className="font-normal text-slate-400">(w teście: rano ok. 8:00)</span></label>
+        <label className="bruno-etykieta" htmlFor="godzina">Reminder time <span className="font-normal text-slate-400">(during the trial: around 8:00 AM)</span></label>
         <select id="godzina" className="bruno-pole" value={h} onChange={(e) => setH(Number(e.target.value))}>
           {Array.from({ length: 18 }, (_, i) => i + 5).map((g) => (
             <option key={g} value={g}>{g}:00</option>
@@ -35,9 +35,9 @@ export default function UstawieniaForm({ godzina }: { godzina: number }) {
         </select>
       </div>
       <div className="flex items-center gap-4">
-        <button type="submit" disabled={stan === "zapis"} className="bruno-przycisk">{stan === "zapis" ? "Zapisuję..." : "Zapisz"}</button>
-        {stan === "ok" && <span className="text-sm text-teal-800">Zapisane.</span>}
-        {stan === "blad" && <span className="text-sm text-red-700">Nie udało się zapisać.</span>}
+        <button type="submit" disabled={stan === "zapis"} className="bruno-przycisk">{stan === "zapis" ? "Saving..." : "Save"}</button>
+        {stan === "ok" && <span className="text-sm text-teal-800">Saved.</span>}
+        {stan === "blad" && <span className="text-sm text-red-700">Couldn't save.</span>}
       </div>
     </form>
   );

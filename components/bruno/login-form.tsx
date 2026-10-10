@@ -28,27 +28,27 @@ export default function LoginForm() {
     if (res.ok) {
       router.push("/bruno/panel");
       router.refresh();
-    } else setBlad((await res.json().catch(() => null))?.blad ?? "Nie udało się zalogować.");
+    } else setBlad((await res.json().catch(() => null))?.blad ?? "Couldn't log in.");
   };
 
   return (
     <div className="bruno-szklo rounded-3xl p-6 sm:p-8">
       <form onSubmit={zaloguj} className="flex flex-col gap-5">
         <div>
-          <label className="bruno-etykieta" htmlFor="email">Adres e-mail</label>
+          <label className="bruno-etykieta" htmlFor="email">Email address</label>
           <input
             id="email"
             type="email"
             required
             autoComplete="email"
             className="bruno-pole"
-            placeholder="ty@twojafirma.pl"
+            placeholder="you@yourcompany.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div>
-          <label className="bruno-etykieta" htmlFor="kod">Kod</label>
+          <label className="bruno-etykieta" htmlFor="kod">Code</label>
           <input
             id="kod"
             inputMode="numeric"
@@ -64,7 +64,7 @@ export default function LoginForm() {
         </div>
         {blad && <p className="text-red-700 text-sm">{blad}</p>}
         <button type="submit" disabled={stan === "wysylanie" || kod.length !== 6} className="bruno-przycisk w-full">
-          {stan === "wysylanie" ? "Loguję..." : "Zaloguj się"}
+          {stan === "wysylanie" ? "Logging in..." : "Log in"}
         </button>
       </form>
     </div>

@@ -17,7 +17,7 @@ export default async function BrunoUstawieniaPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Ustawienia <span className="bruno-gradient-tekst">konta</span></h1>
+        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Account <span className="bruno-gradient-tekst">settings</span></h1>
         <p className="text-slate-600 mt-2">
           {konto?.imie ? `${konto.imie}, ` : ""}{email}{konto?.firma ? `, ${konto.firma}` : ""}
         </p>
@@ -26,7 +26,7 @@ export default async function BrunoUstawieniaPage() {
       <KodForm />
       {/* Instrukcja (USER_001 2.10): ten sam film, co w popupie przy pierwszym logowaniu, do odtworzenia na miejscu. */}
       <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-4">
-        <h2 className="bruno-h2 text-lg">Instrukcja</h2>
+        <h2 className="bruno-h2 text-lg">How it works</h2>
         <video
           src={FILM_OPROWADZAJACY}
           poster={FILM_OKLADKA}

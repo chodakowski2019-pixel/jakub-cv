@@ -1,7 +1,7 @@
 import type { Kryterium } from "./db";
 
-// Nazwy i wagi kryteriów rubryki (SalesAI/BRUNO-RUBRYKA.md). Osobny plik bez
-// SDK Anthropica, bo importują go komponenty kliencka i strony panelu.
+// Wagi i nazwy 5 kryteriów rubryki (SalesAI/BRUNO-RUBRYKA.md). Osobny plik bez
+// Supabase, bo czyta go też przeglądarka (feedback, statystyki). 10.10: nazwy EN.
 
 export const WAGI: Record<Kryterium["nazwa"], number> = {
   otwarcie: 0.15,
@@ -12,9 +12,9 @@ export const WAGI: Record<Kryterium["nazwa"], number> = {
 };
 
 export const NAZWY: Record<Kryterium["nazwa"], string> = {
-  otwarcie: "Otwarcie",
-  pytania: "Pytania",
-  obiekcje: "Obiekcje",
-  zamkniecie: "Zamknięcie",
-  pewnosc: "Pewność siebie",
+  otwarcie: "Opening",
+  pytania: "Questions",
+  obiekcje: "Objections",
+  zamkniecie: "Closing",
+  pewnosc: "Confidence",
 };

@@ -5,6 +5,7 @@ import {
   PLAN_FREE,
   ROZMOWA_SEKUND,
   ROZMOW_ZA_DARMO,
+  rozmowyFreeZuzyte,
   limitDzienny,
   pelnyDostep,
   pobierzKonfig,
@@ -31,7 +32,7 @@ export const dynamic = "force-dynamic";
 // do nawiązania połączenia WebRTC z przeglądarki.
 export async function POST(req: Request) {
   const email = await zalogowanyEmail();
-  if (!email) return NextResponse.json({ ok: false, blad: "Zaloguj się." }, { status: 401 });
+  if (!email) return NextResponse.json({ ok: false, blad: "Log in." }, { status: 401 });
   // Dostawca głosu (2.10): ElevenLabs, a gdy kredyty się kończą albo ElevenLabs nie odpowiada → OpenAI automatycznie.
   let dostawca: "elevenlabs" | "openai" = elevenlabsWlaczone() ? "elevenlabs" : "openai";
   let powodZmiany: string | null = null;
@@ -43,28 +44,29 @@ export async function POST(req: Request) {
     }
   }
   if (dostawca === "openai" && !process.env.OPENAI_API_KEY) {
-    return NextResponse.json({ ok: false, blad: "Brak OPENAI_API_KEY na serwerze." }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: "OPENAI_API_KEY is missing on the server." }, { status: 500 });
   }
 
   const konto = await pobierzKonto(email);
   const stan = stanDostepu(konto);
-  if (!konto || !stan.aktywny) return NextResponse.json({ ok: false, blad: "Dostęp testowy wygasł." }, { status: 403 });
+  if (!konto || !stan.aktywny) return NextResponse.json({ ok: false, blad: "Your trial access has expired." }, { status: 403 });
 
   await zamknijPorzucone(email);
   const zuzyte = await zuzyteSekundy(email);
   const zostalo = konto.limit_sekund - zuzyte;
   if (zostalo < 60) {
     return NextResponse.json(
-      { ok: false, blad: "Limit minut testu wyczerpany.", kod: "limit" },
+      { ok: false, blad: "You've used up your trial minutes.", kod: "limit" },
       { status: 403 },
     );
   }
   // 9.10: plan „free” (rejestracja B2C) = 3 rozmowy łącznie, liczone od założenia konta.
+  // 10.10: liczą się rozmowy zakończone albo przerwane po ≥ 60 s (`rozmowyFreeZuzyte`), nie każdy wpis.
   if (konto.plan === PLAN_FREE) {
-    const { count } = await supabaseAdmin.from("bruno_rozmowy").select("id", { count: "exact", head: true }).eq("email", email);
-    if ((count ?? 0) >= ROZMOW_ZA_DARMO) {
+    const zuzyteFree = await rozmowyFreeZuzyte(email);
+    if (zuzyteFree >= ROZMOW_ZA_DARMO) {
       return NextResponse.json(
-        { ok: false, blad: `Wykorzystane ${ROZMOW_ZA_DARMO} bezpłatne rozmowy.`, kod: "limit" },
+        { ok: false, blad: `You've used all ${ROZMOW_ZA_DARMO} free calls.`, kod: "limit" },
         { status: 403 },
       );
     }
@@ -73,7 +75,7 @@ export async function POST(req: Request) {
   const dziennie = limitDzienny(konto);
   if (dzis >= dziennie) {
     return NextResponse.json(
-      { ok: false, blad: `Plan na dziś zrobiony: ${dziennie} rozmowy. Wróć jutro.`, kod: "plan" },
+      { ok: false, blad: `Today's plan is done: ${dziennie} ${dziennie === 1 ? "call" : "calls"}. Come back tomorrow.`, kod: "plan" },
       { status: 403 },
     );
   }
@@ -127,7 +129,7 @@ export async function POST(req: Request) {
     .single();
   if (error || !rozmowa) {
     console.error("[bruno start] insert", error);
-    return NextResponse.json({ ok: false, blad: "Nie udało się zapisać rozmowy." }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: "Couldn't save the call. Try again." }, { status: 500 });
   }
 
   const instrukcje = instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, poziom, obiekcja, obiekcje: wybrane, karta, sytuacja });
@@ -165,7 +167,7 @@ export async function POST(req: Request) {
       dostawca = "openai";
       if (!process.env.OPENAI_API_KEY) {
         await supabaseAdmin.from("bruno_rozmowy").update({ status: "przerwana", koniec: new Date().toISOString(), sekundy: 0 }).eq("id", rozmowa.id);
-        return NextResponse.json({ ok: false, blad: "ElevenLabs nie wydało tokenu sesji, a OpenAI nie jest skonfigurowane." }, { status: 502 });
+        return NextResponse.json({ ok: false, blad: "ElevenLabs didn't issue a session token, and OpenAI isn't set up." }, { status: 502 });
       }
       await supabaseAdmin.from("bruno_rozmowy").update({ dostawca: "openai" }).eq("id", rozmowa.id);
     }
@@ -200,11 +202,11 @@ export async function POST(req: Request) {
     const tekst = await odp.text();
     console.error("[bruno start] client_secrets", odp.status, tekst.slice(0, 500));
     await supabaseAdmin.from("bruno_rozmowy").update({ status: "przerwana", koniec: new Date().toISOString(), sekundy: 0 }).eq("id", rozmowa.id);
-    return NextResponse.json({ ok: false, blad: "OpenAI nie wydało klucza sesji." }, { status: 502 });
+    return NextResponse.json({ ok: false, blad: "OpenAI didn't issue a session key." }, { status: 502 });
   }
   const dane = (await odp.json()) as { value?: string; client_secret?: { value: string } };
   const klucz = dane.value ?? dane.client_secret?.value;
-  if (!klucz) return NextResponse.json({ ok: false, blad: "Pusty klucz sesji." }, { status: 502 });
+  if (!klucz) return NextResponse.json({ ok: false, blad: "Empty session key." }, { status: 502 });
 
   return NextResponse.json({
     ok: true,

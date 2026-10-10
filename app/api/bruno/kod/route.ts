@@ -15,14 +15,14 @@ export async function POST(req: Request) {
     const b = await req.json();
     const stary = poprawnyKod(b.stary);
     const nowy = poprawnyKod(b.nowy);
-    if (!stary || !nowy) return NextResponse.json({ ok: false, blad: "Kod ma mieć 6 cyfr." }, { status: 400 });
+    if (!stary || !nowy) return NextResponse.json({ ok: false, blad: "The code must be 6 digits." }, { status: 400 });
     if (/^(\d)\1{5}$/.test(nowy) || nowy === "123456") {
-      return NextResponse.json({ ok: false, blad: "Ten kod jest zbyt łatwy do zgadnięcia." }, { status: 400 });
+      return NextResponse.json({ ok: false, blad: "This code is too easy to guess." }, { status: 400 });
     }
 
     const konto = await pobierzKonto(email);
     if (!konto || !kodPasuje(stary, konto.kod_hash)) {
-      return NextResponse.json({ ok: false, blad: "Obecny kod się nie zgadza." }, { status: 401 });
+      return NextResponse.json({ ok: false, blad: "Your current code doesn't match." }, { status: 401 });
     }
 
     const { error } = await supabaseAdmin
@@ -33,6 +33,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[bruno kod]", e);
-    return NextResponse.json({ ok: false, blad: "Nie udało się zmienić kodu." }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: "Couldn't change your code. Try again." }, { status: 500 });
   }
 }

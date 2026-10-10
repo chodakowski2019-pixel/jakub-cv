@@ -41,7 +41,7 @@ function OcenaKolo({ ocena }: { ocena: number }) {
   const obwod = 2 * Math.PI * r;
   const udzial = Math.min(1, Math.max(0, ocena / 10));
   return (
-    <svg viewBox="0 0 104 104" width="128" height="128" role="img" aria-label={`Ocena ${ocena} na 10`}>
+    <svg viewBox="0 0 104 104" width="128" height="128" role="img" aria-label={`Score ${ocena} out of 10`}>
       <circle cx="52" cy="52" r={r} fill="none" stroke="rgba(212,175,90,0.12)" strokeWidth="9" />
       <circle cx="52" cy="52" r={r} fill="none" stroke="url(#bruno-ocena-kolo)" strokeWidth="9" strokeLinecap="round" strokeDasharray={`${obwod * udzial} ${obwod}`} transform="rotate(-90 52 52)" className="bruno-pierscien-wypelnienie" />
       <defs>
@@ -63,29 +63,29 @@ function OcenaKolo({ ocena }: { ocena: number }) {
 /** 10.10 (E12): techniki zamykania jako lista z ✓ / ✗, pod kryterium „Zamknięcie". */
 function Techniki({ t }: { t: ZamkniecieTechniki }) {
   const POMYSLEC: Record<ZamkniecieTechniki["musze_pomyslec"], [boolean | null, string]> = {
-    nie_padlo: [null, "klient nie unikał"],
-    poddal_sie: [false, "poddałeś się po „muszę pomyśleć”"],
-    czekal: [false, "„muszę pomyśleć” zostało bez odpowiedzi"],
-    pytanie: [true, "zapytałeś, co konkretnie chce przemyśleć"],
-    warunek: [true, "postawiłeś warunek „jeśli X, to podpisujemy?”"],
+    nie_padlo: [null, "the customer didn't stall"],
+    poddal_sie: [false, "you gave up after “I need to think about it”"],
+    czekal: [false, "“I need to think about it” got no answer"],
+    pytanie: [true, "you asked what exactly they need to think about"],
+    warunek: [true, "you set a condition: “if X, do we sign?”"],
   };
   const DRUGIE: Record<ZamkniecieTechniki["drugie_zamkniecie"], [boolean | null, string]> = {
-    nie_dotyczy: [null, "obiekcji przy zamknięciu nie było"],
-    brak: [false, "po obiekcji nie poprosiłeś o decyzję drugi raz"],
-    bylo: [true, "po obiekcji poprosiłeś o decyzję drugi raz"],
+    nie_dotyczy: [null, "no objection at the close"],
+    brak: [false, "after the objection, you didn't ask for a decision again"],
+    bylo: [true, "after the objection, you asked for a decision again"],
   };
   const SYGNAL: Record<ZamkniecieTechniki["sygnal_kupna"], [boolean | null, string]> = {
-    nie_bylo: [null, "klient nie dał sygnału kupna"],
-    wykorzystany: [true, "sygnał kupna wykorzystany od razu"],
-    zmarnowany: [false, "sygnał kupna zmarnowany, mówiłeś dalej"],
+    nie_bylo: [null, "the customer gave no buying signal"],
+    wykorzystany: [true, "you used the buying signal right away"],
+    zmarnowany: [false, "buying signal missed, you kept talking"],
   };
   const wiersze: [string, boolean | null, string][] = [
-    ["Próba zamknięcia", t.proba_zamkniecia, t.proba_zamkniecia ? "„jak to brzmi?” padło" : "brak próbnego „jak to brzmi?”"],
-    ["Pytanie o decyzję", t.pytanie_o_decyzje, t.pytanie_o_decyzje ? "zapytałeś wprost" : "nie zapytałeś wprost „podpisujemy?”"],
-    ["Następny krok z datą", t.nastepny_krok_z_data, t.nastepny_krok_z_data ? "termin zaproponowany" : "bez konkretnego terminu"],
-    ["„Muszę pomyśleć”", ...POMYSLEC[t.musze_pomyslec]],
-    ["Drugie zamknięcie", ...DRUGIE[t.drugie_zamkniecie]],
-    ["Sygnał kupna", ...SYGNAL[t.sygnal_kupna]],
+    ["Trial close", t.proba_zamkniecia, t.proba_zamkniecia ? "you asked “how does that sound?”" : "no trial “how does that sound?”"],
+    ["Ask for a decision", t.pytanie_o_decyzje, t.pytanie_o_decyzje ? "you asked straight out" : "you didn't ask straight out: “shall we sign?”"],
+    ["Dated next step", t.nastepny_krok_z_data, t.nastepny_krok_z_data ? "you suggested a date" : "no specific date"],
+    ["“I need to think about it”", ...POMYSLEC[t.musze_pomyslec]],
+    ["Second close", ...DRUGIE[t.drugie_zamkniecie]],
+    ["Buying signal", ...SYGNAL[t.sygnal_kupna]],
   ];
   return (
     <ul className="mt-3 flex flex-col gap-1 text-sm">
@@ -112,7 +112,7 @@ export default function FeedbackWidok({ feedback, dalej }: { feedback: Feedback;
   return (
     <div className="flex flex-col gap-5">
       <div className="bruno-szklo rounded-3xl p-6 sm:p-8 text-center flex flex-col items-center gap-3">
-        <Badge ton="cyjan">Ocena rozmowy</Badge>
+        <Badge ton="cyjan">Call score</Badge>
         <OcenaKolo ocena={feedback.ocena} />
         <p className="text-slate-700 text-[15px]">{feedback.liczba_z_audio}</p>
       </div>
@@ -122,10 +122,10 @@ export default function FeedbackWidok({ feedback, dalej }: { feedback: Feedback;
         <section className="bruno-szklo rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-3">
             <Kolko znak="minus" kolor="#dc2626" />
-            <Badge>Minusy</Badge>
+            <Badge>Minuses</Badge>
           </div>
           {minusy.length === 0 ? (
-            <p className="text-sm text-slate-500">Brak.</p>
+            <p className="text-sm text-slate-500">None.</p>
           ) : (
             <table className="w-full text-[14px]">
               <tbody>
@@ -142,10 +142,10 @@ export default function FeedbackWidok({ feedback, dalej }: { feedback: Feedback;
         <section className="bruno-szklo rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-3">
             <Kolko znak="plus" kolor="#16a34a" />
-            <Badge>Plusy</Badge>
+            <Badge>Pluses</Badge>
           </div>
           {plusy.length === 0 ? (
-            <p className="text-sm text-slate-500">Brak.</p>
+            <p className="text-sm text-slate-500">None.</p>
           ) : (
             <table className="w-full text-[14px]">
               <tbody>
@@ -167,14 +167,14 @@ export default function FeedbackWidok({ feedback, dalej }: { feedback: Feedback;
             <div className="flex items-center justify-between gap-3 mb-2">
               <div className="bruno-h2 text-base flex items-center gap-2">
                 {NAZWY[k.nazwa]}
-                {k.nazwa === feedback.najslabsze && <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">najsłabsze</span>}
+                {k.nazwa === feedback.najslabsze && <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">weakest</span>}
               </div>
               <div className="font-semibold text-slate-900">{k.ocena}/10</div>
             </div>
             <Pasek ocena={k.ocena} />
             {k.cytat && (
               <blockquote className="mt-3 text-sm text-slate-600 border-l-2 border-slate-300 pl-3 italic">
-                „{k.cytat}” {k.czas && <span className="not-italic text-slate-400">[{k.czas}]</span>}
+                “{k.cytat}” {k.czas && <span className="not-italic text-slate-400">[{k.czas}]</span>}
               </blockquote>
             )}
             <p className="mt-2 text-sm text-slate-800">{k.komentarz}</p>
@@ -185,12 +185,12 @@ export default function FeedbackWidok({ feedback, dalej }: { feedback: Feedback;
 
       {feedback.obiekcje_ocena && feedback.obiekcje_ocena.length > 0 && (
         <div className="bruno-szklo rounded-2xl p-5">
-          <div className="mb-2"><Badge>Obiekcje, które padły</Badge></div>
+          <div className="mb-2"><Badge>Objections that came up</Badge></div>
           <ul className="text-sm text-slate-800 flex flex-col gap-1">
             {feedback.obiekcje_ocena.map((o, i) => (
               <li key={i} className="flex justify-between gap-3">
                 <span className="truncate">{o.obiekcja}</span>
-                <span className="text-slate-500 shrink-0">{["", "poległeś", "słabo", "dobrze", "wzorowo"][o.ocena]}</span>
+                <span className="text-slate-500 shrink-0">{["", "missed", "weak", "good", "textbook"][o.ocena]}</span>
               </li>
             ))}
           </ul>
@@ -200,16 +200,16 @@ export default function FeedbackWidok({ feedback, dalej }: { feedback: Feedback;
       <div className="bruno-szklo rounded-2xl p-5 border-cyan-700/30">
         <div className="flex items-center gap-2 mb-2">
           <Kolko znak="strzalka" kolor="#d4af5a" />
-          <Badge ton="cyjan">Następnym razem</Badge>
+          <Badge ton="cyjan">Next time</Badge>
         </div>
-        <p className="text-[15px] text-slate-900 font-medium leading-relaxed">{feedback.poprawka || "Brak."}</p>
+        <p className="text-[15px] text-slate-900 font-medium leading-relaxed">{feedback.poprawka || "None."}</p>
       </div>
 
       {dalej && (
         <div className="flex flex-wrap gap-3 justify-center pt-2">
-          <Link href="/bruno/panel" className="bruno-przycisk">Wróć do panelu</Link>
-          <Link href="/bruno/trening" className="bruno-przycisk-2">Przećwicz obiekcje w Treningu</Link>
-          <Link href="/bruno/rozmowa" className="bruno-przycisk-2">Jeszcze jeden test</Link>
+          <Link href="/bruno/panel" className="bruno-przycisk">Back to Home</Link>
+          <Link href="/bruno/trening" className="bruno-przycisk-2">Practice objections in Drills</Link>
+          <Link href="/bruno/rozmowa" className="bruno-przycisk-2">One more Live Call</Link>
         </div>
       )}
     </div>

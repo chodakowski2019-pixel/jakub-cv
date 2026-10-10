@@ -44,30 +44,6 @@ const T = {
     tytulKal: "Bruno AI demo with Jakub Chodakowski",
     locale: "en-GB",
   },
-  pl: {
-    temat: (kiedy: string) => `Umówione: demo Bruno AI, ${kiedy} (czas UK)`,
-    zajawka: (kiedy: string) => `Rozmowa z Jakubem umówiona na ${kiedy} (czas UK).`,
-    h1: "Rozmowa umówiona",
-    czasUK: "czas UK",
-    hej: (imie: string) => `Cześć ${imie},`,
-    wstep: "Dzięki za zapis. Poniżej wszystko, czego potrzebujesz przed rozmową.",
-    dlugosc: "Długość",
-    minut: `${DEMO_MINUT_MAIL} minut`,
-    gdzie: "Gdzie",
-    wideo: "Rozmowa wideo",
-    linkPozniej: "link wyślę przed rozmową",
-    zKim: "Z kim",
-    jakub: "Jakub Chodakowski, założyciel Bruno AI",
-    coH: "Jak wygląda rozmowa",
-    co: ["Pytam o Twój zespół i o to, jak dziś sprzedaje.", "Widzisz Bruno na żywo, jak gra Waszego klienta.", "Razem decydujemy, czy to ma dla Was sens."],
-    dodaj: "Dodaj do Kalendarza Google",
-    zalacznik: "Używasz Outlooka albo Kalendarza Apple? Otwórz zaproszenie w załączniku.",
-    inny: "Potrzebujesz innej godziny? Odpisz na tego maila.",
-    linkedin: "Połączmy się na LinkedInie",
-    stopka: "Bruno AI · trening sprzedaży z AI dla zespołów",
-    tytulKal: "Demo Bruno AI z Jakubem Chodakowskim",
-    locale: "pl-PL",
-  },
 } as const;
 
 export type MailDemo = { temat: string; html: string; text: string; tytulKal: string; opisKal: string };
@@ -84,7 +60,8 @@ export function mailPotwierdzenieDemo(a: {
   baza?: string;
   ikonaKalendarza?: string;
 }): MailDemo {
-  const x = T[a.jezyk];
+  // 10.10: mail do klienta zawsze EN (parametr jezyk zostaje dla zgodności).
+  const x = T.en;
   const baza = (a.baza ?? "https://jakubchodakowski.com").replace(/\/$/, "");
   const start = new Date(a.start);
   const kiedy = new Intl.DateTimeFormat(x.locale, { timeZone: "Europe/London", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(start);
@@ -108,7 +85,7 @@ export function mailPotwierdzenieDemo(a: {
     </tr>`;
 
   const html = `<!doctype html>
-<html lang="${a.jezyk}">
+<html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><title>${ESC(x.h1)}</title></head>
 <body style="margin:0;padding:0;background:#ffffff">
 <span style="display:none;max-height:0;overflow:hidden;opacity:0;color:#ffffff">${ESC(x.zajawka(kiedy))}</span>

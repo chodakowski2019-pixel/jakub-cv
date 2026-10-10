@@ -28,6 +28,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[bruno zainteresowany]", e);
-    return NextResponse.json({ ok: false, blad: "Nie udało się wysłać." }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: "Couldn't send. Try again." }, { status: 500 });
   }
 }

@@ -48,6 +48,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[bruno konfig]", e);
-    return NextResponse.json({ ok: false, blad: "Nie udało się zapisać." }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: "Couldn't save. Try again." }, { status: 500 });
   }
 }

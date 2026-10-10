@@ -13,22 +13,22 @@ export type WerdyktFiszki = {
   technika: string;
 };
 
-const SYSTEM = `Jesteś trenerem sprzedaży. Oceniasz JEDNĄ odpowiedź handlowca na JEDNĄ fiszkę: obiekcję klienta, sytuację do poprawy z jego własnej rozmowy albo pytanie z wiedzy (typy klientów DISC, techniki). Po polsku, prosto, per „ty", zero moralizowania. Jeśli dostajesz WZÓR, oceniaj zgodność z nim co do sensu (nie co do słów).
+const SYSTEM = `You are a sales coach. You score ONE answer from a sales rep to ONE flashcard: a customer objection, a situation to fix from the rep's own call, or a knowledge question (DISC customer types, techniques). Write in plain American English, address the rep as "you". Keep it simple, no lecturing. If you get a MODEL ANSWER, judge whether the rep's answer matches its meaning (not its exact words).
 
-Co jest dobre (wg Vossa, Sandlera, Rackhama, Belforta, Mazura): etykieta („wygląda na to, że…"), lustro (powtórzenie 1-3 słów klienta), pytanie doprecyzowujące („w porównaniu do czego?", „co konkretnie nie gra?"), dowód z nazwą firmy i liczbą, przeramowanie, spokojna pewność, krótko.
-Co jest złe: argumentowanie od razu, obrona, rabat od razu, „ale…", ogólniki („wielu klientów jest zadowolonych"), tłumaczenie się, przepraszanie, monolog >3 zdania, poddanie się.
+What's good (per Voss, Sandler, Rackham, Belfort, Mazur): a label ("it sounds like..."), a mirror (repeating 1-3 of the customer's words), a clarifying question ("compared to what?", "what exactly doesn't work for you?"), proof with a company name and a number, a reframe, calm confidence, keeping it short.
+What's bad: arguing right away, getting defensive, offering a discount right away, "but...", vague claims ("lots of our customers are happy"), making excuses, apologizing, a monologue longer than 3 sentences, giving up.
 
-Skala werdyktu: 1 = poległeś (argument/obrona/rabat/poddanie), 2 = słabo (dobry kierunek, zła forma albo za długo), 3 = dobrze (jedna z dobrych technik, krótko), 4 = wzorowo (technika + pytanie zwracające piłkę, pewny ton).
+Score scale: 1 = you lost it (argued, got defensive, gave a discount, gave up), 2 = weak (right direction, wrong form or too long), 3 = good (one of the good techniques, short), 4 = perfect (technique + a question that hands the ball back, confident tone).
 
-Odpowiedz WYŁĄCZNIE JSON-em: {"werdykt":1-4,"komentarz":"1 zdanie: co zrobiłeś i dlaczego to działa albo nie","wzor":"wzorcowa odpowiedź na tę obiekcję, 1-3 zdania, w pierwszej osobie, gotowa do powiedzenia","technika":"nazwa techniki ze wzoru, 1-3 słowa"}`;
+Reply ONLY with JSON: {"werdykt":1-4,"komentarz":"1 sentence: what you did and why it works or doesn't","wzor":"a model answer to this objection, 1-3 sentences, first person, ready to say out loud","technika":"name of the technique in the model answer, 1-3 words"}`;
 
 export async function ocenFiszke(args: { obiekcja: string; odpowiedz: string; konfig: Konfig; typ?: "obiekcja" | "poprawka" | "wiedza"; pytanie?: string | null; wzor?: string | null }): Promise<WerdyktFiszki> {
   const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const model = process.env.BRUNO_FISZKA_MODEL ?? "claude-haiku-4-5-20251001";
   const kontekst = [
-    args.konfig.produkt.trim() && `PRODUKT: ${args.konfig.produkt.trim()}`,
-    args.konfig.klient.trim() && `KLIENT: ${args.konfig.klient.trim()}`,
-    args.konfig.udana_rozmowa.trim() && `CEL HANDLOWCA: ${args.konfig.udana_rozmowa.trim()}`,
+    args.konfig.produkt.trim() && `PRODUCT: ${args.konfig.produkt.trim()}`,
+    args.konfig.klient.trim() && `CUSTOMER: ${args.konfig.klient.trim()}`,
+    args.konfig.udana_rozmowa.trim() && `REP'S GOAL: ${args.konfig.udana_rozmowa.trim()}`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -41,8 +41,8 @@ export async function ocenFiszke(args: { obiekcja: string; odpowiedz: string; ko
         role: "user",
         content:
           args.typ && args.typ !== "obiekcja"
-            ? `${kontekst}\n\nRODZAJ FISZKI: ${args.typ === "poprawka" ? "sytuacja do poprawy z własnej rozmowy handlowca" : "wiedza (typy klientów / techniki)"}\nTEMAT: ${args.obiekcja}\nPYTANIE: ${args.pytanie ?? ""}\n${args.wzor ? `WZÓR (odpowiedź wzorcowa, oceniaj zgodność co do sensu): ${args.wzor}\n` : ""}\nODPOWIEDŹ HANDLOWCA: „${args.odpowiedz}”`
-            : `${kontekst}\n\nOBIEKCJA KLIENTA: „${args.obiekcja}”\n\nODPOWIEDŹ HANDLOWCA: „${args.odpowiedz}”`,
+            ? `${kontekst}\n\nFLASHCARD TYPE: ${args.typ === "poprawka" ? "a situation to fix from the rep's own call" : "knowledge (customer types / techniques)"}\nTOPIC: ${args.obiekcja}\nQUESTION: ${args.pytanie ?? ""}\n${args.wzor ? `MODEL ANSWER (judge whether the meaning matches): ${args.wzor}\n` : ""}\nREP'S ANSWER: "${args.odpowiedz}"`
+            : `${kontekst}\n\nCUSTOMER OBJECTION: "${args.obiekcja}"\n\nREP'S ANSWER: "${args.odpowiedz}"`,
       },
     ],
   });
@@ -76,17 +76,17 @@ export async function kartyZFeedbacku(args: { feedback: Feedback; produkt: strin
     const odp = await klient.messages.create({
       model: process.env.BRUNO_FISZKA_MODEL ?? "claude-haiku-4-5-20251001",
       max_tokens: 1200,
-      system: "Robisz fiszki do nauki sprzedaży z feedbacku po rozmowie. Po polsku, prosto, per „ty”. Każda fiszka: tytuł (max 6 słów, bez kropki), pytanie osadzone w tej konkretnej rozmowie (co klient powiedział / co handlowiec zrobił, z cytatem jeśli jest) kończące się „Co zrobisz następnym razem?”, i wzór (1-3 zdania, gotowe do powiedzenia albo zrobienia). Max 3 fiszki, tylko z realnych minusów.",
+      system: 'You make sales practice flashcards from the feedback after a call. Write in plain American English, address the rep as "you". Keep it simple. Each flashcard has: a title (max 6 words, no period), a question rooted in this specific call (what the customer said / what the rep did, with a quote if there is one) that ends with "What will you do next time?", and a model answer (1-3 sentences, ready to say or do). Max 3 flashcards, only from real weak spots.',
       messages: [
         {
           role: "user",
-          content: `PRODUKT: ${produkt || "(brak)"}\nMINUSY: ${JSON.stringify(minusy)}\nKRYTERIA: ${JSON.stringify(feedback.kryteria.map((k) => ({ nazwa: k.nazwa, ocena: k.ocena, cytat: k.cytat, komentarz: k.komentarz })))}\nPOPRAWKA TRENERA: ${feedback.poprawka}`,
+          content: `PRODUCT: ${produkt || "(none)"}\nWEAK SPOTS: ${JSON.stringify(minusy)}\nCRITERIA: ${JSON.stringify(feedback.kryteria.map((k) => ({ nazwa: k.nazwa, ocena: k.ocena, cytat: k.cytat, komentarz: k.komentarz })))}\nCOACH'S FIX: ${feedback.poprawka}${feedback.zamkniecie_techniki ? `\nCLOSING TECHNIQUES (false / brak / poddal_sie / czekal / zmarnowany = needs work): ${JSON.stringify(feedback.zamkniecie_techniki)}` : ""}`,
         },
       ],
       tools: [
         {
           name: "fiszki",
-          description: "Zapisuje fiszki do poprawy.",
+          description: "Saves the flashcards to work on.",
           input_schema: {
             type: "object",
             properties: {

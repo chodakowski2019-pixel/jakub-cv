@@ -27,7 +27,7 @@ export default function KodForm() {
       setNowy("");
     } else {
       setStan("idle");
-      setBlad((await res.json().catch(() => null))?.blad ?? "Nie udało się zmienić kodu.");
+      setBlad((await res.json().catch(() => null))?.blad ?? "Couldn't change the code.");
     }
   };
 
@@ -52,19 +52,19 @@ export default function KodForm() {
   return (
     <form onSubmit={zapisz} className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-5">
       <div>
-        <h2 className="bruno-h2 text-lg">Kod logowania</h2>
-        <p className="text-sm text-slate-600 mt-1">Tym kodem wchodzisz do panelu. Możesz go zmienić na swój.</p>
+        <h2 className="bruno-h2 text-lg">Login code</h2>
+        <p className="text-sm text-slate-600 mt-1">You use this code to log in. You can change it to your own.</p>
       </div>
       <div className="grid sm:grid-cols-2 gap-4">
-        {pole(stary, setStary, "stary", "Obecny kod")}
-        {pole(nowy, setNowy, "nowy", "Nowy kod")}
+        {pole(stary, setStary, "stary", "Current code")}
+        {pole(nowy, setNowy, "nowy", "New code")}
       </div>
       {blad && <p className="text-sm text-red-700">{blad}</p>}
       <div className="flex items-center gap-4">
         <button type="submit" disabled={stan === "zapis" || stary.length !== 6 || nowy.length !== 6} className="bruno-przycisk">
-          {stan === "zapis" ? "Zmieniam..." : "Zmień kod"}
+          {stan === "zapis" ? "Changing..." : "Change code"}
         </button>
-        {stan === "ok" && <span className="text-sm text-teal-800">Kod zmieniony. Następnym razem logujesz się nowym.</span>}
+        {stan === "ok" && <span className="text-sm text-teal-800">Code changed. Use the new one next time you log in.</span>}
       </div>
     </form>
   );

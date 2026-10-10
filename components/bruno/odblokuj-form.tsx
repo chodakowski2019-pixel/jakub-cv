@@ -18,8 +18,8 @@ export default function OdblokujForm() {
   if (stan === "ok") {
     return (
       <div className="bruno-szklo rounded-3xl p-8 text-center max-w-xl mx-auto w-full">
-        <div className="bruno-h2 text-xl mb-2">Powiadomienie zostało wysłane.</div>
-        <p className="text-slate-600">Skontaktujemy się z Tobą w ciągu 3 dni roboczych.</p>
+        <div className="bruno-h2 text-xl mb-2">Request sent.</div>
+        <p className="text-slate-600">We'll get back to you within 3 business days.</p>
       </div>
     );
   }
@@ -27,9 +27,9 @@ export default function OdblokujForm() {
   return (
     <div className="flex flex-col items-center gap-3">
       <button type="button" onClick={wyslij} disabled={stan === "wysylanie"} className="bruno-przycisk text-base px-10 py-4">
-        {stan === "wysylanie" ? "Wysyłam..." : "Chcę pełen dostęp"}
+        {stan === "wysylanie" ? "Sending..." : "Get full access"}
       </button>
-      {stan === "blad" && <p className="text-sm text-red-700 text-center">Nie udało się wysłać. Napisz na hello@jakubchodakowski.com</p>}
+      {stan === "blad" && <p className="text-sm text-red-700 text-center">Couldn't send. Email us at hello@jakubchodakowski.com</p>}
     </div>
   );
 }

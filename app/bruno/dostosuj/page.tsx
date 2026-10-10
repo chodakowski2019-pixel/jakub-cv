@@ -12,8 +12,8 @@ export default async function BrunoDostosujPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Dostosuj <span className="bruno-gradient-tekst">Bruno</span></h1>
-        <p className="text-slate-600 mt-2">Bruno czyta to przed każdą rozmową. Im więcej szczegółów, tym bardziej brzmi jak Twój klient.</p>
+        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Customize <span className="bruno-gradient-tekst">Bruno</span></h1>
+        <p className="text-slate-600 mt-2">Bruno reads this before every call. The more details you add, the more he sounds like your customer.</p>
       </div>
       {/* 10.10: „wczytaj ofertę ze strony / PDF" także dla konta free (USER_001: link do strony i oferta przy konfiguracji). */}
       <DostosujForm start={konfig} oferta={dostepKonta(konto).oferta} />
