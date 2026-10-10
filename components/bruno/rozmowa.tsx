@@ -34,6 +34,8 @@ type Props = {
   sekundDogrywki: number;
   /** 9.10: pełny dostęp (płacąca firma) odblokowuje „Rozmowę, którą masz jutro". Trial widzi kafelek z kłódką. */
   pelny: boolean;
+  /** 10.10: konto free: licznik bezpłatnych rozmów (3 łącznie) i blokada po ostatniej. */
+  free?: { zuzyte: number; zostalo: number } | null;
 };
 
 function czas(s: number) {
@@ -142,7 +144,7 @@ function startGwar(): { stop: () => void } {
   };
 }
 
-export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny }: Props) {
+export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny, free = null }: Props) {
   const [tryb, setTryb] = useState<TrybId>("cold");
   // „Rozmowa, którą masz jutro" (9.10, moduł płatny): sytuacja z życia wklejona przed rozmową.
   const [sytuacja, setSytuacja] = useState("");
@@ -857,13 +859,16 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
             )}
           </fieldset>
 
-          {planZrobiony ? (
+          {free && free.zostalo === 0 ? (
+            <p className="text-center text-slate-600">Wykorzystane {free.zuzyte} bezpłatne rozmowy. <Link href="/bruno/odblokuj" className="underline">Odblokuj Bruno Pro</Link>.</p>
+          ) : planZrobiony ? (
             <p className="text-center text-slate-600">Plan na dziś zrobiony ({rozmowDziennie} rozmowy). Wróć jutro.</p>
           ) : brakMinut ? (
             <p className="text-center text-slate-600">Limit minut testu wyczerpany. <Link href="/bruno/odblokuj" className="underline">Odblokuj pełen dostęp</Link>.</p>
           ) : (
             <div className="text-center">
               <button type="button" onClick={zacznij} disabled={!gotowy} className="bruno-przycisk text-base px-12 py-4">Start</button>
+              {free && <p className="mt-3 text-sm text-slate-500">Bezpłatne rozmowy: {free.zuzyte} z {free.zuzyte + free.zostalo}. Ta będzie {free.zuzyte + 1}.</p>}
             </div>
           )}
         </>
@@ -897,7 +902,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
               style={{ background: `radial-gradient(circle at 45% 40%, ${p.kolor}cc 0%, ${p.kolor} 48%, ${p.kolor}00 74%)` }}
             />
             {stan === "odliczanie" && (
-              <span key={odliczanie} className="relative bruno-h2 text-7xl text-white drop-shadow-[0_2px_12px_rgba(14,116,144,0.7)] bruno-odliczanie" aria-live="assertive">
+              <span key={odliczanie} className="relative bruno-h2 text-7xl text-white drop-shadow-[0_2px_12px_rgba(212,175,90,0.7)] bruno-odliczanie" aria-live="assertive">
                 {odliczanie > 0 ? odliczanie : "Start"}
               </span>
             )}

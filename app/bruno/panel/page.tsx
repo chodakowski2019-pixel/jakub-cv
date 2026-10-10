@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Inter, Outfit } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { zapiszWejscie, zrodloZParametru } from "@/lib/bruno/wejscia";
-import { pelnyDostep, pobierzKonto, stanDostepu, zamknijPorzucone } from "@/lib/bruno/db";
+import { dostepKonta, pobierzKonto, stanDostepu, stanFree, zamknijPorzucone } from "@/lib/bruno/db";
 import { danePanelu } from "@/components/podglad/panel/dane";
 import PanelA from "@/components/podglad/panel/panel-a";
 import TourPopup from "@/components/bruno/tour-popup";
@@ -36,7 +36,7 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
   return (
     <div className={`${inter.variable} ${outfit.variable}`} style={{ display: "contents" }}>
       {pokazTour && <TourPopup src={FILM_OPROWADZAJACY} okladka={FILM_OKLADKA} />}
-      <PanelA d={d} lp szklo zloty pelny={pelnyDostep(konto)} />
+      <PanelA d={d} lp szklo zloty dostep={dostepKonta(konto)} free={dostepKonta(konto).free ? await stanFree(konto) : null} />
     </div>
   );
 }

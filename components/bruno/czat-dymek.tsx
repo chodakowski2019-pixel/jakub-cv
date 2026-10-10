@@ -32,7 +32,7 @@ export default function CzatDymek() {
   return (
     <div className="fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-20 flex flex-col items-end gap-3">
       {otwarty && (
-        <div className="bruno-szklo rounded-3xl overflow-hidden w-[calc(100vw-2.5rem)] max-w-sm shadow-[0_24px_60px_rgba(14,116,144,0.22)]">
+        <div className="bruno-szklo rounded-3xl overflow-hidden w-[calc(100vw-2.5rem)] max-w-sm shadow-[0_24px_60px_rgba(212,175,90,0.22)]">
           <div className="px-5 py-4 bg-gradient-to-r from-cyan-700 to-teal-700 text-white flex items-center gap-3">
             <span className="size-9 rounded-full bg-white/15 grid place-items-center bruno-h2 text-sm">B</span>
             <div className="min-w-0 flex-1">
@@ -76,9 +76,9 @@ export default function CzatDymek() {
         ) : (
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden>
             <path d="M12 3C7 3 3 6.4 3 10.6c0 2.3 1.2 4.3 3.1 5.7L5.4 20l4-1.9c.8.2 1.7.3 2.6.3 5 0 9-3.4 9-7.6S17 3 12 3z" />
-            <circle cx="8.5" cy="10.8" r="1.1" fill="#0e7490" />
-            <circle cx="12" cy="10.8" r="1.1" fill="#0e7490" />
-            <circle cx="15.5" cy="10.8" r="1.1" fill="#0e7490" />
+            <circle cx="8.5" cy="10.8" r="1.1" fill="#d4af5a" />
+            <circle cx="12" cy="10.8" r="1.1" fill="#d4af5a" />
+            <circle cx="15.5" cy="10.8" r="1.1" fill="#d4af5a" />
           </svg>
         )}
       </button>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Feedback } from "@/lib/bruno/db";
+import type { Feedback, ZamkniecieTechniki } from "@/lib/bruno/db";
 import { NAZWY } from "@/lib/bruno/kryteria";
 
 // Widok feedbacku trenera (układ USER_001 2.10). Ten sam po rozmowie i w Feedbacku.
@@ -42,12 +42,12 @@ function OcenaKolo({ ocena }: { ocena: number }) {
   const udzial = Math.min(1, Math.max(0, ocena / 10));
   return (
     <svg viewBox="0 0 104 104" width="128" height="128" role="img" aria-label={`Ocena ${ocena} na 10`}>
-      <circle cx="52" cy="52" r={r} fill="none" stroke="rgba(14,116,144,0.12)" strokeWidth="9" />
+      <circle cx="52" cy="52" r={r} fill="none" stroke="rgba(212,175,90,0.12)" strokeWidth="9" />
       <circle cx="52" cy="52" r={r} fill="none" stroke="url(#bruno-ocena-kolo)" strokeWidth="9" strokeLinecap="round" strokeDasharray={`${obwod * udzial} ${obwod}`} transform="rotate(-90 52 52)" className="bruno-pierscien-wypelnienie" />
       <defs>
         <linearGradient id="bruno-ocena-kolo" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#0e7490" />
-          <stop offset="1" stopColor="#0f766e" />
+          <stop offset="0" stopColor="#d4af5a" />
+          <stop offset="1" stopColor="#a8822f" />
         </linearGradient>
       </defs>
       <text x="52" y="58" textAnchor="middle" className="fill-slate-900" style={{ fontSize: 30, fontWeight: 800, fontFamily: "var(--font-poppins)" }}>
@@ -57,6 +57,46 @@ function OcenaKolo({ ocena }: { ocena: number }) {
         / 10
       </text>
     </svg>
+  );
+}
+
+/** 10.10 (E12): techniki zamykania jako lista z ✓ / ✗, pod kryterium „Zamknięcie". */
+function Techniki({ t }: { t: ZamkniecieTechniki }) {
+  const POMYSLEC: Record<ZamkniecieTechniki["musze_pomyslec"], [boolean | null, string]> = {
+    nie_padlo: [null, "klient nie unikał"],
+    poddal_sie: [false, "poddałeś się po „muszę pomyśleć”"],
+    czekal: [false, "„muszę pomyśleć” zostało bez odpowiedzi"],
+    pytanie: [true, "zapytałeś, co konkretnie chce przemyśleć"],
+    warunek: [true, "postawiłeś warunek „jeśli X, to podpisujemy?”"],
+  };
+  const DRUGIE: Record<ZamkniecieTechniki["drugie_zamkniecie"], [boolean | null, string]> = {
+    nie_dotyczy: [null, "obiekcji przy zamknięciu nie było"],
+    brak: [false, "po obiekcji nie poprosiłeś o decyzję drugi raz"],
+    bylo: [true, "po obiekcji poprosiłeś o decyzję drugi raz"],
+  };
+  const SYGNAL: Record<ZamkniecieTechniki["sygnal_kupna"], [boolean | null, string]> = {
+    nie_bylo: [null, "klient nie dał sygnału kupna"],
+    wykorzystany: [true, "sygnał kupna wykorzystany od razu"],
+    zmarnowany: [false, "sygnał kupna zmarnowany, mówiłeś dalej"],
+  };
+  const wiersze: [string, boolean | null, string][] = [
+    ["Próba zamknięcia", t.proba_zamkniecia, t.proba_zamkniecia ? "„jak to brzmi?” padło" : "brak próbnego „jak to brzmi?”"],
+    ["Pytanie o decyzję", t.pytanie_o_decyzje, t.pytanie_o_decyzje ? "zapytałeś wprost" : "nie zapytałeś wprost „podpisujemy?”"],
+    ["Następny krok z datą", t.nastepny_krok_z_data, t.nastepny_krok_z_data ? "termin zaproponowany" : "bez konkretnego terminu"],
+    ["„Muszę pomyśleć”", ...POMYSLEC[t.musze_pomyslec]],
+    ["Drugie zamknięcie", ...DRUGIE[t.drugie_zamkniecie]],
+    ["Sygnał kupna", ...SYGNAL[t.sygnal_kupna]],
+  ];
+  return (
+    <ul className="mt-3 flex flex-col gap-1 text-sm">
+      {wiersze.map(([nazwa, ok, opis]) => (
+        <li key={nazwa} className="flex items-start gap-2">
+          <span className={`shrink-0 w-5 text-center font-semibold ${ok === true ? "text-emerald-600" : ok === false ? "text-rose-600" : "text-slate-400"}`}>{ok === true ? "✓" : ok === false ? "✗" : "–"}</span>
+          <span className="text-slate-900 font-medium">{nazwa}</span>
+          <span className="text-slate-500">{opis}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -138,6 +178,7 @@ export default function FeedbackWidok({ feedback, dalej }: { feedback: Feedback;
               </blockquote>
             )}
             <p className="mt-2 text-sm text-slate-800">{k.komentarz}</p>
+            {k.nazwa === "zamkniecie" && feedback.zamkniecie_techniki && <Techniki t={feedback.zamkniecie_techniki} />}
           </li>
         ))}
       </ul>
@@ -158,7 +199,7 @@ export default function FeedbackWidok({ feedback, dalej }: { feedback: Feedback;
 
       <div className="bruno-szklo rounded-2xl p-5 border-cyan-700/30">
         <div className="flex items-center gap-2 mb-2">
-          <Kolko znak="strzalka" kolor="#0e7490" />
+          <Kolko znak="strzalka" kolor="#d4af5a" />
           <Badge ton="cyjan">Następnym razem</Badge>
         </div>
         <p className="text-[15px] text-slate-900 font-medium leading-relaxed">{feedback.poprawka || "Brak."}</p>

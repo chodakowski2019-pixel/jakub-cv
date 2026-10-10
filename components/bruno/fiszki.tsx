@@ -11,7 +11,7 @@ import Link from "next/link";
 export type FiszkaKarta = { id: string; typ: "obiekcja" | "poprawka" | "wiedza"; tresc: string; pytanie: string | null; kategoria: string | null; due: string; naCzas: boolean; reps: number; lapses: number };
 
 const RODZAJ: Record<FiszkaKarta["typ"], { nazwa: string; kolor: string; naglowek: string }> = {
-  obiekcja: { nazwa: "Obiekcja", kolor: "#0e7490", naglowek: "Klient mówi" },
+  obiekcja: { nazwa: "Obiekcja", kolor: "#d4af5a", naglowek: "Klient mówi" },
   poprawka: { nazwa: "Do poprawy z Twojej rozmowy", kolor: "#d97706", naglowek: "Sytuacja z rozmowy" },
   wiedza: { nazwa: "Wiedza", kolor: "#7c3aed", naglowek: "Pytanie" },
 };
@@ -21,7 +21,7 @@ type Wynik = { werdykt: 1 | 2 | 3 | 4; komentarz: string; wzor: string; technika
 const WERDYKTY: Record<1 | 2 | 3 | 4, { nazwa: string; kolor: string; punkty: number; emoji: string }> = {
   1: { nazwa: "Poległeś", kolor: "#dc2626", punkty: 0, emoji: "💥" },
   2: { nazwa: "Słabo", kolor: "#f59e0b", punkty: 5, emoji: "🫤" },
-  3: { nazwa: "Dobrze", kolor: "#0e7490", punkty: 10, emoji: "👊" },
+  3: { nazwa: "Dobrze", kolor: "#d4af5a", punkty: 10, emoji: "👊" },
   4: { nazwa: "Wzorowo", kolor: "#16a34a", punkty: 20, emoji: "🔥" },
 };
 

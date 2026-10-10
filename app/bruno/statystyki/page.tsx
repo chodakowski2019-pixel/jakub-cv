@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { limitDzienny, pobierzKonto, pobierzRozmowy, stanDostepu, zuzyteSekundy, type Kryterium } from "@/lib/bruno/db";
+import { dostepKonta, limitDzienny, pobierzKonto, pobierzRozmowy, stanDostepu, zuzyteSekundy, type Kryterium } from "@/lib/bruno/db";
 import { NAZWY } from "@/lib/bruno/kryteria";
 import { postepScenariuszy } from "@/lib/bruno/scenariusze";
 import { Licznik, Ocena, Pierscien, Slupki, rozmowyNaDni } from "@/components/bruno/statystyki";
@@ -16,6 +16,8 @@ export default async function BrunoStatystykiPage() {
   if (!email) redirect("/bruno");
   const konto = await pobierzKonto(email);
   if (!konto) redirect("/bruno");
+  // 10.10: Statystyki poza planem free (do zakupu Bruno Pro).
+  if (!dostepKonta(konto).statystyki) redirect("/bruno/odblokuj");
   const stan = stanDostepu(konto);
   const [zuzyte, wszystkie, scenariusze] = await Promise.all([zuzyteSekundy(email), pobierzRozmowy(email, 500), postepScenariuszy(email)]);
 

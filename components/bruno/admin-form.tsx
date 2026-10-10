@@ -97,7 +97,8 @@ export default function AdminForm({ klucz }: { klucz: string }) {
           <label className="text-sm text-slate-600">plan
             <select className="bruno-pole mt-1" value={f.plan} onChange={pole("plan")}>
               <option value="trial">trial (test, bez modułów płatnych)</option>
-              <option value="pelny">pełny (oferta z PDF, rozmowa z życia)</option>
+              <option value="pelny">pełny (B2B po dealu / Bruno Pro: wszystko)</option>
+              <option value="free">free (rejestracja B2C: 3 rozmowy, fiszki, oferta ze strony)</option>
             </select>
           </label>
         </div>

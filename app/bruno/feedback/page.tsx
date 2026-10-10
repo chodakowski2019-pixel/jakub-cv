@@ -16,9 +16,9 @@ function OcenaKolko({ ocena }: { ocena: number | null }) {
   const udzial = ocena ? Math.min(1, Math.max(0, ocena / 10)) : 0;
   return (
     <svg viewBox="0 0 64 64" width="72" height="72" role="img" aria-label={ocena ? `Ocena ${ocena} na 10` : "Bez oceny"}>
-      <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(14,116,144,0.12)" strokeWidth="6" />
+      <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(212,175,90,0.12)" strokeWidth="6" />
       {ocena ? (
-        <circle cx="32" cy="32" r={r} fill="none" stroke="#0e7490" strokeWidth="6" strokeLinecap="round" strokeDasharray={`${obwod * udzial} ${obwod}`} transform="rotate(-90 32 32)" />
+        <circle cx="32" cy="32" r={r} fill="none" stroke="#d4af5a" strokeWidth="6" strokeLinecap="round" strokeDasharray={`${obwod * udzial} ${obwod}`} transform="rotate(-90 32 32)" />
       ) : null}
       <text x="32" y="37" textAnchor="middle" className={ocena ? "fill-slate-900" : "fill-slate-400"} style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--font-poppins)" }}>
         {ocena ?? "–"}

@@ -11,7 +11,7 @@ export function Pierscien({ wartosc, max, liczba, opis, uwaga, goly }: { wartosc
   return (
     <div className={`${goly ? "rounded-2xl bg-white/50 border border-white/80" : "bruno-szklo rounded-2xl"} p-4 flex items-center gap-4`}>
       <svg viewBox="0 0 72 72" width="72" height="72" className="shrink-0" role="img" aria-label={`${opis}: ${liczba}`}>
-        <circle cx="36" cy="36" r={r} fill="none" stroke="rgba(14,116,144,0.12)" strokeWidth="7" />
+        <circle cx="36" cy="36" r={r} fill="none" stroke="rgba(212,175,90,0.12)" strokeWidth="7" />
         <circle
           cx="36"
           cy="36"
@@ -26,8 +26,8 @@ export function Pierscien({ wartosc, max, liczba, opis, uwaga, goly }: { wartosc
         />
         <defs>
           <linearGradient id="bruno-pierscien" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#0e7490" />
-            <stop offset="1" stopColor="#0f766e" />
+            <stop offset="0" stopColor="#d4af5a" />
+            <stop offset="1" stopColor="#a8822f" />
           </linearGradient>
         </defs>
         <text x="36" y="40" textAnchor="middle" className="fill-slate-900" style={{ fontSize: 15, fontWeight: 700, fontFamily: "var(--font-poppins)" }}>
@@ -102,19 +102,19 @@ export function Slupki({ dni, cel, tytul, goly, wysoki }: { dni: Slupek[]; cel: 
     <div className={goly ? "flex-1 flex flex-col" : "bruno-szklo rounded-2xl p-4 sm:p-5"}>
       <h2 className="bruno-h2 text-base text-center mb-2">{tytul}</h2>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-label={`${tytul}: ${dni.map((d) => `${d.etykieta} ${d.wartosc}`).join(", ")}`}>
-        <line x1="0" x2={W} y1={y(cel)} y2={y(cel)} stroke="rgba(14,116,144,0.35)" strokeWidth="1" strokeDasharray="3 4" />
-        <line x1="0" x2={W} y1={y(0)} y2={y(0)} stroke="rgba(15,23,42,0.12)" strokeWidth="1" />
+        <line x1="0" x2={W} y1={y(cel)} y2={y(cel)} stroke="rgba(212,175,90,0.35)" strokeWidth="1" strokeDasharray="3 4" />
+        <line x1="0" x2={W} y1={y(0)} y2={y(0)} stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
         {dni.map((d, i) => {
           const x = i * szer + (szer - slupekSzer) / 2;
           const h = Math.max(0, y(0) - y(d.wartosc));
           return (
-            <g key={d.etykieta}>
+            <g key={`${d.podpis}-${i}`}>
               <title>{`${d.podpis}: ${d.wartosc} ${d.wartosc === 1 ? "rozmowa" : d.wartosc >= 2 && d.wartosc <= 4 ? "rozmowy" : "rozmów"}`}</title>
-              <rect x={x} y={y(0) - 2} width={slupekSzer} height="2" fill="rgba(14,116,144,0.15)" />
+              <rect x={x} y={y(0) - 2} width={slupekSzer} height="2" fill="rgba(212,175,90,0.15)" />
               {h > 0 && (
                 <path
                   d={`M${x},${y(0)} v${-(h - 4)} a4,4 0 0 1 4,-4 h${slupekSzer - 8} a4,4 0 0 1 4,4 v${h - 4} z`}
-                  fill={d.wartosc >= cel ? "url(#bruno-slupek)" : "rgba(14,116,144,0.55)"}
+                  fill={d.wartosc >= cel ? "url(#bruno-slupek)" : "rgba(212,175,90,0.55)"}
                   className="bruno-slupek"
                 />
               )}
@@ -131,8 +131,8 @@ export function Slupki({ dni, cel, tytul, goly, wysoki }: { dni: Slupek[]; cel: 
         })}
         <defs>
           <linearGradient id="bruno-slupek" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0" stopColor="#0e7490" />
-            <stop offset="1" stopColor="#14b8a6" />
+            <stop offset="0" stopColor="#d4af5a" />
+            <stop offset="1" stopColor="#f3dc9c" />
           </linearGradient>
         </defs>
       </svg>

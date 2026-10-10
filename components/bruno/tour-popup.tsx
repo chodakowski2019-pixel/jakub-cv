@@ -68,12 +68,12 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
 
   if (!otwarty || !cel) return null;
   return createPortal(
-    <div className="fixed inset-0 z-50 bg-white flex flex-col" role="dialog" aria-modal="true" aria-label="Film oprowadzający">
+    <div className="fixed inset-0 z-50 bg-white bz-tour flex flex-col" role="dialog" aria-modal="true" aria-label="Film oprowadzający">
       {/* Tło jak w panelu: białe z rozmytymi plamami. */}
       <div className="bruno-plamy" aria-hidden>
-        <i style={{ top: -140, left: -100, width: 620, height: 620, opacity: 0.7, background: "radial-gradient(closest-side, #a5f3fc, transparent)" }} />
-        <i style={{ top: "33%", right: -140, width: 560, height: 560, opacity: 0.6, background: "radial-gradient(closest-side, #99f6e4, transparent)" }} />
-        <i style={{ bottom: -160, left: "25%", width: 640, height: 520, opacity: 0.5, background: "radial-gradient(closest-side, #bae6fd, transparent)" }} />
+        <i style={{ top: -140, left: -100, width: 620, height: 620, opacity: 0.7, background: "radial-gradient(closest-side, #3a3122, transparent)" }} />
+        <i style={{ top: "33%", right: -140, width: 560, height: 560, opacity: 0.6, background: "radial-gradient(closest-side, #2a2418, transparent)" }} />
+        <i style={{ bottom: -160, left: "25%", width: 640, height: 520, opacity: 0.5, background: "radial-gradient(closest-side, #2f2a1e, transparent)" }} />
       </div>
 
       <div className="relative z-[1] flex flex-col h-full">
@@ -106,7 +106,7 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
             />
             {!gra && (
               <button type="button" onClick={odtworz} aria-label="Odtwórz film" className="absolute inset-0 grid place-items-center group">
-                <span className="size-20 rounded-full bg-gradient-to-br from-cyan-600 to-teal-700 grid place-items-center shadow-[0_12px_40px_rgba(14,116,144,0.5)] transition-transform group-hover:scale-105">
+                <span className="size-20 rounded-full bg-gradient-to-br from-cyan-600 to-teal-700 grid place-items-center shadow-[0_12px_40px_rgba(212,175,90,0.5)] transition-transform group-hover:scale-105">
                   <svg viewBox="0 0 24 24" width="34" height="34" fill="#fff" aria-hidden>
                     <path d="M8 5v14l11-7z" />
                   </svg>

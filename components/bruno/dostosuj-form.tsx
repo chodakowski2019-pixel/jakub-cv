@@ -37,7 +37,7 @@ function Sekcja({ nr, tytul, podpowiedz, htmlFor, children }: { nr: number; tytu
 
 type Propozycja = { produkt?: string; klient?: string; obiekcje?: string; skrypt?: string; zrodlo?: string };
 
-export default function DostosujForm({ start, pelny }: { start: Konfig; pelny: boolean }) {
+export default function DostosujForm({ start, oferta }: { start: Konfig; oferta: boolean }) {
   const router = useRouter();
   const [f, setF] = useState({
     produkt: start.produkt,
@@ -113,13 +113,13 @@ export default function DostosujForm({ start, pelny }: { start: Konfig; pelny: b
       {/* 0. Oferta ze strony / PDF (moduł płatny) */}
       <section className="flex gap-4">
         <span className="hidden sm:grid shrink-0 size-8 place-items-center rounded-full bg-slate-900 text-white text-sm font-bold bruno-h2" aria-hidden>
-          {pelny ? "AI" : "🔒"}
+          {oferta ? "AI" : "🔒"}
         </span>
         <div className="min-w-0 flex-1">
           <div className="bruno-h2 text-[17px] sm:text-lg text-slate-900 leading-tight">
-            Wczytaj ofertę ze strony albo z PDF <span className="text-xs font-normal text-slate-400">{pelny ? "(wypełnia pola niżej)" : "(pełny dostęp)"}</span>
+            Wczytaj ofertę ze strony albo z PDF <span className="text-xs font-normal text-slate-400">{oferta ? "(wypełnia pola niżej)" : "(Bruno Pro)"}</span>
           </div>
-          {pelny ? (
+          {oferta ? (
             <>
               <p className="text-[13px] text-slate-500 mt-1 mb-3">Bruno przeczyta Waszą stronę albo ofertę i wypełni pola 1-3: co sprzedajecie, kim jest klient, jakie obiekcje padają. Ty sprawdzasz i zapisujesz.</p>
               <div className="flex flex-col sm:flex-row gap-2">

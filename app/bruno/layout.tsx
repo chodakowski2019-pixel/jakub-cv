@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
-import { Poppins, Open_Sans } from "next/font/google";
+import { redirect } from "next/navigation";
+import { Poppins, Open_Sans, Outfit } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { pelnyDostep, pobierzKonto } from "@/lib/bruno/db";
-import BrunoNav, { BrunoPasek } from "@/components/bruno/nav";
+import { dostepKonta, pobierzKonto, stanFree } from "@/lib/bruno/db";
+import PasekZloty from "@/components/bruno/pasek-zloty";
 import CzatDymek from "@/components/bruno/czat-dymek";
 import "./bruno.css";
 
@@ -21,44 +22,54 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width: "device-width", initialScale: 1 };
 
 const poppins = Poppins({ variable: "--font-poppins", subsets: ["latin", "latin-ext"], weight: ["600", "700", "800"] });
+const outfit = Outfit({ variable: "--font-outfit", subsets: ["latin", "latin-ext"], weight: ["300", "400", "500", "600"] });
 const openSans = Open_Sans({ variable: "--font-open-sans", subsets: ["latin", "latin-ext"], weight: ["400", "500", "600"] });
+
+/** 10.10: po 3 darmowych rozmowach konto free widzi tylko te ekrany (reszta → Bruno Pro). */
+const PO_BLOKADZIE = ["/bruno/odblokuj", "/bruno/feedback", "/bruno/ustawienia"];
 
 export default async function BrunoLayout({ children }: { children: React.ReactNode }) {
   const email = await zalogowanyEmail();
-  // 9.10: zakładka „Ogień" tylko w pełnym dostępie (USER_001: tester w trialu ma jej nie widzieć).
-  const pelny = email ? pelnyDostep(await pobierzKonto(email)) : false;
+  const konto = email ? await pobierzKonto(email) : null;
+  // 9.10: zakładka „Ogień" tylko w pełnym dostępie; 10.10: „Statystyki" nie dla free.
+  const dostep = dostepKonta(konto);
+  const fonty = `${poppins.variable} ${openSans.variable} ${outfit.variable}`;
   // 9.10 (USER_001): niezalogowany widzi logowanie Aurora na cały ekran, bez paska, tła i stopki panelu.
-  if (!email) return <div className={`${poppins.variable} ${openSans.variable}`}>{children}</div>;
+  if (!email) return <div className={fonty}>{children}</div>;
+
+  const sciezka = (await headers()).get("x-sciezka") ?? "";
+  // 10.10 (USER_001): konto free po 3 rozmowach = wszystko zablokowane, zostaje zakup Bruno Pro
+  // (plus feedback z ostatniej rozmowy i ustawienia z wylogowaniem).
+  const free = dostep.free ? await stanFree(konto) : null;
+  if (free?.zablokowane && sciezka && !PO_BLOKADZIE.some((p) => sciezka === p || sciezka.startsWith(`${p}/`))) {
+    redirect("/bruno/odblokuj");
+  }
+
   // 10.10 (USER_001): panel czarno-złoty ma własny pasek i tło. Czat zostaje.
-  if ((await headers()).get("x-sciezka") === "/bruno/panel") {
+  if (sciezka === "/bruno/panel") {
     return (
-      <div className={`bruno ${poppins.variable} ${openSans.variable}`} style={{ background: "#080807" }}>
+      <div className={`bruno zloty ${fonty}`}>
         {children}
         <CzatDymek />
       </div>
     );
   }
+  // 10.10 (USER_001: „cały ten Bruno się zmienia”): wszystkie ekrany czarno-złote, wspólny pasek.
+  const inicjal = (konto?.imie?.trim()?.[0] ?? email[0] ?? "B").toUpperCase();
   return (
-    <div className={`bruno ${poppins.variable} ${openSans.variable} font-[var(--font-open-sans)]`}>
-      <div className="bruno-plamy" aria-hidden>
-        <i style={{ top: -140, left: -100, width: 620, height: 620, opacity: 0.7, background: "radial-gradient(closest-side, #a5f3fc, transparent)" }} />
-        <i style={{ top: "33%", right: -140, width: 560, height: 560, opacity: 0.6, background: "radial-gradient(closest-side, #99f6e4, transparent)" }} />
-        <i style={{ bottom: -160, left: "25%", width: 640, height: 520, opacity: 0.5, background: "radial-gradient(closest-side, #bae6fd, transparent)" }} />
-      </div>
-      <div className="relative z-[1] min-h-screen flex">
-        {email && <BrunoPasek pelny={pelny} />}
-        <div className={`flex-1 min-w-0 flex flex-col ${email ? "sm:ml-52" : ""}`}>
-          <BrunoNav zalogowany={Boolean(email)} pelny={pelny} />
-          <main className="flex-1 px-4 sm:px-6 pb-10 pt-6 sm:pt-10 max-w-5xl w-full mx-auto overflow-x-hidden">{children}</main>
+    <div className={`bruno zloty ${fonty} font-[var(--font-open-sans)]`}>
+      <div className="bz-uklad">
+        <PasekZloty dostep={dostep} inicjal={inicjal} free={free} />
+        <div className="bz-tresc">
+          <main className="flex-1 px-4 sm:px-6 pb-10 pt-6 sm:pt-8 max-w-5xl w-full mx-auto overflow-x-hidden">{children}</main>
           {/* Dokumenty muszą być dostępne z każdego ekranu panelu (2.10): rozmowy są nagrywane. */}
-          <footer className="px-4 sm:px-6 pb-24 pt-2 max-w-5xl w-full mx-auto text-xs text-slate-400 flex flex-wrap gap-x-4 gap-y-1 justify-center">
-            <span>Bruno AI, Jakub Chodakowski, NIP 6711845485</span>
-            <a className="hover:text-slate-600 underline underline-offset-2" href="/regulamin">Regulamin</a>
-            <a className="hover:text-slate-600 underline underline-offset-2" href="/polityka-prywatnosci">Polityka prywatności</a>
+          <footer className="bz-stopka">
+            <a href="/regulamin">Regulamin</a>
+            <a href="/polityka-prywatnosci">Polityka prywatności</a>
           </footer>
         </div>
-        {email && <CzatDymek />}
       </div>
+      <CzatDymek />
     </div>
   );
 }
