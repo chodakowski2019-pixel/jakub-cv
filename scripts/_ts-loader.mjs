@@ -16,6 +16,8 @@ const root = ${JSON.stringify(root)};
 export async function resolve(specifier, context, next) {
   let s = specifier;
   if (s.startsWith("@/")) s = root + s.slice(2);
+  // next/headers, next/server: pakiet next nie ma pola exports, Node chce pełnej nazwy pliku.
+  if (/^next\\/[a-z-]+$/.test(s)) return next(s + ".js", context);
   const wzgledny = s.startsWith("./") || s.startsWith("../") || s.startsWith("file:");
   if (wzgledny && !/\\.[a-z]+$/i.test(s)) {
     const baza = s.startsWith("file:") ? s : new URL(s, context.parentURL).href;

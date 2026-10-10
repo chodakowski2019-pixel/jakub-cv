@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { Poppins, Open_Sans, Outfit } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { dostepKonta, pobierzKonto, stanFree } from "@/lib/bruno/db";
-import PasekZloty from "@/components/bruno/pasek-zloty";
+import UkladZloty from "@/components/bruno/uklad-zloty";
 import CzatDymek from "@/components/bruno/czat-dymek";
 import "./bruno.css";
 
@@ -37,38 +37,22 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   // 9.10 (USER_001): niezalogowany widzi logowanie Aurora na cały ekran, bez paska, tła i stopki panelu.
   if (!email) return <div className={fonty}>{children}</div>;
 
+  // Blokada free po 3 rozmowach na pierwszym wejściu (twarde wejście z adresu). Przejścia między
+  // zakładkami pilnuje UkladZloty w przeglądarce, bo układ nie renderuje się przy nich od nowa.
   const sciezka = (await headers()).get("x-sciezka") ?? "";
-  // 10.10 (USER_001): konto free po 3 rozmowach = wszystko zablokowane, zostaje zakup Bruno Pro
-  // (plus feedback z ostatniej rozmowy i ustawienia z wylogowaniem).
   const free = dostep.free ? await stanFree(konto) : null;
   if (free?.zablokowane && sciezka && !PO_BLOKADZIE.some((p) => sciezka === p || sciezka.startsWith(`${p}/`))) {
     redirect("/bruno/odblokuj");
   }
 
-  // 10.10 (USER_001): panel czarno-złoty ma własny pasek i tło. Czat zostaje.
-  if (sciezka === "/bruno/panel") {
-    return (
-      <div className={`bruno zloty ${fonty}`}>
-        {children}
-        <CzatDymek />
-      </div>
-    );
-  }
-  // 10.10 (USER_001: „cały ten Bruno się zmienia”): wszystkie ekrany czarno-złote, wspólny pasek.
+  // 10.10 (USER_001: „cały ten Bruno się zmienia”): wszystkie ekrany czarno-złote. Panel ma własny pasek,
+  // reszta wspólny; o tym decyduje UkladZloty po adresie w przeglądarce.
   const inicjal = (konto?.imie?.trim()?.[0] ?? email[0] ?? "B").toUpperCase();
   return (
     <div className={`bruno zloty ${fonty} font-[var(--font-open-sans)]`}>
-      <div className="bz-uklad">
-        <PasekZloty dostep={dostep} inicjal={inicjal} free={free} />
-        <div className="bz-tresc">
-          <main className="flex-1 px-4 sm:px-6 pb-10 pt-6 sm:pt-8 max-w-5xl w-full mx-auto overflow-x-hidden">{children}</main>
-          {/* Dokumenty muszą być dostępne z każdego ekranu panelu (2.10): rozmowy są nagrywane. */}
-          <footer className="bz-stopka">
-            <a href="/regulamin">Terms</a>
-            <a href="/polityka-prywatnosci">Privacy Policy</a>
-          </footer>
-        </div>
-      </div>
+      <UkladZloty dostep={dostep} inicjal={inicjal} free={free}>
+        {children}
+      </UkladZloty>
       <CzatDymek />
     </div>
   );
