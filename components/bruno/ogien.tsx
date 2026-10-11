@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Cytat } from "@/lib/bruno/cytaty";
 import { policzMetryki } from "@/lib/bruno/metryki";
+import { useT } from "@/components/bruno/jezyk-kontekst";
+import type { Jezyk } from "@/lib/bruno/i18n";
 
 // „Ogień przed rozmową" (USER_001 9.10). Rytuał 5 minut przed PRAWDZIWYM telefonem:
 // zapal (muzyka + Bruno nakręca + cytat) → oddech 60 s → głos 45 s → kartka W BRUNO
@@ -25,21 +27,22 @@ type Props = {
 };
 
 type Krok = "zapal" | "oddech" | "glos" | "kartka" | "glowa" | "sparing" | "rozmowa" | "po" | "koniec";
-const KROKI: { id: Krok; nazwa: string }[] = [
-  { id: "zapal", nazwa: "Light it" },
-  { id: "oddech", nazwa: "Breathe" },
-  { id: "glos", nazwa: "Voice" },
-  { id: "kartka", nazwa: "Card" },
-  { id: "glowa", nazwa: "Mindset" },
-  { id: "sparing", nazwa: "Sparring" },
-  { id: "rozmowa", nazwa: "Calling" },
+const KROKI: { id: Krok; nazwa: string; nazwaPl: string }[] = [
+  { id: "zapal", nazwa: "Light it", nazwaPl: "Zapal" },
+  { id: "oddech", nazwa: "Breathe", nazwaPl: "Oddech" },
+  { id: "glos", nazwa: "Voice", nazwaPl: "Głos" },
+  { id: "kartka", nazwa: "Card", nazwaPl: "Kartka" },
+  { id: "glowa", nazwa: "Mindset", nazwaPl: "Głowa" },
+  { id: "sparing", nazwa: "Sparring", nazwaPl: "Sparing" },
+  { id: "rozmowa", nazwa: "Calling", nazwaPl: "Dzwonię" },
 ];
 
 const ODDECH_S = 60;
 const GLOS_S = 45;
 
 /** Faza oddechu w sekundzie t: 30 s „2 wdechy, 1 wydech" ×5, potem 4-4-4-4 ×2 (32 s). */
-function fazaOddechu(t: number): { tekst: string; skala: number; cykl: string } {
+function fazaOddechu(t: number, jezyk: Jezyk = "en"): { tekst: string; skala: number; cykl: string } {
+  if (jezyk === "pl") return fazaOddechuPl(t);
   if (t < 30) {
     const w = t % 6;
     if (w < 1) return { tekst: "Breathe in through your nose", skala: 1.15, cykl: "double inhale, long exhale" };
@@ -51,6 +54,21 @@ function fazaOddechu(t: number): { tekst: string; skala: number; cykl: string } 
   if (w < 8) return { tekst: "Hold 4", skala: 1.3, cykl: "box 4-4-4-4" };
   if (w < 12) return { tekst: "Out 4", skala: 0.85, cykl: "box 4-4-4-4" };
   return { tekst: "Hold empty 4", skala: 0.85, cykl: "box 4-4-4-4" };
+}
+
+/** 11.10: te same fazy po polsku (fd7de52). */
+function fazaOddechuPl(t: number): { tekst: string; skala: number; cykl: string } {
+  if (t < 30) {
+    const w = t % 6;
+    if (w < 1) return { tekst: "Wdech nosem", skala: 1.15, cykl: "podwójny wdech, długi wydech" };
+    if (w < 2) return { tekst: "Jeszcze raz, krótko", skala: 1.3, cykl: "podwójny wdech, długi wydech" };
+    return { tekst: "Długi wydech ustami", skala: 0.85, cykl: "podwójny wdech, długi wydech" };
+  }
+  const w = (t - 30) % 16;
+  if (w < 4) return { tekst: "Wdech 4", skala: 1.3, cykl: "kwadrat 4-4-4-4" };
+  if (w < 8) return { tekst: "Trzymaj 4", skala: 1.3, cykl: "kwadrat 4-4-4-4" };
+  if (w < 12) return { tekst: "Wydech 4", skala: 0.85, cykl: "kwadrat 4-4-4-4" };
+  return { tekst: "Pusto 4", skala: 0.85, cykl: "kwadrat 4-4-4-4" };
 }
 
 /** Muzyka z WebAudio: 126 BPM, stopa + hi-hat + bas. Zero plików, zero praw. */
@@ -139,6 +157,8 @@ function startBeat(): { stop: () => void; cisza: (v: boolean) => void } {
 type Rozpoznawanie = { start: () => void; stop: () => void; onresult: ((e: { resultIndex: number; results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null; onerror: (() => void) | null; continuous: boolean; interimResults: boolean; lang: string };
 
 export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, poprawki, ostatnia }: Props) {
+  const { t, jezyk } = useT();
+  const cudzy = (s: string) => (jezyk === "pl" ? `„${s}”` : `“${s}”`);
   const [krok, setKrok] = useState<Krok>("zapal");
   const [sek, setSek] = useState(0);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -167,7 +187,7 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
     kwota: "",
     data: "",
   });
-  const [najgorszy, setNajgorszy] = useState("I'll hear “no.” One “no” = one flashcard. That's it.");
+  const [najgorszy, setNajgorszy] = useState(t("I'll hear “no.” One “no” = one flashcard. That's it.", "Usłyszę „nie”. Jedno „nie” = jedna fiszka. Tyle."));
   const [nakrecony, setNakrecony] = useState(false);
 
   // Po rozmowie
@@ -281,7 +301,7 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
     setGlosWynik(null);
     try {
       const r = new K();
-      r.lang = "en-US";
+      r.lang = jezyk === "pl" ? "pl-PL" : "en-US";
       r.continuous = true;
       r.interimResults = true;
       let koncowe = "";
@@ -312,7 +332,7 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
     const tekst = transkrypt.trim();
     if (tekst) {
       const s = Math.max(10, Math.min(GLOS_S, sek || GLOS_S));
-      const m = policzMetryki([{ rola: "handlowiec", tekst, t: 0 }], s);
+      const m = policzMetryki([{ rola: "handlowiec", tekst, t: 0 }], s, [], jezyk);
       setGlosWynik({ slowa: m.slowa_handlowca, wypelniacze: m.wypelniacze, naMin: m.wypelniacze_na_min, tempo: Math.round((m.slowa_handlowca / s) * 60) });
     }
     setKrok("kartka");
@@ -350,23 +370,23 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
   const pole = (n: keyof typeof k) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setK((x) => ({ ...x, [n]: e.target.value }));
   const wyj = (nazwa: string) => obiekcje.find((o) => o.nazwa === nazwa)?.wyjasnienie ?? null;
   const kartaSparingu = obiekcje.find((o) => o.nazwa === k.ob1)?.karta_id ?? obiekcje.find((o) => o.karta_id)?.karta_id ?? null;
-  const faza = fazaOddechu(sek);
+  const faza = fazaOddechu(sek, jezyk);
 
   return (
     <div className="flex flex-col gap-6">
       <div className="text-center">
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
-          <span className="bruno-gradient-tekst">Fire Up</span>
+          {jezyk === "pl" ? <>Ogień <span className="bruno-gradient-tekst">przed rozmową</span></> : <span className="bruno-gradient-tekst">Fire Up</span>}
         </h1>
-        <p className="text-slate-600 mt-2">5 minutes. Then you call.</p>
+        <p className="text-slate-600 mt-2">{t("5 minutes. Then you call.", "5 minut. Potem dzwonisz.")}</p>
       </div>
 
       {/* Pasek kroków */}
       {krok !== "koniec" && (
-        <ol className="flex flex-wrap justify-center gap-1.5 text-xs" aria-label="Steps">
+        <ol className="flex flex-wrap justify-center gap-1.5 text-xs" aria-label={t("Steps", "Kroki")}>
           {KROKI.map((x, i) => (
             <li key={x.id} className={`px-2.5 py-1 rounded-full border ${i === nr ? "bg-slate-900 text-white border-slate-900" : i < nr ? "bg-teal-50 text-teal-800 border-teal-200" : "bg-white/60 text-slate-500 border-slate-200"}`}>
-              {i + 1}. {x.nazwa}
+              {i + 1}. {t(x.nazwa, x.nazwaPl)}
             </li>
           ))}
         </ol>
@@ -376,31 +396,31 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
       {krok !== "rozmowa" && krok !== "po" && krok !== "koniec" && (
         <div className="flex flex-wrap items-center justify-center gap-2">
           <button type="button" onClick={przelaczMuzyke} className={`bruno-pastylka ${muzyka ? "bruno-pastylka-wybrana" : ""}`} aria-pressed={muzyka}>
-            {muzyka ? "■ Music on" : "▶ Music"}
+            {muzyka ? t("■ Music on", "■ Muzyka gra") : t("▶ Music", "▶ Muzyka")}
           </button>
           <button type="button" onClick={nakrec} disabled={hypeStan === "laduje" || hypeStan === "gra"} className="bruno-pastylka">
-            {hypeStan === "laduje" ? "Bruno is taking a breath..." : hypeStan === "gra" ? "Bruno is talking..." : "Bruno, hype me up"}
+            {hypeStan === "laduje" ? t("Bruno is taking a breath...", "Bruno bierze oddech...") : hypeStan === "gra" ? t("Bruno is talking...", "Bruno mówi...") : t("Bruno, hype me up", "Bruno, nakręć mnie")}
           </button>
-          {hypeStan === "blad" && <span className="text-xs text-red-700">That didn't work. Try again in a moment.</span>}
+          {hypeStan === "blad" && <span className="text-xs text-red-700">{t("That didn't work. Try again in a moment.", "Nie udało się. Spróbuj za chwilę.")}</span>}
         </div>
       )}
-      {hypeTekst && krok !== "koniec" && <p className="text-center text-slate-800 italic max-w-xl mx-auto">“{hypeTekst}”</p>}
+      {hypeTekst && krok !== "koniec" && <p className="text-center text-slate-800 italic max-w-xl mx-auto">{cudzy(hypeTekst)}</p>}
 
       {krok === "zapal" && (
         <div className="bruno-szklo rounded-3xl p-8 sm:p-10 text-center flex flex-col items-center gap-6">
           <blockquote className="max-w-xl">
-            <p className="bruno-h2 text-xl sm:text-2xl text-slate-900 leading-snug">“{cytat.tekst}”</p>
+            <p className="bruno-h2 text-xl sm:text-2xl text-slate-900 leading-snug">{cudzy(cytat.tekst)}</p>
             <footer className="text-sm text-slate-500 mt-2">{cytat.autor}</footer>
           </blockquote>
           {ostatnia && (
             <div className="text-sm text-slate-700 bruno-szklo rounded-2xl p-4 max-w-xl">
-              <div className="text-xs font-semibold uppercase tracking-wide text-cyan-800 mb-1">From your last call with Bruno ({ostatnia.ocena}/10)</div>
-              <div><b>What worked:</b> {ostatnia.wygrana}</div>
-              <div className="mt-1"><b>Do this differently today:</b> {ostatnia.poprawka}</div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-cyan-800 mb-1">{t("From your last call with Bruno", "Z ostatniej rozmowy z Bruno")} ({ostatnia.ocena}/10)</div>
+              <div><b>{t("What worked:", "Zagrało:")}</b> {ostatnia.wygrana}</div>
+              <div className="mt-1"><b>{t("Do this differently today:", "Dziś zrób inaczej:")}</b> {ostatnia.poprawka}</div>
             </div>
           )}
-          <p className="text-slate-600">{imie ? `${imie}, y` : "Y"}ou have a real call coming up. Turn on the music, get hyped, and let's go: breathe, voice, card, mindset.</p>
-          <button type="button" onClick={() => idz("oddech")} className="bruno-przycisk text-base px-12 py-4">Light the fire</button>
+          <p className="text-slate-600">{t(`${imie ? `${imie}, y` : "Y"}ou have a real call coming up. Turn on the music, get hyped, and let's go: breathe, voice, card, mindset.`, `${imie ? `${imie}, m` : "M"}asz za chwilę prawdziwą rozmowę. Włącz muzykę, daj się nakręcić i lecimy: oddech, głos, kartka, głowa.`)}</p>
+          <button type="button" onClick={() => idz("oddech")} className="bruno-przycisk text-base px-12 py-4">{t("Light the fire", "Zapal ogień")}</button>
         </div>
       )}
 
@@ -415,20 +435,20 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
             />
             <span className="relative bruno-h2 text-2xl text-white drop-shadow-[0_2px_12px_rgba(234,88,12,0.7)]" aria-live="polite">{faza.tekst}</span>
           </div>
-          <p className="text-sm text-slate-600 max-w-md">First 30 s: two short breaths in through your nose, one long breath out through your mouth. The fastest known way to slow your heart rate. Then box breathing 4-4-4-4.</p>
-          <button type="button" onClick={() => idz("glos")} className="bruno-przycisk-2">Skip</button>
+          <p className="text-sm text-slate-600 max-w-md">{t("First 30 s: two short breaths in through your nose, one long breath out through your mouth. The fastest known way to slow your heart rate. Then box breathing 4-4-4-4.", "Pierwsze 30 s: dwa krótkie wdechy nosem, jeden długi wydech ustami. Najszybszy znany sposób na zbicie tętna. Potem kwadrat 4-4-4-4.")}</p>
+          <button type="button" onClick={() => idz("glos")} className="bruno-przycisk-2">{t("Skip", "Pomiń")}</button>
         </div>
       )}
 
       {krok === "glos" && (
         <div className="bruno-szklo rounded-3xl p-8 sm:p-10 flex flex-col items-center gap-5 text-center">
-          <div className="text-xs uppercase tracking-wide text-slate-500">Voice · {czas(GLOS_S - sek)}</div>
-          <p className="text-slate-800">Stand up. Hum “mmm” for 10 s. Then read your first line <b>out loud 3 times</b>, slower each time.</p>
-          <input id="zdanie" className="bruno-pole text-center text-lg" placeholder="Your first line on the call" value={zdanie} onChange={(e) => setZdanie(e.target.value)} maxLength={300} />
+          <div className="text-xs uppercase tracking-wide text-slate-500">{t("Voice", "Głos")} · {czas(GLOS_S - sek)}</div>
+          <p className="text-slate-800">{jezyk === "pl" ? <>Wstań. 10 s mrucz „mmm”. Potem przeczytaj swoje pierwsze zdanie <b>3 razy na głos</b>, coraz wolniej.</> : <>Stand up. Hum “mmm” for 10 s. Then read your first line <b>out loud 3 times</b>, slower each time.</>}</p>
+          <input id="zdanie" className="bruno-pole text-center text-lg" placeholder={t("Your first line on the call", "Twoje pierwsze zdanie w rozmowie")} value={zdanie} onChange={(e) => setZdanie(e.target.value)} maxLength={300} />
           <div className="text-sm text-slate-600 min-h-[3rem] max-w-xl">
-            {rozpoznawanieJest ? (transkrypt ? `I hear: “${transkrypt}”` : "Listening... (mic, Chrome)") : "Your browser can't recognize speech, so I'm only tracking time. Chrome can do it."}
+            {rozpoznawanieJest ? (transkrypt ? `${t("I hear:", "Słyszę:")} ${cudzy(transkrypt)}` : t("Listening... (mic, Chrome)", "Słucham... (mikrofon, Chrome)")) : t("Your browser can't recognize speech, so I'm only tracking time. Chrome can do it.", "Przeglądarka nie rozpoznaje mowy, liczę tylko czas. Chrome to umie.")}
           </div>
-          <button type="button" onClick={zakonczGlos} className="bruno-przycisk">Done, next</button>
+          <button type="button" onClick={zakonczGlos} className="bruno-przycisk">{t("Done, next", "Gotowe, dalej")}</button>
         </div>
       )}
 
@@ -436,56 +456,56 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
         <div className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-5">
           {glosWynik && (
             <div className="text-sm rounded-2xl bg-white/70 border border-slate-200 p-3 flex flex-wrap gap-x-5 gap-y-1">
-              <span><b>{glosWynik.slowa}</b> {glosWynik.slowa === 1 ? "word" : "words"}</span>
-              <span><b>{glosWynik.wypelniacze}</b> {glosWynik.wypelniacze === 1 ? "filler" : "fillers"} ({glosWynik.naMin}/min, {glosWynik.naMin <= 2 ? "clean" : glosWynik.naMin <= 5 ? "OK" : "too many “um”s"})</span>
-              <span>pace <b>{glosWynik.tempo}</b> words/min ({glosWynik.tempo > 170 ? "too fast, slow down" : glosWynik.tempo < 90 ? "slow, good" : "normal"})</span>
+              <span><b>{glosWynik.slowa}</b> {jezyk === "pl" ? "słów" : glosWynik.slowa === 1 ? "word" : "words"}</span>
+              <span><b>{glosWynik.wypelniacze}</b> {jezyk === "pl" ? "wypełniaczy" : glosWynik.wypelniacze === 1 ? "filler" : "fillers"} ({glosWynik.naMin}/min, {glosWynik.naMin <= 2 ? t("clean", "czysto") : glosWynik.naMin <= 5 ? t("OK", "średnio") : t("too many “um”s", "za dużo „yy”")})</span>
+              <span>{t("pace", "tempo")} <b>{glosWynik.tempo}</b> {t("words/min", "słów/min")} ({glosWynik.tempo > 170 ? t("too fast, slow down", "za szybko, zwolnij") : glosWynik.tempo < 90 ? t("slow, good", "wolno, dobrze") : t("normal", "w normie")})</span>
             </div>
           )}
           <div>
-            <h2 className="bruno-h2 text-lg">Call card</h2>
-            <p className="text-sm text-slate-500">It stays in Bruno. Five things that decide how the call goes.</p>
+            <h2 className="bruno-h2 text-lg">{t("Call card", "Kartka rozmowy")}</h2>
+            <p className="text-sm text-slate-500">{t("It stays in Bruno. Five things that decide how the call goes.", "Zostaje w Bruno. Pięć rzeczy, które decydują o wyniku.")}</p>
           </div>
           <label className="text-sm text-slate-700" htmlFor="cel">
-            1. Goal = dated next step
-            <input id="cel" className="bruno-pole mt-1" placeholder="e.g. in-person meeting booked for next week, date and time" value={k.cel} onChange={pole("cel")} maxLength={200} />
+            {t("1. Goal = dated next step", "1. Cel = następny krok z datą")}
+            <input id="cel" className="bruno-pole mt-1" placeholder={t("e.g. in-person meeting booked for next week, date and time", "np. umówione spotkanie na żywo w przyszłym tygodniu, data i godzina")} value={k.cel} onChange={pole("cel")} maxLength={200} />
           </label>
           <label className="text-sm text-slate-700" htmlFor="pytanie">
-            2. Opening question (open: how, what, how much, when)
-            <input id="pytanie" className="bruno-pole mt-1" placeholder="e.g. How do you handle grant paperwork today?" value={k.pytanie} onChange={pole("pytanie")} maxLength={200} />
+            {t("2. Opening question (open: how, what, how much, when)", "2. Pytanie otwierające (otwarte: jak, co, ile, kiedy)")}
+            <input id="pytanie" className="bruno-pole mt-1" placeholder={t("e.g. How do you handle grant paperwork today?", "np. Jak dziś wygląda u Pana rozliczanie dotacji?")} value={k.pytanie} onChange={pole("pytanie")} maxLength={200} />
           </label>
           <div className="grid sm:grid-cols-2 gap-4">
             {([["ob1", "re1"], ["ob2", "re2"]] as const).map(([o, r], i) => (
               <div key={o} className="rounded-2xl bg-white/60 border border-slate-200 p-3 flex flex-col gap-2">
                 <label className="text-sm text-slate-700" htmlFor={o}>
-                  {i + 3}. Objection you'll hear
+                  {i + 3}. {t("Objection you'll hear", "Obiekcja, która padnie")}
                   <select id={o} className="bruno-pole mt-1" value={k[o]} onChange={pole(o)}>
-                    <option value="">choose</option>
+                    <option value="">{t("choose", "wybierz")}</option>
                     {obiekcje.map((x) => (
                       <option key={x.nazwa} value={x.nazwa}>{x.nazwa}</option>
                     ))}
                   </select>
                 </label>
-                {wyj(k[o]) && <div className="text-xs text-slate-500">What the customer means: {wyj(k[o])}</div>}
+                {wyj(k[o]) && <div className="text-xs text-slate-500">{t("What the customer means:", "Co klient ma na myśli:")} {wyj(k[o])}</div>}
                 <label className="text-sm text-slate-700" htmlFor={r}>
-                  Your FIRST response (a question or a label, not an argument)
-                  <input id={r} className="bruno-pole mt-1" placeholder="e.g. “Compared to what?” / “It sounds like you're worried about paying it back.”" value={k[r]} onChange={pole(r)} maxLength={200} />
+                  {t("Your FIRST response (a question or a label, not an argument)", "Twoja PIERWSZA reakcja (pytanie albo etykieta, nie argument)")}
+                  <input id={r} className="bruno-pole mt-1" placeholder={t("e.g. “Compared to what?” / “It sounds like you're worried about paying it back.”", "np. „W porównaniu do czego?” / „Wygląda na to, że boi się Pan zwrotu.”")} value={k[r]} onChange={pole(r)} maxLength={200} />
                 </label>
               </div>
             ))}
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="text-sm text-slate-700" htmlFor="kwota">
-              5. Say the price straight (no “only,” no “just”)
-              <input id="kwota" className="bruno-pole mt-1" placeholder="e.g. $6,050 total, then silence" value={k.kwota} onChange={pole("kwota")} maxLength={120} />
+              {t("5. Say the price straight (no “only,” no “just”)", "5. Kwota wprost (bez „tylko”, „jedynie”)")}
+              <input id="kwota" className="bruno-pole mt-1" placeholder={t("e.g. $6,050 total, then silence", "np. 6 050 zł brutto, potem cisza")} value={k.kwota} onChange={pole("kwota")} maxLength={120} />
             </label>
             <label className="text-sm text-slate-700" htmlFor="data">
-              Date you'll suggest
-              <input id="data" className="bruno-pole mt-1" placeholder="e.g. Tuesday 10 AM or Thursday 2 PM" value={k.data} onChange={pole("data")} maxLength={120} />
+              {t("Date you'll suggest", "Data, którą zaproponujesz")}
+              <input id="data" className="bruno-pole mt-1" placeholder={t("e.g. Tuesday 10 AM or Thursday 2 PM", "np. wtorek 10:00 albo czwartek 14:00")} value={k.data} onChange={pole("data")} maxLength={120} />
             </label>
           </div>
           {poprawki.length > 0 && (
             <div className="text-sm rounded-2xl bg-cyan-50/70 border border-cyan-200 p-3">
-              <div className="text-xs font-semibold uppercase tracking-wide text-cyan-800 mb-1">Your open fixes from Bruno</div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-cyan-800 mb-1">{t("Your open fixes from Bruno", "Twoje otwarte poprawki z Bruno")}</div>
               <ul className="list-disc pl-5 flex flex-col gap-1">
                 {poprawki.map((p, i) => (
                   <li key={i}><b>{p.tresc}</b>{p.wzor ? `: ${p.wzor}` : ""}</li>
@@ -493,7 +513,7 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
               </ul>
             </div>
           )}
-          {produkt && <div className="text-xs text-slate-500">You sell: {produkt.slice(0, 160)}</div>}
+          {produkt && <div className="text-xs text-slate-500">{t("You sell:", "Sprzedajesz:")} {produkt.slice(0, 160)}</div>}
           <div className="flex justify-end">
             <button
               type="button"
@@ -503,7 +523,7 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
               }}
               className="bruno-przycisk"
             >
-              Got it, next
+              {t("Got it, next", "Mam to, dalej")}
             </button>
           </div>
         </div>
@@ -512,70 +532,73 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
       {krok === "glowa" && (
         <div className="bruno-szklo rounded-3xl p-8 sm:p-10 flex flex-col items-center gap-6 text-center">
           <blockquote className="max-w-xl">
-            <p className="bruno-h2 text-xl text-slate-900 leading-snug">“{cytat.tekst}”</p>
+            <p className="bruno-h2 text-xl text-slate-900 leading-snug">{cudzy(cytat.tekst)}</p>
             <footer className="text-sm text-slate-500 mt-2">{cytat.autor}</footer>
           </blockquote>
-          <p className="text-slate-700 max-w-lg">Not “calm down.” Fear and excitement are the same heartbeat. Only the label is different. Say it out loud:</p>
+          <p className="text-slate-700 max-w-lg">{t("Not “calm down.” Fear and excitement are the same heartbeat. Only the label is different. Say it out loud:", "Nie „uspokój się”. Strach i ekscytacja to to samo tętno, różni je tylko etykieta. Powiedz na głos:")}</p>
           <button type="button" onClick={() => setNakrecony(true)} aria-pressed={nakrecony} className={`${nakrecony ? "bruno-przycisk" : "bruno-przycisk-2"} text-xl px-10 py-5`}>
-            {nakrecony ? "✓ I'm fired up" : "I'm fired up"}
+            {nakrecony ? t("✓ I'm fired up", "✓ Jestem nakręcony") : t("I'm fired up", "Jestem nakręcony")}
           </button>
           <label className="w-full max-w-lg text-left text-sm text-slate-700" htmlFor="najgorszy">
-            The worst that can happen
+            {t("The worst that can happen", "Najgorsze, co może się stać")}
             <input id="najgorszy" className="bruno-pole mt-1" value={najgorszy} onChange={(e) => setNajgorszy(e.target.value)} maxLength={200} />
           </label>
-          <button type="button" onClick={() => idz("sparing")} className="bruno-przycisk">Next</button>
+          <button type="button" onClick={() => idz("sparing")} className="bruno-przycisk">{t("Next", "Dalej")}</button>
         </div>
       )}
 
       {krok === "sparing" && (
         <div className="bruno-szklo rounded-3xl p-8 sm:p-10 flex flex-col items-center gap-5 text-center">
-          <h2 className="bruno-h2 text-lg">Sparring (optional, 3 minutes)</h2>
-          <p className="text-slate-700 max-w-lg">Bruno will throw {k.ob1 ? `“${k.ob1}”` : "your toughest objection"} at you. You answer once, get a score, come back here, and make the call.</p>
+          <h2 className="bruno-h2 text-lg">{t("Sparring (optional, 3 minutes)", "Sparing (opcja, 3 minuty)")}</h2>
+          <p className="text-slate-700 max-w-lg">{t(
+            `Bruno will throw ${k.ob1 ? `“${k.ob1}”` : "your toughest objection"} at you. You answer once, get a score, come back here, and make the call.`,
+            `Bruno rzuci Ci ${k.ob1 ? `„${k.ob1}”` : "najtrudniejszą obiekcję"}. Odpowiadasz raz, dostajesz ocenę, wracasz tu i dzwonisz.`,
+          )}</p>
           <div className="flex flex-wrap gap-3 justify-center">
             {kartaSparingu ? (
-              <Link href={`/bruno/rozmowa?karta=${encodeURIComponent(kartaSparingu)}`} className="bruno-przycisk-2">Spar with Bruno</Link>
+              <Link href={`/bruno/rozmowa?karta=${encodeURIComponent(kartaSparingu)}`} className="bruno-przycisk-2">{t("Spar with Bruno", "Sparing z Bruno")}</Link>
             ) : (
-              <Link href="/bruno/rozmowa" className="bruno-przycisk-2">Spar with Bruno</Link>
+              <Link href="/bruno/rozmowa" className="bruno-przycisk-2">{t("Spar with Bruno", "Sparing z Bruno")}</Link>
             )}
-            <button type="button" onClick={() => idz("rozmowa")} className="bruno-przycisk text-base px-10 py-4">Calling</button>
+            <button type="button" onClick={() => idz("rozmowa")} className="bruno-przycisk text-base px-10 py-4">{t("Calling", "Dzwonię")}</button>
           </div>
         </div>
       )}
 
       {krok === "rozmowa" && (
         <div className="bruno-szklo rounded-3xl p-8 sm:p-10 flex flex-col items-center gap-6 text-center min-h-[24rem] justify-center">
-          <div className="text-xs uppercase tracking-wide text-slate-500">Call in progress</div>
+          <div className="text-xs uppercase tracking-wide text-slate-500">{t("Call in progress", "Rozmowa trwa")}</div>
           <div className="bruno-h1 text-5xl tabular-nums">{czas(sek)}</div>
           <div className="text-left text-sm text-slate-800 bg-white/70 border border-slate-200 rounded-2xl p-4 max-w-md w-full flex flex-col gap-1">
-            {k.cel && <div><b>Goal:</b> {k.cel}</div>}
+            {k.cel && <div><b>{t("Goal:", "Cel:")}</b> {k.cel}</div>}
             {k.pytanie && <div><b>Start:</b> {k.pytanie}</div>}
-            {k.ob1 && <div><b>{k.ob1}:</b> {k.re1 || "a question, not an argument"}</div>}
-            {k.ob2 && <div><b>{k.ob2}:</b> {k.re2 || "a question, not an argument"}</div>}
-            {k.kwota && <div><b>Price:</b> {k.kwota}, then silence</div>}
-            {k.data && <div><b>Date:</b> {k.data}</div>}
+            {k.ob1 && <div><b>{k.ob1}:</b> {k.re1 || t("a question, not an argument", "pytanie, nie argument")}</div>}
+            {k.ob2 && <div><b>{k.ob2}:</b> {k.re2 || t("a question, not an argument", "pytanie, nie argument")}</div>}
+            {k.kwota && <div><b>{t("Price:", "Kwota:")}</b> {k.kwota}{t(", then silence", ", potem cisza")}</div>}
+            {k.data && <div><b>{t("Date:", "Data:")}</b> {k.data}</div>}
           </div>
-          <button type="button" onClick={() => { stopTimer(); setKrok("po"); }} className="bruno-przycisk-2">Call ended</button>
+          <button type="button" onClick={() => { stopTimer(); setKrok("po"); }} className="bruno-przycisk-2">{t("Call ended", "Rozmowa skończona")}</button>
         </div>
       )}
 
       {krok === "po" && (
         <div className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-5">
           <div>
-            <h2 className="bruno-h2 text-lg">After the call: 3 questions</h2>
-            <p className="text-sm text-slate-500">It lasted {czas(sek)}. 30 seconds and you're done.</p>
+            <h2 className="bruno-h2 text-lg">{t("After the call: 3 questions", "Po rozmowie: 3 pytania")}</h2>
+            <p className="text-sm text-slate-500">{t(`It lasted ${czas(sek)}. 30 seconds and you're done.`, `Trwała ${czas(sek)}. 30 sekund i masz to z głowy.`)}</p>
           </div>
           <fieldset>
-            <legend className="text-sm text-slate-700 mb-2">1. Did you hit the goal “{k.cel || "dated next step"}”?</legend>
+            <legend className="text-sm text-slate-700 mb-2">{t(`1. Did you hit the goal “${k.cel || "dated next step"}”?`, `1. Cel „${k.cel || "następny krok z datą"}” osiągnięty?`)}</legend>
             <div className="flex gap-2 flex-wrap">
               {(["tak", "czesciowo", "nie"] as const).map((v) => (
                 <button key={v} type="button" aria-pressed={po.cel === v} onClick={() => setPo((x) => ({ ...x, cel: v }))} className={`bruno-pastylka ${po.cel === v ? "bruno-pastylka-wybrana" : ""}`}>
-                  {v === "tak" ? "Yes" : v === "czesciowo" ? "Partly" : "No"}
+                  {v === "tak" ? t("Yes", "Tak") : v === "czesciowo" ? t("Partly", "Częściowo") : t("No", "Nie")}
                 </button>
               ))}
             </div>
           </fieldset>
           <fieldset>
-            <legend className="text-sm text-slate-700 mb-2">2. Which objections came up?</legend>
+            <legend className="text-sm text-slate-700 mb-2">{t("2. Which objections came up?", "2. Które obiekcje padły?")}</legend>
             <div className="flex gap-2 flex-wrap">
               {obiekcje.map((o) => {
                 const w = po.obiekcje.includes(o.nazwa);
@@ -589,30 +612,30 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
           </fieldset>
           <div className="grid sm:grid-cols-2 gap-4">
             <label className="text-sm text-slate-700" htmlFor="po-krok">
-              3. Next step
-              <input id="po-krok" className="bruno-pole mt-1" placeholder="e.g. meeting at their office / sending a quote / none" value={po.krok} onChange={(e) => setPo((x) => ({ ...x, krok: e.target.value }))} maxLength={200} />
+              {t("3. Next step", "3. Następny krok")}
+              <input id="po-krok" className="bruno-pole mt-1" placeholder={t("e.g. meeting at their office / sending a quote / none", "np. spotkanie u klienta / wysyłam ofertę / nie")} value={po.krok} onChange={(e) => setPo((x) => ({ ...x, krok: e.target.value }))} maxLength={200} />
             </label>
             <label className="text-sm text-slate-700" htmlFor="po-kiedy">
-              When
-              <input id="po-kiedy" className="bruno-pole mt-1" placeholder="e.g. Tuesday 10 AM" value={po.kiedy} onChange={(e) => setPo((x) => ({ ...x, kiedy: e.target.value }))} maxLength={120} />
+              {t("When", "Kiedy")}
+              <input id="po-kiedy" className="bruno-pole mt-1" placeholder={t("e.g. Tuesday 10 AM", "np. wtorek 10:00")} value={po.kiedy} onChange={(e) => setPo((x) => ({ ...x, kiedy: e.target.value }))} maxLength={120} />
             </label>
           </div>
           <div className="flex items-center gap-4 justify-end">
-            {zapisStan === "blad" && <span className="text-sm text-red-700">It didn't save. Try again.</span>}
-            <button type="button" onClick={zapiszPo} disabled={zapisStan === "zapis" || !po.cel} className="bruno-przycisk">{zapisStan === "zapis" ? "Saving..." : "Save"}</button>
+            {zapisStan === "blad" && <span className="text-sm text-red-700">{t("It didn't save. Try again.", "Nie zapisało się, spróbuj jeszcze raz.")}</span>}
+            <button type="button" onClick={zapiszPo} disabled={zapisStan === "zapis" || !po.cel} className="bruno-przycisk">{zapisStan === "zapis" ? t("Saving...", "Zapisuję...") : t("Save", "Zapisz")}</button>
           </div>
         </div>
       )}
 
       {krok === "koniec" && (
         <div className="bruno-szklo rounded-3xl p-8 sm:p-10 flex flex-col items-center gap-5 text-center">
-          <h2 className="bruno-h2 text-2xl">{po.cel === "tak" ? "Nailed it. That's how it's done." : po.cel === "czesciowo" ? "A step forward. The next one will be a full win." : "One “no.” One flashcard. Next call."}</h2>
-          {po.krok && <p className="text-slate-700"><b>Next step:</b> {po.krok}{po.kiedy ? `, ${po.kiedy}` : ""}</p>}
-          {po.obiekcje.length > 0 && <p className="text-sm text-slate-600">Came up: {po.obiekcje.join(", ")}. Bruno will bring them back in Drills.</p>}
+          <h2 className="bruno-h2 text-2xl">{po.cel === "tak" ? t("Nailed it. That's how it's done.", "Jest. Tak to się robi.") : po.cel === "czesciowo" ? t("A step forward. The next one will be a full win.", "Krok do przodu. Następny będzie pełny.") : t("One “no.” One flashcard. Next call.", "Jedno „nie”. Jedna fiszka. Następna rozmowa.")}</h2>
+          {po.krok && <p className="text-slate-700"><b>{t("Next step:", "Następny krok:")}</b> {po.krok}{po.kiedy ? `, ${po.kiedy}` : ""}</p>}
+          {po.obiekcje.length > 0 && <p className="text-sm text-slate-600">{t(`Came up: ${po.obiekcje.join(", ")}. Bruno will bring them back in Drills.`, `Padły: ${po.obiekcje.join(", ")}. Bruno wróci do nich w Treningu.`)}</p>}
           <div className="flex flex-wrap gap-3 justify-center">
-            <button type="button" onClick={() => { setPo({ cel: "", obiekcje: [], krok: "", kiedy: "" }); setZapisStan("idle"); setZapisId(null); setKrok("zapal"); }} className="bruno-przycisk">Next call</button>
-            <Link href="/bruno/trening" className="bruno-przycisk-2">Drills</Link>
-            <Link href="/bruno/panel" className="bruno-przycisk-2">Home</Link>
+            <button type="button" onClick={() => { setPo({ cel: "", obiekcje: [], krok: "", kiedy: "" }); setZapisStan("idle"); setZapisId(null); setKrok("zapal"); }} className="bruno-przycisk">{t("Next call", "Następna rozmowa")}</button>
+            <Link href="/bruno/trening" className="bruno-przycisk-2">{t("Drills", "Trening")}</Link>
+            <Link href="/bruno/panel" className="bruno-przycisk-2">{t("Home", "Panel")}</Link>
           </div>
         </div>
       )}

@@ -3,7 +3,8 @@ import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonfig, pobierzKonto } from "@/lib/bruno/db";
 import UstawieniaForm from "@/components/bruno/ustawienia-form";
 import KodForm from "@/components/bruno/kod-form";
-import { FILM_OKLADKA, FILM_OPROWADZAJACY } from "@/lib/bruno/film";
+import { filmDla } from "@/lib/bruno/film";
+import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 
 export const dynamic = "force-dynamic";
 
@@ -13,11 +14,11 @@ export const dynamic = "force-dynamic";
 export default async function BrunoUstawieniaPage() {
   const email = await zalogowanyEmail();
   if (!email) redirect("/bruno");
-  const [konfig, konto] = await Promise.all([pobierzKonfig(email), pobierzKonto(email)]);
+  const [konfig, konto, { t }] = await Promise.all([pobierzKonfig(email), pobierzKonto(email), tSerwer()]);
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">Account <span className="bruno-gradient-tekst">settings</span></h1>
+        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">{t("Account", "Ustawienia")} <span className="bruno-gradient-tekst">{t("settings", "konta")}</span></h1>
         <p className="text-slate-600 mt-2">
           {konto?.imie ? `${konto.imie}, ` : ""}{email}{konto?.firma ? `, ${konto.firma}` : ""}
         </p>
@@ -26,10 +27,10 @@ export default async function BrunoUstawieniaPage() {
       <KodForm />
       {/* Instrukcja (USER_001 2.10): ten sam film, co w popupie przy pierwszym logowaniu, do odtworzenia na miejscu. */}
       <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-4">
-        <h2 className="bruno-h2 text-lg">How it works</h2>
+        <h2 className="bruno-h2 text-lg">{t("How it works", "Instrukcja")}</h2>
         <video
-          src={FILM_OPROWADZAJACY}
-          poster={FILM_OKLADKA}
+          src={filmDla(konto).src}
+          poster={filmDla(konto).okladka}
           controls
           preload="metadata"
           playsInline

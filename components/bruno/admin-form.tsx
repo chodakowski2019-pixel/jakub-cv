@@ -17,7 +17,7 @@ export default function AdminForm({ klucz }: { klucz: string }) {
   const [maile, setMaile] = useState<MailSkrot[]>([]);
   const [wejscia, setWejscia] = useState<WejscieSkrot[]>([]);
   const [zaint, setZaint] = useState<{ email: string; wiadomosc: string; utworzono: string }[]>([]);
-  const [f, setF] = useState({ email: "", imie: "", firma: "", kod: "", dni: 7, limit_min: 63, rozmow_dziennie: 3, fiszek_dziennie: 5, plan: "trial", produkt: "", klient: "", obiekcje: "", udana_rozmowa: "", skrypt: "", postac: "czerwony" as PostacId });
+  const [f, setF] = useState({ email: "", imie: "", firma: "", kod: "", dni: 7, limit_min: 63, rozmow_dziennie: 3, fiszek_dziennie: 5, plan: "trial", jezyk: "en", produkt: "", klient: "", obiekcje: "", udana_rozmowa: "", skrypt: "", postac: "czerwony" as PostacId });
   const [stan, setStan] = useState<string>("");
 
   const odswiez = async () => {
@@ -55,6 +55,7 @@ export default function AdminForm({ klucz }: { klucz: string }) {
         rozmow_dziennie: f.rozmow_dziennie,
         fiszek_dziennie: f.fiszek_dziennie,
         plan: f.plan,
+        jezyk: f.jezyk,
         konfig: { produkt: f.produkt, klient: f.klient, obiekcje: f.obiekcje, udana_rozmowa: f.udana_rozmowa, skrypt: f.skrypt, postac: f.postac },
       }),
     });
@@ -99,6 +100,12 @@ export default function AdminForm({ klucz }: { klucz: string }) {
               <option value="trial">trial (test, no paid modules)</option>
               <option value="pelny">full (B2B after deal / Bruno Pro: everything)</option>
               <option value="free">free (B2C sign-up: 3 calls, flashcards, offer import)</option>
+            </select>
+          </label>
+          <label className="text-sm text-slate-600">language
+            <select className="bruno-pole mt-1" value={f.jezyk} onChange={pole("jezyk")}>
+              <option value="en">EN (salesbruno.com)</option>
+              <option value="pl">PL (salesbruno.pl)</option>
             </select>
           </label>
         </div>

@@ -1,4 +1,5 @@
 import type { Wypowiedz } from "./db";
+import type { Jezyk } from "./domeny";
 
 // Liczby z transkrypcji, liczone deterministycznie, zanim trener (Claude)
 // zobaczy rozmowę. Progi z SalesAI/BRUNO-RUBRYKA.md. Trener dostaje gotowe
@@ -6,6 +7,8 @@ import type { Wypowiedz } from "./db";
 //
 // 10.10 (USER_001, wariant A): rozmowy są PO ANGIELSKU (amerykańskim). Wszystkie
 // wzorce słów poniżej są angielskie; polskie poszły do archiwum razem z PL.
+// 11.10 (USER_001): Bruno w dwóch językach. Wzorce EN zostają bez zmian, obok wracają
+// polskie (z fd7de52, 1:1). Wybór zestawu: parametr `jezyk` (domyślnie "en").
 
 const WYPELNIACZE = /\b(u+m+|u+h+|e+r+|a+h+|hmm+|you know|i mean|kind of|sort of|basically|literally|okay so|so yeah|right\?)/giu;
 const OSLABIACZE = /\b(maybe|perhaps|i think|i guess|i feel like|i believe|a little|a bit|hopefully|probably|possibly|i'?m not sure if|just (wanted|calling|checking|reaching|following)|if that makes sense)\b/giu;
@@ -16,13 +19,14 @@ const SLOWO_PYTAJNE = /(^|[\s,„"(])(what|how|why|when|where|who|which|how much
 const ZAMKNIETE_START =
   /^\s*(and\s+|so\s+|but\s+|okay,?\s+|ok,?\s+)?(do|does|did|is|are|was|were|can|could|would|will|should|have|has|had|may|might|shall|isn'?t|aren'?t|don'?t|doesn'?t|won'?t|wouldn'?t|couldn'?t|right|correct|okay|ok|yes|sure)\b/iu;
 /** Czy fragment zdania (z „?") jest pytaniem otwartym. Eksport dla fazy.ts. */
-export function czyPytanieOtwarte(zdanie: string): boolean {
+export function czyPytanieOtwarte(zdanie: string, jezyk: Jezyk = "en"): boolean {
+  const w = WZORCE[jezyk] ?? WZORCE.en;
   const z = zdanie.trim();
   if (!z) return false;
-  if (ZAMKNIETE_START.test(z)) return false;
+  if (w.ZAMKNIETE_START.test(z)) return false;
   // „what?" albo „how so?" bywa retoryczne: wymagamy ≥3 słów.
   if (z.split(/\s+/).length < 3) return false;
-  return SLOWO_PYTAJNE.test(z);
+  return w.SLOWO_PYTAJNE.test(z);
 }
 /** Zdania-pytania z wypowiedzi (po „?"). */
 export function pytaniaZ(tekst: string): string[] {
@@ -70,12 +74,92 @@ function trafiaWObiekcjeFirmy(tekst: string, firmy: string[][]): boolean {
   return firmy.some((r) => r.length > 0 && r.filter((x) => moje.has(x)).length >= Math.ceil(r.length * 0.6));
 }
 
-/** Po angielsku czasowniki nie mają rodzaju: trener pisze „you", płeć nie jest potrzebna. Zostaje dla zgodności, zawsze null. */
-export function plecZTranskrypcji(_tr: Wypowiedz[]): boolean | null {
-  return null;
+/**
+ * Płeć handlowca z jego własnych słów: „-łam/-łabym" = kobieta, „-łem/-łbym" = mężczyzna. Pewniejsze niż imię.
+ * Po angielsku czasowniki nie mają rodzaju: trener pisze „you", dla EN zawsze null.
+ */
+export function plecZTranskrypcji(tr: Wypowiedz[], jezyk: Jezyk = "en"): boolean | null {
+  if (jezyk !== "pl") return null;
+  const t = tr.filter((w) => w.rola === "handlowiec").map((w) => w.tekst).join(" ").toLowerCase();
+  const k = (t.match(/\p{L}+(łam|łabym)(?!\p{L})/gu) ?? []).length;
+  const m = (t.match(/\p{L}+(łem|łbym)(?!\p{L})/gu) ?? []).length;
+  if (k === m) return null;
+  return k > m;
 }
 const DATA =
   /(monday|tuesday|wednesday|thursday|friday|saturday|sunday|tomorrow|day after tomorrow|next week|this week|end of (the )?week|next month|at \d{1,2}(:\d{2})?( ?[ap]\.?m\.?)?|\d{1,2}(:\d{2})? ?[ap]\.?m\.?|o'?clock|noon|midday|(january|february|march|april|may|june|july|august|september|october|november|december) \d{1,2}|\d{1,2}(st|nd|rd|th)\b)/iu;
+
+// ——— Wzorce PL (z fd7de52, 1:1) ———
+const PL_WYPELNIACZE = /\b(y{2,}|e{2,}|hmm+|mmm+|no więc|jakby|w sensie|znaczy się|znaczy|tak jakby|no i)\b/giu;
+const PL_OSLABIACZE = /\b(chyba|może|wydaje mi się|spróbuję|spróbujemy|trochę|myślę,? że|nie wiem czy|w sumie|jakoś|właściwie)\b/giu;
+const PL_PRZEPROSINY = /\b(przepraszam|niestety|przeszkadzam|nie zajmę)\b/giu;
+// 9.10: słowo pytajne gdziekolwiek w zdaniu, nie tylko na początku. Aleksandra pytała
+// „Czego pan się boi?", „A co miałoby się nie udać?", „Konkretnie jaki model?" i miała 0 otwartych.
+// Zdanie zaczynające się od „czy" to pytanie zamknięte, nawet gdy dalej jest „jak".
+const PL_SLOWO_PYTAJNE = /(^|[\s,„"(])(jak|co|czego|czemu|ile|kiedy|dlaczego|gdzie|skąd|dokąd|kto|kogo|komu|czym|który|która|które|którego|jaki|jaka|jakie|jakiego|jakich|jakim|w jaki sposób|od jak dawna|po co|na czym|z czego|o co|w czym)(?=[\s?,.!]|$)/iu;
+const PL_ZAMKNIETE_START = /^\s*(a\s+)?(czy|może|mogę|mógłbym|mogłabym|możemy|chce|chciałby|chciałaby|ma|mają|macie|jest|są|zgadza|pasuje|ok|okej|dobrze|tak|prawda)\b/iu;
+// 6.10: dopisane obiekcje o zaufaniu, dowodzie i koszcie (rozmowy Aleksandry: „stoją od zawsze",
+// „nikt nic nie zrobił", „ile to kosztuje" liczyły się jako 0 obiekcji).
+const PL_OBIEKCJA =
+  /(za drog|drogo|pomyśl|zastanow|przemyśl|nie teraz|mamy już|budżet|nie mam czasu|prześlij|proszę wysłać|wyślij|nie jestem zainteresowan|nie jestem przekonan|nie potrzeb|zapytam|skonsultuj|wspólnik|szef|od zawsze|nikt (z tym )?(nigdy )?nic|ile (to )?(wszystko )?(kosztuj|będzie kosztow|muszę wło)|kosztować|ryzyk|nie wierzę|nie ufam|obietnic|gwarancj|wygran|nie przejdzie|dlaczego (teraz|miałbym|miałabym)|co (z tego )?będę miał|poważna decyzja|nie stać|nie mam pieniędzy)/iu;
+const PL_RABAT = /(rabat|taniej|zejść|zejdę|obniż|zniżk|promocj|upust)/iu;
+// Aleksandra 8.10: „kiedy możemy pełnomocnictwo podpisać u notariusza?", „mogę panią umówić na poniedziałek" = 0 próśb.
+const PL_PROSBA_O_DECYZJE =
+  /(zaczynamy|umówmy|umówimy|umawiamy|od kiedy|podpis|startujemy|możemy zacząć|kiedy możemy|kiedy może (pan|pani)|wchodzimy|zróbmy tak|proponuję termin|pasuje (panu|pani|państwu)|spotkajmy się|mogę (pana|panią|państwa) umówić|ustalmy|ustalamy|decydujemy|decyduje się (pan|pani)|jaka godzina|która godzina|przed południem czy|rano czy|wtorek czy|poniedziałek czy|czy (możemy|może pan|może pani) (dziś|dzisiaj|jutro|w tym tygodniu)|w (poniedziałek|wtorek|środę|czwartek|piątek) o)/iu;
+/** Klient sam prosi o liczbę (9.10, rozmowa 4 Aleksandry: „ile zostanie mi w kieszeni?"). */
+const PL_PROSBA_O_LICZBE = /(ile|koszt|cen[aęy]|kwot|zarobi|zostan|opłat|procent|stawk|prowizj|zwrot)/iu;
+// Transkrypcja ElevenLabs pisze liczby słowami („sześć tysięcy pięćdziesiąt złotych"), więc
+// sama cyfra nie wystarcza (6.10: `kwota_padla: false` mimo 6 050 zł w rozmowie).
+const PL_LICZEBNIK =
+  "(?:jeden|jedna|jednego|dwa|dwie|dwóch|trzy|trzech|cztery|czterech|pięć|pięciu|sześć|sześciu|siedem|siedmiu|osiem|ośmiu|dziewięć|dziewięciu|\\p{L}*dzie[sś]\\p{L}*|\\p{L}+na[sś][tć]\\p{L}*|sto|stu|dwieście|dwustu|trzysta|trzystu|czterysta|czterystu|\\p{L}+set|\\p{L}+uset|półtora)";
+const PL_TYSIAC = "(?:tysiąc\\p{L}*|tysięcy|milion\\p{L}*)";
+const PL_KWOTA = new RegExp(
+  [
+    `\\d[\\d\\s.,]*\\s*(zł|złotych|tys|tysięcy|procent|%|euro|eur|dolar)`,
+    // „sześć tysięcy złotych", „pięćdziesięciu tysięcy", „dwa miliony"
+    `(?<!\\p{L})${PL_LICZEBNIK}(\\s+${PL_TYSIAC})?\\s+(zł|złotych|złote|złoty|procent|euro|dolar\\p{L}*)`,
+    `(?<!\\p{L})${PL_LICZEBNIK}\\s+${PL_TYSIAC}(?!\\p{L})`,
+    // „tysiąc złotych" bez liczebnika z przodu; samo „tysiące klientów" to nie kwota
+    `(?<!\\p{L})${PL_TYSIAC}\\s+(zł|złotych|euro|dolar\\p{L}*)`,
+  ].join("|"),
+  "iu",
+);
+const PL_DATA = /(poniedziałek|wtorek|środ|czwartek|piątek|sobot|niedziel|jutro|pojutrze|o \d{1,2}(:\d{2})?|godzin|w przyszłym tygodniu|za tydzień)/iu;
+
+type Wzorce = {
+  WYPELNIACZE: RegExp;
+  OSLABIACZE: RegExp;
+  PRZEPROSINY: RegExp;
+  SLOWO_PYTAJNE: RegExp;
+  ZAMKNIETE_START: RegExp;
+  OBIEKCJA: RegExp;
+  RABAT: RegExp;
+  PROSBA_O_DECYZJE: RegExp;
+  PROSBA_O_LICZBE: RegExp;
+  KWOTA: RegExp;
+  DATA: RegExp;
+};
+const WZORCE: Record<Jezyk, Wzorce> = {
+  en: { WYPELNIACZE, OSLABIACZE, PRZEPROSINY, SLOWO_PYTAJNE, ZAMKNIETE_START, OBIEKCJA, RABAT, PROSBA_O_DECYZJE, PROSBA_O_LICZBE, KWOTA, DATA },
+  pl: {
+    WYPELNIACZE: PL_WYPELNIACZE,
+    OSLABIACZE: PL_OSLABIACZE,
+    PRZEPROSINY: PL_PRZEPROSINY,
+    SLOWO_PYTAJNE: PL_SLOWO_PYTAJNE,
+    ZAMKNIETE_START: PL_ZAMKNIETE_START,
+    OBIEKCJA: PL_OBIEKCJA,
+    RABAT: PL_RABAT,
+    PROSBA_O_DECYZJE: PL_PROSBA_O_DECYZJE,
+    PROSBA_O_LICZBE: PL_PROSBA_O_LICZBE,
+    KWOTA: PL_KWOTA,
+    DATA: PL_DATA,
+  },
+};
+
+/** Wzorzec prośby o decyzję / następnego kroku z datą w danym języku (fazy.ts, UI). */
+export function prosbaODecyzje(jezyk: Jezyk = "en"): RegExp {
+  return (WZORCE[jezyk] ?? WZORCE.en).PROSBA_O_DECYZJE;
+}
 
 function slowa(t: string) {
   return t.trim().split(/\s+/).filter(Boolean);
@@ -118,7 +202,8 @@ export type Metryki = {
   zdania_ponad_25_slow: number;
 };
 
-export function policzMetryki(tr: Wypowiedz[], sekundy: number, obiekcjeFirmy: string[] = []): Metryki {
+export function policzMetryki(tr: Wypowiedz[], sekundy: number, obiekcjeFirmy: string[] = [], jezyk: Jezyk = "en"): Metryki {
+  const { WYPELNIACZE, OSLABIACZE, PRZEPROSINY, OBIEKCJA, RABAT, PROSBA_O_DECYZJE, PROSBA_O_LICZBE, KWOTA, DATA } = WZORCE[jezyk] ?? WZORCE.en;
   const firmy = obiekcjeFirmy.map(rdzenie);
   const toObiekcja = (t: string) => OBIEKCJA.test(t) || trafiaWObiekcjeFirmy(t, firmy);
   const h = tr.filter((w) => w.rola === "handlowiec");
@@ -142,7 +227,7 @@ export function policzMetryki(tr: Wypowiedz[], sekundy: number, obiekcjeFirmy: s
   // Pytania
   const wypowiedziZPytaniem = h.filter((w) => w.tekst.includes("?"));
   const pytaniaHandlowca = h.reduce((s, w) => s + ile(/\?/g, w.tekst), 0);
-  const pytaniaOtwarte = wypowiedziZPytaniem.filter((w) => pytaniaZ(w.tekst).some(czyPytanieOtwarte)).length;
+  const pytaniaOtwarte = wypowiedziZPytaniem.filter((w) => pytaniaZ(w.tekst).some((z) => czyPytanieOtwarte(z, jezyk))).length;
 
   // Sam odpowiada: po wypowiedzi handlowca z „?" znów mówi handlowiec.
   let samOdpowiada = 0;

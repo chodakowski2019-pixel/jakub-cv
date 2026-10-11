@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useT } from "@/components/bruno/jezyk-kontekst";
+import type { T } from "@/lib/bruno/i18n";
 
 // Fiszki „Trening" (USER_001 2.10): rozrywka, nie egzamin. Jedna karta na raz:
 // przód = obiekcja, odpowiadasz głosem (rozpoznawanie mowy w przeglądarce,
@@ -10,19 +12,30 @@ import Link from "next/link";
 
 export type FiszkaKarta = { id: string; typ: "obiekcja" | "poprawka" | "wiedza"; tresc: string; pytanie: string | null; kategoria: string | null; due: string; naCzas: boolean; reps: number; lapses: number };
 
-const RODZAJ: Record<FiszkaKarta["typ"], { nazwa: string; kolor: string; naglowek: string }> = {
+const RODZAJ_EN: Record<FiszkaKarta["typ"], { nazwa: string; kolor: string; naglowek: string }> = {
   obiekcja: { nazwa: "Objection", kolor: "#d4af5a", naglowek: "The customer says" },
   poprawka: { nazwa: "Fix from your call", kolor: "#d97706", naglowek: "Moment from the call" },
   wiedza: { nazwa: "Knowledge", kolor: "#7c3aed", naglowek: "Question" },
 };
+const RODZAJ_PL: typeof RODZAJ_EN = {
+  obiekcja: { nazwa: "Obiekcja", kolor: "#d4af5a", naglowek: "Klient mówi" },
+  poprawka: { nazwa: "Do poprawy z Twojej rozmowy", kolor: "#d97706", naglowek: "Sytuacja z rozmowy" },
+  wiedza: { nazwa: "Wiedza", kolor: "#7c3aed", naglowek: "Pytanie" },
+};
 
 type Wynik = { werdykt: 1 | 2 | 3 | 4; komentarz: string; wzor: string; technika: string; due: string | null };
 
-const WERDYKTY: Record<1 | 2 | 3 | 4, { nazwa: string; kolor: string; punkty: number; emoji: string }> = {
+const WERDYKTY_EN: Record<1 | 2 | 3 | 4, { nazwa: string; kolor: string; punkty: number; emoji: string }> = {
   1: { nazwa: "Missed", kolor: "#dc2626", punkty: 0, emoji: "💥" },
   2: { nazwa: "Weak", kolor: "#f59e0b", punkty: 5, emoji: "🫤" },
   3: { nazwa: "Good", kolor: "#d4af5a", punkty: 10, emoji: "👊" },
   4: { nazwa: "Textbook", kolor: "#16a34a", punkty: 20, emoji: "🔥" },
+};
+const WERDYKTY_PL: typeof WERDYKTY_EN = {
+  1: { ...WERDYKTY_EN[1], nazwa: "Poległeś" },
+  2: { ...WERDYKTY_EN[2], nazwa: "Słabo" },
+  3: { ...WERDYKTY_EN[3], nazwa: "Dobrze" },
+  4: { ...WERDYKTY_EN[4], nazwa: "Wzorowo" },
 };
 
 type Rozpoznawanie = {
@@ -36,16 +49,19 @@ type Rozpoznawanie = {
   stop: () => void;
 };
 
-function kiedyWraca(due: string | null): string {
+function kiedyWraca(due: string | null, t: T): string {
   if (!due) return "";
   const dni = Math.round((new Date(due).getTime() - Date.now()) / 86_400_000);
-  if (dni <= 0) return "back today";
-  if (dni === 1) return "back tomorrow";
-  if (dni < 5) return `back in ${dni} days`;
-  return `back in ${dni} days`;
+  if (dni <= 0) return t("back today", "wraca dziś");
+  if (dni === 1) return t("back tomorrow", "wraca jutro");
+  return t(`back in ${dni} days`, `wraca za ${dni} dni`);
 }
 
 export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerdykt, naCzas }: { karty: FiszkaKarta[]; dzis: number; dziennie: number; seria: number; razem: number; sredniWerdykt: number | null; naCzas: number }) {
+  const { t, jezyk, mnoga } = useT();
+  const RODZAJ = jezyk === "pl" ? RODZAJ_PL : RODZAJ_EN;
+  const WERDYKTY = jezyk === "pl" ? WERDYKTY_PL : WERDYKTY_EN;
+  const cudzy = (s: string) => (jezyk === "pl" ? `„${s}”` : `“${s}”`);
   const [i, setI] = useState(0);
   const [odp, setOdp] = useState("");
   const [stan, setStan] = useState<"pytanie" | "ocena" | "wynik" | "koniec">("pytanie");
@@ -76,7 +92,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
       return;
     }
     const r = new K();
-    r.lang = "en-US";
+    r.lang = jezyk === "pl" ? "pl-PL" : "en-US";
     r.interimResults = true;
     r.continuous = true;
     bazaTekstu.current = odp.trim() ? odp.trim() + " " : "";
@@ -109,14 +125,14 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         body: JSON.stringify({ karta_id: karta.id, odpowiedz: odp }),
       });
       const d = await res.json();
-      if (!res.ok) throw new Error(d.blad ?? "Couldn't score your answer.");
+      if (!res.ok) throw new Error(d.blad ?? t("Couldn't score your answer.", "Nie udało się ocenić."));
       const w = d as Wynik;
       setWynik(w);
       setSesja((s) => ({ punkty: s.punkty + WERDYKTY[w.werdykt].punkty, karty: s.karty + 1, werdykty: [...s.werdykty, w.werdykt] }));
       setZrobioneDzis((n) => n + 1);
       setStan("wynik");
     } catch (e) {
-      setBlad(e instanceof Error ? e.message : "Couldn't score your answer.");
+      setBlad(e instanceof Error ? e.message : t("Couldn't score your answer.", "Nie udało się ocenić."));
       setStan("pytanie");
     }
   };
@@ -148,53 +164,56 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
     <div className="flex flex-col gap-6">
       <div className="text-center">
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
-          <span className="bruno-gradient-tekst">Drills</span>
+          <span className="bruno-gradient-tekst">{t("Drills", "Trening")}</span>
         </h1>
-        <p className="text-slate-600 mt-2">Objections, moments from your calls, and customer know-how. You answer.</p>
+        <p className="text-slate-600 mt-2">{t("Objections, moments from your calls, and customer know-how. You answer.", "Obiekcje, sytuacje z Twoich rozmów i wiedza o klientach. Ty odpowiadasz.")}</p>
       </div>
 
       {/* Pasek gry: seria, dziś, punkty sesji */}
       <div className="grid grid-cols-3 gap-3">
         <div className="bruno-szklo rounded-2xl p-3 text-center">
           <div className="bruno-h2 text-xl leading-none">{seria > 0 || zrobioneDzis > 0 ? (zrobioneDzis > 0 && seria === 0 ? 1 : seria) : 0} 🔥</div>
-          <div className="text-[11px] text-slate-500 mt-1">day streak</div>
+          <div className="text-[11px] text-slate-500 mt-1">{jezyk === "pl" ? (seria === 1 ? "dzień serii" : "dni serii") : "day streak"}</div>
         </div>
         <div className="bruno-szklo rounded-2xl p-3 text-center">
           <div className="bruno-h2 text-xl leading-none">{Math.min(zrobioneDzis, dziennie)}/{dziennie}</div>
-          <div className="text-[11px] text-slate-500 mt-1">flashcards today</div>
+          <div className="text-[11px] text-slate-500 mt-1">{t("flashcards today", "fiszek dziś")}</div>
         </div>
         <div className="bruno-szklo rounded-2xl p-3 text-center">
           <div className="bruno-h2 text-xl leading-none"><span className="bruno-gradient-tekst">{sesja.punkty}</span><span className="text-sm text-slate-400">/{dziennie * WERDYKTY[4].punkty}</span></div>
-          <div className="text-[11px] text-slate-500 mt-1 leading-tight">points<span className="hidden min-[400px]:inline"> this session</span></div>
+          <div className="text-[11px] text-slate-500 mt-1 leading-tight">{t("points", "punktów")}<span className="hidden min-[400px]:inline">{t(" this session", " w tej sesji")}</span></div>
         </div>
       </div>
 
       {stan === "pytanie" && zrobioneDzis >= dziennie && sesja.karty === 0 ? (
         <div className="bruno-szklo rounded-3xl p-8 text-center flex flex-col items-center gap-3">
           <div className="text-4xl">✅</div>
-          <h2 className="bruno-h2 text-2xl">Today's flashcards are done</h2>
-          <p className="text-sm text-slate-600">Your trial gives you {dziennie} {dziennie === 1 ? "flashcard" : "flashcards"} a day. More tomorrow.</p>
-          <Link href="/bruno/rozmowa" className="bruno-przycisk-2 mt-2">Test yourself in a Live Call with Bruno</Link>
+          <h2 className="bruno-h2 text-2xl">{t("Today's flashcards are done", "Plan fiszek na dziś zrobiony")}</h2>
+          <p className="text-sm text-slate-600">{t(`Your trial gives you ${dziennie} ${dziennie === 1 ? "flashcard" : "flashcards"} a day. More tomorrow.`, `W teście masz ${dziennie} fiszek dziennie. Następne jutro.`)}</p>
+          <Link href="/bruno/rozmowa" className="bruno-przycisk-2 mt-2">{t("Test yourself in a Live Call with Bruno", "Sprawdź się w teście z Bruno")}</Link>
         </div>
       ) : stan === "koniec" ? (
         <div className="bruno-szklo rounded-3xl p-8 text-center flex flex-col items-center gap-4">
           <div className="text-5xl">{sesja.werdykty.every((w) => w >= 3) ? "🏆" : sesja.punkty >= 30 ? "💪" : "🧠"}</div>
-          <h2 className="bruno-h2 text-2xl">Session done: {sesja.punkty} pts</h2>
-          <div className="flex gap-1.5" aria-label="Results this session">
+          <h2 className="bruno-h2 text-2xl">{t("Session done:", "Sesja zrobiona:")} {sesja.punkty} {t("pts", "pkt")}</h2>
+          <div className="flex gap-1.5" aria-label={t("Results this session", "Werdykty w sesji")}>
             {sesja.werdykty.map((w, k) => (
               <span key={k} className="size-3 rounded-full" style={{ background: WERDYKTY[w as 1 | 2 | 3 | 4].kolor }} title={WERDYKTY[w as 1 | 2 | 3 | 4].nazwa} />
             ))}
           </div>
           <p className="text-sm text-slate-600 max-w-md">
-            {razem + sesja.karty} {razem + sesja.karty === 1 ? "flashcard" : "flashcards"} total{sredniWerdykt ? `, average result ${sredniWerdykt}/4` : ""}.
+            {t(
+              `${razem + sesja.karty} ${razem + sesja.karty === 1 ? "flashcard" : "flashcards"} total${sredniWerdykt ? `, average result ${sredniWerdykt}/4` : ""}.`,
+              `${razem + sesja.karty} ${mnoga(razem + sesja.karty, ["", ""], ["fiszka", "fiszki", "fiszek"])} łącznie${sredniWerdykt ? `, średni werdykt ${sredniWerdykt}/4` : ""}.`,
+            )}
           </p>
           <div className="flex flex-wrap gap-3 justify-center pt-2">
             {zrobioneDzis < dziennie ? (
-              <button type="button" onClick={jeszcze} className="bruno-przycisk">{Math.min(dziennie, dziennie - zrobioneDzis)} more</button>
+              <button type="button" onClick={jeszcze} className="bruno-przycisk">{t(`${Math.min(dziennie, dziennie - zrobioneDzis)} more`, `Jeszcze ${Math.min(dziennie, dziennie - zrobioneDzis)}`)}</button>
             ) : (
-              <span className="text-sm text-slate-500 self-center">You've used today's flashcards. Come back tomorrow.</span>
+              <span className="text-sm text-slate-500 self-center">{t("You've used today's flashcards. Come back tomorrow.", "Limit fiszek na dziś wykorzystany. Wróć jutro.")}</span>
             )}
-            <Link href="/bruno/rozmowa" className="bruno-przycisk-2">Test yourself in a Live Call with Bruno</Link>
+            <Link href="/bruno/rozmowa" className="bruno-przycisk-2">{t("Test yourself in a Live Call with Bruno", "Sprawdź się w teście z Bruno")}</Link>
           </div>
         </div>
       ) : karta ? (
@@ -202,17 +221,17 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
           <div key={`${karta.id}-${stan === "wynik" ? "tyl" : "przod"}`} className="bruno-szklo rounded-3xl p-6 sm:p-8 bruno-fiszka">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center rounded-full bg-cyan-700/10 text-cyan-800 text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1">Flashcard {postep + 1} of {dziennie}</span>
+                <span className="inline-flex items-center rounded-full bg-cyan-700/10 text-cyan-800 text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1">{t("Flashcard", "Karta")} {postep + 1} {t("of", "z")} {dziennie}</span>
                 <span className="inline-flex items-center rounded-full text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1" style={{ background: `${RODZAJ[karta.typ].kolor}1a`, color: RODZAJ[karta.typ].kolor }}>
-                  {RODZAJ[karta.typ].nazwa}{karta.typ === "wiedza" && karta.kategoria === "typy" ? ": customer types" : karta.typ === "wiedza" ? ": technique" : ""}
+                  {RODZAJ[karta.typ].nazwa}{karta.typ === "wiedza" && karta.kategoria === "typy" ? t(": customer types", ": typy klientów") : karta.typ === "wiedza" ? t(": technique", ": technika") : ""}
                 </span>
               </div>
-              {karta.lapses > 0 && <span className="text-[11px] text-slate-400">misses: {karta.lapses}</span>}
+              {karta.lapses > 0 && <span className="text-[11px] text-slate-400">{t("misses:", "wpadek:")} {karta.lapses}</span>}
             </div>
 
             <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">{RODZAJ[karta.typ].naglowek}</div>
             {karta.typ === "obiekcja" ? (
-              <blockquote className="bruno-h2 text-2xl sm:text-3xl text-slate-900 leading-snug">“{karta.tresc}”</blockquote>
+              <blockquote className="bruno-h2 text-2xl sm:text-3xl text-slate-900 leading-snug">{cudzy(karta.tresc)}</blockquote>
             ) : (
               <>
                 <div className="bruno-h2 text-xl sm:text-2xl text-slate-900 leading-snug">{karta.tresc}</div>
@@ -223,21 +242,21 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
             {stan !== "wynik" ? (
               <div className="mt-6 flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="odp" className="text-xs font-semibold uppercase tracking-wide text-cyan-800">Your answer</label>
+                  <label htmlFor="odp" className="text-xs font-semibold uppercase tracking-wide text-cyan-800">{t("Your answer", "Twoja odpowiedź")}</label>
                   {mowaOk && (
                     <button type="button" onClick={mow} className={`inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full border transition-colors ${nagrywa ? "bg-red-600 text-white border-red-600 bruno-zegar-alarm" : "bg-white/70 text-slate-700 border-slate-200 hover:border-cyan-700/50"}`}>
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
-                      {nagrywa ? "Listening… click to stop" : "Say it out loud"}
+                      {nagrywa ? t("Listening… click to stop", "Słucham… kliknij, żeby skończyć") : t("Say it out loud", "Powiedz głosem")}
                     </button>
                   )}
                 </div>
-                <textarea id="odp" className="bruno-pole text-[15px]" rows={4} placeholder={karta.typ === "obiekcja" ? "Say it like you would to a customer. 1-3 sentences." : "Answer in your own words. 1-3 sentences."} value={odp} onChange={(e) => setOdp(e.target.value)} maxLength={1500} disabled={stan === "ocena"} />
+                <textarea id="odp" className="bruno-pole text-[15px]" rows={4} placeholder={karta.typ === "obiekcja" ? t("Say it like you would to a customer. 1-3 sentences.", "Powiedz to tak, jak powiedziałbyś klientowi. 1-3 zdania.") : t("Answer in your own words. 1-3 sentences.", "Odpowiedz własnymi słowami. 1-3 zdania.")} value={odp} onChange={(e) => setOdp(e.target.value)} maxLength={1500} disabled={stan === "ocena"} />
                 {blad && <p className="text-sm text-red-700">{blad}</p>}
                 <div className="flex items-center justify-between gap-3">
                   <span />
                   <button type="button" onClick={sprawdz} disabled={stan === "ocena" || slow < 3} className="bruno-przycisk px-8 inline-flex items-center gap-2">
                     {stan === "ocena" && <span className="bruno-kolko-ladowania" aria-hidden />}
-                    {stan === "ocena" ? "Coach is reading…" : "Check"}
+                    {stan === "ocena" ? t("Coach is reading…", "Trener czyta…") : t("Check", "Sprawdź")}
                   </button>
                 </div>
               </div>
@@ -247,36 +266,36 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
                   <span className="text-3xl" aria-hidden>{WERDYKTY[wynik.werdykt].emoji}</span>
                   <div>
                     <div className="bruno-h2 text-xl" style={{ color: WERDYKTY[wynik.werdykt].kolor }}>{WERDYKTY[wynik.werdykt].nazwa}</div>
-                    <div className="text-xs text-slate-500">+{WERDYKTY[wynik.werdykt].punkty} pts · {kiedyWraca(wynik.due)}</div>
+                    <div className="text-xs text-slate-500">+{WERDYKTY[wynik.werdykt].punkty} {t("pts", "pkt")} · {kiedyWraca(wynik.due, t)}</div>
                   </div>
                 </div>
                 {/* Odpowiedź trenera jako tabela (USER_001 2.10). */}
                 <table className="w-full text-[15px] border-separate border-spacing-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/60">
                   <tbody>
                     <tr className="align-top">
-                      <th scope="row" className="w-32 sm:w-40 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 px-4 py-3 border-b border-slate-200/80 bg-slate-50/60">What you did</th>
+                      <th scope="row" className="w-32 sm:w-40 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 px-4 py-3 border-b border-slate-200/80 bg-slate-50/60">{t("What you did", "Co zrobiłeś")}</th>
                       <td className="px-4 py-3 border-b border-slate-200/80 text-slate-800">{wynik.komentarz}</td>
                     </tr>
                     {wynik.technika && (
                       <tr className="align-top">
-                        <th scope="row" className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500 px-4 py-3 border-b border-slate-200/80 bg-slate-50/60">Technique</th>
+                        <th scope="row" className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500 px-4 py-3 border-b border-slate-200/80 bg-slate-50/60">{t("Technique", "Technika")}</th>
                         <td className="px-4 py-3 border-b border-slate-200/80 text-slate-800">{wynik.technika}</td>
                       </tr>
                     )}
                     <tr className="align-top">
-                      <th scope="row" className="text-left text-xs font-semibold uppercase tracking-wide text-cyan-800 px-4 py-3 bg-cyan-700/5">Model answer</th>
-                      <td className="px-4 py-3 text-slate-900 font-medium leading-relaxed bg-cyan-700/5">“{wynik.wzor}”</td>
+                      <th scope="row" className="text-left text-xs font-semibold uppercase tracking-wide text-cyan-800 px-4 py-3 bg-cyan-700/5">{t("Model answer", "Wzór")}</th>
+                      <td className="px-4 py-3 text-slate-900 font-medium leading-relaxed bg-cyan-700/5">{cudzy(wynik.wzor)}</td>
                     </tr>
                   </tbody>
                 </table>
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div className="flex flex-col gap-2 min-w-0 flex-1">
                     <button type="button" onClick={() => setPokazOdp((p) => !p)} aria-expanded={pokazOdp} className="bruno-przycisk-2 py-1.5 px-3 text-[13px] self-start">
-                      {pokazOdp ? "Hide my answer" : "Your answer"}
+                      {pokazOdp ? t("Hide my answer", "Ukryj moją odpowiedź") : t("Your answer", "Twoja odpowiedź")}
                     </button>
-                    {pokazOdp && <p className="text-sm text-slate-700 bg-white/60 border border-slate-200/80 rounded-xl px-4 py-3">“{odp}”</p>}
+                    {pokazOdp && <p className="text-sm text-slate-700 bg-white/60 border border-slate-200/80 rounded-xl px-4 py-3">{cudzy(odp)}</p>}
                   </div>
-                  <button type="button" onClick={dalej} className="bruno-przycisk px-8">{sesja.karty >= dziennie || i + 1 >= karty.length ? "Summary" : "Next"}</button>
+                  <button type="button" onClick={dalej} className="bruno-przycisk px-8">{sesja.karty >= dziennie || i + 1 >= karty.length ? t("Summary", "Podsumowanie") : t("Next", "Następna")}</button>
                 </div>
               </div>
             ) : null}

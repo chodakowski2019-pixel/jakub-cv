@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { dostepKonta, limitDzienny, pobierzKonto, pobierzRozmowy, stanDostepu, zuzyteSekundy, type Kryterium } from "@/lib/bruno/db";
-import { NAZWY } from "@/lib/bruno/kryteria";
+import { etykiety } from "@/lib/bruno/etykiety";
+import { tSerwer } from "@/lib/bruno/jezyk-serwer";
+import { locale, mnoga } from "@/lib/bruno/i18n";
 import { postepScenariuszy } from "@/lib/bruno/scenariusze";
 import { Licznik, Ocena, Pierscien, Slupki, rozmowyNaDni } from "@/components/bruno/statystyki";
 
@@ -18,6 +20,8 @@ export default async function BrunoStatystykiPage() {
   if (!konto) redirect("/bruno");
   // 10.10: Statystyki poza planem free (do zakupu Bruno Pro).
   if (!dostepKonta(konto).statystyki) redirect("/bruno/odblokuj");
+  const { t, jezyk } = await tSerwer();
+  const { NAZWY } = etykiety(jezyk);
   const stan = stanDostepu(konto);
   const [zuzyte, wszystkie, scenariusze] = await Promise.all([zuzyteSekundy(email), pobierzRozmowy(email, 500), postepScenariuszy(email)]);
 
@@ -38,26 +42,26 @@ export default async function BrunoStatystykiPage() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem] text-center">
-        Your <span className="bruno-gradient-tekst">stats</span>
+        {t("Your", "Twoje")} <span className="bruno-gradient-tekst">{t("stats", "statystyki")}</span>
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <Pierscien wartosc={minutLimit - minutZostalo} max={minutLimit} liczba={`${minutZostalo}`} opis="min left" uwaga={`of ${minutLimit} in your trial`} />
-        <Licznik liczba={`${ocenione.length}`} opis={ocenione.length === 1 ? "call scored" : "calls scored"} uwaga={`${stan.dniZostalo} ${stan.dniZostalo === 1 ? "day" : "days"} of access left`} />
-        <Ocena wartosc={srednia} opis="average score" uwaga="across all scored calls" />
-        <Ocena wartosc={ostatnia?.ocena ?? null} opis="last score" uwaga={ostatnia ? new Date(ostatnia.start).toLocaleDateString("en-US") : undefined} />
+        <Pierscien wartosc={minutLimit - minutZostalo} max={minutLimit} liczba={`${minutZostalo}`} opis={t("min left", "minut zostało")} uwaga={t(`of ${minutLimit} in your trial`, `z ${minutLimit} w teście`)} />
+        <Licznik liczba={`${ocenione.length}`} opis={jezyk === "pl" ? (ocenione.length === 1 ? "rozmowa oceniona" : "rozmów ocenionych") : ocenione.length === 1 ? "call scored" : "calls scored"} uwaga={t(`${stan.dniZostalo} ${stan.dniZostalo === 1 ? "day" : "days"} of access left`, `${stan.dniZostalo} ${stan.dniZostalo === 1 ? "dzień" : "dni"} dostępu zostało`)} />
+        <Ocena wartosc={srednia} opis={t("average score", "średnia ocena")} uwaga={t("across all scored calls", "ze wszystkich ocenionych")} />
+        <Ocena wartosc={ostatnia?.ocena ?? null} opis={t("last score", "ostatnia ocena")} uwaga={ostatnia ? new Date(ostatnia.start).toLocaleDateString(locale(jezyk)) : undefined} />
       </div>
 
       <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-start">
-        <Slupki dni={rozmowyNaDni(wszystkie, dniTestu)} cel={limitDzienny(konto)} tytul={`Calls in the last ${dniTestu} days`} />
+        <Slupki dni={rozmowyNaDni(wszystkie, dniTestu, jezyk)} cel={limitDzienny(konto)} tytul={t(`Calls in the last ${dniTestu} days`, `Rozmowy w ostatnich ${dniTestu} dniach`)} jezyk={jezyk} />
 
         <section className="bruno-szklo rounded-2xl p-4 sm:p-5">
           <div className="flex items-baseline justify-between mb-3">
-            <h2 className="bruno-h2 text-base">Average per area</h2>
-            <span className="text-[11px] text-slate-400">scale 1-10</span>
+            <h2 className="bruno-h2 text-base">{t("Average per area", "Średnia na kryterium")}</h2>
+            <span className="text-[11px] text-slate-400">{t("scale 1-10", "skala 1-10")}</span>
           </div>
           {ocenione.length === 0 ? (
-            <p className="text-sm text-slate-600">Shows up after your first scored call.</p>
+            <p className="text-sm text-slate-600">{t("Shows up after your first scored call.", "Pojawi się po pierwszej ocenionej rozmowie.")}</p>
           ) : (
             <ul className="flex flex-col gap-3">
               {kryteria.map((k) => (
@@ -79,13 +83,15 @@ export default async function BrunoStatystykiPage() {
       {/* Ten sam scenariusz = ten sam egzamin (2.10). Dowód postępu, nie średnia ze wszystkiego. */}
       <section className="bruno-szklo rounded-2xl p-4 sm:p-5">
         <div className="flex items-baseline justify-between mb-3">
-          <h2 className="bruno-h2 text-base">Same scenario</h2>
-          <span className="text-[11px] text-slate-400">first → last try</span>
+          <h2 className="bruno-h2 text-base">{t("Same scenario", "Ten sam scenariusz")}</h2>
+          <span className="text-[11px] text-slate-400">{t("first → last try", "pierwsza → ostatnia próba")}</span>
         </div>
         {scenariusze.length === 0 ? (
           <p className="text-sm text-slate-600">
-            Shows up when you repeat a call with the same setup (same mode, customer type, goal, and objections). It takes two tries at the same
-            test to show progress.
+            {t(
+              "Shows up when you repeat a call with the same setup (same mode, customer type, goal, and objections). It takes two tries at the same test to show progress.",
+              "Pojawi się, gdy powtórzysz rozmowę z tym samym ustawieniem kreatora (ten sam tryb, typ klienta, cel i obiekcje). Dopiero dwa podejścia do tego samego egzaminu pokazują postęp.",
+            )}
           </p>
         ) : (
           <ul className="flex flex-col gap-3">
@@ -94,7 +100,7 @@ export default async function BrunoStatystykiPage() {
                 <div className="min-w-0">
                   <p className="text-sm text-slate-800 font-medium truncate">{s.nazwa}</p>
                   <p className="text-[11px] text-slate-500">
-                    {s.proby} {s.proby === 1 ? "try" : "tries"} · best {s.najlepsza}/10
+                    {s.proby} {mnoga(jezyk, s.proby, ["try", "tries"], ["próba", "próby", "prób"])} · {t("best", "najlepsza")} {s.najlepsza}/10
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 tabular-nums">

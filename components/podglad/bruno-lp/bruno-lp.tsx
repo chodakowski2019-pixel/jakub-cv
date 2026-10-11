@@ -1,5 +1,8 @@
 "use client";
 
+import { jezykZHosta } from "@/lib/bruno/domeny";
+import { adresStrony, naDomenieBruno, type CelBruno } from "../aurora/jezyk";
+
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { track } from "@vercel/analytics";
@@ -18,7 +21,8 @@ const VoiceCanvas = dynamic(() => import("./voice-canvas"), { ssr: false });
 export type Wersja = "business" | "reps";
 
 type Teksty = {
-  linkInny: { href: string; tekst: string };
+  /** 11.10: cel linku, adres liczy adresStrony (ładny na salesbruno.*, stary lokalnie). */
+  linkInny: { cel: CelBruno; tekst: string };
   navCta: string;
   menuCta: string;
   hero: [string, string];
@@ -39,7 +43,7 @@ type Teksty = {
 // sprzedaży (B2B, główny kanał), /brunoai = handlowiec (B2C). Teksty: amerykański angielski, poziom 12-latki.
 const TEKSTY_EN: Record<Wersja, Teksty> = {
   business: {
-    linkInny: { href: "/brunoai", tekst: "For sales reps" },
+    linkInny: { cel: "handlowcy", tekst: "For sales reps" },
     navCta: "Book a demo call",
     menuCta: "Book a demo call",
     hero: ["Your sales reps", "close more with AI."],
@@ -62,7 +66,7 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
     stopka: "AI sales practice for teams",
   },
   reps: {
-    linkInny: { href: "/brunobusiness", tekst: "For teams" },
+    linkInny: { cel: "firmy", tekst: "For teams" },
     navCta: "I want to test it",
     menuCta: "I want free access",
     hero: ["Start selling", "MORE."],
@@ -89,7 +93,7 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
 
 const TEKSTY_PL: Record<Wersja, Teksty> = {
   business: {
-    linkInny: { href: "/brunoai", tekst: "Dla handlowców" },
+    linkInny: { cel: "handlowcy", tekst: "Dla handlowców" },
     navCta: "Umów rozmowę z demo",
     menuCta: "Umów rozmowę z demo",
     hero: ["Twoi handlowcy", "domykają więcej z AI."],
@@ -112,10 +116,10 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
     stopka: "Trening sprzedaży z AI dla zespołów",
   },
   reps: {
-    linkInny: { href: "/brunobusiness", tekst: "Dla firm" },
+    linkInny: { cel: "firmy", tekst: "Dla firm" },
     navCta: "Chcę przetestować",
     menuCta: "Chcę bezpłatny dostęp",
-    hero: ["Zacznij więcej", "sprzedawać."],
+    hero: ["Zacznij sprzedawać", "WIĘCEJ."],
     treningDol: "Bruno AI trenuje Cię codziennie",
     kroki: [
       { maly: "Krok 1", tytul: "Ćwiczysz\nprawdziwe rozmowy", opis: "Bruno gra trudnego klienta. Twój produkt, Twój rynek, Twoje obiekcje. O każdej porze, sam." },
@@ -178,6 +182,8 @@ const REPS = {
     sredni: "Typical sales rep",
     najlepsi: "Top 10% of sales reps",
     rocznie: "a year",
+    kwotaSredni: "$100,070",
+    kwotaTop: "$194,890+",
     zarTekst: "The best reps are not born that way. They practice more calls than everyone else.",
     zarZrodlo: "U.S. Bureau of Labor Statistics, May 2024, technical and scientific sales reps",
     szefH: "Want Bruno for your whole team?",
@@ -192,7 +198,7 @@ const REPS = {
       ["What is Bruno?", "An AI customer you talk to out loud. Bruno plays a buyer for your product, raises real objections and tries to end the call. After every call you get a score and a practice plan."],
       ["What do I need?", "A computer with Chrome, a microphone and headphones. Nothing to install."],
       ["How long is one call?", "3 minutes, plus 45 seconds to close the deal."],
-      ["Can my company pay for it?", "Yes. Send your manager jakubchodakowski.com/brunobusiness, the page for teams."],
+      ["Can my company pay for it?", "Yes. Send your manager salesbruno.com, the page for teams."],
     ],
   },
   pl: {
@@ -200,6 +206,8 @@ const REPS = {
     sredni: "Przeciętny handlowiec",
     najlepsi: "Najlepsze 10% handlowców",
     rocznie: "rocznie",
+    kwotaSredni: "100 070 $",
+    kwotaTop: "194 890+ $",
     zarTekst: "Najlepsi nie rodzą się najlepsi. Ćwiczą więcej rozmów niż wszyscy inni.",
     zarZrodlo: "U.S. Bureau of Labor Statistics, maj 2024, handlowcy techniczni i naukowi (USA)",
     szefH: "Chcesz Bruno dla całego zespołu?",
@@ -214,13 +222,13 @@ const REPS = {
       ["Czym jest Bruno?", "Klientem AI, z którym rozmawiasz na głos. Bruno gra kupującego Twój produkt, zgłasza prawdziwe obiekcje i próbuje skończyć rozmowę. Po każdej rozmowie dostajesz ocenę i plan ćwiczeń."],
       ["Czego potrzebuję?", "Komputera z Chrome, mikrofonu i słuchawek. Nic nie instalujesz."],
       ["Ile trwa jedna rozmowa?", "3 minuty plus 45 sekund na domknięcie."],
-      ["Czy firma może za to zapłacić?", "Tak. Wyślij szefowi stronę dla firm: jakubchodakowski.com/brunobusiness."],
+      ["Czy firma może za to zapłacić?", "Tak. Wyślij szefowi stronę dla firm: salesbruno.pl."],
     ],
   },
 } as const;
 
 // 9.10 (USER_001): cennik dla handlowców = JEDEN pakiet, 250 $ / mies. albo 2 500 $ z góry za rok
-// (2 miesiące gratis). Bez Jakuba w pakiecie („Bruno jest trenerem, nie ja”). 5 rozmów dziennie (USER_001 9.10, było 6).
+// (2 miesiące gratis). 11.10 (USER_001): PL = 250 zł / mies. albo 2 500 zł / rok. Bez Jakuba w pakiecie („Bruno jest trenerem, nie ja”). 5 rozmów dziennie (USER_001 9.10, było 6).
 const CENNIK = {
   en: {
     h: "One plan. Everything in it.",
@@ -257,11 +265,11 @@ const CENNIK = {
     mies: "Miesięcznie",
     rok: "Rocznie",
     gratis: "2 miesiące gratis",
-    cenaMies: "250 $",
+    cenaMies: "250 zł",
     okresMies: "/ mies.",
-    cenaRok: "2 500 $",
+    cenaRok: "2 500 zł",
     okresRok: "/ rok",
-    podRok: "To 208 $ miesięcznie, płatne raz w roku.",
+    podRok: "To 208 zł miesięcznie, płatne raz w roku.",
     podMies: "Rezygnujesz w każdej chwili.",
     nazwa: "Bruno Pro",
     lista: [
@@ -304,11 +312,17 @@ function Tytul({ t }: { t: string }) {
   );
 }
 
-export default function BrunoLp({ wersja = "business", zloto = false }: { wersja?: Wersja; zloto?: boolean }) {
-  const [jezyk, setJezyk] = useState<Jezyk>("en");
+export default function BrunoLp({ wersja = "business", zloto = false, jezykStart, naDomenieStart = false }: { wersja?: Wersja; zloto?: boolean; jezykStart?: Jezyk; naDomenieStart?: boolean }) {
+  // 11.10: język i domena z serwera (strona czyta host), potem sprawdzenie w przeglądarce.
+  const [jezyk, setJezyk] = useState<Jezyk>(jezykStart ?? "en");
+  const [naDomenie, setNaDomenie] = useState(naDomenieStart);
   useEffect(() => {
+    setNaDomenie(naDomenieBruno());
     const q = new URLSearchParams(window.location.search);
-    if (q.has("pl") || q.get("lang") === "pl") setJezyk("pl");
+    // 11.10 (USER_001): na domenach Bruno decyduje TYLKO domena; ?pl działa tylko lokalnie / na podglądach.
+    const zDomeny = jezykZHosta(window.location.hostname);
+    if (zDomeny) setJezyk(zDomeny);
+    else if (q.has("pl") || q.get("lang") === "pl") setJezyk("pl");
     // 9.10: link prosto do zapisu (np. w cold mailu): /brunobusiness#demo
     if (window.location.hash.startsWith("#demo")) setPokazFormularz(true);
   }, []);
@@ -349,7 +363,7 @@ export default function BrunoLp({ wersja = "business", zloto = false }: { wersja
     track("salesai_cta", { przycisk, wersja });
     // 9.10 (USER_001): na stronie dla handlowców każdy przycisk prowadzi do /bruno (założenie darmowego konta albo logowanie).
     if (wersja === "reps") {
-      window.location.href = "/bruno";
+      window.location.href = adresStrony(jezyk, "logowanie", naDomenie);
       return;
     }
     setPokazFormularz(true);
@@ -420,7 +434,7 @@ export default function BrunoLp({ wersja = "business", zloto = false }: { wersja
             <a href="#korzysci" onClick={doSekcji("korzysci")}>
               {u.wyniki}
             </a>
-            <a href={t.linkInny.href}>{t.linkInny.tekst}</a>
+            <a href={adresStrony(jezyk, t.linkInny.cel, naDomenie)}>{t.linkInny.tekst}</a>
           </div>
         </div>
         {/* 9.10 (USER_001): bez przycisku „Menu”; przycisk zapisu w stylu dawnego „Menu” (czarny, biała kropka). */}
@@ -509,12 +523,12 @@ export default function BrunoLp({ wersja = "business", zloto = false }: { wersja
                 <div className={s.zarobki}>
                   <div className={`${s.zarobek} ${s.rv}`}>
                     <span className={s.zarEtykieta}>{REPS[jezyk].sredni}</span>
-                    <span className={s.zarKwota}>$100,070</span>
+                    <span className={s.zarKwota}>{REPS[jezyk].kwotaSredni}</span>
                     <span className={s.zarRok}>{REPS[jezyk].rocznie}</span>
                   </div>
                   <div className={`${s.zarobek} ${s.zarobekTop} ${s.rv} ${s.d1}`}>
                     <span className={s.zarEtykieta}>{REPS[jezyk].najlepsi}</span>
-                    <span className={s.zarKwota}>$194,890+</span>
+                    <span className={s.zarKwota}>{REPS[jezyk].kwotaTop}</span>
                     <span className={s.zarRok}>{REPS[jezyk].rocznie}</span>
                   </div>
                 </div>

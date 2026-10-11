@@ -24,7 +24,9 @@ export const PRO_LIMIT_SEKUND = PRO_ROZMOW_DZIENNIE * 366 * ROZMOWA_SEKUND_MAX;
 
 export type OkresPro = "miesiac" | "rok";
 
-export function cenaPro(okres: OkresPro): string | undefined {
+/** 11.10: konto PL płaci w złotówkach (250 zł / 2 500 zł), EN w dolarach (250 $ / 2 500 $). */
+export function cenaPro(okres: OkresPro, jezyk?: string | null): string | undefined {
+  if (jezyk === "pl") return okres === "rok" ? process.env.BRUNO_STRIPE_CENA_ROK_PL : process.env.BRUNO_STRIPE_CENA_MIESIAC_PL;
   return okres === "rok" ? process.env.BRUNO_STRIPE_CENA_ROK : process.env.BRUNO_STRIPE_CENA_MIESIAC;
 }
 

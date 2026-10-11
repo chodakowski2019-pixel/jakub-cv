@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Ikona, linkiDla, useWyloguj } from "@/components/podglad/panel/wspolne";
+import { useT } from "@/components/bruno/jezyk-kontekst";
 
 // 10.10 (USER_001: „cały ten Bruno się zmienia”): pasek czarno-złoty dla wszystkich ekranów panelu
 // poza /bruno/panel (tam pasek rysuje sam panel). Ten sam wygląd: kółko z inicjałem na górze,
@@ -13,13 +14,14 @@ import { Ikona, linkiDla, useWyloguj } from "@/components/podglad/panel/wspolne"
 export default function PasekZloty({ dostep, inicjal, free }: { dostep: { ogien: boolean; statystyki: boolean }; inicjal: string; free?: { zuzyte: number; zostalo: number } | null }) {
   const sciezka = usePathname() ?? "";
   const wyloguj = useWyloguj();
-  const linki = linkiDla(dostep);
+  const { t, jezyk } = useT();
+  const linki = linkiDla(dostep, jezyk);
   const aktywny = (href: string) => sciezka === href || sciezka.startsWith(`${href}/`);
 
   return (
     <>
-      <aside className="bz-pasek" aria-label="Main menu">
-        <Link href="/bruno/panel" className="bz-ja" title="Home" aria-label="Home">{inicjal}</Link>
+      <aside className="bz-pasek" aria-label={t("Main menu", "Panel")}>
+        <Link href="/bruno/panel" className="bz-ja" title={t("Home", "Panel")} aria-label={t("Home", "Panel")}>{inicjal}</Link>
         {linki.map((l) => (
           <span key={l.href} style={{ display: "contents" }}>
             {l.ikona === "dostosuj" && <div className="bz-sep" />}
@@ -29,27 +31,27 @@ export default function PasekZloty({ dostep, inicjal, free }: { dostep: { ogien:
           </span>
         ))}
         <div className="bz-rosnie" />
-        <button type="button" className="bz-nav" aria-label="Log out" title="Log out" onClick={wyloguj}><Ikona nazwa="wyjscie" /></button>
+        <button type="button" className="bz-nav" aria-label={t("Log out", "Wyloguj")} title={t("Log out", "Wyloguj")} onClick={wyloguj}><Ikona nazwa="wyjscie" /></button>
       </aside>
 
       <header className="bz-gora">
-        <Link href="/bruno/panel" className="bz-ja bz-ja-tel" aria-label="Home">{inicjal}</Link>
+        <Link href="/bruno/panel" className="bz-ja bz-ja-tel" aria-label={t("Home", "Panel")}>{inicjal}</Link>
         <Link href="/bruno/odblokuj" className="bz-odblokuj" aria-current={aktywny("/bruno/odblokuj") ? "page" : undefined}>
           <Ikona nazwa="klodka" rozmiar={15} grubosc={2} />
           {free ? (
             <>
-              <span className="bz-dlugi">Free calls: {free.zuzyte} / {free.zuzyte + free.zostalo} · Bruno Pro</span>
+              <span className="bz-dlugi">{t("Free calls", "Bezpłatne rozmowy")}: {free.zuzyte} / {free.zuzyte + free.zostalo} · Bruno Pro</span>
               <span className="bz-krotki">{free.zuzyte} / {free.zuzyte + free.zostalo} · Pro</span>
             </>
           ) : (
             <>
-              <span className="bz-dlugi">Unlock full access</span>
-              <span className="bz-krotki">Unlock</span>
+              <span className="bz-dlugi">{t("Unlock full access", "Odblokuj pełen dostęp")}</span>
+              <span className="bz-krotki">{t("Unlock", "Odblokuj")}</span>
             </>
           )}
         </Link>
-        <button type="button" className="bz-wyl" onClick={wyloguj} aria-label="Log out"><Ikona nazwa="wyjscie" rozmiar={18} /></button>
-        <nav className="bz-zakladki" aria-label="Main menu">
+        <button type="button" className="bz-wyl" onClick={wyloguj} aria-label={t("Log out", "Wyloguj")}><Ikona nazwa="wyjscie" rozmiar={18} /></button>
+        <nav className="bz-zakladki" aria-label={t("Main menu", "Panel")}>
           {linki.map((l) => (
             <Link key={l.href} href={l.href} className={aktywny(l.href) ? "bz-on" : ""} aria-current={aktywny(l.href) ? "page" : undefined}>{l.nazwa}</Link>
           ))}

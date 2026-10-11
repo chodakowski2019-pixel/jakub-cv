@@ -7,7 +7,8 @@ import { dostepKonta, pobierzKonto, stanDostepu, stanFree, zamknijPorzucone } fr
 import { danePanelu } from "@/components/podglad/panel/dane";
 import PanelA from "@/components/podglad/panel/panel-a";
 import TourPopup from "@/components/bruno/tour-popup";
-import { FILM_OKLADKA, FILM_OPROWADZAJACY } from "@/lib/bruno/film";
+import { filmDla } from "@/lib/bruno/film";
+import { jezykZadania } from "@/lib/bruno/jezyk-serwer";
 
 export const dynamic = "force-dynamic";
 
@@ -29,13 +30,13 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
 
   const konto = await pobierzKonto(email);
   if (konto && stanDostepu(konto).aktywny) await zamknijPorzucone(email);
-  const d = await danePanelu();
+  const d = await danePanelu(await jezykZadania());
   // Popup z filmem: przy pierwszym wejściu albo na życzenie (?tour=1 z Ustawień).
   const pokazTour = !d.wygasl && (tour === "1" || !konto?.tour_obejrzany_at);
 
   return (
     <div className={`${inter.variable} ${outfit.variable}`} style={{ display: "contents" }}>
-      {pokazTour && <TourPopup src={FILM_OPROWADZAJACY} okladka={FILM_OKLADKA} />}
+      {pokazTour && <TourPopup src={filmDla(konto).src} okladka={filmDla(konto).okladka} />}
       <PanelA d={d} lp szklo zloty dostep={dostepKonta(konto)} free={dostepKonta(konto).free ? await stanFree(konto) : null} />
     </div>
   );

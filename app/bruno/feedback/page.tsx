@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzRozmowy } from "@/lib/bruno/db";
+import { locale, type T } from "@/lib/bruno/i18n";
+import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 
 export const dynamic = "force-dynamic";
 
@@ -10,12 +12,12 @@ export const dynamic = "force-dynamic";
 // transkrypcja) dopiero po kliknięciu. Bez odtwarzacza nagrania.
 
 /** Ocena w kółku (pierścień). Bez oceny = szare kółko z kreską. */
-function OcenaKolko({ ocena }: { ocena: number | null }) {
+function OcenaKolko({ ocena, t }: { ocena: number | null; t: T }) {
   const r = 26;
   const obwod = 2 * Math.PI * r;
   const udzial = ocena ? Math.min(1, Math.max(0, ocena / 10)) : 0;
   return (
-    <svg viewBox="0 0 64 64" width="72" height="72" role="img" aria-label={ocena ? `Score ${ocena} out of 10` : "No score"}>
+    <svg viewBox="0 0 64 64" width="72" height="72" role="img" aria-label={ocena ? t(`Score ${ocena} out of 10`, `Ocena ${ocena} na 10`) : t("No score", "Bez oceny")}>
       <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(212,175,90,0.12)" strokeWidth="6" />
       {ocena ? (
         <circle cx="32" cy="32" r={r} fill="none" stroke="#d4af5a" strokeWidth="6" strokeLinecap="round" strokeDasharray={`${obwod * udzial} ${obwod}`} transform="rotate(-90 32 32)" />
@@ -32,28 +34,35 @@ export default async function BrunoFeedbackPage() {
   if (!email) redirect("/bruno");
   const rozmowy = (await pobierzRozmowy(email, 100)).filter((r) => r.status !== "trwa");
   const ocenione = rozmowy.filter((r) => r.ocena);
+  const { t, jezyk } = await tSerwer();
   const srednia = ocenione.length ? Math.round((ocenione.reduce((s, r) => s + (r.ocena ?? 0), 0) / ocenione.length) * 10) / 10 : null;
 
   return (
     <div className="flex flex-col gap-6">
       <div className="text-center">
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
-          Your <span className="bruno-gradient-tekst">feedback</span>
+          {t("Your", "Twój")} <span className="bruno-gradient-tekst">feedback</span>
         </h1>
         <p className="text-slate-600 mt-2">
           {srednia !== null ? (
-            <>
-              Average <b className="text-slate-900">{srednia}/10</b> from {ocenione.length} scored {ocenione.length === 1 ? "call" : "calls"}. Click a call to see what to fix.
-            </>
+            jezyk === "pl" ? (
+              <>
+                Średnia <b className="text-slate-900">{srednia}/10</b> z {ocenione.length} {ocenione.length === 1 ? "ocenionej rozmowy" : "ocenionych rozmów"}. Kliknij rozmowę, żeby zobaczyć, co poprawić.
+              </>
+            ) : (
+              <>
+                Average <b className="text-slate-900">{srednia}/10</b> from {ocenione.length} scored {ocenione.length === 1 ? "call" : "calls"}. Click a call to see what to fix.
+              </>
+            )
           ) : (
-            "After every Live Call, Bruno the coach leaves a score, quotes, and one thing to fix here."
+            t("After every Live Call, Bruno the coach leaves a score, quotes, and one thing to fix here.", "Po każdej rozmowie testowej Bruno-trener zostawia tu ocenę, cytaty i jedną rzecz do poprawy.")
           )}
         </p>
       </div>
 
       {rozmowy.length === 0 ? (
         <div className="bruno-szklo rounded-3xl p-8 text-center text-slate-600">
-          Nothing yet. <Link href="/bruno/rozmowa" className="underline">Do your first Live Call with Bruno</Link>.
+          {t("Nothing yet.", "Jeszcze nic.")} <Link href="/bruno/rozmowa" className="underline">{t("Do your first Live Call with Bruno", "Zrób pierwszy test z Bruno")}</Link>.
         </div>
       ) : (
         <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -62,9 +71,9 @@ export default async function BrunoFeedbackPage() {
             const data = new Date(r.start);
             const tresc = (
               <>
-                <div className="text-sm font-semibold text-slate-800">{data.toLocaleDateString("en-US", { day: "2-digit", month: "2-digit", year: "numeric" })}</div>
-                <div className="text-[11px] text-slate-400 mb-3">{data.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}</div>
-                <OcenaKolko ocena={ocena} />
+                <div className="text-sm font-semibold text-slate-800">{data.toLocaleDateString(locale(jezyk), { day: "2-digit", month: "2-digit", year: "numeric" })}</div>
+                <div className="text-[11px] text-slate-400 mb-3">{data.toLocaleTimeString(locale(jezyk), { hour: "2-digit", minute: "2-digit" })}</div>
+                <OcenaKolko ocena={ocena} t={t} />
               </>
             );
             return (

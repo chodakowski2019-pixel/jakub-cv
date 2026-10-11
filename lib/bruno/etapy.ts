@@ -32,3 +32,17 @@ export const REJESTRY: Record<RejestrId, { nazwa: string; opis: string; bruno: s
 export function rejestrLubDomyslny(id: string | null | undefined): RejestrId {
   return id === "ty" ? "ty" : "pan";
 }
+
+// 11.10: Bruno w dwóch językach. Pole `bruno` (prompt) dla rozmów PL. Etykiety UI PL leżą w etykiety.ts.
+// Teksty = wersja sprzed tłumaczenia (git fd7de52), 1:1.
+export const ETAPY_BRUNO_PL: Record<EtapId, string> = {
+  cold: "Nie znasz handlowca ani oferty. Wszystko, co wiesz, usłyszysz dopiero w tej rozmowie.",
+  oferta: "Dostałeś ofertę i ją przeczytałeś, ale nie podjąłeś decyzji. Porównujesz, wahasz się, masz pytania do szczegółów.",
+  umowa: "UMOWA JEST JUŻ PODPISANA. Nie wybierasz oferty od nowa i nie pytasz „ile to kosztuje”, bo to wiesz. Masz wątpliwości PO decyzji i rozważasz wycofanie się. Handlowiec ma Cię zatrzymać.",
+  klient: "Jesteś już klientem tej firmy: znasz ją z praktyki, masz własne doświadczenia (dobre i złe). Rozmowa dotyczy dokupienia albo przedłużenia, nie pierwszego zakupu.",
+};
+
+export const REJESTRY_BRUNO_PL: Record<RejestrId, string> = {
+  pan: "Zwracasz się do handlowca per „pan” / „pani” (forma grzecznościowa), tak jak on do Ciebie. Nie mówisz „słuchaj” ani „ty”.",
+  ty: "Zwracasz się do handlowca na „ty” (luźno, jak w startupie albo między znajomymi z branży).",
+};

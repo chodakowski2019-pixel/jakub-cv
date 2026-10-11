@@ -20,6 +20,10 @@ import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import { POSTACIE, celLubDomyslny, instrukcjeKlienta, postacLubDomyslna, poziomLubDomyslny, trybLubDomyslny } from "@/lib/bruno/postacie";
 import { listaObiekcji } from "@/lib/bruno/obiekcje";
 import { zapewnijScenariusz } from "@/lib/bruno/scenariusze";
+import { jezykLubDomyslny } from "@/lib/bruno/domeny";
+import { etykiety } from "@/lib/bruno/etykiety";
+import { mnoga, tDla } from "@/lib/bruno/i18n";
+import { jezykZadania } from "@/lib/bruno/jezyk-serwer";
 import { MIN_KREDYTOW_EL, elevenlabsWlaczone, glosElevenlabs, pierwszaWypowiedz, podpisanyUrlEl, polaczenieEl, tokenRozmowyEl, wolneKredytyEl } from "@/lib/bruno/elevenlabs";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +36,11 @@ export const dynamic = "force-dynamic";
 // do nawiązania połączenia WebRTC z przeglądarki.
 export async function POST(req: Request) {
   const email = await zalogowanyEmail();
-  if (!email) return NextResponse.json({ ok: false, blad: "Log in." }, { status: 401 });
+  if (!email) return NextResponse.json({ ok: false, blad: tDla(await jezykZadania())("Log in.", "Zaloguj się.") }, { status: 401 });
+  // 11.10: język konta steruje promptem Bruno, głosem, pierwszą wypowiedzią i komunikatami.
+  const konto = await pobierzKonto(email);
+  const jezyk = jezykLubDomyslny(konto?.jezyk);
+  const t = tDla(jezyk);
   // Dostawca głosu (2.10): ElevenLabs, a gdy kredyty się kończą albo ElevenLabs nie odpowiada → OpenAI automatycznie.
   let dostawca: "elevenlabs" | "openai" = elevenlabsWlaczone() ? "elevenlabs" : "openai";
   let powodZmiany: string | null = null;
@@ -44,19 +52,18 @@ export async function POST(req: Request) {
     }
   }
   if (dostawca === "openai" && !process.env.OPENAI_API_KEY) {
-    return NextResponse.json({ ok: false, blad: "OPENAI_API_KEY is missing on the server." }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: t("OPENAI_API_KEY is missing on the server.", "Brak OPENAI_API_KEY na serwerze.") }, { status: 500 });
   }
 
-  const konto = await pobierzKonto(email);
   const stan = stanDostepu(konto);
-  if (!konto || !stan.aktywny) return NextResponse.json({ ok: false, blad: "Your trial access has expired." }, { status: 403 });
+  if (!konto || !stan.aktywny) return NextResponse.json({ ok: false, blad: t("Your trial access has expired.", "Twój dostęp testowy wygasł.") }, { status: 403 });
 
   await zamknijPorzucone(email);
   const zuzyte = await zuzyteSekundy(email);
   const zostalo = konto.limit_sekund - zuzyte;
   if (zostalo < 60) {
     return NextResponse.json(
-      { ok: false, blad: "You've used up your trial minutes.", kod: "limit" },
+      { ok: false, blad: t("You've used up your trial minutes.", "Minuty testu się skończyły."), kod: "limit" },
       { status: 403 },
     );
   }
@@ -66,7 +73,7 @@ export async function POST(req: Request) {
     const zuzyteFree = await rozmowyFreeZuzyte(email);
     if (zuzyteFree >= ROZMOW_ZA_DARMO) {
       return NextResponse.json(
-        { ok: false, blad: `You've used all ${ROZMOW_ZA_DARMO} free calls.`, kod: "limit" },
+        { ok: false, blad: t(`You've used all ${ROZMOW_ZA_DARMO} free calls.`, `Wszystkie ${ROZMOW_ZA_DARMO} bezpłatne rozmowy są już wykorzystane.`), kod: "limit" },
         { status: 403 },
       );
     }
@@ -75,14 +82,21 @@ export async function POST(req: Request) {
   const dziennie = limitDzienny(konto);
   if (dzis >= dziennie) {
     return NextResponse.json(
-      { ok: false, blad: `Today's plan is done: ${dziennie} ${dziennie === 1 ? "call" : "calls"}. Come back tomorrow.`, kod: "plan" },
+      {
+        ok: false,
+        blad: t(
+          `Today's plan is done: ${dziennie} ${dziennie === 1 ? "call" : "calls"}. Come back tomorrow.`,
+          `Plan na dziś zrobiony: ${dziennie} ${mnoga("pl", dziennie, ["", ""], ["rozmowa", "rozmowy", "rozmów"])}. Wróć jutro.`,
+        ),
+        kod: "plan",
+      },
       { status: 403 },
     );
   }
 
   const b = await req.json().catch(() => ({}));
   const konfig = await pobierzKonfig(email);
-  await zapewnijKarty(email, konfig);
+  await zapewnijKarty(email, konfig, jezyk);
   const postac = postacLubDomyslna(b.postac ?? konfig.postac);
   // Ustawienia wybrane przed rozmową (2.10): tryb, cel, obiekcja.
   const tryb = trybLubDomyslny(b.tryb);
@@ -129,10 +143,11 @@ export async function POST(req: Request) {
     .single();
   if (error || !rozmowa) {
     console.error("[bruno start] insert", error);
-    return NextResponse.json({ ok: false, blad: "Couldn't save the call. Try again." }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: t("Couldn't save the call. Try again.", "Nie udało się zapisać rozmowy. Spróbuj ponownie.") }, { status: 500 });
   }
 
-  const instrukcje = instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, poziom, obiekcja, obiekcje: wybrane, karta, sytuacja });
+  const instrukcje = instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, poziom, obiekcja, obiekcje: wybrane, karta, sytuacja }, jezyk);
+  const postacNazwa = etykiety(jezyk).POSTACIE[postac].nazwa;
 
   // ElevenLabs Agents (2.10): token WebRTC + nadpisania per rozmowa. Prompt idzie przez przeglądarkę
   // (tak działają nadpisania w SDK), więc nie ma w nim nic tajnego: to opis klienta z „Dostosuj Bruno".
@@ -141,7 +156,7 @@ export async function POST(req: Request) {
       const polaczenie = polaczenieEl();
       const [token, pierwsza] = await Promise.all([
         polaczenie === "webrtc" ? tokenRozmowyEl() : podpisanyUrlEl(),
-        pierwszaWypowiedz({ tryb, postac, konfig, obiekcja: wybrane[0] ?? obiekcja, sytuacja }),
+        pierwszaWypowiedz({ tryb, postac, konfig, obiekcja: wybrane[0] ?? obiekcja, sytuacja, jezyk }),
       ]);
       return NextResponse.json({
         ok: true,
@@ -151,10 +166,12 @@ export async function POST(req: Request) {
         token,
         prompt: instrukcje,
         pierwsza_wypowiedz: pierwsza,
-        glos: glosElevenlabs(postac),
+        glos: glosElevenlabs(postac, jezyk),
+        // 11.10: przeglądarka ustawia z tego `language` w nadpisaniach agenta ElevenLabs.
+        jezyk,
         sekundy: sekundyTejRozmowy,
         postac,
-        postac_nazwa: POSTACIE[postac].nazwa,
+        postac_nazwa: postacNazwa,
         tryb,
         cel,
         poziom,
@@ -167,7 +184,7 @@ export async function POST(req: Request) {
       dostawca = "openai";
       if (!process.env.OPENAI_API_KEY) {
         await supabaseAdmin.from("bruno_rozmowy").update({ status: "przerwana", koniec: new Date().toISOString(), sekundy: 0 }).eq("id", rozmowa.id);
-        return NextResponse.json({ ok: false, blad: "ElevenLabs didn't issue a session token, and OpenAI isn't set up." }, { status: 502 });
+        return NextResponse.json({ ok: false, blad: t("ElevenLabs didn't issue a session token, and OpenAI isn't set up.", "ElevenLabs nie wydało tokenu sesji, a OpenAI nie jest skonfigurowane.") }, { status: 502 });
       }
       await supabaseAdmin.from("bruno_rozmowy").update({ dostawca: "openai" }).eq("id", rozmowa.id);
     }
@@ -182,7 +199,8 @@ export async function POST(req: Request) {
       instructions: instrukcje,
       audio: {
         input: {
-          transcription: { model: "gpt-4o-mini-transcribe", language: "pl" },
+          // 11.10: język transkrypcji = język konta (wcześniej na sztywno "pl", także dla EN).
+          transcription: { model: "gpt-4o-mini-transcribe", language: jezyk },
           // interrupt_response: false (2.10): bez słuchawek głos Bruno z głośnika wracał do mikrofonu i przerywał mu w pół zdania.
           // Bruno mówi max 2-3 zdania, więc brak możliwości wejścia mu w słowo kosztuje mało, a kończy problem urywania.
           turn_detection: { type: "semantic_vad", eagerness: "medium", create_response: true, interrupt_response: false },
@@ -202,11 +220,11 @@ export async function POST(req: Request) {
     const tekst = await odp.text();
     console.error("[bruno start] client_secrets", odp.status, tekst.slice(0, 500));
     await supabaseAdmin.from("bruno_rozmowy").update({ status: "przerwana", koniec: new Date().toISOString(), sekundy: 0 }).eq("id", rozmowa.id);
-    return NextResponse.json({ ok: false, blad: "OpenAI didn't issue a session key." }, { status: 502 });
+    return NextResponse.json({ ok: false, blad: t("OpenAI didn't issue a session key.", "OpenAI nie wydało klucza sesji.") }, { status: 502 });
   }
   const dane = (await odp.json()) as { value?: string; client_secret?: { value: string } };
   const klucz = dane.value ?? dane.client_secret?.value;
-  if (!klucz) return NextResponse.json({ ok: false, blad: "Empty session key." }, { status: 502 });
+  if (!klucz) return NextResponse.json({ ok: false, blad: t("Empty session key.", "Pusty klucz sesji.") }, { status: 502 });
 
   return NextResponse.json({
     ok: true,
@@ -217,7 +235,8 @@ export async function POST(req: Request) {
     model,
     sekundy: sekundyTejRozmowy,
     postac,
-    postac_nazwa: POSTACIE[postac].nazwa,
+    postac_nazwa: postacNazwa,
+    jezyk,
     tryb,
     cel,
     poziom,

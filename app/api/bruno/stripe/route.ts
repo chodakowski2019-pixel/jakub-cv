@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         await zapiszPlatnosc({ email, zdarzenie: event.type, session: s.id, subscription: subId, customer, kwota: s.amount_total, waluta: s.currency, okres: s.metadata.okres, status: s.payment_status });
         const konto = await pobierzKonto(email);
         try {
-          await wyslij({ do: email, rodzaj: "inny", temat: "Bruno Pro is active", html: htmlProAktywny({ imie: konto?.imie ?? null, okres: s.metadata.okres === "rok" ? "rok" : "miesiac" }) });
+          await wyslij({ do: email, rodzaj: "inny", temat: konto?.jezyk === "pl" ? "Bruno Pro jest aktywne" : "Bruno Pro is active", html: htmlProAktywny({ imie: konto?.imie ?? null, jezyk: konto?.jezyk, okres: s.metadata.okres === "rok" ? "rok" : "miesiac" }) });
           await wyslij({
             do: SKRZYNKA_JAKUBA,
             rodzaj: "inny",

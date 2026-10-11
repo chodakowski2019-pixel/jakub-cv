@@ -1,29 +1,33 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import type { Jezyk } from "@/lib/bruno/i18n";
 
 // Zakładki prawdziwego panelu (components/bruno/nav.tsx), te same adresy i nazwy.
 export const LINKI = [
-  { href: "/bruno/panel", nazwa: "Home", ikona: "panel" },
-  { href: "/bruno/rozmowa", nazwa: "Live Call", ikona: "test" },
+  { href: "/bruno/panel", nazwa: "Home", nazwaPl: "Panel", ikona: "panel" },
+  { href: "/bruno/rozmowa", nazwa: "Live Call", nazwaPl: "Test", ikona: "test" },
   // „Ogień” tylko przy pełnym dostępie (jak components/bruno/nav.tsx, 9.10).
-  { href: "/bruno/ogien", nazwa: "Fire Up", ikona: "ogien", pelny: true },
-  { href: "/bruno/trening", nazwa: "Drills", ikona: "trening" },
-  { href: "/bruno/feedback", nazwa: "Feedback", ikona: "feedback" },
-  { href: "/bruno/statystyki", nazwa: "Stats", ikona: "statystyki" },
-  { href: "/bruno/dostosuj", nazwa: "Customize Bruno", ikona: "dostosuj" },
-  { href: "/bruno/ustawienia", nazwa: "Settings", ikona: "ustawienia" },
+  { href: "/bruno/ogien", nazwa: "Fire Up", nazwaPl: "Ogień", ikona: "ogien", pelny: true },
+  { href: "/bruno/trening", nazwa: "Drills", nazwaPl: "Trening", ikona: "trening" },
+  { href: "/bruno/feedback", nazwa: "Feedback", nazwaPl: "Feedback", ikona: "feedback" },
+  { href: "/bruno/statystyki", nazwa: "Stats", nazwaPl: "Statystyki", ikona: "statystyki" },
+  { href: "/bruno/dostosuj", nazwa: "Customize Bruno", nazwaPl: "Dostosuj Bruno", ikona: "dostosuj" },
+  { href: "/bruno/ustawienia", nazwa: "Settings", nazwaPl: "Ustawienia", ikona: "ustawienia" },
 ] as const;
 
 /**
  * Linki widoczne dla konta: „Ogień” tylko przy pełnym dostępie; „Statystyki” nie dla konta free (10.10).
  * Przyjmuje stare `pelny: boolean` albo obiekt dostępu z `dostepKonta`.
  */
-export const linkiDla = (d: boolean | { ogien: boolean; statystyki: boolean }) => {
+export const linkiDla = (d: boolean | { ogien: boolean; statystyki: boolean }, jezyk: Jezyk = "en") => {
   const ogien = typeof d === "boolean" ? d : d.ogien;
   const statystyki = typeof d === "boolean" ? true : d.statystyki;
-  return LINKI.filter((l) => ("pelny" in l ? ogien : true) && (l.href === "/bruno/statystyki" ? statystyki : true));
+  return LINKI.filter((l) => ("pelny" in l ? ogien : true) && (l.href === "/bruno/statystyki" ? statystyki : true)).map((l) => ({ ...l, nazwa: nazwaLinku(l, jezyk) }));
 };
+
+/** 11.10: nazwa zakładki w języku konta (PL = nazwy sprzed tłumaczenia, fd7de52). */
+export const nazwaLinku = (l: { nazwa: string; nazwaPl: string }, jezyk: Jezyk = "en") => (jezyk === "pl" ? l.nazwaPl : l.nazwa);
 
 export type NazwaIkony = (typeof LINKI)[number]["ikona"] | "klodka" | "wyjscie" | "mikrofon" | "strzalka";
 
@@ -70,7 +74,7 @@ export function useWyloguj() {
 export const odmiana = (n: number, jeden: string, kilka: string, wiele: string) =>
   n === 1 ? jeden : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? kilka : wiele;
 
-export const rozmowy = (n: number) => odmiana(n, "call", "calls", "calls");
+export const rozmowy = (n: number, jezyk: Jezyk = "en") => (jezyk === "pl" ? odmiana(n, "rozmowa", "rozmowy", "rozmów") : odmiana(n, "call", "calls", "calls"));
 
 /** Czy użytkownik prosi o mniej ruchu. */
 export function malaAnimacja(): boolean {

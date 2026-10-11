@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { pobierzKonfig } from "@/lib/bruno/db";
+import { pobierzKonfig, pobierzKonto } from "@/lib/bruno/db";
+import { jezykLubDomyslny } from "@/lib/bruno/domeny";
+import { tDla } from "@/lib/bruno/i18n";
 import { etapLubDomyslny, rejestrLubDomyslny } from "@/lib/bruno/etapy";
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import { postacLubDomyslna } from "@/lib/bruno/postacie";
@@ -21,6 +23,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
+  const jezyk = jezykLubDomyslny((await pobierzKonto(email))?.jezyk);
   try {
     const b = await req.json();
     // Zapis częściowy: „Dostosuj Bruno" i „Ustawienia" (godzina przypomnienia)
@@ -44,10 +47,10 @@ export async function POST(req: Request) {
     };
     const { error } = await supabaseAdmin.from("bruno_konfig").upsert(wiersz, { onConflict: "email" });
     if (error) throw error;
-    await zapewnijKarty(email, { ...wiersz });
+    await zapewnijKarty(email, { ...wiersz }, jezyk);
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[bruno konfig]", e);
-    return NextResponse.json({ ok: false, blad: "Couldn't save. Try again." }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: tDla(jezyk)("Couldn't save. Try again.", "Nie udało się zapisać. Spróbuj ponownie.") }, { status: 500 });
   }
 }

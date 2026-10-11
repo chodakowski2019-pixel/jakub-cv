@@ -8,6 +8,8 @@ import { kartyZFeedbacku } from "@/lib/bruno/fiszka";
 import { policzMetryki } from "@/lib/bruno/metryki";
 import { celLubDomyslny, opisCelu, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
 import { ocenRozmowe } from "@/lib/bruno/rubryka";
+import { jezykLubDomyslny } from "@/lib/bruno/domeny";
+import { tDla } from "@/lib/bruno/i18n";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -19,12 +21,16 @@ export const maxDuration = 60;
 export async function POST(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
+  // 11.10: język konta steruje metrykami (wzorce słów), trenerem, fiszkami i komunikatami.
+  const konto = await pobierzKonto(email);
+  const jezyk = jezykLubDomyslny(konto?.jezyk);
+  const t = tDla(jezyk);
   const b = await req.json().catch(() => null);
   const id = String(b?.rozmowa_id ?? "");
-  if (!id) return NextResponse.json({ ok: false, blad: "Missing call ID." }, { status: 400 });
+  if (!id) return NextResponse.json({ ok: false, blad: t("Missing call ID.", "Brak ID rozmowy.") }, { status: 400 });
 
   const { data: rozmowa } = await supabaseAdmin.from("bruno_rozmowy").select("*").eq("id", id).eq("email", email).maybeSingle();
-  if (!rozmowa) return NextResponse.json({ ok: false, blad: "Call not found." }, { status: 404 });
+  if (!rozmowa) return NextResponse.json({ ok: false, blad: t("Call not found.", "Nie znaleziono rozmowy.") }, { status: 404 });
   if (rozmowa.status === "zakonczona" && rozmowa.feedback) {
     return NextResponse.json({ ok: true, feedback: rozmowa.feedback, ocena: rozmowa.ocena, id });
   }
@@ -52,8 +58,8 @@ export async function POST(req: Request) {
     });
   }
 
-  const [konfig, konto] = await Promise.all([pobierzKonfig(email), pobierzKonto(email)]);
-  const metrykiCzyste = policzMetryki(transkrypcja, sekundy, listaObiekcji(konfig.obiekcje));
+  const konfig = await pobierzKonfig(email);
+  const metrykiCzyste = policzMetryki(transkrypcja, sekundy, listaObiekcji(konfig.obiekcje), jezyk);
   // Koniec przez limit czasu aplikacji (przeglądarka mówi „limit" albo czas doszedł do sufitu rozmowy).
   const ucietaLimitem = b?.powod === "limit" || sekundy >= ROZMOWA_SEKUND;
   // Diagnostyka jakości dźwięku (2.10): statystyki WebRTC i błędy Realtime z przeglądarki, zapisywane obok metryk.
@@ -83,18 +89,19 @@ export async function POST(req: Request) {
       konfig,
       postac: postacLubDomyslna(rozmowa.postac),
       tryb: trybLubDomyslny(rozmowa.tryb),
-      cel: opisCelu(celLubDomyslny(rozmowa.cel), rozmowa.cel_wlasny),
+      cel: opisCelu(celLubDomyslny(rozmowa.cel), rozmowa.cel_wlasny, jezyk),
       obiekcja: rozmowa.obiekcja ?? null,
       poziom: rozmowa.poziom ?? null,
       imie: konto?.imie ?? null,
       ucieta_limitem: ucietaLimitem,
       sytuacja: rozmowa.sytuacja ?? null,
+      jezyk,
     });
     await supabaseAdmin.from("bruno_rozmowy").update({ feedback, ocena: feedback.ocena }).eq("id", id);
     await zaktualizujKarty(email, feedback);
     // Minusy z tej rozmowy → fiszki „do poprawy" w Treningu (USER_001 2.10).
     try {
-      const nowe = await kartyZFeedbacku({ feedback, produkt: konfig.produkt });
+      const nowe = await kartyZFeedbacku({ feedback, produkt: konfig.produkt, jezyk });
       await dodajKartyPoprawek(email, nowe, id);
     } catch (e) {
       console.error("[bruno koniec] karty poprawek", e);
@@ -107,6 +114,6 @@ export async function POST(req: Request) {
     const err = e as { status?: number; message?: string };
     const trener_blad = `${err?.status ?? ""} ${String(err?.message ?? e).slice(0, 300)}`.trim();
     await supabaseAdmin.from("bruno_rozmowy").update({ metryki: { ...metryki, trener_blad } }).eq("id", id);
-    return NextResponse.json({ ok: true, id, feedback: null, blad: "Call saved, but the coach didn't respond. Try refreshing your history.", trener_blad });
+    return NextResponse.json({ ok: true, id, feedback: null, blad: t("Call saved, but the coach didn't respond. Try refreshing your history.", "Rozmowa zapisana, ale trener nie odpowiedział. Odśwież historię."), trener_blad });
   }
 }

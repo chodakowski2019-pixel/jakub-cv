@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { track } from "@vercel/analytics";
 import AuroraShell from "./aurora-shell";
 import s from "./aurora.module.css";
-import { useJezyk } from "./jezyk";
+import { adresStrony, useJezyk, useNaDomenie } from "./jezyk";
+import type { Jezyk } from "@/lib/bruno/domeny";
 import GooglePrzycisk from "./google-przycisk";
 
 // Zgłoszenie o dostęp do Bruno w wyglądzie Aurora. Logika 1:1 z app/aisaleskontakt/page.tsx:
@@ -40,6 +42,8 @@ const T = {
     blad: "Something went wrong. Email hello@jakubchodakowski.com",
     wysylam: "Sending...",
     wyslij: "Send →",
+    maKonto: "Already have an account?",
+    zaloguj: "Log in",
   },
   pl: {
     tytul: "Otrzymaj dostęp",
@@ -61,18 +65,21 @@ const T = {
     zawody: ["Dyrektor sprzedaży", "Kierownik zespołu sprzedaży", "Właściciel firmy", "Handlowiec", "Inne"],
     handl: "Ilu handlowców jest w Twojej firmie?",
     handlPh: "np. 8",
-    produkt: "Jaki produkt sprzedajecie?",
+    produkt: "Co sprzedajesz?",
     produktPh: "np. ubezpieczenia na życie dla firm",
     zgoda: "Akceptuję",
-    polityka: "Politykę prywatności",
+    polityka: "politykę prywatności",
     blad: "Coś poszło nie tak. Napisz na hello@jakubchodakowski.com",
     wysylam: "Wysyłam...",
     wyslij: "Wyślij →",
+    maKonto: "Masz już konto?",
+    zaloguj: "Zaloguj się",
   },
 } as const;
 
-export default function RejestracjaForm({ google = false }: { google?: boolean }) {
-  const jezyk = useJezyk();
+export default function RejestracjaForm({ google = false, jezykStart, naDomenieStart }: { google?: boolean; jezykStart?: Jezyk; naDomenieStart?: boolean }) {
+  const jezyk = useJezyk(jezykStart);
+  const naDomenie = useNaDomenie(naDomenieStart);
   const x = T[jezyk];
   const [form, setForm] = useState({
     imie: "",
@@ -248,6 +255,10 @@ export default function RejestracjaForm({ google = false }: { google?: boolean }
           <button type="submit" disabled={status === "sending" || !form.zawod} className={s.btnW}>
             {status === "sending" ? x.wysylam : x.wyslij}
           </button>
+
+          <p className={s.login}>
+            {x.maKonto} <Link href={adresStrony(jezyk, "logowanie", naDomenie)}>{x.zaloguj}</Link>
+          </p>
         </form>
       )}
     </AuroraShell>

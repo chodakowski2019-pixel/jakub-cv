@@ -58,6 +58,8 @@ export async function POST(req: Request) {
     aktywne: b.aktywne === undefined ? true : Boolean(b.aktywne),
     // 9.10: plan „trial" (test) albo „pelny" (płacąca firma: oferta z PDF/strony, „Rozmowa, którą masz jutro").
     plan: b.plan === "pelny" ? "pelny" : b.plan === "free" ? "free" : "trial",
+    // 11.10: język konta firmy (PL = salesbruno.pl, polski Bruno).
+    jezyk: b.jezyk === "pl" ? "pl" : "en",
     ...(kod ? { kod_hash: zaszyfrujKod(kod), nieudane: 0, blokada_do: null } : {}),
   };
   const { error } = await supabaseAdmin.from("bruno_konta").upsert(konto, { onConflict: "email" });
@@ -78,7 +80,7 @@ export async function POST(req: Request) {
     };
     const { error: e2 } = await supabaseAdmin.from("bruno_konfig").upsert(wiersz, { onConflict: "email" });
     if (e2) return NextResponse.json({ ok: false, blad: e2.message }, { status: 500 });
-    await zapewnijKarty(email, wiersz);
+    await zapewnijKarty(email, wiersz, konto.jezyk === "pl" ? "pl" : "en");
   }
 
   // Mail z dostępem idzie tylko wtedy, gdy kod jest nowy: inaczej nie mamy go
@@ -89,7 +91,7 @@ export async function POST(req: Request) {
       await wyslij({
         do: email,
         rodzaj: "dostep",
-        temat: "Your Bruno AI access",
+        temat: konto.jezyk === "pl" ? "Twój dostęp do Bruno AI" : "Your Bruno AI access",
         html: htmlDostep({
           imie: konto.imie,
           email,
@@ -97,6 +99,7 @@ export async function POST(req: Request) {
           dni: konto.dni,
           rozmowDziennie: konto.rozmow_dziennie,
           fiszekDziennie: konto.fiszek_dziennie,
+          jezyk: konto.jezyk,
         }),
       });
       mail = "wyslany";

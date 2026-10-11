@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useT } from "@/components/bruno/jezyk-kontekst";
 
 // Jeden ekran: adres + stały 6-cyfrowy kod konta (USER_001 30.09).
 // Kod nadaje USER_001 przy zakładaniu konta, tester zmienia go w panelu.
 
 export default function LoginForm() {
+  const { t } = useT();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [kod, setKod] = useState("");
@@ -28,27 +30,27 @@ export default function LoginForm() {
     if (res.ok) {
       router.push("/bruno/panel");
       router.refresh();
-    } else setBlad((await res.json().catch(() => null))?.blad ?? "Couldn't log in.");
+    } else setBlad((await res.json().catch(() => null))?.blad ?? t("Couldn't log in.", "Nie udało się zalogować."));
   };
 
   return (
     <div className="bruno-szklo rounded-3xl p-6 sm:p-8">
       <form onSubmit={zaloguj} className="flex flex-col gap-5">
         <div>
-          <label className="bruno-etykieta" htmlFor="email">Email address</label>
+          <label className="bruno-etykieta" htmlFor="email">{t("Email address", "Adres e-mail")}</label>
           <input
             id="email"
             type="email"
             required
             autoComplete="email"
             className="bruno-pole"
-            placeholder="you@yourcompany.com"
+            placeholder={t("you@yourcompany.com", "ty@twojafirma.pl")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div>
-          <label className="bruno-etykieta" htmlFor="kod">Code</label>
+          <label className="bruno-etykieta" htmlFor="kod">{t("Code", "Kod")}</label>
           <input
             id="kod"
             inputMode="numeric"
@@ -64,7 +66,7 @@ export default function LoginForm() {
         </div>
         {blad && <p className="text-red-700 text-sm">{blad}</p>}
         <button type="submit" disabled={stan === "wysylanie" || kod.length !== 6} className="bruno-przycisk w-full">
-          {stan === "wysylanie" ? "Logging in..." : "Log in"}
+          {stan === "wysylanie" ? t("Logging in...", "Loguję...") : t("Log in", "Zaloguj się")}
         </button>
       </form>
     </div>

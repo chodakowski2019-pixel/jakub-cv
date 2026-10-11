@@ -15,6 +15,8 @@ import {
 import { NAZWY } from "@/lib/bruno/kryteria";
 import { POSTACIE, postacLubDomyslna, type PostacId } from "@/lib/bruno/postacie";
 import { rozmowyNaDni, type Slupek } from "@/components/bruno/statystyki";
+import { etykiety } from "@/lib/bruno/etykiety";
+import { locale, mnoga, tDla, type Jezyk } from "@/lib/bruno/i18n";
 
 // Podgląd dwóch wersji panelu Bruno (6.10). Te same dane co app/bruno/panel/page.tsx,
 // tymi samymi funkcjami z lib/bruno, tylko do odczytu: NIE wołamy zamknijPorzucone
@@ -65,6 +67,7 @@ export type DanePanelu = {
 };
 
 const DNI_PELNE: Record<string, string> = { Su: "Sunday", Mo: "Monday", Tu: "Tuesday", We: "Wednesday", Th: "Thursday", Fr: "Friday", Sa: "Saturday" };
+const DNI_PELNE_PL: Record<string, string> = { nd: "Niedziela", pn: "Poniedziałek", wt: "Wtorek", "śr": "Środa", cz: "Czwartek", pt: "Piątek", sb: "Sobota" };
 const KOLEJNOSC = Object.keys(NAZWY) as (keyof typeof NAZWY)[];
 
 const kluczPL = (d: Date) => d.toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
@@ -89,9 +92,13 @@ type Wejscie = {
   rozmowy: Pick<Rozmowa, "start" | "status" | "sekundy" | "ocena" | "postac" | "feedback">[];
   wygasl: boolean;
   przyklad: boolean;
+  jezyk?: Jezyk;
 };
 
 function zbuduj(w: Wejscie): DanePanelu {
+  const jezyk: Jezyk = w.jezyk ?? "en";
+  const t = tDla(jezyk);
+  const E = etykiety(jezyk);
   const zostaloDzis = Math.max(0, w.dziennie - w.dzis);
   const planZrobiony = zostaloDzis === 0;
   const minutZostalo = Math.max(0, Math.floor((w.limitSekund - w.zuzyte) / 60));
@@ -99,15 +106,15 @@ function zbuduj(w: Wejscie): DanePanelu {
   const linkRozmowy = w.powtorka ? `/bruno/rozmowa?karta=${w.powtorka.id}` : "/bruno/rozmowa";
   const powtorka = w.powtorka
     ? w.powtorka.typ === "obiekcja"
-      ? `Objection review: "${w.powtorka.tresc}"`
-      : `Review: ${NAZWY[w.powtorka.tresc as keyof typeof NAZWY] ?? w.powtorka.tresc}`
+      ? t(`Objection review: "${w.powtorka.tresc}"`, `Powtórka obiekcji: „${w.powtorka.tresc}”`)
+      : `${t("Review", "Powtórka")}: ${E.NAZWY[w.powtorka.tresc as keyof typeof NAZWY] ?? w.powtorka.tresc}`
     : null;
 
   const liczone = w.rozmowy.filter((r) => r.status !== "przerwana");
   const ocenione = liczone.filter((r) => typeof r.ocena === "number");
 
   // 14 dni: ostatnie 7 + poprzednie 7 (linia porównania w wersji A).
-  const dni14 = rozmowyNaDni(w.rozmowy, 14);
+  const dni14 = rozmowyNaDni(w.rozmowy, 14, jezyk);
   const dniPoprzednie = dni14.slice(0, 7).map((d) => d.wartosc);
   const teraz = Date.now();
   const dni7: DzienPodglad[] = dni14.slice(7).map((d, i) => {
@@ -115,7 +122,7 @@ function zbuduj(w: Wejscie): DanePanelu {
     const tegoDnia = liczone.filter((r) => kluczPL(new Date(r.start)) === k);
     return {
       ...d,
-      nazwaPelna: DNI_PELNE[d.etykieta] ?? d.etykieta,
+      nazwaPelna: (jezyk === "pl" ? DNI_PELNE_PL : DNI_PELNE)[d.etykieta] ?? d.etykieta,
       minuty: Math.round(tegoDnia.reduce((a, r) => a + Math.min(r.sekundy ?? 0, ROZMOWA_SEKUND), 0) / 60),
       srednia: srednia(tegoDnia.filter((r) => typeof r.ocena === "number").map((r) => r.ocena as number)),
     };
@@ -123,18 +130,18 @@ function zbuduj(w: Wejscie): DanePanelu {
 
   const ocenaZ = (r: (typeof ocenione)[number]): OcenaRozmowy => ({
     ocena: zaokr(r.ocena as number),
-    kryteria: KOLEJNOSC.map((n) => ({ nazwa: NAZWY[n], ocena: r.feedback?.kryteria?.find((k) => k.nazwa === n)?.ocena ?? 0 })),
-    opis: `Customer ${POSTACIE[postacLubDomyslna(r.postac)].nazwa.toLowerCase()}, ${Math.max(1, Math.round((r.sekundy ?? 0) / 60))} min`,
+    kryteria: KOLEJNOSC.map((n) => ({ nazwa: E.NAZWY[n], ocena: r.feedback?.kryteria?.find((k) => k.nazwa === n)?.ocena ?? 0 })),
+    opis: `${t("Customer", "Klient")} ${E.POSTACIE[postacLubDomyslna(r.postac)].nazwa.toLowerCase()}, ${Math.max(1, Math.round((r.sekundy ?? 0) / 60))} min`,
   });
   const ostatnia = ocenione[0] ? ocenaZ(ocenione[0]) : null;
   const sred = ocenione.length
     ? {
         ocena: srednia(ocenione.map((r) => r.ocena as number)) ?? 0,
         kryteria: KOLEJNOSC.map((n) => ({
-          nazwa: NAZWY[n],
+          nazwa: E.NAZWY[n],
           ocena: srednia(ocenione.map((r) => r.feedback?.kryteria?.find((k) => k.nazwa === n)?.ocena).filter((v): v is number => typeof v === "number")) ?? 0,
         })),
-        opis: `From ${ocenione.length} ${ocenione.length === 1 ? "call" : "calls"}`,
+        opis: `${t("From", "Z")} ${ocenione.length} ${mnoga(jezyk, ocenione.length, ["call", "calls"], ["rozmowy", "rozmów", "rozmów"])}`,
       }
     : null;
 
@@ -142,9 +149,9 @@ function zbuduj(w: Wejscie): DanePanelu {
     const z = liczone.filter((r) => postacLubDomyslna(r.postac) === id);
     return {
       id,
-      nazwa: POSTACIE[id].nazwa,
-      krotko: POSTACIE[id].krotko,
-      opis: POSTACIE[id].opis,
+      nazwa: E.POSTACIE[id].nazwa,
+      krotko: E.POSTACIE[id].krotko ?? POSTACIE[id].krotko,
+      opis: E.POSTACIE[id].opis,
       kolor: POSTACIE[id].kolor,
       rozmow: z.length,
       srednia: srednia(z.filter((r) => typeof r.ocena === "number").map((r) => r.ocena as number)),
@@ -167,7 +174,7 @@ function zbuduj(w: Wejscie): DanePanelu {
     dni: w.dni,
     dniZostalo: w.dniZostalo,
     dniUplynelo: Math.max(0, w.dni - w.dniZostalo),
-    koniec: w.koniec ? w.koniec.toLocaleDateString("en-US", { timeZone: "Europe/Warsaw" }) : null,
+    koniec: w.koniec ? w.koniec.toLocaleDateString(locale(jezyk), { timeZone: "Europe/Warsaw" }) : null,
     minutZostalo,
     limitMinut: Math.round(w.limitSekund / 60),
     minDzis: dni7[6]?.minuty ?? 0,
@@ -186,7 +193,7 @@ function zbuduj(w: Wejscie): DanePanelu {
 }
 
 /** Wyraźnie zmyślone dane, tylko w trybie development i tylko bez logowania. */
-function przykladowe(): DanePanelu {
+function przykladowe(jezyk: Jezyk): DanePanelu {
   const dzien = 86_400_000;
   const teraz = Date.now();
   const kr = (o: number, p: number, ob: number, z: number, pe: number) =>
@@ -226,10 +233,11 @@ function przykladowe(): DanePanelu {
     rozmowy,
     wygasl: false,
     przyklad: true,
+    jezyk,
   });
 }
 
-export async function danePanelu(): Promise<DanePanelu> {
+export async function danePanelu(jezyk: Jezyk = "en"): Promise<DanePanelu> {
   let email: string | null = null;
   try {
     email = await zalogowanyEmail();
@@ -237,7 +245,7 @@ export async function danePanelu(): Promise<DanePanelu> {
     email = null;
   }
   if (!email) {
-    if (process.env.NODE_ENV === "development") return przykladowe();
+    if (process.env.NODE_ENV === "development") return przykladowe(jezyk);
     redirect("/bruno");
   }
 
@@ -260,6 +268,7 @@ export async function danePanelu(): Promise<DanePanelu> {
         rozmowy: [],
         wygasl: true,
         przyklad: false,
+        jezyk,
       }),
     };
   }
@@ -267,7 +276,7 @@ export async function danePanelu(): Promise<DanePanelu> {
   const [zuzyte, dzis, karty, konfig, wszystkie] = await Promise.all([
     zuzyteSekundy(email),
     rozmowyDzis(email),
-    kartyDoPowtorki(email, 6),
+    kartyDoPowtorki(email, 6, konto.jezyk),
     pobierzKonfig(email),
     pobierzRozmowy(email, 200),
   ]);
@@ -288,5 +297,6 @@ export async function danePanelu(): Promise<DanePanelu> {
     rozmowy: wszystkie,
     wygasl: false,
     przyklad: false,
+    jezyk,
   });
 }

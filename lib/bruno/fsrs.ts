@@ -2,7 +2,8 @@ import { createEmptyCard, fsrs, Rating, type Card, type Grade } from "ts-fsrs";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Feedback, Karta, Konfig, Kryterium } from "./db";
 import { listaObiekcji } from "./db";
-import { WIEDZA } from "./wiedza";
+import type { Jezyk } from "./domeny";
+import { wiedzaDla } from "./wiedza";
 
 // Harmonogram powtórek (decyzja 26.09: FSRS, ten sam algorytm co Anki od 2023).
 // Karta = jedna obiekcja z „Dostosuj Bruno" albo jedno z 5 kryteriów rubryki.
@@ -59,15 +60,16 @@ export function ocenaObiekcjiNaGrade(ocena: number): Grade {
 /**
  * Dba, żeby każda obiekcja z konfiguracji i każde kryterium miały kartę.
  * Wołane przy zapisie „Dostosuj Bruno" i przed każdą rozmową.
+ * 11.10: talia wiedzy w języku konta (domyślnie EN). Karty drugiego języka nie są kasowane.
  */
-export async function zapewnijKarty(email: string, konfig: Konfig): Promise<void> {
+export async function zapewnijKarty(email: string, konfig: Konfig, jezyk: Jezyk = "en"): Promise<void> {
   const { data } = await supabaseAdmin.from("bruno_karty").select("typ, tresc").eq("email", email);
   const istnieja = new Set((data ?? []).map((k) => `${k.typ}:${k.tresc}`));
   const nowe: { email: string; typ: string; tresc: string; pytanie?: string; wzor?: string; kategoria?: string }[] = [];
   for (const k of KRYTERIA) if (!istnieja.has(`kryterium:${k}`)) nowe.push({ email, typ: "kryterium", tresc: k });
   for (const o of listaObiekcji(konfig.obiekcje)) if (!istnieja.has(`obiekcja:${o}`)) nowe.push({ email, typ: "obiekcja", tresc: o });
   // Stała talia wiedzy (2.10): typy klientów + techniki. Dokładana każdemu kontu raz.
-  for (const w of WIEDZA) if (!istnieja.has(`wiedza:${w.tresc}`)) nowe.push({ email, typ: "wiedza", tresc: w.tresc, pytanie: w.pytanie, wzor: w.wzor, kategoria: w.kategoria });
+  for (const w of wiedzaDla(jezyk)) if (!istnieja.has(`wiedza:${w.tresc}`)) nowe.push({ email, typ: "wiedza", tresc: w.tresc, pytanie: w.pytanie, wzor: w.wzor, kategoria: w.kategoria });
   if (nowe.length) {
     const pusta = naWiersz(createEmptyCard(new Date()));
     const { error } = await supabaseAdmin.from("bruno_karty").insert(nowe.map((n) => ({ ...n, ...pusta })));

@@ -30,6 +30,8 @@ export async function zalozKontoFree(a: {
     fiszek_dziennie: 5,
     aktywne: true,
     plan: PLAN_FREE,
+    // 11.10: język konta = domena rejestracji (salesbruno.pl = pl).
+    jezyk: a.jezyk,
     kod_hash: kod ? zaszyfrujKod(kod) : null,
     nieudane: 0,
     blokada_do: null,

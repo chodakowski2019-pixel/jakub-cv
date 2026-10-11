@@ -1,0 +1,76 @@
+import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { DOMENA, SCIEZKI, jezykZHosta, type Jezyk } from "@/lib/bruno/domeny";
+
+// 11.10 (USER_001): publiczne strony Bruno na dwóch domenach. Język i metadane liczone na serwerze,
+// żeby strona na salesbruno.pl od razu (bez mignięcia EN) była po polsku, a canonical wskazywał właściwą domenę.
+
+export type CelStrony = "firmy" | "handlowcy" | "rejestracja" | "logowanie";
+type Szukaj = Promise<Record<string, string | string[] | undefined>> | undefined;
+
+/** Język strony: domena (x-jezyk z proxy / host), a poza domenami Bruno ?pl albo ?lang=pl. */
+export async function stronaBruno(searchParams?: Szukaj): Promise<{ jezyk: Jezyk; naDomenie: boolean }> {
+  const h = await headers();
+  const zHosta = jezykZHosta(h.get("host"));
+  if (zHosta) return { jezyk: zHosta, naDomenie: true };
+  const q = (await searchParams) ?? {};
+  const pl = h.get("x-jezyk") === "pl" || q.pl !== undefined || q.lang === "pl";
+  return { jezyk: pl ? "pl" : "en", naDomenie: false };
+}
+
+const OPISY: Record<CelStrony, Record<Jezyk, { title: string; description: string }>> = {
+  firmy: {
+    en: {
+      title: "Bruno AI for sales teams | AI sales practice",
+      description: "Your sales reps practice calls with an AI customer before they talk to a real one. Every call gets a score. Book a 30-minute demo call.",
+    },
+    pl: {
+      title: "Bruno AI dla zespołów sprzedaży | Trening sprzedaży z AI",
+      description: "Wasi handlowcy ćwiczą rozmowy z klientem AI, zanim zadzwonią do prawdziwego. Każda rozmowa dostaje ocenę. Umów 30-minutową rozmowę z demo.",
+    },
+  },
+  handlowcy: {
+    en: {
+      title: "Bruno AI for sales reps | Practice your next call",
+      description: "Practice your next sales call with an AI customer before it counts. Every call gets a score and a practice plan. Your first 3 calls are free.",
+    },
+    pl: {
+      title: "Bruno AI dla handlowców | Przećwicz następną rozmowę",
+      description: "Przećwicz rozmowę sprzedażową z klientem AI, zanim zadzwonisz do prawdziwego. Każda rozmowa dostaje ocenę i plan ćwiczeń. Pierwsze 3 rozmowy za darmo.",
+    },
+  },
+  rejestracja: {
+    en: { title: "Bruno AI: sign up", description: "Sign up for Bruno AI and get 3 free practice calls with an AI customer. No card." },
+    pl: { title: "Bruno AI: rejestracja", description: "Załóż konto w Bruno AI i odbierz 3 darmowe rozmowy treningowe z klientem AI. Bez karty." },
+  },
+  logowanie: {
+    en: { title: "Bruno AI: log in", description: "Log in to your Bruno AI practice panel." },
+    pl: { title: "Bruno AI: logowanie", description: "Zaloguj się do panelu treningowego Bruno AI." },
+  },
+};
+
+/** Metadane: tytuł i opis w języku, canonical na domenę języka, wersje językowe, OG. */
+export async function metadaneBruno(cel: CelStrony, searchParams?: Szukaj, robots?: Metadata["robots"]): Promise<Metadata> {
+  const { jezyk } = await stronaBruno(searchParams);
+  const { title, description } = OPISY[cel][jezyk];
+  const sciezka = SCIEZKI[jezyk][cel];
+  return {
+    metadataBase: new URL(DOMENA[jezyk]),
+    title,
+    description,
+    alternates: {
+      canonical: sciezka,
+      languages: { en: `${DOMENA.en}${SCIEZKI.en[cel]}`, pl: `${DOMENA.pl}${SCIEZKI.pl[cel]}`, "x-default": `${DOMENA.en}${SCIEZKI.en[cel]}` },
+    },
+    openGraph: {
+      title,
+      description,
+      url: sciezka,
+      siteName: "Bruno AI",
+      locale: jezyk === "pl" ? "pl_PL" : "en_US",
+      type: "website",
+      images: [{ url: "/jakub.jpg" }],
+    },
+    ...(robots ? { robots } : {}),
+  };
+}

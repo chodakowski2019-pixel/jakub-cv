@@ -6,10 +6,11 @@ import Link from "next/link";
 import AuroraShell from "./aurora-shell";
 import s from "./aurora.module.css";
 import { useEffect } from "react";
-import { useJezyk } from "./jezyk";
+import { adresStrony, useJezyk, useNaDomenie } from "./jezyk";
+import type { Jezyk } from "@/lib/bruno/domeny";
 import GooglePrzycisk from "./google-przycisk";
 
-// 9.10 (USER_001): EN domyślnie, PL z ?pl.
+// 9.10 (USER_001): EN domyślnie, PL z ?pl. 11.10: PL też na salesbruno.pl.
 const T = {
   en: {
     nieUdalo: "Wrong email or code.",
@@ -26,26 +27,24 @@ const T = {
     loguje: "Logging in...",
     brak: "No account yet?",
     rejestracja: "Sign up",
-    rejHref: "/brunorejestracja",
     bladGoogle: "Google sign-in failed. Try again or use your code.",
     wygasl: "Your free access has ended.",
   },
   pl: {
-    nieUdalo: "Nie udało się zalogować.",
+    nieUdalo: "Zły e-mail albo kod.",
     tytul: "Panel treningowy",
     podtytul: "Sprzedawaj więcej.",
     panel: "Kroki logowania do Bruno AI",
-    kroki: ["Podaj email", "Wpisz swój 6-cyfrowy kod", "Wejdź do panelu"],
+    kroki: ["Podaj e-mail", "Wpisz 6-cyfrowy kod", "Wejdź do panelu"],
     h2: "Zaloguj się",
-    lead: "Podaj adres i 6-cyfrowy kod.",
+    lead: "Podaj e-mail i 6-cyfrowy kod.",
     email: "Adres e-mail",
     emailPh: "ty@twojafirma.pl",
     kod: "Kod",
     zaloguj: "Zaloguj się",
     loguje: "Loguję...",
-    brak: "Nie masz dostępu?",
+    brak: "Nie masz jeszcze konta?",
     rejestracja: "Zarejestruj się",
-    rejHref: "/brunorejestracja?pl",
     bladGoogle: "Logowanie przez Google nie wyszło. Spróbuj ponownie albo użyj kodu.",
     wygasl: "Twój bezpłatny dostęp się skończył.",
   },
@@ -56,9 +55,10 @@ const T = {
 
 const wygladaJakEmail = (v: string) => /^\S+@\S+\.\S+$/.test(v.trim());
 
-export default function LogowanieForm({ google = false }: { google?: boolean }) {
+export default function LogowanieForm({ google = false, jezykStart, naDomenieStart }: { google?: boolean; jezykStart?: Jezyk; naDomenieStart?: boolean }) {
   const router = useRouter();
-  const jezyk = useJezyk();
+  const jezyk = useJezyk(jezykStart);
+  const naDomenie = useNaDomenie(naDomenieStart);
   const x = T[jezyk];
   // Błąd z powrotu z Google (?blad=google / ?blad=wygasl).
   useEffect(() => {
@@ -165,7 +165,7 @@ export default function LogowanieForm({ google = false }: { google?: boolean }) 
         </button>
 
         <p className={s.login}>
-          {x.brak} <Link href={x.rejHref}>{x.rejestracja}</Link>
+          {x.brak} <Link href={adresStrony(jezyk, "rejestracja", naDomenie)}>{x.rejestracja}</Link>
         </p>
       </form>
     </AuroraShell>

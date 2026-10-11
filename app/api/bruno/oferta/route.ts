@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { dostepKonta, pobierzKonto } from "@/lib/bruno/db";
+import { jezykLubDomyslny } from "@/lib/bruno/domeny";
+import { tDla, type T } from "@/lib/bruno/i18n";
+import { jezykZadania } from "@/lib/bruno/jezyk-serwer";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -33,54 +36,57 @@ function htmlDoTekstu(html: string): string {
     .trim();
 }
 
-async function tekstZeStrony(url: string): Promise<string> {
+async function tekstZeStrony(url: string, t: T): Promise<string> {
   let u: URL;
   try {
     u = new URL(url.startsWith("http") ? url : `https://${url}`);
   } catch {
-    throw new Error("That website address doesn't look right.");
+    throw new Error(t("That website address doesn't look right.", "Zły adres strony."));
   }
-  if (!/^https?:$/.test(u.protocol)) throw new Error("The address must start with https://");
+  if (!/^https?:$/.test(u.protocol)) throw new Error(t("The address must start with https://", "Adres musi zaczynać się od https://"));
   const odp = await fetch(u.toString(), {
     headers: { "User-Agent": "Mozilla/5.0 (compatible; BrunoAI/1.0; +https://jakubchodakowski.com/bruno)", Accept: "text/html,application/xhtml+xml" },
     redirect: "follow",
     signal: AbortSignal.timeout(15_000),
   });
-  if (!odp.ok) throw new Error(`The website responded with ${odp.status}.`);
+  if (!odp.ok) throw new Error(t(`The website responded with ${odp.status}.`, `Strona odpowiedziała ${odp.status}.`));
   const html = await odp.text();
   const tekst = htmlDoTekstu(html).slice(0, MAX_TEKST);
-  if (tekst.length < 200) throw new Error("This page has almost no text (it may load with a script). Upload a PDF instead.");
+  if (tekst.length < 200) throw new Error(t("This page has almost no text (it may load with a script). Upload a PDF instead.", "Na tej stronie prawie nie ma tekstu (może ładuje się skryptem). Wgraj PDF."));
   return tekst;
 }
 
 export async function POST(req: Request) {
   const email = await zalogowanyEmail();
-  if (!email) return NextResponse.json({ ok: false, blad: "Log in." }, { status: 401 });
+  if (!email) return NextResponse.json({ ok: false, blad: tDla(await jezykZadania())("Log in.", "Zaloguj się.") }, { status: 401 });
   const konto = await pobierzKonto(email);
+  // 11.10: konto PL = prompt PL (z fd7de52), propozycja pól po polsku.
+  const pl = jezykLubDomyslny(konto?.jezyk) === "pl";
+  const t = tDla(pl ? "pl" : "en");
   // 10.10: także konto free (USER_001: darmowy użytkownik konfiguruje Bruno pod siebie, z linkiem do strony).
-  if (!dostepKonta(konto).oferta) return NextResponse.json({ ok: false, blad: "Loading your offer is part of full access." }, { status: 403 });
-  if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ ok: false, blad: "The model key is missing on the server." }, { status: 500 });
+  if (!dostepKonta(konto).oferta) return NextResponse.json({ ok: false, blad: t("Loading your offer is part of full access.", "Wczytywanie oferty jest w pełnym dostępie.") }, { status: 403 });
+  if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ ok: false, blad: t("The model key is missing on the server.", "Brak klucza modelu na serwerze.") }, { status: 500 });
 
   let fd: FormData;
   try {
     fd = await req.formData();
   } catch {
-    return NextResponse.json({ ok: false, blad: "Wrong request format." }, { status: 400 });
+    return NextResponse.json({ ok: false, blad: t("Wrong request format.", "Zły format żądania.") }, { status: 400 });
   }
   const url = String(fd.get("url") ?? "").trim();
   const plik = fd.get("plik");
   const pdf = plik instanceof File && plik.size > 0 ? plik : null;
-  if (!url && !pdf) return NextResponse.json({ ok: false, blad: "Enter a website address or upload a PDF." }, { status: 400 });
-  if (pdf && pdf.size > MAX_PDF) return NextResponse.json({ ok: false, blad: "The PDF is too big (max 8 MB)." }, { status: 400 });
-  if (pdf && !/pdf/i.test(pdf.type) && !/\.pdf$/i.test(pdf.name)) return NextResponse.json({ ok: false, blad: "The file must be a PDF." }, { status: 400 });
+  if (!url && !pdf) return NextResponse.json({ ok: false, blad: t("Enter a website address or upload a PDF.", "Podaj adres strony albo PDF.") }, { status: 400 });
+  if (pdf && pdf.size > MAX_PDF) return NextResponse.json({ ok: false, blad: t("The PDF is too big (max 8 MB).", "PDF jest za duży (max 8 MB).") }, { status: 400 });
+  if (pdf && !/pdf/i.test(pdf.type) && !/\.pdf$/i.test(pdf.name)) return NextResponse.json({ ok: false, blad: t("The file must be a PDF.", "Plik musi być PDF-em.") }, { status: 400 });
 
   const zrodla: string[] = [];
   const tresc: Anthropic.Messages.ContentBlockParam[] = [];
   try {
     if (url) {
-      const t = await tekstZeStrony(url);
+      const tekstStrony = await tekstZeStrony(url, t);
       zrodla.push(new URL(url.startsWith("http") ? url : `https://${url}`).hostname);
-      tresc.push({ type: "text", text: `TEXT FROM THE WEBSITE ${url}:\n\n${t}` });
+      tresc.push({ type: "text", text: pl ? `TEKST ZE STRONY ${url}:\n\n${tekstStrony}` : `TEXT FROM THE WEBSITE ${url}:\n\n${tekstStrony}` });
     }
     if (pdf) {
       const b64 = Buffer.from(await pdf.arrayBuffer()).toString("base64");
@@ -88,11 +94,13 @@ export async function POST(req: Request) {
       tresc.push({ type: "document", source: { type: "base64", media_type: "application/pdf", data: b64 } });
     }
   } catch (e) {
-    return NextResponse.json({ ok: false, blad: e instanceof Error ? e.message : "Couldn't load the materials." }, { status: 400 });
+    return NextResponse.json({ ok: false, blad: e instanceof Error ? e.message : t("Couldn't load the materials.", "Nie udało się pobrać materiałów.") }, { status: 400 });
   }
   tresc.push({
     type: "text",
-    text: "Using the company materials above, fill in the setup fields for a sales training tool. Write in plain American English, be specific, no marketing adjectives. Copy numbers and prices exactly if they are there. If something is not in the materials, keep that field short and don't make anything up.",
+    text: pl
+      ? "Z powyższych materiałów firmy wypełnij pola konfiguracji trenażera sprzedaży. Pisz po polsku, konkretnie, bez marketingowych przymiotników. Liczby i ceny przepisuj dokładnie, jeśli są. Jeśli czegoś nie ma w materiałach, zostaw pole krótkie i nie zmyślaj."
+      : "Using the company materials above, fill in the setup fields for a sales training tool. Write in plain American English, be specific, no marketing adjectives. Copy numbers and prices exactly if they are there. If something is not in the materials, keep that field short and don't make anything up.",
   });
 
   try {
@@ -100,8 +108,9 @@ export async function POST(req: Request) {
     const odp = await klient.messages.create({
       model: process.env.BRUNO_TRENER_MODEL ?? "claude-sonnet-5",
       max_tokens: 1500,
-      system:
-        "You are an assistant that turns company materials (website, PDF offer) into input for an AI that plays the CUSTOMER in sales training. We need FACTS about the offer (product, prices, terms, what the customer gets), a profile of the typical customer (who buys, what they fear, who makes the decision), and the objections this customer really raises, each with one sentence explaining what they mean. Collect the sales points separately as bullet points for a script. Write in plain American English.",
+      system: pl
+        ? "Jesteś asystentem, który z materiałów firmy (strona, oferta PDF) przygotowuje wsad dla AI grającego KLIENTA w treningu sprzedaży. Potrzebne są FAKTY o ofercie (produkt, ceny, warunki, co klient dostaje), portret typowego klienta (kto kupuje, czego się boi, kto decyduje) i obiekcje, jakie taki klient realnie podnosi, każda z jednym zdaniem wyjaśnienia, co ma na myśli. Argumenty handlowe zbierz osobno jako punkty do skryptu. Pisz po polsku."
+        : "You are an assistant that turns company materials (website, PDF offer) into input for an AI that plays the CUSTOMER in sales training. We need FACTS about the offer (product, prices, terms, what the customer gets), a profile of the typical customer (who buys, what they fear, who makes the decision), and the objections this customer really raises, each with one sentence explaining what they mean. Collect the sales points separately as bullet points for a script. Write in plain American English.",
       messages: [{ role: "user", content: tresc }],
       tools: [
         {
@@ -122,7 +131,7 @@ export async function POST(req: Request) {
       tool_choice: { type: "tool", name: "konfiguracja_bruno" },
     });
     const blok = odp.content.find((c) => c.type === "tool_use");
-    if (!blok || blok.type !== "tool_use") throw new Error("The model didn't return a suggestion.");
+    if (!blok || blok.type !== "tool_use") throw new Error(t("The model didn't return a suggestion.", "Model nie zwrócił propozycji."));
     const r = blok.input as { produkt?: string; klient?: string; obiekcje?: { obiekcja: string; wyjasnienie?: string }[]; argumenty?: string[] };
     const obiekcje = (r.obiekcje ?? [])
       .filter((o) => o && typeof o.obiekcja === "string" && o.obiekcja.trim().length >= 3)
@@ -136,12 +145,12 @@ export async function POST(req: Request) {
         produkt: String(r.produkt ?? "").slice(0, 1500),
         klient: String(r.klient ?? "").slice(0, 2000),
         obiekcje: obiekcje.slice(0, 3000),
-        skrypt: skrypt ? `Points from your offer:\n${skrypt}`.slice(0, 4000) : "",
+        skrypt: skrypt ? `${t("Points from your offer:", "Argumenty z oferty:")}\n${skrypt}`.slice(0, 4000) : "",
         zrodlo: zrodla.join(", "),
       },
     });
   } catch (e) {
     console.error("[bruno oferta]", e);
-    return NextResponse.json({ ok: false, blad: "Couldn't read your offer. Try a different file or address." }, { status: 502 });
+    return NextResponse.json({ ok: false, blad: t("Couldn't read your offer. Try a different file or address.", "Nie udało się odczytać oferty. Spróbuj z innym plikiem albo adresem.") }, { status: 502 });
   }
 }

@@ -1,7 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Feedback, Konfig, Kryterium, Wypowiedz, ZamkniecieTechniki } from "./db";
 import { listaObiekcji } from "./db";
-import type { Metryki } from "./metryki";
+import type { Jezyk } from "./domeny";
+import { etykiety } from "./etykiety";
+import { plecZTranskrypcji, type Metryki } from "./metryki";
 import { POSTACIE, POZIOMY, TRYBY, poziomLubDomyslny, type PostacId, type PoziomId, type TrybId } from "./postacie";
 import { NAZWY, WAGI } from "./kryteria";
 
@@ -71,14 +73,76 @@ const SCHEMAT = `Reply ONLY with JSON (no markdown) shaped like this:
 obiekcje_ocena scale: 1 = the rep lost it, 2 = weak, 3 = good, 4 = textbook. Include only objections from the company's list that actually came up.
 FORMAT: it must be valid JSON. Inside strings do NOT use the plain double quote " or newlines; write quotes with ' or “ ”. No text before or after the JSON.`;
 
+// 11.10 (USER_001): Bruno w dwóch językach. Dla kont PL rubryka i schemat po polsku (z fd7de52, 1:1),
+// techniki zamykania przetłumaczone z EN. Klucze JSON i schemat narzędzia te same.
+const RUBRYKA_PL = `
+Oceniasz treningową rozmowę sprzedażową po polsku. Handlowiec ćwiczy, AI grało klienta. Oceniasz WYŁĄCZNIE handlowca.
+
+KRYTERIA (każde 1-10):
+1. OTWARCIE (pierwsze 90 s): cel rozmowy w ≤30 s; ≤6 zdań przed pierwszym pytaniem; kontrakt wstępny (cel, czas, wynik); zero „przepraszam, że przeszkadzam”, „tylko”, „nie zajmę dużo”; zero „nasza firma”, „oferujemy”, nazwy produktu przed pierwszym pytaniem klienta; plus za tezę lub liczbę z rynku.
+2. PYTANIA: udział słów handlowca <50 % (dobrze), >60 % (źle); ≥5 pytań otwartych („jak”, „co”, „ile”, „kiedy”) przed prezentacją; SPIN: pytania o problem (P), jego skutki (I) i o to, czego klient chce (N) ważniejsze niż pytania o sytuację (S); brak pytania implikacyjnego = max 5; pytanie o koszt problemu; pytanie o budżet i decydenta; lustro (powtórzenie 1-3 słów klienta); handlowiec NIE odpowiada sam na swoje pytania; podsumowanie „powiedział Pan, że…”.
+3. OBIEKCJE (po „za drogo”, „muszę pomyśleć”, „nie teraz”, „mamy już”): następna wypowiedź = etykieta („wygląda na to”), lustro albo pytanie („w porównaniu do czego?”, „co nie gra?”) = dobrze; argument, obrona, rabat od razu = źle; rabat bez niczego w zamian = źle; nowa informacja + ponowna prośba o decyzję (pętla) = dobrze; dowód z nazwą firmy i liczbą = dobrze, „wielu klientów jest zadowolonych” = źle; poddanie się po pierwszym „przemyślę” = źle; cena przed pytaniem o ból = czerwona flaga.
+4. ZAMKNIĘCIE (ostatnie 20 %). PROŚBA O DECYZJĘ to KAŻDA z tych form: (a) pytanie o decyzję wprost („podpisujemy?”, „wchodzimy w to?”), (b) NASTĘPNY KROK Z DATĄ zaproponowany przez handlowca („kiedy możemy podpisać pełnomocnictwo u notariusza?”, „mogę panią umówić na poniedziałek”, „spotkajmy się we wtorek o 10”), (c) pytanie o termin do wyboru („przed południem czy po?”). W sprzedaży wieloetapowej (b) JEST zamknięciem i NIE wolno pisać „brak prośby o decyzję”, gdy padło. 1-2 prośby = dobrze, 0 albo ≥3 = źle; postęp = data + osoba + działanie klienta; kontynuacja bez daty („odezwę się”, „prześlę ofertę”, „proszę pomyśleć”) = źle; kwota wprost = dobrze; cena z „tylko”, „jedynie”, „niestety” = źle; klient sam wypowiada datę/krok = dobrze; pytanie „co może stanąć na drodze” = plus; limit tylko z prawdziwym powodem; po kwocie cisza, klient odzywa się pierwszy (handlowiec dopowiada >15 słów = usprawiedliwianie).
+   TECHNIKI ZAMYKANIA: wypełnij zamkniecie_techniki (każda technika osobno; ocena ZAMKNIĘCIA liczy się z nich automatycznie, Twoja liczba dla „zamkniecie” jest tylko orientacyjna):
+   - proba_zamkniecia: próbne zamknięcie przed prośbą („jak to brzmi?”, „co pan o tym myśli?”, „czy to ma dla pana sens?”).
+   - pytanie_o_decyzje: pytanie o decyzję wprost („podpisujemy?”, „wchodzimy w to?”, „zaczynamy?”).
+   - nastepny_krok_z_data: handlowiec zaproponował konkretny następny krok z datą albo terminy do wyboru.
+   - musze_pomyslec: jak handlowiec obsłużył unik („muszę pomyśleć”, „prześlę szefowi”, „zapytam wspólnika”, „wróćmy do tego w przyszłym kwartale”, „porównam”): nie_padlo (klient nie robił uniku), poddal_sie („rozumiem, to się odezwę”), czekal (nic nie zrobił, zmienił temat), pytanie („co konkretnie chce pan przemyśleć?”, „czego brakuje do decyzji?”), warunek („jeśli X, to podpisujemy?”).
+   - drugie_zamkniecie: po obiekcji przy zamknięciu padła DRUGA prośba o decyzję (bylo), nie padła (brak), przy zamknięciu nie było obiekcji (nie_dotyczy).
+   - sygnal_kupna: klient dał sygnał („co mam zrobić, żeby ruszyć?”, „to daje mi lepszy obraz”, „brzmi ciekawie”): wykorzystany (handlowiec od razu poprosił o decyzję albo krok), zmarnowany (mówił dalej), nie_bylo.
+   Każda brakująca technika idzie do MINUSÓW jako osobny punkt, słowami handlowca do powtórzenia następnym razem (np. „Brak prośby o decyzję: po liczbach zapytaj «to co, wchodzimy w to?»”).
+5. PEWNOŚĆ SIEBIE (głos, z liczb): wypełniacze/min 0-2 dobrze, 3-5 średnio, >5 źle; osłabiacze na 100 słów ≤1 dobrze, >3 źle; „przepraszam”/„niestety” >2 = źle; zmiana_tempa_proc to zmiana tempa ostatniej minuty względem pierwszej (plus = przyspieszył, minus = zwolnił): ≤ -15 = siadanie po odmowie, ≥ +15 przy cenie = nerwy; w komentarzu pisz po ludzku „przyspieszyłeś o X %” albo „zwolniłeś o X %”. Jeśli zmiana_tempa_proc = null, NIE pisz nic o tempie ani o nerwach z tempa (za mało słów handlowca w oknie, tempo nieznane). Przerywanie klienta; zdania >25 słów; energia rosnąca przy „nie” klienta = źle. To jest kryterium główne wg Mazura: handlowiec ma twierdzić, nie sugerować.
+
+REGUŁY TWARDE (zastosuj i wypisz, które zadziałały):
+- brak prośby o decyzję (żadna z form a/b/c) → ocena ogólna max 5
+- prezentacja lub cena przed pytaniem o ból → ocena ogólna minus 3. WYJĄTEK: gdy kwota_na_prosbe_klienta = true (klient sam zapytał o liczbę), odpowiedź kwotą NIE jest karana; oceń tylko, czy po liczbie handlowiec zadał pytanie, zamiast dalej tłumaczyć
+- ocena ogólna nie wyższa niż pewność siebie + 2
+- rozmowa „miła”, bez tezy, liczby i następnego kroku → max 5
+- klient powiedział „nie myślałem o tym w ten sposób” → +1
+- fałszywa technika (limit bez powodu, „klient” bez nazwy) → minus 2 za każdą
+
+ZASADY FEEDBACKU:
+- Oceniasz czyny i liczby, nigdy osobę: „zrobiłeś X”, nie „jesteś Y”. Zero moralizowania. Zero ogólników.
+- Do każdego kryterium 1 cytat DOSŁOWNY z transkrypcji (może być fragment) + znacznik czasu z transkrypcji.
+- Jedna liczba z audio (z metryk), jedna wygrana (co poszło dobrze, konkretnie), jedna poprawka (co zrobić inaczej w NASTĘPNEJ rozmowie, jedno zdanie, wykonalne).
+- Komentarz do kryterium: max 2 zdania, po polsku, prosto, per „ty”.
+- Jeśli rozmowa była za krótka (poniżej 60 s) albo handlowiec prawie nic nie powiedział, oceń nisko i powiedz to wprost.
+`;
+
+const SCHEMAT_PL = `Odpowiedz WYŁĄCZNIE JSON-em (bez markdownu) o kształcie:
+{
+  "kryteria": [
+    {"nazwa":"otwarcie","ocena":1-10,"cytat":"...","czas":"m:ss","komentarz":"..."},
+    {"nazwa":"pytania", ...},
+    {"nazwa":"obiekcje", ...},
+    {"nazwa":"zamkniecie", ...},
+    {"nazwa":"pewnosc", ...}
+  ],
+  "liczba_z_audio": "np. 7 wypełniaczy na minutę",
+  "wygrana": "...",
+  "poprawka": "...",
+  "plusy": ["2-4 krótkie punkty (max 12 słów każdy): co konkretnie zagrało, z cytatem albo liczbą"],
+  "minusy": ["2-4 krótkie punkty (max 12 słów każdy): co konkretnie nie zagrało"],
+  "reguly": ["nazwy reguł twardych, które zadziałały, albo pusta lista"],
+  "bonus": 0 lub 1,
+  "kary": liczba całkowita ≥ 0 (suma punktów do odjęcia z reguł: 3 za cenę przed bólem, 2 za każdą fałszywą technikę),
+  "brak_prosby_o_decyzje": true/false,
+  "mila_bez_tresci": true/false,
+  "obiekcje_ocena": [{"obiekcja":"tekst obiekcji z listy firmy, która padła","ocena":1-4}],
+  "zamkniecie_techniki": {"proba_zamkniecia":true/false,"pytanie_o_decyzje":true/false,"nastepny_krok_z_data":true/false,"musze_pomyslec":"nie_padlo|poddal_sie|czekal|pytanie|warunek","drugie_zamkniecie":"nie_dotyczy|brak|bylo","sygnal_kupna":"nie_bylo|wykorzystany|zmarnowany"}
+}
+Skala obiekcje_ocena: 1 = handlowiec poległ, 2 = słabo, 3 = dobrze, 4 = wzorowo. Uwzględnij tylko obiekcje z listy firmy, które realnie padły.
+FORMAT: to musi być poprawny JSON. Wewnątrz tekstów NIE używaj prostego cudzysłowu " ani znaków nowej linii; cytaty zapisuj w „ ” albo w apostrofach. Żadnego tekstu przed ani po JSON-ie.`;
+
 function formatCzas(s: number) {
   const m = Math.floor(s / 60);
   const r = Math.floor(s % 60);
   return `${m}:${String(r).padStart(2, "0")}`;
 }
 
-export function transkrypcjaDoTekstu(tr: Wypowiedz[]): string {
-  return tr.map((w) => `[${formatCzas(w.t)}] ${w.rola === "handlowiec" ? "REP" : "CUSTOMER"}: ${w.tekst}`).join("\n");
+export function transkrypcjaDoTekstu(tr: Wypowiedz[], jezyk: Jezyk = "en"): string {
+  const [h, k] = jezyk === "pl" ? ["HANDLOWIEC", "KLIENT"] : ["REP", "CUSTOMER"];
+  return tr.map((w) => `[${formatCzas(w.t)}] ${w.rola === "handlowiec" ? h : k}: ${w.tekst}`).join("\n");
 }
 
 /** Poniżej tej oceny kara z reguł już nie spycha: słaba rozmowa ma niskie kryteria i bez kary. */
@@ -93,24 +157,26 @@ const PODLOGA_KARY = 3;
 export function policzOcene(
   kryteria: Kryterium[],
   reguly: { bonus?: number; kary?: number; brak_prosby_o_decyzje?: boolean; mila_bez_tresci?: boolean },
+  jezyk: Jezyk = "en",
 ): { ocena: number; reguly: string[] } {
+  const pl = jezyk === "pl";
   const z = (n: Kryterium["nazwa"]) => Math.min(10, Math.max(1, Number(kryteria.find((k) => k.nazwa === n)?.ocena ?? 1)));
   let baza = 0;
   for (const n of Object.keys(WAGI) as Kryterium["nazwa"][]) baza += z(n) * WAGI[n];
   const uzyte: string[] = [];
   if (reguly.bonus) {
     baza += 1;
-    uzyte.push("reframe: +1");
+    uzyte.push(pl ? "przeramowanie: +1" : "reframe: +1");
   }
 
   // Kandydaci: każda reguła osobno liczy, ile zostaje z bazy. Wygrywa najniższy wynik.
   const kandydaci: { wynik: number; opis: string }[] = [];
   const kary = Math.max(0, Math.min(6, Number(reguly.kary ?? 0)));
-  if (kary && baza > PODLOGA_KARY) kandydaci.push({ wynik: Math.max(PODLOGA_KARY, baza - kary), opis: `rule penalty: -${kary} (not below ${PODLOGA_KARY})` });
-  if (reguly.brak_prosby_o_decyzje && baza > 5) kandydaci.push({ wynik: 5, opis: "no ask for a decision: max 5" });
-  if (reguly.mila_bez_tresci && baza > 5) kandydaci.push({ wynik: 5, opis: "nice but empty: max 5" });
+  if (kary && baza > PODLOGA_KARY) kandydaci.push({ wynik: Math.max(PODLOGA_KARY, baza - kary), opis: pl ? `kara z reguł: -${kary} (nie poniżej ${PODLOGA_KARY})` : `rule penalty: -${kary} (not below ${PODLOGA_KARY})` });
+  if (reguly.brak_prosby_o_decyzje && baza > 5) kandydaci.push({ wynik: 5, opis: pl ? "brak prośby o decyzję: max 5" : "no ask for a decision: max 5" });
+  if (reguly.mila_bez_tresci && baza > 5) kandydaci.push({ wynik: 5, opis: pl ? "miło bez treści: max 5" : "nice but empty: max 5" });
   const sufit = z("pewnosc") + 2;
-  if (baza > sufit) kandydaci.push({ wynik: sufit, opis: "no higher than confidence + 2" });
+  if (baza > sufit) kandydaci.push({ wynik: sufit, opis: pl ? "nie wyżej niż pewność siebie + 2" : "no higher than confidence + 2" });
 
   let ocena = baza;
   if (kandydaci.length) {
@@ -229,14 +295,17 @@ export async function ocenRozmowe(args: {
   ucieta_limitem?: boolean;
   /** 9.10: „Rozmowa, którą masz jutro" (moduł płatny). */
   sytuacja?: string | null;
+  /** 11.10: język rozmowy i feedbacku. Brak = "en". */
+  jezyk?: Jezyk;
 }): Promise<Feedback> {
   const { transkrypcja, metryki, konfig, postac, tryb, cel, obiekcja } = args;
-  // 10.10: po angielsku trener pisze „you", płeć nie jest potrzebna (plecZTranskrypcji / czyKobieta zostają nieużywane).
+  const pl = args.jezyk === "pl";
+  // 10.10: po angielsku trener pisze „you", płeć nie jest potrzebna. 11.10: dla PL wraca logika z fd7de52.
   const poziom = poziomLubDomyslny(typeof args.poziom === "string" ? args.poziom : null);
   const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const model = process.env.BRUNO_TRENER_MODEL ?? "claude-sonnet-5";
 
-  const kontekst = [
+  const kontekst = pl ? kontekstPL(args, poziom) : [
     // 6.10: limit 3 min ucinał rozmowę tuż po sygnale kupna klienta, a trener karał za „urwanie" rozmowy.
     args.ucieta_limitem &&
       "THE APP'S TIME LIMIT ENDED THIS CALL (3 min + 45 s overtime to close). Don't penalize the rep for not answering the customer's LAST line or for the call 'cutting off': the app did that. No ask for a decision in the whole call is still the rep's fault, because during overtime they saw 'Overtime: close' on screen. If the customer gave a buying signal and the rep didn't use it, write that in MINUSES and in the FIX suggest how to close earlier.",
@@ -269,7 +338,9 @@ export async function ocenRozmowe(args: {
     .filter(Boolean)
     .join("\n\n");
 
-  const tresc = `${kontekst}\n\nMETRICS (computed from the transcript, trust them):\n${JSON.stringify(metryki, null, 0)}\n\nTRANSCRIPT:\n${transkrypcjaDoTekstu(transkrypcja)}\n\n${SCHEMAT}`;
+  const tresc = pl
+    ? `${kontekst}\n\nMETRYKI (policzone z transkrypcji, ufaj im):\n${JSON.stringify(metryki, null, 0)}\n\nTRANSKRYPCJA:\n${transkrypcjaDoTekstu(transkrypcja, "pl")}\n\n${SCHEMAT_PL}`
+    : `${kontekst}\n\nMETRICS (computed from the transcript, trust them):\n${JSON.stringify(metryki, null, 0)}\n\nTRANSCRIPT:\n${transkrypcjaDoTekstu(transkrypcja)}\n\n${SCHEMAT}`;
 
   // Wymuszony format (2.10): odpowiedź jako wywołanie narzędzia ze schematem.
   // API oddaje gotowy obiekt, więc znika cała klasa błędów „niepoprawny JSON"
@@ -277,7 +348,7 @@ export async function ocenRozmowe(args: {
   const odp = await klient.messages.create({
     model,
     max_tokens: 3000,
-    system: RUBRYKA,
+    system: pl ? RUBRYKA_PL : RUBRYKA,
     messages: [{ role: "user", content: tresc }],
     tools: [
       {
@@ -379,25 +450,31 @@ export async function ocenRozmowe(args: {
   const brakProsby = prosbaWgMetryk ? false : (raw.brak_prosby_o_decyzje ?? metryki.prosby_o_decyzje === 0);
   // Kwota na prośbę klienta: kara „cena przed bólem" (3 pkt) nie obowiązuje.
   const kary = metryki.kwota_na_prosbe_klienta ? Math.max(0, Number(raw.kary ?? 0) - 3) : raw.kary;
-  const { ocena, reguly } = policzOcene(kryteria, {
-    bonus: raw.bonus,
-    kary,
-    brak_prosby_o_decyzje: brakProsby,
-    mila_bez_tresci: raw.mila_bez_tresci,
-  });
+  const { ocena, reguly } = policzOcene(
+    kryteria,
+    {
+      bonus: raw.bonus,
+      kary,
+      brak_prosby_o_decyzje: brakProsby,
+      mila_bez_tresci: raw.mila_bez_tresci,
+    },
+    pl ? "pl" : "en",
+  );
   // Lista reguł = to, co naprawdę zadziałało w policzOcene. Z listy modelu zostają tylko powody kary
   // (cena przed bólem, fałszywa technika), i tylko wtedy, gdy kara faktycznie obniżyła ocenę.
-  const karaZadzialala = reguly.some((r) => r.startsWith("rule penalty"));
-  const powodyKary = karaZadzialala
-    ? (raw.reguly ?? []).map(String).filter((r) => /minus|price|pitch|fake|technique|scarcity/i.test(r) && !/max 5|confidence/i.test(r))
-    : [];
+  const karaZadzialala = reguly.some((r) => r.startsWith(pl ? "kara z reguł" : "rule penalty"));
+  const powodyKary = !karaZadzialala
+    ? []
+    : pl
+      ? (raw.reguly ?? []).map(String).filter((r) => /minus|cen[aęy]|prezentac|fałszyw|technik|limit bez/i.test(r) && !/max 5|pewno/i.test(r))
+      : (raw.reguly ?? []).map(String).filter((r) => /minus|price|pitch|fake|technique|scarcity/i.test(r) && !/max 5|confidence/i.test(r));
   const najslabsze = [...kryteria].sort((a, b) => a.ocena - b.ocena)[0].nazwa;
 
   return {
     ocena,
     kryteria,
     zamkniecie_techniki: techniki,
-    liczba_z_audio: String(raw.liczba_z_audio ?? `${metryki.wypelniacze_na_min} fillers per minute`).slice(0, 200),
+    liczba_z_audio: String(raw.liczba_z_audio ?? (pl ? `${metryki.wypelniacze_na_min} wypełniaczy na minutę` : `${metryki.wypelniacze_na_min} fillers per minute`)).slice(0, 200),
     wygrana: String(raw.wygrana ?? "").slice(0, 400),
     poprawka: String(raw.poprawka ?? "").slice(0, 400),
     najslabsze,
@@ -408,4 +485,48 @@ export async function ocenRozmowe(args: {
     plusy: (raw.plusy ?? []).filter((p) => typeof p === "string" && p.trim()).map((p) => p.trim().slice(0, 160)).slice(0, 5),
     minusy: (raw.minusy ?? []).filter((m) => typeof m === "string" && m.trim()).map((m) => m.trim().slice(0, 160)).slice(0, 5),
   };
+}
+
+/** 11.10: kontekst oceny PO POLSKU (z fd7de52, 1:1; płeć handlowca z transkrypcji albo imienia). */
+function kontekstPL(args: Parameters<typeof ocenRozmowe>[0], poziom: PoziomId): string {
+  const { transkrypcja, metryki, konfig, postac, tryb, cel, obiekcja } = args;
+  const E = etykiety("pl");
+  // Płeć: najpierw z własnych słów handlowca w transkrypcji, potem z imienia.
+  const kobieta = plecZTranskrypcji(transkrypcja, "pl") ?? czyKobieta(args.imie);
+  return [
+    // 6.10: ta sama osoba dostawała raz „podałaś", raz „podałeś".
+    kobieta === true && `HANDLOWIEC TO KOBIETA${args.imie ? ` (${args.imie})` : ""}. Wszystkie teksty pisz w rodzaju żeńskim: „zrobiłaś”, „podałaś”, „zapytałaś”.`,
+    kobieta === false && `HANDLOWIEC TO MĘŻCZYZNA${args.imie ? ` (${args.imie})` : ""}. Wszystkie teksty pisz w rodzaju męskim: „zrobiłeś”, „podałeś”, „zapytałeś”.`,
+    kobieta === null && "PŁEĆ HANDLOWCA NIEZNANA. Unikaj form z końcówką rodzajową: zamiast „zrobiłeś” pisz „tu zabrakło…”, „następnym razem zapytaj…”, „dobrze, że padła liczba”.",
+    // 6.10: limit 3 min ucinał rozmowę tuż po sygnale kupna klienta, a trener karał za „urwanie" rozmowy.
+    args.ucieta_limitem &&
+      "ROZMOWĘ ZAKOŃCZYŁ LIMIT CZASU APLIKACJI (3 min + 45 s dogrywki na domknięcie). Nie karz za to, że handlowiec nie odpowiedział na OSTATNIĄ wypowiedź klienta, ani za to, że rozmowa „urywa się”: to zrobiła aplikacja. Brak prośby o decyzję w całej rozmowie nadal jest błędem handlowca, bo w dogrywce widział na ekranie „Dogrywka: domknij”. Jeśli klient dał sygnał kupna, a handlowiec go nie wykorzystał, napisz to w MINUSACH i w POPRAWCE podpowiedz, jak domknąć wcześniej.",
+    `TYP KLIENTA (DISC): ${E.POSTACIE[postac].nazwa}, ${E.POSTACIE[postac].krotko}: ${E.POSTACIE[postac].opis}`,
+    tryb && `TRYB ROZMOWY: ${E.TRYBY[tryb].nazwa}. ${tryb === "cold" ? "Klient nie znał oferty, otwarcie oceniaj w pełni." : "Klient znał ofertę i sam zaczął od obiekcji, więc OTWARCIE oceniaj łagodniej (liczy się reakcja na pierwszą obiekcję), a OBIEKCJE i ZAMKNIĘCIE surowiej."}`,
+    cel && `CEL HANDLOWCA: ${cel}. W ZAMKNIĘCIU oceń wprost, czy ten cel został osiągnięty albo czy handlowiec o niego poprosił.`,
+    // Poziom to kontekst, nie taryfa: rubryka jest ta sama, inaczej oceny z dwóch poziomów nie dałyby się porównać.
+    `POZIOM TRUDNOŚCI KLIENTA: ${E.POZIOMY[poziom].nazwa} (${E.POZIOMY[poziom].krotko}). ${
+      poziom === "trudny"
+        ? "Klient miał wracać do obiekcji dwa razy i dociskać cenę. Jeśli handlowiec to wytrzymał, napisz to w PLUSACH."
+        : poziom === "latwy"
+          ? "Klient był życzliwy i odpuszczał szybko, więc wynik nie dowodzi jeszcze, że handlowiec zbije obiekcję u trudnego klienta. Jeśli rozmowa poszła gładko, w NASTĘPNYM RAZEM zaproponuj powtórkę tego samego scenariusza na wyższym poziomie."
+          : "Zachowanie klienta było typowe."
+    } OCENY NIE ZMIENIAJ ZE WZGLĘDU NA POZIOM: rubryka i skala 1-10 są te same na każdym poziomie.`,
+    obiekcja &&
+      (obiekcja.includes(" · ")
+        ? `OBIEKCJE DO PRZETRENOWANIA (klient miał podnieść każdą): ${obiekcja
+            .split(" · ")
+            .map((o) => `„${o.trim()}”`)
+            .join(", ")}. Oceń zbicie każdej z nich w pierwszej kolejności i wpisz je do obiekcje_ocena.`
+        : `OBIEKCJA DO PRZETRENOWANIA: „${obiekcja}”. Oceń jej zbicie w pierwszej kolejności i wpisz ją do obiekcje_ocena.`),
+    args.sytuacja?.trim() && `SYTUACJA TEJ ROZMOWY (wklejona przez handlowca, prawdziwa): ${args.sytuacja.trim()}. Oceń, czy handlowiec poradził sobie z TĄ sytuacją.`,
+    metryki.nastepny_krok_z_data && "METRYKI WYKRYŁY NASTĘPNY KROK Z DATĄ w końcówce: to jest prośba o decyzję w formie (b). Nie pisz „brak prośby o decyzję”.",
+    metryki.kwota_na_prosbe_klienta && "KWOTA PADŁA NA PROŚBĘ KLIENTA (sam zapytał o liczbę): nie karz za „cenę przed bólem”.",
+    konfig.produkt && `PRODUKT HANDLOWCA: ${konfig.produkt}`,
+    konfig.klient && `KLIENT WG FIRMY: ${konfig.klient}`,
+    konfig.udana_rozmowa && `UDANA ROZMOWA WG FIRMY: ${konfig.udana_rozmowa}`,
+    listaObiekcji(konfig.obiekcje).length && `LISTA OBIEKCJI FIRMY:\n- ${listaObiekcji(konfig.obiekcje).join("\n- ")}`,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
 }

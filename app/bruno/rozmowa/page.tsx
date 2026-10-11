@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { DOGRYWKA_SEKUND, ROZMOWA_SEKUND, dostepKonta, limitDzienny, listaObiekcji, pelnyDostep, pobierzKonfig, pobierzKonto, rozmowyDzis, stanDostepu, stanFree, zuzyteSekundy, type Karta } from "@/lib/bruno/db";
-import { NAZWY } from "@/lib/bruno/kryteria";
+import { etykiety } from "@/lib/bruno/etykiety";
+import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { postacLubDomyslna } from "@/lib/bruno/postacie";
 import Rozmowa from "@/components/bruno/rozmowa";
 
@@ -22,6 +23,8 @@ export default async function BrunoRozmowaPage({ searchParams }: { searchParams:
     karta = (data as Karta | null) ?? null;
   }
   const [konfig, dzis, zuzyte] = await Promise.all([pobierzKonfig(email), rozmowyDzis(email), zuzyteSekundy(email)]);
+  const { jezyk } = await tSerwer();
+  const { NAZWY } = etykiety(jezyk);
   const minutZostalo = Math.max(0, Math.floor((konto.limit_sekund - zuzyte) / 60));
 
   return (

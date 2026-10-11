@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pelnyDostep, pobierzKonfig, pobierzKonto, pobierzRozmowy, stanDostepu, type Karta } from "@/lib/bruno/db";
-import { NAZWY } from "@/lib/bruno/kryteria";
+import { etykiety } from "@/lib/bruno/etykiety";
+import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { obiekcjeZWyjasnieniem } from "@/lib/bruno/obiekcje";
 import { cytatDnia } from "@/lib/bruno/cytaty";
 import Ogien from "@/components/bruno/ogien";
@@ -23,6 +24,7 @@ export default async function BrunoOgienPage() {
   if (!pelnyDostep(konto)) redirect("/bruno/panel");
 
   const [konfig, rozmowy] = await Promise.all([pobierzKonfig(email), pobierzRozmowy(email, 5)]);
+  const { NAZWY } = etykiety((await tSerwer()).jezyk);
   const ostatnia = rozmowy.find((r) => r.status === "zakonczona" && r.feedback) ?? null;
   const { data: kartyRaw } = await supabaseAdmin
     .from("bruno_karty")

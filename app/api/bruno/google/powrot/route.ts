@@ -7,6 +7,7 @@ import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import { CIASTECZKO_GOOGLE, adresPowrotu, daneZGoogle } from "@/lib/bruno/google";
 import { zalozKontoFree } from "@/lib/bruno/konto-free";
 import { zapiszWejscie } from "@/lib/bruno/wejscia";
+import { jezykDomeny } from "@/lib/bruno/db";
 
 export const dynamic = "force-dynamic";
 
@@ -39,9 +40,9 @@ export async function GET(req: Request) {
 
   await supabaseAdmin
     .from("bruno_konta")
-    .update({ nieudane: 0, blokada_do: null, ...(konto.start_dostepu ? {} : { start_dostepu: new Date().toISOString() }) })
+    .update({ nieudane: 0, blokada_do: null, ...(konto.start_dostepu ? {} : { start_dostepu: new Date().toISOString() }), ...((await jezykDomeny()) ? { jezyk: await jezykDomeny() } : {}) })
     .eq("email", dane.email);
-  await zapewnijKarty(dane.email, await pobierzKonfig(dane.email));
+  await zapewnijKarty(dane.email, await pobierzKonfig(dane.email), konto.jezyk === "pl" ? "pl" : "en");
   await zapiszWejscie({ email: dane.email, rodzaj: "logowanie", zrodlo: "google", agent: req.headers.get("user-agent") });
 
   c.set(CIASTECZKO, nowyToken(dane.email), {

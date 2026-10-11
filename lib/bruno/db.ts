@@ -1,6 +1,8 @@
+import { headers } from "next/headers";
 import { supabaseAdmin } from "@/lib/supabase";
+import { jezykZHosta } from "./domeny";
 import { listaObiekcji } from "./obiekcje";
-import { WIEDZA } from "./wiedza";
+import { WIEDZA, WIEDZA_PL } from "./wiedza";
 
 export { listaObiekcji };
 
@@ -57,6 +59,8 @@ export type Konto = {
    */
   plan?: "trial" | "pelny" | "free" | string | null;
   /** 10.10 (Stripe, Bruno Pro): klient i subskrypcja w Stripe, koniec opłaconego okresu. */
+  /** 11.10: język konta (salesbruno.com = en, salesbruno.pl = pl). Steruje panelem, Bruno, mailami i domeną w linkach. */
+  jezyk?: "en" | "pl" | string | null;
   stripe_customer_id?: string | null;
   stripe_subscription_id?: string | null;
   pro_do?: string | null;
@@ -218,7 +222,21 @@ export type Karta = {
 
 export async function pobierzKonto(email: string): Promise<Konto | null> {
   const { data } = await supabaseAdmin.from("bruno_konta").select("*").eq("email", email).maybeSingle();
-  return (data as Konto | null) ?? null;
+  const konto = (data as Konto | null) ?? null;
+  // 11.10 (USER_001: „na salesbruno.pl wszystko po polsku, na salesbruno.com wszystko po angielsku”):
+  // na domenie Bruno język = domena, niezależnie od zapisu na koncie. Jedno miejsce dla panelu, Bruno,
+  // trenera, fiszek i API. Poza zapytaniem (cron z innego hosta, skrypty) zostaje język z konta.
+  const zDomeny = await jezykDomeny();
+  return konto && zDomeny ? { ...konto, jezyk: zDomeny } : konto;
+}
+
+/** Język domeny Bruno z bieżącego zapytania (salesbruno.pl / .com) albo null (inny host, brak zapytania). */
+export async function jezykDomeny(): Promise<"en" | "pl" | null> {
+  try {
+    return jezykZHosta((await headers()).get("host"));
+  } catch {
+    return null;
+  }
 }
 
 export type StanDostepu = { aktywny: boolean; koniec: Date | null; dniZostalo: number; powod?: string };
@@ -334,10 +352,13 @@ export async function pobierzRozmowe(email: string, id: string): Promise<Rozmowa
  * 10.10 (wariant A, tylko EN): karty wiedzy spoza obecnej talii (stare polskie tytuły) są ukryte,
  * nie kasowane (USER_001: nic nie usuwamy bez „tak”). Nowe EN dokłada zapewnijKarty.
  */
-const TALIA_WIEDZY = new Set(WIEDZA.map((w) => w.tresc));
-const aktualna = (k: Karta) => k.typ !== "wiedza" || TALIA_WIEDZY.has(k.tresc);
+// 11.10: Bruno w dwóch językach. Przepuszczamy karty z OBU talii (EN i PL).
+const TALIA_EN = new Set(WIEDZA.map((w) => w.tresc));
+const TALIA_PL = new Set(WIEDZA_PL.map((w) => w.tresc));
+/** 11.10: karta wiedzy pokazuje się tylko z talii języka konta (konto EN nie widzi polskich i odwrotnie). */
+const aktualna = (jezyk?: string | null) => (k: Karta) => k.typ !== "wiedza" || (jezyk === "pl" ? TALIA_PL : TALIA_EN).has(k.tresc);
 
-export async function kartyDoPowtorki(email: string, limit = 10): Promise<Karta[]> {
+export async function kartyDoPowtorki(email: string, limit = 10, jezyk?: string | null): Promise<Karta[]> {
   const { data } = await supabaseAdmin
     .from("bruno_karty")
     .select("*")
@@ -345,11 +366,11 @@ export async function kartyDoPowtorki(email: string, limit = 10): Promise<Karta[
     .lte("due", new Date().toISOString())
     .order("due", { ascending: true })
     .limit(limit + 40);
-  return ((data as Karta[]) ?? []).filter(aktualna).slice(0, limit);
+  return ((data as Karta[]) ?? []).filter(aktualna(jezyk)).slice(0, limit);
 }
 
-export async function wszystkieKarty(email: string): Promise<Karta[]> {
+export async function wszystkieKarty(email: string, jezyk?: string | null): Promise<Karta[]> {
   const { data } = await supabaseAdmin.from("bruno_karty").select("*").eq("email", email).order("due");
-  return ((data as Karta[]) ?? []).filter(aktualna);
+  return ((data as Karta[]) ?? []).filter(aktualna(jezyk));
 }
 

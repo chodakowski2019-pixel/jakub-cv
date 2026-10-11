@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import PasekZloty from "@/components/bruno/pasek-zloty";
+import { useT } from "@/components/bruno/jezyk-kontekst";
 
 // 10.10 (USER_001: „brak paska po lewej, wszystko się rozjechało”): układ Next.js NIE renderuje
 // się od nowa przy przejściu między zakładkami. Gdy pierwszym ekranem był /bruno/panel (własny pasek),
@@ -25,6 +26,7 @@ export default function UkladZloty({
 }) {
   const sciezka = usePathname() ?? "";
   const router = useRouter();
+  const { t } = useT();
   const zablokowany = Boolean(free?.zablokowane) && !PO_BLOKADZIE.some((p) => sciezka === p || sciezka.startsWith(`${p}/`));
 
   useEffect(() => {
@@ -41,8 +43,8 @@ export default function UkladZloty({
         <main className="flex-1 px-4 sm:px-6 pb-10 pt-6 sm:pt-8 max-w-5xl w-full mx-auto overflow-x-hidden">{zablokowany ? null : children}</main>
         {/* Dokumenty muszą być dostępne z każdego ekranu panelu (2.10): rozmowy są nagrywane. */}
         <footer className="bz-stopka">
-          <a href="/regulamin">Terms</a>
-          <a href="/polityka-prywatnosci">Privacy Policy</a>
+          <a href="/regulamin">{t("Terms", "Regulamin")}</a>
+          <a href="/polityka-prywatnosci">{t("Privacy Policy", "Polityka prywatności")}</a>
         </footer>
       </div>
     </div>

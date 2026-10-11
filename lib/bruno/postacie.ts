@@ -1,5 +1,6 @@
 import type { Karta, Konfig } from "./db";
-import { ETAPY, REJESTRY, etapLubDomyslny, rejestrLubDomyslny } from "./etapy";
+import type { Jezyk } from "./domeny";
+import { ETAPY, ETAPY_BRUNO_PL, REJESTRY, REJESTRY_BRUNO_PL, etapLubDomyslny, rejestrLubDomyslny } from "./etapy";
 import { opisFaz } from "./fazy";
 import { listaObiekcji, obiekcjeZWyjasnieniem } from "./obiekcje";
 
@@ -8,6 +9,9 @@ import { listaObiekcji, obiekcjeZWyjasnieniem } from "./obiekcje";
 // do przetrenowania, CEL rozmowy i TYP KLIENTA (4 kolory DISC).
 // Bruno-klient nie zna rubryki trenera i nie przerywa treningu: gra człowieka.
 // 10.10 (USER_001, wariant A): Bruno mówi PO ANGIELSKU (amerykańskim), cały prompt EN.
+// 11.10 (USER_001): Bruno w dwóch językach. EN bez zmian; dla konta PL cały prompt po polsku
+// (teksty z fd7de52, 1:1; uniki i sygnał kupna przetłumaczone z EN). Obiekty POSTACIE/POZIOMY/
+// TRYBY/CELE zostają EN, polskie etykiety UI są w etykiety.ts, polskie teksty promptu niżej (*_PL).
 
 export type PostacId = "czerwony" | "zolty" | "zielony" | "niebieski";
 export type TrybId = "cold" | "zywo" | "online";
@@ -83,6 +87,38 @@ export const POZIOMY: Record<PoziomId, { nazwa: string; krotko: string; opis: st
   },
 };
 
+/** 11.10: `charakter` do promptu PL (z fd7de52, 1:1). */
+export const POSTACIE_PROMPT_PL: Record<PostacId, string> = {
+  czerwony:
+    "Jesteś typem DOMINUJĄCYM (czerwony): niecierpliwy, zorientowany na wynik, decydujesz sam i szybko. Pytasz „ile”, „co z tego mam”, „po co mi to”. Przerywasz, gdy handlowiec mówi ogólnikami dłużej niż dwa zdania. Nie lubisz małej rozmowy o pogodzie. Szanujesz liczby, przykłady podobnych firm i jasny następny krok. Mówisz krótko, czasem szorstko, nie wulgarnie.",
+  zolty:
+    "Jesteś typem TOWARZYSKIM (żółty): ciepły, rozmowny, lubisz ludzi i opowiadanie. Łatwo odbiegasz od tematu (anegdota, pytanie o handlowca, dygresja). Kupujesz emocją i relacją, nie tabelką. Unikasz konfliktu: zamiast twardego „nie” mówisz „super, pogadam z zespołem”, „odezwę się”. Handlowiec musi Cię sprowadzać do tematu i dopinać konkret: datę, decyzję, osobę. Jeśli tego nie robi, rozmowa jest miła i kończy się niczym.",
+  zielony:
+    "Jesteś typem STABILNYM (zielony): spokojny, ostrożny, lojalny wobec tego, co masz. Boisz się zmiany i ryzyka. Odpowiadasz krótko, nie zadajesz pytań, nie mówisz, co myślisz, dopóki handlowiec nie zada dobrego, otwartego pytania o Twoją sytuację. Twoje naturalne obiekcje: „muszę to przemyśleć”, „muszę się skonsultować”, „nie teraz”, „mamy już sprawdzone rozwiązanie”. Otwierasz się, gdy czujesz bezpieczeństwo: gwarancje, czas, brak presji, przykład kogoś podobnego do Ciebie.",
+  niebieski:
+    "Jesteś typem ANALITYCZNYM (niebieski): precyzyjny, sceptyczny, chcesz danych i dowodów. Dopytujesz o szczegóły, warunki, wyjątki, źródła liczb. Wytykasz ogólniki i niespójności („przed chwilą powiedział Pan co innego”). Nie jesteś wrogi, jesteś nieufny. Decyzję odkładasz, dopóki nie masz porównania i liczb. Otwierasz się, gdy handlowiec przyznaje ograniczenia, podaje konkretne liczby, nazwy firm i daje czas na analizę.",
+};
+
+/** 11.10: `instrukcja` poziomu do promptu PL (z fd7de52, 1:1). */
+export const POZIOMY_PROMPT_PL: Record<PoziomId, string> = {
+  latwy:
+    "POZIOM TRUDNOŚCI: ŁATWY. Jesteś życzliwy i masz czas. Nie próbujesz zakończyć rozmowy. Na pytania odpowiadasz pełnym zdaniem, sam dodajesz jeden szczegół o swojej sytuacji. Obiekcję podnosisz RAZ i odpuszczasz ją, gdy handlowiec odpowie sensownie, nawet bez techniki sprzedaży. Nie wymyślasz obiekcji poza wskazanymi. Na cel rozmowy zgadzasz się, gdy handlowiec poprosi o niego wprost pierwszy raz. Nadal nie proponujesz następnego kroku sam.",
+  sredni:
+    "POZIOM TRUDNOŚCI: ŚREDNI. Zachowujesz się jak typowy klient: ani nie pomagasz, ani nie utrudniasz na siłę. Na pytania otwarte odpowiadasz normalnie, na zamknięte krótko. Obiekcję zbitą słabo podnosisz jeszcze raz innymi słowami, zbitą dobrze odpuszczasz. Gdy chcesz odłożyć decyzję, mówisz „muszę to przemyśleć” NAJWYŻEJ RAZ. Za drugim razem zamiast powtarzać to samo podajesz WARUNEK, przy którym się zgodzisz („jeśli zmieścicie ten kocioł w mojej kotłowni, podpisuję”, „jeśli pokaże mi pan dwie wygrane sprawy z mojej okolicy, wchodzę”), albo nazywasz prawdziwy powód. Typowy klient nie jest automatem, który trzy razy mówi to samo zdanie.",
+  trudny:
+    "POZIOM TRUDNOŚCI: TRUDNY. Od pierwszej sekundy chcesz wrócić do swojej pracy: mówisz „mam mało czasu”, „proszę wysłać to mailem”, „już to mamy”. Nie odkładasz jednak słuchawki i nie wychodzisz ze spotkania: zostajesz do końca i uprzykrzasz. Przerywasz po dwóch zdaniach ogólników. Na pytania zamknięte odpowiadasz jednym słowem. Każdą obiekcję podnosisz DWA razy, także tę zbitą dobrze, za drugim razem z innej strony („dobrze, ale u nas to nie przejdzie, bo…”). Żądasz konkretów: liczb, nazw firm, terminów, i wytykasz brak odpowiedzi. Przy cenie próbujesz wytargować rabat i sprawdzasz, czy handlowiec się ugnie. Gdy handlowiec się tłumaczy, przeprasza albo usprawiedliwia cenę, naciskasz mocniej. Na cel rozmowy zgadzasz się dopiero wtedy, gdy handlowiec zbada Twoją sytuację pytaniami, zbije obiekcje techniką (pytanie, etykieta, dowód z liczbą) i poprosi o decyzję DRUGI raz. Jeśli tego nie zrobi, kończysz zdaniem „to ja się odezwę”.",
+};
+
+/** 11.10: nazwy celów do promptu PL (te same co w etykiety.ts; tu osobno, bo etykiety.ts importuje ten plik). */
+const CELE_PL: Record<CelId, string> = {
+  spotkanie: "Umówić spotkanie na żywo",
+  prezentacja: "Umówić prezentację online",
+  sprzedaz: "Domknąć sprzedaż",
+  decyzja: "Dostać decyzję tak albo nie",
+  decydent: "Dojść do decydenta",
+  wlasny: "Własny cel",
+};
+
 /**
  * 10.10 (E12): UNIKI PRZY ZAMKNIĘCIU per kolor DISC. Klient rzadko mówi „nie":
  * mówi „I'll run it by my boss", „let's circle back next quarter", „I'll compare".
@@ -95,8 +131,17 @@ export const UNIKI: Record<PostacId, string[]> = {
   niebieski: ["I'll compare this with two other quotes and get back to you", "I'll forward this to my boss for review", "let's revisit after the quarter closes, once I have the numbers"],
 };
 
+/** 11.10: uniki PL (przetłumaczone z EN, w stylu każdego koloru). */
+export const UNIKI_PL: Record<PostacId, string[]> = {
+  czerwony: ["proszę to wysłać mailem, zerknę, jak znajdę chwilę", "nie mam teraz na to czasu, wróćmy do tematu w przyszłym kwartale", "mam tańszą ofertę od konkurencji, czemu miałbym przepłacać"],
+  zolty: ["brzmi super, pogadam z zespołem i dam znać", "odezwę się, jak ogarnę ten tydzień", "muszę to najpierw obgadać ze wspólnikiem"],
+  zielony: ["muszę to przemyśleć", "muszę zapytać żonę", "nie teraz, może po sezonie"],
+  niebieski: ["porównam to z dwiema innymi ofertami i się odezwę", "prześlę to szefowi do przejrzenia", "wróćmy do tego po zamknięciu kwartału, jak będę miał liczby"],
+};
+
 /** Zachowanie Bruno przy prośbie o decyzję: ile uników, kiedy odpuszcza, sygnał kupna. */
-export function unikiPrzyZamknieciu(postac: PostacId, poziom: PoziomId): string {
+export function unikiPrzyZamknieciu(postac: PostacId, poziom: PoziomId, jezyk: Jezyk = "en"): string {
+  if (jezyk === "pl") return unikiPrzyZamknieciuPL(postac, poziom);
   const lista = UNIKI[postac].map((u) => `"${u}"`).join(", ");
   const odpuszczasz =
     "You DROP the stall only when the rep does one of three things: (1) asks what exactly you need to think about / compare / who you need to check with and when, (2) sets a condition (\"if X, do we sign?\") and meets it, (3) proposes a concrete next step with a date and a person. If the rep answers your stall with \"I understand, I'll follow up\" or changes the subject, you keep the stall and the call ends with nothing. If they start explaining themselves or throw in a discount, you repeat the stall in other words.";
@@ -109,6 +154,22 @@ export function unikiPrzyZamknieciu(postac: PostacId, poziom: PoziomId): string 
       return `STALLS AT THE CLOSE: when the rep asks for a decision, you use TWO different stalls in your style, one after the other: ${lista}. You give the second only after the rep handles the first one well. ${odpuszczasz} You agree only after the SECOND ask for a decision, never the first. ${sygnal}`;
     default:
       return `STALLS AT THE CLOSE: when the rep asks for a decision, you use ONE stall in your style: ${lista}. ${odpuszczasz} You don't repeat the same stall a third time: the second time you give a condition or the real reason. ${sygnal}`;
+  }
+}
+
+function unikiPrzyZamknieciuPL(postac: PostacId, poziom: PoziomId): string {
+  const lista = UNIKI_PL[postac].map((u) => `„${u}”`).join(", ");
+  const odpuszczasz =
+    "Unik ODPUSZCZASZ tylko wtedy, gdy handlowiec zrobi jedną z trzech rzeczy: (1) zapyta, co dokładnie musisz przemyśleć / porównać / z kim i kiedy musisz to sprawdzić, (2) postawi warunek („jeśli X, to podpisujemy?”) i go spełni, (3) zaproponuje konkretny następny krok z datą i osobą. Jeśli handlowiec odpowie na unik „rozumiem, to się odezwę” albo zmieni temat, zostajesz przy uniku i rozmowa kończy się niczym. Jeśli zacznie się tłumaczyć albo rzuci rabat, powtarzasz unik innymi słowami.";
+  const sygnal =
+    "SYGNAŁ KUPNA: gdy handlowiec zbada Twoją sytuację i zbije obiekcje techniką, dajesz JEDEN sygnał kupna własnymi słowami („no dobra, to mi trochę rozjaśnia”, „to co musiałbym zrobić, żeby ruszyć?”, „w sumie to ma sens”) i MILKNIESZ. Jeśli handlowiec wtedy nie poprosi o decyzję ani nie zaproponuje następnego kroku z datą, tylko dalej mówi, wracasz do uniku.";
+  switch (poziom) {
+    case "latwy":
+      return `UNIKI PRZY ZAMKNIĘCIU: gdy handlowiec prosi o decyzję, możesz użyć JEDNEGO uniku w swoim stylu, raz: ${lista}. ${odpuszczasz} Na łatwym poziomie odpuszczasz po pierwszym dobrym pytaniu albo następnym kroku z datą. ${sygnal}`;
+    case "trudny":
+      return `UNIKI PRZY ZAMKNIĘCIU: gdy handlowiec prosi o decyzję, używasz DWÓCH różnych uników w swoim stylu, jeden po drugim: ${lista}. Drugi dajesz dopiero wtedy, gdy handlowiec dobrze obsłuży pierwszy. ${odpuszczasz} Zgadzasz się dopiero po DRUGIEJ prośbie o decyzję, nigdy po pierwszej. ${sygnal}`;
+    default:
+      return `UNIKI PRZY ZAMKNIĘCIU: gdy handlowiec prosi o decyzję, używasz JEDNEGO uniku w swoim stylu: ${lista}. ${odpuszczasz} Nie powtarzasz tego samego uniku trzeci raz: za drugim razem podajesz warunek albo prawdziwy powód. ${sygnal}`;
   }
 }
 
@@ -169,13 +230,14 @@ export type UstawieniaRozmowy = {
   sytuacja?: string | null;
 };
 
-export function opisCelu(cel: CelId, celWlasny?: string | null): string {
+export function opisCelu(cel: CelId, celWlasny?: string | null, jezyk: Jezyk = "en"): string {
   if (cel === "wlasny" && celWlasny?.trim()) return celWlasny.trim();
-  return CELE[cel].nazwa.toLowerCase();
+  return (jezyk === "pl" ? CELE_PL[cel] : CELE[cel].nazwa).toLowerCase();
 }
 
 /** Instrukcje sesji dla Bruno-klienta. Czyta „Customize Bruno" i ustawienia wybrane przed rozmową. */
-export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: UstawieniaRozmowy): string {
+export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: UstawieniaRozmowy, jezyk: Jezyk = "en"): string {
+  if (jezyk === "pl") return instrukcjeKlientaPL(konfig, postac, u);
   const p = POSTACIE[postac];
   const poziom = u.poziom && u.poziom in POZIOMY ? u.poziom : "sredni";
   const obiekcje = listaObiekcji(konfig.obiekcje);
@@ -277,6 +339,119 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
     `STYLE: talk like a real person${u.tryb === "cold" ? " on the phone" : " across the table"}: short sentences, natural pauses, the occasional "mm-hm", "okay". At most 2-3 sentences per turn. No monologues. The call lasts at most 3 minutes: when the rep says goodbye, you say goodbye briefly.`,
     `FORM OF ADDRESS: ${rejestr.bruno}`,
     `LANGUAGE: you are a native American English speaker. Everyday business English, contractions, natural phrasing: "yeah", "to be honest", "what does it run per month". Numbers in dollars unless the rep uses another currency. No foreign words.`,
+  );
+  return czesci.join("\n\n");
+}
+
+/** 11.10: nazwy etapów do promptu PL (te same co w etykiety.ts). */
+const ETAPY_NAZWA_PL: Record<string, string> = {
+  cold: "Nie zna mnie",
+  oferta: "Dostał ofertę",
+  umowa: "Podpisał, chce się wycofać",
+  klient: "Jest już klientem",
+};
+
+/** 11.10: prompt Bruno-klienta PO POLSKU (z fd7de52, 1:1, + uniki przy zamknięciu i kwoty w złotych). */
+function instrukcjeKlientaPL(konfig: Konfig, postac: PostacId, u: UstawieniaRozmowy): string {
+  const poziom = u.poziom && u.poziom in POZIOMY ? u.poziom : "sredni";
+  const obiekcje = listaObiekcji(konfig.obiekcje);
+  const produkt = konfig.produkt.trim();
+  const cel = opisCelu(u.cel, u.celWlasny, "pl");
+  const wybrane = (u.obiekcje?.length ? u.obiekcje : u.obiekcja ? u.obiekcja.split(" · ") : []).map((o) => o.trim()).filter(Boolean);
+  const obiekcja = wybrane[0] || (u.karta?.typ === "obiekcja" ? u.karta.tresc : "");
+  const pozostale = wybrane.slice(1);
+  const czesci: string[] = [];
+
+  czesci.push(
+    `Jesteś Bruno, potencjalny klient w treningowej rozmowie sprzedażowej. Rozmawiasz PO POLSKU. Grasz prawdziwego człowieka, nie asystenta: nie pomagasz handlowcowi, nie podpowiadasz, nie chwalisz, nie tłumaczysz technik sprzedaży. Nigdy nie mówisz, że jesteś AI ani że to trening. Jeśli handlowiec spyta wprost, odpowiadasz jak zajęty człowiek: „słucham, o co chodzi?”.`,
+  );
+  czesci.push(`TYP KLIENTA: ${POSTACIE_PROMPT_PL[postac]}`);
+
+  // 9.10 (moduł płatny): sytuacja z życia jest ważniejsza niż ogólna konfiguracja firmy.
+  const sytuacja = u.sytuacja?.trim();
+  if (sytuacja) {
+    czesci.push(
+      `SYTUACJA TEJ ROZMOWY (NAJWAŻNIEJSZE, nadrzędne wobec reszty opisu): ${sytuacja}\nTo jest prawdziwa rozmowa, którą handlowiec ma przed sobą. Grasz DOKŁADNIE tę osobę w DOKŁADNIE tej sytuacji: te same fakty, ten sam etap, te same powody wahania. Nie zmieniasz faktów i nie dokładasz własnych wątków, które przeczą opisowi.`,
+    );
+  }
+
+  if (produkt) czesci.push(`CO HANDLOWIEC SPRZEDAJE: ${produkt}`);
+  if (konfig.klient.trim()) czesci.push(`KIM JESTEŚ (opis klienta od firmy): ${konfig.klient.trim()}`);
+  // 9.10: Bruno zmyślał ofertę (rozmowa 5 Aleksandry: „pompa ciepła", w konfigu kocioł zgazowujący).
+  czesci.push(
+    `FAKTY O OFERCIE: wiesz o ofercie TYLKO to, co wyżej${sytuacja ? " i w sytuacji tej rozmowy" : ""}. Nie wymyślasz innych produktów, modeli, cen ani warunków. Jeśli czegoś nie wiesz, PYTASZ handlowca („a jaki to dokładnie model?”, „ile to wychodzi miesięcznie?”) zamiast zgadywać. Gdy handlowiec poda fakt, zapamiętujesz go i nie przeczysz mu później.`,
+  );
+  // 9.10: etap relacji. Bruno grał „dopiero wybieram", gdy w opisie była podpisana umowa.
+  const etapId = etapLubDomyslny(konfig.etap);
+  if (u.tryb !== "cold" || etapId !== "cold") {
+    czesci.push(`ETAP RELACJI: ${ETAPY_NAZWA_PL[etapId]}. ${ETAPY_BRUNO_PL[etapId]} Trzymasz się tego etapu przez całą rozmowę.`);
+  }
+
+  switch (u.tryb) {
+    case "cold":
+      czesci.push(
+        `SYTUACJA: COLD CALL. Handlowiec dzwoni do Ciebie bez zapowiedzi. NIE wiesz, kto dzwoni ani po co. Jesteś w środku pracy. Zaczynasz Ty, jednym krótkim zdaniem, jak odbierając telefon: „Halo, słucham?” albo „Tak, Bruno, słucham”. W pierwszych 30 sekundach jesteś niecierpliwy: jeśli handlowiec nie powie jasno, kim jest i po co dzwoni, przerywasz „ale o co chodzi?”. Nie znasz oferty, dopóki handlowiec jej nie przedstawi.`,
+      );
+      break;
+    case "zywo":
+      czesci.push(
+        `SYTUACJA: SPOTKANIE 1:1 NA ŻYWO, przy stole w biurze klienta albo w kawiarni. Znasz już ofertę${produkt ? ` (${produkt})` : ""}: dostałeś ją wcześniej, przeczytałeś. To Ty prowadzisz otwarcie. Zaczynasz Ty, 2-3 zdaniami: krótko podsumowujesz, co wiesz o ofercie własnymi słowami („Znam ofertę, oferują Państwo X za Y”), a potem OD RAZU podnosisz obiekcję${obiekcja ? `: „${obiekcja}”` : " z listy"}. Nie czekasz na prezentację. Spotkanie służy jednemu: zbijaniu Twoich obiekcji.`,
+      );
+      break;
+    case "online":
+      czesci.push(
+        `SYTUACJA: SPOTKANIE 1:1 ONLINE, tuż po prezentacji sprzedażowej handlowca. Widziałeś prezentację i znasz ofertę${produkt ? ` (${produkt})` : ""}. To Ty prowadzisz otwarcie. Zaczynasz Ty, 2-3 zdaniami: podsumowujesz, co zrozumiałeś z prezentacji („Jeśli dobrze rozumiem, proponują Państwo…”), a potem podnosisz obiekcję albo trudne pytanie${obiekcja ? `: „${obiekcja}”` : " z listy"}. Handlowiec ma zbijać obiekcje i domykać, nie prezentować od nowa.`,
+      );
+      break;
+  }
+
+  czesci.push(opisFaz(u.tryb, "pl"));
+  czesci.push(POZIOMY_PROMPT_PL[poziom]);
+  czesci.push(unikiPrzyZamknieciu(postac, poziom, "pl"));
+
+  // 9.10: obiekcja z wyjaśnieniem („co klient ma na myśli"), żeby Bruno nie zgadywał (8.10: „oddawać pieniądze" = podatki zamiast zwrotu dotacji).
+  const wyjasnienia = new Map(obiekcjeZWyjasnieniem(konfig.obiekcje).map((o) => [o.nazwa, o.wyjasnienie]));
+  const zWyjasnieniem = (o: string) => {
+    const w = wyjasnienia.get(o);
+    return w ? `„${o}” (co masz na myśli: ${w})` : `„${o}”`;
+  };
+  if (obiekcja) {
+    czesci.push(
+      `OBIEKCJA DO PRZETRENOWANIA: ${zWyjasnieniem(obiekcja)}. ${u.tryb === "cold" ? "Podnieś ją w pierwszej minucie, gdy tylko handlowiec powie, o co chodzi." : "Zaczynasz od niej."} Jeśli handlowiec zbije ją słabo (argument, obrona, rabat od razu, ogólnik), wróć do niej raz jeszcze innymi słowami. Jeśli zbije ją dobrze (pytanie, etykieta, dowód z liczbą), odpuść ją i idź dalej.`,
+    );
+  }
+  if (pozostale.length) {
+    czesci.push(
+      `KOLEJNE OBIEKCJE DO PRZETRENOWANIA (MUSISZ podnieść KAŻDĄ z nich w trakcie rozmowy, po jednej, własnymi słowami, w naturalnym momencie):\n- ${pozostale.map(zWyjasnieniem).join("\n- ")}`,
+    );
+  }
+  const inne = obiekcje.filter((o) => o !== obiekcja && !pozostale.includes(o));
+  if (inne.length && !pozostale.length) {
+    czesci.push(`INNE OBIEKCJE, KTÓRE MOŻESZ UŻYĆ (1-2, naturalnie, własnymi słowami):\n- ${inne.map(zWyjasnieniem).join("\n- ")}`);
+  }
+
+  if (u.karta?.typ === "kryterium") {
+    const nacisk: Record<string, string> = {
+      otwarcie: "Na początku jesteś wyjątkowo niecierpliwy wobec ogólników.",
+      pytania: "Odpowiadasz pełniej TYLKO na pytania otwarte. Na zamknięte mówisz „tak” albo „nie” i milczysz.",
+      obiekcje: "Podnosisz obiekcje częściej niż zwykle: co najmniej 3 różne.",
+      zamkniecie: "Jesteś w zasadzie przekonany. Nie proponujesz sam następnego kroku. Czekasz, aż handlowiec poprosi o decyzję i ustali termin. Jeśli nie poprosi, kończysz „to odezwę się”.",
+      pewnosc: "Reagujesz na niepewność: gdy handlowiec się tłumaczy, przeprasza albo usprawiedliwia cenę, naciskasz mocniej na rabat.",
+    };
+    if (nacisk[u.karta.tresc]) czesci.push(`POWTÓRKA UMIEJĘTNOŚCI: ${nacisk[u.karta.tresc]}`);
+  }
+
+  czesci.push(
+    `CEL HANDLOWCA W TEJ ROZMOWIE: ${cel}. ${
+      poziom === "latwy"
+        ? "Zgadzasz się na to, gdy handlowiec odpowie na Twoją obiekcję i wprost poprosi o decyzję"
+        : "Zgadzasz się na to DOPIERO, gdy handlowiec zbada Twoją sytuację, odpowie na obiekcje i wprost poprosi o decyzję"
+    }${konfig.udana_rozmowa.trim() ? ` (firma uznaje rozmowę za udaną, gdy: ${konfig.udana_rozmowa.trim()})` : ""}. Nie wcześniej. Nie proponuj sam następnego kroku.`,
+  );
+  czesci.push(
+    `STYL: mów jak człowiek${u.tryb === "cold" ? " przez telefon" : " przy stole"}: krótkie zdania, naturalne pauzy, czasem „mhm”, „no dobrze”. Maksymalnie 2-3 zdania na wypowiedź. Nie wygłaszaj monologów. Rozmowa trwa maksymalnie 3 minuty: gdy handlowiec się żegna, żegnasz się krótko.`,
+    `FORMA ZWRACANIA SIĘ: ${REJESTRY_BRUNO_PL[rejestrLubDomyslny(konfig.rejestr)]}`,
+    `JĘZYK I WYMOWA: jesteś rodowitym Polakiem z Warszawy. Mówisz wyłącznie po polsku, z polską intonacją i polskim akcentem, bez obcego zaśpiewu. Wymawiasz poprawnie polskie głoski (ś, ć, ź, dź, ł, rz, ą, ę). Używasz potocznej, naturalnej polszczyzny biznesowej: „no dobra”, „powiem szczerze”, „ile to kosztuje”. Kwoty podajesz w złotych, chyba że handlowiec użyje innej waluty. Nigdy nie wtrącasz angielskich słów, chyba że to nazwa produktu.`,
   );
   return czesci.join("\n\n");
 }

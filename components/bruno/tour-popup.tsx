@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
+import { useT } from "@/components/bruno/jezyk-kontekst";
 
 // Film oprowadzający przy pierwszym logowaniu (USER_001 2.10, wzór z OMG
 // tour-popup: pokazuje się RAZ, dopóki bruno_konta.tour_obejrzany_at jest puste).
@@ -13,6 +14,7 @@ import { useRouter } from "next/navigation";
 // „Odtwórz". „Pomiń" albo „Zaczynam" oznacza film jako obejrzany.
 
 export default function TourPopup({ src, okladka }: { src: string; okladka?: string }) {
+  const { t } = useT();
   const router = useRouter();
   const [otwarty, setOtwarty] = useState(true);
   // Portal do kontenera `.bruno`, nie do <body>: popup siedział w `.bruno-ekran`,
@@ -68,7 +70,7 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
 
   if (!otwarty || !cel) return null;
   return createPortal(
-    <div className="fixed inset-0 z-50 bg-white bz-tour flex flex-col" role="dialog" aria-modal="true" aria-label="Welcome video">
+    <div className="fixed inset-0 z-50 bg-white bz-tour flex flex-col" role="dialog" aria-modal="true" aria-label={t("Welcome video", "Film oprowadzający")}>
       {/* Tło jak w panelu: białe z rozmytymi plamami. */}
       <div className="bruno-plamy" aria-hidden>
         <i style={{ top: -140, left: -100, width: 620, height: 620, opacity: 0.7, background: "radial-gradient(closest-side, #3a3122, transparent)" }} />
@@ -87,7 +89,7 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
                 <path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4" />
                 <path d="M14 8l4 4-4 4M18 12H9" />
               </svg>
-              Log out
+              {t("Log out", "Wyloguj")}
             </button>
           </div>
         </header>
@@ -105,7 +107,7 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
               className="absolute inset-0 w-full h-full object-contain"
             />
             {!gra && (
-              <button type="button" onClick={odtworz} aria-label="Play video" className="absolute inset-0 grid place-items-center group">
+              <button type="button" onClick={odtworz} aria-label={t("Play video", "Odtwórz film")} className="absolute inset-0 grid place-items-center group">
                 <span className="size-20 rounded-full bg-gradient-to-br from-cyan-600 to-teal-700 grid place-items-center shadow-[0_12px_40px_rgba(212,175,90,0.5)] transition-transform group-hover:scale-105">
                   <svg viewBox="0 0 24 24" width="34" height="34" fill="#fff" aria-hidden>
                     <path d="M8 5v14l11-7z" />
@@ -118,10 +120,10 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
           {/* Tekst, pod nim przycisk w stylu „Wyloguj" (USER_001 2.10). */}
           <div className="flex flex-col items-center gap-2.5">
             <span className="text-sm text-slate-500 text-center">
-              {koniec ? "Done. Start with “Customize Bruno,” then your first Live Call." : "You can always find this video in Settings, under Guide."}
+              {koniec ? t("Done. Start with “Customize Bruno,” then your first Live Call.", "Gotowe. Zacznij od „Dostosuj Bruno”, potem pierwszy test.") : t("You can always find this video in Settings, under Guide.", "Film znajdziesz zawsze w Ustawieniach, w sekcji Instrukcja.")}
             </span>
             <button type="button" onClick={zamknij} className="bruno-wyloguj">
-              {koniec ? "Let's go" : "Skip"}
+              {koniec ? t("Let's go", "Zaczynam") : t("Skip", "Pomiń")}
             </button>
           </div>
         </main>

@@ -1,4 +1,5 @@
 import type { Rozmowa } from "@/lib/bruno/db";
+import { mnoga, type Jezyk } from "@/lib/bruno/i18n";
 
 // Statystyki jako wykresy (USER_001 1.10): pierścienie postępu dla „ile
 // zostało z ilu", słupki na 7 dni, kafelki z paskiem /10 dla ocen. Jeden
@@ -64,9 +65,10 @@ export function Ocena({ wartosc, opis, uwaga }: { wartosc: number | null; opis: 
 export type Slupek = { etykieta: string; wartosc: number; podpis: string; dzis?: boolean };
 
 const DNI_TYG = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const DNI_TYG_PL = ["nd", "pn", "wt", "śr", "cz", "pt", "sb"];
 
 /** Rozmowy (bez przerwanych) na każdy z ostatnich N dni, liczone po polskim czasie. */
-export function rozmowyNaDni(rozmowy: Pick<Rozmowa, "start" | "status">[], n: number): Slupek[] {
+export function rozmowyNaDni(rozmowy: Pick<Rozmowa, "start" | "status">[], n: number, jezyk: Jezyk = "en"): Slupek[] {
   const kluczPL = (d: Date) => d.toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
   const licznik = new Map<string, number>();
   for (const r of rozmowy) {
@@ -79,7 +81,7 @@ export function rozmowyNaDni(rozmowy: Pick<Rozmowa, "start" | "status">[], n: nu
   for (let i = n - 1; i >= 0; i--) {
     const k = kluczPL(new Date(Date.now() - i * 86_400_000));
     const [, m, dd] = k.split("-");
-    wynik.push({ etykieta: DNI_TYG[new Date(`${k}T12:00:00`).getDay()], podpis: `${m}/${dd}`, wartosc: licznik.get(k) ?? 0, dzis: k === dzis });
+    wynik.push({ etykieta: (jezyk === "pl" ? DNI_TYG_PL : DNI_TYG)[new Date(`${k}T12:00:00`).getDay()], podpis: jezyk === "pl" ? `${dd}.${m}` : `${m}/${dd}`, wartosc: licznik.get(k) ?? 0, dzis: k === dzis });
   }
   return wynik;
 }
@@ -89,7 +91,7 @@ export function rozmowyNaDni(rozmowy: Pick<Rozmowa, "start" | "status">[], n: nu
  * słupki z zaokrągloną górą od linii bazowej, cienka linia celu, etykieta
  * tylko nad słupkiem z wartością. Tooltip = <title> na każdym słupku.
  */
-export function Slupki({ dni, cel, tytul, goly, wysoki }: { dni: Slupek[]; cel: number; tytul: string; goly?: boolean; wysoki?: boolean }) {
+export function Slupki({ dni, cel, tytul, goly, wysoki, jezyk = "en" }: { dni: Slupek[]; cel: number; tytul: string; goly?: boolean; wysoki?: boolean; jezyk?: Jezyk }) {
   const W = 320;
   const H = wysoki ? 210 : 150;
   const gora = 18;
@@ -109,7 +111,7 @@ export function Slupki({ dni, cel, tytul, goly, wysoki }: { dni: Slupek[]; cel: 
           const h = Math.max(0, y(0) - y(d.wartosc));
           return (
             <g key={`${d.podpis}-${i}`}>
-              <title>{`${d.podpis}: ${d.wartosc} ${d.wartosc === 1 ? "call" : "calls"}`}</title>
+              <title>{`${d.podpis}: ${d.wartosc} ${mnoga(jezyk, d.wartosc, ["call", "calls"], ["rozmowa", "rozmowy", "rozmów"])}`}</title>
               <rect x={x} y={y(0) - 2} width={slupekSzer} height="2" fill="rgba(212,175,90,0.15)" />
               {h > 0 && (
                 <path

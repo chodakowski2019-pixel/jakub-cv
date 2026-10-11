@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { ROZMOWA_SEKUND, kartyDoPowtorki, limitDzienny, planFree, rozmowyDzis, stanDostepu, stanFree, type Konto } from "@/lib/bruno/db";
 import { htmlNieZalogowany, htmlPrzypomnienie, htmlPrzypomnienieFree, wyslij } from "@/lib/bruno/mail";
 import { dociagnijNagraniaEl } from "@/lib/bruno/nagrania";
+import { mnoga, tDla } from "@/lib/bruno/i18n";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -33,6 +34,8 @@ export async function GET(req: Request) {
   for (const konto of (konta ?? []) as Konto[]) {
     const stan = stanDostepu(konto);
     if (!stan.aktywny) continue;
+    // 11.10: temat i treść maila w języku konta.
+    const t = tDla(konto.jezyk);
     // 10.10 (USER_001): konto free = jedno przypomnienie DZIENNIE, dopóki nie skończy 3 bezpłatnych rozmów.
     // Po trzeciej cisza (paywall jest w panelu). Niezależnie od pierwszego logowania.
     if (planFree(konto)) {
@@ -42,8 +45,14 @@ export async function GET(req: Request) {
         await wyslij({
           do: konto.email,
           rodzaj: "przypomnienie",
-          temat: f.zuzyte === 0 ? "Bruno AI: Your first call is waiting" : `Bruno AI: you have ${f.zostalo} free ${f.zostalo === 1 ? "call" : "calls"} left`,
-          html: htmlPrzypomnienieFree({ imie: konto.imie, zuzyte: f.zuzyte, zostalo: f.zostalo, zalogowany: Boolean(konto.start_dostepu) }),
+          temat:
+            f.zuzyte === 0
+              ? t("Bruno AI: Your first call is waiting", "Bruno AI: Twoja pierwsza rozmowa czeka")
+              : t(
+                  `Bruno AI: you have ${f.zostalo} free ${f.zostalo === 1 ? "call" : "calls"} left`,
+                  `Bruno AI: ${f.zostalo === 1 ? "została" : mnoga("pl", f.zostalo, ["", ""], ["", "zostały", "zostało"])} Ci ${f.zostalo} ${mnoga("pl", f.zostalo, ["", ""], ["bezpłatna rozmowa", "bezpłatne rozmowy", "bezpłatnych rozmów"])}`,
+                ),
+          html: htmlPrzypomnienieFree({ imie: konto.imie, jezyk: konto.jezyk, zuzyte: f.zuzyte, zostalo: f.zostalo, zalogowany: Boolean(konto.start_dostepu) }),
           replyTo: "hello@jakubchodakowski.com",
         });
         free.push(konto.email);
@@ -60,8 +69,8 @@ export async function GET(req: Request) {
         await wyslij({
           do: konto.email,
           rodzaj: "niezalogowany",
-          temat: "Bruno AI: Your first call is waiting",
-          html: htmlNieZalogowany({ imie: konto.imie, dni: konto.dni }),
+          temat: t("Bruno AI: Your first call is waiting", "Bruno AI: Twoja pierwsza rozmowa czeka"),
+          html: htmlNieZalogowany({ imie: konto.imie, jezyk: konto.jezyk, dni: konto.dni }),
           replyTo: "hello@jakubchodakowski.com",
         });
         niezalogowani.push(konto.email);
@@ -75,13 +84,22 @@ export async function GET(req: Request) {
     const dzis = await rozmowyDzis(konto.email);
     const dziennie = limitDzienny(konto);
     if (dzis >= dziennie) continue;
-    const karty = await kartyDoPowtorki(konto.email, 50);
+    const karty = await kartyDoPowtorki(konto.email, 50, konto.jezyk);
     try {
       await wyslij({
         do: konto.email,
         rodzaj: "przypomnienie",
-        temat: dzis === 0 ? `Bruno is waiting: ${dziennie} ${dziennie === 1 ? "call" : "calls"}, ${ROZMOWA_SEKUND / 60} ${ROZMOWA_SEKUND / 60 === 1 ? "minute" : "minutes"} each` : `Bruno is waiting: ${dziennie - dzis} ${dziennie - dzis === 1 ? "call" : "calls"} left`,
-        html: htmlPrzypomnienie({ imie: konto.imie, kart: karty.length, rozmowyDzis: dzis, dniZostalo: stan.dniZostalo, dziennie }),
+        temat:
+          dzis === 0
+            ? t(
+                `Bruno is waiting: ${dziennie} ${dziennie === 1 ? "call" : "calls"}, ${ROZMOWA_SEKUND / 60} ${ROZMOWA_SEKUND / 60 === 1 ? "minute" : "minutes"} each`,
+                `Bruno czeka: ${dziennie} ${mnoga("pl", dziennie, ["", ""], ["rozmowa", "rozmowy", "rozmów"])} po ${ROZMOWA_SEKUND / 60} ${mnoga("pl", ROZMOWA_SEKUND / 60, ["", ""], ["minutę", "minuty", "minut"])}`,
+              )
+            : t(
+                `Bruno is waiting: ${dziennie - dzis} ${dziennie - dzis === 1 ? "call" : "calls"} left`,
+                `Bruno czeka: ${dziennie - dzis === 1 ? "została" : mnoga("pl", dziennie - dzis, ["", ""], ["", "zostały", "zostało"])} ${dziennie - dzis} ${mnoga("pl", dziennie - dzis, ["", ""], ["rozmowa", "rozmowy", "rozmów"])}`,
+              ),
+        html: htmlPrzypomnienie({ imie: konto.imie, jezyk: konto.jezyk, kart: karty.length, rozmowyDzis: dzis, dniZostalo: stan.dniZostalo, dziennie }),
       });
       wyslane.push(konto.email);
     } catch (e) {

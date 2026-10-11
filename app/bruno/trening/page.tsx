@@ -5,6 +5,7 @@ import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { limitFiszek, pobierzKonfig, pobierzKonto, poczatekDniaPL, stanDostepu, wszystkieKarty } from "@/lib/bruno/db";
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import Fiszki, { type FiszkaKarta } from "@/components/bruno/fiszki";
+import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +38,7 @@ export default async function BrunoTreningPage({ searchParams }: { searchParams:
   const { karta: kartaId } = await searchParams;
 
   const [karty, fiszkiDzis, wszystkieFiszki] = await Promise.all([
-    wszystkieKarty(email),
+    wszystkieKarty(email, konto.jezyk),
     supabaseAdmin.from("bruno_fiszki").select("id", { count: "exact", head: true }).eq("email", email).gte("utworzono", poczatekDniaPL()),
     supabaseAdmin.from("bruno_fiszki").select("utworzono, werdykt").eq("email", email).order("utworzono", { ascending: false }).limit(500),
   ]);
@@ -68,11 +69,14 @@ export default async function BrunoTreningPage({ searchParams }: { searchParams:
   }
 
   if (obiekcje.length === 0) {
+    const { t } = await tSerwer();
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem] text-center">Drills</h1>
+        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem] text-center">{t("Drills", "Trening")}</h1>
         <div className="bruno-szklo rounded-3xl p-8 text-center text-slate-600">
-          Your deck is being built. <Link href="/bruno/dostosuj" className="underline">Add objections in Customize Bruno</Link> and do your first Live Call. Your cards will show up here.
+          {t("Your deck is being built.", "Talia się buduje.")}{" "}
+          <Link href="/bruno/dostosuj" className="underline">{t("Add objections in Customize Bruno", "Dodaj obiekcje w „Dostosuj Bruno”")}</Link>{" "}
+          {t("and do your first Live Call. Your cards will show up here.", "i zrób pierwszy test, a karty pojawią się tutaj.")}
         </div>
       </div>
     );

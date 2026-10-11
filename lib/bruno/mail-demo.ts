@@ -1,3 +1,4 @@
+import { DOMENA } from "./domeny";
 // Mail do klienta po umówieniu rozmowy z demo Bruno (USER_001 9.10: „template w stylu tej strony”).
 // Styl = LP /brunobusiness: biała karta 22 px zaokrąglenia, „BRUNO AI”
 // wersalikami, czarne przyciski-pigułki, pomarańczowy akcent #f08a2b. Po poprawkach USER_001 9.10:
@@ -43,6 +44,33 @@ const T = {
     stopka: "Bruno AI · AI sales practice for teams",
     tytulKal: "Bruno AI demo with Jakub Chodakowski",
     locale: "en-GB",
+    strefa: "Europe/London",
+  },
+  // 11.10 (USER_001): Bruno w dwóch językach. Wersja PL z fd7de52, czas polski (Europe/Warsaw) zamiast UK.
+  pl: {
+    temat: (kiedy: string) => `Umówione: demo Bruno AI, ${kiedy} (czas polski)`,
+    zajawka: (kiedy: string) => `Rozmowa z Jakubem umówiona na ${kiedy} (czas polski).`,
+    h1: "Rozmowa umówiona",
+    czasUK: "czas polski",
+    hej: (imie: string) => `Cześć ${imie},`,
+    wstep: "Dzięki za zapis. Poniżej wszystko, czego potrzebujesz przed rozmową.",
+    dlugosc: "Długość",
+    minut: `${DEMO_MINUT_MAIL} minut`,
+    gdzie: "Gdzie",
+    wideo: "Rozmowa wideo",
+    linkPozniej: "link wyślę przed rozmową",
+    zKim: "Z kim",
+    jakub: "Jakub Chodakowski, założyciel Bruno AI",
+    coH: "Jak wygląda rozmowa",
+    co: ["Pytam o Twój zespół i o to, jak dziś sprzedaje.", "Widzisz Bruno na żywo, jak gra Waszego klienta.", "Razem decydujemy, czy to ma dla Was sens."],
+    dodaj: "Dodaj do Kalendarza Google",
+    zalacznik: "Używasz Outlooka albo Kalendarza Apple? Otwórz zaproszenie w załączniku.",
+    inny: "Potrzebujesz innej godziny? Odpisz na tego maila.",
+    linkedin: "Połączmy się na LinkedInie",
+    stopka: "Bruno AI · trening sprzedaży z AI dla zespołów",
+    tytulKal: "Demo Bruno AI z Jakubem Chodakowskim",
+    locale: "pl-PL",
+    strefa: "Europe/Warsaw",
   },
 } as const;
 
@@ -60,11 +88,12 @@ export function mailPotwierdzenieDemo(a: {
   baza?: string;
   ikonaKalendarza?: string;
 }): MailDemo {
-  // 10.10: mail do klienta zawsze EN (parametr jezyk zostaje dla zgodności).
-  const x = T.en;
-  const baza = (a.baza ?? "https://jakubchodakowski.com").replace(/\/$/, "");
+  // 10.10: mail do klienta EN. 11.10: jezyk = "pl" daje wersję PL (czas polski).
+  const x = a.jezyk === "pl" ? T.pl : T.en;
+  // 11.10: domena Bruno w języku maila (salesbruno.com / salesbruno.pl), nie jakubchodakowski.com.
+  const baza = (a.baza ?? DOMENA[a.jezyk === "pl" ? "pl" : "en"]).replace(/\/$/, "");
   const start = new Date(a.start);
-  const kiedy = new Intl.DateTimeFormat(x.locale, { timeZone: "Europe/London", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(start);
+  const kiedy = new Intl.DateTimeFormat(x.locale, { timeZone: x.strefa, weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(start);
   const kiedyGora = kiedy.charAt(0).toUpperCase() + kiedy.slice(1);
   const link = a.link?.trim() || null;
   // 9.10 (USER_001): nazwa wydarzenia w kalendarzu = „Sales AI x [imię]”.
@@ -85,7 +114,7 @@ export function mailPotwierdzenieDemo(a: {
     </tr>`;
 
   const html = `<!doctype html>
-<html lang="en">
+<html lang="${a.jezyk === "pl" ? "pl" : "en"}">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><title>${ESC(x.h1)}</title></head>
 <body style="margin:0;padding:0;background:#ffffff">
 <span style="display:none;max-height:0;overflow:hidden;opacity:0;color:#ffffff">${ESC(x.zajawka(kiedy))}</span>
@@ -127,7 +156,7 @@ export function mailPotwierdzenieDemo(a: {
           <tr><td align="center" style="font:400 12.5px/1.5 ${font};color:${muted};padding:0 0 4px">${ESC(x.zalacznik.replace(/\?.*$/, "?"))}<br>${ESC(x.zalacznik.replace(/^[^?]*\?\s*/, ""))}</td></tr>
         </table>
       </td></tr>
-      <tr><td align="center" style="padding:24px 0 0;font:400 12px/1.6 ${font};color:#9a9a9a">${ESC(x.stopka)}<br><a href="${baza}/brunobusiness" style="color:#9a9a9a">jakubchodakowski.com/brunobusiness</a></td></tr>
+      <tr><td align="center" style="padding:24px 0 0;font:400 12px/1.6 ${font};color:#9a9a9a">${ESC(x.stopka)}<br><a href="${baza}/" style="color:#9a9a9a">${baza.replace(/^https?:\/\//, "")}</a></td></tr>
     </table>
   </td></tr>
 </table>

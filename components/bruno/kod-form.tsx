@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useT } from "@/components/bruno/jezyk-kontekst";
 
 // Zmiana stałego kodu logowania z panelu (USER_001 30.09).
 // Stary kod wymagany: porzucona sesja w cudzej przeglądarce nie może
 // wystarczyć do przejęcia konta.
 
 export default function KodForm() {
+  const { t } = useT();
   const [stary, setStary] = useState("");
   const [nowy, setNowy] = useState("");
   const [stan, setStan] = useState<"idle" | "zapis" | "ok">("idle");
@@ -27,7 +29,7 @@ export default function KodForm() {
       setNowy("");
     } else {
       setStan("idle");
-      setBlad((await res.json().catch(() => null))?.blad ?? "Couldn't change the code.");
+      setBlad((await res.json().catch(() => null))?.blad ?? t("Couldn't change the code.", "Nie udało się zmienić kodu."));
     }
   };
 
@@ -52,19 +54,19 @@ export default function KodForm() {
   return (
     <form onSubmit={zapisz} className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-5">
       <div>
-        <h2 className="bruno-h2 text-lg">Login code</h2>
-        <p className="text-sm text-slate-600 mt-1">You use this code to log in. You can change it to your own.</p>
+        <h2 className="bruno-h2 text-lg">{t("Login code", "Kod logowania")}</h2>
+        <p className="text-sm text-slate-600 mt-1">{t("You use this code to log in. You can change it to your own.", "Tym kodem wchodzisz do panelu. Możesz go zmienić na swój.")}</p>
       </div>
       <div className="grid sm:grid-cols-2 gap-4">
-        {pole(stary, setStary, "stary", "Current code")}
-        {pole(nowy, setNowy, "nowy", "New code")}
+        {pole(stary, setStary, "stary", t("Current code", "Obecny kod"))}
+        {pole(nowy, setNowy, "nowy", t("New code", "Nowy kod"))}
       </div>
       {blad && <p className="text-sm text-red-700">{blad}</p>}
       <div className="flex items-center gap-4">
         <button type="submit" disabled={stan === "zapis" || stary.length !== 6 || nowy.length !== 6} className="bruno-przycisk">
-          {stan === "zapis" ? "Changing..." : "Change code"}
+          {stan === "zapis" ? t("Changing...", "Zmieniam...") : t("Change code", "Zmień kod")}
         </button>
-        {stan === "ok" && <span className="text-sm text-teal-800">Code changed. Use the new one next time you log in.</span>}
+        {stan === "ok" && <span className="text-sm text-teal-800">{t("Code changed. Use the new one next time you log in.", "Kod zmieniony. Następnym razem logujesz się nowym.")}</span>}
       </div>
     </form>
   );

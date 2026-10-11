@@ -55,7 +55,7 @@ const T = {
     h1b: "i zobacz, jak Bruno gra Twojego klienta",
     lead: "Uzupełnij formularz poniżej",
     kroki: ["O Tobie", "Dzień", "Godzina"],
-    strefa: "Godziny w Twojej strefie czasowej",
+    strefa: "Godziny w czasie polskim",
     brak: "W tym miesiącu nie ma już wolnych terminów. Napisz na hello@jakubchodakowski.com, zaproponuję godzinę.",
     laduje: "Wczytuję wolne terminy...",
     pustyDzien: "Ten dzień już się zapełnił. Wybierz inny.",
@@ -83,10 +83,16 @@ const T = {
 } as const;
 
 /** Data lokalna → "YYYY-MM-DD". */
+// 11.10 (USER_001): PL (salesbruno.pl) pokazuje godziny w czasie polskim, EN bez zmian (strefa przeglądarki).
+const STREFA: Record<"en" | "pl", string | undefined> = { en: undefined, pl: "Europe/Warsaw" };
+
 const klucz = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () => void; jezyk?: "en" | "pl" }) {
   const x = T[jezyk];
+  const strefa = STREFA[jezyk];
+  /** Dzień slotu ("YYYY-MM-DD") w strefie, w której pokazujemy godziny. */
+  const kluczSlotu = (iso: string) => (strefa ? new Date(iso).toLocaleDateString("sv-SE", { timeZone: strefa }) : klucz(new Date(iso)));
   const [krok, setKrok] = useState<1 | 2 | 3>(1);
   const [leadId, setLeadId] = useState<string | null>(null);
   const [sloty, setSloty] = useState<string[] | null>(null);
@@ -95,7 +101,7 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
   const [gotowe, setGotowe] = useState<string | null>(null);
   // 9.10: następny miesiąc widoczny, gdy API odda jego terminy (7 dni przed końcem miesiąca).
   const [przesuniecie, setPrzesuniecie] = useState(0);
-  const [f, setF] = useState({ imie: "", email: "", telefon: "", kraj: "US", stanowisko: "", handlowcy: "", zgoda: false, www: "" });
+  const [f, setF] = useState({ imie: "", email: "", telefon: "", kraj: jezyk === "pl" ? "PL" : "US", stanowisko: "", handlowcy: "", zgoda: false, www: "" });
   const [wysylam, setWysylam] = useState(false);
   const [blad, setBlad] = useState<string | null>(null);
 
@@ -122,15 +128,16 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
   const poDniach = useMemo(() => {
     const m = new Map<string, string[]>();
     for (const t of sloty ?? []) {
-      const k = klucz(new Date(t));
+      const k = kluczSlotu(t);
       m.set(k, [...(m.get(k) ?? []), t]);
     }
     return m;
-  }, [sloty]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sloty, strefa]);
 
-  const godz = (iso: string) => new Date(iso).toLocaleTimeString(x.locale, { hour: "2-digit", minute: "2-digit" });
+  const godz = (iso: string) => new Date(iso).toLocaleTimeString(x.locale, { hour: "2-digit", minute: "2-digit", timeZone: strefa });
   const krotkaData = (k: string) => new Date(`${k}T12:00:00`).toLocaleDateString(x.locale, { day: "numeric", month: "short" });
-  const pelna = (iso: string) => `${new Date(iso).toLocaleDateString(x.locale, { weekday: "long", day: "numeric", month: "long" })}, ${godz(iso)}`;
+  const pelna = (iso: string) => `${new Date(iso).toLocaleDateString(x.locale, { weekday: "long", day: "numeric", month: "long", timeZone: strefa })}, ${godz(iso)}`;
   const emailZly = f.email.includes("@") && !firmowyEmail(f.email);
   const pole = (k: "imie" | "email" | "telefon" | "handlowcy" | "www") => (e: React.ChangeEvent<HTMLInputElement>) => setF((v) => ({ ...v, [k]: e.target.value }));
 
@@ -281,11 +288,11 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
           <form onSubmit={zapiszDane} className={s.form}>
             <div>
               <label className={s.fLabel} htmlFor="demo-imie">{x.imie}</label>
-              <input id="demo-imie" required autoComplete="given-name" className={s.input} placeholder="James" value={f.imie} onChange={pole("imie")} />
+              <input id="demo-imie" required autoComplete="given-name" className={s.input} placeholder={jezyk === "pl" ? "Adam" : "James"} value={f.imie} onChange={pole("imie")} />
             </div>
             <div>
               <label className={s.fLabel} htmlFor="demo-email">{x.email}</label>
-              <input id="demo-email" required type="email" autoComplete="email" aria-invalid={emailZly} className={`${s.input} ${emailZly ? s.inputWarn : ""}`} placeholder="james@yourcompany.com" value={f.email} onChange={pole("email")} />
+              <input id="demo-email" required type="email" autoComplete="email" aria-invalid={emailZly} className={`${s.input} ${emailZly ? s.inputWarn : ""}`} placeholder={jezyk === "pl" ? "adam@twojafirma.pl" : "james@yourcompany.com"} value={f.email} onChange={pole("email")} />
               {emailZly && <p className={s.warn}>{x.warn}</p>}
             </div>
             <div>

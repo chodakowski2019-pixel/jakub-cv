@@ -16,6 +16,9 @@ const stripe = new Stripe(klucz);
 const CENY = [
   { lookup_key: "bruno_pro_miesiac", unit_amount: 250_00, interval: "month", nickname: "Bruno Pro miesięcznie" },
   { lookup_key: "bruno_pro_rok", unit_amount: 2_500_00, interval: "year", nickname: "Bruno Pro rocznie (2 miesiące gratis)" },
+  // 11.10 (USER_001): Polska, salesbruno.pl. 250 zł / mies., 2 500 zł / rok.
+  { lookup_key: "bruno_pro_miesiac_pln_250", unit_amount: 250_00, interval: "month", nickname: "Bruno Pro PL miesięcznie 250 zł", currency: "pln" },
+  { lookup_key: "bruno_pro_rok_pln_2500", unit_amount: 2_500_00, interval: "year", nickname: "Bruno Pro PL rocznie 2500 zł", currency: "pln" },
 ];
 
 const istniejace = await stripe.prices.list({ lookup_keys: CENY.map((c) => c.lookup_key), active: true, limit: 10 });
@@ -40,7 +43,7 @@ for (const c of CENY) {
   if (!cena) {
     cena = await stripe.prices.create({
       product: produkt,
-      currency: "usd",
+      currency: c.currency ?? "usd",
       unit_amount: c.unit_amount,
       recurring: { interval: c.interval },
       lookup_key: c.lookup_key,
@@ -55,6 +58,9 @@ for (const c of CENY) {
 const m = (await stripe.prices.list({ lookup_keys: ["bruno_pro_miesiac"] })).data[0]?.id;
 const r = (await stripe.prices.list({ lookup_keys: ["bruno_pro_rok"] })).data[0]?.id;
 console.log(`\nDo Vercela (Production + Preview):\nBRUNO_STRIPE_CENA_MIESIAC=${m}\nBRUNO_STRIPE_CENA_ROK=${r}`);
+const mpl = (await stripe.prices.list({ lookup_keys: ["bruno_pro_miesiac_pln_250"] })).data[0]?.id;
+const rpl = (await stripe.prices.list({ lookup_keys: ["bruno_pro_rok_pln_2500"] })).data[0]?.id;
+console.log(`BRUNO_STRIPE_CENA_MIESIAC_PL=${mpl}\nBRUNO_STRIPE_CENA_ROK_PL=${rpl}`);
 console.log("Webhook: Stripe → Developers → Webhooks → Add endpoint: https://jakubchodakowski.com/api/bruno/stripe");
 console.log("Zdarzenia: checkout.session.completed, invoice.paid, customer.subscription.updated, customer.subscription.deleted");
 console.log("Signing secret → BRUNO_STRIPE_WEBHOOK_SECRET");

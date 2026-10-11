@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useT } from "@/components/bruno/jezyk-kontekst";
 
 // Dymek czatu w prawym dolnym rogu (USER_001 1.10). Tester pisze wiadomość,
 // serwer wysyła ją mailem do USER_001 z reply-to = tester, więc USER_001
@@ -8,6 +9,7 @@ import { useState } from "react";
 // Żadnej skrzynki w panelu: to kanał jednokierunkowy do maila.
 
 export default function CzatDymek() {
+  const { t } = useT();
   const [otwarty, setOtwarty] = useState(false);
   const [tekst, setTekst] = useState("");
   const [stan, setStan] = useState<"idle" | "wysylanie" | "ok" | "blad">("idle");
@@ -36,28 +38,28 @@ export default function CzatDymek() {
           <div className="px-5 py-4 bg-gradient-to-r from-cyan-700 to-teal-700 text-white flex items-center gap-3">
             <span className="size-9 rounded-full bg-white/15 grid place-items-center bruno-h2 text-sm">B</span>
             <div className="min-w-0 flex-1">
-              <div className="bruno-h2 text-[15px] leading-tight">Message us</div>
-              <div className="text-[12px] text-white/80">We'll reply to your account email.</div>
+              <div className="bruno-h2 text-[15px] leading-tight">{t("Message us", "Napisz do nas")}</div>
+              <div className="text-[12px] text-white/80">{t("We'll reply to your account email.", "Odpowiemy mailem na adres Twojego konta.")}</div>
             </div>
-            <button type="button" onClick={() => setOtwarty(false)} aria-label="Close" className="text-white/80 hover:text-white text-2xl leading-none px-1">×</button>
+            <button type="button" onClick={() => setOtwarty(false)} aria-label={t("Close", "Zamknij")} className="text-white/80 hover:text-white text-2xl leading-none px-1">×</button>
           </div>
           <form onSubmit={wyslij} className="p-4 sm:p-5 flex flex-col gap-3">
             {stan === "ok" ? (
-              <p className="text-sm text-teal-800 py-2">Message sent. We'll reply by email.</p>
+              <p className="text-sm text-teal-800 py-2">{t("Message sent. We'll reply by email.", "Wiadomość wysłana. Odpowiedź przyjdzie mailem.")}</p>
             ) : (
               <>
                 <textarea
                   className="bruno-pole text-[14px]"
                   rows={4}
-                  placeholder="Question, problem, idea..."
+                  placeholder={t("Question, problem, idea...", "Pytanie, problem, pomysł...")}
                   value={tekst}
                   onChange={(e) => setTekst(e.target.value)}
                   maxLength={3000}
                   autoFocus
                 />
-                {stan === "blad" && <p className="text-xs text-red-700">Couldn't send. Email us at hello@jakubchodakowski.com</p>}
+                {stan === "blad" && <p className="text-xs text-red-700">{t("Couldn't send. Email us at hello@jakubchodakowski.com", "Nie udało się wysłać. Napisz na hello@jakubchodakowski.com")}</p>}
                 <button type="submit" disabled={stan === "wysylanie" || tekst.trim().length < 2} className="bruno-przycisk w-full py-2.5 text-sm">
-                  {stan === "wysylanie" ? "Sending..." : "Send"}
+                  {stan === "wysylanie" ? t("Sending...", "Wysyłam...") : t("Send", "Wyślij")}
                 </button>
               </>
             )}
@@ -67,7 +69,7 @@ export default function CzatDymek() {
       <button
         type="button"
         onClick={() => { setOtwarty((o) => !o); if (stan === "ok") setStan("idle"); }}
-        aria-label={otwarty ? "Close chat" : "Message us"}
+        aria-label={otwarty ? t("Close chat", "Zamknij czat") : t("Message us", "Napisz do nas")}
         aria-expanded={otwarty}
         className={`bruno-dymek ${otwarty ? "bruno-dymek-otwarty" : ""}`}
       >

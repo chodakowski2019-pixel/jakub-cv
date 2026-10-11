@@ -5,7 +5,10 @@ import { Poppins, Open_Sans, Outfit } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { dostepKonta, pobierzKonto, stanFree } from "@/lib/bruno/db";
 import UkladZloty from "@/components/bruno/uklad-zloty";
+import { JezykProvider } from "@/components/bruno/jezyk-kontekst";
+import { jezykZHosta } from "@/lib/bruno/domeny";
 import CzatDymek from "@/components/bruno/czat-dymek";
+import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import "./bruno.css";
 
 // Panel testowy Bruno AI (USER_001 30.09): logowanie stałym kodem, dostęp
@@ -13,11 +16,15 @@ import "./bruno.css";
 // trenera, powtórki FSRS, „Dostosuj Bruno", „Ustawienia", „Odblokuj pełen dostęp".
 // Na jakubchodakowski.com do czasu zakupu salesbruno.com.
 
-export const metadata: Metadata = {
-  title: "Bruno AI: Sales Practice",
-  description: "Practice sales calls with Bruno AI.",
-  robots: { index: false, follow: false },
-};
+// 11.10: tytuł karty w języku konta (niezalogowany: domena / ?pl).
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await tSerwer();
+  return {
+    title: t("Bruno AI: Sales Practice", "Bruno AI: panel treningowy"),
+    description: t("Practice sales calls with Bruno AI.", "Trening rozmów sprzedażowych z Bruno AI."),
+    robots: { index: false, follow: false },
+  };
+}
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1 };
 
@@ -35,11 +42,14 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   const dostep = dostepKonta(konto);
   const fonty = `${poppins.variable} ${openSans.variable} ${outfit.variable}`;
   // 9.10 (USER_001): niezalogowany widzi logowanie Aurora na cały ekran, bez paska, tła i stopki panelu.
-  if (!email) return <div className={fonty}>{children}</div>;
+  // 11.10: język panelu = język konta; niezalogowany = domena (salesbruno.pl) albo ?pl (nagłówek x-jezyk z proxy).
+  const h = await headers();
+  const jezyk = konto?.jezyk === "pl" || konto?.jezyk === "en" ? konto.jezyk : ((h.get("x-jezyk") as "pl" | "en" | null) ?? jezykZHosta(h.get("host")) ?? "en");
+  if (!email) return <JezykProvider jezyk={jezyk}><div className={fonty}>{children}</div></JezykProvider>;
 
   // Blokada free po 3 rozmowach na pierwszym wejściu (twarde wejście z adresu). Przejścia między
   // zakładkami pilnuje UkladZloty w przeglądarce, bo układ nie renderuje się przy nich od nowa.
-  const sciezka = (await headers()).get("x-sciezka") ?? "";
+  const sciezka = h.get("x-sciezka") ?? "";
   const free = dostep.free ? await stanFree(konto) : null;
   if (free?.zablokowane && sciezka && !PO_BLOKADZIE.some((p) => sciezka === p || sciezka.startsWith(`${p}/`))) {
     redirect("/bruno/odblokuj");
@@ -49,11 +59,13 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   // reszta wspólny; o tym decyduje UkladZloty po adresie w przeglądarce.
   const inicjal = (konto?.imie?.trim()?.[0] ?? email[0] ?? "B").toUpperCase();
   return (
+    <JezykProvider jezyk={jezyk}>
     <div className={`bruno zloty ${fonty} font-[var(--font-open-sans)]`}>
       <UkladZloty dostep={dostep} inicjal={inicjal} free={free}>
         {children}
       </UkladZloty>
       <CzatDymek />
     </div>
+    </JezykProvider>
   );
 }

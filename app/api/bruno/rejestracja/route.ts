@@ -55,7 +55,7 @@ export async function POST(req: Request) {
     await wyslij({
       do: email,
       rodzaj: "dostep",
-      temat: "Your Bruno AI access",
+      temat: T("Your Bruno AI access", "Twój dostęp do Bruno AI"),
       html: htmlRejestracja({ imie, email, kod: z.kod ?? "", jezyk: pl ? "pl" : "en", rozmow: ROZMOW_ZA_DARMO }),
     });
   } catch (e) {

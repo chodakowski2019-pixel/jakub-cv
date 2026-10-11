@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useT } from "@/components/bruno/jezyk-kontekst";
+import { LINKI as LINKI_PL } from "@/components/podglad/panel/wspolne";
 
 // Układ panelu (USER_001 1.10): wąski pasek Z LEWEJ z logo i zakładkami
 // (Panel, Historia, Dostosuj Bruno, Ustawienia), na górze po środku
@@ -21,6 +23,9 @@ const LINKI = [
   { href: "/bruno/dostosuj", nazwa: "Customize Bruno", ikona: "dostosuj" },
   { href: "/bruno/ustawienia", nazwa: "Settings", ikona: "ustawienia" },
 ] as const;
+
+/** 11.10: polska nazwa zakładki (z listy w podglad/panel/wspolne.tsx). */
+const nazwaPl = (href: string, en: string) => LINKI_PL.find((l) => l.href === href)?.nazwaPl ?? en;
 
 /** Linki widoczne dla konta: „Ogień" tylko przy pełnym dostępie (9.10). */
 const linkiDla = (pelny: boolean) => LINKI.filter((l) => !("pelny" in l) || pelny);
@@ -62,16 +67,17 @@ function Logo({ zalogowany }: { zalogowany: boolean }) {
 /** Wąski pasek boczny (tylko od szerokości sm). */
 export function BrunoPasek({ pelny }: { pelny: boolean }) {
   const sciezka = usePathname();
+  const { t } = useT();
   return (
     <aside className="bruno-pasek-boczny hidden sm:flex flex-col w-52 bruno-szklo rounded-none border-y-0 border-l-0 px-3 py-4 gap-6">
       <div className="px-2">
         <Logo zalogowany />
       </div>
-      <nav className="bruno-pasek flex flex-col gap-1" aria-label="Main menu">
+      <nav className="bruno-pasek flex flex-col gap-1" aria-label={t("Main menu", "Panel")}>
         {linkiDla(pelny).map((l) => (
           <Link key={l.href} href={l.href} aria-current={sciezka?.startsWith(l.href) ? "page" : undefined}>
             <Ikona nazwa={l.ikona} />
-            {l.nazwa}
+            {t(l.nazwa, nazwaPl(l.href, l.nazwa))}
           </Link>
         ))}
       </nav>
@@ -82,6 +88,7 @@ export function BrunoPasek({ pelny }: { pelny: boolean }) {
 /** Górna belka: po środku „Odblokuj pełen dostęp", z prawej „Wyloguj". Na telefonie dodatkowo logo i zakładki. */
 export default function BrunoNav({ zalogowany, pelny }: { zalogowany: boolean; pelny: boolean }) {
   const sciezka = usePathname();
+  const { t } = useT();
   const router = useRouter();
   const wyloguj = async () => {
     await fetch("/api/bruno/wyloguj", { method: "POST" });
@@ -112,18 +119,18 @@ export default function BrunoNav({ zalogowany, pelny }: { zalogowany: boolean; p
           className={`bruno-odblokuj inline-flex items-center gap-2 whitespace-nowrap ${odblokuj ? "bruno-odblokuj-aktywny" : ""}`}
         >
           <Ikona nazwa="klodka" />
-          <span className="sm:hidden">Unlock</span>
-          <span className="hidden sm:inline">Unlock full access</span>
+          <span className="sm:hidden">{t("Unlock", "Odblokuj")}</span>
+          <span className="hidden sm:inline">{t("Unlock full access", "Odblokuj pełen dostęp")}</span>
         </Link>
         <button type="button" onClick={wyloguj} className="bruno-wyloguj sm:absolute sm:right-6 inline-flex items-center gap-1.5">
           <Ikona nazwa="wyjscie" />
-          <span className="hidden sm:inline">Log out</span>
+          <span className="hidden sm:inline">{t("Log out", "Wyloguj")}</span>
         </button>
       </div>
-      <nav className="sm:hidden bruno-nav flex items-center gap-1 overflow-x-auto px-3 pb-2" aria-label="Main menu">
+      <nav className="sm:hidden bruno-nav flex items-center gap-1 overflow-x-auto px-3 pb-2" aria-label={t("Main menu", "Panel")}>
         {linkiDla(pelny).map((l) => (
           <Link key={l.href} href={l.href} aria-current={sciezka?.startsWith(l.href) ? "page" : undefined} className="whitespace-nowrap">
-            {l.nazwa}
+            {t(l.nazwa, nazwaPl(l.href, l.nazwa))}
           </Link>
         ))}
       </nav>

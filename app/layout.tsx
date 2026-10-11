@@ -29,7 +29,9 @@ export default async function RootLayout({
 }>) {
   // Merge 22.09: strona glowna jest po polsku (SEO dla klinik), ale /en dalej
   // istnieje z czerwcowego przelacznika PL/EN, wiec jezyk bierzemy z naglowka.
-  const locale = (await headers()).get("x-locale") ?? "pl";
+  // 11.10: na domenach Bruno język z domeny (x-jezyk z proxy).
+  const h = await headers();
+  const locale = h.get("x-jezyk") ?? h.get("x-locale") ?? "pl";
   return (
     <html
       lang={locale}

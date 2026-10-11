@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonto } from "@/lib/bruno/db";
 import { SKRZYNKA_JAKUBA, htmlWiadomosc, wyslij } from "@/lib/bruno/mail";
+import { tDla } from "@/lib/bruno/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -11,10 +12,11 @@ export async function POST(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
   const b = await req.json().catch(() => ({}));
+  const konto = await pobierzKonto(email);
+  const t = tDla(konto?.jezyk);
   const tekst = String(b.tekst ?? "").trim().slice(0, 3000);
-  if (tekst.length < 2) return NextResponse.json({ ok: false, blad: "Your message is empty." }, { status: 400 });
+  if (tekst.length < 2) return NextResponse.json({ ok: false, blad: t("Your message is empty.", "Wiadomość jest pusta.") }, { status: 400 });
   try {
-    const konto = await pobierzKonto(email);
     await wyslij({
       do: SKRZYNKA_JAKUBA,
       replyTo: email,
@@ -24,6 +26,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[bruno wiadomosc]", e);
-    return NextResponse.json({ ok: false, blad: "Couldn't send. Try again." }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: t("Couldn't send. Try again.", "Nie udało się wysłać. Spróbuj ponownie.") }, { status: 500 });
   }
 }

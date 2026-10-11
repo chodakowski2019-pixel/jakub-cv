@@ -1,6 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Konfig } from "./db";
-import { ETAPY, REJESTRY, etapLubDomyslny, rejestrLubDomyslny } from "./etapy";
+import type { Jezyk } from "./domeny";
+import { ETAPY, ETAPY_BRUNO_PL, REJESTRY, REJESTRY_BRUNO_PL, etapLubDomyslny, rejestrLubDomyslny } from "./etapy";
+import { etykiety } from "./etykiety";
 import { POSTACIE, type PostacId, type TrybId } from "./postacie";
 
 // Bruno-klient na ElevenLabs Agents (decyzja USER_001 2.10: natywne polskie
@@ -21,7 +23,11 @@ export function elevenlabsWlaczone(): boolean {
  *  (ElevenLabs premade, amerykański). Zapas: Brian `nPczCjzI2devNBz1zQrb` (amerykański, niski), Daniel `onwK4e9ZLuTAKqWW03F9` (brytyjski).
  *  Stary polski głos (Adam `o11yegU3CL24TZ1qcm6b`) wyłączony razem z polskim. Nadpisanie: ELEVENLABS_GLOS. */
 export const GLOS_BRUNO = "iP95p4xoKVk53GoZ742B";
-export function glosElevenlabs(_postac: PostacId): string {
+/** 11.10 (Bruno w dwóch językach): konta PL wracają do polskiego głosu Adam „Approachable and Raspy" (wybór USER_001 z 2.10). */
+export const GLOS_BRUNO_PL = "o11yegU3CL24TZ1qcm6b";
+/** Głos Bruno w danym języku. ELEVENLABS_GLOS nadpisuje tylko EN. */
+export function glosElevenlabs(_postac: PostacId, jezyk: Jezyk = "en"): string {
+  if (jezyk === "pl") return GLOS_BRUNO_PL;
   return process.env.ELEVENLABS_GLOS || GLOS_BRUNO;
 }
 
@@ -100,7 +106,8 @@ export function polaczenieEl(): "websocket" | "webrtc" {
  * sam zaczyna: podsumowanie oferty + pierwsza obiekcja. Generowane Haiku
  * w 1-2 s, z awaryjnym szablonem, gdy model nie odpowie.
  */
-export async function pierwszaWypowiedz(args: { tryb: TrybId; postac: PostacId; konfig: Konfig; obiekcja: string | null; sytuacja?: string | null }): Promise<string> {
+export async function pierwszaWypowiedz(args: { tryb: TrybId; postac: PostacId; konfig: Konfig; obiekcja: string | null; sytuacja?: string | null; jezyk?: Jezyk }): Promise<string> {
+  if (args.jezyk === "pl") return pierwszaWypowiedzPL(args);
   const { tryb, postac, konfig, obiekcja } = args;
   if (tryb === "cold") {
     const warianty = ["Yeah, hello?", "This is Bruno.", "Hello? Who's this?", "Bruno speaking."];
@@ -130,6 +137,51 @@ export async function pierwszaWypowiedz(args: { tryb: TrybId; postac: PostacId; 
             (tryb === "zywo"
               ? `Situation: in-person 1:1 meeting. The customer knows the offer: ${produkt}. They open the conversation: briefly sum up in their own words what they know about the offer and RIGHT AWAY raise the objection: "${obiekcja ?? "I have doubts about the price"}".`
               : `Situation: online meeting right after the rep's presentation. The customer saw the presentation of: ${produkt}. They open: sum up what they understood ("if I got this right…") and raise an objection or a hard question: "${obiekcja ?? "is this really a fit for us"}".`),
+        },
+      ],
+    });
+    const tekst = odp.content
+      .map((c) => (c.type === "text" ? c.text : ""))
+      .join("")
+      .trim();
+    return tekst.length > 10 ? tekst.slice(0, 400) : szablon;
+  } catch {
+    return szablon;
+  }
+}
+
+/** 11.10: pierwsza wypowiedź PO POLSKU (z fd7de52, 1:1). */
+async function pierwszaWypowiedzPL(args: { tryb: TrybId; postac: PostacId; konfig: Konfig; obiekcja: string | null; sytuacja?: string | null }): Promise<string> {
+  const { tryb, postac, konfig, obiekcja } = args;
+  if (tryb === "cold") {
+    const warianty = ["Halo, słucham?", "Tak, Bruno, słucham.", "Halo? Kto mówi?", "Słucham, Bruno przy telefonie."];
+    return warianty[Math.floor(Math.random() * warianty.length)];
+  }
+  const E = etykiety("pl");
+  const produkt = konfig.produkt.trim() || "Państwa ofertę";
+  const rejestr = REJESTRY_BRUNO_PL[rejestrLubDomyslny(konfig.rejestr)];
+  const etapId = etapLubDomyslny(konfig.etap);
+  const sytuacja = args.sytuacja?.trim();
+  const szablon =
+    tryb === "zywo"
+      ? `Dzień dobry. Znam już ${produkt}, przeczytałem wszystko. Powiem wprost: ${obiekcja ? obiekcja.toLowerCase() : "mam wątpliwości"}.`
+      : `Dziękuję za prezentację. Jeśli dobrze rozumiem, proponują Państwo ${produkt}. Mam jedno pytanie: ${obiekcja ? obiekcja.toLowerCase() : "czy to na pewno dla nas"}.`;
+  if (!process.env.ANTHROPIC_API_KEY) return szablon;
+  try {
+    const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const odp = await klient.messages.create({
+      model: process.env.BRUNO_FISZKA_MODEL ?? "claude-haiku-4-5-20251001",
+      max_tokens: 200,
+      // 9.10: etap, forma zwracania się i sytuacja z życia, żeby pierwsze zdanie nie zmyślało oferty ani nie mówiło „słuchaj".
+      system: `Piszesz JEDNĄ pierwszą wypowiedź klienta w treningowej rozmowie sprzedażowej, po polsku, 2-3 krótkie zdania, mówione, naturalne, bez cudzysłowów i bez didaskaliów. Klient to typ ${E.POSTACIE[postac].krotko} (${E.POSTACIE[postac].opis}). ${rejestr} Etap relacji: ${E.ETAPY[etapId].nazwa}: ${ETAPY_BRUNO_PL[etapId]} Mówisz TYLKO o tym, co jest w opisie oferty; nie wymyślasz innych produktów ani cen. Zwróć tylko tekst wypowiedzi.`,
+      messages: [
+        {
+          role: "user",
+          content:
+            (sytuacja ? `SYTUACJA TEJ ROZMOWY (nadrzędna, trzymaj się faktów): ${sytuacja}\n\n` : "") +
+            (tryb === "zywo"
+              ? `Sytuacja: spotkanie 1:1 na żywo. Klient zna ofertę: ${produkt}. Zaczyna rozmowę: krótko podsumowuje własnymi słowami, co wie o ofercie, i OD RAZU podnosi obiekcję: „${obiekcja ?? "mam wątpliwości co do ceny"}”.`
+              : `Sytuacja: spotkanie online tuż po prezentacji handlowca. Klient widział prezentację oferty: ${produkt}. Zaczyna: podsumowuje, co zrozumiał („jeśli dobrze rozumiem…”), i podnosi obiekcję albo trudne pytanie: „${obiekcja ?? "czy to na pewno dla nas"}”.`),
         },
       ],
     });

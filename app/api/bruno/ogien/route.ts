@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pelnyDostep, pobierzKonto } from "@/lib/bruno/db";
+import { tDla } from "@/lib/bruno/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -16,31 +17,35 @@ const przytnij = (v: unknown) => JSON.parse(JSON.stringify(v ?? {}).slice(0, MAX
 export async function POST(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
-  if (!pelnyDostep(await pobierzKonto(email))) return NextResponse.json({ ok: false, blad: "Fire Up is part of full access." }, { status: 403 });
+  const konto = await pobierzKonto(email);
+  const t = tDla(konto?.jezyk);
+  if (!pelnyDostep(konto)) return NextResponse.json({ ok: false, blad: t("Fire Up is part of full access.", "Ogień jest w pełnym dostępie.") }, { status: 403 });
   const b = await req.json().catch(() => ({}));
   let dane: unknown;
   try {
     dane = przytnij(b.dane);
   } catch {
-    return NextResponse.json({ ok: false, blad: "Wrong format." }, { status: 400 });
+    return NextResponse.json({ ok: false, blad: t("Wrong format.", "Zły format.") }, { status: 400 });
   }
   const { data, error } = await supabaseAdmin.from("bruno_ogien").insert({ email, dane }).select("id").single();
-  if (error || !data) return NextResponse.json({ ok: false, blad: error?.message ?? "Not saved." }, { status: 500 });
+  if (error || !data) return NextResponse.json({ ok: false, blad: error?.message ?? t("Not saved.", "Nie zapisano.") }, { status: 500 });
   return NextResponse.json({ ok: true, id: data.id });
 }
 
 export async function PATCH(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
-  if (!pelnyDostep(await pobierzKonto(email))) return NextResponse.json({ ok: false, blad: "Fire Up is part of full access." }, { status: 403 });
+  const konto = await pobierzKonto(email);
+  const t = tDla(konto?.jezyk);
+  if (!pelnyDostep(konto)) return NextResponse.json({ ok: false, blad: t("Fire Up is part of full access.", "Ogień jest w pełnym dostępie.") }, { status: 403 });
   const b = await req.json().catch(() => ({}));
   const id = String(b.id ?? "");
-  if (!id) return NextResponse.json({ ok: false, blad: "Missing ID." }, { status: 400 });
+  if (!id) return NextResponse.json({ ok: false, blad: t("Missing ID.", "Brak ID.") }, { status: 400 });
   let po: unknown;
   try {
     po = przytnij(b.po_rozmowie);
   } catch {
-    return NextResponse.json({ ok: false, blad: "Wrong format." }, { status: 400 });
+    return NextResponse.json({ ok: false, blad: t("Wrong format.", "Zły format.") }, { status: 400 });
   }
   const { error } = await supabaseAdmin.from("bruno_ogien").update({ po_rozmowie: po, zakonczono: new Date().toISOString() }).eq("id", id).eq("email", email);
   if (error) return NextResponse.json({ ok: false, blad: error.message }, { status: 500 });

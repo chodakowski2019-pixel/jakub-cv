@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { SCIEZKI, adresBruno, jezykZHosta, type Jezyk } from "@/lib/bruno/domeny";
 
 const GATED_PATHS = [
   "/scamalertmiami/report-scam",
@@ -37,15 +38,73 @@ function withLocaleHeader(request: NextRequest, locale: "pl" | "en") {
   return NextResponse.next({ request: { headers } });
 }
 
+/** Stare adresy Bruno z jakubchodakowski.com (9-10.10). */
+const STARE_BRUNO = ["/brunobusiness", "/brunoai", "/brunorejestracja", "/bruno"];
+
+/** Nagłówki dla stron Bruno: ścieżka (blokada free w układzie) i język domeny. */
+function dalej(request: NextRequest, pathname: string, jezyk: Jezyk | null, rewrite?: string) {
+  const h = new Headers(request.headers);
+  h.set("x-sciezka", pathname);
+  if (jezyk) h.set("x-jezyk", jezyk);
+  if (rewrite) {
+    const url = request.nextUrl.clone();
+    url.pathname = rewrite;
+    return NextResponse.rewrite(url, { request: { headers: h } });
+  }
+  return NextResponse.next({ request: { headers: h } });
+}
+
 export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
+  const host = request.headers.get("host");
+
+  // --- 11.10 (USER_001): DOMENY BRUNO. salesbruno.com = EN, salesbruno.pl = PL. Ładne adresy = rewrite
+  // na istniejące strony, stare adresy = przekierowanie na ładne. Panel zostaje pod /bruno/... ---
+  const jezyk = jezykZHosta(host);
+  if (jezyk) {
+    const P = SCIEZKI[jezyk];
+    if (pathname === "/") return dalej(request, pathname, jezyk, "/brunobusiness");
+    if (pathname === P.handlowcy) return dalej(request, pathname, jezyk, "/brunoai");
+    if (pathname === P.rejestracja) return dalej(request, pathname, jezyk, "/brunorejestracja");
+    if (pathname === P.logowanie) return dalej(request, pathname, jezyk, "/bruno");
+    const nowa: Record<string, string> = { "/brunobusiness": "/", "/brunoai": P.handlowcy, "/brunorejestracja": P.rejestracja, "/bruno": P.logowanie };
+    if (nowa[pathname]) {
+      const url = request.nextUrl.clone();
+      url.pathname = nowa[pathname];
+      url.searchParams.delete("pl");
+      return NextResponse.redirect(url, 308);
+    }
+    // Adres z drugiej domeny (np. /reps na .pl): na odpowiednik w tej domenie.
+    const inny = SCIEZKI[jezyk === "pl" ? "en" : "pl"];
+    const odpowiednik = pathname === inny.handlowcy ? P.handlowcy : pathname === inny.rejestracja ? P.rejestracja : null;
+    if (odpowiednik) {
+      const url = request.nextUrl.clone();
+      url.pathname = odpowiednik;
+      return NextResponse.redirect(url, 308);
+    }
+    if (pathname.startsWith("/bruno/")) return dalej(request, pathname, jezyk);
+    return dalej(request, pathname, jezyk);
+  }
+
+  // --- 11.10: na jakubchodakowski.com nie zostaje nic z Bruno. 301 na salesbruno.com, z ?pl na salesbruno.pl.
+  // Tylko produkcyjna domena: lokalnie i na podglądach Vercela Bruno działa dalej pod starymi adresami. ---
+  const naJakubie = (host ?? "").toLowerCase().split(":")[0].endsWith("jakubchodakowski.com");
+  if (naJakubie && (STARE_BRUNO.includes(pathname) || pathname.startsWith("/bruno/"))) {
+    const j: Jezyk = searchParams.has("pl") ? "pl" : "en";
+    const P = SCIEZKI[j];
+    const sciezka =
+      pathname === "/brunobusiness" ? "/" : pathname === "/brunoai" ? P.handlowcy : pathname === "/brunorejestracja" ? P.rejestracja : pathname === "/bruno" ? P.logowanie : pathname;
+    const cel = new URL(adresBruno(j, sciezka));
+    searchParams.forEach((v, k) => {
+      if (k !== "pl") cel.searchParams.set(k, v);
+    });
+    return NextResponse.redirect(cel, 301);
+  }
 
   // --- 10.10: /bruno/panel ma własny układ (czarny ze złotym), app/bruno/layout.tsx czyta ścieżkę z nagłówka.
   // 10.10 wieczór: nagłówek dla całego /bruno, bo układ blokuje konto free po 3 rozmowach (poza Odblokuj / Feedback / Ustawienia). ---
   if (pathname === "/bruno" || pathname.startsWith("/bruno/")) {
-    const h = new Headers(request.headers);
-    h.set("x-sciezka", pathname);
-    return NextResponse.next({ request: { headers: h } });
+    return dalej(request, pathname, searchParams.has("pl") ? "pl" : null);
   }
 
   // --- Strona główna (9.10): / = app/page.tsx (nowa, PL). /en = public/home.html (5.10, EN) ---
@@ -83,5 +142,6 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/en", "/scamalertmiami/:path*", "/bruno", "/bruno/:path*"],
+  // 11.10: domeny Bruno łapią wszystko poza plikami statycznymi i API (strony Jakuba na salesbruno też dostają x-jezyk).
+  matcher: ["/((?!api/|_next/|favicon|icon|apple-icon|.*\\.[a-z0-9]{2,5}$).*)"],
 };
