@@ -165,7 +165,6 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
           <span className="bruno-gradient-tekst">{t("Drills", "Trening")}</span>
         </h1>
-        <p className="text-slate-600 mt-2">{t("Objections, moments from your calls, and customer know-how. You answer.", "Obiekcje, sytuacje z Twoich rozmów i wiedza o klientach. Ty odpowiadasz.")}</p>
       </div>
 
       {/* Pasek gry. 11.10 (USER_001): w trakcie fiszek tylko „fiszek dziś”; seria i punkty dopiero po skończeniu. */}

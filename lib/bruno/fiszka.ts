@@ -63,7 +63,7 @@ export async function ocenFiszke(args: {
     .join("\n");
   const odp = await klient.messages.create({
     model,
-    max_tokens: 500,
+    max_tokens: 900,
     system: pl ? SYSTEM_PL : SYSTEM,
     messages: [
       {
@@ -77,15 +77,38 @@ export async function ocenFiszke(args: {
             : `${kontekst}\n\nCUSTOMER OBJECTION: "${args.obiekcja}"\n\nREP'S ANSWER: "${args.odpowiedz}"`,
       },
     ],
+    // 11.10: wymuszony format (narzędzie ze schematem) zamiast JSON-a w tekście. Model wstawiał
+    // cudzysłowy w środek odpowiedzi i JSON.parse padał („Trener nie odpowiedział” w Treningu).
+    tools: [
+      {
+        name: "ocena_fiszki",
+        description: "Saves the score of the rep's flashcard answer.",
+        input_schema: {
+          type: "object",
+          properties: {
+            werdykt: { type: "integer", minimum: 1, maximum: 4 },
+            komentarz: { type: "string" },
+            wzor: { type: "string" },
+            technika: { type: "string" },
+          },
+          required: ["werdykt", "komentarz", "wzor", "technika"],
+        },
+      },
+    ],
+    tool_choice: { type: "tool", name: "ocena_fiszki" },
   });
-  const tekst = odp.content
-    .map((c) => (c.type === "text" ? c.text : ""))
-    .join("")
-    .trim();
-  const s = tekst.indexOf("{");
-  const e = tekst.lastIndexOf("}");
-  if (s < 0 || e < 0) throw new Error("Trener fiszek nie zwrócił JSON");
-  const raw = JSON.parse(tekst.slice(s, e + 1)) as Partial<WerdyktFiszki>;
+  const blok = odp.content.find((c) => c.type === "tool_use");
+  let raw: Partial<WerdyktFiszki>;
+  if (blok && blok.type === "tool_use") {
+    raw = blok.input as Partial<WerdyktFiszki>;
+  } else {
+    // Zapasowo: stara ścieżka z JSON-em w tekście.
+    const tekst = odp.content.map((c) => (c.type === "text" ? c.text : "")).join("").trim();
+    const s = tekst.indexOf("{");
+    const e = tekst.lastIndexOf("}");
+    if (s < 0 || e < 0) throw new Error("Trener fiszek nie zwrócił JSON");
+    raw = JSON.parse(tekst.slice(s, e + 1)) as Partial<WerdyktFiszki>;
+  }
   const w = Math.min(4, Math.max(1, Math.round(Number(raw.werdykt ?? 2)))) as 1 | 2 | 3 | 4;
   return {
     werdykt: w,
