@@ -41,6 +41,8 @@ export async function POST(req: Request) {
       // 9.10: etap relacji i forma zwracania się (Bruno trzyma się etapu, mówi per pan/pani albo na ty).
       etap: etapLubDomyslny(b.etap === undefined ? stare.etap : b.etap),
       rejestr: rejestrLubDomyslny(b.rejestr === undefined ? stare.rejestr : b.rejestr),
+      // 11.10 (USER_001): głos Bruno (m / k) z Ustawień.
+      glos: b.glos === undefined ? (stare.glos === "k" ? "k" : "m") : b.glos === "k" ? "k" : "m",
       godzina_przypomnienia:
         b.godzina_przypomnienia === undefined ? stare.godzina_przypomnienia : Math.min(22, Math.max(5, Number(b.godzina_przypomnienia) || 8)),
       zaktualizowano: new Date().toISOString(),

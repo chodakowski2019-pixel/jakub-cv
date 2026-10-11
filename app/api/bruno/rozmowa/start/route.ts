@@ -24,7 +24,7 @@ import { jezykLubDomyslny } from "@/lib/bruno/domeny";
 import { etykiety } from "@/lib/bruno/etykiety";
 import { mnoga, tDla } from "@/lib/bruno/i18n";
 import { jezykZadania } from "@/lib/bruno/jezyk-serwer";
-import { MIN_KREDYTOW_EL, elevenlabsWlaczone, glosElevenlabs, pierwszaWypowiedz, podpisanyUrlEl, polaczenieEl, tokenRozmowyEl, wolneKredytyEl } from "@/lib/bruno/elevenlabs";
+import { MIN_KREDYTOW_EL, elevenlabsWlaczone, glosElevenlabs, plecGlosu, ustawieniaGlosu, pierwszaWypowiedz, podpisanyUrlEl, polaczenieEl, tokenRozmowyEl, wolneKredytyEl } from "@/lib/bruno/elevenlabs";
 
 export const dynamic = "force-dynamic";
 
@@ -166,7 +166,9 @@ export async function POST(req: Request) {
         token,
         prompt: instrukcje,
         pierwsza_wypowiedz: pierwsza,
-        glos: glosElevenlabs(postac, jezyk),
+        glos: glosElevenlabs(postac, jezyk, plecGlosu(konfig.glos)),
+        // 11.10: ustawienia głosu (płynność) dla wybranego głosu, null = ustawienia agenta.
+        glos_ustawienia: ustawieniaGlosu(jezyk, plecGlosu(konfig.glos)),
         // 11.10: przeglądarka ustawia z tego `language` w nadpisaniach agenta ElevenLabs.
         jezyk,
         sekundy: sekundyTejRozmowy,

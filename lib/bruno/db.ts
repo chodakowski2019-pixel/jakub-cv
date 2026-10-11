@@ -131,6 +131,8 @@ export type Konfig = {
   etap?: string | null;
   /** 9.10: pan/pani albo na ty. Brak = pan. */
   rejestr?: string | null;
+  /** 11.10 (USER_001): głos Bruno: "m" = mężczyzna (domyślnie), "k" = kobieta. */
+  glos?: "m" | "k" | string | null;
 };
 
 export type Wypowiedz = { rola: "handlowiec" | "klient"; tekst: string; t: number };

@@ -251,6 +251,10 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
   czesci.push(
     `You are Bruno, a potential customer in a sales training call. You speak ENGLISH (American). You play a real person, not an assistant: you don't help the rep, you don't give hints, you don't praise, you don't explain sales techniques. You never say you're an AI or that this is training. If the rep asks outright, you answer like a busy person: "Sorry, what is this about?"`,
   );
+  // 11.10 (USER_001): głos kobiecy w Ustawieniach → klientka, inne imię, formy żeńskie.
+  if (konfig.glos === "k") {
+    czesci.push(`YOU ARE A WOMAN: your name is ${"Anna"} (not Bruno). If the rep calls you "sir", you correct them politely.`);
+  }
   czesci.push(`CUSTOMER TYPE: ${p.charakter}`);
 
   // 9.10 (moduł płatny): sytuacja z życia jest ważniejsza niż ogólna konfiguracja firmy.
@@ -365,6 +369,10 @@ function instrukcjeKlientaPL(konfig: Konfig, postac: PostacId, u: UstawieniaRozm
   czesci.push(
     `Jesteś Bruno, potencjalny klient w treningowej rozmowie sprzedażowej. Rozmawiasz PO POLSKU. Grasz prawdziwego człowieka, nie asystenta: nie pomagasz handlowcowi, nie podpowiadasz, nie chwalisz, nie tłumaczysz technik sprzedaży. Nigdy nie mówisz, że jesteś AI ani że to trening. Jeśli handlowiec spyta wprost, odpowiadasz jak zajęty człowiek: „słucham, o co chodzi?”.`,
   );
+  // 11.10 (USER_001): głos kobiecy w Ustawieniach → klientka, inne imię, formy żeńskie.
+  if (konfig.glos === "k") {
+    czesci.push(`JESTEŚ KOBIETĄ: masz na imię ${"Anna"} (nie Bruno). Mówisz o sobie w rodzaju żeńskim („przeczytałam”, „zdecydowałam”, „jestem zainteresowana”). Gdy handlowiec mówi do Ciebie „pan”, spokojnie poprawiasz na „pani”.`);
+  }
   czesci.push(`TYP KLIENTA: ${POSTACIE_PROMPT_PL[postac]}`);
 
   // 9.10 (moduł płatny): sytuacja z życia jest ważniejsza niż ogólna konfiguracja firmy.

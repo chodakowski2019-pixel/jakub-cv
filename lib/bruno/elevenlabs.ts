@@ -25,8 +25,26 @@ export function elevenlabsWlaczone(): boolean {
 export const GLOS_BRUNO = "iP95p4xoKVk53GoZ742B";
 /** 11.10 (Bruno w dwóch językach): konta PL wracają do polskiego głosu Adam „Approachable and Raspy" (wybór USER_001 z 2.10). */
 export const GLOS_BRUNO_PL = "o11yegU3CL24TZ1qcm6b";
-/** Głos Bruno w danym języku. ELEVENLABS_GLOS nadpisuje tylko EN. */
-export function glosElevenlabs(_postac: PostacId, jezyk: Jezyk = "en"): string {
+/** 11.10 (USER_001): kobiece głosy do wyboru w Ustawieniach. PL Aleksandra (biblioteka ElevenLabs, conversational), EN Matilda (potwierdzona). */
+export const GLOS_BRUNO_K_PL = "NOWYzprzTwfZQqU76pBX"; // 11.10 USER_001: Aleksandra (C), „najlepsza, ma być płynniejsza”.
+export const GLOS_BRUNO_K = "XrExE9yKIg1WjnnlVkGX";
+/**
+ * 11.10 (USER_001: „Aleksandra, wersja C4 naturalna-płynna”): ustawienia głosu dla kobiecego PL.
+ * Agent ElevenLabs pozwala nadpisać per rozmowa: stability, similarity_boost, speed. Inne głosy = ustawienia agenta.
+ */
+export function ustawieniaGlosu(jezyk: Jezyk, plec: PlecGlosu): { stability: number; similarityBoost: number; speed: number } | null {
+  if (plec === "k" && jezyk === "pl") return { stability: 0.55, similarityBoost: 0.75, speed: 1.05 };
+  return null;
+}
+/** Imię klientki, gdy wybrany głos kobiecy (do potwierdzenia przez USER_001). */
+export const IMIE_K: Record<Jezyk, string> = { pl: "Anna", en: "Anna" };
+export type PlecGlosu = "m" | "k";
+export function plecGlosu(g: unknown): PlecGlosu {
+  return g === "k" ? "k" : "m";
+}
+/** Głos Bruno w danym języku i płci. ELEVENLABS_GLOS nadpisuje tylko męski EN. */
+export function glosElevenlabs(_postac: PostacId, jezyk: Jezyk = "en", plec: PlecGlosu = "m"): string {
+  if (plec === "k") return jezyk === "pl" ? GLOS_BRUNO_K_PL : GLOS_BRUNO_K;
   if (jezyk === "pl") return GLOS_BRUNO_PL;
   return process.env.ELEVENLABS_GLOS || GLOS_BRUNO;
 }
@@ -110,7 +128,7 @@ export async function pierwszaWypowiedz(args: { tryb: TrybId; postac: PostacId; 
   if (args.jezyk === "pl") return pierwszaWypowiedzPL(args);
   const { tryb, postac, konfig, obiekcja } = args;
   if (tryb === "cold") {
-    const warianty = ["Yeah, hello?", "This is Bruno.", "Hello? Who's this?", "Bruno speaking."];
+    const warianty = plecGlosu(konfig.glos) === "k" ? ["Yeah, hello?", `This is ${IMIE_K.en}.`, "Hello? Who's this?", `${IMIE_K.en} speaking.`] : ["Yeah, hello?", "This is Bruno.", "Hello? Who's this?", "Bruno speaking."];
     return warianty[Math.floor(Math.random() * warianty.length)];
   }
   const produkt = konfig.produkt.trim() || "your offer";
@@ -128,7 +146,7 @@ export async function pierwszaWypowiedz(args: { tryb: TrybId; postac: PostacId; 
       model: process.env.BRUNO_FISZKA_MODEL ?? "claude-haiku-4-5-20251001",
       max_tokens: 200,
       // 9.10: etap, forma zwracania się i sytuacja z życia, żeby pierwsze zdanie nie zmyślało oferty.
-      system: `You write ONE opening line for the customer in a sales training call, in American English, 2-3 short spoken sentences, natural, no quotation marks, no stage directions. The customer is the ${POSTACIE[postac].krotko} type (${POSTACIE[postac].opis}). ${rejestr.bruno} Relationship stage: ${etap.nazwa}: ${etap.bruno} You talk ONLY about what's in the offer description; you don't invent other products or prices. Return only the spoken text.`,
+      system: `You write ONE opening line for the customer in a sales training call, in American English, 2-3 short spoken sentences, natural, no quotation marks, no stage directions. The customer is the ${POSTACIE[postac].krotko} type (${POSTACIE[postac].opis}). ${rejestr.bruno} Relationship stage: ${etap.nazwa}: ${etap.bruno} You talk ONLY about what's in the offer description; you don't invent other products or prices. Return only the spoken text.${plecGlosu(konfig.glos) === "k" ? " The customer is a woman." : ""}`,
       messages: [
         {
           role: "user",
@@ -154,7 +172,7 @@ export async function pierwszaWypowiedz(args: { tryb: TrybId; postac: PostacId; 
 async function pierwszaWypowiedzPL(args: { tryb: TrybId; postac: PostacId; konfig: Konfig; obiekcja: string | null; sytuacja?: string | null }): Promise<string> {
   const { tryb, postac, konfig, obiekcja } = args;
   if (tryb === "cold") {
-    const warianty = ["Halo, słucham?", "Tak, Bruno, słucham.", "Halo? Kto mówi?", "Słucham, Bruno przy telefonie."];
+    const warianty = plecGlosu(konfig.glos) === "k" ? ["Halo, słucham?", `Tak, ${IMIE_K.pl}, słucham.`, "Halo? Kto mówi?", `Słucham, ${IMIE_K.pl} przy telefonie.`] : ["Halo, słucham?", "Tak, Bruno, słucham.", "Halo? Kto mówi?", "Słucham, Bruno przy telefonie."];
     return warianty[Math.floor(Math.random() * warianty.length)];
   }
   const E = etykiety("pl");
@@ -173,7 +191,7 @@ async function pierwszaWypowiedzPL(args: { tryb: TrybId; postac: PostacId; konfi
       model: process.env.BRUNO_FISZKA_MODEL ?? "claude-haiku-4-5-20251001",
       max_tokens: 200,
       // 9.10: etap, forma zwracania się i sytuacja z życia, żeby pierwsze zdanie nie zmyślało oferty ani nie mówiło „słuchaj".
-      system: `Piszesz JEDNĄ pierwszą wypowiedź klienta w treningowej rozmowie sprzedażowej, po polsku, 2-3 krótkie zdania, mówione, naturalne, bez cudzysłowów i bez didaskaliów. Klient to typ ${E.POSTACIE[postac].krotko} (${E.POSTACIE[postac].opis}). ${rejestr} Etap relacji: ${E.ETAPY[etapId].nazwa}: ${ETAPY_BRUNO_PL[etapId]} Mówisz TYLKO o tym, co jest w opisie oferty; nie wymyślasz innych produktów ani cen. Zwróć tylko tekst wypowiedzi.`,
+      system: `Piszesz JEDNĄ pierwszą wypowiedź klienta w treningowej rozmowie sprzedażowej, po polsku, 2-3 krótkie zdania, mówione, naturalne, bez cudzysłowów i bez didaskaliów. Klient to typ ${E.POSTACIE[postac].krotko} (${E.POSTACIE[postac].opis}). ${rejestr} Etap relacji: ${E.ETAPY[etapId].nazwa}: ${ETAPY_BRUNO_PL[etapId]} Mówisz TYLKO o tym, co jest w opisie oferty; nie wymyślasz innych produktów ani cen. Zwróć tylko tekst wypowiedzi.${plecGlosu(konfig.glos) === "k" ? " Klientka jest kobietą: mówi o sobie w rodzaju żeńskim (przeczytałam, zdecydowałam)." : ""}`,
       messages: [
         {
           role: "user",

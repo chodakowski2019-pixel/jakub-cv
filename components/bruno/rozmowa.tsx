@@ -146,6 +146,44 @@ function startGwar(): { stop: () => void } {
   };
 }
 
+/**
+ * 11.10 (USER_001): zamiast „Bruno-trener ocenia rozmowę (do 30 s)…” kółko, które powoli się wypełnia,
+ * i napis „Ocena rozmowy”. Postęp rośnie szybko na starcie i zwalnia (do 95 %), bo czas oceny jest nieznany.
+ */
+function KolkoOceny({ etykieta }: { etykieta: string }) {
+  const [postep, setPostep] = useState(0);
+  useEffect(() => {
+    const t0 = Date.now();
+    const id = setInterval(() => setPostep(Math.min(0.95, 1 - Math.exp(-(Date.now() - t0) / 12000))), 200);
+    return () => clearInterval(id);
+  }, []);
+  const r = 70;
+  const obwod = 2 * Math.PI * r;
+  return (
+    <div className="flex flex-col items-center gap-5" role="status" aria-live="polite">
+      <div className="relative size-44 sm:size-52">
+        <svg viewBox="0 0 160 160" className="size-full -rotate-90" aria-hidden>
+          <circle cx="80" cy="80" r={r} fill="none" stroke="rgba(212,175,90,0.15)" strokeWidth="10" />
+          <circle
+            cx="80"
+            cy="80"
+            r={r}
+            fill="none"
+            stroke="#d4af5a"
+            strokeWidth="10"
+            strokeLinecap="round"
+            strokeDasharray={obwod}
+            strokeDashoffset={obwod * (1 - postep)}
+            style={{ transition: "stroke-dashoffset 200ms linear" }}
+          />
+        </svg>
+        <span className="absolute inset-0 grid place-items-center bruno-h2 text-3xl tabular-nums">{Math.round(postep * 100)}%</span>
+      </div>
+      <div className="bruno-h2 text-xl">{etykieta}</div>
+    </div>
+  );
+}
+
 export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny, free = null }: Props) {
   // 11.10: teksty UI w języku konta (tr, bo `t` jest niżej zmienną trybu). Etykiety z etykiety(jezyk), kolor/ikona z postacie.ts.
   const { t: tr, jezyk, mnoga } = useT();
@@ -212,12 +250,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
 
   const planZrobiony = rozmowyDzis >= rozmowDziennie;
   const brakMinut = minutZostalo < 1;
-  // Safari rwie i rozciąga dźwięk WebRTC (2.10: ten sam objaw przy OpenAI i ElevenLabs). Podpowiedź: Chrome.
-  const [safari, setSafari] = useState(false);
-  useEffect(() => {
-    const ua = navigator.userAgent;
-    setSafari(/Safari/.test(ua) && !/Chrome|Chromium|CriOS|Edg|OPR/.test(ua));
-  }, []);
+  // 11.10 (USER_001: „na Safari śmigało super”): ostrzeżenie o Safari usunięte.
 
   const dodaj = (w: Wypowiedz) => {
     transkrypcja.current.push(w);
@@ -468,7 +501,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
   };
 
   /** Ścieżka ElevenLabs Agents (2.10): polskie głosy, SDK obsługuje mikrofon, odtwarzanie i przerywanie. */
-  const startElevenlabs = async (dane: { token: string; polaczenie?: "websocket" | "webrtc"; prompt: string; pierwsza_wypowiedz: string; glos: string; jezyk?: string }) => {
+  const startElevenlabs = async (dane: { token: string; polaczenie?: "websocket" | "webrtc"; prompt: string; pierwsza_wypowiedz: string; glos: string; jezyk?: string; glos_ustawienia?: { stability: number; similarityBoost: number; speed: number } | null }) => {
     setEtap(tr("Connecting to Bruno...", "Łączę z Bruno..."));
     // SDK bierze własny mikrofon: zwalniamy nasz, żeby nie było podwójnego nagrywania.
     mic.current?.getTracks().forEach((t) => t.stop());
@@ -487,7 +520,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
         ...polaczenie,
         overrides: {
           agent: { prompt: { prompt: dane.prompt }, firstMessage: dane.pierwsza_wypowiedz, language: dane.jezyk === "pl" || dane.jezyk === "en" ? dane.jezyk : jezyk },
-          tts: { voiceId: dane.glos },
+          tts: { voiceId: dane.glos, ...(dane.glos_ustawienia ?? {}) },
         },
         onConnect: () => {
           if (wystartowano.current) return;
@@ -561,7 +594,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     odliczaj();
 
     setEtap(tr("Checking your limit and waking up Bruno...", "Sprawdzam limit i budzę Bruno..."));
-    let dane: { dostawca?: "openai" | "elevenlabs"; rozmowa_id: string; klucz: string; model: string; sekundy: number; token?: string; prompt?: string; pierwsza_wypowiedz?: string; glos?: string; jezyk?: string };
+    let dane: { dostawca?: "openai" | "elevenlabs"; rozmowa_id: string; klucz: string; model: string; sekundy: number; token?: string; prompt?: string; pierwsza_wypowiedz?: string; glos?: string; jezyk?: string; glos_ustawienia?: { stability: number; similarityBoost: number; speed: number } | null };
     try {
       const res = await fetch("/api/bruno/rozmowa/start", {
         method: "POST",
@@ -591,7 +624,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
     setLimit(dane.sekundy);
 
     if (dane.dostawca === "elevenlabs") {
-      await startElevenlabs(dane as { token: string; polaczenie?: "websocket" | "webrtc"; prompt: string; pierwsza_wypowiedz: string; glos: string; jezyk?: string });
+      await startElevenlabs(dane as { token: string; polaczenie?: "websocket" | "webrtc"; prompt: string; pierwsza_wypowiedz: string; glos: string; jezyk?: string; glos_ustawienia?: { stability: number; similarityBoost: number; speed: number } | null });
       return;
     }
 
@@ -700,16 +733,6 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
             <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">{tr("Call with", "Rozmowa z")} <span className="bruno-gradient-tekst">Bruno</span></h1>
             <p className="text-slate-600 mt-2">{tr(`${sekundRozmowy / 60} ${sekundRozmowy / 60 === 1 ? "minute" : "minutes"}. Set up your call and hit Start.`, `${sekundRozmowy / 60} minuty. Ustaw rozmowę i naciśnij Start.`)}</p>
           </div>
-
-          {safari && (
-            <div className="bruno-szklo rounded-2xl p-4 border-amber-200/80 bg-amber-50/70 text-sm text-amber-900 text-center">
-              {jezyk === "pl" ? (
-                <>Używasz Safari. Rozmowy głosowe działają w nim gorzej (głos się zacina). Otwórz Bruno w <b>Chrome</b> i załóż słuchawki.</>
-              ) : (
-                <>You're using Safari. Voice calls work worse there (the voice cuts out). Open Bruno in <b>Chrome</b> and put on headphones.</>
-              )}
-            </div>
-          )}
 
           {karta?.typ === "kryterium" && (
             <div className="bruno-szklo rounded-2xl p-4 text-sm text-slate-800">
@@ -907,7 +930,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       )}
 
       {(stan === "odliczanie" || stan === "laczenie" || stan === "trwa" || stan === "konczenie") && (
-        <div className="bruno-szklo relative rounded-3xl p-8 sm:p-10 text-center flex flex-col items-center gap-6 min-h-[28rem] justify-center">
+        <div className="bruno-szklo relative rounded-3xl px-8 py-16 sm:px-10 sm:py-20 text-center flex flex-col items-center gap-8 min-h-[34rem] sm:min-h-[38rem] justify-center">
           {stan === "trwa" && (
             <div
               className={`absolute top-4 right-4 sm:top-5 sm:right-5 rounded-full px-3 py-1.5 text-sm font-semibold tabular-nums transition-colors ${
@@ -925,6 +948,10 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
             {POZIOMY[poziom].nazwa.toLowerCase()}
           </div>
 
+          {stan === "konczenie" ? (
+            <KolkoOceny etykieta={tr("Scoring your call", "Ocena rozmowy")} />
+          ) : (
+          <>
           <div className="relative size-44 sm:size-56 grid place-items-center" aria-hidden={stan !== "odliczanie"}>
             <div
               className={`bruno-kula absolute inset-0 rounded-full blur-2xl transition-transform duration-200 ${
@@ -946,6 +973,8 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
               {stan === "trwa" ? (mowi === "bruno" ? tr("Bruno is talking", "Bruno mówi") : mowi === "ty" ? tr("Listening to you", "Słucha Cię") : tr("Call in progress", "Rozmowa trwa")) : stan === "odliczanie" ? (tryb === "cold" ? tr("Bruno will pick up the phone in a moment.", "Za chwilę Bruno odbierze telefon.") : tr("Bruno will start the call in a moment.", "Za chwilę Bruno zacznie rozmowę.")) : etap}
             </div>
           </div>
+          </>
+          )}
 
           {stan === "trwa" && (
             <button type="button" onClick={() => zakoncz("recznie")} className="bruno-przycisk-2">{tr("End call", "Zakończ rozmowę")}</button>

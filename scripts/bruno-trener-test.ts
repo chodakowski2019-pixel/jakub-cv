@@ -64,7 +64,9 @@ for (const r of rozmowy) {
   const tr = (r.transkrypcja ?? []) as Wypowiedz[];
   const [konfig, konto] = await Promise.all([pobierzKonfig(r.email), pobierzKonto(r.email)]);
   const sekundy = r.sekundy ?? 0;
-  const m = policzMetryki(tr, sekundy, listaObiekcji(konfig.obiekcje));
+  // 11.10: język rozmowy z transkrypcji (stare rozmowy PL leżą na kontach z jezyk=en).
+  const jezyk = /[ąćęłńóśźż]/i.test(tr.map((w) => w.tekst).join(" ")) ? "pl" : "en";
+  const m = policzMetryki(tr, sekundy, listaObiekcji(konfig.obiekcje), jezyk);
   const wybierz = (o: Record<string, unknown> | null) => Object.fromEntries(POLA_METRYK.map((p) => [p, o?.[p] ?? null]));
   const w: Wynik = {
     id: r.id,
@@ -94,6 +96,7 @@ for (const r of rozmowy) {
         imie: konto?.imie ?? null,
         ucieta_limitem: sekundy >= ROZMOWA_SEKUND,
         sytuacja: r.sytuacja ?? null,
+        jezyk,
       });
       w.ocena_nowa = f.ocena;
       w.kryteria_nowe = Object.fromEntries(KRYTERIA.map((k) => [k, ocenaKryt(f, k)]));

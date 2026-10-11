@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonfig, pobierzKonto, pelnyDostep } from "@/lib/bruno/db";
 import UstawieniaForm from "@/components/bruno/ustawienia-form";
+import GlosForm from "@/components/bruno/glos-form";
 import KodForm from "@/components/bruno/kod-form";
 import { filmDla } from "@/lib/bruno/film";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
@@ -23,6 +24,7 @@ export default async function BrunoUstawieniaPage() {
           {konto?.imie ? `${konto.imie}, ` : ""}{email}{konto?.firma ? `, ${konto.firma}` : ""}
         </p>
       </div>
+      <GlosForm glos={konfig.glos === "k" ? "k" : "m"} />
       <UstawieniaForm godzina={konfig.godzina_przypomnienia} />
       <KodForm />
       {/* Instrukcja (USER_001 2.10): ten sam film, co w popupie przy pierwszym logowaniu, do odtworzenia na miejscu. */}

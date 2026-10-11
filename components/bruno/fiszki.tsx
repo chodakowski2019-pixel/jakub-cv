@@ -14,12 +14,12 @@ export type FiszkaKarta = { id: string; typ: "obiekcja" | "poprawka" | "wiedza";
 
 const RODZAJ_EN: Record<FiszkaKarta["typ"], { nazwa: string; kolor: string; naglowek: string }> = {
   obiekcja: { nazwa: "Objection", kolor: "#d4af5a", naglowek: "The customer says" },
-  poprawka: { nazwa: "Fix from your call", kolor: "#d97706", naglowek: "Moment from the call" },
+  poprawka: { nazwa: "Moment from your call", kolor: "#d97706", naglowek: "" },
   wiedza: { nazwa: "Knowledge", kolor: "#7c3aed", naglowek: "Question" },
 };
 const RODZAJ_PL: typeof RODZAJ_EN = {
   obiekcja: { nazwa: "Obiekcja", kolor: "#d4af5a", naglowek: "Klient mówi" },
-  poprawka: { nazwa: "Do poprawy z Twojej rozmowy", kolor: "#d97706", naglowek: "Sytuacja z rozmowy" },
+  poprawka: { nazwa: "Sytuacja z rozmowy", kolor: "#d97706", naglowek: "" },
   wiedza: { nazwa: "Wiedza", kolor: "#7c3aed", naglowek: "Pytanie" },
 };
 
@@ -158,7 +158,6 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
   };
 
   const slow = odp.trim().split(/\s+/).filter(Boolean).length;
-  const postep = Math.min(dziennie, sesja.karty + (stan === "wynik" ? 0 : 0));
 
   return (
     <div className="flex flex-col gap-6">
@@ -169,21 +168,30 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         <p className="text-slate-600 mt-2">{t("Objections, moments from your calls, and customer know-how. You answer.", "Obiekcje, sytuacje z Twoich rozmów i wiedza o klientach. Ty odpowiadasz.")}</p>
       </div>
 
-      {/* Pasek gry: seria, dziś, punkty sesji */}
-      <div className="grid grid-cols-3 gap-3">
+      {/* Pasek gry. 11.10 (USER_001): w trakcie fiszek tylko „fiszek dziś”; seria i punkty dopiero po skończeniu. */}
+      {(() => {
+        const podsumowanie = stan === "koniec" || (stan === "pytanie" && zrobioneDzis >= dziennie && sesja.karty === 0);
+        return (
+      <div className={`grid gap-3 ${podsumowanie ? "grid-cols-3" : "grid-cols-1 max-w-xs w-full mx-auto"}`}>
+        {podsumowanie && (
         <div className="bruno-szklo rounded-2xl p-3 text-center">
           <div className="bruno-h2 text-xl leading-none">{seria > 0 || zrobioneDzis > 0 ? (zrobioneDzis > 0 && seria === 0 ? 1 : seria) : 0} 🔥</div>
           <div className="text-[11px] text-slate-500 mt-1">{jezyk === "pl" ? (seria === 1 ? "dzień serii" : "dni serii") : "day streak"}</div>
         </div>
+        )}
         <div className="bruno-szklo rounded-2xl p-3 text-center">
           <div className="bruno-h2 text-xl leading-none">{Math.min(zrobioneDzis, dziennie)}/{dziennie}</div>
           <div className="text-[11px] text-slate-500 mt-1">{t("flashcards today", "fiszek dziś")}</div>
         </div>
+        {podsumowanie && (
         <div className="bruno-szklo rounded-2xl p-3 text-center">
           <div className="bruno-h2 text-xl leading-none"><span className="bruno-gradient-tekst">{sesja.punkty}</span><span className="text-sm text-slate-400">/{dziennie * WERDYKTY[4].punkty}</span></div>
           <div className="text-[11px] text-slate-500 mt-1 leading-tight">{t("points", "punktów")}<span className="hidden min-[400px]:inline">{t(" this session", " w tej sesji")}</span></div>
         </div>
+        )}
       </div>
+        );
+      })()}
 
       {stan === "pytanie" && zrobioneDzis >= dziennie && sesja.karty === 0 ? (
         <div className="bruno-szklo rounded-3xl p-8 text-center flex flex-col items-center gap-3">
@@ -221,7 +229,6 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
           <div key={`${karta.id}-${stan === "wynik" ? "tyl" : "przod"}`} className="bruno-szklo rounded-3xl p-6 sm:p-8 bruno-fiszka">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center rounded-full bg-cyan-700/10 text-cyan-800 text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1">{t("Flashcard", "Karta")} {postep + 1} {t("of", "z")} {dziennie}</span>
                 <span className="inline-flex items-center rounded-full text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1" style={{ background: `${RODZAJ[karta.typ].kolor}1a`, color: RODZAJ[karta.typ].kolor }}>
                   {RODZAJ[karta.typ].nazwa}{karta.typ === "wiedza" && karta.kategoria === "typy" ? t(": customer types", ": typy klientów") : karta.typ === "wiedza" ? t(": technique", ": technika") : ""}
                 </span>
@@ -229,9 +236,12 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
               {karta.lapses > 0 && <span className="text-[11px] text-slate-400">{t("misses:", "wpadek:")} {karta.lapses}</span>}
             </div>
 
-            <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">{RODZAJ[karta.typ].naglowek}</div>
+            {RODZAJ[karta.typ].naglowek && <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">{RODZAJ[karta.typ].naglowek}</div>}
             {karta.typ === "obiekcja" ? (
               <blockquote className="bruno-h2 text-2xl sm:text-3xl text-slate-900 leading-snug">{cudzy(karta.tresc)}</blockquote>
+            ) : karta.typ === "poprawka" ? (
+              // 11.10 (USER_001: „tego nie rozumiem, ma być prościej”): sama scenka z rozmowy i pytanie, bez tytułu z odpowiedzią.
+              <div className="bruno-h2 text-xl sm:text-2xl text-slate-900 leading-snug">{karta.pytanie ?? karta.tresc}</div>
             ) : (
               <>
                 <div className="bruno-h2 text-xl sm:text-2xl text-slate-900 leading-snug">{karta.tresc}</div>

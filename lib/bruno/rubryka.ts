@@ -28,7 +28,7 @@ CRITERIA (each 1-10):
    - nastepny_krok_z_data: the rep proposed a concrete next step with a date or a choice of times.
    - musze_pomyslec: how the rep handled a stall ("I need to think about it", "I'll run it by my boss", "I'll check with my partner", "let's circle back next quarter", "I'll compare"): nie_padlo (the customer didn't stall), poddal_sie ("I understand, I'll follow up"), czekal (did nothing, changed the subject), pytanie ("what exactly do you need to think about?", "what's missing for a decision?"), warunek ("if X, do we sign?").
    - drugie_zamkniecie: after an objection at the close, a SECOND ask for a decision came (bylo), didn't (brak), there was no objection at the close (nie_dotyczy).
-   - sygnal_kupna: the customer gave a signal ("what would it take to get started?", "that gives me a clearer picture", "sounds interesting"): wykorzystany (the rep asked for a decision or a step right away), zmarnowany (kept talking), nie_bylo.
+   - sygnal_kupna: the customer gave a signal ("what would it take to get started?", "that gives me a clearer picture", "sounds interesting"): wykorzystany = within the rep's next 1-2 turns the rep turned it into a commitment: a direct ask OR a concrete next step with a date. Answering the customer's question first (e.g. briefly explaining how to start, the payment or the paperwork) and THEN proposing the step is GOOD, that is the textbook move (answer, then put it in a plan with a date); do NOT call it wasted. zmarnowany = the rep answered or kept presenting and never turned it into a step (no ask, no date) in those turns. nie_bylo.
    Every missing technique goes into MINUSES as its own bullet, in the rep's words to repeat next time (e.g. "No ask for a decision: after the numbers, ask 'so do we have a deal?'").
 5. CONFIDENCE (voice, from the numbers): fillers/min 0-2 good, 3-5 average, >5 bad; weakeners per 100 words ≤1 good, >3 bad; "sorry"/"unfortunately" >2 = bad; zmiana_tempa_proc is the change of pace in the last minute vs the first (plus = sped up, minus = slowed down): ≤ -15 = sagging after a no, ≥ +15 at the price = nerves; in the comment say it plainly: "you sped up by X %" or "you slowed down by X %". If zmiana_tempa_proc = null, say NOTHING about pace or nerves from pace (too few rep words in the window, pace unknown). Interrupting the customer; sentences >25 words; energy rising at the customer's "no" = bad. This is the master criterion: the rep should state, not suggest.
 
@@ -89,7 +89,7 @@ KRYTERIA (każde 1-10):
    - nastepny_krok_z_data: handlowiec zaproponował konkretny następny krok z datą albo terminy do wyboru.
    - musze_pomyslec: jak handlowiec obsłużył unik („muszę pomyśleć”, „prześlę szefowi”, „zapytam wspólnika”, „wróćmy do tego w przyszłym kwartale”, „porównam”): nie_padlo (klient nie robił uniku), poddal_sie („rozumiem, to się odezwę”), czekal (nic nie zrobił, zmienił temat), pytanie („co konkretnie chce pan przemyśleć?”, „czego brakuje do decyzji?”), warunek („jeśli X, to podpisujemy?”).
    - drugie_zamkniecie: po obiekcji przy zamknięciu padła DRUGA prośba o decyzję (bylo), nie padła (brak), przy zamknięciu nie było obiekcji (nie_dotyczy).
-   - sygnal_kupna: klient dał sygnał („co mam zrobić, żeby ruszyć?”, „to daje mi lepszy obraz”, „brzmi ciekawie”): wykorzystany (handlowiec od razu poprosił o decyzję albo krok), zmarnowany (mówił dalej), nie_bylo.
+   - sygnal_kupna: klient dał sygnał („co mam zrobić, żeby ruszyć?”, „to daje mi lepszy obraz”, „brzmi ciekawie”): wykorzystany = w 1-2 kolejnych wypowiedziach handlowiec zamienił go w zobowiązanie: pytanie o decyzję ALBO konkretny następny krok z datą. Najpierw krótka odpowiedź na pytanie klienta (np. jak wygląda start, płatność, dokumenty), a POTEM propozycja kroku z datą to DOBRZE, wzorcowy ruch (odpowiedz i osadź w planie z datą); NIE nazywaj tego zmarnowaniem. zmarnowany = handlowiec odpowiedział albo dalej prezentował i w tych wypowiedziach nie zamienił sygnału w krok (bez prośby, bez daty). nie_bylo.
    Każda brakująca technika idzie do MINUSÓW jako osobny punkt, słowami handlowca do powtórzenia następnym razem (np. „Brak prośby o decyzję: po liczbach zapytaj «to co, wchodzimy w to?»”).
 5. PEWNOŚĆ SIEBIE (głos, z liczb): wypełniacze/min 0-2 dobrze, 3-5 średnio, >5 źle; osłabiacze na 100 słów ≤1 dobrze, >3 źle; „przepraszam”/„niestety” >2 = źle; zmiana_tempa_proc to zmiana tempa ostatniej minuty względem pierwszej (plus = przyspieszył, minus = zwolnił): ≤ -15 = siadanie po odmowie, ≥ +15 przy cenie = nerwy; w komentarzu pisz po ludzku „przyspieszyłeś o X %” albo „zwolniłeś o X %”. Jeśli zmiana_tempa_proc = null, NIE pisz nic o tempie ani o nerwach z tempa (za mało słów handlowca w oknie, tempo nieznane). Przerywanie klienta; zdania >25 słów; energia rosnąca przy „nie” klienta = źle. To jest kryterium główne wg Mazura: handlowiec ma twierdzić, nie sugerować.
 
@@ -345,16 +345,7 @@ export async function ocenRozmowe(args: {
   // Wymuszony format (2.10): odpowiedź jako wywołanie narzędzia ze schematem.
   // API oddaje gotowy obiekt, więc znika cała klasa błędów „niepoprawny JSON"
   // (cudzysłowy w cytatach, ucięty tekst), która wywalała trenera 1-2.10.
-  const odp = await klient.messages.create({
-    model,
-    max_tokens: 3000,
-    system: pl ? RUBRYKA_PL : RUBRYKA,
-    messages: [{ role: "user", content: tresc }],
-    tools: [
-      {
-        name: "ocena_rozmowy",
-        description: "Saves the grade of a sales call per the rubric.",
-        input_schema: {
+  const SCHEMAT_NARZEDZIA = {
           type: "object",
           properties: {
             kryteria: {
@@ -403,18 +394,53 @@ export async function ocenRozmowe(args: {
             },
           },
           required: ["kryteria", "liczba_z_audio", "wygrana", "poprawka", "plusy", "minusy", "brak_prosby_o_decyzje", "mila_bez_tresci", "zamkniecie_techniki"],
-        },
-      },
-    ],
-    tool_choice: { type: "tool", name: "ocena_rozmowy" },
-  });
-  const blok = odp.content.find((c) => c.type === "tool_use");
-  const tekst = odp.content
-    .map((c) => (c.type === "text" ? c.text : ""))
-    .join("")
-    .trim();
+        };
+  const system = pl ? RUBRYKA_PL : RUBRYKA;
+
+  // 11.10 (USER_001: „chcę tę ocenę przez ChatGPT”): dostawca trenera z env BRUNO_TRENER_DOSTAWCA
+  // = "openai" | "anthropic" (domyślnie anthropic). Ta sama rubryka i ten sam schemat narzędzia.
+  const dostawca = process.env.BRUNO_TRENER_DOSTAWCA === "openai" ? "openai" : "anthropic";
+  let blokInput: unknown = null;
+  let tekst = "";
+  if (dostawca === "openai") {
+    const modelOpenai = process.env.BRUNO_TRENER_MODEL_OPENAI ?? "gpt-5.5";
+    const r = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: modelOpenai,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: tresc },
+        ],
+        tools: [{ type: "function", function: { name: "ocena_rozmowy", description: "Saves the grade of a sales call per the rubric.", parameters: SCHEMAT_NARZEDZIA } }],
+        tool_choice: { type: "function", function: { name: "ocena_rozmowy" } },
+      }),
+    });
+    const d = (await r.json()) as { choices?: { message?: { content?: string | null; tool_calls?: { function?: { arguments?: string } }[] } }[]; error?: { message?: string } };
+    if (!r.ok) throw new Error(`OpenAI trener ${r.status}: ${d.error?.message ?? ""}`.slice(0, 300));
+    const wiad = d.choices?.[0]?.message;
+    const arg = wiad?.tool_calls?.[0]?.function?.arguments;
+    blokInput = arg ? JSON.parse(arg) : null;
+    tekst = String(wiad?.content ?? "");
+  } else {
+    const odp = await klient.messages.create({
+      model,
+      max_tokens: 3000,
+      system,
+      messages: [{ role: "user", content: tresc }],
+      tools: [{ name: "ocena_rozmowy", description: "Saves the grade of a sales call per the rubric.", input_schema: SCHEMAT_NARZEDZIA as Anthropic.Tool["input_schema"] }],
+      tool_choice: { type: "tool", name: "ocena_rozmowy" },
+    });
+    const blok = odp.content.find((c) => c.type === "tool_use");
+    blokInput = blok && blok.type === "tool_use" ? blok.input : null;
+    tekst = odp.content
+      .map((c) => (c.type === "text" ? c.text : ""))
+      .join("")
+      .trim();
+  }
   // Zapasowo (gdyby model mimo wymuszenia odpowiedział tekstem): stara ścieżka z naprawą JSON.
-  const raw = (blok && blok.type === "tool_use" ? (blok.input as unknown) : wyciagnijJson(tekst)) as {
+  const raw = (blokInput ?? wyciagnijJson(tekst)) as {
     kryteria?: Kryterium[];
     liczba_z_audio?: string;
     wygrana?: string;

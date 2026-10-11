@@ -4,7 +4,7 @@ import { etykiety } from "@/lib/bruno/etykiety";
 import { tDla, type Jezyk, type T } from "@/lib/bruno/i18n";
 
 // Widok feedbacku trenera (układ USER_001 2.10). Ten sam po rozmowie i w Feedbacku.
-// Kolejność: badge OCENA ROZMOWY + ocena w kółku → MINUSY | PLUSY (punkty)
+// Kolejność: badge OCENA ROZMOWY + ocena w kółku → PLUSY | MINUSY (tabelka, 11.10)
 // → 5 kryteriów z cytatem → obiekcje, które padły → NASTĘPNYM RAZEM na końcu.
 // Bez wypisywania reguł twardych (zostają w danych, nie na ekranie).
 
@@ -121,49 +121,33 @@ export default function FeedbackWidok({ feedback, dalej, jezyk = "en" }: { feedb
         <p className="text-slate-700 text-[15px]">{feedback.liczba_z_audio}</p>
       </div>
 
-      {/* MINUSY | PLUSY jako punkty w tabeli */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <section className="bruno-szklo rounded-2xl p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Kolko znak="minus" kolor="#dc2626" />
-            <Badge>{tr("Minuses", "Minusy")}</Badge>
-          </div>
-          {minusy.length === 0 ? (
-            <p className="text-sm text-slate-500">{tr("None.", "Brak.")}</p>
-          ) : (
-            <table className="w-full text-[14px]">
-              <tbody>
-                {minusy.map((m, i) => (
-                  <tr key={i} className="align-top">
-                    <td className="w-6 pt-2 pb-2 text-red-600 font-bold">–</td>
-                    <td className="pt-2 pb-2 text-slate-800 border-b border-slate-200/60 last:border-0">{m}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </section>
-        <section className="bruno-szklo rounded-2xl p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Kolko znak="plus" kolor="#16a34a" />
-            <Badge>{tr("Pluses", "Plusy")}</Badge>
-          </div>
-          {plusy.length === 0 ? (
-            <p className="text-sm text-slate-500">{tr("None.", "Brak.")}</p>
-          ) : (
-            <table className="w-full text-[14px]">
-              <tbody>
-                {plusy.map((p, i) => (
-                  <tr key={i} className="align-top">
-                    <td className="w-6 pt-2 pb-2 text-green-600 font-bold">+</td>
-                    <td className="pt-2 pb-2 text-slate-800 border-b border-slate-200/60 last:border-0">{p}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </section>
-      </div>
+      {/* 11.10 (USER_001): PLUSY po lewej, MINUSY po prawej, w jednej tabelce (wiersze obok siebie). */}
+      <section className="bruno-szklo rounded-2xl p-5 overflow-x-auto">
+        <table className="w-full text-[14px] table-fixed border-collapse">
+          <thead>
+            <tr>
+              <th className="w-1/2 text-left pb-3 pr-4 font-normal">
+                <span className="flex items-center gap-2"><Kolko znak="plus" kolor="#16a34a" /><Badge>{tr("Pluses", "Plusy")}</Badge></span>
+              </th>
+              <th className="w-1/2 text-left pb-3 pl-4 font-normal border-l border-slate-200/60">
+                <span className="flex items-center gap-2"><Kolko znak="minus" kolor="#dc2626" /><Badge>{tr("Minuses", "Minusy")}</Badge></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: Math.max(plusy.length, minusy.length, 1) }, (_, i) => (
+              <tr key={i} className="align-top border-t border-slate-200/60">
+                <td className="py-2.5 pr-4 text-slate-800">
+                  {plusy[i] ? (<span className="flex gap-2"><span className="text-green-600 font-bold shrink-0">+</span><span>{plusy[i]}</span></span>) : i === 0 ? <span className="text-slate-500">{tr("None.", "Brak.")}</span> : null}
+                </td>
+                <td className="py-2.5 pl-4 text-slate-800 border-l border-slate-200/60">
+                  {minusy[i] ? (<span className="flex gap-2"><span className="text-red-600 font-bold shrink-0">–</span><span>{minusy[i]}</span></span>) : i === 0 ? <span className="text-slate-500">{tr("None.", "Brak.")}</span> : null}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
 
       <ul className="flex flex-col gap-3">
         {feedback.kryteria.map((k) => (

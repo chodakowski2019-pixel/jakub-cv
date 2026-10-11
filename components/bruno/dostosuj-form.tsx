@@ -211,10 +211,16 @@ export default function DostosujForm({ start, oferta }: { start: Konfig; oferta:
         <textarea id="skrypt" rows={6} className="bruno-pole text-[14px]" placeholder={t("Paste your script if you have one.", "Wklej skrypt, jeśli masz.")} value={f.skrypt} onChange={pole("skrypt")} maxLength={8000} />
       </Sekcja>
 
-      <div className="flex items-center gap-4 sm:pl-12">
+      <div className="flex flex-wrap items-center gap-4 sm:pl-12">
         <button type="submit" disabled={stan === "zapis"} className="bruno-przycisk">{stan === "zapis" ? t("Saving...", "Zapisuję...") : t("Save", "Zapisz")}</button>
         {stan === "ok" && <span className="text-sm text-teal-800">{t("Saved. Bruno will use this in your next call.", "Zapisane. Bruno użyje tego w następnej rozmowie.")}</span>}
         {stan === "blad" && <span className="text-sm text-red-700">{t("Couldn't save.", "Nie udało się zapisać.")}</span>}
+        {/* 11.10 (USER_001): po zapisie od razu przejście do rozmowy, przycisk po prawej. */}
+        {stan === "ok" && (
+          <Link href="/bruno/rozmowa" className="bruno-przycisk sm:ml-auto">
+            {t("Start a call with Bruno →", "Zacznij rozmowę z Bruno →")}
+          </Link>
+        )}
       </div>
     </form>
   );
