@@ -52,5 +52,6 @@ export async function GET(req: Request) {
     path: "/",
     maxAge: WAZNOSC_SESJI_S,
   });
-  return NextResponse.redirect(new URL(nowe ? "/bruno/dostosuj" : "/bruno/panel", url.origin));
+  // 11.10: nowe konto (albo bez profilu) uzupełnia profil na /bruno/start, potem panel.
+  return NextResponse.redirect(new URL(nowe || !konto.profil_at ? "/bruno/start" : "/bruno/panel", url.origin));
 }

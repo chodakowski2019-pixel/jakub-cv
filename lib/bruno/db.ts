@@ -59,6 +59,13 @@ export type Konto = {
    */
   plan?: "trial" | "pelny" | "free" | string | null;
   /** 10.10 (Stripe, Bruno Pro): klient i subskrypcja w Stripe, koniec opłaconego okresu. */
+  /** 11.10: profil uzupełniany po rejestracji (e-mail + hasło). Bez `profil_at` panel prowadzi na /bruno/start. */
+  rola?: string | null;
+  telefon?: string | null;
+  handlowcy?: number | null;
+  profil_at?: string | null;
+  /** 11.10: ostatnia prośba o nowe hasło (odstęp 2 min). */
+  haslo_reset_at?: string | null;
   /** 11.10: język konta (salesbruno.com = en, salesbruno.pl = pl). Steruje panelem, Bruno, mailami i domeną w linkach. */
   jezyk?: "en" | "pl" | string | null;
   stripe_customer_id?: string | null;

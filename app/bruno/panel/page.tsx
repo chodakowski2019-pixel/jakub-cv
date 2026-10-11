@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Inter, Outfit } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { zapiszWejscie, zrodloZParametru } from "@/lib/bruno/wejscia";
-import { dostepKonta, pobierzKonto, stanDostepu, stanFree, zamknijPorzucone } from "@/lib/bruno/db";
+import { dostepKonta, pelnyDostep, pobierzKonto, stanDostepu, stanFree, zamknijPorzucone } from "@/lib/bruno/db";
 import { danePanelu } from "@/components/podglad/panel/dane";
 import PanelA from "@/components/podglad/panel/panel-a";
 import TourPopup from "@/components/bruno/tour-popup";
@@ -32,7 +32,8 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
   if (konto && stanDostepu(konto).aktywny) await zamknijPorzucone(email);
   const d = await danePanelu(await jezykZadania());
   // Popup z filmem: przy pierwszym wejściu albo na życzenie (?tour=1 z Ustawień).
-  const pokazTour = !d.wygasl && (tour === "1" || !konto?.tour_obejrzany_at);
+  // 11.10 (USER_001): film dopiero po zakupie (pełny dostęp: Bruno Pro albo firma). Konto free go nie widzi.
+  const pokazTour = pelnyDostep(konto) && !d.wygasl && (tour === "1" || !konto?.tour_obejrzany_at);
 
   return (
     <div className={`${inter.variable} ${outfit.variable}`} style={{ display: "contents" }}>

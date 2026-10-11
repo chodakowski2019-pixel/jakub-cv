@@ -54,6 +54,9 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   if (free?.zablokowane && sciezka && !PO_BLOKADZIE.some((p) => sciezka === p || sciezka.startsWith(`${p}/`))) {
     redirect("/bruno/odblokuj");
   }
+  // 11.10 (USER_001): po rejestracji (e-mail + hasło) najpierw profil, dopiero potem panel.
+  const profilBrak = Boolean(konto && !konto.profil_at);
+  if (profilBrak && sciezka && sciezka !== "/bruno/start") redirect("/bruno/start");
 
   // 10.10 (USER_001: „cały ten Bruno się zmienia”): wszystkie ekrany czarno-złote. Panel ma własny pasek,
   // reszta wspólny; o tym decyduje UkladZloty po adresie w przeglądarce.
@@ -61,7 +64,7 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   return (
     <JezykProvider jezyk={jezyk}>
     <div className={`bruno zloty ${fonty} font-[var(--font-open-sans)]`}>
-      <UkladZloty dostep={dostep} inicjal={inicjal} free={free}>
+      <UkladZloty dostep={dostep} inicjal={inicjal} free={free} profilBrak={profilBrak}>
         {children}
       </UkladZloty>
       <CzatDymek />

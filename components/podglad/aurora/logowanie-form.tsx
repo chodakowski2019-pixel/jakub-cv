@@ -13,39 +13,49 @@ import GooglePrzycisk from "./google-przycisk";
 // 9.10 (USER_001): EN domyślnie, PL z ?pl. 11.10: PL też na salesbruno.pl.
 const T = {
   en: {
-    nieUdalo: "Wrong email or code.",
+    nieUdalo: "Wrong email or password.",
     tytul: "Training panel",
     podtytul: "Sell more.",
     panel: "Steps to log in to Bruno AI",
-    kroki: ["Enter your email", "Enter your 6-digit code", "Open your panel"],
+    kroki: ["Enter your email", "Enter your password", "Open your panel"],
     h2: "Log in",
-    lead: "Enter your email and 6-digit code.",
+    lead: "Enter your email and password.",
     email: "Email",
     emailPh: "you@company.com",
-    kod: "Code",
+    kod: "Password",
+    zapomnialem: "Forgot your password?",
+    resetH: "We'll email you a new password.",
+    resetWyslij: "Send new password",
+    resetOk: "If this email has an account, a new password is on its way. Check your inbox.",
+    resetWroc: "Back to log in",
     zaloguj: "Log in",
     loguje: "Logging in...",
     brak: "No account yet?",
     rejestracja: "Sign up",
-    bladGoogle: "Google sign-in failed. Try again or use your code.",
+    bladGoogle: "Google sign-in failed. Try again or use your password.",
     wygasl: "Your free access has ended.",
   },
   pl: {
-    nieUdalo: "Zły e-mail albo kod.",
+    nieUdalo: "Zły e-mail albo hasło.",
     tytul: "Panel treningowy",
     podtytul: "Sprzedawaj więcej.",
     panel: "Kroki logowania do Bruno AI",
-    kroki: ["Podaj e-mail", "Wpisz 6-cyfrowy kod", "Wejdź do panelu"],
+    kroki: ["Podaj e-mail", "Wpisz hasło", "Wejdź do panelu"],
     h2: "Zaloguj się",
-    lead: "Podaj e-mail i 6-cyfrowy kod.",
+    lead: "Podaj e-mail i hasło.",
     email: "Adres e-mail",
     emailPh: "ty@twojafirma.pl",
-    kod: "Kod",
+    kod: "Hasło",
+    zapomnialem: "Nie pamiętasz hasła?",
+    resetH: "Wyślemy Ci nowe hasło mailem.",
+    resetWyslij: "Wyślij nowe hasło",
+    resetOk: "Jeśli ten e-mail ma konto, nowe hasło już leci. Sprawdź skrzynkę.",
+    resetWroc: "Wróć do logowania",
     zaloguj: "Zaloguj się",
     loguje: "Loguję...",
     brak: "Nie masz jeszcze konta?",
     rejestracja: "Zarejestruj się",
-    bladGoogle: "Logowanie przez Google nie wyszło. Spróbuj ponownie albo użyj kodu.",
+    bladGoogle: "Logowanie przez Google nie wyszło. Spróbuj ponownie albo użyj hasła.",
     wygasl: "Twój bezpłatny dostęp się skończył.",
   },
 } as const;
@@ -71,6 +81,14 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
   const [stan, setStan] = useState<"idle" | "wysylanie" | "ok">("idle");
   const [blad, setBlad] = useState<string | null>(null);
   const [fokusKod, setFokusKod] = useState(false);
+  // 11.10: „Nie pamiętasz hasła?” → nowe hasło tymczasowe mailem (POST /api/bruno/haslo).
+  const [reset, setReset] = useState<"nie" | "formularz" | "wysylanie" | "wyslane">("nie");
+  const wyslijReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setReset("wysylanie");
+    await fetch("/api/bruno/haslo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) }).catch(() => null);
+    setReset("wyslane");
+  };
   const emailRef = useRef<HTMLInputElement>(null);
   const kodRef = useRef<HTMLInputElement>(null);
 
@@ -82,7 +100,7 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
       method: "POST",
       headers: { "Content-Type": "application/json" },
       // E18: źródło wejścia z linku w mailu (`/bruno?src=mail-dostep`) idzie do logu logowań.
-      body: JSON.stringify({ email, kod, src: new URLSearchParams(window.location.search).get("src") }),
+      body: JSON.stringify({ email, haslo: kod, src: new URLSearchParams(window.location.search).get("src") }),
     });
     if (res.ok) {
       setStan("ok");
@@ -91,8 +109,7 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
     } else {
       setStan("idle");
       const komunikat: string = (await res.json().catch(() => null))?.blad ?? x.nieUdalo;
-      // Serwer odpowiada po polsku, więc w wersji EN pokazujemy własny komunikat.
-      setBlad(jezyk === "pl" ? komunikat : x.nieUdalo);
+      setBlad(komunikat);
     }
   };
 
@@ -112,6 +129,28 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
         { etykieta: x.kroki[2] },
       ]}
     >
+      {reset !== "nie" ? (
+        <form onSubmit={wyslijReset} className={`${s.pane} ${s.enter}`}>
+          <h2>{x.zapomnialem}</h2>
+          <p className={s.lead}>{reset === "wyslane" ? x.resetOk : x.resetH}</p>
+          {reset !== "wyslane" && (
+            <>
+              <div className={s.f}>
+                <label htmlFor="email-reset">{x.email}</label>
+                <div className={s.in}>
+                  <input id="email-reset" type="email" required autoComplete="email" placeholder={x.emailPh} value={email} onChange={(e) => setEmail(e.target.value)} />
+                </div>
+              </div>
+              <button type="submit" disabled={reset === "wysylanie" || !wygladaJakEmail(email)} className={s.btnW}>
+                {x.resetWyslij}
+              </button>
+            </>
+          )}
+          <p className={s.login}>
+            <a href="#" onClick={(e) => { e.preventDefault(); setReset("nie"); }}>{x.resetWroc}</a>
+          </p>
+        </form>
+      ) : (
       <form onSubmit={zaloguj} className={`${s.pane} ${s.enter}`}>
         <h2>{x.h2}</h2>
         <p className={s.lead}>{x.lead}</p>
@@ -139,17 +178,15 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
             <input
               ref={kodRef}
               id="kod"
-              inputMode="numeric"
+              type="password"
               autoComplete="current-password"
-              pattern="[0-9]{6}"
-              maxLength={6}
+              minLength={6}
+              maxLength={72}
               required
-              className={s.kod}
-              placeholder="000000"
               value={kod}
               onFocus={() => setFokusKod(true)}
               onBlur={() => setFokusKod(false)}
-              onChange={(e) => setKod(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              onChange={(e) => setKod(e.target.value)}
             />
           </div>
         </div>
@@ -160,14 +197,18 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
           </p>
         )}
 
-        <button type="submit" disabled={stan !== "idle" || kod.length !== 6} className={s.btnW}>
+        <button type="submit" disabled={stan !== "idle" || kod.length < 6} className={s.btnW}>
           {stan === "idle" ? x.zaloguj : x.loguje}
         </button>
 
         <p className={s.login}>
           {x.brak} <Link href={adresStrony(jezyk, "rejestracja", naDomenie)}>{x.rejestracja}</Link>
         </p>
+        <p className={s.login} style={{ marginTop: 6 }}>
+          <a href="#" onClick={(e) => { e.preventDefault(); setReset("formularz"); }}>{x.zapomnialem}</a>
+        </p>
       </form>
+      )}
     </AuroraShell>
   );
 }

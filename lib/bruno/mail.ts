@@ -291,6 +291,29 @@ export function htmlProAktywny(args: { imie: string | null; jezyk?: string | nul
   });
 }
 
+/** 11.10 (USER_001): „Nie pamiętasz hasła?” → hasło tymczasowe, zmiana w Ustawieniach. */
+export function htmlNoweHaslo(args: { imie: string | null; haslo: string; jezyk?: string | null }) {
+  const link = linkZeZrodlem(`${bazaUrl(args.jezyk)}/login`, "dostep");
+  if (czyPL(args.jezyk))
+    return kopertaBruno({
+      jezyk: "pl",
+      naglowek: `${args.imie ? `${args.imie}, t` : "T"}woje nowe hasło`,
+      tresc: [
+        tabelaParami([["Hasło tymczasowe", args.haslo]]),
+        przycisk({ tekst: "Zaloguj się", link }),
+        akapit("Po zalogowaniu zmień je w Ustawieniach na swoje. Jeśli to nie Ty prosiłeś o nowe hasło, odpisz na tego maila."),
+      ].join("\n"),
+    });
+  return kopertaBruno({
+    naglowek: `${args.imie ? `${args.imie}, y` : "Y"}our new password`,
+    tresc: [
+      tabelaParami([["Temporary password", args.haslo]]),
+      przycisk({ tekst: "Log in", link }),
+      akapit("After you log in, change it to your own in Settings. If you didn't ask for a new password, reply to this email."),
+    ].join("\n"),
+  });
+}
+
 /** Przypomnienie dla konta bez pierwszego logowania (6.10). Kodu nie wysyłamy ponownie: w bazie jest tylko jego skrót. */
 export function htmlNieZalogowany(args: { imie: string | null; jezyk?: string | null; dni: number }) {
   const link = linkZeZrodlem(`${bazaUrl(args.jezyk)}/login`, "niezalogowany");

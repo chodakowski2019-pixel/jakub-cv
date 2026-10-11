@@ -51,6 +51,26 @@ export function poprawnyKod(surowy: unknown): string | null {
   return kod.length === 6 ? kod : null;
 }
 
+/**
+ * 11.10 (USER_001): rejestracja = e-mail + HASŁO. Hasło trzymamy tym samym skrótem scrypt co dawny
+ * 6-cyfrowy kod, więc stare konta logują się dalej swoim kodem (kod = hasło). Nowe hasło: 8-72 znaki.
+ */
+export const HASLO_MIN = 8;
+export function poprawneHaslo(surowe: unknown): string | null {
+  const h = String(surowe ?? "");
+  return h.length >= HASLO_MIN && h.length <= 72 ? h : null;
+}
+/** Hasło przy logowaniu: nowe hasło albo stary 6-cyfrowy kod. */
+export function hasloDoLogowania(surowe: unknown): string | null {
+  const h = String(surowe ?? "").trim();
+  return h.length >= 6 && h.length <= 72 ? h : null;
+}
+/** Hasło tymczasowe po „Nie pamiętasz hasła?”: 10 znaków bez mylących (0/O, 1/l/I). */
+export function noweHasloTymczasowe(): string {
+  const znaki = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  return Array.from({ length: 10 }, () => znaki[randomInt(0, znaki.length)]).join("");
+}
+
 export function zaszyfrujKod(kod: string): string {
   const sol = randomBytes(DLUGOSC_SOLI).toString("hex");
   const skrot = scryptSync(kod, sol, DLUGOSC_SKROTU).toString("hex");

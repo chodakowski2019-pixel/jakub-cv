@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { kodPasuje, poprawnyKod, zalogowanyEmail, zaszyfrujKod } from "@/lib/bruno/auth";
+import { hasloDoLogowania, kodPasuje, poprawneHaslo, zalogowanyEmail, zaszyfrujKod } from "@/lib/bruno/auth";
 import { pobierzKonto } from "@/lib/bruno/db";
 import { tDla } from "@/lib/bruno/i18n";
 
@@ -16,15 +16,12 @@ export async function POST(req: Request) {
   const t = tDla(konto?.jezyk);
   try {
     const b = await req.json();
-    const stary = poprawnyKod(b.stary);
-    const nowy = poprawnyKod(b.nowy);
-    if (!stary || !nowy) return NextResponse.json({ ok: false, blad: t("The code must be 6 digits.", "Kod ma mieć 6 cyfr.") }, { status: 400 });
-    if (/^(\d)\1{5}$/.test(nowy) || nowy === "123456") {
-      return NextResponse.json({ ok: false, blad: t("This code is too easy to guess.", "Ten kod jest zbyt łatwy do zgadnięcia.") }, { status: 400 });
-    }
-
+    // 11.10: kod → hasło. Obecne: hasło albo stary 6-cyfrowy kod. Nowe: 8-72 znaki.
+    const stary = hasloDoLogowania(b.stary);
+    const nowy = poprawneHaslo(b.nowy);
+    if (!stary || !nowy) return NextResponse.json({ ok: false, blad: t("New password: at least 8 characters.", "Nowe hasło: co najmniej 8 znaków.") }, { status: 400 });
     if (!konto || !kodPasuje(stary, konto.kod_hash)) {
-      return NextResponse.json({ ok: false, blad: t("Your current code doesn't match.", "Obecny kod się nie zgadza.") }, { status: 401 });
+      return NextResponse.json({ ok: false, blad: t("Your current password doesn't match.", "Obecne hasło się nie zgadza.") }, { status: 401 });
     }
 
     const { error } = await supabaseAdmin
@@ -35,6 +32,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[bruno kod]", e);
-    return NextResponse.json({ ok: false, blad: t("Couldn't change your code. Try again.", "Nie udało się zmienić kodu. Spróbuj ponownie.") }, { status: 500 });
+    return NextResponse.json({ ok: false, blad: t("Couldn't change your password. Try again.", "Nie udało się zmienić hasła. Spróbuj ponownie.") }, { status: 500 });
   }
 }

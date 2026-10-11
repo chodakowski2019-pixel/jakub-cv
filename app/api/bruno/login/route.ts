@@ -10,7 +10,7 @@ import {
   kodPasuje,
   normalizujEmail,
   nowyToken,
-  poprawnyKod,
+  hasloDoLogowania,
 } from "@/lib/bruno/auth";
 import { pobierzKonto, pobierzKonfig, stanDostepu } from "@/lib/bruno/db";
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
@@ -33,9 +33,10 @@ export async function POST(req: Request) {
     const b = await req.json();
     if (b?.jezyk === "pl") t = tDla("pl");
     const email = normalizujEmail(b.email);
-    const kod = poprawnyKod(b.kod);
-    if (!email || !kod) return NextResponse.json({ ok: false, blad: t("Enter your email and 6-digit code.", "Podaj adres i 6-cyfrowy kod.") }, { status: 400 });
-    const ZLE = t("Wrong email or code.", "Zły adres albo kod.");
+    // 11.10 (USER_001): logowanie e-mail + hasło. Stare konta: 6-cyfrowy kod działa jak hasło.
+    const kod = hasloDoLogowania(b.haslo ?? b.kod);
+    if (!email || !kod) return NextResponse.json({ ok: false, blad: t("Enter your email and password.", "Podaj e-mail i hasło.") }, { status: 400 });
+    const ZLE = t("Wrong email or password.", "Zły e-mail albo hasło.");
 
     const konto = await pobierzKonto(email);
     if (!konto || !konto.kod_hash) return NextResponse.json({ ok: false, blad: ZLE }, { status: 401 });

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { pobierzKonfig, pobierzKonto } from "@/lib/bruno/db";
+import { pobierzKonfig, pobierzKonto, pelnyDostep } from "@/lib/bruno/db";
 import UstawieniaForm from "@/components/bruno/ustawienia-form";
 import KodForm from "@/components/bruno/kod-form";
 import { filmDla } from "@/lib/bruno/film";
@@ -26,6 +26,8 @@ export default async function BrunoUstawieniaPage() {
       <UstawieniaForm godzina={konfig.godzina_przypomnienia} />
       <KodForm />
       {/* Instrukcja (USER_001 2.10): ten sam film, co w popupie przy pierwszym logowaniu, do odtworzenia na miejscu. */}
+      {/* 11.10 (USER_001): film tylko po zakupie (pełny dostęp). */}
+      {pelnyDostep(konto) && (
       <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-4">
         <h2 className="bruno-h2 text-lg">{t("How it works", "Instrukcja")}</h2>
         <video
@@ -37,6 +39,7 @@ export default async function BrunoUstawieniaPage() {
           className="w-full rounded-2xl bg-slate-900 aspect-[16/10]"
         />
       </section>
+      )}
     </div>
   );
 }
