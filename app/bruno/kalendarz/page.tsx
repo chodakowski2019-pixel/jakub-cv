@@ -20,17 +20,18 @@ export default async function BrunoKalendarzPage() {
     supabaseAdmin.from("bruno_fiszki").select("utworzono").eq("email", email).order("utworzono", { ascending: false }).limit(2000),
   ]);
 
-  // Koniec dostępu: opłacony Bruno Pro (pro_do) albo test firmy (trial). Free liczy rozmowy, nie dni; firmy B2B bez daty.
+  // Koniec dostępu: opłacony Bruno Pro (pro_do), test firmy (trial) albo konto free (dni od pierwszego logowania).
+  // Firmy B2B (pelny bez pro_do) bez daty. 12.10: free też pokazuje datę, żeby dni z dostępem świeciły w kalendarzu.
   let koniec: string | null = null;
   let opis: string | null = null;
   if (konto.plan === "pelny" && konto.pro_do) {
     koniec = konto.pro_do;
     opis = t("Bruno Pro is active until", "Bruno Pro aktywne do");
-  } else if (konto.plan === "trial") {
+  } else if (konto.plan === "trial" || konto.plan === "free") {
     const s = stanDostepu(konto);
     if (s.koniec) {
       koniec = s.koniec.toISOString();
-      opis = t("Your trial lasts until", "Dostęp testowy do");
+      opis = konto.plan === "free" ? t("Free access until", "Bezpłatny dostęp do") : t("Your trial lasts until", "Dostęp testowy do");
     }
   }
 
