@@ -356,6 +356,16 @@ export async function zamknijPorzucone(email: string): Promise<void> {
     .lt("start", granica);
 }
 
+/** 12.10 (USER_001): czy konto dziś trenowało (choć jedna rozmowa albo fiszka). Przypomnienie wtedy nie idzie. */
+export async function trenowalDzis(email: string): Promise<boolean> {
+  const od = poczatekDniaPL();
+  const [r, f] = await Promise.all([
+    supabaseAdmin.from("bruno_rozmowy").select("id", { count: "exact", head: true }).eq("email", email).gte("start", od).neq("status", "przerwana"),
+    supabaseAdmin.from("bruno_fiszki").select("id", { count: "exact", head: true }).eq("email", email).gte("utworzono", od),
+  ]);
+  return (r.count ?? 0) > 0 || (f.count ?? 0) > 0;
+}
+
 export async function rozmowyDzis(email: string): Promise<number> {
   const { count } = await supabaseAdmin
     .from("bruno_rozmowy")

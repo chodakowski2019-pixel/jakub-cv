@@ -1,5 +1,6 @@
 {
   "crons": [
-    { "path": "/api/bruno/przypomnienia?konserwacja=1", "schedule": "0 6 * * *" }
+    { "path": "/api/bruno/przypomnienia?wymus=1&godzina=8", "schedule": "0 6 * * *" },
+    { "path": "/api/bruno/przypomnienia?wymus=1&godzina=8", "schedule": "0 7 * * *" }
   ]
 }

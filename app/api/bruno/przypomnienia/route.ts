@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { ROZMOWA_SEKUND, kartyDoPowtorki, limitDzienny, planFree, rozmowyDzis, stanDostepu, stanFree, type Konto } from "@/lib/bruno/db";
+import { ROZMOWA_SEKUND, kartyDoPowtorki, limitDzienny, planFree, rozmowyDzis, stanDostepu, stanFree, trenowalDzis, type Konto } from "@/lib/bruno/db";
 import { htmlNieZalogowany, htmlPrzypomnienie, htmlPrzypomnienieFree, wyslij } from "@/lib/bruno/mail";
 import { dociagnijNagraniaEl } from "@/lib/bruno/nagrania";
 import { mnoga, tDla } from "@/lib/bruno/i18n";
@@ -47,6 +47,13 @@ export async function GET(req: Request) {
   const teraz = new Date();
   const godzinaPL = Number(teraz.toLocaleString("en-US", { timeZone: "Europe/Warsaw", hour: "numeric", hour12: false })) % 24;
   const wymus = params.get("wymus") === "1";
+  // 12.10 (USER_001: bez cron-job.org): cron Vercela biegnie o 6:00 i 7:00 UTC (plan Hobby = 2 crony, raz dziennie),
+  // a `?godzina=8` przepuszcza tylko ten przebieg, który wypada o 8:00 czasu polskiego (lato: 6 UTC, zima: 7 UTC).
+  // Wtedy `wymus=1` wysyła WSZYSTKIM, którzy dziś jeszcze nie trenowali (rozmowa albo fiszka), bez godziny z Ustawień.
+  const tylkoOGodzinie = Number(params.get("godzina"));
+  if (tylkoOGodzinie && godzinaPL !== tylkoOGodzinie) {
+    return NextResponse.json({ ok: true, godzinaPL, pominieto: `nie ${tylkoOGodzinie}:00 PL` });
+  }
   const konserwacja = wymus || params.get("konserwacja") === "1" || godzinaPL === GODZINA_KONSERWACJI;
 
   // 11.10: roczny Bruno Pro jest płatnością jednorazową (bez subskrypcji), więc po 365 dniach wygaszamy go tu.
@@ -87,7 +94,7 @@ export async function GET(req: Request) {
   const wyslane: string[] = [];
   const niezalogowani: string[] = [];
   const free: string[] = [];
-  const pominiete = { juzDzis: 0, innaGodzina: 0 };
+  const pominiete = { juzDzis: 0, innaGodzina: 0, trenowalDzis: 0 };
   for (const konto of (konta ?? []) as Konto[]) {
     const stan = stanDostepu(konto);
     if (!stan.aktywny) continue;
@@ -99,6 +106,11 @@ export async function GET(req: Request) {
     const godzina = godziny.get(konto.email) ?? DOMYSLNA_GODZINA;
     if (!wymus && godzina !== godzinaPL) {
       pominiete.innaGodzina++;
+      continue;
+    }
+    // 12.10 (USER_001): kto dziś już trenował (choć jedna rozmowa albo fiszka), nie dostaje przypomnienia.
+    if (konto.start_dostepu && (await trenowalDzis(konto.email))) {
+      pominiete.trenowalDzis++;
       continue;
     }
     // 11.10: temat i treść maila w języku konta.
