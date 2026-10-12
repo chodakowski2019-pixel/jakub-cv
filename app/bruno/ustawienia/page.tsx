@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { pobierzKonfig, pobierzKonto, pelnyDostep } from "@/lib/bruno/db";
+import { pobierzKonfig, pobierzKonto } from "@/lib/bruno/db";
 import UstawieniaForm from "@/components/bruno/ustawienia-form";
 import GlosForm from "@/components/bruno/glos-form";
 import KodForm from "@/components/bruno/kod-form";
@@ -28,8 +28,7 @@ export default async function BrunoUstawieniaPage() {
       <UstawieniaForm godzina={konfig.godzina_przypomnienia} />
       <KodForm />
       {/* Instrukcja (USER_001 2.10): ten sam film, co w popupie przy pierwszym logowaniu, do odtworzenia na miejscu. */}
-      {/* 11.10 (USER_001): film tylko po zakupie (pełny dostęp). */}
-      {pelnyDostep(konto) && (
+      {/* 12.10 (USER_001): film dla każdego konta (po profilu), więc Instrukcja też dla każdego. */}
       <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-4">
         <h2 className="bruno-h2 text-lg">{t("How it works", "Instrukcja")}</h2>
         <video
@@ -41,7 +40,6 @@ export default async function BrunoUstawieniaPage() {
           className="w-full rounded-2xl bg-slate-900 aspect-[16/10]"
         />
       </section>
-      )}
       {/* 11.10: dokumenty w jednym miejscu panelu (wcześniej stopka na każdym ekranie). Rozmowy są nagrywane: RODO = łatwy dostęp. */}
       <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-3">
         <h2 className="bruno-h2 text-lg">{t("Documents", "Dokumenty")}</h2>

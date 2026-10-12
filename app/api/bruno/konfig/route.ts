@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { pobierzKonfig, pobierzKonto } from "@/lib/bruno/db";
+import { pobierzKonfig, pobierzKonto, segmentLubDomyslny } from "@/lib/bruno/db";
 import { jezykLubDomyslny } from "@/lib/bruno/domeny";
 import { tDla } from "@/lib/bruno/i18n";
 import { etapLubDomyslny, rejestrLubDomyslny } from "@/lib/bruno/etapy";
@@ -43,6 +43,8 @@ export async function POST(req: Request) {
       rejestr: rejestrLubDomyslny(b.rejestr === undefined ? stare.rejestr : b.rejestr),
       // 11.10 (USER_001): głos Bruno (m / k) z Ustawień.
       glos: b.glos === undefined ? (stare.glos === "k" ? "k" : "m") : b.glos === "k" ? "k" : "m",
+      // 12.10 (USER_001): klient = firma (b2b) albo osoba (b2c), domyślnie b2c.
+      segment: segmentLubDomyslny(b.segment === undefined ? stare.segment : b.segment),
       godzina_przypomnienia:
         b.godzina_przypomnienia === undefined ? stare.godzina_przypomnienia : Math.min(22, Math.max(5, Number(b.godzina_przypomnienia) || 8)),
       zaktualizowano: new Date().toISOString(),

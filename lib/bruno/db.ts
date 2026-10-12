@@ -133,7 +133,14 @@ export type Konfig = {
   rejestr?: string | null;
   /** 11.10 (USER_001): głos Bruno: "m" = mężczyzna (domyślnie), "k" = kobieta. */
   glos?: "m" | "k" | string | null;
+  /** 12.10 (USER_001): klient to firma (b2b) czy osoba (b2c). Domyślnie b2c. */
+  segment?: "b2b" | "b2c" | string | null;
 };
+
+/** 12.10: segment klienta z bazy albo domyślny b2c. */
+export function segmentLubDomyslny(s: string | null | undefined): "b2b" | "b2c" {
+  return s === "b2b" ? "b2b" : "b2c";
+}
 
 export type Wypowiedz = { rola: "handlowiec" | "klient"; tekst: string; t: number };
 
@@ -333,6 +340,7 @@ export async function pobierzKonfig(email: string): Promise<Konfig> {
       godzina_przypomnienia: 8,
       etap: "cold",
       rejestr: "pan",
+      segment: "b2c",
     }
   );
 }

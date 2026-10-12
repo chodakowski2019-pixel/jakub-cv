@@ -48,40 +48,32 @@ export async function zalozKontoFree(a: {
   return { ok: true, kod };
 }
 
-/** 11.10: profil po rejestracji. Zapis na koncie + produkt do „Dostosuj Bruno” + lead + powiadomienie USER_001. */
+/** 11.10: profil po rejestracji. Zapis na koncie + lead + powiadomienie USER_001.
+ *  12.10 (USER_001): bez telefonu i produktu (produkt = „Dostosuj Bruno”), rola „other” z własną nazwą. */
 export async function zapiszProfil(a: {
   email: string;
   imie: string;
-  telefon: string | null;
   rola: string;
+  rolaInna: string | null;
   handlowcy: number | null;
-  produkt: string;
   jezyk: "en" | "pl";
 }): Promise<{ ok: true } | { ok: false; blad: string }> {
   const { error } = await supabaseAdmin
     .from("bruno_konta")
-    .update({ imie: a.imie, telefon: a.telefon, rola: a.rola, handlowcy: a.handlowcy, profil_at: new Date().toISOString() })
+    .update({ imie: a.imie, rola: a.rola, rola_inna: a.rolaInna, handlowcy: a.handlowcy, profil_at: new Date().toISOString() })
     .eq("email", a.email);
   if (error) return { ok: false, blad: error.message };
 
-  // Produkt trafia do „Dostosuj Bruno”, ale nie nadpisuje tego, co konto już tam wpisało.
-  const { data: konfig } = await supabaseAdmin.from("bruno_konfig").select("produkt").eq("email", a.email).maybeSingle();
-  if (!String(konfig?.produkt ?? "").trim()) {
-    const { error: e2 } = await supabaseAdmin
-      .from("bruno_konfig")
-      .upsert({ email: a.email, produkt: a.produkt, zaktualizowano: new Date().toISOString() }, { onConflict: "email" });
-    if (e2) console.error("[bruno profil] konfig", e2.message);
-  }
-
+  const rolaOpis = a.rolaInna ? `${a.rola}: ${a.rolaInna}` : a.rola;
   // Kopia w leadach (best-effort) + powiadomienie USER_001.
   try {
     const { error: e3 } = await supabaseAdmin.from("salesai_leady").insert({
       imie: a.imie,
       email: a.email,
-      telefon: a.telefon,
-      zawod: a.rola,
+      telefon: null,
+      zawod: rolaOpis.slice(0, 120),
       handlowcy: a.handlowcy ?? 1,
-      produkt: a.produkt,
+      produkt: null,
       zgoda: true,
     });
     if (e3) console.error("[bruno profil] lead", e3.message);
@@ -93,8 +85,8 @@ export async function zapiszProfil(a: {
       do: SKRZYNKA_JAKUBA,
       replyTo: a.email,
       rodzaj: "inny",
-      temat: `Bruno: nowe konto B2C (${a.jezyk.toUpperCase()}): ${a.imie}, ${a.rola}`,
-      html: `<h2>Nowe konto B2C, profil uzupełniony</h2><p>Plan free, ${ROZMOW_ZA_DARMO} rozmowy.</p><p><b>Imię:</b> ${esc(a.imie)}<br/><b>E-mail:</b> ${esc(a.email)}<br/><b>Telefon:</b> ${esc(a.telefon ?? "nie podano")}<br/><b>Rola:</b> ${esc(a.rola)}<br/><b>Handlowców:</b> ${a.handlowcy ?? "brak"}<br/><b>Produkt:</b> ${esc(a.produkt)}<br/><b>Język:</b> ${a.jezyk.toUpperCase()}</p>`,
+      temat: `Bruno: nowe konto B2C (${a.jezyk.toUpperCase()}): ${a.imie}, ${rolaOpis}`,
+      html: `<h2>Nowe konto B2C, profil uzupełniony</h2><p>Plan free, ${ROZMOW_ZA_DARMO} rozmowy.</p><p><b>Imię:</b> ${esc(a.imie)}<br/><b>E-mail:</b> ${esc(a.email)}<br/><b>Rola:</b> ${esc(rolaOpis)}<br/><b>Handlowców:</b> ${a.handlowcy ?? "brak"}<br/><b>Język:</b> ${a.jezyk.toUpperCase()}</p>`,
     });
   } catch (e) {
     console.error("[bruno profil] mail do Jakuba", e);

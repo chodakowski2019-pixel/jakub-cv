@@ -18,13 +18,11 @@ export default async function BrunoStartPage() {
   const { t } = await tSerwer();
   return (
     <div className="flex flex-col gap-6 py-6">
+      {/* 12.10 (USER_001): „Poznajmy się”, bez podtytułu. */}
       <div className="text-center">
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
-          {t("Almost", "Prawie")} <span className="bruno-gradient-tekst">{t("there", "gotowe")}</span>
+          {t("Nice to", "Poznajmy")} <span className="bruno-gradient-tekst">{t("meet you", "się")}</span>
         </h1>
-        <p className="text-slate-600 mt-2 max-w-xl mx-auto">
-          {t("Tell Bruno who you are and what you sell. Then you get 3 free calls.", "Powiedz Bruno, kim jesteś i co sprzedajesz. Potem masz 3 bezpłatne rozmowy.")}
-        </p>
       </div>
       <ProfilForm imieStart={konto.imie} />
     </div>

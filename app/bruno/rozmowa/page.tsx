@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { DOGRYWKA_SEKUND, ROZMOWA_SEKUND, dostepKonta, limitDzienny, listaObiekcji, pelnyDostep, pobierzKonfig, pobierzKonto, rozmowyDzis, stanDostepu, stanFree, zuzyteSekundy, type Karta } from "@/lib/bruno/db";
@@ -23,8 +24,29 @@ export default async function BrunoRozmowaPage({ searchParams }: { searchParams:
     karta = (data as Karta | null) ?? null;
   }
   const [konfig, dzis, zuzyte] = await Promise.all([pobierzKonfig(email), rozmowyDzis(email), zuzyteSekundy(email)]);
-  const { jezyk } = await tSerwer();
+  const { jezyk, t } = await tSerwer();
   const { NAZWY } = etykiety(jezyk);
+
+  // 12.10 (USER_001): bez „co sprzedajesz” i „kim jest klient” Bruno nie ma kogo grać.
+  // Zamiast kreatora: komunikat „Uzupełnij Bruno” z przejściem do „Dostosuj Bruno”.
+  if (!konfig.produkt.trim() || !konfig.klient.trim()) {
+    return (
+      <div className="bruno-szklo rounded-3xl p-8 sm:p-10 max-w-xl mx-auto mt-6 text-center flex flex-col items-center gap-4">
+        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
+          {t("Set up", "Uzupełnij")} <span className="bruno-gradient-tekst">Bruno</span>
+        </h1>
+        <p className="text-slate-600 max-w-md">
+          {t(
+            "Before your first call, tell Bruno what you sell and who your customer is. It takes 2 minutes. You can paste your website and Bruno fills it in for you.",
+            "Przed pierwszą rozmową powiedz Bruno, co sprzedajesz i kim jest Twój klient. To 2 minuty. Możesz wkleić adres strony, a Bruno wypełni pola sam.",
+          )}
+        </p>
+        <Link href="/bruno/dostosuj" className="bruno-przycisk text-base px-6 py-3">
+          {t("Customize Bruno →", "Dostosuj Bruno →")}
+        </Link>
+      </div>
+    );
+  }
   const minutZostalo = Math.max(0, Math.floor((konto.limit_sekund - zuzyte) / 60));
 
   return (
