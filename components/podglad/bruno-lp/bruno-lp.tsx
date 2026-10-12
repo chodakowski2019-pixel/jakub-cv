@@ -147,8 +147,8 @@ export type Jezyk = "en" | "pl";
 const TEKSTY: Record<Jezyk, Record<Wersja, Teksty>> = { en: TEKSTY_EN, pl: TEKSTY_PL };
 
 const UI = {
-  en: { jak: "How it works", wyniki: "Benefits", jakBruno: "How Bruno AI works", krokiH: "How does Bruno AI work?", kroki3: "See the 3 steps", trenowani: "Reps who get coached:", kwartal: "once a quarter", tydzien: "once a week", robia: "hit", planu: "of quota", liczby: "See the numbers", ocena: "score 1-10", zrodlo: "Source:", zalozyciel: "Founder, Bruno AI", kryteria: ["Opening", "Questions", "Objections", "Closing", "Confidence"], korzysci: [["You win more deals", "CSO Insights, 2019 Sales Enablement Study, 900+ companies"], ["More reps hit quota", "CSO Insights, 2019 Sales Enablement Study, 900+ companies"], ["Training pays for itself", "ASTD, Profiting From Learning, 575 companies"]], vs: "vs" },
-  pl: { jak: "Jak to działa", wyniki: "Korzyści", jakBruno: "Jak działa Bruno AI", krokiH: "Jak działa Bruno AI?", kroki3: "Zobacz 3 kroki", trenowani: "Handlowcy trenują sprzedaż:", kwartal: "raz na kwartał", tydzien: "raz w tygodniu", robia: "robią", planu: "planu", liczby: "Zobacz liczby", ocena: "ocena 1-10", zrodlo: "Źródło:", zalozyciel: "Założyciel, Bruno AI", kryteria: ["Otwarcie", "Pytania", "Obiekcje", "Zamknięcie", "Pewność siebie"], korzysci: [["Wygrywasz więcej transakcji", "CSO Insights, 2019 Sales Enablement Study, ponad 900 firm"], ["Więcej handlowców robi plan", "CSO Insights, 2019 Sales Enablement Study, ponad 900 firm"], ["Trening się zwraca", "ASTD, Profiting From Learning, 575 firm"]], vs: "vs" },
+  en: { jak: "How it works", wyniki: "Benefits", jakBruno: "How Bruno AI works", krokiH: "How does Bruno AI work?", kroki3: "See the 3 steps", trenowani: "Reps who get coached:", kwartal: "once a quarter", tydzien: "once a week", robia: "hit", planu: "of quota", liczby: "See the numbers", ocena: "score 1-10", zrodlo: "Source:", zalozyciel: "Founder, Bruno AI", kryteria: ["Opening", "Questions", "Objections", "Closing", "Confidence"], korzysci: [["You win more deals", "CSO Insights, 2019 Sales Enablement Study, 900+ companies"], ["More reps hit quota", "CSO Insights, 2019 Sales Enablement Study, 900+ companies"], ["Training pays for itself", "ASTD, Profiting From Learning, 575 companies"]], vs: "vs", regulamin: "Terms", polityka: "Privacy Policy", bezpieczenstwo: "Security & Data" },
+  pl: { jak: "Jak to działa", wyniki: "Korzyści", jakBruno: "Jak działa Bruno AI", krokiH: "Jak działa Bruno AI?", kroki3: "Zobacz 3 kroki", trenowani: "Handlowcy trenują sprzedaż:", kwartal: "raz na kwartał", tydzien: "raz w tygodniu", robia: "robią", planu: "planu", liczby: "Zobacz liczby", ocena: "ocena 1-10", zrodlo: "Źródło:", zalozyciel: "Założyciel, Bruno AI", kryteria: ["Otwarcie", "Pytania", "Obiekcje", "Zamknięcie", "Pewność siebie"], korzysci: [["Wygrywasz więcej transakcji", "CSO Insights, 2019 Sales Enablement Study, ponad 900 firm"], ["Więcej handlowców robi plan", "CSO Insights, 2019 Sales Enablement Study, ponad 900 firm"], ["Trening się zwraca", "ASTD, Profiting From Learning, 575 firm"]], vs: "vs", regulamin: "Regulamin", polityka: "Polityka prywatności", bezpieczenstwo: "Bezpieczeństwo i dane" },
 } as const;
 
 // Liczby i źródła wspólne dla obu wersji, opisy w TEKSTY[wersja].korzysciOpis.
@@ -692,6 +692,13 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
 
           <footer className={s.footer}>
             <span>Bruno AI</span>
+            {/* 12.10 (E11): dokumenty dla firm w stopce. Regulamin i polityka mają jeden adres na każdym hoście,
+                Security ma ładny adres /security na salesbruno.com (adresStrony). */}
+            <nav className={s.footerLinki} aria-label={u.bezpieczenstwo}>
+              <a href="/regulamin">{u.regulamin}</a>
+              <a href="/polityka-prywatnosci">{u.polityka}</a>
+              <a href={adresStrony(jezyk, "bezpieczenstwo", naDomenie)}>{u.bezpieczenstwo}</a>
+            </nav>
             <span>{t.stopka}</span>
           </footer>
         </>

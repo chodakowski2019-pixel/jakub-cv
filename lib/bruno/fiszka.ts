@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Feedback, Konfig } from "./db";
 import type { Jezyk } from "./domeny";
+import { SEGMENT_NAZWA, segmentZ } from "./segment";
 
 // Fiszki w „Trening" (USER_001 2.10): obiekcja → odpowiedź handlowca (głos
 // albo tekst) → krótki werdykt trenera + wzorcowa odpowiedź. Tani, szybki
@@ -122,9 +123,11 @@ export async function ocenFiszke(args: {
  * Z feedbacku po rozmowie robi 1-3 fiszki „do poprawy" (USER_001 2.10): każda = krótki
  * tytuł, pytanie osadzone w TEJ rozmowie (z cytatem) i wzór. Haiku, tanio. Pusta lista przy błędzie.
  */
-export async function kartyZFeedbacku(args: { feedback: Feedback; produkt: string; jezyk?: Jezyk }): Promise<{ tresc: string; pytanie: string; wzor: string }[]> {
+export async function kartyZFeedbacku(args: { feedback: Feedback; produkt: string; jezyk?: Jezyk; segment?: string | null }): Promise<{ tresc: string; pytanie: string; wzor: string }[]> {
   const { feedback, produkt } = args;
   const pl = args.jezyk === "pl";
+  // 12.10 (W5): fiszki wiedzą, czy klient to firma czy osoba (inne wzory odpowiedzi).
+  const segment = SEGMENT_NAZWA[segmentZ(args.segment)][pl ? "pl" : "en"];
   const minusy = feedback.minusy?.length ? feedback.minusy : feedback.kryteria.filter((k) => k.ocena <= 5).map((k) => k.komentarz);
   if (!minusy.length) return [];
   try {
@@ -139,8 +142,8 @@ export async function kartyZFeedbacku(args: { feedback: Feedback; produkt: strin
         {
           role: "user",
           content: pl
-            ? `PRODUKT: ${produkt || "(brak)"}\nMINUSY: ${JSON.stringify(minusy)}\nKRYTERIA: ${JSON.stringify(feedback.kryteria.map((k) => ({ nazwa: k.nazwa, ocena: k.ocena, cytat: k.cytat, komentarz: k.komentarz })))}\nPOPRAWKA TRENERA: ${feedback.poprawka}${feedback.zamkniecie_techniki ? `\nTECHNIKI ZAMYKANIA (false / brak / poddal_sie / czekal / zmarnowany = do poprawy): ${JSON.stringify(feedback.zamkniecie_techniki)}` : ""}`
-            : `PRODUCT: ${produkt || "(none)"}\nWEAK SPOTS: ${JSON.stringify(minusy)}\nCRITERIA: ${JSON.stringify(feedback.kryteria.map((k) => ({ nazwa: k.nazwa, ocena: k.ocena, cytat: k.cytat, komentarz: k.komentarz })))}\nCOACH'S FIX: ${feedback.poprawka}${feedback.zamkniecie_techniki ? `\nCLOSING TECHNIQUES (false / brak / poddal_sie / czekal / zmarnowany = needs work): ${JSON.stringify(feedback.zamkniecie_techniki)}` : ""}`,
+            ? `PRODUKT: ${produkt || "(brak)"}\nKLIENT: ${segment}\nMINUSY: ${JSON.stringify(minusy)}\nKRYTERIA: ${JSON.stringify(feedback.kryteria.map((k) => ({ nazwa: k.nazwa, ocena: k.ocena, cytat: k.cytat, komentarz: k.komentarz })))}\nPOPRAWKA TRENERA: ${feedback.poprawka}${feedback.zamkniecie_techniki ? `\nTECHNIKI ZAMYKANIA (false / brak / poddal_sie / czekal / zmarnowany = do poprawy): ${JSON.stringify(feedback.zamkniecie_techniki)}` : ""}${feedback.obiekcje_techniki && feedback.obiekcje_techniki.obiekcji > 0 ? `\nTECHNIKI OBIEKCJI (false = do poprawy, kontra_ale > 0 = za dużo „ale”): ${JSON.stringify(feedback.obiekcje_techniki)}` : ""}`
+            : `PRODUCT: ${produkt || "(none)"}\nCUSTOMER: ${segment}\nWEAK SPOTS: ${JSON.stringify(minusy)}\nCRITERIA: ${JSON.stringify(feedback.kryteria.map((k) => ({ nazwa: k.nazwa, ocena: k.ocena, cytat: k.cytat, komentarz: k.komentarz })))}\nCOACH'S FIX: ${feedback.poprawka}${feedback.zamkniecie_techniki ? `\nCLOSING TECHNIQUES (false / brak / poddal_sie / czekal / zmarnowany = needs work): ${JSON.stringify(feedback.zamkniecie_techniki)}` : ""}${feedback.obiekcje_techniki && feedback.obiekcje_techniki.obiekcji > 0 ? `\nOBJECTION TECHNIQUES (false = needs work, kontra_ale > 0 = too many "but"): ${JSON.stringify(feedback.obiekcje_techniki)}` : ""}`,
         },
       ],
       tools: [

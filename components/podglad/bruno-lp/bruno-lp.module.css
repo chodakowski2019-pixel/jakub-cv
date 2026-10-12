@@ -689,10 +689,22 @@
 .footer {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   padding: 26px 48px 34px;
   font-size: 12.5px;
   color: var(--muted);
+}
+/* 12.10 (E11): linki do dokumentów w stopce. */
+.footerLinki {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+.footerLinki a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* ---------- FORMULARZ ---------- */

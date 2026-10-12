@@ -89,6 +89,34 @@ export function plecZTranskrypcji(tr: Wypowiedz[], jezyk: Jezyk = "en"): boolean
 const DATA =
   /(monday|tuesday|wednesday|thursday|friday|saturday|sunday|tomorrow|day after tomorrow|next week|this week|end of (the )?week|next month|at \d{1,2}(:\d{2})?( ?[ap]\.?m\.?)?|\d{1,2}(:\d{2})? ?[ap]\.?m\.?|o'?clock|noon|midday|(january|february|march|april|may|june|july|august|september|october|november|december) \d{1,2}|\d{1,2}(st|nd|rd|th)\b)/iu;
 
+// ——— 12.10 (W3, /brunowiedza): techniki obiekcji z 20 kart `SalesAI/wiedza/techniki/`, sekcja „Jak trener rozpoznaje" ———
+// Pierwsza odpowiedź handlowca po obiekcji: ZGODA („rozumiem", „ma pan rację") albo KONTRA („ale", „but").
+// Negacz NSM 099 / NSM 049: „ale kasuje wszystko, co było przed nim". Belfort: krótkie odbicie „słyszę, co pan mówi".
+const ZGODA_START =
+  /^\s*(?:(?:okay|ok|yeah|yes|right|alright|well|oh|look|hey|and|so)[,.!]?\s+)*(i (totally |completely |really |do )?(get it|get that|hear you|hear what you('re| are) saying|understand|get where you('re| are) coming from)|that's (fair|true|a fair (point|reaction)|totally fair|understandable)|fair (enough|point)|makes sense|that makes sense|you're (absolutely |totally )?right|of course|no problem|that's fine|not a problem|i figured|i (totally |completely )?agree|got it|absolutely|totally|understood|i appreciate (that|you saying that)|thanks for (being (straight|honest)|telling me)|i'm not trying to|let me (update|note|mark)|(okay|sure|alright),? let me (update|note|mark))/iu;
+const KONTRA_START =
+  /^\s*(?:(?:okay|ok|yeah|yes|right|alright|well|oh|look|hmm|hm)[,.!]?\s+)*(but\b|no,? but|yes,? but|well,? actually|actually,? (no|that's)|that's not (true|right|really|quite)|not really|not necessarily|have you considered|with all due respect|i (have to |must )?disagree|i don't think (so|that's)|hold on)/iu;
+/** „ale/but" jako spójnik w odpowiedzi po obiekcji (liczone w całej pierwszej odpowiedzi). */
+const ALE = /\b(but|however|although|though)\b/giu;
+// Karta 27 (Negacz `mit-wysokiej-ceny.md`): „czy jest coś oprócz ceny, co wpłynęło na decyzję?"
+const PYTANIE_POZA_CENA =
+  /((is|was) there )?(anything|something) (else )?(besides|other than|apart from|aside from|beyond) (the |just )?(price|cost|money|the number)|besides (the )?(price|cost)|(only|just|purely) (about )?(the )?(price|cost|money)\?|what else (played|mattered|drove|went into|was behind|factored)|other than (the )?(price|cost|money),? (what|was|is|anything)/iu;
+// Karta 38 (Cole Gordon): skala 1-10 + pytanie o lukę.
+const SKALA_1_10 =
+  /on a scale (of|from) (1|one) (to|through) (10|ten)|scale of (1|one)[- ]?(to|-)[- ]?(10|ten)|(1|one) to (10|ten),? (where|how)|what('s| is) keeping you (at|from) (a |an )?(\d|five|six|seven|eight|nine|ten)|what would (make|get) (it|you|that) (a |to )?(9|10|nine|ten)/iu;
+// Karty 38, 39 (Cole Gordon): izolacja „poza tym, czy jest coś jeszcze?", „gdyby żona była na linii".
+const IZOLACJA =
+  /(other than|besides|aside from|apart from|outside of) (that|this|time|money|the (price|cost|money)|(talking to|telling|letting) your (wife|husband|partner|spouse)( know)?|your (wife|husband|partner|spouse)|[a-z]+),? (is there |was there )?anything else|is (that|this) the only (thing|reason|concern)|if it weren'?t for (that|the|this|[a-z]+)|if (she|he|your (wife|husband|partner|spouse)) (were|was) (on the (call|line|phone)|(right )?here|sitting here)|(money|price|the cost) aside|set (the )?money aside|if money (weren'?t|wasn'?t|was not|were not) (a factor|an issue|a thing|the issue)/iu;
+// Karta 41 (Elliott): hipoteza „obejrzał pan wszystkie, moje było ostatnie, co zdecyduje?"
+const HIPOTEZA_KONIEC =
+  /hypothetically|let'?s (just )?say you('ve| have)? ?(already )?(seen|checked|compared|looked at|been to) (them all|all of them|both|everything|the other|every)|(mine|this|ours|this one) (was|is|were) the last (one|place|stop)|what (decides|would decide|ends up deciding) (it |this )?(in the end|at the end|ultimately)|in the end,? what (decides|would decide|matters)|at the end of the day,? what (decides|matters|would decide)/iu;
+// Karta 42 (Cardone): „gdyby pieniądze były te same, u kogo wolałby pan kupić?"
+const GDYBY_CENA_TA_SAMA =
+  /if (the )?(money|price|cost|numbers?|dollars) (were|was) (the same|equal|identical)|(at |for )?the same (price|money|cost),? who (would|do) you|same (price|money),? who|if (it|they) (cost|were) the same,? who|if we were (the same|at the same) price/iu;
+// Karta 43 (Tom Ferry / Toole): dopięcie pytaniem na „tak" („…, right?", „fair enough?"). Koniec wypowiedzi handlowca.
+const TIE_DOWN =
+  /(,?\s*(right|correct|fair|fair enough|is that fair|does that make sense|make sense|makes sense|wouldn'?t you agree|agreed|yeah|sound (good|fair|right)|okay|deal)\?)\s*$/iu;
+
 // ——— Wzorce PL (z fd7de52, 1:1) ———
 const PL_WYPELNIACZE = /\b(y{2,}|e{2,}|hmm+|mmm+|no więc|jakby|w sensie|znaczy się|znaczy|tak jakby|no i)\b/giu;
 const PL_OSLABIACZE = /\b(chyba|może|wydaje mi się|spróbuję|spróbujemy|trochę|myślę,? że|nie wiem czy|w sumie|jakoś|właściwie)\b/giu;
@@ -126,6 +154,25 @@ const PL_KWOTA = new RegExp(
 );
 const PL_DATA = /(poniedziałek|wtorek|środ|czwartek|piątek|sobot|niedziel|jutro|pojutrze|o \d{1,2}(:\d{2})?|godzin|w przyszłym tygodniu|za tydzień)/iu;
 
+// ——— 12.10 (W3): techniki obiekcji PL (te same karty, wzorce z sekcji „Jak trener rozpoznaje") ———
+const PL_ZGODA_START =
+  /^\s*(?:(?:no|a|ok|okej|dobrze|tak|mhm|aha|jasne|hm)[,.!]?\s+)*(rozumiem|zgadzam się|ma (pan|pani) (absolutnie |całkowitą |pełną )?racj[eę]|słusznie|jasne|zdaję sobie sprawę|faktycznie|to prawda|to fakt|oczywiście|żaden problem|nie ma problemu|tego się spodziewał[ea]m|słyszę,? co (pan|pani) mówi|słyszę|w porządku|uczciwe pytanie|dobre pytanie|dziękuję za szczerość|dziękuję,? że (pan|pani) mówi wprost|nie próbuję|w pełni (to )?rozumiem|doceniam|(dobrze|ok|okej),? (zaznaczam|aktualizuję|zapisuję|notuję)|(zaznaczam|aktualizuję|zapisuję|notuję) (w karcie|w systemie|sobie))/iu;
+const PL_KONTRA_START =
+  /^\s*(?:(?:no|a|ok|okej|dobrze|tak|hm|hmm)[,.!]?\s+)*(ale\b|no ale|tak,? ale|nie,? (to|ale)|przecież|wcale nie|to nieprawda|to nie (tak|jest tak)|niekoniecznie|a czy (wie|zastanawiał|rozważał)|a może|chwileczkę|z całym szacunkiem|nie zgadzam się|nie powiedziałbym)/iu;
+const PL_ALE = /\b(ale|jednak|natomiast|aczkolwiek|chociaż|choć)\b/giu;
+const PL_PYTANIE_POZA_CENA =
+  /(coś|cos|czegoś) (oprócz|poza|prócz) cen|poza (samą )?ceną|oprócz (samej )?ceny|co jeszcze (wpłynęło|zdecydowało|zaważyło|miało znaczenie|grało rolę)|(tylko|wyłącznie|jedynie) (o )?cen[aęy]\?|czy chodzi tylko o cenę|czy cena (to|była) jedyn|oprócz ceny,? (co|czy)/iu;
+const PL_SKALA_1_10 =
+  /w skali (od )?(1|jeden|jednego) do (10|dziesięciu|dziesiątki)|na skali (od )?(1|jeden)[- ]?(do|-)[- ]?(10|dziesięciu)|skali 1-10|od 1 do 10,? gdzie|co trzyma (pana|panią|pana|cię) (na|przy) (siódemce|ósemce|szóstce|piątce|\d)|co brakuje (panu|pani|ci)? ?do (dziesiątki|10|dziewiątki)|co (sprawia|powoduje),? że (to )?nie (10|dziesięć|dziesiątka)/iu;
+const PL_IZOLACJA =
+  /(poza|oprócz|prócz) (tym|tego|czasem|ceną|kwotą|pieniędzmi|żoną|mężem|partnerem|partnerką|powiedzeniem|rozmową|tą jedną rzeczą|\p{L}+)( (z )?(żonie|mężowi|żoną|mężem|partnerem|partnerką))?,? (czy )?(jest|ma (pan|pani)|było|byłoby) (jeszcze )?coś (jeszcze|innego)|czy to jedyn[aey] (rzecz|powód|wątpliwość|obawa)|czy coś (jeszcze|poza tym) (pana|panią) (trzyma|powstrzymuje)|gdyby nie (to|ta|ten|cena|czas|kwota|pieniądze)|gdyby (żona|mąż|partner|partnerka) (była|był) (teraz )?(tutaj|tu|na linii|przy telefonie|obok)|(odłóżmy|odkładając|odłożmy) (na chwilę )?(pieniądze|cenę|kwotę) na bok|pieniądze na bok|gdyby (pieniądze|cena|kasa|kwota) nie (grał[ay]|był[ay]|miał[ay])|pomijając (cenę|koszt|pieniądze)/iu;
+const PL_HIPOTEZA_KONIEC =
+  /hipotetycznie|załóżmy,? że (obejrzał|sprawdził|porównał|zobaczył|odwiedził) (pan|pani) (już )?(wszystkie|oba|obie|wszystko|resztę|pozostałe)|(to|moje|nasze|ta) (było|była|jest) ostatni[ea]|co (na końcu|na koniec|ostatecznie|finalnie) (zdecyduje|zadecyduje|przeważy)|co zdecyduje (na końcu|na koniec|ostatecznie)|na koniec dnia,? co (zdecyduje|się liczy)/iu;
+const PL_GDYBY_CENA_TA_SAMA =
+  /gdyby (cena|pieniądze|kwota|koszt|ceny) (była|były|był) (ta sama|te same|taka sama|takie same|równ\p{L}*|identyczn\p{L}*)|przy (tej samej|takiej samej|równej) cenie,? u kogo|ta sama cena,? u kogo|gdyby (kosztowało|wychodziło) (tyle samo|to samo),? u kogo|gdybyśmy (byli|mieli) (w tej samej|tę samą) cen/iu;
+const PL_TIE_DOWN =
+  /(,?\s*(prawda|zgadza się|tak|racja|w porządku|pasuje|uczciwie|dobrze|nie|zgoda|ma to sens|to ma sens|logiczne|czy nie)\?)\s*$/iu;
+
 type Wzorce = {
   WYPELNIACZE: RegExp;
   OSLABIACZE: RegExp;
@@ -138,9 +185,40 @@ type Wzorce = {
   PROSBA_O_LICZBE: RegExp;
   KWOTA: RegExp;
   DATA: RegExp;
+  // 12.10 (W3): techniki obiekcji
+  ZGODA_START: RegExp;
+  KONTRA_START: RegExp;
+  ALE: RegExp;
+  PYTANIE_POZA_CENA: RegExp;
+  SKALA_1_10: RegExp;
+  IZOLACJA: RegExp;
+  HIPOTEZA_KONIEC: RegExp;
+  GDYBY_CENA_TA_SAMA: RegExp;
+  TIE_DOWN: RegExp;
 };
 const WZORCE: Record<Jezyk, Wzorce> = {
-  en: { WYPELNIACZE, OSLABIACZE, PRZEPROSINY, SLOWO_PYTAJNE, ZAMKNIETE_START, OBIEKCJA, RABAT, PROSBA_O_DECYZJE, PROSBA_O_LICZBE, KWOTA, DATA },
+  en: {
+    WYPELNIACZE,
+    OSLABIACZE,
+    PRZEPROSINY,
+    SLOWO_PYTAJNE,
+    ZAMKNIETE_START,
+    OBIEKCJA,
+    RABAT,
+    PROSBA_O_DECYZJE,
+    PROSBA_O_LICZBE,
+    KWOTA,
+    DATA,
+    ZGODA_START,
+    KONTRA_START,
+    ALE,
+    PYTANIE_POZA_CENA,
+    SKALA_1_10,
+    IZOLACJA,
+    HIPOTEZA_KONIEC,
+    GDYBY_CENA_TA_SAMA,
+    TIE_DOWN,
+  },
   pl: {
     WYPELNIACZE: PL_WYPELNIACZE,
     OSLABIACZE: PL_OSLABIACZE,
@@ -153,8 +231,47 @@ const WZORCE: Record<Jezyk, Wzorce> = {
     PROSBA_O_LICZBE: PL_PROSBA_O_LICZBE,
     KWOTA: PL_KWOTA,
     DATA: PL_DATA,
+    ZGODA_START: PL_ZGODA_START,
+    KONTRA_START: PL_KONTRA_START,
+    ALE: PL_ALE,
+    PYTANIE_POZA_CENA: PL_PYTANIE_POZA_CENA,
+    SKALA_1_10: PL_SKALA_1_10,
+    IZOLACJA: PL_IZOLACJA,
+    HIPOTEZA_KONIEC: PL_HIPOTEZA_KONIEC,
+    GDYBY_CENA_TA_SAMA: PL_GDYBY_CENA_TA_SAMA,
+    TIE_DOWN: PL_TIE_DOWN,
   },
 };
+
+/**
+ * 12.10 (W3): jak handlowiec zaczął pierwszą odpowiedź po obiekcji.
+ * zgoda = „rozumiem" / „ma pan rację" / "makes sense"; kontra = „ale" / "but" na początku;
+ * rabat = rabat w odpowiedzi; pytanie = jest „?"; argument = nic z powyższych (tłumaczenie, obrona).
+ * Jedna odpowiedź może być zgodą I pytaniem naraz (to wzór Negacza). Eksport dla testów i trenera.
+ */
+export type OdpowiedzPoObiekcji = { zgoda: boolean; kontra: boolean; pytanie: boolean; rabat: boolean; argument: boolean; ale: number };
+export function klasyfikujOdpowiedz(tekst: string, jezyk: Jezyk = "en"): OdpowiedzPoObiekcji {
+  const w = WZORCE[jezyk] ?? WZORCE.en;
+  const t = tekst.trim();
+  const zgoda = w.ZGODA_START.test(t);
+  const kontra = !zgoda && w.KONTRA_START.test(t);
+  const pytanie = t.includes("?");
+  const rabat = w.RABAT.test(t);
+  return { zgoda, kontra, pytanie, rabat, argument: !zgoda && !kontra && !pytanie && !rabat, ale: ile(w.ALE, t) };
+}
+
+/** 12.10 (W3): które techniki obiekcji padły w tekście handlowca (do testów zdań i metryk). */
+export function technikiObiekcjiW(tekst: string, jezyk: Jezyk = "en"): { pytanie_poza_cena: boolean; skala_1_10: boolean; izolacja: boolean; hipoteza_koniec: boolean; gdyby_cena_ta_sama: boolean; tie_down: boolean } {
+  const w = WZORCE[jezyk] ?? WZORCE.en;
+  return {
+    pytanie_poza_cena: w.PYTANIE_POZA_CENA.test(tekst),
+    skala_1_10: w.SKALA_1_10.test(tekst),
+    izolacja: w.IZOLACJA.test(tekst),
+    hipoteza_koniec: w.HIPOTEZA_KONIEC.test(tekst),
+    gdyby_cena_ta_sama: w.GDYBY_CENA_TA_SAMA.test(tekst),
+    tie_down: w.TIE_DOWN.test(tekst.trim()),
+  };
+}
 
 /** Wzorzec prośby o decyzję / następnego kroku z datą w danym języku (fazy.ts, UI). */
 export function prosbaODecyzje(jezyk: Jezyk = "en"): RegExp {
@@ -200,10 +317,33 @@ export type Metryki = {
   /** Zmiana tempa ostatnia vs pierwsza minuta w %: plus = przyspieszył, minus = zwolnił (6.10: było odwrotnie i myliło trenera). */
   zmiana_tempa_proc: number | null;
   zdania_ponad_25_slow: number;
+  // ——— 12.10 (W3, /brunowiedza): techniki obiekcji z kart `SalesAI/wiedza/techniki/` ———
+  /** Pierwsze odpowiedzi po obiekcji zaczynające się od zgody („rozumiem", „ma pan rację", "makes sense"). Karta 25 Negacz. */
+  obiekcje_odp_zgoda: number;
+  /** Pierwsze odpowiedzi po obiekcji zaczynające się od kontry („ale", „przecież", "but"). */
+  obiekcje_odp_kontra: number;
+  /** Pierwsze odpowiedzi po obiekcji bez zgody, pytania, kontry i rabatu = argument / tłumaczenie. */
+  obiekcje_odp_argument: number;
+  /** Suma „ale/but" w pierwszych odpowiedziach po obiekcjach (Negacz: „ale kasuje wszystko przed nim"). */
+  kontra_ale_po_obiekcji: number;
+  /** Po pierwszej obiekcji padła jeszcze prośba o decyzję (pętla Belforta, karta 35; drugie podejście). */
+  prosba_po_obiekcji: boolean;
+  /** „Czy jest coś oprócz ceny?" (karta 27, Negacz). */
+  pytanie_poza_cena: boolean;
+  /** Skala 1-10 albo pytanie o lukę „co trzyma pana na 7?" (karta 38, Cole Gordon). */
+  skala_1_10: boolean;
+  /** Izolacja „poza tym, czy coś jeszcze?", „gdyby żona była na linii", „pieniądze na bok" (karty 38, 39). */
+  izolacja: boolean;
+  /** Hipoteza „obejrzał pan wszystkie, moje było ostatnie, co zdecyduje?" (karta 41, Elliott). */
+  hipoteza_koniec: boolean;
+  /** „Gdyby cena była ta sama, u kogo?" (karta 42, Cardone). */
+  gdyby_cena_ta_sama: boolean;
+  /** Wypowiedzi handlowca zakończone dopięciem „…, prawda?", "…, right?" (karta 43, Tom Ferry). */
+  tie_down: number;
 };
 
 export function policzMetryki(tr: Wypowiedz[], sekundy: number, obiekcjeFirmy: string[] = [], jezyk: Jezyk = "en"): Metryki {
-  const { WYPELNIACZE, OSLABIACZE, PRZEPROSINY, OBIEKCJA, RABAT, PROSBA_O_DECYZJE, PROSBA_O_LICZBE, KWOTA, DATA } = WZORCE[jezyk] ?? WZORCE.en;
+  const { WYPELNIACZE, OSLABIACZE, PRZEPROSINY, OBIEKCJA, RABAT, PROSBA_O_DECYZJE, PROSBA_O_LICZBE, KWOTA, DATA, TIE_DOWN } = WZORCE[jezyk] ?? WZORCE.en;
   const firmy = obiekcjeFirmy.map(rdzenie);
   const toObiekcja = (t: string) => OBIEKCJA.test(t) || trafiaWObiekcjeFirmy(t, firmy);
   const h = tr.filter((w) => w.rola === "handlowiec");
@@ -234,6 +374,12 @@ export function policzMetryki(tr: Wypowiedz[], sekundy: number, obiekcjeFirmy: s
   let obiekcje = 0;
   let obiekcjeZPytaniem = 0;
   let obiekcjeZRabatem = 0;
+  // 12.10 (W3): zgoda / kontra / argument w pierwszej odpowiedzi, „ale" po obiekcji, prośba o decyzję po obiekcji.
+  let odpZgoda = 0;
+  let odpKontra = 0;
+  let odpArgument = 0;
+  let alePoObiekcji = 0;
+  let pierwszaObiekcjaIdx = -1;
   // Do końca transkrypcji: obiekcja w ostatniej wypowiedzi też się liczy (bez odpowiedzi handlowca).
   for (let i = 0; i < tr.length; i++) {
     const a = tr[i];
@@ -241,13 +387,23 @@ export function policzMetryki(tr: Wypowiedz[], sekundy: number, obiekcjeFirmy: s
     if (b && a.rola === "handlowiec" && a.tekst.includes("?") && b.rola === "handlowiec") samOdpowiada++;
     if (a.rola === "klient" && toObiekcja(a.tekst)) {
       obiekcje++;
+      if (pierwszaObiekcjaIdx < 0) pierwszaObiekcjaIdx = i;
       const odp = tr.slice(i + 1).find((w) => w.rola === "handlowiec");
       if (odp) {
         if (odp.tekst.includes("?")) obiekcjeZPytaniem++;
         if (RABAT.test(odp.tekst)) obiekcjeZRabatem++;
+        const k = klasyfikujOdpowiedz(odp.tekst, jezyk);
+        if (k.zgoda) odpZgoda++;
+        if (k.kontra) odpKontra++;
+        if (k.argument) odpArgument++;
+        alePoObiekcji += k.ale;
       }
     }
   }
+  const prosbaPoObiekcji = pierwszaObiekcjaIdx >= 0 && tr.slice(pierwszaObiekcjaIdx + 1).some((w) => w.rola === "handlowiec" && PROSBA_O_DECYZJE.test(w.tekst));
+  // Techniki obiekcji w całym tekście handlowca (frazy są na tyle swoiste, że nie trzeba ich wiązać z konkretną obiekcją).
+  const techniki = technikiObiekcjiW(tekstH, jezyk);
+  const tieDown = h.filter((w) => TIE_DOWN.test(w.tekst.trim())).length;
 
   // Kwota i usprawiedliwianie ceny
   let kwotaPadla = false;
@@ -324,5 +480,16 @@ export function policzMetryki(tr: Wypowiedz[], sekundy: number, obiekcjeFirmy: s
     tempo_ostatnia_min: tempoOstatnia,
     zmiana_tempa_proc: zmiana,
     zdania_ponad_25_slow: zdaniaDlugie,
+    obiekcje_odp_zgoda: odpZgoda,
+    obiekcje_odp_kontra: odpKontra,
+    obiekcje_odp_argument: odpArgument,
+    kontra_ale_po_obiekcji: alePoObiekcji,
+    prosba_po_obiekcji: prosbaPoObiekcji,
+    pytanie_poza_cena: techniki.pytanie_poza_cena,
+    skala_1_10: techniki.skala_1_10,
+    izolacja: techniki.izolacja,
+    hipoteza_koniec: techniki.hipoteza_koniec,
+    gdyby_cena_ta_sama: techniki.gdyby_cena_ta_sama,
+    tie_down: tieDown,
   };
 }

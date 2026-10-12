@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { jezykZHosta } from "./domeny";
 import { listaObiekcji } from "./obiekcje";
 import { WIEDZA, WIEDZA_PL } from "./wiedza";
+import type { PoprzedniaRozmowa } from "./zachowania";
 
 export { listaObiekcji };
 
@@ -171,11 +172,50 @@ export type ZamkniecieTechniki = {
   sygnal_kupna: "nie_bylo" | "wykorzystany" | "zmarnowany";
 };
 
+/**
+ * 12.10 (W3, /brunowiedza): OBIEKCJE rozbite na techniki z 20 kart `SalesAI/wiedza/techniki/`.
+ * Ocena kryterium „obiekcje" liczy się z nich w kodzie (`policzObiekcje`), gdy w rozmowie padła
+ * choć jedna obiekcja; bez obiekcji zostaje ocena modelu. Pola liczone z metryk mają głos rozstrzygający,
+ * model dopowiada tylko to, czego regex nie złapie (dowód z liczbą, ukryty powód).
+ */
+export type ObiekcjeTechniki = {
+  /** Ile obiekcji klienta padło (z metryk). 0 = kryterium oceniane jak dotąd, z modelu. */
+  obiekcji: number;
+  /** Pierwsza odpowiedź po obiekcji zaczyna się od zgody: „rozumiem", „ma pan rację", "makes sense" (Negacz, karta 25). */
+  zgoda_przed_odpowiedzia: boolean;
+  /** Pierwsza odpowiedź po obiekcji zawiera pytanie: „w porównaniu do czego?" (Negacz, karta 26). */
+  pytanie_po_obiekcji: boolean;
+  /** Liczba „ale/but" w pierwszych odpowiedziach po obiekcjach. 0 = dobrze. */
+  kontra_ale: number;
+  /** Rabat w pierwszej odpowiedzi na obiekcję. */
+  rabat_od_razu: boolean;
+  /** „Czy jest coś oprócz ceny?" (Negacz, karta 27). */
+  pytanie_poza_cena: boolean;
+  /** „Poza tym, czy coś jeszcze?", „gdyby żona była na linii", „pieniądze na bok" (Cole Gordon, karty 38, 39). */
+  izolacja: boolean;
+  /** Skala 1-10 i pytanie o lukę (Cole Gordon, karta 38). */
+  skala: boolean;
+  /** „Hipotetycznie: obejrzał pan wszystkie, co zdecyduje?" (Elliott, karta 41). */
+  hipoteza: boolean;
+  /** „Gdyby cena była ta sama, u kogo?" (Cardone, karta 42). */
+  gdyby_cena_ta_sama: boolean;
+  /** Dopięcie pytaniem na „tak": „…, prawda?" (Tom Ferry, karta 43). */
+  tie_down: boolean;
+  /** Dowód z nazwą i liczbą albo historia klienta z tą samą wątpliwością (Negacz karta 33, Cialdini). Z modelu. */
+  dowod_z_liczba: boolean;
+  /** Klient po pytaniu handlowca nazwał prawdziwy powód inny niż pierwszy (karty 27, 36, 38). Z modelu. */
+  ukryty_powod_odkryty: boolean;
+  /** Po obiekcji padła nowa informacja i druga prośba o decyzję (pętla Belforta, karta 35). */
+  petla_drugie_podejscie: boolean;
+};
+
 export type Feedback = {
   ocena: number;
   kryteria: Kryterium[];
   /** 10.10: techniki zamykania (brak w starszych feedbackach). */
   zamkniecie_techniki?: ZamkniecieTechniki;
+  /** 12.10 (W3): techniki obiekcji (brak w starszych feedbackach). */
+  obiekcje_techniki?: ObiekcjeTechniki;
   liczba_z_audio: string;
   wygrana: string;
   poprawka: string;
@@ -353,6 +393,36 @@ export async function pobierzRozmowy(email: string, limit = 50): Promise<Rozmowa
     .order("start", { ascending: false })
     .limit(limit);
   return (data as Rozmowa[]) ?? [];
+}
+
+/**
+ * 12.10 (E29): ostatnia zakończona rozmowa z tym samym typem klienta z 30 dni, do pamięci Bruno.
+ * `pomin` = id właśnie założonej rozmowy. Cel w języku konta składa tryba startu (tu surowe pola).
+ */
+export async function poprzedniaRozmowa(email: string, postac: string, pomin: string): Promise<PoprzedniaRozmowa | null> {
+  const od = new Date(Date.now() - 30 * 86_400_000).toISOString();
+  const { data } = await supabaseAdmin
+    .from("bruno_rozmowy")
+    .select("id, start, cel, cel_wlasny, obiekcja, ocena, feedback")
+    .eq("email", email)
+    .eq("postac", postac)
+    .eq("status", "zakonczona")
+    .neq("id", pomin)
+    .gte("start", od)
+    .order("start", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!data) return null;
+  const r = data as Pick<Rozmowa, "start" | "cel" | "cel_wlasny" | "obiekcja" | "ocena" | "feedback">;
+  const z = r.feedback?.zamkniecie_techniki;
+  return {
+    start: r.start,
+    cel: r.cel_wlasny?.trim() || r.cel || null,
+    obiekcja: r.obiekcja ? r.obiekcja.split(" · ")[0] : null,
+    ocena: r.ocena ?? null,
+    krokZData: z ? Boolean(z.nastepny_krok_z_data) : null,
+    prosbaODecyzje: z ? Boolean(z.pytanie_o_decyzje) : null,
+  };
 }
 
 export async function pobierzRozmowe(email: string, id: string): Promise<Rozmowa | null> {

@@ -46,6 +46,8 @@ export default async function BrunoUstawieniaPage() {
         <div className="flex flex-wrap gap-4 text-sm">
           <a href="/regulamin" className="underline">{t("Terms", "Regulamin")}</a>
           <a href="/polityka-prywatnosci" className="underline">{t("Privacy Policy", "Polityka prywatności")}</a>
+          {/* 12.10 (E11): strona dla firm. Adres /bezpieczenstwo działa na każdym hoście; na salesbruno.com proxy przekierowuje na /security. */}
+          <a href="/bezpieczenstwo" className="underline">{t("Security & Data", "Bezpieczeństwo i dane")}</a>
         </div>
       </section>
     </div>

@@ -3,7 +3,7 @@ import { Resend } from "resend";
 import { supabaseAdmin } from "@/lib/supabase";
 import { firmowyEmail } from "@/lib/firmowy-email";
 import { SKRZYNKA_JAKUBA } from "@/lib/bruno/mail";
-import { DEMO_MINUT, slotyMiesiaca, zaproszenieIcs } from "@/lib/bruno/demo-terminy";
+import { DEMO_MINUT, ORGANIZATOR_DEMO, slotyMiesiaca, zaproszenieIcs } from "@/lib/bruno/demo-terminy";
 import { mailPotwierdzenieDemo } from "@/lib/bruno/mail-demo";
 
 export const dynamic = "force-dynamic";
@@ -119,7 +119,7 @@ export async function PATCH(req: Request) {
       const kiedyPL = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(start);
       // 9.10: mail do klienta = szablon w stylu LP (lib/bruno/mail-demo.ts).
       const m = mailPotwierdzenieDemo({ imie: data.imie, start: start.toISOString(), jezyk: pl ? "pl" : "en", link });
-      const ics = zaproszenieIcs({ start: start.toISOString(), tytul: m.tytulKal, opis: m.opisKal, organizator: "hello@jakubchodakowski.com", uczestnik: data.email, uid: data.id });
+      const ics = zaproszenieIcs({ start: start.toISOString(), tytul: m.tytulKal, opis: m.opisKal, organizator: ORGANIZATOR_DEMO, uczestnik: data.email, uid: data.id, lokalizacja: link || null });
       const zalacznik = [{ filename: "bruno-demo.ics", content: Buffer.from(ics).toString("base64") }];
       await r.emails.send({
         from: "Jakub Chodakowski <hello@jakubchodakowski.com>",

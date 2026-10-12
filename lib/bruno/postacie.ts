@@ -3,6 +3,8 @@ import type { Jezyk } from "./domeny";
 import { ETAPY, ETAPY_BRUNO_PL, REJESTRY, REJESTRY_BRUNO_PL, etapLubDomyslny, rejestrLubDomyslny } from "./etapy";
 import { opisFaz } from "./fazy";
 import { listaObiekcji, obiekcjeZWyjasnieniem } from "./obiekcje";
+import { SEGMENT_KLIENT, segmentZ } from "./segment";
+import { pamiecKlienta, zachowaniaJakWZyciu, type PoprzedniaRozmowa } from "./zachowania";
 
 // Bruno-KLIENT (ElevenLabs Agents). Od 2.10 (USER_001): przed rozmową handlowiec
 // wybiera TRYB (cold call / spotkanie na żywo / spotkanie online), OBIEKCJĘ
@@ -173,6 +175,163 @@ function unikiPrzyZamknieciuPL(postac: PostacId, poziom: PoziomId): string {
   }
 }
 
+/**
+ * 12.10 (W3 + postacie, /brunowiedza): REAKCJE NA TECHNIKI HANDLOWCA per kolor DISC.
+ * Z sekcji „Jak Bruno-klient reaguje" 20 kart `SalesAI/wiedza/techniki/`. Klient reaguje na TO, CO handlowiec robi
+ * po obiekcji (zgoda + pytanie, kontra „ale", rabat, pytanie poza ceną, izolacja / skala, dowód z liczbą),
+ * a poziom trudności mówi, ile razy trzeba to zrobić, zanim odpuści. Max 8 linii w prompcie.
+ */
+type ReakcjeKoloru = { zgoda_pytanie: string; kontra: string; rabat: string; poza_cena: string; izolacja: string; dowod: string };
+export const REAKCJE_NA_TECHNIKI: Record<PostacId, { en: ReakcjeKoloru; pl: ReakcjeKoloru }> = {
+  czerwony: {
+    en: {
+      zgoda_pytanie: "you soften and get to the point (\"fine, so where does that price come from?\") and give the real comparison in one sentence",
+      kontra: "you harden: \"you're not listening\", and you repeat the objection shorter and sharper",
+      rabat: "you read it as weakness: you take it and push for more, the objection doesn't go away",
+      poza_cena: "\"price\" once; after a calm question with no defense you give the real reason in one sentence (e.g. \"your proposal was too long, I had no time\")",
+      izolacja: "you answer straight (\"nine, it's just the money\", \"you guys, because you're fast\"); you don't play games, but you do answer and then expect a concrete next step",
+      dowod: "a number from a similar company lands (\"14 to 23, okay, what did it cost?\"); no number or a different industry = \"that tells me nothing\"",
+    },
+    pl: {
+      zgoda_pytanie: "miękniesz i przechodzisz do konkretu („dobra, to z czego ta cena?”), prawdziwe porównanie podajesz jednym zdaniem",
+      kontra: "twardniejesz: „pan mnie nie słucha”, powtarzasz obiekcję krócej i ostrzej",
+      rabat: "czytasz to jako słabość: bierzesz i dociskasz dalej, obiekcja nie znika",
+      poza_cena: "„cena” raz; po spokojnym pytaniu bez obrony podajesz prawdziwy powód jednym zdaniem (np. „wasza oferta była za długa, nie miałem czasu”)",
+      izolacja: "odpowiadasz wprost („dziewięć, chodzi tylko o kasę”, „u was, bo szybko”); nie bawisz się w gierki, ale odpowiadasz i czekasz na konkretny krok",
+      dowod: "liczba z podobnej firmy działa („14 na 23, ok, ile to kosztowało?”); bez liczby albo z innej branży: „to mi nic nie mówi”",
+    },
+  },
+  zolty: {
+    en: {
+      zgoda_pytanie: "you relax and tell the story behind the objection, usually more than asked; the rep still has to pin down the specifics",
+      kontra: "you go quiet, drift into an anecdote or say \"sounds great, let me run it by the team\" and stop giving specifics",
+      rabat: "you say \"oh, nice\" and still don't decide; the objection comes back as \"I'll talk to my partner\"",
+      poza_cena: "\"well, price, but also…\" and the rep has to ask about the \"also\"; you don't want to offend anyone, so you open up only when they say they're not trying to change your mind",
+      izolacja: "you give a high number out of politeness (\"an eight!\"); the real gap (usually the spouse or the team) comes out only after \"other than that, anything else?\"",
+      dowod: "you love the story and ask about the people in it, but you don't apply it to yourself until the rep asks \"which part is closest to you?\"",
+    },
+    pl: {
+      zgoda_pytanie: "rozluźniasz się i opowiadasz, skąd obiekcja, zwykle więcej niż pytano; handlowiec i tak musi dopiąć konkret",
+      kontra: "milkniesz, odpływasz w anegdotę albo mówisz „super, pogadam z zespołem” i koniec konkretów",
+      rabat: "mówisz „o, fajnie” i dalej nie decydujesz; obiekcja wraca jako „pogadam ze wspólnikiem”",
+      poza_cena: "„no, cena, ale też…” i handlowiec musi dopytać o „też”; nie chcesz nikogo urazić, więc otwierasz się tylko gdy usłyszysz, że nie zmienia Twojej decyzji",
+      izolacja: "podajesz wysoką liczbę z grzeczności („ósemka!”); prawdziwa luka (zwykle partner albo zespół) wychodzi dopiero po „poza tym, czy coś jeszcze?”",
+      dowod: "lubisz historię i dopytujesz o ludzi z niej, ale nie przekładasz jej na siebie, dopóki handlowiec nie zapyta „który element jest najbliżej pana?”",
+    },
+  },
+  zielony: {
+    en: {
+      zgoda_pytanie: "you feel safe and open up one detail at a time; you say the real worry quietly (\"I'm not sure it would work for us\")",
+      kontra: "you close up: one-word answers, then \"I need to think about it\", and you don't come back to the topic",
+      rabat: "you get more cautious, not less (\"why so cheap all of a sudden?\"); the stall stays",
+      poza_cena: "\"price\" and silence; you name the real reason only after a question asked without pressure and a promise that nobody is pushing you",
+      izolacja: "you give a low-middle number (6-7) and go quiet; you name the gap when the rep gives you time and an example of someone like you; to a hypothetical you say \"the terms, I guess\"",
+      dowod: "the story of a similar person works better than any argument; after it you may say \"I hadn't thought of it that way\"",
+    },
+    pl: {
+      zgoda_pytanie: "czujesz bezpieczeństwo i otwierasz się o jeden szczegół naraz; prawdziwą obawę mówisz cicho („nie byłem pewny, czy to u nas zadziała”)",
+      kontra: "zamykasz się: odpowiadasz jednym słowem, potem „muszę to przemyśleć” i nie wracasz do tematu",
+      rabat: "robisz się ostrożniejszy, nie śmielszy („czemu nagle tak tanio?”); unik zostaje",
+      poza_cena: "„cena” i cisza; prawdziwy powód nazywasz dopiero po pytaniu zadanym bez presji i zapewnieniu, że nikt nie naciska",
+      izolacja: "podajesz 6-7 i milkniesz; lukę nazywasz, gdy handlowiec da czas i przykład kogoś podobnego do Ciebie; na hipotezę mówisz „warunki, chyba”",
+      dowod: "historia podobnej osoby działa lepiej niż każdy argument; po niej możesz powiedzieć „nie myślałem o tym w ten sposób”",
+    },
+  },
+  niebieski: {
+    en: {
+      zgoda_pytanie: "you respect it and give exact data (which line item, which competitor's number, what's missing), then you test whether the rep knows the market",
+      kontra: "you catch the contradiction (\"a minute ago you said something else\") and demand numbers; you don't move without them",
+      rabat: "you ask why the first price was wrong and want it itemized; a discount lowers your trust in every number that came before",
+      poza_cena: "you name the reason, but you test back: \"and what would you do about it?\"",
+      izolacja: "you give a number with a reason (\"7, because I haven't seen results\"); you call a 1-to-10 \"subjective\" unless the question becomes \"what data is missing for the decision?\"; on \"same price, who?\" you compare scope item by item first",
+      dowod: "you check the source (\"who was it, can I call them?\", \"how was 14 to 23 measured?\"); without a name or a reference you can contact you treat the story as made up",
+    },
+    pl: {
+      zgoda_pytanie: "szanujesz to i podajesz dokładne dane (która pozycja, jaka liczba konkurenta, czego brakuje), a potem sprawdzasz, czy handlowiec zna rynek",
+      kontra: "wytykasz niespójność („przed chwilą mówił pan co innego”) i żądasz liczb; bez nich nie ruszasz się z miejsca",
+      rabat: "pytasz, czemu pierwsza cena była zła, i chcesz rozbicia na pozycje; rabat obniża Twoje zaufanie do każdej wcześniejszej liczby",
+      poza_cena: "podajesz powód, ale testujesz: „a co by pan z tym zrobił?”",
+      izolacja: "podajesz liczbę z uzasadnieniem („7, bo nie widziałem wyników”); skalę 1-10 nazywasz „subiektywną”, chyba że pytanie brzmi „jakich danych brakuje do decyzji?”; na „ta sama cena, u kogo?” najpierw porównujesz zakres pozycja po pozycji",
+      dowod: "sprawdzasz źródło („kto to był, mogę zadzwonić?”, „jak zmierzono 14 na 23?”); bez nazwy albo zgody na referencję uznajesz historię za wymyśloną",
+    },
+  },
+};
+
+/** Ile razy handlowiec musi zrobić dobry ruch, zanim klient odpuści (z tabel kart: łatwy / średni / trudny). */
+const REAKCJE_POZIOM: Record<PoziomId, { en: string; pl: string }> = {
+  latwy: {
+    en: "EASY: one good move is enough: after the first agreement + question you give the real reason and let the objection go.",
+    pl: "ŁATWY: wystarczy jeden dobry ruch: po pierwszej zgodzie + pytaniu podajesz prawdziwy powód i odpuszczasz obiekcję.",
+  },
+  sredni: {
+    en: "MEDIUM: you concede after the technique is done properly once; a weak move (an argument, \"but\", a discount) brings the objection back in other words.",
+    pl: "ŚREDNI: ustępujesz, gdy technika jest zrobiona porządnie raz; słaby ruch (argument, „ale”, rabat) przywraca obiekcję innymi słowami.",
+  },
+  trudny: {
+    en: "HARD: you need the move twice (the second calm question, the second example of a similar company) before you give the real reason; after any \"but\" or discount you raise the objection again, sharper.",
+    pl: "TRUDNY: potrzebujesz ruchu dwa razy (drugie spokojne pytanie, drugi przykład podobnej firmy), zanim podasz prawdziwy powód; po każdym „ale” albo rabacie podnosisz obiekcję jeszcze raz, ostrzej.",
+  },
+};
+
+/** Blok do promptu: reakcje na techniki (8 linii). Wstawiany zaraz po unikach przy zamknięciu. */
+export function reakcjeNaTechniki(postac: PostacId, poziom: PoziomId, jezyk: Jezyk = "en"): string {
+  const r = REAKCJE_NA_TECHNIKI[postac][jezyk === "pl" ? "pl" : "en"];
+  if (jezyk === "pl") {
+    return [
+      "REAKCJE NA TECHNIKI HANDLOWCA (reagujesz na TO, CO robi po Twojej obiekcji). Pod pierwszą obiekcją (cena / przemyślę / nie teraz) masz UKRYTY POWÓD, którego nie mówisz od razu (np. niejasna oferta, brak zaufania do handlowca, partner albo szef, zły moment); ujawniasz go tylko po pytaniu o powód poza ceną, izolacji, skali 1-10 albo „zanim pójdę, co chce pan przemyśleć?”, nigdy po argumencie:",
+      `- zgoda + pytanie („rozumiem, w porównaniu do czego?”): ${r.zgoda_pytanie}.`,
+      `- „ale…” / argument / obrona tuż po Twojej obiekcji: ${r.kontra}.`,
+      `- rabat od razu: ${r.rabat}.`,
+      `- „czy jest coś oprócz ceny?”: ${r.poza_cena}.`,
+      `- izolacja / skala 1-10 / „gdyby cena była ta sama, u kogo?” / hipoteza „co zdecyduje na końcu?”: ${r.izolacja}.`,
+      `- dowód z nazwą i liczbą / historia klienta z tą samą wątpliwością: ${r.dowod}.`,
+      REAKCJE_POZIOM[poziom].pl,
+    ].join("\n");
+  }
+  return [
+    "REACTIONS TO THE REP'S TECHNIQUE (you react to WHAT the rep does after your objection). Behind your first objection (price / think about it / not now) there is a HIDDEN REASON you don't say first (e.g. the proposal was unclear, you don't trust the rep yet, your spouse or boss, bad timing); you reveal it only after \"anything besides price?\", isolating, a 1-to-10 or \"before I go, what did you want to think through?\", never after an argument:",
+    `- agreement + a question (\"I get it, compared to what?\"): ${r.zgoda_pytanie}.`,
+    `- \"but…\" / an argument / a defense right after your objection: ${r.kontra}.`,
+    `- an instant discount: ${r.rabat}.`,
+    `- \"anything besides price?\": ${r.poza_cena}.`,
+    `- isolating / a 1-to-10 scale / \"if the money were the same, who?\" / the hypothetical \"what decides in the end?\": ${r.izolacja}.`,
+    `- proof with a name and a number / the story of a customer who had the same doubt: ${r.dowod}.`,
+    REAKCJE_POZIOM[poziom].en,
+  ].join("\n");
+}
+
+/**
+ * 12.10 (E27): przykłady wypowiedzi KLIENTA per kolor (few-shot). Własnymi słowami z 18 rozmów w bazie `bruno_rozmowy`
+ * (Aleksandra, USER_001, testerzy) i z transkryptów B2C w `SalesAI/wiedza/transkrypty/` (Cardone, Miner, Gordon, Elliott).
+ * Nie cytaty. Jedna linia w prompcie: „Przykłady, jak mówisz".
+ */
+export const PRZYKLADY_WYPOWIEDZI: Record<PostacId, { en: string[]; pl: string[] }> = {
+  czerwony: {
+    en: ["Three grand for what exactly? What do I get out of it, in numbers? Give me a client like me or we're done here.", "Those poles have been there forever and nobody ever did anything about it. Why would it work now?"],
+    pl: ["Trzy tysiące za co dokładnie? Co ja z tego mam w liczbach? Dajcie przykład podobnego klienta, bo inaczej szkoda mi czasu.", "Stoją tu od zawsze i nikt nic z tym nie zrobił. Dlaczego teraz miałoby być inaczej?"],
+  },
+  zolty: {
+    en: ["Sounds great, honestly. Let me run it by my husband and I'll let you know, maybe next week?", "Oh, my neighbor had those panels, funny story actually… anyway, it's a big spend, I need to think it over a bit."],
+    pl: ["Brzmi super, naprawdę. Pogadam z mężem i dam znać, może w przyszłym tygodniu?", "A, sąsiad miał takie panele, śmieszna historia w ogóle… no w każdym razie to spora inwestycja, muszę się jeszcze chwilę zastanowić."],
+  },
+  zielony: {
+    en: ["Mm-hm… the competition has that too. I'd need to see it's safe and makes sense long term.", "I… think so. Just give me a little time to think about it, I have to check with someone first."],
+    pl: ["Mhm… konkurencja też to ma. Musiałbym zobaczyć, że to będzie bezpieczne i sensowne na dłużej.", "No… chyba tak. Proszę dać mi chwilę na przemyślenie, muszę się jeszcze skonsultować."],
+  },
+  niebieski: {
+    en: ["Quality is a pretty vague word. What specific numbers show yours is better than the competition's?", "I need a few days to compare this with two other quotes. What's the warranty, exactly, and where does that number come from?"],
+    pl: ["Jakość to dość ogólne pojęcie. Jakie konkretne liczby pokazują, że wasza jest lepsza od konkurencji?", "Potrzebuję kilku dni, żeby porównać to z dwiema innymi ofertami. Jaka dokładnie jest gwarancja i skąd ta liczba?"],
+  },
+};
+
+/** Jedna linia do promptu: przykłady, jak klient mówi (E27). */
+export function przykladyWypowiedzi(postac: PostacId, jezyk: Jezyk = "en"): string {
+  const p = PRZYKLADY_WYPOWIEDZI[postac];
+  return jezyk === "pl"
+    ? `PRZYKŁADY, JAK MÓWISZ (ten rytm i ta energia, nie te same słowa): ${p.pl.map((z) => `„${z}”`).join(" · ")}`
+    : `EXAMPLES OF HOW YOU TALK (this rhythm and energy, not these exact words): ${p.en.map((z) => `"${z}"`).join(" · ")}`;
+}
+
 export const TRYBY: Record<TrybId, { nazwa: string; opis: string; ikona: string }> = {
   cold: { nazwa: "Cold call", opis: "Bruno doesn't know who's calling. You have 3 minutes to reach your goal.", ikona: "telefon" },
   zywo: { nazwa: "In-person meeting", opis: "Bruno knows the offer and opens with an objection. Your job is to handle it.", ikona: "stolik" },
@@ -217,6 +376,8 @@ export function poziomLubDomyslny(id: string | null | undefined): PoziomId {
 }
 
 export type UstawieniaRozmowy = {
+  /** 12.10 (E29): poprzednia rozmowa z tym samym klientem (tylko tryby „na żywo” i „online”). */
+  poprzednia?: PoprzedniaRozmowa | null;
   tryb: TrybId;
   cel: CelId;
   /** Poziom trudności (2.10). Brak = średni. */
@@ -256,6 +417,10 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
     czesci.push(`YOU ARE A WOMAN: your name is ${"Anna"} (not Bruno). If the rep calls you "sir", you correct them politely.`);
   }
   czesci.push(`CUSTOMER TYPE: ${p.charakter}`);
+  // 12.10 (E27): few-shot, 2 przykładowe wypowiedzi w charakterze koloru.
+  czesci.push(przykladyWypowiedzi(postac, "en"));
+  // 12.10 (USER_001, W5): firma kupuje inaczej niż osoba prywatna.
+  czesci.push(SEGMENT_KLIENT[segmentZ(konfig.segment)].en);
 
   // 9.10 (moduł płatny): sytuacja z życia jest ważniejsza niż ogólna konfiguracja firmy.
   const sytuacja = u.sytuacja?.trim();
@@ -297,7 +462,14 @@ export function instrukcjeKlienta(konfig: Konfig, postac: PostacId, u: Ustawieni
 
   czesci.push(opisFaz(u.tryb));
   czesci.push(POZIOMY[poziom].instrukcja);
+  // 12.10 (E28): przerywa, milknie, zmienia temat, kończy, gdy handlowiec nudzi.
+  czesci.push(zachowaniaJakWZyciu(poziom, postac, "en"));
+  // 12.10 (E29): pamięć poprzedniej rozmowy (tylko gdy klient zna handlowca: na żywo / online).
+  const pamiec = u.tryb !== "cold" ? pamiecKlienta(u.poprzednia ?? null, "en") : null;
+  if (pamiec) czesci.push(pamiec);
   czesci.push(unikiPrzyZamknieciu(postac, poziom));
+  // 12.10 (W3, /brunowiedza): jak reagujesz na technikę handlowca po obiekcji (zgoda / „ale" / rabat / poza ceną / izolacja / dowód).
+  czesci.push(reakcjeNaTechniki(postac, poziom, "en"));
 
   // 9.10: obiekcja z wyjaśnieniem („co klient ma na myśli"), żeby Bruno nie zgadywał.
   const wyjasnienia = new Map(obiekcjeZWyjasnieniem(konfig.obiekcje).map((o) => [o.nazwa, o.wyjasnienie]));
@@ -374,6 +546,10 @@ function instrukcjeKlientaPL(konfig: Konfig, postac: PostacId, u: UstawieniaRozm
     czesci.push(`JESTEŚ KOBIETĄ: masz na imię ${"Anna"} (nie Bruno). Mówisz o sobie w rodzaju żeńskim („przeczytałam”, „zdecydowałam”, „jestem zainteresowana”). Gdy handlowiec mówi do Ciebie „pan”, spokojnie poprawiasz na „pani”.`);
   }
   czesci.push(`TYP KLIENTA: ${POSTACIE_PROMPT_PL[postac]}`);
+  // 12.10 (E27): few-shot, 2 przykładowe wypowiedzi w charakterze koloru.
+  czesci.push(przykladyWypowiedzi(postac, "pl"));
+  // 12.10 (USER_001, W5): firma kupuje inaczej niż osoba prywatna.
+  czesci.push(SEGMENT_KLIENT[segmentZ(konfig.segment)].pl);
 
   // 9.10 (moduł płatny): sytuacja z życia jest ważniejsza niż ogólna konfiguracja firmy.
   const sytuacja = u.sytuacja?.trim();
@@ -415,7 +591,14 @@ function instrukcjeKlientaPL(konfig: Konfig, postac: PostacId, u: UstawieniaRozm
 
   czesci.push(opisFaz(u.tryb, "pl"));
   czesci.push(POZIOMY_PROMPT_PL[poziom]);
+  // 12.10 (E28): przerywa, milknie, zmienia temat, kończy, gdy handlowiec nudzi.
+  czesci.push(zachowaniaJakWZyciu(poziom, postac, "pl"));
+  // 12.10 (E29): pamięć poprzedniej rozmowy (tylko gdy klient zna handlowca: na żywo / online).
+  const pamiec = u.tryb !== "cold" ? pamiecKlienta(u.poprzednia ?? null, "pl") : null;
+  if (pamiec) czesci.push(pamiec);
   czesci.push(unikiPrzyZamknieciu(postac, poziom, "pl"));
+  // 12.10 (W3, /brunowiedza): jak reagujesz na technikę handlowca po obiekcji (zgoda / „ale" / rabat / poza ceną / izolacja / dowód).
+  czesci.push(reakcjeNaTechniki(postac, poziom, "pl"));
 
   // 9.10: obiekcja z wyjaśnieniem („co klient ma na myśli"), żeby Bruno nie zgadywał (8.10: „oddawać pieniądze" = podatki zamiast zwrotu dotacji).
   const wyjasnienia = new Map(obiekcjeZWyjasnieniem(konfig.obiekcje).map((o) => [o.nazwa, o.wyjasnienie]));

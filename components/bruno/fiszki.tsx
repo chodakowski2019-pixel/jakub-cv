@@ -229,7 +229,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="inline-flex items-center rounded-full text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1" style={{ background: `${RODZAJ[karta.typ].kolor}1a`, color: RODZAJ[karta.typ].kolor }}>
-                  {RODZAJ[karta.typ].nazwa}{karta.typ === "wiedza" && karta.kategoria === "typy" ? t(": customer types", ": typy klientów") : karta.typ === "wiedza" ? t(": technique", ": technika") : ""}
+                  {RODZAJ[karta.typ].nazwa}{karta.typ === "wiedza" && karta.kategoria === "typy" ? t(": customer types", ": typy klientów") : karta.typ === "wiedza" && karta.kategoria === "obiekcje" ? t(": objection", ": obiekcja") : karta.typ === "wiedza" ? t(": technique", ": technika") : ""}
                 </span>
               </div>
               {karta.lapses > 0 && <span className="text-[11px] text-slate-400">{t("misses:", "wpadek:")} {karta.lapses}</span>}

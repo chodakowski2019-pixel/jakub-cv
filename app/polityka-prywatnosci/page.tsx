@@ -17,7 +17,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const AKTUALIZACJA = "9 października 2026";
+// 12.10 (E11): retencja ElevenLabs 30 dni → 1 dzień (ustawione 9.10), link do strony „Bezpieczeństwo i dane”.
+const AKTUALIZACJA = "12 października 2026";
 
 function Sekcja({ tytul, children }: { tytul: string; children: React.ReactNode }) {
   return (
@@ -128,7 +129,7 @@ export default function PolitykaPrywatnosciPage() {
               <b>ElevenLabs</b> (głos Bruno, rozpoznawanie mowy, prowadzenie rozmowy). Dla osób z Europejskiego
               Obszaru Gospodarczego podmiotem odpowiedzialnym jest Eleven Labs Poland sp. z o.o. z siedzibą w
               Warszawie; przetwarzanie może odbywać się w USA, Unii Europejskiej lub Singapurze. Okres
-              przechowywania rozmów po stronie ElevenLabs jest ustawiony na 30 dni. Zgodnie z polityką ElevenLabs
+              przechowywania rozmów po stronie ElevenLabs jest ustawiony na 1 dzień. Zgodnie z polityką ElevenLabs
               treści przesyłane w planach innych niż enterprise mogą służyć doskonaleniu jego modeli, dopóki nie
               wyłączy się tego w ustawieniach konta. Na naszym koncie to ustawienie jest wyłączone od 3 października
               2026 r., więc rozmowy prowadzone od tego dnia nie są używane do uczenia modeli ElevenLabs.
@@ -146,8 +147,12 @@ export default function PolitykaPrywatnosciPage() {
           <p>
             Przekazanie danych do USA odbywa się na podstawie decyzji Komisji Europejskiej o Data Privacy Framework
             albo standardowych klauzul umownych. Nie sprzedaję danych i nie udostępniam ich nikomu innemu, chyba że
-            wymaga tego prawo. Aktualną listę dostawców podaję na żądanie, a o jej zmianie informuję mailem z
-            14-dniowym wyprzedzeniem.
+            wymaga tego prawo. Aktualna lista dostawców z krajem, celem i okresem przechowywania jest na stronie{" "}
+            <a className="text-cyan-700 underline underline-offset-2" href="/bezpieczenstwo">
+              Bezpieczeństwo i dane
+            </a>
+            . O jej zmianie informuję mailem z 14-dniowym wyprzedzeniem; firma korzystająca z kont dla zespołu może
+            zgłosić sprzeciw i wypowiedzieć umowę (powierzenie danych: punkt 12 regulaminu).
           </p>
         </Sekcja>
 
@@ -162,7 +167,8 @@ export default function PolitykaPrywatnosciPage() {
             </li>
             <li>
               Nagrania i transkrypcje rozmów treningowych: 12 miesięcy od rozmowy, a w razie zakończenia współpracy,
-              30 dni od jej zakończenia. Kopia po stronie dostawcy głosu znika najpóźniej po 30 dniach.
+              30 dni od jej zakończenia. Kopia po stronie dostawcy głosu znika po 1 dniu, kopie u dostawców oceny
+              najpóźniej po 30 dniach.
             </li>
             <li>Oceny i statystyki bez nagrania (potrzebne, żeby pokazywać postęp): przez czas korzystania z usługi.</li>
           </ul>

@@ -101,7 +101,7 @@ export async function POST(req: Request) {
     await zaktualizujKarty(email, feedback);
     // Minusy z tej rozmowy → fiszki „do poprawy" w Treningu (USER_001 2.10).
     try {
-      const nowe = await kartyZFeedbacku({ feedback, produkt: konfig.produkt, jezyk });
+      const nowe = await kartyZFeedbacku({ feedback, produkt: konfig.produkt, jezyk, segment: konfig.segment });
       await dodajKartyPoprawek(email, nowe, id);
     } catch (e) {
       console.error("[bruno koniec] karty poprawek", e);

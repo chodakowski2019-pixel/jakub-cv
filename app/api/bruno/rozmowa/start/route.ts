@@ -10,6 +10,7 @@ import {
   pelnyDostep,
   pobierzKonfig,
   pobierzKonto,
+  poprzedniaRozmowa,
   rozmowyDzis,
   stanDostepu,
   zamknijPorzucone,
@@ -146,7 +147,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, blad: t("Couldn't save the call. Try again.", "Nie udało się zapisać rozmowy. Spróbuj ponownie.") }, { status: 500 });
   }
 
-  const instrukcje = instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, poziom, obiekcja, obiekcje: wybrane, karta, sytuacja }, jezyk);
+  // 12.10 (E29): pamięć klienta. W trybach „na żywo” i „online” Bruno pamięta ostatnią zakończoną rozmowę
+  // z tym samym typem klienta z ostatnich 30 dni (data, cel, obiekcja, czy był następny krok). Cold call = bez pamięci.
+  const poprzednia = tryb !== "cold" ? await poprzedniaRozmowa(email, postac, rozmowa.id) : null;
+  const instrukcje = instrukcjeKlienta(konfig, postac, { tryb, cel, celWlasny, poziom, obiekcja, obiekcje: wybrane, karta, sytuacja, poprzednia }, jezyk);
   const postacNazwa = etykiety(jezyk).POSTACIE[postac].nazwa;
 
   // ElevenLabs Agents (2.10): token WebRTC + nadpisania per rozmowa. Prompt idzie przez przeglądarkę

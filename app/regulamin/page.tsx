@@ -249,7 +249,12 @@ const TRESC: Record<Jezyk, Tresc> = {
         po: [
           <>
             Klient, który potrzebuje odrębnej, podpisanej umowy powierzenia na własnym wzorze, może o nią wystąpić na
-            adres kontaktowy.
+            adres kontaktowy. Aktualna lista podwykonawców z krajem i celem, miejsca przechowywania i okresy
+            retencji są na stronie{" "}
+            <a className="text-cyan-700 underline underline-offset-2" href="/bezpieczenstwo">
+              Bezpieczeństwo i dane
+            </a>
+            .
           </>,
         ],
       },
@@ -483,7 +488,12 @@ const TRESC: Record<Jezyk, Tresc> = {
         po: [
           <>
             A customer who needs a separate, signed data processing agreement on its own template may request one at
-            the contact address.
+            the contact address. The current list of sub-processors with country and purpose, storage locations and
+            retention periods is on the{" "}
+            <a className="text-cyan-700 underline underline-offset-2" href="/bezpieczenstwo">
+              Security &amp; Data
+            </a>{" "}
+            page.
           </>,
         ],
       },

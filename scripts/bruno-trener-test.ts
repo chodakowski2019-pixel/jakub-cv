@@ -54,11 +54,14 @@ type Wynik = {
   minusy_nowe?: string[];
   reguly_nowe?: string[];
   techniki?: Feedback["zamkniecie_techniki"];
+  /** 12.10 (W3): techniki obiekcji. */
+  obiekcje?: Feedback["obiekcje_techniki"];
   blad?: string;
 };
 
 const wyniki: Wynik[] = [];
-const POLA_METRYK = ["pytania_otwarte", "pytania_handlowca", "prosby_o_decyzje", "nastepny_krok_z_data", "obiekcje_klienta", "zmiana_tempa_proc", "wypelniacze", "kwota_padla", "cena_przed_pytaniem"];
+// 12.10 (W3): + zgoda / kontra / „ale" po obiekcji, tie-down, techniki pogłębiające.
+const POLA_METRYK = ["pytania_otwarte", "pytania_handlowca", "prosby_o_decyzje", "nastepny_krok_z_data", "obiekcje_klienta", "obiekcje_z_pytaniem", "obiekcje_odp_zgoda", "obiekcje_odp_kontra", "kontra_ale_po_obiekcji", "prosba_po_obiekcji", "pytanie_poza_cena", "skala_1_10", "izolacja", "hipoteza_koniec", "gdyby_cena_ta_sama", "tie_down", "zmiana_tempa_proc", "wypelniacze", "kwota_padla", "cena_przed_pytaniem"];
 
 for (const r of rozmowy) {
   const tr = (r.transkrypcja ?? []) as Wypowiedz[];
@@ -103,14 +106,17 @@ for (const r of rozmowy) {
       w.minusy_nowe = f.minusy;
       w.reguly_nowe = f.reguly;
       w.techniki = f.zamkniecie_techniki;
+      w.obiekcje = f.obiekcje_techniki;
     } catch (e) {
       w.blad = String(e).slice(0, 200);
     }
   }
   wyniki.push(w);
   const k = (o: Record<string, number | null>) => KRYTERIA.map((n) => o[n] ?? "-").join("/");
+  const mn = w.metryki_nowe;
+  const obiekcjeSkrot = `obiekcje ${mn.obiekcje_klienta} zgoda ${mn.obiekcje_odp_zgoda} kontra ${mn.obiekcje_odp_kontra} ale ${mn.kontra_ale_po_obiekcji} pyt ${mn.obiekcje_z_pytaniem} tie ${mn.tie_down}${[mn.pytanie_poza_cena && "pozaCeną", mn.skala_1_10 && "skala", mn.izolacja && "izolacja", mn.hipoteza_koniec && "hipoteza", mn.gdyby_cena_ta_sama && "taSamaCena"].filter(Boolean).map((x) => ` ${x}`).join("")}`;
   console.log(
-    `${w.kto.padEnd(10)} ${w.data} ${String(w.postac).padEnd(9)} ${sekundy}s | ocena ${w.ocena_stara ?? "-"} → ${w.ocena_nowa ?? "-"} | kryteria ${k(w.kryteria_stare)} → ${k(w.kryteria_nowe)} | otwarte ${w.metryki_stare.pytania_otwarte}→${w.metryki_nowe.pytania_otwarte} prośby ${w.metryki_stare.prosby_o_decyzje}→${w.metryki_nowe.prosby_o_decyzje} krok ${w.metryki_nowe.nastepny_krok_z_data} tempo ${w.metryki_stare.zmiana_tempa_proc}→${w.metryki_nowe.zmiana_tempa_proc}${w.techniki ? ` | techniki ${Object.values(w.techniki).map((v) => (v === true ? "✓" : v === false ? "✗" : v)).join(",")}` : ""}${w.blad ? ` | BŁĄD ${w.blad}` : ""}`,
+    `${w.kto.padEnd(10)} ${w.data} ${String(w.postac).padEnd(9)} ${sekundy}s | ocena ${w.ocena_stara ?? "-"} → ${w.ocena_nowa ?? "-"} | kryteria ${k(w.kryteria_stare)} → ${k(w.kryteria_nowe)} | otwarte ${w.metryki_stare.pytania_otwarte}→${w.metryki_nowe.pytania_otwarte} prośby ${w.metryki_stare.prosby_o_decyzje}→${w.metryki_nowe.prosby_o_decyzje} krok ${w.metryki_nowe.nastepny_krok_z_data} tempo ${w.metryki_stare.zmiana_tempa_proc}→${w.metryki_nowe.zmiana_tempa_proc} | ${obiekcjeSkrot}${w.techniki ? ` | techniki ${Object.values(w.techniki).map((v) => (v === true ? "✓" : v === false ? "✗" : v)).join(",")}` : ""}${w.obiekcje ? ` | obiekcje_techniki ${Object.entries(w.obiekcje).map(([n, v]) => (v === true ? "✓" : v === false ? "✗" : `${n}=${v}`)).join(",")}` : ""}${w.blad ? ` | BŁĄD ${w.blad}` : ""}`,
   );
 }
 

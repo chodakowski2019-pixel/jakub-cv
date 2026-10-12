@@ -70,17 +70,47 @@ export function slotyMiesiaca(teraz = new Date()): string[] {
   return sloty;
 }
 
-/** Plik .ics (zaproszenie do kalendarza) dla jednej rozmowy. */
-export function zaproszenieIcs(a: { start: string; tytul: string; opis: string; organizator: string; uczestnik: string; uid: string }): string {
+/** Organizator w zaproszeniach .ics = skrzynka, z której wychodzą maile Bruno (ten sam adres co nadawca, inaczej Outlook/Gmail traktują zaproszenie podejrzliwie). */
+export const ORGANIZATOR_DEMO = "hello@jakubchodakowski.com";
+/** 12.10 (E19): link do pliku .ics działa tylko dla terminów do tylu dni w przód. */
+export const ICS_DNI_W_PRZOD = 60;
+
+/**
+ * 12.10 (E19): termin z linku `?termin=` w mailu. Przyjmujemy tylko ISO UTC (jak `Date#toISOString`),
+ * nie starszy niż dzień i nie dalej niż ICS_DNI_W_PRZOD dni, żeby nie dało się generować dowolnych wpisów.
+ */
+export function terminIcsPoprawny(termin: string | null | undefined, teraz = new Date()): Date | null {
+  if (!termin || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?Z$/.test(termin)) return null;
+  const t = new Date(termin);
+  if (Number.isNaN(t.getTime())) return null;
+  if (t.getTime() < teraz.getTime() - 86_400_000) return null;
+  if (t.getTime() > teraz.getTime() + ICS_DNI_W_PRZOD * 86_400_000) return null;
+  return t;
+}
+
+/** Łamanie długich linii .ics (RFC 5545: max 75 znaków, kontynuacja od spacji). */
+function zlamLinie(l: string): string {
+  const czesci: string[] = [];
+  for (let i = 0; i < l.length; i += 70) czesci.push((i === 0 ? "" : " ") + l.slice(i, i + 70));
+  return czesci.join("\r\n");
+}
+
+/**
+ * Plik .ics (zaproszenie do kalendarza) dla jednej rozmowy.
+ * Z `uczestnik` = zaproszenie (METHOD:REQUEST, załącznik maila). Bez = zwykły wpis do pobrania (METHOD:PUBLISH, link „Apple / Outlook”).
+ * `lokalizacja` = link do rozmowy wideo (LOCATION + URL).
+ */
+export function zaproszenieIcs(a: { start: string; tytul: string; opis: string; organizator: string; uczestnik?: string | null; uid: string; lokalizacja?: string | null }): string {
   const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
   const s = new Date(a.start);
   const e = new Date(s.getTime() + DEMO_MINUT * 60000);
   const esc = (t: string) => t.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
-  return [
+  const lokalizacja = a.lokalizacja?.trim() || null;
+  const linie = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     "PRODID:-//Bruno AI//Demo//EN",
-    "METHOD:REQUEST",
+    `METHOD:${a.uczestnik ? "REQUEST" : "PUBLISH"}`,
     "BEGIN:VEVENT",
     `UID:${a.uid}@jakubchodakowski.com`,
     `DTSTAMP:${fmt(new Date())}`,
@@ -88,9 +118,12 @@ export function zaproszenieIcs(a: { start: string; tytul: string; opis: string; 
     `DTEND:${fmt(e)}`,
     `SUMMARY:${esc(a.tytul)}`,
     `DESCRIPTION:${esc(a.opis)}`,
+    ...(lokalizacja ? [`LOCATION:${esc(lokalizacja)}`, `URL:${lokalizacja}`] : []),
+    "STATUS:CONFIRMED",
     `ORGANIZER;CN=Jakub Chodakowski:mailto:${a.organizator}`,
-    `ATTENDEE;CN=${esc(a.uczestnik)};RSVP=TRUE:mailto:${a.uczestnik}`,
+    ...(a.uczestnik ? [`ATTENDEE;CN=${esc(a.uczestnik)};RSVP=TRUE:mailto:${a.uczestnik}`] : []),
     "END:VEVENT",
     "END:VCALENDAR",
-  ].join("\r\n");
+  ];
+  return linie.map(zlamLinie).join("\r\n");
 }

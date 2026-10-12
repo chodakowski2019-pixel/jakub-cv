@@ -24,8 +24,8 @@ export function useJezyk(start?: Jezyk): "en" | "pl" {
 
 // 11.10: linki między stronami publicznymi Bruno. Na salesbruno.* ładne adresy (SCIEZKI),
 // na innym hoście (localhost, podglądy Vercela) stare adresy, bo tam proxy nie robi rewrite.
-export type CelBruno = "firmy" | "handlowcy" | "rejestracja" | "logowanie";
-const STARE: Record<CelBruno, string> = { firmy: "/brunobusiness", handlowcy: "/brunoai", rejestracja: "/brunorejestracja", logowanie: "/bruno" };
+export type CelBruno = "firmy" | "handlowcy" | "rejestracja" | "logowanie" | "bezpieczenstwo";
+const STARE: Record<CelBruno, string> = { firmy: "/brunobusiness", handlowcy: "/brunoai", rejestracja: "/brunorejestracja", logowanie: "/bruno", bezpieczenstwo: "/bezpieczenstwo" };
 
 export function adresStrony(jezyk: Jezyk, cel: CelBruno, naDomenie: boolean, hash = ""): string {
   if (naDomenie) return `${SCIEZKI[jezyk][cel]}${hash}`;

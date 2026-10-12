@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Feedback, ZamkniecieTechniki } from "@/lib/bruno/db";
+import type { Feedback, ObiekcjeTechniki, ZamkniecieTechniki } from "@/lib/bruno/db";
 import { etykiety } from "@/lib/bruno/etykiety";
 import { tDla, type Jezyk, type T } from "@/lib/bruno/i18n";
 
@@ -101,6 +101,43 @@ function Techniki({ t, tr }: { t: ZamkniecieTechniki; tr: T }) {
   );
 }
 
+/** 12.10 (W3): techniki obiekcji jako lista ✓ / ✗ pod kryterium „Obiekcje", jak techniki zamykania. */
+function TechnikiObiekcji({ t, tr }: { t: ObiekcjeTechniki; tr: T }) {
+  if (t.obiekcji <= 0) {
+    return <p className="mt-3 text-sm text-slate-500">{tr("The customer raised no objection, so there was nothing to handle.", "Klient nie podniósł obiekcji, nie było czego zbijać.")}</p>;
+  }
+  const poglebienie: [boolean, string][] = [
+    [t.pytanie_poza_cena, tr("“anything besides price?”", "„coś oprócz ceny?”")],
+    [t.skala, tr("1-to-10 scale", "skala 1-10")],
+    [t.izolacja, tr("isolating (“other than that, anything else?”)", "izolacja („poza tym, coś jeszcze?”)")],
+    [t.hipoteza, tr("hypothetical (“say you've seen them all…”)", "hipoteza („załóżmy, że obejrzał pan wszystkie…”)")],
+    [t.gdyby_cena_ta_sama, tr("“if the money were the same, who?”", "„gdyby cena była ta sama, u kogo?”")],
+  ];
+  const uzyte = poglebienie.filter(([ok]) => ok).map(([, n]) => n);
+  const wiersze: [string, boolean | null, string][] = [
+    [tr("Agree first", "Zgoda przed odpowiedzią"), t.zgoda_przed_odpowiedzia, t.zgoda_przed_odpowiedzia ? tr("you started with “I get it” / “you're right”", "zacząłeś od „rozumiem” / „ma pan rację”") : tr("no “I get it” before the answer", "bez „rozumiem” przed odpowiedzią")],
+    [tr("Question after the objection", "Pytanie po obiekcji"), t.pytanie_po_obiekcji, t.pytanie_po_obiekcji ? tr("you asked “compared to what?”", "zapytałeś „w porównaniu do czego?”") : tr("you answered instead of asking", "odpowiedziałeś zamiast zapytać")],
+    [tr("No “but”", "Zero „ale”"), t.kontra_ale === 0, t.kontra_ale === 0 ? tr("no “but” after the objection", "żadnego „ale” po obiekcji") : tr(`“but” ${t.kontra_ale}× right after the objection`, `„ale” ${t.kontra_ale}× tuż po obiekcji`)],
+    [tr("No instant discount", "Bez rabatu od razu"), !t.rabat_od_razu, t.rabat_od_razu ? tr("a discount in the first reply", "rabat w pierwszej odpowiedzi") : tr("you held the price", "cena utrzymana")],
+    [tr("Dig deeper", "Pogłębienie"), uzyte.length > 0, uzyte.length ? uzyte.join(", ") : tr("none of: besides price / 1-10 / isolate / hypothetical / same price", "żadne z: coś oprócz ceny / skala / izolacja / hipoteza / ta sama cena")],
+    [tr("Tie-down", "Dopięcie"), t.tie_down, t.tie_down ? tr("you ended with “…, right?”", "zakończyłeś „…, prawda?”") : tr("no “…, right?” at the end", "bez „…, prawda?” na końcu")],
+    [tr("Proof with a number", "Dowód z liczbą"), t.dowod_z_liczba, t.dowod_z_liczba ? tr("a name and a number", "nazwa i liczba") : tr("no name, no number", "bez nazwy i liczby")],
+    [tr("Real reason uncovered", "Ukryty powód odkryty"), t.ukryty_powod_odkryty, t.ukryty_powod_odkryty ? tr("the customer named the real reason", "klient nazwał prawdziwy powód") : tr("the first objection stayed as is", "pierwsza obiekcja została jak była")],
+    [tr("Second attempt (loop)", "Drugie podejście (pętla)"), t.petla_drugie_podejscie, t.petla_drugie_podejscie ? tr("new info + another ask", "nowa informacja + ponowna prośba") : tr("no second ask after the objection", "bez drugiej prośby po obiekcji")],
+  ];
+  return (
+    <ul className="mt-3 flex flex-col gap-1 text-sm">
+      {wiersze.map(([nazwa, ok, opis]) => (
+        <li key={nazwa} className="flex items-start gap-2">
+          <span className={`shrink-0 w-5 text-center font-semibold ${ok === true ? "text-emerald-600" : ok === false ? "text-rose-600" : "text-slate-400"}`}>{ok === true ? "✓" : ok === false ? "✗" : "–"}</span>
+          <span className="text-slate-900 font-medium">{nazwa}</span>
+          <span className="text-slate-500">{opis}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /** Starsze feedbacki nie mają list plusy/minusy: liczymy je z kryteriów. */
 function plusyMinusy(f: Feedback, NAZWY: Record<string, string>): { plusy: string[]; minusy: string[] } {
   const plusy = f.plusy?.length ? f.plusy : [f.wygrana, ...f.kryteria.filter((k) => k.ocena >= 7).map((k) => `${NAZWY[k.nazwa]}: ${k.komentarz}`)].filter(Boolean);
@@ -167,6 +204,7 @@ export default function FeedbackWidok({ feedback, dalej, jezyk = "en" }: { feedb
             )}
             <p className="mt-2 text-sm text-slate-800">{k.komentarz}</p>
             {k.nazwa === "zamkniecie" && feedback.zamkniecie_techniki && <Techniki t={feedback.zamkniecie_techniki} tr={tr} />}
+            {k.nazwa === "obiekcje" && feedback.obiekcje_techniki && <TechnikiObiekcji t={feedback.obiekcje_techniki} tr={tr} />}
           </li>
         ))}
       </ul>

@@ -38,6 +38,7 @@ const T = {
     coH: "What happens on the call",
     co: ["I ask about your team and how they sell today.", "You see Bruno live, playing your own customer.", "We decide together if it makes sense for you."],
     dodaj: "Add to Google Calendar",
+    ics: "Apple / Outlook (.ics)",
     zalacznik: "Using Outlook or Apple Calendar? Open the invite attached to this email.",
     inny: "Need another time? Just reply to this email.",
     linkedin: "Connect on LinkedIn",
@@ -64,6 +65,7 @@ const T = {
     coH: "Jak wygląda rozmowa",
     co: ["Pytam o Twój zespół i o to, jak dziś sprzedaje.", "Widzisz Bruno na żywo, jak gra Waszego klienta.", "Razem decydujemy, czy to ma dla Was sens."],
     dodaj: "Dodaj do Kalendarza Google",
+    ics: "Apple / Outlook (.ics)",
     zalacznik: "Używasz Outlooka albo Kalendarza Apple? Otwórz zaproszenie w załączniku.",
     inny: "Potrzebujesz innej godziny? Odpisz na tego maila.",
     linkedin: "Połączmy się na LinkedInie",
@@ -75,6 +77,19 @@ const T = {
 } as const;
 
 export type MailDemo = { temat: string; html: string; text: string; tytulKal: string; opisKal: string };
+
+/** 12.10 (E19): tytuł i opis wpisu w pliku .ics pobieranym z linku „Apple / Outlook” (trasa /api/bruno/demo/ics). */
+export function wpisKalendarzaDemo(jezyk: "en" | "pl", link?: string | null): { tytul: string; opis: string } {
+  const x = jezyk === "pl" ? T.pl : T.en;
+  const l = link?.trim() || null;
+  return { tytul: x.tytulKal, opis: `${x.minut}. ${x.co.join(" ")}${l ? ` ${l}` : ""}` };
+}
+
+/** 12.10 (E19): adres pliku .ics dla terminu (strona w języku maila). */
+export function linkIcsDemo(a: { baza: string; start: string; jezyk: "en" | "pl" }): string {
+  const q = new URLSearchParams({ termin: new Date(a.start).toISOString(), jezyk: a.jezyk });
+  return `${a.baza.replace(/\/$/, "")}/api/bruno/demo/ics?${q.toString()}`;
+}
 
 /**
  * Potwierdzenie rozmowy dla klienta.
@@ -100,6 +115,8 @@ export function mailPotwierdzenieDemo(a: {
   const tytulKal = `Sales AI x ${a.imie}`;
   const opisKal = `${x.minut}. ${x.co.join(" ")}${link ? ` ${link}` : ""}`;
   const gcal = linkGoogleKalendarz({ start: a.start, minut: DEMO_MINUT_MAIL, tytul: tytulKal, opis: opisKal });
+  // 12.10 (E19): obok Google link do pliku .ics (Apple Calendar, Outlook), bez logowania.
+  const ics = linkIcsDemo({ baza, start: a.start, jezyk: a.jezyk });
   const ikona = a.ikonaKalendarza ?? `${baza}/email/kalendarz.png`;
 
   const font = `-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif`;
@@ -153,6 +170,7 @@ export function mailPotwierdzenieDemo(a: {
           <tr><td align="center" style="padding:24px 0 12px">
             <a href="${ESC(gcal)}" style="display:inline-block;background:#111111;color:#ffffff;text-decoration:none;font:600 15px/1 ${font};padding:17px 28px;border-radius:999px">${ESC(x.dodaj)}</a>
           </td></tr>
+          <tr><td align="center" style="padding:0 0 14px"><a href="${ESC(ics)}" style="font:600 14px/1.4 ${font};color:${ink};text-decoration:underline">${ESC(x.ics)}</a></td></tr>
           <tr><td align="center" style="font:400 12.5px/1.5 ${font};color:${muted};padding:0 0 4px">${ESC(x.zalacznik.replace(/\?.*$/, "?"))}<br>${ESC(x.zalacznik.replace(/^[^?]*\?\s*/, ""))}</td></tr>
         </table>
       </td></tr>
@@ -177,6 +195,7 @@ export function mailPotwierdzenieDemo(a: {
     ...x.co.map((c, i) => `${i + 1}. ${c}`),
     "",
     `${x.dodaj}: ${gcal}`,
+    `${x.ics}: ${ics}`,
     "",
     "Jakub Chodakowski",
     "Bruno AI",

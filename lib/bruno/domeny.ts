@@ -10,9 +10,10 @@ export const DOMENA: Record<Jezyk, string> = {
 };
 
 /** Ładne adresy na domenach Bruno (USER_001 11.10). Panel zostaje pod /bruno/... */
-export const SCIEZKI: Record<Jezyk, { firmy: string; handlowcy: string; rejestracja: string; logowanie: string }> = {
-  en: { firmy: "/", handlowcy: "/reps", rejestracja: "/signup", logowanie: "/login" },
-  pl: { firmy: "/", handlowcy: "/handlowcy", rejestracja: "/rejestracja", logowanie: "/login" },
+// 12.10 (E11): strona „Security & Data” dla firm: app/bezpieczenstwo, EN pod /security.
+export const SCIEZKI: Record<Jezyk, { firmy: string; handlowcy: string; rejestracja: string; logowanie: string; bezpieczenstwo: string }> = {
+  en: { firmy: "/", handlowcy: "/reps", rejestracja: "/signup", logowanie: "/login", bezpieczenstwo: "/security" },
+  pl: { firmy: "/", handlowcy: "/handlowcy", rejestracja: "/rejestracja", logowanie: "/login", bezpieczenstwo: "/bezpieczenstwo" },
 };
 
 /** Język z nazwy hosta: salesbruno.pl → pl, salesbruno.com → en, inny host → null. */

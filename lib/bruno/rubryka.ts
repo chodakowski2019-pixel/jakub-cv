@@ -1,11 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { Feedback, Konfig, Kryterium, Wypowiedz, ZamkniecieTechniki } from "./db";
+import type { Feedback, Konfig, Kryterium, ObiekcjeTechniki, Wypowiedz, ZamkniecieTechniki } from "./db";
 import { listaObiekcji } from "./db";
 import type { Jezyk } from "./domeny";
 import { etykiety } from "./etykiety";
 import { plecZTranskrypcji, type Metryki } from "./metryki";
 import { POSTACIE, POZIOMY, TRYBY, poziomLubDomyslny, type PostacId, type PoziomId, type TrybId } from "./postacie";
 import { NAZWY, WAGI } from "./kryteria";
+import { SEGMENT_TRENER, segmentZ } from "./segment";
 
 // Bruno-TRENER. Ocenia rozmowę po jej zakończeniu wg SalesAI/BRUNO-RUBRYKA.md
 // (złożonej 30.09 z 7 plików bazy wiedzy: Belfort, Rackham, Voss, Sandler,
@@ -21,6 +22,20 @@ CRITERIA (each 1-10):
 1. OPENING (first 90 s): purpose of the call in ≤30 s; ≤6 sentences before the first question; upfront contract (goal, time, outcome); zero "sorry to bother you", "just", "I won't take much of your time"; zero "our company", "we offer", product name before the customer's first question; bonus for a thesis or a market number.
 2. QUESTIONS: rep's share of words <50 % (good), >60 % (bad); ≥5 open questions ("what", "how", "how much", "when") before the pitch; SPIN: problem (P), implication (I) and need-payoff (N) questions matter more than situation (S) questions; no implication question = max 5; a question about the cost of the problem; a question about budget and the decision maker; mirroring (repeating 1-3 of the customer's words); the rep does NOT answer their own questions; a summary "you said that…".
 3. OBJECTIONS (after "too expensive", "I need to think about it", "not now", "we already have"): the next line = a label ("sounds like"), a mirror or a question ("compared to what?", "what's not working?") = good; an argument, a defense, an instant discount = bad; a discount with nothing in return = bad; new information + a second ask for a decision (the loop) = good; proof with a company name and a number = good, "lots of clients are happy" = bad; giving up after the first "I'll think about it" = bad; price before the pain question = red flag.
+   OBJECTION TECHNIQUES: fill in obiekcje_techniki (each technique separately; when at least one objection came up, the OBJECTIONS score is computed from them automatically and your number for "obiekcje" is only a guide). B2B = Negacz method, B2C = NEPQ / Straight Line / Gordon / Elliott / Cardone; the same fields apply to both:
+   - zgoda_przed_odpowiedzia: the rep's FIRST line after an objection starts with agreement ("I get it", "you're right", "makes sense", "fair enough", "no problem"), not with "but" or a defense.
+   - pytanie_po_obiekcji: the first line after an objection contains a question that digs in ("compared to what?", "what exactly do you mean?", "what needs to happen by the end of the quarter?", "who besides you decides?").
+   - rabat_od_razu: a discount or a lower price offered in the first reply to an objection.
+   - pytanie_poza_cena: after a price objection the rep asked for a reason other than price ("was there anything besides price?").
+   - izolacja: the rep isolated the objection ("other than that, is there anything else?", "if your wife were on the call, would you be at 100 %?", "money aside, is this what you need?").
+   - skala: a 1-to-10 scale plus the gap question ("what's keeping you at a 7?").
+   - hipoteza: a hypothetical at the end of the search ("say you've seen them all and mine was the last: what decides it, the product or the terms?").
+   - gdyby_cena_ta_sama: "if the money were the same, who would you buy from, and why?" (then selling only the difference).
+   - tie_down: the rep ended a line with a yes-question ("you want serious buyers, right?", "fair enough?").
+   - dowod_z_liczba: proof with a company name (or a clear description of a similar customer) AND a number, or the story of a customer who had the same doubt. "Lots of happy clients" = false.
+   - ukryty_powod_odkryty: after the rep's question the customer named a real reason different from the first objection (e.g. "price" turned out to be "I didn't understand the proposal", "think about it" turned out to be "budget" or "my wife").
+   - petla_drugie_podejscie: after an objection the rep added NEW information (a number, a guarantee, a date, a named reference) and asked for a decision again. Repeating the same argument = false.
+   Every missing technique that fit the situation goes into MINUSES as its own bullet, in the rep's words to use next time.
 4. CLOSING (last 20 %). AN ASK FOR A DECISION is ANY of these: (a) a direct question for a decision ("do we have a deal?", "are you in?"), (b) A DATED NEXT STEP proposed by the rep ("when can we get the paperwork signed?", "I can put you down for Monday", "let's meet Tuesday at 10"), (c) a choice of time ("morning or afternoon?"). In multi-step sales (b) IS a close and you must NOT write "no ask for a decision" when it happened. 1-2 asks = good, 0 or ≥3 = bad; progress = date + person + an action by the customer; continuation with no date ("I'll follow up", "I'll send the proposal", "think it over") = bad; the amount stated plainly = good; price with "only", "just", "unfortunately" = bad; the customer saying the date/step themselves = good; "what could get in the way?" = bonus; scarcity only with a real reason; silence after the price, the customer speaks first (rep adds >15 words = justifying).
    CLOSING TECHNIQUES: fill in zamkniecie_techniki (each technique separately; the CLOSING score is computed from them automatically, your number for "zamkniecie" is only a guide):
    - proba_zamkniecia: a trial close before the ask ("how does that sound?", "what do you think?", "does that make sense for you?").
@@ -68,9 +83,10 @@ const SCHEMAT = `Reply ONLY with JSON (no markdown) shaped like this:
   "brak_prosby_o_decyzje": true/false,
   "mila_bez_tresci": true/false,
   "obiekcje_ocena": [{"obiekcja":"the objection from the company's list that came up","ocena":1-4}],
-  "zamkniecie_techniki": {"proba_zamkniecia":true/false,"pytanie_o_decyzje":true/false,"nastepny_krok_z_data":true/false,"musze_pomyslec":"nie_padlo|poddal_sie|czekal|pytanie|warunek","drugie_zamkniecie":"nie_dotyczy|brak|bylo","sygnal_kupna":"nie_bylo|wykorzystany|zmarnowany"}
+  "zamkniecie_techniki": {"proba_zamkniecia":true/false,"pytanie_o_decyzje":true/false,"nastepny_krok_z_data":true/false,"musze_pomyslec":"nie_padlo|poddal_sie|czekal|pytanie|warunek","drugie_zamkniecie":"nie_dotyczy|brak|bylo","sygnal_kupna":"nie_bylo|wykorzystany|zmarnowany"},
+  "obiekcje_techniki": {"zgoda_przed_odpowiedzia":true/false,"pytanie_po_obiekcji":true/false,"rabat_od_razu":true/false,"pytanie_poza_cena":true/false,"izolacja":true/false,"skala":true/false,"hipoteza":true/false,"gdyby_cena_ta_sama":true/false,"tie_down":true/false,"dowod_z_liczba":true/false,"ukryty_powod_odkryty":true/false,"petla_drugie_podejscie":true/false}
 }
-obiekcje_ocena scale: 1 = the rep lost it, 2 = weak, 3 = good, 4 = textbook. Include only objections from the company's list that actually came up.
+obiekcje_ocena scale: 1 = the rep lost it, 2 = weak, 3 = good, 4 = textbook. Include only objections from the company's list that actually came up. If no objection came up at all, set every field of obiekcje_techniki to false.
 FORMAT: it must be valid JSON. Inside strings do NOT use the plain double quote " or newlines; write quotes with ' or “ ”. No text before or after the JSON.`;
 
 // 11.10 (USER_001): Bruno w dwóch językach. Dla kont PL rubryka i schemat po polsku (z fd7de52, 1:1),
@@ -82,6 +98,20 @@ KRYTERIA (każde 1-10):
 1. OTWARCIE (pierwsze 90 s): cel rozmowy w ≤30 s; ≤6 zdań przed pierwszym pytaniem; kontrakt wstępny (cel, czas, wynik); zero „przepraszam, że przeszkadzam”, „tylko”, „nie zajmę dużo”; zero „nasza firma”, „oferujemy”, nazwy produktu przed pierwszym pytaniem klienta; plus za tezę lub liczbę z rynku.
 2. PYTANIA: udział słów handlowca <50 % (dobrze), >60 % (źle); ≥5 pytań otwartych („jak”, „co”, „ile”, „kiedy”) przed prezentacją; SPIN: pytania o problem (P), jego skutki (I) i o to, czego klient chce (N) ważniejsze niż pytania o sytuację (S); brak pytania implikacyjnego = max 5; pytanie o koszt problemu; pytanie o budżet i decydenta; lustro (powtórzenie 1-3 słów klienta); handlowiec NIE odpowiada sam na swoje pytania; podsumowanie „powiedział Pan, że…”.
 3. OBIEKCJE (po „za drogo”, „muszę pomyśleć”, „nie teraz”, „mamy już”): następna wypowiedź = etykieta („wygląda na to”), lustro albo pytanie („w porównaniu do czego?”, „co nie gra?”) = dobrze; argument, obrona, rabat od razu = źle; rabat bez niczego w zamian = źle; nowa informacja + ponowna prośba o decyzję (pętla) = dobrze; dowód z nazwą firmy i liczbą = dobrze, „wielu klientów jest zadowolonych” = źle; poddanie się po pierwszym „przemyślę” = źle; cena przed pytaniem o ból = czerwona flaga.
+   TECHNIKI OBIEKCJI: wypełnij obiekcje_techniki (każda technika osobno; gdy padła choć jedna obiekcja, ocena OBIEKCJI liczy się z nich automatycznie, a Twoja liczba dla „obiekcje” jest tylko orientacyjna). B2B = metoda Negacza, B2C = NEPQ / Straight Line / Gordon / Elliott / Cardone; pola są te same dla obu:
+   - zgoda_przed_odpowiedzia: PIERWSZA wypowiedź handlowca po obiekcji zaczyna się od zgody („rozumiem”, „ma pan rację”, „jasne”, „słusznie”, „żaden problem”), nie od „ale” ani od obrony.
+   - pytanie_po_obiekcji: pierwsza wypowiedź po obiekcji zawiera pytanie pogłębiające („w porównaniu do czego?”, „co dokładnie ma pan na myśli?”, „co ma się wydarzyć do końca kwartału?”, „kto oprócz pana decyduje?”).
+   - rabat_od_razu: rabat albo niższa cena w pierwszej odpowiedzi na obiekcję.
+   - pytanie_poza_cena: po obiekcji cenowej handlowiec zapytał o powód inny niż cena („czy było coś oprócz ceny?”).
+   - izolacja: handlowiec odizolował obiekcję („poza tym, czy jest coś jeszcze?”, „gdyby żona była teraz na linii, byłby pan na 100 %?”, „odłóżmy pieniądze na bok: czy to jest to, czego pan potrzebuje?”).
+   - skala: skala 1-10 plus pytanie o lukę („co trzyma pana na siódemce?”).
+   - hipoteza: hipoteza końca poszukiwań („załóżmy, że obejrzał pan wszystkie i moje było ostatnie: co zdecyduje, produkt czy warunki?”).
+   - gdyby_cena_ta_sama: „gdyby cena była ta sama, u kogo wolałby pan kupić i dlaczego?” (potem sprzedaż samej różnicy).
+   - tie_down: handlowiec zakończył wypowiedź pytaniem na „tak” („chce pan poważnych kupujących, prawda?”, „w porządku?”).
+   - dowod_z_liczba: dowód z nazwą firmy (albo jasnym opisem podobnego klienta) I liczbą, albo historia klienta, który miał tę samą wątpliwość. „Wielu zadowolonych klientów” = false.
+   - ukryty_powod_odkryty: po pytaniu handlowca klient nazwał prawdziwy powód inny niż pierwsza obiekcja (np. „cena” okazała się „nie zrozumiałem oferty”, „przemyślę” okazało się „budżet” albo „żona”).
+   - petla_drugie_podejscie: po obiekcji handlowiec dodał NOWĄ informację (liczbę, gwarancję, termin, referencję z nazwą) i poprosił o decyzję jeszcze raz. Powtórzenie tego samego argumentu = false.
+   Każda brakująca technika, która pasowała do sytuacji, idzie do MINUSÓW jako osobny punkt, słowami handlowca do użycia następnym razem.
 4. ZAMKNIĘCIE (ostatnie 20 %). PROŚBA O DECYZJĘ to KAŻDA z tych form: (a) pytanie o decyzję wprost („podpisujemy?”, „wchodzimy w to?”), (b) NASTĘPNY KROK Z DATĄ zaproponowany przez handlowca („kiedy możemy podpisać pełnomocnictwo u notariusza?”, „mogę panią umówić na poniedziałek”, „spotkajmy się we wtorek o 10”), (c) pytanie o termin do wyboru („przed południem czy po?”). W sprzedaży wieloetapowej (b) JEST zamknięciem i NIE wolno pisać „brak prośby o decyzję”, gdy padło. 1-2 prośby = dobrze, 0 albo ≥3 = źle; postęp = data + osoba + działanie klienta; kontynuacja bez daty („odezwę się”, „prześlę ofertę”, „proszę pomyśleć”) = źle; kwota wprost = dobrze; cena z „tylko”, „jedynie”, „niestety” = źle; klient sam wypowiada datę/krok = dobrze; pytanie „co może stanąć na drodze” = plus; limit tylko z prawdziwym powodem; po kwocie cisza, klient odzywa się pierwszy (handlowiec dopowiada >15 słów = usprawiedliwianie).
    TECHNIKI ZAMYKANIA: wypełnij zamkniecie_techniki (każda technika osobno; ocena ZAMKNIĘCIA liczy się z nich automatycznie, Twoja liczba dla „zamkniecie” jest tylko orientacyjna):
    - proba_zamkniecia: próbne zamknięcie przed prośbą („jak to brzmi?”, „co pan o tym myśli?”, „czy to ma dla pana sens?”).
@@ -129,9 +159,10 @@ const SCHEMAT_PL = `Odpowiedz WYŁĄCZNIE JSON-em (bez markdownu) o kształcie:
   "brak_prosby_o_decyzje": true/false,
   "mila_bez_tresci": true/false,
   "obiekcje_ocena": [{"obiekcja":"tekst obiekcji z listy firmy, która padła","ocena":1-4}],
-  "zamkniecie_techniki": {"proba_zamkniecia":true/false,"pytanie_o_decyzje":true/false,"nastepny_krok_z_data":true/false,"musze_pomyslec":"nie_padlo|poddal_sie|czekal|pytanie|warunek","drugie_zamkniecie":"nie_dotyczy|brak|bylo","sygnal_kupna":"nie_bylo|wykorzystany|zmarnowany"}
+  "zamkniecie_techniki": {"proba_zamkniecia":true/false,"pytanie_o_decyzje":true/false,"nastepny_krok_z_data":true/false,"musze_pomyslec":"nie_padlo|poddal_sie|czekal|pytanie|warunek","drugie_zamkniecie":"nie_dotyczy|brak|bylo","sygnal_kupna":"nie_bylo|wykorzystany|zmarnowany"},
+  "obiekcje_techniki": {"zgoda_przed_odpowiedzia":true/false,"pytanie_po_obiekcji":true/false,"rabat_od_razu":true/false,"pytanie_poza_cena":true/false,"izolacja":true/false,"skala":true/false,"hipoteza":true/false,"gdyby_cena_ta_sama":true/false,"tie_down":true/false,"dowod_z_liczba":true/false,"ukryty_powod_odkryty":true/false,"petla_drugie_podejscie":true/false}
 }
-Skala obiekcje_ocena: 1 = handlowiec poległ, 2 = słabo, 3 = dobrze, 4 = wzorowo. Uwzględnij tylko obiekcje z listy firmy, które realnie padły.
+Skala obiekcje_ocena: 1 = handlowiec poległ, 2 = słabo, 3 = dobrze, 4 = wzorowo. Uwzględnij tylko obiekcje z listy firmy, które realnie padły. Jeśli nie padła żadna obiekcja, wszystkie pola obiekcje_techniki = false.
 FORMAT: to musi być poprawny JSON. Wewnątrz tekstów NIE używaj prostego cudzysłowu " ani znaków nowej linii; cytaty zapisuj w „ ” albo w apostrofach. Żadnego tekstu przed ani po JSON-ie.`;
 
 function formatCzas(s: number) {
@@ -208,6 +239,69 @@ export function policzZamkniecie(t: ZamkniecieTechniki, metryki: Pick<Metryki, "
   if (metryki.prosby_o_decyzje >= 3) p -= 1;
   if (!pytanie && !krok) p = Math.min(p, 4);
   return Math.min(10, Math.max(1, Math.round(p)));
+}
+
+/** Pola `ObiekcjeTechniki`, które wypełnia model (reszta liczona z metryk). */
+const OBIEKCJE_POLA_MODELU = ["zgoda_przed_odpowiedzia", "pytanie_po_obiekcji", "rabat_od_razu", "pytanie_poza_cena", "izolacja", "skala", "hipoteza", "gdyby_cena_ta_sama", "tie_down", "dowod_z_liczba", "ukryty_powod_odkryty", "petla_drugie_podejscie"] as const;
+
+type MetrykiObiekcji = Pick<
+  Metryki,
+  "obiekcje_klienta" | "obiekcje_z_pytaniem" | "obiekcje_z_rabatem" | "obiekcje_odp_zgoda" | "obiekcje_odp_kontra" | "kontra_ale_po_obiekcji" | "prosba_po_obiekcji" | "pytanie_poza_cena" | "skala_1_10" | "izolacja" | "hipoteza_koniec" | "gdyby_cena_ta_sama" | "tie_down"
+>;
+
+/**
+ * 12.10 (W3, /brunowiedza): techniki obiekcji z odpowiedzi modelu, uzupełnione metrykami.
+ * Metryki rozstrzygają tam, gdzie regex liczy (zgoda, pytanie, „ale", rabat, frazy technik); model dopowiada
+ * to, czego regex nie złapie (parafraza zgody, dowód z liczbą, ukryty powód). Stare metryki (bez pól W3) = undefined → 0 / false.
+ */
+export function technikiObiekcjiZOdpowiedzi(raw: unknown, metryki: Partial<MetrykiObiekcji>): ObiekcjeTechniki {
+  const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const m = (k: keyof typeof r) => r[k] === true;
+  const obiekcji = Number(metryki.obiekcje_klienta ?? 0);
+  const kontra = Number(metryki.obiekcje_odp_kontra ?? 0);
+  // Zgoda: regex ALBO model, ale gdy regex widzi kontrę („ale…") i zero zgód, model nie przegłosuje.
+  const zgoda = Number(metryki.obiekcje_odp_zgoda ?? 0) > 0 || (m("zgoda_przed_odpowiedzia") && kontra === 0);
+  return {
+    obiekcji,
+    zgoda_przed_odpowiedzia: obiekcji > 0 && zgoda,
+    pytanie_po_obiekcji: obiekcji > 0 && (Number(metryki.obiekcje_z_pytaniem ?? 0) > 0 || m("pytanie_po_obiekcji")),
+    kontra_ale: Number(metryki.kontra_ale_po_obiekcji ?? 0),
+    rabat_od_razu: Number(metryki.obiekcje_z_rabatem ?? 0) > 0 || m("rabat_od_razu"),
+    pytanie_poza_cena: Boolean(metryki.pytanie_poza_cena) || m("pytanie_poza_cena"),
+    izolacja: Boolean(metryki.izolacja) || m("izolacja"),
+    skala: Boolean(metryki.skala_1_10) || m("skala"),
+    hipoteza: Boolean(metryki.hipoteza_koniec) || m("hipoteza"),
+    gdyby_cena_ta_sama: Boolean(metryki.gdyby_cena_ta_sama) || m("gdyby_cena_ta_sama"),
+    tie_down: Number(metryki.tie_down ?? 0) > 0 || m("tie_down"),
+    dowod_z_liczba: m("dowod_z_liczba"),
+    ukryty_powod_odkryty: m("ukryty_powod_odkryty"),
+    petla_drugie_podejscie: obiekcji > 0 && (Boolean(metryki.prosba_po_obiekcji) || m("petla_drugie_podejscie")),
+  };
+}
+
+/**
+ * 12.10 (W3): ocena OBIEKCJI liczona z technik, jak zamknięcie (E12a). Bez obiekcji w rozmowie = ocena modelu
+ * (nie ma czego liczyć). Punkty, start 0: zgoda przed odpowiedzią +2; pytanie po obiekcji +3; zero „ale" +1,
+ * 1-2 „ale" -1, ≥3 -2; rabat od razu -2; technika pogłębiająca (poza ceną / izolacja / skala / hipoteza /
+ * gdyby cena ta sama): pierwsza +2, druga +1 (max +3); dopięcie +1; dowód z liczbą +1; ukryty powód +1;
+ * pętla z drugą prośbą +1. Bez zgody i bez pytania (argument / obrona / rabat): max 4. Wynik 1-10.
+ */
+export function policzObiekcje(t: ObiekcjeTechniki, ocenaModelu: number): number {
+  const klamra = (n: number) => Math.min(10, Math.max(1, Math.round(n)));
+  if (t.obiekcji <= 0) return klamra(Number(ocenaModelu) || 1);
+  let p = 0;
+  if (t.zgoda_przed_odpowiedzia) p += 2;
+  if (t.pytanie_po_obiekcji) p += 3;
+  p += t.kontra_ale === 0 ? 1 : t.kontra_ale >= 3 ? -2 : -1;
+  if (t.rabat_od_razu) p -= 2;
+  const poglebienie = [t.pytanie_poza_cena, t.izolacja, t.skala, t.hipoteza, t.gdyby_cena_ta_sama].filter(Boolean).length;
+  p += Math.min(3, poglebienie >= 1 ? 2 + (poglebienie - 1) : 0);
+  if (t.tie_down) p += 1;
+  if (t.dowod_z_liczba) p += 1;
+  if (t.ukryty_powod_odkryty) p += 1;
+  if (t.petla_drugie_podejscie) p += 1;
+  if (!t.zgoda_przed_odpowiedzia && !t.pytanie_po_obiekcji) p = Math.min(p, 4);
+  return klamra(p);
 }
 
 /** Techniki z odpowiedzi modelu, uzupełnione metrykami. Brak pola = technika nie padła. */
@@ -310,6 +404,8 @@ export async function ocenRozmowe(args: {
     args.ucieta_limitem &&
       "THE APP'S TIME LIMIT ENDED THIS CALL (3 min + 45 s overtime to close). Don't penalize the rep for not answering the customer's LAST line or for the call 'cutting off': the app did that. No ask for a decision in the whole call is still the rep's fault, because during overtime they saw 'Overtime: close' on screen. If the customer gave a buying signal and the rep didn't use it, write that in MINUSES and in the FIX suggest how to close earlier.",
     `CUSTOMER TYPE (DISC): ${POSTACIE[postac].nazwa}, ${POSTACIE[postac].krotko}: ${POSTACIE[postac].opis}`,
+    // 12.10 (USER_001, W5): B2B oceniany metodą Negacza, B2C przez zaufanie i decyzję w rozmowie.
+    SEGMENT_TRENER[segmentZ(konfig.segment)].en,
     tryb && `CALL MODE: ${TRYBY[tryb].nazwa}. ${tryb === "cold" ? "The customer didn't know the offer; grade the opening in full." : "The customer knew the offer and opened with an objection, so grade the OPENING leniently (what counts is the reaction to the first objection) and OBJECTIONS and CLOSING more strictly."}`,
     cel && `THE REP'S GOAL: ${cel}. In CLOSING say outright whether this goal was reached or whether the rep asked for it.`,
     // Poziom to kontekst, nie taryfa: rubryka jest ta sama, inaczej oceny z dwóch poziomów nie dałyby się porównać.
@@ -392,8 +488,14 @@ export async function ocenRozmowe(args: {
               },
               required: ["proba_zamkniecia", "pytanie_o_decyzje", "nastepny_krok_z_data", "musze_pomyslec", "drugie_zamkniecie", "sygnal_kupna"],
             },
+            // 12.10 (W3): techniki obiekcji, same wartości tak / nie (liczby i „ale" dolicza kod z metryk).
+            obiekcje_techniki: {
+              type: "object",
+              properties: Object.fromEntries(OBIEKCJE_POLA_MODELU.map((p) => [p, { type: "boolean" }])),
+              required: [...OBIEKCJE_POLA_MODELU],
+            },
           },
-          required: ["kryteria", "liczba_z_audio", "wygrana", "poprawka", "plusy", "minusy", "brak_prosby_o_decyzje", "mila_bez_tresci", "zamkniecie_techniki"],
+          required: ["kryteria", "liczba_z_audio", "wygrana", "poprawka", "plusy", "minusy", "brak_prosby_o_decyzje", "mila_bez_tresci", "zamkniecie_techniki", "obiekcje_techniki"],
         };
   const system = pl ? RUBRYKA_PL : RUBRYKA;
 
@@ -454,17 +556,22 @@ export async function ocenRozmowe(args: {
     mila_bez_tresci?: boolean;
     obiekcje_ocena?: { obiekcja: string; ocena: number }[];
     zamkniecie_techniki?: unknown;
+    obiekcje_techniki?: unknown;
   };
 
   // 10.10: zamknięcie liczone z technik, liczba modelu zastąpiona.
   const techniki = technikiZOdpowiedzi(raw.zamkniecie_techniki, metryki);
   const ocenaZamkniecia = policzZamkniecie(techniki, metryki);
+  // 12.10 (W3): obiekcje liczone z technik, gdy padła choć jedna obiekcja; bez obiekcji zostaje liczba modelu.
+  const technikiObiekcji = technikiObiekcjiZOdpowiedzi(raw.obiekcje_techniki, metryki);
+  const ocenaObiekcjiModelu = Number(raw.kryteria?.find((x) => x.nazwa === "obiekcje")?.ocena ?? 1);
+  const ocenaObiekcji = policzObiekcje(technikiObiekcji, ocenaObiekcjiModelu);
   const kolejnosc: Kryterium["nazwa"][] = ["otwarcie", "pytania", "obiekcje", "zamkniecie", "pewnosc"];
   const kryteria: Kryterium[] = kolejnosc.map((n) => {
     const k = raw.kryteria?.find((x) => x.nazwa === n);
     return {
       nazwa: n,
-      ocena: n === "zamkniecie" ? ocenaZamkniecia : Math.min(10, Math.max(1, Math.round(Number(k?.ocena ?? 1)))),
+      ocena: n === "zamkniecie" ? ocenaZamkniecia : n === "obiekcje" ? ocenaObiekcji : Math.min(10, Math.max(1, Math.round(Number(k?.ocena ?? 1)))),
       cytat: String(k?.cytat ?? "").slice(0, 300),
       czas: String(k?.czas ?? ""),
       komentarz: String(k?.komentarz ?? "").slice(0, 400),
@@ -500,6 +607,7 @@ export async function ocenRozmowe(args: {
     ocena,
     kryteria,
     zamkniecie_techniki: techniki,
+    obiekcje_techniki: technikiObiekcji,
     liczba_z_audio: String(raw.liczba_z_audio ?? (pl ? `${metryki.wypelniacze_na_min} wypełniaczy na minutę` : `${metryki.wypelniacze_na_min} fillers per minute`)).slice(0, 200),
     wygrana: String(raw.wygrana ?? "").slice(0, 400),
     poprawka: String(raw.poprawka ?? "").slice(0, 400),
@@ -528,6 +636,8 @@ function kontekstPL(args: Parameters<typeof ocenRozmowe>[0], poziom: PoziomId): 
     args.ucieta_limitem &&
       "ROZMOWĘ ZAKOŃCZYŁ LIMIT CZASU APLIKACJI (3 min + 45 s dogrywki na domknięcie). Nie karz za to, że handlowiec nie odpowiedział na OSTATNIĄ wypowiedź klienta, ani za to, że rozmowa „urywa się”: to zrobiła aplikacja. Brak prośby o decyzję w całej rozmowie nadal jest błędem handlowca, bo w dogrywce widział na ekranie „Dogrywka: domknij”. Jeśli klient dał sygnał kupna, a handlowiec go nie wykorzystał, napisz to w MINUSACH i w POPRAWCE podpowiedz, jak domknąć wcześniej.",
     `TYP KLIENTA (DISC): ${E.POSTACIE[postac].nazwa}, ${E.POSTACIE[postac].krotko}: ${E.POSTACIE[postac].opis}`,
+    // 12.10 (USER_001, W5): B2B oceniany metodą Negacza, B2C przez zaufanie i decyzję w rozmowie.
+    SEGMENT_TRENER[segmentZ(konfig.segment)].pl,
     tryb && `TRYB ROZMOWY: ${E.TRYBY[tryb].nazwa}. ${tryb === "cold" ? "Klient nie znał oferty, otwarcie oceniaj w pełni." : "Klient znał ofertę i sam zaczął od obiekcji, więc OTWARCIE oceniaj łagodniej (liczy się reakcja na pierwszą obiekcję), a OBIEKCJE i ZAMKNIĘCIE surowiej."}`,
     cel && `CEL HANDLOWCA: ${cel}. W ZAMKNIĘCIU oceń wprost, czy ten cel został osiągnięty albo czy handlowiec o niego poprosił.`,
     // Poziom to kontekst, nie taryfa: rubryka jest ta sama, inaczej oceny z dwóch poziomów nie dałyby się porównać.
