@@ -4,6 +4,7 @@ import { ROZMOWA_SEKUND, kartyDoPowtorki, limitDzienny, planFree, rozmowyDzis, s
 import { htmlNieZalogowany, htmlPrzypomnienie, htmlPrzypomnienieFree, wyslij } from "@/lib/bruno/mail";
 import { dociagnijNagraniaEl } from "@/lib/bruno/nagrania";
 import { mnoga, tDla } from "@/lib/bruno/i18n";
+import { wylaczPro } from "@/lib/bruno/stripe";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -23,6 +24,27 @@ export async function GET(req: Request) {
 
   const godzinaPL = Number(new Date().toLocaleString("en-US", { timeZone: "Europe/Warsaw", hour: "numeric", hour12: false }));
   const wymus = new URL(req.url).searchParams.get("wymus") === "1";
+
+  // 11.10: roczny Bruno Pro jest płatnością jednorazową (bez subskrypcji), więc po 365 dniach wygaszamy go tu.
+  // Tylko konta z `pro_do` i bez subskrypcji Stripe: firmy B2B (pro_do puste) i subskrypcje (Stripe pilnuje sam) bez zmian.
+  const wygasle: string[] = [];
+  {
+    const { data: doWygaszenia } = await supabaseAdmin
+      .from("bruno_konta")
+      .select("email")
+      .eq("plan", "pelny")
+      .is("stripe_subscription_id", null)
+      .not("pro_do", "is", null)
+      .lt("pro_do", new Date().toISOString());
+    for (const k of doWygaszenia ?? []) {
+      try {
+        await wylaczPro(k.email as string);
+        wygasle.push(k.email as string);
+      } catch (e) {
+        console.error("[bruno przypomnienia] wygaszenie Pro", k.email, e);
+      }
+    }
+  }
 
   const { data: konta } = await supabaseAdmin.from("bruno_konta").select("*").eq("aktywne", true);
   const { data: konfigi } = await supabaseAdmin.from("bruno_konfig").select("email, godzina_przypomnienia");
@@ -115,5 +137,5 @@ export async function GET(req: Request) {
     console.error("[bruno przypomnienia] nagrania", e);
   }
 
-  return NextResponse.json({ ok: true, godzinaPL, wyslane, niezalogowani, free, nagrania });
+  return NextResponse.json({ ok: true, godzinaPL, wyslane, niezalogowani, free, wygasle, nagrania });
 }

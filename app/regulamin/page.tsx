@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const AKTUALIZACJA = "2 października 2026";
+const AKTUALIZACJA = "12 października 2026";
 
 function Sekcja({ tytul, children }: { tytul: string; children: React.ReactNode }) {
   return (
@@ -105,6 +105,13 @@ export default function RegulaminPage() {
         </Sekcja>
 
         <Sekcja tytul="6. Pełen dostęp">
+          <Lista
+            punkty={[
+              "Bruno Pro dla jednej osoby kupuje się płatnością jednorazową przez Stripe: 250 zł za 30 dni albo 2 500 zł za 365 dni (ceny brutto).",
+              "Płatność nie odnawia się sama. Po upływie okresu konto wraca do planu bezpłatnego, a historia rozmów zostaje.",
+              "Kolejna płatność przed końcem okresu przedłuża dostęp od dnia, w którym kończy się obecny okres.",
+            ]}
+          />
           <p>
             Pełen dostęp (konta dla zespołu, konfiguracja pod produkt klienta, raport dla szefa sprzedaży) jest płatny
             i uruchamiany na podstawie odrębnego zamówienia lub umowy, która określa zakres, cenę, okres rozliczeniowy

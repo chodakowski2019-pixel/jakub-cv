@@ -18,6 +18,15 @@ export function getStripeBruno(): Stripe {
   return _stripe;
 }
 
+/** Produkt „Bruno Pro” w Stripe (konto Bruno AI). 11.10: roczny dostęp = płatność jednorazowa na ten produkt. */
+export const PRODUKT_PRO = process.env.BRUNO_STRIPE_PRODUKT ?? "prod_VPwr1XHuTOmD4W";
+/** 11.10 (USER_001): rok = jednorazowo 2 500 zł / 2 500 $ (w groszach / centach), dostęp na 365 dni bez odnawiania. */
+export const ROK_JEDNORAZOWO = 2_500_00;
+export const DNI_ROKU = 365;
+/** 11.10 (USER_001: „jednorazowo”): miesiąc też jako jedna płatność 250 zł / 250 $ na 30 dni, bez subskrypcji. */
+export const MIESIAC_JEDNORAZOWO = 250_00;
+export const DNI_MIESIACA = 30;
+
 export const PRO_ROZMOW_DZIENNIE = 5;
 /** Limit sekund na rok z zapasem: 5 rozmów × 366 dni × pełna rozmowa. Webhook odnawia przy każdej fakturze. */
 export const PRO_LIMIT_SEKUND = PRO_ROZMOW_DZIENNIE * 366 * ROZMOWA_SEKUND_MAX;

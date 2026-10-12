@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { emailZSubskrypcji, getStripeBruno, wlaczPro, wylaczPro, zapiszPlatnosc } from "@/lib/bruno/stripe";
+import { DNI_MIESIACA, DNI_ROKU, emailZSubskrypcji, getStripeBruno, wlaczPro, wylaczPro, zapiszPlatnosc } from "@/lib/bruno/stripe";
 import { pobierzKonto } from "@/lib/bruno/db";
+import { supabaseAdmin } from "@/lib/supabase";
 import { SKRZYNKA_JAKUBA, htmlProAktywny, wyslij } from "@/lib/bruno/mail";
 
 export const runtime = "nodejs";
@@ -31,15 +32,26 @@ export async function POST(req: NextRequest) {
 
   try {
     switch (event.type) {
-      case "checkout.session.completed": {
+      case "checkout.session.completed":
+      case "checkout.session.async_payment_succeeded": {
         const s = event.data.object as Stripe.Checkout.Session;
-        if (s.metadata?.produkt !== "bruno-pro" || s.mode !== "subscription") break;
+        if (s.metadata?.produkt !== "bruno-pro") break;
+        // 11.10: rok = płatność jednorazowa (mode payment). Przelewy24 potwierdza później (async_payment_succeeded).
+        if (s.mode === "payment" && s.payment_status !== "paid") break;
+        if (s.mode !== "subscription" && s.mode !== "payment") break;
         const email = s.metadata.email ?? s.client_reference_id ?? s.customer_details?.email ?? null;
         if (!email) break;
         const subId = typeof s.subscription === "string" ? s.subscription : s.subscription?.id ?? null;
         const customer = typeof s.customer === "string" ? s.customer : s.customer?.id ?? null;
+        // 12.10: Stripe ponawia zdarzenia po błędzie. Ta sama sesja opłacona raz = jedno przedłużenie, nie dwa.
+        const { data: juz } = await supabaseAdmin.from("bruno_platnosci").select("id").eq("stripe_session_id", s.id).eq("status", "paid").limit(1);
+        if (juz && juz.length > 0) break;
         const sub = subId ? await getStripeBruno().subscriptions.retrieve(subId) : null;
-        await wlaczPro({ email, customer, subscription: subId, proDo: sub ? koniecOkresu(sub) : null });
+        // 11.10: jednorazowo rok = 365 dni, miesiąc = 30 dni. Kolejny zakup przed końcem doliczamy do obecnego końca.
+        const obecne = (await pobierzKonto(email))?.pro_do;
+        const od = obecne && new Date(obecne).getTime() > Date.now() ? new Date(obecne).getTime() : Date.now();
+        const proDo = s.mode === "payment" ? new Date(od + (s.metadata.okres === "rok" ? DNI_ROKU : DNI_MIESIACA) * 86_400_000) : sub ? koniecOkresu(sub) : null;
+        await wlaczPro({ email, customer, subscription: subId, proDo });
         await zapiszPlatnosc({ email, zdarzenie: event.type, session: s.id, subscription: subId, customer, kwota: s.amount_total, waluta: s.currency, okres: s.metadata.okres, status: s.payment_status });
         const konto = await pobierzKonto(email);
         try {
@@ -48,7 +60,7 @@ export async function POST(req: NextRequest) {
             do: SKRZYNKA_JAKUBA,
             rodzaj: "inny",
             temat: `💰 Bruno Pro: ${email} (${s.metadata.okres}, ${((s.amount_total ?? 0) / 100).toFixed(0)} ${(s.currency ?? "").toUpperCase()})`,
-            html: `<p>Nowa subskrypcja Bruno Pro.</p><p><b>E-mail:</b> ${email}<br/><b>Okres:</b> ${s.metadata.okres}<br/><b>Kwota:</b> ${((s.amount_total ?? 0) / 100).toFixed(2)} ${(s.currency ?? "").toUpperCase()}<br/><b>Subskrypcja:</b> ${subId}</p>`,
+            html: `<p>Nowa płatność Bruno Pro.</p><p><b>E-mail:</b> ${email}<br/><b>Okres:</b> ${s.metadata.okres}<br/><b>Kwota:</b> ${((s.amount_total ?? 0) / 100).toFixed(2)} ${(s.currency ?? "").toUpperCase()}<br/><b>Dostęp do:</b> ${proDo ? proDo.toISOString().slice(0, 10) : "-"}</p>`,
           });
         } catch (e) {
           console.error("[bruno stripe] mail", e);

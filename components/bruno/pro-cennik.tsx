@@ -75,37 +75,59 @@ export default function ProCennik({ stripe, zablokowane, zuzyte, ok }: { stripe:
         </p>
       </div>
 
+      {/* 11.10 (USER_001): rocznie po lewej (wyróżnione), miesięcznie po prawej. Rocznie = płatność jednorazowa. */}
       <div className="grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto w-full">
-        <div className="bruno-szklo rounded-2xl p-6 flex flex-col gap-3">
-          <div className="bruno-h2 text-base">{t("Monthly", "Miesięcznie")}</div>
-          <div className="text-4xl font-bold text-slate-900">{t("$250", "250 zł")}<span className="text-base font-normal text-slate-500">{t(" / month", " / mies.")}</span></div>
-          <p className="text-sm text-slate-600">{t("Cancel anytime.", "Rezygnujesz w każdej chwili.")}</p>
-          {stripe ? (
-            <button type="button" onClick={() => kup("miesiac")} disabled={stan === "miesiac" || stan === "rok"} className="bruno-przycisk-2 mt-auto">
-              {stan === "miesiac" ? t("Redirecting...", "Przekierowuję...") : t("Choose monthly", "Wybieram miesięcznie")}
-            </button>
-          ) : null}
-        </div>
         <div className="bruno-szklo rounded-2xl p-6 flex flex-col gap-3 border-amber-300/80">
           <div className="bruno-h2 text-base flex items-center gap-2">
             {t("Yearly", "Rocznie")} <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">{t("2 months free", "2 miesiące gratis")}</span>
           </div>
           <div className="text-4xl font-bold text-slate-900">{t("$2,500", "2 500 zł")}<span className="text-base font-normal text-slate-500">{t(" / year", " / rok")}</span></div>
-          <p className="text-sm text-slate-600">{t("Paid upfront, $208 a month.", "Płatne z góry, 208 zł miesięcznie.")}</p>
+          <p className="text-sm text-slate-600">{t("One payment, no auto-renewal. That's $208 a month.", "Jedna płatność, bez odnawiania. To 208 zł miesięcznie.")}</p>
           {stripe ? (
             <button type="button" onClick={() => kup("rok")} disabled={stan === "miesiac" || stan === "rok"} className="bruno-przycisk mt-auto">
               {stan === "rok" ? t("Redirecting...", "Przekierowuję...") : t("Choose yearly", "Wybieram rocznie")}
             </button>
           ) : null}
         </div>
+        <div className="bruno-szklo rounded-2xl p-6 flex flex-col gap-3">
+          <div className="bruno-h2 text-base">{t("Monthly", "Miesięcznie")}</div>
+          <div className="text-4xl font-bold text-slate-900">{t("$250", "250 zł")}<span className="text-base font-normal text-slate-500">{t(" / month", " / mies.")}</span></div>
+          <p className="text-sm text-slate-600">{t("One payment for 30 days, no auto-renewal.", "Jedna płatność na 30 dni, bez odnawiania.")}</p>
+          {stripe ? (
+            <button type="button" onClick={() => kup("miesiac")} disabled={stan === "miesiac" || stan === "rok"} className="bruno-przycisk-2 mt-auto">
+              {stan === "miesiac" ? t("Redirecting...", "Przekierowuję...") : t("Choose monthly", "Wybieram miesięcznie")}
+            </button>
+          ) : null}
+        </div>
       </div>
       {stan === "blad" && <p className="text-center text-sm text-red-700">{t("Couldn't open checkout. Try again or email hello@jakubchodakowski.com.", "Nie udało się otworzyć płatności. Spróbuj jeszcze raz albo napisz: hello@jakubchodakowski.com.")}</p>}
 
-      <ul className="bruno-szklo rounded-2xl p-6 max-w-3xl mx-auto w-full grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-slate-800">
-        {(jezyk === "pl" ? PRO_PUNKTY_PL : PRO_PUNKTY).map((p) => (
-          <li key={p} className="flex gap-2"><span className="text-emerald-600 font-semibold">✓</span>{p}</li>
-        ))}
-      </ul>
+      {/* 11.10 (USER_001): co jest w Bruno Pro jako prawdziwa tabelka (jak plusy i minusy w Feedbacku). */}
+      {(() => {
+        const punkty = jezyk === "pl" ? PRO_PUNKTY_PL : PRO_PUNKTY;
+        const wiersze = Array.from({ length: Math.ceil(punkty.length / 2) }, (_, i) => [punkty[2 * i], punkty[2 * i + 1]]);
+        return (
+          <section className="bruno-szklo rounded-2xl p-5 max-w-3xl mx-auto w-full overflow-x-auto">
+            <table className="w-full text-sm table-fixed border-collapse">
+              <thead>
+                <tr>
+                  <th colSpan={2} className="text-left pb-3 font-normal">
+                    <span className="bruno-h2 text-base">{t("What you get in Bruno Pro", "Co dostajesz w Bruno Pro")}</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {wiersze.map(([a, b], i) => (
+                  <tr key={i} className="align-top border-t border-slate-200/60">
+                    <td className="py-2.5 pr-4 text-slate-800"><span className="flex gap-2"><span className="text-emerald-600 font-semibold shrink-0">✓</span><span>{a}</span></span></td>
+                    <td className="py-2.5 pl-4 text-slate-800 border-l border-slate-200/60">{b ? <span className="flex gap-2"><span className="text-emerald-600 font-semibold shrink-0">✓</span><span>{b}</span></span> : null}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        );
+      })()}
 
       {!stripe && (
         <div className="flex flex-col items-center gap-2">

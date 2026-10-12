@@ -39,7 +39,6 @@ export default function CzatDymek() {
             <span className="size-9 rounded-full bg-white/15 grid place-items-center bruno-h2 text-sm">B</span>
             <div className="min-w-0 flex-1">
               <div className="bruno-h2 text-[15px] leading-tight">{t("Message us", "Napisz do nas")}</div>
-              <div className="text-[12px] text-white/80">{t("We'll reply to your account email.", "Odpowiemy mailem na adres Twojego konta.")}</div>
             </div>
             <button type="button" onClick={() => setOtwarty(false)} aria-label={t("Close", "Zamknij")} className="text-white/80 hover:text-white text-2xl leading-none px-1">×</button>
           </div>

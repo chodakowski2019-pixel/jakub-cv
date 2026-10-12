@@ -12,6 +12,8 @@ export const LINKI = [
   { href: "/bruno/trening", nazwa: "Drills", nazwaPl: "Trening", ikona: "trening" },
   { href: "/bruno/feedback", nazwa: "Feedback", nazwaPl: "Feedback", ikona: "feedback" },
   { href: "/bruno/statystyki", nazwa: "Stats", nazwaPl: "Statystyki", ikona: "statystyki" },
+  // 11.10 (USER_001, E32): kalendarz rozmów i treningu, do kiedy trwa dostęp.
+  { href: "/bruno/kalendarz", nazwa: "Calendar", nazwaPl: "Kalendarz", ikona: "kalendarz" },
   { href: "/bruno/dostosuj", nazwa: "Customize Bruno", nazwaPl: "Dostosuj Bruno", ikona: "dostosuj" },
   { href: "/bruno/ustawienia", nazwa: "Settings", nazwaPl: "Ustawienia", ikona: "ustawienia" },
 ] as const;
@@ -44,6 +46,8 @@ export function Ikona({ nazwa, rozmiar = 20, grubosc = 1.7 }: { nazwa: NazwaIkon
       return <svg {...w}><rect x="3" y="5" width="13" height="15" rx="2" /><path d="M8 3h11a2 2 0 0 1 2 2v11" /><path d="M7 12h5M7 15.5h3" /></svg>;
     case "feedback":
       return <svg {...w}><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 4.5V3h6v1.5" /><path d="M9 11l2 2 4-4" /><path d="M9 16h6" /></svg>;
+    case "kalendarz":
+      return <svg {...w}><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M3 10h18M8 3v4M16 3v4" /><circle cx="8.5" cy="14.5" r="1" fill="currentColor" /><circle cx="12" cy="14.5" r="1" fill="currentColor" /></svg>;
     case "statystyki":
       return <svg {...w}><rect x="3" y="3" width="18" height="18" rx="5" /><path d="M7 14l3-4 3 3 4-5" /></svg>;
     case "dostosuj":

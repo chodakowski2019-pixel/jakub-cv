@@ -62,3 +62,20 @@ html {
   background: var(--accent);
   color: #0a1218;
 }
+
+/* 11.10 (USER_001: „przy przewijaniu na chwilę niebieskie tło”): pod panelem leżała niebieska
+   poświata strony jakubchodakowski.com (body::before z globals.css), widoczna przy odbiciu przewijania.
+   W panelu Bruno: czarne tło strony, bez poświaty i bez odbijania. */
+html:has(.bruno.zloty),
+body:has(.bruno.zloty),
+html:has(.bruno-tlo),
+body:has(.bruno-tlo) {
+  background: #0b0b0b;
+  overscroll-behavior-y: none;
+}
+body:has(.bruno.zloty)::before,
+body:has(.bruno.zloty)::after,
+body:has(.bruno-tlo)::before,
+body:has(.bruno-tlo)::after {
+  display: none;
+}

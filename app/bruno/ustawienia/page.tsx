@@ -42,6 +42,14 @@ export default async function BrunoUstawieniaPage() {
         />
       </section>
       )}
+      {/* 11.10: dokumenty w jednym miejscu panelu (wcześniej stopka na każdym ekranie). Rozmowy są nagrywane: RODO = łatwy dostęp. */}
+      <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-3">
+        <h2 className="bruno-h2 text-lg">{t("Documents", "Dokumenty")}</h2>
+        <div className="flex flex-wrap gap-4 text-sm">
+          <a href="/regulamin" className="underline">{t("Terms", "Regulamin")}</a>
+          <a href="/polityka-prywatnosci" className="underline">{t("Privacy Policy", "Polityka prywatności")}</a>
+        </div>
+      </section>
     </div>
   );
 }

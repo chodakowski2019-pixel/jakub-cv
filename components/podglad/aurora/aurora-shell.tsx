@@ -31,7 +31,7 @@ export default function AuroraShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${s.root} ${inter.variable}`}>
+    <div className={`bruno-tlo ${s.root} ${inter.variable}`}>
       <main className={s.wrap}>
         <section className={s.art} aria-label={etykietaPanelu}>
           <AuroraCanvas fallbackClass={s.artFallback} />

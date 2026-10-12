@@ -45,7 +45,7 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   // 11.10: język panelu = język konta; niezalogowany = domena (salesbruno.pl) albo ?pl (nagłówek x-jezyk z proxy).
   const h = await headers();
   const jezyk = konto?.jezyk === "pl" || konto?.jezyk === "en" ? konto.jezyk : ((h.get("x-jezyk") as "pl" | "en" | null) ?? jezykZHosta(h.get("host")) ?? "en");
-  if (!email) return <JezykProvider jezyk={jezyk}><div className={fonty}>{children}</div></JezykProvider>;
+  if (!email) return <JezykProvider jezyk={jezyk}><div className={`bruno-tlo ${fonty}`}>{children}</div></JezykProvider>;
 
   // Blokada free po 3 rozmowach na pierwszym wejściu (twarde wejście z adresu). Przejścia między
   // zakładkami pilnuje UkladZloty w przeglądarce, bo układ nie renderuje się przy nich od nowa.
