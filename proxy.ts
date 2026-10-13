@@ -61,6 +61,16 @@ export function proxy(request: NextRequest) {
   // --- 11.10 (USER_001): DOMENY BRUNO. salesbruno.com = EN, salesbruno.pl = PL. Ładne adresy = rewrite
   // na istniejące strony, stare adresy = przekierowanie na ładne. Panel zostaje pod /bruno/... ---
   const jezyk = jezykZHosta(host);
+  // 13.10: www.salesbruno.* → bez www (308). Inaczej logowanie Google wysyła adres powrotu z www,
+  // którego nie ma w Google Cloud (redirect_uri_mismatch), a sesja żyje na dwóch osobnych hostach.
+  const hostBezPortu = (host ?? "").toLowerCase().split(":")[0];
+  if (jezyk && hostBezPortu.startsWith("www.")) {
+    const url = request.nextUrl.clone();
+    url.host = hostBezPortu.slice(4);
+    url.port = "";
+    url.protocol = "https:";
+    return NextResponse.redirect(url, 308);
+  }
   if (jezyk) {
     const P = SCIEZKI[jezyk];
     if (pathname === "/") return dalej(request, pathname, jezyk, "/brunobusiness");
