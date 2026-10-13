@@ -287,18 +287,19 @@ const CENNIK = {
       "Statystyki i postęp",
       "Codzienne przypomnienia",
     ],
-    cta: "Zaczynam za darmo",
+    cta: "Zaczynam bezpłatnie",
     pod: "Do darmowych rozmów nie potrzebujesz karty.",
   },
 } as const;
 
 // 9.10 (USER_001): sekcja „Zobacz Bruno w środku”: 3 zrzuty ekranu (panel, rozmowa, feedback).
-// Zrzuty wchodzą po poprawie designu panelu (zadanie 3 na 10.10); do tego czasu ramki z podpisem.
+// 13.10: zrzuty PL z polskiego panelu (`scripts/bruno-zrzuty-lp.mjs`, 1600 px webp) w `public/bruno/zrzuty/pl-*.webp`.
+// EN jeszcze bez plików: `onError` chowa obraz i zostaje ramka z podpisem.
 const ZRZUTY = {
   en: { h: "See Bruno inside", pod: [["Your panel", "Today's plan, your calls, your progress"], ["A call with Bruno", "Bruno talks back, raises objections, pushes to end the call"], ["Feedback", "Score, what worked, what to fix next time"]] },
   pl: { h: "Zobacz Bruno w środku", pod: [["Twój panel", "Plan dnia, Twoje rozmowy, Twój postęp"], ["Rozmowa z Bruno", "Bruno odpowiada, zgłasza obiekcje, próbuje skończyć rozmowę"], ["Feedback", "Ocena, co zagrało, co poprawić następnym razem"]] },
 } as const;
-const ZRZUTY_PLIKI = ["/bruno-zrzut-panel.png", "/bruno-zrzut-rozmowa.png", "/bruno-zrzut-feedback.png"];
+const zrzutyPliki = (jezyk: Jezyk) => ["panel", "rozmowa", "feedback"].map((n) => `/bruno/zrzuty/${jezyk}-${n}.webp`);
 
 // \n w tytule = łamanie wiersza tylko na szerokim ekranie.
 function Tytul({ t }: { t: string }) {
@@ -361,9 +362,9 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
   const otworzFormularz = (przycisk: number) => () => {
     setMenu(false);
     track("salesai_cta", { przycisk, wersja });
-    // 9.10 (USER_001): na stronie dla handlowców każdy przycisk prowadzi do /bruno (założenie darmowego konta albo logowanie).
+    // 13.10 (USER_001): na stronie dla handlowców każdy przycisk prowadzi do REJESTRACJI (.pl /rejestracja, .com /signup), nie do logowania.
     if (wersja === "reps") {
-      window.location.href = adresStrony(jezyk, "logowanie", naDomenie);
+      window.location.href = adresStrony(jezyk, "rejestracja", naDomenie);
       return;
     }
     setPokazFormularz(true);
@@ -597,7 +598,7 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
                     <div className={s.scrollLaptop}>
                       <div className={s.laptop}>
                         <div className={s.laptopEkran} data-brak={jezyk === "pl" ? "zrzut ekranu wkrótce" : "screenshot coming soon"}>
-                          {ZRZUTY_PLIKI.map((src, i) => (
+                          {zrzutyPliki(jezyk).map((src, i) => (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img key={src} src={src} alt={ZRZUTY[jezyk].pod[i][0]} loading="lazy" className={aktywnyZrzut === i ? s.laptopObrazOn : ""} onError={(e) => (e.currentTarget.style.display = "none")} />
                           ))}
