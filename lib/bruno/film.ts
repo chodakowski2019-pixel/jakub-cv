@@ -15,13 +15,13 @@ export const FILM_OKLADKA_PELNY = "/bruno/oprowadzanie-v10-pelny.jpg";
 export const FILM_DLUGOSC_PELNY = "1 min";
 
 /**
- * Wersja PL: v11 (12.10) = polskie ekrany panelu (konto free), lektor Adam, 1 min 17 s.
- * Nowe sceny: „Poznajmy się” po rejestracji, „Komu sprzedajesz” + zapis sam w Dostosuj, Kalendarz.
+ * Wersja PL: v12 (13.10) = v11 bez sceny „Poznajmy się” (film leci PO tym ekranie, USER_001) i z żywszym lektorem
+ * (Adam, eleven_v3 stability 0 = Creative, wykrzykniki), 1 min 8 s. Sceny: panel, Dostosuj (komu sprzedajesz + zapis sam), Test, Start, Feedback, Trening, Kalendarz, Bruno Pro.
  * Jest tylko wersja z końcówką Bruno Pro.
  */
-export const FILM_OPROWADZAJACY_PL = "/bruno/oprowadzanie-v11-pl.mp4";
-export const FILM_OKLADKA_PL = "/bruno/oprowadzanie-v11-pl.jpg";
-export const FILM_DLUGOSC_PL = "1 min 17 s";
+export const FILM_OPROWADZAJACY_PL = "/bruno/oprowadzanie-v12-pl.mp4";
+export const FILM_OKLADKA_PL = "/bruno/oprowadzanie-v12-pl.jpg";
+export const FILM_DLUGOSC_PL = "1 min 8 s";
 
 /**
  * 11.10 (USER_001): który film dla którego konta. Free (B2C, 3 rozmowy) = wersja z końcówką
