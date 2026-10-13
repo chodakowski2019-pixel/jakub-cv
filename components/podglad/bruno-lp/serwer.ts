@@ -35,7 +35,7 @@ const OPISY: Record<CelStrony, Record<Jezyk, { title: string; description: strin
       description: "Practice your next sales call with an AI customer before it counts. Every call gets a score and a practice plan. Your first 3 calls are free.",
     },
     pl: {
-      title: "Bruno AI dla handlowców | Przećwicz następną rozmowę",
+      title: "Wykorzystaj swój potencjał | sprzedaży można się nauczyć",
       description: "Przećwicz rozmowę sprzedażową z klientem AI, zanim zadzwonisz do prawdziwego. Każda rozmowa dostaje ocenę i plan ćwiczeń. Pierwsze 3 rozmowy za darmo.",
     },
   },
@@ -69,7 +69,8 @@ export async function metadaneBruno(cel: CelStrony, searchParams?: Szukaj, robot
       siteName: "Bruno AI",
       locale: jezyk === "pl" ? "pl_PL" : "en_US",
       type: "website",
-      images: [{ url: "/jakub.jpg" }],
+      // 13.10 (USER_001): handlowcy = zorza z rejestracji + „Bruno AI” (1200x630, pełna szerokość na FB). Reszta = zdjęcie Jakuba.
+      images: cel === "handlowcy" ? [{ url: "/bruno/og-bruno.png", width: 1200, height: 630, alt: "Bruno AI" }] : [{ url: "/jakub.jpg" }],
     },
     ...(robots ? { robots } : {}),
   };
