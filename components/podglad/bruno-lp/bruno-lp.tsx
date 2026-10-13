@@ -1,6 +1,6 @@
 "use client";
 
-import { jezykZHosta } from "@/lib/bruno/domeny";
+import { adresBruno, jezykZHosta, SCIEZKI } from "@/lib/bruno/domeny";
 import { adresStrony, naDomenieBruno, type CelBruno } from "../aurora/jezyk";
 
 import { useEffect, useRef, useState } from "react";
@@ -422,7 +422,7 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
   );
 
   return (
-    <div className={`${s.root} ${zloto ? s.zloto : ""}`} ref={rootRef}>
+    <div className={`${s.root} ${zloto ? s.zloto : ""} bruno-lp-jasne`} ref={rootRef}>
       <nav className={`${s.nav} ${pokazFormularz ? s.navFormularz : ""}`}>
         <div className={s.navL}>
           <a className={s.logo} href="#top" onClick={doSekcji("top")}>
@@ -439,7 +439,8 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
           </div>
         </div>
         {/* 9.10 (USER_001): bez przycisku „Menu”; przycisk zapisu w stylu dawnego „Menu” (czarny, biała kropka). */}
-        <button type="button" className={`${s.pill} ${s.pillBlack}`} onClick={otworzFormularz(3)}>
+        {/* 13.10 (USER_001): na telefonie ukryty, bo na dole jest przyklejony ten sam przycisk (.lepki). */}
+        <button type="button" className={`${s.pill} ${s.pillBlack} ${s.navCta}`} onClick={otworzFormularz(3)}>
           <span className={s.dot}>+</span>{t.navCta}
         </button>
       </nav>
@@ -699,6 +700,12 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
               <a href="/regulamin">{u.regulamin}</a>
               <a href="/polityka-prywatnosci">{u.polityka}</a>
               <a href={adresStrony(jezyk, "bezpieczenstwo", naDomenie)}>{u.bezpieczenstwo}</a>
+              {/* 13.10: wyjście z przekierowania po kraju (proxy.ts): ?lang=en zapamiętuje EN na salesbruno.com na rok. */}
+              {jezyk === "pl" && (
+                <a href={`${adresBruno("en", wersja === "business" ? SCIEZKI.en.firmy : SCIEZKI.en.handlowcy)}?lang=en`} hrefLang="en">
+                  English
+                </a>
+              )}
             </nav>
             <span>{t.stopka}</span>
           </footer>

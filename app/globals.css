@@ -79,3 +79,14 @@ body:has(.bruno-tlo)::before,
 body:has(.bruno-tlo)::after {
   display: none;
 }
+
+/* 13.10 (USER_001: „jak się wyciąga stronę, pod nią niebieskie tło”): LP Bruno (salesbruno.com / .pl)
+   jasna, więc pod spodem też jasne tło, bez niebieskiej poświaty jakubchodakowski.com. */
+html:has(.bruno-lp-jasne),
+body:has(.bruno-lp-jasne) {
+  background: #f6f6f5;
+}
+body:has(.bruno-lp-jasne)::before,
+body:has(.bruno-lp-jasne)::after {
+  display: none;
+}

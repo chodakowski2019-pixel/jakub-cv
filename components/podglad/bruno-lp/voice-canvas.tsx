@@ -39,8 +39,9 @@ export default function VoiceCanvas({ className, akcentRgb = "232, 140, 70", baz
       const n = mobile ? 46 : 64;
       const krok = szer / n;
       const bar = Math.max(2, krok * 0.34);
-      const srodek = h * (mobile ? 0.24 : 0.46);
-      const maks = h * (mobile ? 0.08 : 0.2);
+      // 13.10 (USER_001): na telefonie fala w pikselach, tyle wolnego nad nią co pod nią (CSS .introInner padding-top 312px).
+      const srodek = mobile ? 182 : h * 0.46;
+      const maks = mobile ? 60 : h * 0.2;
 
       for (let i = 0; i < n; i++) {
         const u = i / (n - 1);

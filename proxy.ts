@@ -71,6 +71,29 @@ export function proxy(request: NextRequest) {
     url.protocol = "https:";
     return NextResponse.redirect(url, 308);
   }
+  // 13.10 (USER_001): ikona karty na domenach Bruno pomarańczowa (jakubchodakowski.com zostaje zielona).
+  const IKONY: Record<string, string> = { "/icon.svg": "/bruno/ikona.svg", "/favicon.ico": "/bruno/ikona.ico", "/apple-icon.png": "/bruno/ikona-apple.png" };
+  if (IKONY[pathname]) {
+    return jezyk ? NextResponse.rewrite(new URL(IKONY[pathname], request.url)) : NextResponse.next();
+  }
+  // 13.10 (USER_001): wejście z Polski (kraj z IP, nagłówek Vercela) na stronę firm albo handlowców salesbruno.com
+  // → odpowiednik na salesbruno.pl. 307, bo wynik zależy od kraju. Rejestracja, logowanie i panel bez przekierowania
+  // (sesja żyje osobno na każdej domenie). Link „English” na .pl daje ?lang=en = cookie na rok, bez przekierowania.
+  if (jezyk === "en") {
+    if (searchParams.get("lang") === "en") {
+      const url = request.nextUrl.clone();
+      url.searchParams.delete("lang");
+      const odp = NextResponse.redirect(url, 307);
+      odp.cookies.set("bruno_lang", "en", { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
+      return odp;
+    }
+    const plOdpowiednik = pathname === SCIEZKI.en.firmy ? SCIEZKI.pl.firmy : pathname === SCIEZKI.en.handlowcy ? SCIEZKI.pl.handlowcy : null;
+    if (plOdpowiednik && request.headers.get("x-vercel-ip-country") === "PL" && request.cookies.get("bruno_lang")?.value !== "en") {
+      const cel = new URL(adresBruno("pl", plOdpowiednik));
+      searchParams.forEach((v, k) => cel.searchParams.set(k, v));
+      return NextResponse.redirect(cel, 307);
+    }
+  }
   if (jezyk) {
     const P = SCIEZKI[jezyk];
     if (pathname === "/") return dalej(request, pathname, jezyk, "/brunobusiness");
@@ -156,5 +179,5 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   // 11.10: domeny Bruno łapią wszystko poza plikami statycznymi i API (strony Jakuba na salesbruno też dostają x-jezyk).
-  matcher: ["/((?!api/|_next/|favicon|icon|apple-icon|.*\\.[a-z0-9]{2,5}$).*)"],
+  matcher: ["/((?!api/|_next/|favicon|icon|apple-icon|.*\\.[a-z0-9]{2,5}$).*)", "/icon.svg", "/favicon.ico", "/apple-icon.png"],
 };

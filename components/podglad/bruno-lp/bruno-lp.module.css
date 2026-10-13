@@ -2472,6 +2472,9 @@
     width: 100%;
     margin-top: 0;
   }
+  .navCta {
+    display: none;
+  }
   .footer {
     padding-bottom: 96px;
   }
@@ -2782,4 +2785,18 @@
 }
 .zloto .okZdjecie img {
   box-shadow: 0 10px 40px rgba(195, 155, 69, 0.45), 0 0 24px rgba(195, 155, 69, 0.25);
+}
+
+/* 13.10 (USER_001): telefon: pod falą tyle wolnego, ile nad nią. Fala: środek 182px, ±60px (voice-canvas.tsx).
+   Nav ok. 52px → 70px wolnego → fala 120px → 70px wolnego → nagłówek. */
+@media (max-width: 759px) {
+  .intro {
+    min-height: 0;
+    padding-top: 0;
+  }
+  .introInner {
+    min-height: 0;
+    padding-top: 312px;
+    align-content: start;
+  }
 }
