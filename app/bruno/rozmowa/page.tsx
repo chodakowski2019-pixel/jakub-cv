@@ -35,7 +35,7 @@ export default async function BrunoRozmowaPage({ searchParams }: { searchParams:
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
           {t("Set up", "Uzupełnij")} <span className="bruno-gradient-tekst">Bruno</span>
         </h1>
-        <p className="text-slate-600 max-w-md">
+        <p className="bruno-opis text-slate-600 max-w-md">
           {t(
             "Before your first call, tell Bruno what you sell and who your customer is. It takes 2 minutes. You can paste your website and Bruno fills it in for you.",
             "Przed pierwszą rozmową powiedz Bruno, co sprzedajesz i kim jest Twój klient. To 2 minuty. Możesz wkleić adres strony, a Bruno wypełni pola sam.",

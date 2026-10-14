@@ -26,7 +26,7 @@ export default function UstawieniaForm({ godzina }: { godzina: number }) {
     <form onSubmit={zapisz} className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-5">
       <div>
         <h2 className="bruno-h2 text-lg">{t("Practice reminders", "Przypomnienia o treningu")}</h2>
-        <p className="text-sm text-slate-600 mt-1">{t("If you haven't practiced yet that day, we'll send you an email reminder. Reviews are what make a rep great.", "Jeżeli jeszcze nie zrobiłeś treningu, otrzymasz przypomnienie na e-mail. Powtórki są kluczowe dla skuteczności handlowca.")}</p>
+        <p className="bruno-opis text-sm text-slate-600 mt-1">{t("If you haven't practiced yet that day, we'll send you an email reminder. Reviews are what make a rep great.", "Jeżeli jeszcze nie zrobiłeś treningu, otrzymasz przypomnienie na e-mail. Powtórki są kluczowe dla skuteczności handlowca.")}</p>
       </div>
       <div className="max-w-xs">
         <label className="bruno-etykieta" htmlFor="godzina">{t("Reminder time", "Godzina")} <span className="font-normal text-slate-400">{t("(during the trial: around 8:00 AM)", "(w teście: rano ok. 8:00)")}</span></label>

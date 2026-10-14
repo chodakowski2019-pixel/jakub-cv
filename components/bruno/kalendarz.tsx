@@ -189,7 +189,7 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
             );
           })}
         </div>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm mt-5" style={{ color: "rgba(245, 242, 234, 0.72)" }}>
+        <div className="bruno-opis flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm mt-5" style={{ color: "rgba(245, 242, 234, 0.72)" }}>
           <span>📞 {t("calls · average score", "rozmowy · średnia ocena")}</span>
           <span>🃏 {t("flashcards", "fiszki")}</span>
           {koniec && (

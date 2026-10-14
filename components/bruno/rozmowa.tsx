@@ -761,7 +761,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
                   >
                     <div className={`mb-2 ${wybrany ? "text-cyan-800" : "text-slate-500"}`}><IkonaTrybu nazwa={t.ikona} /></div>
                     <div className="bruno-h2 text-base">{t.nazwa}</div>
-                    <div className="text-sm text-slate-600 mt-1">{t.opis}</div>
+                    <div className="bruno-opis text-sm text-slate-600 mt-1">{t.opis}</div>
                   </button>
                 );
               })}
@@ -804,7 +804,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
                 return (
                   <button key={id} type="button" aria-pressed={wybrany} onClick={() => setCel(id)} className={kafelek(wybrany, "p-3")}>
                     <div className="font-semibold text-sm text-slate-900">{c.nazwa}</div>
-                    <div className="text-xs text-slate-500 mt-0.5">{c.opis}</div>
+                    <div className="bruno-opis text-xs text-slate-500 mt-0.5">{c.opis}</div>
                   </button>
                 );
               })}
@@ -828,7 +828,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
                       <div className="bruno-h2 text-base">{k.nazwa}</div>
                       <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: `${k.kolor}1a`, color: k.kolor }}>{k.krotko}</span>
                     </div>
-                    <div className="text-sm text-slate-600 mt-1">{k.opis}</div>
+                    <div className="bruno-opis text-sm text-slate-600 mt-1">{k.opis}</div>
                   </button>
                 );
               })}
@@ -857,7 +857,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
                       <div className="bruno-h2 text-base">{z.nazwa}</div>
                       <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{z.krotko}</span>
                     </div>
-                    <div className="text-sm text-slate-600 mt-1">{z.opis}</div>
+                    <div className="bruno-opis text-sm text-slate-600 mt-1">{z.opis}</div>
                   </button>
                 );
               })}

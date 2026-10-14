@@ -196,7 +196,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         <div className="bruno-szklo rounded-3xl p-8 text-center flex flex-col items-center gap-3">
           <div className="text-4xl">✅</div>
           <h2 className="bruno-h2 text-2xl">{t("Today's flashcards are done", "Plan fiszek na dziś zrobiony")}</h2>
-          <p className="text-sm text-slate-600">{t(`Your trial gives you ${dziennie} ${dziennie === 1 ? "flashcard" : "flashcards"} a day. More tomorrow.`, `W teście masz ${dziennie} fiszek dziennie. Następne jutro.`)}</p>
+          <p className="bruno-opis text-sm text-slate-600">{t(`Your trial gives you ${dziennie} ${dziennie === 1 ? "flashcard" : "flashcards"} a day. More tomorrow.`, `W teście masz ${dziennie} fiszek dziennie. Następne jutro.`)}</p>
           <Link href="/bruno/rozmowa" className="bruno-przycisk-2 mt-2">{t("Test yourself in a Live Call with Bruno", "Sprawdź się w teście z Bruno")}</Link>
         </div>
       ) : stan === "koniec" ? (
@@ -208,7 +208,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
               <span key={k} className="size-3 rounded-full" style={{ background: WERDYKTY[w as 1 | 2 | 3 | 4].kolor }} title={WERDYKTY[w as 1 | 2 | 3 | 4].nazwa} />
             ))}
           </div>
-          <p className="text-sm text-slate-600 max-w-md">
+          <p className="bruno-opis text-sm text-slate-600 max-w-md">
             {t(
               `${razem + sesja.karty} ${razem + sesja.karty === 1 ? "flashcard" : "flashcards"} total${sredniWerdykt ? `, average result ${sredniWerdykt}/4` : ""}.`,
               `${razem + sesja.karty} ${mnoga(razem + sesja.karty, ["", ""], ["fiszka", "fiszki", "fiszek"])} łącznie${sredniWerdykt ? `, średni werdykt ${sredniWerdykt}/4` : ""}.`,

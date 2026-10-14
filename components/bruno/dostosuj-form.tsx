@@ -34,7 +34,7 @@ function Sekcja({ nr, tytul, podpowiedz, htmlFor, children }: { nr: number; tytu
           <span className="sm:hidden bruno-gradient-tekst mr-1.5">{nr}.</span>
           {tytul}
         </label>
-        {podpowiedz && <p className="text-[13px] text-slate-500 mt-1 mb-3">{podpowiedz}</p>}
+        {podpowiedz && <p className="bruno-opis text-[13px] text-slate-500 mt-1 mb-3">{podpowiedz}</p>}
         {!podpowiedz && <div className="mb-3" />}
         {children}
       </div>
@@ -186,7 +186,7 @@ export default function DostosujForm({ start, oferta }: { start: Konfig; oferta:
           </div>
           {oferta ? (
             <>
-              <p className="text-[13px] text-slate-500 mt-1 mb-3">{t("Paste your website address or pick a PDF. Bruno reads it and fills in what you sell, who the customer is, and the objections. You can edit anything after.", "Wklej adres strony albo wybierz PDF. Bruno przeczyta i wypełni: co sprzedajecie, kim jest klient, jakie obiekcje padają. Potem możesz wszystko poprawić.")}</p>
+              <p className="bruno-opis text-[13px] text-slate-500 mt-1 mb-3">{t("Paste your website address or pick a PDF. Bruno reads it and fills in what you sell, who the customer is, and the objections. You can edit anything after.", "Wklej adres strony albo wybierz PDF. Bruno przeczyta i wypełni: co sprzedajecie, kim jest klient, jakie obiekcje padają. Potem możesz wszystko poprawić.")}</p>
               <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
                 <input
                   id="oferta-url"
@@ -223,7 +223,7 @@ export default function DostosujForm({ start, oferta }: { start: Konfig; oferta:
               )}
             </>
           ) : (
-            <p className="text-[13px] text-slate-500 mt-1">
+            <p className="bruno-opis text-[13px] text-slate-500 mt-1">
               {t(
                 "With full access, you paste your website address or an offer PDF. Bruno fills in the fields below and knows your offer during the call.",
                 "W pełnym dostępie wklejasz adres strony albo PDF z ofertą, a Bruno sam wypełnia pola niżej i zna Waszą ofertę w rozmowie.",

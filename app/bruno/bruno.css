@@ -738,3 +738,9 @@ html:has(.bruno.zloty), body:has(.bruno.zloty) { background: #080807; }
   /* dymek czatu nad dolnym paskiem */
   .bruno.zloty .bruno-czat { bottom: calc(76px + env(safe-area-inset-bottom)) !important; right: 14px !important; }
 }
+
+/* 14.10 (USER_001: „na telefonach o wiele mniej tekstów, w zasadzie same nagłówki”):
+   do 860 px znikają podtytuły pod nagłówkiem strony i teksty objaśniające oznaczone klasą bruno-opis. */
+@media (max-width: 860px) {
+  .bruno.zloty h1.bruno-h1 + p, .bruno.zloty .bruno-opis { display: none !important; }
+}

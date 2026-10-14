@@ -22,7 +22,7 @@ export default function GlosForm({ glos }: { glos: "m" | "k" }) {
     <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-4">
       <div>
         <h2 className="bruno-h2 text-lg">{t("Bruno's voice", "Głos Bruno")}</h2>
-        <p className="text-sm text-slate-600 mt-1">{t("Who plays your customer in the call.", "Kto gra Twojego klienta w rozmowie.")}</p>
+        <p className="bruno-opis text-sm text-slate-600 mt-1">{t("Who plays your customer in the call.", "Kto gra Twojego klienta w rozmowie.")}</p>
       </div>
       <div className="flex flex-wrap items-center gap-3">
         {(["m", "k"] as const).map((x) => (

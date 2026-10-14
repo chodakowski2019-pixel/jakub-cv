@@ -87,7 +87,7 @@ export default async function BrunoStatystykiPage() {
           <span className="text-[11px] text-slate-400">{t("first → last try", "pierwsza → ostatnia próba")}</span>
         </div>
         {scenariusze.length === 0 ? (
-          <p className="text-sm text-slate-600">
+          <p className="bruno-opis text-sm text-slate-600">
             {t(
               "Shows up when you repeat a call with the same setup (same mode, customer type, goal, and objections). It takes two tries at the same test to show progress.",
               "Pojawi się, gdy powtórzysz rozmowę z tym samym ustawieniem kreatora (ten sam tryb, typ klienta, cel i obiekcje). Dopiero dwa podejścia do tego samego egzaminu pokazują postęp.",

@@ -76,7 +76,7 @@ export default async function BrunoOdblokujPage({ searchParams }: { searchParams
           <li key={k.tytul} className={`bruno-szklo rounded-2xl p-5 relative overflow-hidden ${i === KAFELKI.length - 1 && KAFELKI.length % 2 === 1 ? "sm:col-span-2" : ""}`}>
             <span aria-hidden className="pointer-events-none select-none absolute -top-4 right-3 text-[7rem] leading-none font-extrabold font-[var(--font-poppins)] tracking-[-0.06em] text-cyan-700/10">{i + 1}</span>
             <div className="relative bruno-h2 text-base mb-1">{k.tytul}</div>
-            <p className="relative text-sm text-slate-600">{k.opis}</p>
+            <p className="bruno-opis relative text-sm text-slate-600">{k.opis}</p>
           </li>
         ))}
       </ul>

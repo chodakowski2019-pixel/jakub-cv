@@ -134,7 +134,7 @@ function Minuty({ d }: { d: DanePanelu }) {
   return (
     <article className="card glass mins">
       <h3>{t("Today's plan", "Plan dnia")}</h3>
-      <p>{dane.txt}</p>
+      <p className="bruno-opis">{dane.txt}</p>
       <span className="badge glass"><i />{dane.badge}</span>
       <div className="blocks" aria-hidden>
         {Array.from({ length: 25 }, (_, i) => {
