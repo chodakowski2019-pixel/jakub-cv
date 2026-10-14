@@ -44,8 +44,8 @@ type Teksty = {
 const TEKSTY_EN: Record<Wersja, Teksty> = {
   business: {
     linkInny: { cel: "handlowcy", tekst: "For sales reps" },
-    navCta: "Book a demo call",
-    menuCta: "Book a demo call",
+    navCta: "I want to try Bruno",
+    menuCta: "I want to try Bruno",
     hero: ["Your sales reps", "close more with AI."],
     treningDol: "Bruno AI coaches your team every day",
     kroki: [
@@ -53,7 +53,7 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
       { maly: "Step 2", tytul: "Your rep gets feedback\n+ a review plan", opis: "Bruno coaches each rep 1:1. Then it builds a review plan just for them." },
       { maly: "Step 3", tytul: "Your rep\nimproves results", opis: "It shows in real calls. You see who practiced and who improved." },
     ],
-    krokiCta: "Book a 30-minute demo",
+    krokiCta: "I want to try Bruno",
     korzysciH: "What sales training gives you",
     korzysciOpis: [
       "Companies that coach reps regularly, on a plan, win 32% more forecast deals than companies that leave coaching to chance.",
@@ -61,8 +61,8 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
       "Companies that invest the most in training earn 218% more income per employee and have 24% higher profit margins than those that invest the least.",
     ],
     ctaH: ["Give your team Bruno.", "Start with one month."],
-    ctaBtn: "Book a demo call",
-    ctaBok: "30-minute call. I will show you Bruno playing your own customer, live.",
+    ctaBtn: "I want to try Bruno",
+    ctaBok: "Your first 3 calls with Bruno are free. No card. Then set Bruno up for your whole team.",
     stopka: "AI sales practice for teams",
   },
   reps: {
@@ -94,8 +94,8 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
 const TEKSTY_PL: Record<Wersja, Teksty> = {
   business: {
     linkInny: { cel: "handlowcy", tekst: "Dla handlowców" },
-    navCta: "Umów rozmowę z demo",
-    menuCta: "Umów rozmowę z demo",
+    navCta: "Chcę wypróbować Bruno",
+    menuCta: "Chcę wypróbować Bruno",
     hero: ["Twoi handlowcy", "domykają więcej z AI."],
     treningDol: "Bruno AI trenuje Twój zespół codziennie",
     kroki: [
@@ -103,7 +103,7 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
       { maly: "Krok 2", tytul: "Handlowiec otrzymuje feedback\n+ plan powtórek", opis: "Bruno trenuje handlowca 1:1. Następnie planuje dla niego system powtórek." },
       { maly: "Krok 3", tytul: "Handlowiec\npoprawia wyniki", opis: "Widać to w prawdziwych rozmowach. Widzisz, kto ćwiczył i kto się poprawił." },
     ],
-    krokiCta: "Umów 30-minutowe demo",
+    krokiCta: "Chcę wypróbować Bruno",
     korzysciH: "Co daje trening sprzedaży?",
     korzysciOpis: [
       "Firmy, które trenują handlowców regularnie, według planu, wygrywają o 32% więcej szans sprzedaży niż firmy, w których trening zależy od przypadku.",
@@ -111,8 +111,8 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
       "Firmy, które najwięcej inwestują w szkolenia, mają o 218% wyższy dochód na pracownika i o 24% wyższą marżę niż firmy, które inwestują najmniej.",
     ],
     ctaH: ["Daj zespołowi Bruno.", "Zacznij od jednego miesiąca."],
-    ctaBtn: "Umów rozmowę z demo",
-    ctaBok: "30 minut rozmowy. Pokażę Ci na żywo, jak Bruno gra Waszego klienta.",
+    ctaBtn: "Chcę wypróbować Bruno",
+    ctaBok: "Pierwsze 3 rozmowy z Bruno są za darmo. Bez karty. Potem ustawimy Bruno dla całego zespołu.",
     stopka: "Trening sprzedaży z AI dla zespołów",
   },
   reps: {
@@ -187,12 +187,12 @@ const REPS = {
     zarTekst: "The best reps are not born that way. They practice more calls than everyone else.",
     zarZrodlo: "U.S. Bureau of Labor Statistics, May 2024, technical and scientific sales reps",
     szefH: "Want Bruno for your whole team?",
-    szefTekst: "Send this page to your manager. Bruno for teams has team plans and a demo call.",
+    szefTekst: "Send this page to your manager. Bruno for teams has team plans and 3 free calls to test it.",
     szefMail: "Email it to my manager",
     szefKopiuj: "Copy the link",
     szefSkopiowane: "Link copied",
     szefTemat: "Bruno AI for our sales team",
-    szefTresc: "Hi,\n\nI found Bruno AI. It is an AI customer our reps can practice sales calls with before real ones. Every call gets a score and a practice plan.\n\nHere is the page for teams, you can book a 30-minute demo there:\n",
+    szefTresc: "Hi,\n\nI found Bruno AI. It is an AI customer our reps can practice sales calls with before real ones. Every call gets a score and a practice plan.\n\nHere is the page for teams, you can try 3 calls for free there:\n",
     faqH: "Questions",
     faq: [
       ["What is Bruno?", "An AI customer you talk to out loud. Bruno plays a buyer for your product, raises real objections and tries to end the call. After every call you get a score and a practice plan."],
@@ -211,12 +211,12 @@ const REPS = {
     zarTekst: "Najlepsi nie rodzą się najlepsi. Ćwiczą więcej rozmów niż wszyscy inni.",
     zarZrodlo: "U.S. Bureau of Labor Statistics, maj 2024, handlowcy techniczni i naukowi (USA)",
     szefH: "Chcesz Bruno dla całego zespołu?",
-    szefTekst: "Wyślij tę stronę szefowi. Bruno dla firm ma plany dla zespołów i rozmowę z demo.",
+    szefTekst: "Wyślij tę stronę szefowi. Bruno dla firm ma plany dla zespołów i 3 bezpłatne rozmowy na próbę.",
     szefMail: "Wyślij szefowi mailem",
     szefKopiuj: "Kopiuj link",
     szefSkopiowane: "Skopiowano",
     szefTemat: "Bruno AI dla naszego zespołu sprzedaży",
-    szefTresc: "Cześć,\n\nznalazłem Bruno AI. To klient AI, z którym nasi handlowcy mogą ćwiczyć rozmowy, zanim zadzwonią do prawdziwego. Każda rozmowa dostaje ocenę i plan ćwiczeń.\n\nTu jest strona dla firm, można umówić 30-minutowe demo:\n",
+    szefTresc: "Cześć,\n\nznalazłem Bruno AI. To klient AI, z którym nasi handlowcy mogą ćwiczyć rozmowy, zanim zadzwonią do prawdziwego. Każda rozmowa dostaje ocenę i plan ćwiczeń.\n\nTu jest strona dla firm, można przetestować 3 rozmowy za darmo:\n",
     faqH: "Pytania",
     faq: [
       ["Czym jest Bruno?", "Klientem AI, z którym rozmawiasz na głos. Bruno gra kupującego Twój produkt, zgłasza prawdziwe obiekcje i próbuje skończyć rozmowę. Po każdej rozmowie dostajesz ocenę i plan ćwiczeń."],
@@ -324,8 +324,8 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
     const zDomeny = jezykZHosta(window.location.hostname);
     if (zDomeny) setJezyk(zDomeny);
     else if (q.has("pl") || q.get("lang") === "pl") setJezyk("pl");
-    // 9.10: link prosto do zapisu (np. w cold mailu): /brunobusiness#demo
-    if (window.location.hash.startsWith("#demo")) setPokazFormularz(true);
+    // 9.10: link prosto do zapisu (np. w cold mailu): /brunobusiness#demo. 14.10: otwiera popup „Bruno dla zespołu”.
+    if (window.location.hash.startsWith("#demo") || window.location.hash === "#zespol") setPokazFormularz(true);
   }, []);
   const t = TEKSTY[jezyk][wersja];
   const u = UI[jezyk];
@@ -363,13 +363,16 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
     setMenu(false);
     track("salesai_cta", { przycisk, wersja });
     // 13.10 (USER_001): na stronie dla handlowców każdy przycisk prowadzi do REJESTRACJI (.pl /rejestracja, .com /signup), nie do logowania.
-    if (wersja === "reps") {
-      window.location.href = adresStrony(jezyk, "rejestracja", naDomenie);
-      return;
-    }
-    setPokazFormularz(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // 14.10 (USER_001): strona firm też (3 rozmowy za darmo zamiast umawiania demo).
+    window.location.href = adresStrony(jezyk, "rejestracja", naDomenie);
   };
+  // 14.10 (USER_001): link pod przyciskiem na stronie firm → formularz z kalendarzem (Rezerwacja, rozmowa telefoniczna).
+  const zespolLink =
+    wersja === "business" ? (
+      <button type="button" className={s.zespolLink} onClick={() => { track("salesai_cta", { przycisk: "zespol", wersja }); setPokazFormularz(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+        {jezyk === "pl" ? "Chcesz Bruno dla zespołu? Napisz do mnie" : "Want Bruno for your team? Message me"}
+      </button>
+    ) : null;
 
   useEffect(() => {
     try {
@@ -447,7 +450,6 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
 
       {pokazFormularz ? (
         wersja === "business" ? (
-          // 9.10 (USER_001): firmy umawiają 30-minutową rozmowę z demo zamiast formularza.
           <Rezerwacja jezyk={jezyk} onWstecz={() => setPokazFormularz(false)} />
         ) : (
           <Formularz wersja={wersja} jezyk={jezyk} onWstecz={() => setPokazFormularz(false)} />
@@ -572,6 +574,7 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
                 <button type="button" className={`${s.btnDark} ${s.btnBig}`} onClick={otworzFormularz(1)}>
                   {t.krokiCta}
                 </button>
+                {zespolLink}
               </div>
             )}
           </div>
@@ -671,6 +674,7 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
                   {t.ctaBtn}
                 </button>
               </div>
+              {zespolLink}
             </div>
             <div className={`${s.side} ${s.rv} ${s.d2}`}>
               <p>{t.ctaBok}</p>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { SCIEZKI, adresBruno, jezykZHosta, type Jezyk } from "@/lib/bruno/domeny";
+import { SCIEZKI, STARE_HANDLOWCY, adresBruno, jezykZHosta, type Jezyk } from "@/lib/bruno/domeny";
 
 const GATED_PATHS = [
   "/scamalertmiami/report-scam",
@@ -96,13 +96,15 @@ export function proxy(request: NextRequest) {
   }
   if (jezyk) {
     const P = SCIEZKI[jezyk];
-    if (pathname === "/") return dalej(request, pathname, jezyk, "/brunobusiness");
+    // 14.10 (USER_001): / = handlowcy (B2C), /wspolpraca | /business = firmy (B2B).
     if (pathname === P.handlowcy) return dalej(request, pathname, jezyk, "/brunoai");
+    if (pathname === P.firmy) return dalej(request, pathname, jezyk, "/brunobusiness");
     if (pathname === P.rejestracja) return dalej(request, pathname, jezyk, "/brunorejestracja");
     if (pathname === P.logowanie) return dalej(request, pathname, jezyk, "/bruno");
     // 12.10 (E11): /security (EN) = app/bezpieczenstwo. Na .pl adres jest ten sam, więc bez rewrite.
     if (pathname === P.bezpieczenstwo) return dalej(request, pathname, jezyk, pathname === "/bezpieczenstwo" ? undefined : "/bezpieczenstwo");
-    const nowa: Record<string, string> = { "/brunobusiness": "/", "/brunoai": P.handlowcy, "/brunorejestracja": P.rejestracja, "/bruno": P.logowanie, "/bezpieczenstwo": P.bezpieczenstwo };
+    const nowa: Record<string, string> = { "/brunobusiness": P.firmy, "/brunoai": P.handlowcy, "/brunorejestracja": P.rejestracja, "/bruno": P.logowanie, "/bezpieczenstwo": P.bezpieczenstwo };
+    for (const s of STARE_HANDLOWCY) nowa[s] = P.handlowcy;
     if (nowa[pathname]) {
       const url = request.nextUrl.clone();
       url.pathname = nowa[pathname];
@@ -112,7 +114,7 @@ export function proxy(request: NextRequest) {
     // Adres z drugiej domeny (np. /reps na .pl): na odpowiednik w tej domenie.
     const inny = SCIEZKI[jezyk === "pl" ? "en" : "pl"];
     const odpowiednik =
-      pathname === inny.handlowcy ? P.handlowcy : pathname === inny.rejestracja ? P.rejestracja : pathname === inny.bezpieczenstwo ? P.bezpieczenstwo : null;
+      pathname === inny.firmy ? P.firmy : pathname === inny.rejestracja ? P.rejestracja : pathname === inny.bezpieczenstwo ? P.bezpieczenstwo : null;
     if (odpowiednik) {
       const url = request.nextUrl.clone();
       url.pathname = odpowiednik;
@@ -129,7 +131,7 @@ export function proxy(request: NextRequest) {
     const j: Jezyk = searchParams.has("pl") ? "pl" : "en";
     const P = SCIEZKI[j];
     const sciezka =
-      pathname === "/brunobusiness" ? "/" : pathname === "/brunoai" ? P.handlowcy : pathname === "/brunorejestracja" ? P.rejestracja : pathname === "/bruno" ? P.logowanie : pathname;
+      pathname === "/brunobusiness" ? P.firmy : pathname === "/brunoai" ? P.handlowcy : pathname === "/brunorejestracja" ? P.rejestracja : pathname === "/bruno" ? P.logowanie : pathname;
     const cel = new URL(adresBruno(j, sciezka));
     searchParams.forEach((v, k) => {
       if (k !== "pl") cel.searchParams.set(k, v);

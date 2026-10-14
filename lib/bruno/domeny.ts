@@ -11,10 +11,14 @@ export const DOMENA: Record<Jezyk, string> = {
 
 /** Ładne adresy na domenach Bruno (USER_001 11.10). Panel zostaje pod /bruno/... */
 // 12.10 (E11): strona „Security & Data” dla firm: app/bezpieczenstwo, EN pod /security.
+// 14.10 (USER_001): strona główna = LP dla handlowców (B2C), LP dla firm (B2B) = /wspolpraca (.pl) i /business (.com).
 export const SCIEZKI: Record<Jezyk, { firmy: string; handlowcy: string; rejestracja: string; logowanie: string; bezpieczenstwo: string }> = {
-  en: { firmy: "/", handlowcy: "/reps", rejestracja: "/signup", logowanie: "/login", bezpieczenstwo: "/security" },
-  pl: { firmy: "/", handlowcy: "/handlowcy", rejestracja: "/rejestracja", logowanie: "/login", bezpieczenstwo: "/bezpieczenstwo" },
+  en: { firmy: "/business", handlowcy: "/", rejestracja: "/signup", logowanie: "/login", bezpieczenstwo: "/security" },
+  pl: { firmy: "/wspolpraca", handlowcy: "/", rejestracja: "/rejestracja", logowanie: "/login", bezpieczenstwo: "/bezpieczenstwo" },
 };
+
+/** Adresy LP dla handlowców sprzed 14.10: przekierowanie 308 na stronę główną. */
+export const STARE_HANDLOWCY = ["/reps", "/handlowcy"];
 
 /** Język z nazwy hosta: salesbruno.pl → pl, salesbruno.com → en, inny host → null. */
 export function jezykZHosta(host: string | null | undefined): Jezyk | null {

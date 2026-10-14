@@ -71,7 +71,7 @@ export default function ProCennik({ stripe, zablokowane, zuzyte, ok }: { stripe:
           )}
         </h1>
         <p className="text-slate-600 mt-2 max-w-xl mx-auto">
-          {zablokowane ? t("To keep practicing, unlock Bruno Pro. Every feature, 5 calls a day.", "Żeby trenować dalej, odblokuj Bruno Pro. Wszystkie funkcje, 5 rozmów dziennie.") : t("Every feature, 5 calls a day, no yearly contract.", "Wszystkie funkcje, 5 rozmów dziennie, bez umowy na rok.")}
+          {zablokowane ? t("To keep practicing, unlock Bruno Pro. Every feature, 5 calls a day.", "Żeby trenować dalej, odblokuj Bruno Pro. Wszystkie funkcje, 5 rozmów dziennie.") : t("Unlock every feature", "Odblokuj wszystkie funkcje")}
         </p>
       </div>
 
@@ -102,6 +102,24 @@ export default function ProCennik({ stripe, zablokowane, zuzyte, ok }: { stripe:
       </div>
       {stan === "blad" && <p className="text-center text-sm text-red-700">{t("Couldn't open checkout. Try again or email hello@jakubchodakowski.com.", "Nie udało się otworzyć płatności. Spróbuj jeszcze raz albo napisz: hello@jakubchodakowski.com.")}</p>}
 
+      {/* 14.10 (USER_001): 3 kafelki z badaniami o korzyściach treningu. Te same liczby i źródła co LP handlowców (bruno-lp.tsx, wersja reps). */}
+      <section className="max-w-3xl mx-auto w-full">
+        <h2 className="bruno-h2 text-base mb-3">{t("What sales training gives you", "Co daje trening sprzedaży?")}</h2>
+        <div className="grid sm:grid-cols-3 gap-4">
+          {[
+            { liczba: "+32%", tekst: t("Reps coached regularly, on a plan, win 32% more forecast deals.", "Handlowcy trenowani regularnie, według planu, wygrywają o 32% więcej szans sprzedaży."), zrodlo: t("CSO Insights, 2019 Sales Enablement Study, 900+ companies", "CSO Insights, 2019 Sales Enablement Study, ponad 900 firm") },
+            { liczba: "+28%", tekst: t("Regular, structured coaching lifts quota attainment by 28%.", "Regularny trening według planu podnosi realizację planu o 28%."), zrodlo: t("CSO Insights, 2019 Sales Enablement Study, 900+ companies", "CSO Insights, 2019 Sales Enablement Study, ponad 900 firm") },
+            { liczba: "17%", tekst: t("17% of sales reps bring in 81% of the revenue. Practice is the shortest way into that group.", "17% handlowców przynosi 81% przychodu. Trening to najkrótsza droga do tej grupy."), zrodlo: "Ebsta x Pavilion, GTM Benchmarks 2025" },
+          ].map((k) => (
+            <div key={k.liczba} className="bruno-szklo rounded-2xl p-5 flex flex-col gap-2">
+              <div className="text-3xl font-bold bruno-gradient-tekst">{k.liczba}</div>
+              <p className="text-sm text-slate-800">{k.tekst}</p>
+              <p className="text-[11px] text-slate-500 mt-auto">{t("Source:", "Źródło:")} {k.zrodlo}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* 11.10 (USER_001): co jest w Bruno Pro jako prawdziwa tabelka (jak plusy i minusy w Feedbacku). */}
       {(() => {
         const punkty = jezyk === "pl" ? PRO_PUNKTY_PL : PRO_PUNKTY;
@@ -112,7 +130,7 @@ export default function ProCennik({ stripe, zablokowane, zuzyte, ok }: { stripe:
               <thead>
                 <tr>
                   <th colSpan={2} className="text-left pb-3 font-normal">
-                    <span className="bruno-h2 text-base">{t("What you get in Bruno Pro", "Co dostajesz w Bruno Pro")}</span>
+                    <span className="bruno-h2 text-base">{t("What you get in Bruno Pro", "Co otrzymasz w Bruno Pro")}</span>
                   </th>
                 </tr>
               </thead>

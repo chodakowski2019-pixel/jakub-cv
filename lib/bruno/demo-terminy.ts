@@ -98,9 +98,9 @@ function zlamLinie(l: string): string {
 /**
  * Plik .ics (zaproszenie do kalendarza) dla jednej rozmowy.
  * Z `uczestnik` = zaproszenie (METHOD:REQUEST, załącznik maila). Bez = zwykły wpis do pobrania (METHOD:PUBLISH, link „Apple / Outlook”).
- * `lokalizacja` = link do rozmowy wideo (LOCATION + URL).
+ * `lokalizacja` = link do rozmowy wideo (LOCATION + URL). 14.10: `miejsce` = sam LOCATION bez URL (rozmowa telefoniczna, numer).
  */
-export function zaproszenieIcs(a: { start: string; tytul: string; opis: string; organizator: string; uczestnik?: string | null; uid: string; lokalizacja?: string | null }): string {
+export function zaproszenieIcs(a: { start: string; tytul: string; opis: string; organizator: string; uczestnik?: string | null; uid: string; lokalizacja?: string | null; miejsce?: string | null }): string {
   const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
   const s = new Date(a.start);
   const e = new Date(s.getTime() + DEMO_MINUT * 60000);
@@ -118,7 +118,7 @@ export function zaproszenieIcs(a: { start: string; tytul: string; opis: string; 
     `DTEND:${fmt(e)}`,
     `SUMMARY:${esc(a.tytul)}`,
     `DESCRIPTION:${esc(a.opis)}`,
-    ...(lokalizacja ? [`LOCATION:${esc(lokalizacja)}`, `URL:${lokalizacja}`] : []),
+    ...(lokalizacja ? [`LOCATION:${esc(lokalizacja)}`, `URL:${lokalizacja}`] : a.miejsce ? [`LOCATION:${esc(a.miejsce)}`] : []),
     "STATUS:CONFIRMED",
     `ORGANIZER;CN=Jakub Chodakowski:mailto:${a.organizator}`,
     ...(a.uczestnik ? [`ATTENDEE;CN=${esc(a.uczestnik)};RSVP=TRUE:mailto:${a.uczestnik}`] : []),

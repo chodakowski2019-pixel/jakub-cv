@@ -32,11 +32,12 @@ const T = {
     minut: `${DEMO_MINUT_MAIL} minutes`,
     gdzie: "Where",
     wideo: "Video call",
+    telefon: (tel: string) => `Phone call. I will call you at ${tel}.`,
     linkPozniej: "I will send the link before the call",
     zKim: "With",
     jakub: "Jakub Chodakowski, Founder of Bruno AI",
     coH: "What happens on the call",
-    co: ["I ask about your team and how they sell today.", "You see Bruno live, playing your own customer.", "We decide together if it makes sense for you."],
+    co: ["I ask about your team and how they sell today.", "You hear Bruno live, playing your own customer.", "We decide together if it makes sense for you."],
     dodaj: "Add to Google Calendar",
     ics: "Apple / Outlook (.ics)",
     zalacznik: "Using Outlook or Apple Calendar? Open the invite attached to this email.",
@@ -59,11 +60,12 @@ const T = {
     minut: `${DEMO_MINUT_MAIL} minut`,
     gdzie: "Gdzie",
     wideo: "Rozmowa wideo",
+    telefon: (tel: string) => `Rozmowa telefoniczna. Zadzwonię na numer ${tel}.`,
     linkPozniej: "link wyślę przed rozmową",
     zKim: "Z kim",
     jakub: "Jakub Chodakowski, założyciel Bruno AI",
     coH: "Jak wygląda rozmowa",
-    co: ["Pytam o Twój zespół i o to, jak dziś sprzedaje.", "Widzisz Bruno na żywo, jak gra Waszego klienta.", "Razem decydujemy, czy to ma dla Was sens."],
+    co: ["Pytam o Twój zespół i o to, jak dziś sprzedaje.", "Słyszysz Bruno na żywo, jak gra Waszego klienta.", "Razem decydujemy, czy to ma dla Was sens."],
     dodaj: "Dodaj do Kalendarza Google",
     ics: "Apple / Outlook (.ics)",
     zalacznik: "Używasz Outlooka albo Kalendarza Apple? Otwórz zaproszenie w załączniku.",
@@ -100,6 +102,8 @@ export function mailPotwierdzenieDemo(a: {
   start: string;
   jezyk: "en" | "pl";
   link?: string | null;
+  /** 14.10 (USER_001): rozmowa telefoniczna, „Gdzie” = numer, na który dzwoni Jakub. */
+  telefon?: string | null;
   baza?: string;
   ikonaKalendarza?: string;
 }): MailDemo {
@@ -111,6 +115,8 @@ export function mailPotwierdzenieDemo(a: {
   const kiedy = new Intl.DateTimeFormat(x.locale, { timeZone: x.strefa, weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(start);
   const kiedyGora = kiedy.charAt(0).toUpperCase() + kiedy.slice(1);
   const link = a.link?.trim() || null;
+  const tel = a.telefon?.trim() || null;
+  const gdzieTekst = tel ? x.telefon(tel) : x.wideo;
   // 9.10 (USER_001): nazwa wydarzenia w kalendarzu = „Sales AI x [imię]”.
   const tytulKal = `Sales AI x ${a.imie}`;
   const opisKal = `${x.minut}. ${x.co.join(" ")}${link ? ` ${link}` : ""}`;
@@ -153,7 +159,7 @@ export function mailPotwierdzenieDemo(a: {
           <tr><td>
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
               ${wiersz(x.dlugosc, ESC(x.minut))}
-              ${wiersz(x.gdzie, link ? `<a href="${ESC(link)}" style="color:${ink};text-decoration:underline">${ESC(x.wideo)}</a>` : ESC(x.wideo))}
+              ${wiersz(x.gdzie, link ? `<a href="${ESC(link)}" style="color:${ink};text-decoration:underline">${ESC(x.wideo)}</a>` : ESC(gdzieTekst))}
             </table>
           </td></tr>
           <tr><td align="center" style="padding:26px 0 14px;font:600 15px/1.4 ${font};color:${ink};border-top:1px solid ${linia}">${ESC(x.coH)}</td></tr>
@@ -189,7 +195,7 @@ export function mailPotwierdzenieDemo(a: {
     x.wstep,
     "",
     `${x.dlugosc}: ${x.minut}`,
-    `${x.gdzie}: ${x.wideo}${link ? ` ${link}` : ""}`,
+    `${x.gdzie}: ${link ? `${x.wideo} ${link}` : gdzieTekst}`,
     "",
     x.coH,
     ...x.co.map((c, i) => `${i + 1}. ${c}`),

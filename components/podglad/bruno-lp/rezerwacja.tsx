@@ -7,6 +7,7 @@ import s from "./bruno-lp.module.css";
 import TelefonFlaga, { KRAJE } from "./telefon-flaga";
 
 // Zapis na 30-minutową rozmowę z demo (USER_001 9.10), wersja dla firm (/brunobusiness).
+// 14.10 (USER_001): rozmowa TELEFONICZNA; otwiera ją link „Chcesz Bruno dla zespołu?” na /wspolpraca | /business; + pola firma i produkt.
 // Kreator 3 kroki jak w Gabi, kolejność USER_001: 1 dane → 2 dzień (kalendarz miesiąca) → 3 godzina.
 // Po kroku 1 lead jest zapisany od razu (POST), krok 3 rezerwuje termin (PATCH).
 // Godziny w strefie odwiedzającego. Wygląd = klasy LP.
@@ -30,6 +31,12 @@ const T = {
     laduje: "Loading free times...",
     pustyDzien: "This day is full. Pick another one.",
     imie: "Name *",
+    firma: "Company name *",
+    produkt: "What do you sell? *",
+    produktNp: "e.g. solar panels for homes",
+    telInfo: (tel: string) => `Phone call, 30 minutes. I will call you${tel ? ` at ${tel}` : ""}.`,
+    wybierz: "Pick a time for your phone call",
+    okTel: "I will call you at",
     email: "Work email *",
     warn: "Use an email on your company domain.",
     tel: "Phone *",
@@ -60,6 +67,12 @@ const T = {
     laduje: "Wczytuję wolne terminy...",
     pustyDzien: "Ten dzień już się zapełnił. Wybierz inny.",
     imie: "Imię *",
+    firma: "Nazwa firmy *",
+    produkt: "Co sprzedajecie? *",
+    produktNp: "np. fotowoltaika dla domów",
+    telInfo: (tel: string) => `Rozmowa telefoniczna, 30 minut. Zadzwonię${tel ? ` na numer ${tel}` : ""}.`,
+    wybierz: "Wybierz termin rozmowy telefonicznej",
+    okTel: "Zadzwonię na numer",
     email: "Firmowy e-mail *",
     warn: "Podaj e-mail w domenie firmy.",
     tel: "Telefon *",
@@ -101,7 +114,7 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
   const [gotowe, setGotowe] = useState<string | null>(null);
   // 9.10: następny miesiąc widoczny, gdy API odda jego terminy (7 dni przed końcem miesiąca).
   const [przesuniecie, setPrzesuniecie] = useState(0);
-  const [f, setF] = useState({ imie: "", email: "", telefon: "", kraj: jezyk === "pl" ? "PL" : "US", stanowisko: "", handlowcy: "", zgoda: false, www: "" });
+  const [f, setF] = useState({ imie: "", email: "", telefon: "", kraj: jezyk === "pl" ? "PL" : "US", stanowisko: "", handlowcy: "", firma: "", produkt: "", zgoda: false, www: "" });
   const [wysylam, setWysylam] = useState(false);
   const [blad, setBlad] = useState<string | null>(null);
 
@@ -135,11 +148,13 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sloty, strefa]);
 
+  // 14.10 (USER_001): demo = rozmowa TELEFONICZNA, numer z kroku 1 widoczny w krokach 2-3 i po zapisie.
+  const telPelny = f.telefon ? `${KRAJE.find((k) => k.kod === f.kraj)?.prefiks ?? ""} ${f.telefon}`.trim() : "";
   const godz = (iso: string) => new Date(iso).toLocaleTimeString(x.locale, { hour: "2-digit", minute: "2-digit", timeZone: strefa });
   const krotkaData = (k: string) => new Date(`${k}T12:00:00`).toLocaleDateString(x.locale, { day: "numeric", month: "short" });
   const pelna = (iso: string) => `${new Date(iso).toLocaleDateString(x.locale, { weekday: "long", day: "numeric", month: "long", timeZone: strefa })}, ${godz(iso)}`;
   const emailZly = f.email.includes("@") && !firmowyEmail(f.email);
-  const pole = (k: "imie" | "email" | "telefon" | "handlowcy" | "www") => (e: React.ChangeEvent<HTMLInputElement>) => setF((v) => ({ ...v, [k]: e.target.value }));
+  const pole = (k: "imie" | "email" | "telefon" | "handlowcy" | "firma" | "produkt" | "www") => (e: React.ChangeEvent<HTMLInputElement>) => setF((v) => ({ ...v, [k]: e.target.value }));
 
   // Krok 1: dane → lead zapisany od razu.
   const zapiszDane = async (e: React.FormEvent) => {
@@ -222,6 +237,9 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
             {pelna(gotowe)}
           </p>
           <p className={s.okText} style={{ marginTop: 22 }}>
+            {x.okTel} <b>{telPelny}</b>
+          </p>
+          <p className={s.okText}>
             {x.okB} <b>{f.email}</b>
           </p>
         </div>
@@ -291,6 +309,10 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
               <input id="demo-imie" required autoComplete="given-name" className={s.input} placeholder={jezyk === "pl" ? "Adam" : "James"} value={f.imie} onChange={pole("imie")} />
             </div>
             <div>
+              <label className={s.fLabel} htmlFor="demo-firma">{x.firma}</label>
+              <input id="demo-firma" required autoComplete="organization" maxLength={120} className={s.input} value={f.firma} onChange={pole("firma")} />
+            </div>
+            <div>
               <label className={s.fLabel} htmlFor="demo-email">{x.email}</label>
               <input id="demo-email" required type="email" autoComplete="email" aria-invalid={emailZly} className={`${s.input} ${emailZly ? s.inputWarn : ""}`} placeholder={jezyk === "pl" ? "adam@twojafirma.pl" : "james@yourcompany.com"} value={f.email} onChange={pole("email")} />
               {emailZly && <p className={s.warn}>{x.warn}</p>}
@@ -309,6 +331,10 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
                 ))}
               </div>
             </fieldset>
+            <div>
+              <label className={s.fLabel} htmlFor="demo-produkt">{x.produkt}</label>
+              <input id="demo-produkt" required maxLength={200} className={s.input} placeholder={x.produktNp} value={f.produkt} onChange={pole("produkt")} />
+            </div>
             <div>
               <label className={s.fLabel} htmlFor="demo-handlowcy">{x.ilu}</label>
               <input id="demo-handlowcy" required type="number" inputMode="numeric" min={1} max={100000} step={1} className={s.input} placeholder={x.np} value={f.handlowcy} onChange={pole("handlowcy")} />
@@ -330,6 +356,8 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
 
         {krok === 2 && (
           <div className={s.form}>
+            {/* 14.10 (USER_001): napis nad kalendarzem. */}
+            <h2 className={s.kalTytul}>{x.wybierz}</h2>
             {sloty === null ? (
               <p className={s.okText}>{x.laduje}</p>
             ) : poDniach.size === 0 ? (
@@ -383,6 +411,7 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
             <div className={`${s.kalNaglowek} ${s.kalNaglowekKolumna}`}>
               <p className={s.kalMiesiac}>{dzien && new Date(`${dzien}T12:00:00`).toLocaleDateString(x.locale, { weekday: "long", day: "numeric", month: "long" })}</p>
               <span className={s.kalInfo}>{x.strefa}</span>
+              <span className={s.kalInfo}>{x.telInfo(telPelny)}</span>
             </div>
             {godzinyDnia.length === 0 ? (
               <p className={s.warn}>{x.pustyDzien}</p>

@@ -24,8 +24,13 @@ export default async function BrunoOgienPage() {
   if (!pelnyDostep(konto)) redirect("/bruno/panel");
 
   const [konfig, rozmowy] = await Promise.all([pobierzKonfig(email), pobierzRozmowy(email, 5)]);
-  const { NAZWY } = etykiety((await tSerwer()).jezyk);
-  const ostatnia = rozmowy.find((r) => r.status === "zakonczona" && r.feedback) ?? null;
+  const { jezyk } = await tSerwer();
+  const { NAZWY } = etykiety(jezyk);
+  // 14.10 (USER_001: „dlaczego tu po angielsku?”): ostatnia ocena w języku panelu. Stare oceny z testów EN
+  // (np. 2.10) pomijamy na koncie PL i odwrotnie. Język oceny = polskie znaki w tekście.
+  const poPolsku = (s?: string | null) => /[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/.test(s ?? "");
+  const ostatnia =
+    rozmowy.find((r) => r.status === "zakonczona" && r.feedback && poPolsku(`${r.feedback.wygrana} ${r.feedback.poprawka}`) === (jezyk === "pl")) ?? null;
   const { data: kartyRaw } = await supabaseAdmin
     .from("bruno_karty")
     .select("id, typ, tresc, pytanie, wzor, reps")
@@ -42,7 +47,7 @@ export default async function BrunoOgienPage() {
   return (
     <Ogien
       imie={konto.imie}
-      cytat={cytatDnia(email)}
+      cytat={cytatDnia(email, new Date(), jezyk)}
       produkt={konfig.produkt}
       obiekcje={obiekcje}
       pierwszeZdanie={pierwszeZdanie}

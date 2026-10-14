@@ -17,11 +17,12 @@ export const FILM_DLUGOSC_PELNY = "1 min";
 /**
  * Wersja PL: v12 (13.10) = v11 bez sceny „Poznajmy się” (film leci PO tym ekranie, USER_001) i z żywszym lektorem
  * (Adam, eleven_v3 stability 0 = Creative, wykrzykniki), 1 min 8 s. Sceny: panel, Dostosuj (komu sprzedajesz + zapis sam), Test, Start, Feedback, Trening, Kalendarz, Bruno Pro.
+ * 14.10 (USER_001): v13 = v12 z lektorem z JEDNEGO nagrania (stability 0.5), bo v12 miał różne barwy głosu w scenach. 1 min 10 s.
  * Jest tylko wersja z końcówką Bruno Pro.
  */
-export const FILM_OPROWADZAJACY_PL = "/bruno/oprowadzanie-v12-pl.mp4";
-export const FILM_OKLADKA_PL = "/bruno/oprowadzanie-v12-pl.jpg";
-export const FILM_DLUGOSC_PL = "1 min 8 s";
+export const FILM_OPROWADZAJACY_PL = "/bruno/oprowadzanie-v13-pl.mp4";
+export const FILM_OKLADKA_PL = "/bruno/oprowadzanie-v13-pl.jpg";
+export const FILM_DLUGOSC_PL = "1 min 10 s";
 
 /**
  * 11.10 (USER_001): który film dla którego konta. Free (B2C, 3 rozmowy) = wersja z końcówką

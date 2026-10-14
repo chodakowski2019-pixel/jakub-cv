@@ -22,11 +22,11 @@ const OPISY: Record<CelStrony, Record<Jezyk, { title: string; description: strin
   firmy: {
     en: {
       title: "Bruno AI for sales teams | AI sales practice",
-      description: "Your sales reps practice calls with an AI customer before they talk to a real one. Every call gets a score. Book a 30-minute demo call.",
+      description: "Your sales reps practice calls with an AI customer before they talk to a real one. Every call gets a score. Try 3 calls free.",
     },
     pl: {
       title: "Bruno AI dla zespołów sprzedaży | Trening sprzedaży z AI",
-      description: "Wasi handlowcy ćwiczą rozmowy z klientem AI, zanim zadzwonią do prawdziwego. Każda rozmowa dostaje ocenę. Umów 30-minutową rozmowę z demo.",
+      description: "Wasi handlowcy ćwiczą rozmowy z klientem AI, zanim zadzwonią do prawdziwego. Każda rozmowa dostaje ocenę. Wypróbuj 3 rozmowy za darmo.",
     },
   },
   handlowcy: {
