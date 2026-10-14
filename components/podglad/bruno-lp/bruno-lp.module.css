@@ -2833,3 +2833,33 @@
   text-align: center;
   margin: 0;
 }
+
+/* 14.10 (USER_001, telefon): „Zobacz Bruno w środku” jak na komputerze: laptop przyklejony u góry, pod nim kroki,
+   obraz zmienia się przy przewijaniu. Wcześniej .scrollTor 380vh (wyżej) nadpisywał height: auto z wersji na telefon
+   i pod krokiem 3 zostawała pusta przestrzeń do cennika. Opis widać tylko przy aktywnym kroku, żeby całość mieściła się na ekranie. */
+@media (max-width: 980px) {
+  .scrollTor {
+    height: 300vh;
+  }
+  .scroll {
+    position: sticky;
+    top: 76px;
+    gap: 18px;
+  }
+  .scrollLaptop {
+    position: static;
+  }
+  .scrollTxt b {
+    font-size: 20px;
+  }
+  .scrollTxt span {
+    display: none;
+  }
+  .scrollPunktOn .scrollTxt span {
+    display: block;
+  }
+  .scrollLinia {
+    height: 14px;
+    margin: 4px 0 4px 20px;
+  }
+}

@@ -231,7 +231,7 @@ const REPS = {
 // (2 miesiące gratis). 11.10 (USER_001): PL = 250 zł / mies. albo 2 500 zł / rok. Bez Jakuba w pakiecie („Bruno jest trenerem, nie ja”). 5 rozmów dziennie (USER_001 9.10, było 6).
 const CENNIK = {
   en: {
-    h: "One plan. Everything in it.",
+    h: ["One plan.", "Everything in it."],
     mies: "Monthly",
     rok: "Yearly",
     gratis: "2 months free",
@@ -261,7 +261,7 @@ const CENNIK = {
     pod: "No card for the free calls.",
   },
   pl: {
-    h: "Jeden plan. Wszystko w środku.",
+    h: ["Jeden plan.", "Wszystko w środku."],
     mies: "Miesięcznie",
     rok: "Rocznie",
     gratis: "2 miesiące gratis",
@@ -617,7 +617,12 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
               {/* Cennik: jeden pakiet, miesięcznie albo rocznie. */}
               <section className={`${s.block} ${s.cennikBlok}`} id="cennik">
                 <div className={`${s.blockHead} ${s.blockHeadPelny}`}>
-                  <h2 className={s.rv}>{CENNIK[jezyk].h}</h2>
+                  {/* 14.10 (USER_001): nagłówek cennika w dwóch liniach. */}
+                  <h2 className={s.rv}>
+                    {CENNIK[jezyk].h[0]}
+                    <br />
+                    {CENNIK[jezyk].h[1]}
+                  </h2>
                 </div>
                 <div className={s.cennikPrzelacznik} role="group" aria-label={jezyk === "pl" ? "Okres płatności" : "Billing period"}>
                   {/* 10.10 (USER_001): najpierw rocznie (domyślnie wybrane), potem miesięcznie. */}
