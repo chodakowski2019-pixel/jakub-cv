@@ -4,6 +4,7 @@ import { pobierzKonfig, pobierzKonto } from "@/lib/bruno/db";
 import UstawieniaForm from "@/components/bruno/ustawienia-form";
 import GlosForm from "@/components/bruno/glos-form";
 import KodForm from "@/components/bruno/kod-form";
+import WiadomoscForm from "@/components/bruno/wiadomosc-form";
 import { filmDla } from "@/lib/bruno/film";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 
@@ -27,6 +28,8 @@ export default async function BrunoUstawieniaPage() {
       <GlosForm glos={konfig.glos === "k" ? "k" : "m"} />
       <UstawieniaForm godzina={konfig.godzina_przypomnienia} />
       <KodForm />
+      {/* 14.10 (USER_001): „Napisz do nas” tu zamiast dymka czatu w rogu. */}
+      <WiadomoscForm />
       {/* Instrukcja (USER_001 2.10): ten sam film, co w popupie przy pierwszym logowaniu, do odtworzenia na miejscu. */}
       {/* 12.10 (USER_001): film dla każdego konta (po profilu), więc Instrukcja też dla każdego. */}
       <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-4">

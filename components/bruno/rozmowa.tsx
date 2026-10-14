@@ -930,7 +930,8 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
       )}
 
       {(stan === "odliczanie" || stan === "laczenie" || stan === "trwa" || stan === "konczenie") && (
-        <div className="bruno-szklo relative rounded-3xl px-8 py-16 sm:px-10 sm:py-20 text-center flex flex-col items-center gap-8 min-h-[34rem] sm:min-h-[38rem] justify-center">
+        // 14.10 (USER_001, telefon): większy odstęp między kulą a „Bruno” i przyciskiem; etykieta trybu tylko na komputerze.
+        <div className="bruno-szklo relative rounded-3xl px-8 py-16 sm:px-10 sm:py-20 text-center flex flex-col items-center gap-12 sm:gap-8 min-h-[34rem] sm:min-h-[38rem] justify-center">
           {stan === "trwa" && (
             <div
               className={`absolute top-4 right-4 sm:top-5 sm:right-5 rounded-full px-3 py-1.5 text-sm font-semibold tabular-nums transition-colors ${
@@ -941,7 +942,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
               {dogrywka ? `${tr("Overtime: close it", "Dogrywka: domknij")} · ${czas(zostalo)}` : czas(zostalo)}
             </div>
           )}
-          <div className="absolute top-4 left-4 sm:top-5 sm:left-5 flex items-center gap-2 text-xs text-slate-500">
+          <div className="absolute top-4 left-4 sm:top-5 sm:left-5 hidden sm:flex items-center gap-2 text-xs text-slate-500">
             <span className="size-2.5 rounded-full" style={{ background: p.kolor }} aria-hidden />
             {TRYBY[tryb].nazwa}
             <span className="text-slate-300" aria-hidden>·</span>

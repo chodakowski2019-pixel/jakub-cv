@@ -744,3 +744,22 @@ html:has(.bruno.zloty), body:has(.bruno.zloty) { background: #080807; }
 @media (max-width: 860px) {
   .bruno.zloty h1.bruno-h1 + p, .bruno.zloty .bruno-opis { display: none !important; }
 }
+
+/* 14.10 (USER_001: „na telefonach ekran lata na boki”): Safari na iPhonie powiększa stronę po kliknięciu
+   w pole z czcionką < 16 px (obiekcje i skrypt w Dostosuj miały 14 px, odpowiedź w Treningu 15 px) i zostawia
+   ją powiększoną, więc od tego momentu wszystko jest szersze od ekranu. Na telefonie każde pole ma 16 px. */
+@media (max-width: 860px) {
+  .bruno input, .bruno textarea, .bruno select { font-size: 16px !important; }
+}
+
+/* 14.10 (USER_001, telefon): panel bez kafelka „Twój / inny typ klienta”; w kafelku z falą mikrofon NAD falą,
+   przycisk „Rozmawiaj” POD nią (fala rysuje środek ok. 48 % wysokości kafelka). */
+@media (max-width: 860px) {
+  .bruno.zloty .bpa .persona { display: none; }
+  .bruno.zloty .bpa .hero { height: 420px; }
+  .bruno.zloty .bpa .hero h2 { font-size: 28px; left: 20px; top: 20px; }
+  .bruno.zloty .bpa .listen {
+    left: 50%; top: 56%; height: 62%; transform: translate(-50%, -50%);
+    justify-content: space-between; gap: 0;
+  }
+}

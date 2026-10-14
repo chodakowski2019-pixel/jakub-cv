@@ -7,7 +7,6 @@ import { dostepKonta, pobierzKonto, stanFree } from "@/lib/bruno/db";
 import UkladZloty from "@/components/bruno/uklad-zloty";
 import { JezykProvider } from "@/components/bruno/jezyk-kontekst";
 import { jezykZHosta } from "@/lib/bruno/domeny";
-import CzatDymek from "@/components/bruno/czat-dymek";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import "./bruno.css";
 
@@ -67,7 +66,7 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
       <UkladZloty dostep={dostep} inicjal={inicjal} free={free} profilBrak={profilBrak}>
         {children}
       </UkladZloty>
-      <CzatDymek />
+      {/* 14.10 (USER_001): dymek czatu usunięty, „Napisz do nas” jest w Ustawieniach (wiadomosc-form.tsx). */}
     </div>
     </JezykProvider>
   );

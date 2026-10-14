@@ -2863,3 +2863,10 @@
     margin: 4px 0 4px 20px;
   }
 }
+
+/* 14.10 (USER_001: „ekran lata na boki”): Safari na iPhonie powiększa stronę po kliknięciu w pole z czcionką < 16 px.
+   Na telefonie każde pole formularzy LP (rozmowa telefoniczna, zapis) ma 16 px. */
+/* 14.10: pola 16 px na telefonie */
+@media (max-width: 860px) {
+  .root input, .root textarea, .root select { font-size: 16px; }
+}

@@ -25,7 +25,8 @@ import { useT } from "@/components/bruno/jezyk-kontekst";
 
 function Sekcja({ nr, tytul, podpowiedz, htmlFor, children }: { nr: number; tytul: string; podpowiedz?: React.ReactNode; htmlFor?: string; children: React.ReactNode }) {
   return (
-    <section className="flex gap-4">
+    // 14.10 (USER_001, telefon): więcej przerwy pod każdą sekcją.
+    <section className="flex gap-4 pb-4 sm:pb-0">
       <span className="hidden sm:grid shrink-0 size-8 place-items-center rounded-full bg-gradient-to-br from-cyan-700 to-teal-700 text-white text-sm font-bold bruno-h2" aria-hidden>
         {nr}
       </span>
@@ -35,7 +36,9 @@ function Sekcja({ nr, tytul, podpowiedz, htmlFor, children }: { nr: number; tytu
           {tytul}
         </label>
         {podpowiedz && <p className="bruno-opis text-[13px] text-slate-500 mt-1 mb-3">{podpowiedz}</p>}
-        {!podpowiedz && <div className="mb-3" />}
+        {/* 14.10 (telefon): podpowiedź jest schowana (bruno-opis), więc odstęp pod tytułem zawsze. */}
+        <div className="mb-3 sm:hidden" />
+        {!podpowiedz && <div className="mb-3 hidden sm:block" />}
         {children}
       </div>
     </section>
@@ -182,7 +185,7 @@ export default function DostosujForm({ start, oferta }: { start: Konfig; oferta:
         </span>
         <div className="min-w-0 flex-1">
           <div className="bruno-h2 text-[17px] sm:text-lg text-slate-900 leading-tight">
-            {t("Import your offer from a website or PDF", "Wczytaj ofertę ze strony albo z PDF")} <span className="text-xs font-normal text-slate-400">{oferta ? t("(fills in fields 2-4)", "(wypełnia pola 2-4)") : "(Bruno Pro)"}</span>
+            {t("Import your offer from a website or PDF", "Wczytaj ofertę ze strony albo z PDF")} {/* 14.10 (USER_001): bez „(wypełnia pola 2-4)”. */}{!oferta && <span className="text-xs font-normal text-slate-400">(Bruno Pro)</span>}
           </div>
           {oferta ? (
             <>

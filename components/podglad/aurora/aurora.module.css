@@ -545,6 +545,11 @@
   .leadBezTelefonu {
     display: none;
   }
+  /* 14.10 (USER_001: „ekran lata na boki”): Safari na iPhonie powiększa stronę po kliknięciu w pole
+     z czcionką < 16 px i tak zostaje. Na telefonie pola mają 16 px (na komputerze 15 px bez zmian). */
+  .in input {
+    font-size: 16px;
+  }
   .stage h2:has(+ .leadBezTelefonu) {
     margin-bottom: 28px;
   }

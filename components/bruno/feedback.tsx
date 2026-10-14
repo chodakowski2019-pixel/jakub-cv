@@ -93,8 +93,7 @@ function Techniki({ t, tr }: { t: ZamkniecieTechniki; tr: T }) {
       {wiersze.map(([nazwa, ok, opis]) => (
         <li key={nazwa} className="flex items-start gap-2">
           <span className={`shrink-0 w-5 text-center font-semibold ${ok === true ? "text-emerald-600" : ok === false ? "text-rose-600" : "text-slate-400"}`}>{ok === true ? "✓" : ok === false ? "✗" : "–"}</span>
-          <span className="text-slate-900 font-medium">{nazwa}</span>
-          <span className="text-slate-500">{opis}</span>
+          <span className="flex flex-wrap gap-x-2"><span className="text-slate-900 font-medium">{nazwa}</span><span className="text-slate-500">{opis}</span></span>
         </li>
       ))}
     </ul>
@@ -130,8 +129,7 @@ function TechnikiObiekcji({ t, tr }: { t: ObiekcjeTechniki; tr: T }) {
       {wiersze.map(([nazwa, ok, opis]) => (
         <li key={nazwa} className="flex items-start gap-2">
           <span className={`shrink-0 w-5 text-center font-semibold ${ok === true ? "text-emerald-600" : ok === false ? "text-rose-600" : "text-slate-400"}`}>{ok === true ? "✓" : ok === false ? "✗" : "–"}</span>
-          <span className="text-slate-900 font-medium">{nazwa}</span>
-          <span className="text-slate-500">{opis}</span>
+          <span className="flex flex-wrap gap-x-2"><span className="text-slate-900 font-medium">{nazwa}</span><span className="text-slate-500">{opis}</span></span>
         </li>
       ))}
     </ul>
@@ -159,7 +157,27 @@ export default function FeedbackWidok({ feedback, dalej, jezyk = "en" }: { feedb
       </div>
 
       {/* 11.10 (USER_001): PLUSY po lewej, MINUSY po prawej, w jednej tabelce (wiersze obok siebie). */}
-      <section className="bruno-szklo rounded-2xl p-5 overflow-x-auto">
+      {/* 14.10 (USER_001, telefon: „wszystko na siebie nachodzi”): plusy i minusy jedno pod drugim, tabelka od sm. */}
+      <section className="sm:hidden flex flex-col gap-4">
+        {[
+          { znak: "plus" as const, kolor: "#16a34a", tytul: tr("Pluses", "Plusy"), lista: plusy, prefiks: "+", klasa: "text-green-600" },
+          { znak: "minus" as const, kolor: "#dc2626", tytul: tr("Minuses", "Minusy"), lista: minusy, prefiks: "–", klasa: "text-red-600" },
+        ].map((b) => (
+          <div key={b.znak} className="bruno-szklo rounded-2xl p-5">
+            <span className="flex items-center gap-2 mb-3"><Kolko znak={b.znak} kolor={b.kolor} /><Badge>{b.tytul}</Badge></span>
+            {b.lista.length ? (
+              <ul className="flex flex-col gap-2 text-[14px] text-slate-800">
+                {b.lista.map((x, i) => (
+                  <li key={i} className="flex gap-2"><span className={`${b.klasa} font-bold shrink-0`}>{b.prefiks}</span><span>{x}</span></li>
+                ))}
+              </ul>
+            ) : (
+              <span className="text-sm text-slate-500">{tr("None.", "Brak.")}</span>
+            )}
+          </div>
+        ))}
+      </section>
+      <section className="hidden sm:block bruno-szklo rounded-2xl p-5 overflow-x-auto">
         <table className="w-full text-[14px] table-fixed border-collapse">
           <thead>
             <tr>
