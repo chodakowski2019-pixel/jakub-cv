@@ -521,24 +521,31 @@
   }
 }
 
+/* 14.10 (USER_001, telefon): zorza na całą szerokość bez czarnych pasków (bez odstępu i zaokrągleń),
+   bez tytułu i kroków; zostaje pas z zorzą i logo, pod nim formularz. */
 @media (max-width: 900px) {
   .wrap {
     grid-template-columns: 1fr;
-    padding: 12px;
+    gap: 0;
+    padding: 0;
   }
   .art {
-    min-height: 540px;
+    min-height: 200px;
+    border-radius: 0;
+  }
+  .art h1,
+  .art .sub,
+  .art .steps {
+    display: none;
   }
   .artInner {
-    padding-bottom: 36px;
+    padding-bottom: 28px;
+  }
+  .logo {
+    margin: 0;
   }
   .side {
-    padding: 36px 4px 48px;
-  }
-}
-@media (max-width: 480px) {
-  .art {
-    min-height: 500px;
+    padding: 32px 16px 48px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
