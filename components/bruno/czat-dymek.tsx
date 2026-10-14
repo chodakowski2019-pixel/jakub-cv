@@ -32,7 +32,7 @@ export default function CzatDymek() {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-20 flex flex-col items-end gap-3">
+    <div className="bruno-czat fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-20 flex flex-col items-end gap-3">
       {otwarty && (
         <div className="bruno-szklo rounded-3xl overflow-hidden w-[calc(100vw-2.5rem)] max-w-sm shadow-[0_24px_60px_rgba(212,175,90,0.22)]">
           <div className="px-5 py-4 bg-gradient-to-r from-cyan-700 to-teal-700 text-white flex items-center gap-3">

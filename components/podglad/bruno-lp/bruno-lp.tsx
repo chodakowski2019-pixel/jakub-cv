@@ -295,11 +295,8 @@ const CENNIK = {
 // 9.10 (USER_001): sekcja „Zobacz Bruno w środku”: 3 zrzuty ekranu (panel, rozmowa, feedback).
 // 13.10: zrzuty PL z polskiego panelu (`scripts/bruno-zrzuty-lp.mjs`, 1600 px webp) w `public/bruno/zrzuty/pl-*.webp`.
 // EN jeszcze bez plików: `onError` chowa obraz i zostaje ramka z podpisem.
-const ZRZUTY = {
-  en: { h: "See Bruno inside", pod: [["Your panel", "Today's plan, your calls, your progress"], ["A call with Bruno", "Bruno talks back, raises objections, pushes to end the call"], ["Feedback", "Score, what worked, what to fix next time"]] },
-  pl: { h: "Zobacz Bruno w środku", pod: [["Twój panel", "Plan dnia, Twoje rozmowy, Twój postęp"], ["Rozmowa z Bruno", "Bruno odpowiada, zgłasza obiekcje, próbuje skończyć rozmowę"], ["Feedback", "Ocena, co zagrało, co poprawić następnym razem"]] },
-} as const;
-const zrzutyPliki = (jezyk: Jezyk) => ["panel", "rozmowa", "feedback"].map((n) => `/bruno/zrzuty/${jezyk}-${n}.webp`);
+// 14.10 (USER_001): sekcja z laptopem niesie treść 3 kroków „Jak działa Bruno AI?” (kroki = rozmowa → feedback → gotowy, panel z postępem).
+const zrzutyPliki = (jezyk: Jezyk) => ["rozmowa", "feedback", "panel"].map((n) => `/bruno/zrzuty/${jezyk}-${n}.webp`);
 
 // \n w tytule = łamanie wiersza tylko na szerokim ekranie.
 function Tytul({ t }: { t: string }) {
@@ -548,6 +545,8 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
             </>
           )}
 
+          {/* 14.10 (USER_001): na stronie handlowców kroki są w sekcji z laptopem (te same 3 punkty), tu tylko wersja dla firm. */}
+          {wersja !== "reps" && (
           <div className={s.panelWrap} id="kroki">
             {/* 9.10 (USER_001): nagłówek jak „Co daje trening sprzedaży?”. */}
             <div className={`${s.blockHead} ${s.krokiHead}`}>
@@ -568,30 +567,33 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
                 </div>
               ))}
             </div>
-            {/* 9.10 (USER_001): na stronie dla handlowców przycisk jest pod laptopem, nie pod krokami. */}
-            {wersja !== "reps" && (
-              <div className={`${s.panelCta} ${s.rv}`}>
-                <button type="button" className={`${s.btnDark} ${s.btnBig}`} onClick={otworzFormularz(1)}>
-                  {t.krokiCta}
-                </button>
-                {zespolLink}
-              </div>
-            )}
+            <div className={`${s.panelCta} ${s.rv}`}>
+              <button type="button" className={`${s.btnDark} ${s.btnBig}`} onClick={otworzFormularz(1)}>
+                {t.krokiCta}
+              </button>
+              {zespolLink}
+            </div>
           </div>
+          )}
 
           {wersja === "reps" && (
             <>
               {/* Zobacz Bruno w środku: 3 punkty po lewej, laptop po prawej (sticky), obraz zmienia się przy przewijaniu. */}
-              <section className={`${s.block} ${s.zrzutyBlok}`} id="zrzuty" aria-label={ZRZUTY[jezyk].h}>
+              <section className={`${s.block} ${s.zrzutyBlok}`} id="kroki" aria-label={u.krokiH}>
+                <div className={`${s.blockHead} ${s.krokiHead}`}>
+                  <h2 className={s.rv}>{u.krokiH}</h2>
+                </div>
                 <div className={s.scrollTor} ref={scrollRef}>
                   <div className={s.scroll}>
                     <ol className={s.scrollPunkty}>
-                      {ZRZUTY[jezyk].pod.map(([tytul, opis], i) => (
+                      {KROKI.map(({ tytul, opis }, i) => (
                         <li key={tytul} className={`${s.scrollPunkt} ${aktywnyZrzut === i ? s.scrollPunktOn : ""} ${aktywnyZrzut > i ? s.scrollPunktZrob : ""}`}>
                           <button type="button" className={s.scrollPunktBtn} onClick={() => setAktywnyZrzut(i)}>
                             <span className={s.scrollNr}>{aktywnyZrzut > i ? "✓" : i + 1}</span>
                             <span className={s.scrollTxt}>
-                              <b>{tytul}</b>
+                              <b>
+                                <Tytul t={tytul} />
+                              </b>
                               <span>{opis}</span>
                             </span>
                           </button>
@@ -604,7 +606,7 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
                         <div className={s.laptopEkran} data-brak={jezyk === "pl" ? "zrzut ekranu wkrótce" : "screenshot coming soon"}>
                           {zrzutyPliki(jezyk).map((src, i) => (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img key={src} src={src} alt={ZRZUTY[jezyk].pod[i][0]} loading="lazy" className={aktywnyZrzut === i ? s.laptopObrazOn : ""} onError={(e) => (e.currentTarget.style.display = "none")} />
+                            <img key={src} src={src} alt={KROKI[i].tytul.replace("\n", " ")} loading="lazy" className={aktywnyZrzut === i ? s.laptopObrazOn : ""} onError={(e) => (e.currentTarget.style.display = "none")} />
                           ))}
                         </div>
                         <div className={s.laptopPodstawa} />

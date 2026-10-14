@@ -539,7 +539,14 @@
     display: none;
   }
   .artInner {
-    padding-bottom: 28px;
+    justify-content: center;
+    padding: 0 24px;
+  }
+  .leadBezTelefonu {
+    display: none;
+  }
+  .stage h2:has(+ .leadBezTelefonu) {
+    margin-bottom: 28px;
   }
   .logo {
     margin: 0;

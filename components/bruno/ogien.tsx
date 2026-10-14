@@ -8,9 +8,8 @@ import { useT } from "@/components/bruno/jezyk-kontekst";
 import type { Jezyk } from "@/lib/bruno/i18n";
 
 // „Ogień przed rozmową" (USER_001 9.10). Rytuał 5 minut przed PRAWDZIWYM telefonem:
-// zapal (muzyka + Bruno nakręca + cytat) → oddech 60 s → głos 45 s → kartka W BRUNO
-// (cel, pytanie, 2 obiekcje z reakcją, kwota, data) → głowa → sparing (opcja) →
-// „Dzwonię" (zegar) → 3 pytania po rozmowie → zapis. Nic na kartkach (USER_001).
+// zapal (muzyka + Bruno nakręca + cytat) → oddech (instrukcja + ćwiczenie, 2 techniki) → głos 45 s → głowa →
+// „Dzwonię" (zegar) → 3 pytania po rozmowie → zapis. 14.10: bez kartki i sparingu. Nic na kartkach (USER_001).
 // Źródła: cykliczne wzdychanie (Balban, Stanford 2023), „jestem nakręcony" zamiast
 // „uspokój się" (Brooks, Harvard 2014), energia zespołu (USER_001: „byliśmy na pełnej").
 
@@ -26,50 +25,111 @@ type Props = {
   ostatnia: { ocena: number; najslabsze: string; poprawka: string; wygrana: string } | null;
 };
 
-type Krok = "zapal" | "oddech" | "glos" | "kartka" | "glowa" | "sparing" | "rozmowa" | "po" | "koniec";
+// 14.10 (USER_001): kartka i sparing wypadły, oddech dostał instrukcję przed każdą techniką i grafikę.
+type Krok = "zapal" | "oddech" | "glos" | "glowa" | "rozmowa" | "po" | "koniec";
 const KROKI: { id: Krok; nazwa: string; nazwaPl: string }[] = [
   { id: "zapal", nazwa: "Light it", nazwaPl: "Zapal" },
   { id: "oddech", nazwa: "Breathe", nazwaPl: "Oddech" },
   { id: "glos", nazwa: "Voice", nazwaPl: "Głos" },
-  { id: "kartka", nazwa: "Card", nazwaPl: "Kartka" },
   { id: "glowa", nazwa: "Mindset", nazwaPl: "Głowa" },
-  { id: "sparing", nazwa: "Sparring", nazwaPl: "Sparing" },
   { id: "rozmowa", nazwa: "Calling", nazwaPl: "Dzwonię" },
 ];
 
-const ODDECH_S = 60;
 const GLOS_S = 45;
 
-/** Faza oddechu w sekundzie t: 30 s „2 wdechy, 1 wydech" ×5, potem 4-4-4-4 ×2 (32 s). */
-function fazaOddechu(t: number, jezyk: Jezyk = "en"): { tekst: string; skala: number; cykl: string } {
-  if (jezyk === "pl") return fazaOddechuPl(t);
-  if (t < 30) {
-    const w = t % 6;
-    if (w < 1) return { tekst: "Breathe in through your nose", skala: 1.15, cykl: "double inhale, long exhale" };
-    if (w < 2) return { tekst: "Once more, short", skala: 1.3, cykl: "double inhale, long exhale" };
-    return { tekst: "Long exhale through your mouth", skala: 0.85, cykl: "double inhale, long exhale" };
+// Technika 1: podwójny wdech (2 s + 1 s dobrania), długi wydech 6 s. Było 1+1+4 s i USER_001 14.10:
+// „za szybko, nie wiadomo, o co chodzi”. Technika 2: kwadrat 4-4-4-4.
+const SIGH = [2, 1, 6] as const;
+const SIGH_CYKL = 9;
+const SIGH_RAZY = 4;
+const BOX_RAZY = 2;
+type Technika = "sigh" | "box";
+const TECHNIKA_S: Record<Technika, number> = { sigh: SIGH_CYKL * SIGH_RAZY, box: 16 * BOX_RAZY };
+
+/** Faza w sekundzie t (ułamkowej) danej techniki: napis, skala kuli, postęp 0-1 w cyklu. */
+function faza(tech: Technika, t: number, jezyk: Jezyk): { tekst: string; skala: number; postep: number } {
+  const pl = jezyk === "pl";
+  if (tech === "sigh") {
+    const w = t % SIGH_CYKL;
+    const postep = w / SIGH_CYKL;
+    if (w < SIGH[0]) return { tekst: pl ? "Wdech nosem" : "Breathe in (nose)", skala: 1.15, postep };
+    if (w < SIGH[0] + SIGH[1]) return { tekst: pl ? "Dobierz krótko" : "Top up, short", skala: 1.3, postep };
+    return { tekst: pl ? "Długi wydech ustami" : "Long exhale (mouth)", skala: 0.85, postep };
   }
-  const w = (t - 30) % 16;
-  if (w < 4) return { tekst: "In 4", skala: 1.3, cykl: "box 4-4-4-4" };
-  if (w < 8) return { tekst: "Hold 4", skala: 1.3, cykl: "box 4-4-4-4" };
-  if (w < 12) return { tekst: "Out 4", skala: 0.85, cykl: "box 4-4-4-4" };
-  return { tekst: "Hold empty 4", skala: 0.85, cykl: "box 4-4-4-4" };
+  const w = t % 16;
+  const postep = w / 16;
+  if (w < 4) return { tekst: pl ? "Wdech 4" : "In 4", skala: 1.3, postep };
+  if (w < 8) return { tekst: pl ? "Trzymaj 4" : "Hold 4", skala: 1.3, postep };
+  if (w < 12) return { tekst: pl ? "Wydech 4" : "Out 4", skala: 0.85, postep };
+  return { tekst: pl ? "Pusto 4" : "Hold empty 4", skala: 0.85, postep };
 }
 
-/** 11.10: te same fazy po polsku (fd7de52). */
-function fazaOddechuPl(t: number): { tekst: string; skala: number; cykl: string } {
-  if (t < 30) {
-    const w = t % 6;
-    if (w < 1) return { tekst: "Wdech nosem", skala: 1.15, cykl: "podwójny wdech, długi wydech" };
-    if (w < 2) return { tekst: "Jeszcze raz, krótko", skala: 1.3, cykl: "podwójny wdech, długi wydech" };
-    return { tekst: "Długi wydech ustami", skala: 0.85, cykl: "podwójny wdech, długi wydech" };
+/** Grafika techniki: krzywa oddechu (podwójny wdech) albo kwadrat (4-4-4-4) z kropką. postep = null: bez kropki. */
+function GrafikaOddechu({ tech, postep, jezyk }: { tech: Technika; postep: number | null; jezyk: Jezyk }) {
+  const pl = jezyk === "pl";
+  if (tech === "sigh") {
+    // Objętość płuc w czasie: 0-2 s w górę, 2-3 s jeszcze wyżej (stromo), 3-9 s powoli w dół.
+    const W = 270, H = 110, x = (s: number) => 10 + (s / SIGH_CYKL) * (W - 20), y = (v: number) => H - 22 - v * (H - 42);
+    const punkty: [number, number][] = [[0, 0], [2, 0.7], [3, 1], [9, 0]];
+    const d = punkty.map(([s, v], i) => `${i ? "L" : "M"}${x(s).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+    let kropka: [number, number] | null = null;
+    if (postep !== null) {
+      const s = postep * SIGH_CYKL;
+      const i = Math.max(0, punkty.findIndex(([ps], j) => j > 0 && s <= ps) - 1);
+      const [s0, v0] = punkty[i], [s1, v1] = punkty[i + 1] ?? punkty[i];
+      const v = s1 === s0 ? v0 : v0 + ((v1 - v0) * (s - s0)) / (s1 - s0);
+      kropka = [x(s), y(v)];
+    }
+    return (
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-xs" role="img" aria-label={pl ? "Wdech, dobranie, długi wydech" : "Inhale, top up, long exhale"}>
+        <path d={d} fill="none" stroke="#f97316" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" />
+        <text x={x(1)} y={H - 4} textAnchor="middle" className="fill-slate-500" fontSize="11">{pl ? "wdech 2 s" : "in 2 s"}</text>
+        <text x={x(2.6)} y={14} textAnchor="middle" className="fill-slate-500" fontSize="11">{pl ? "+1 s" : "+1 s"}</text>
+        <text x={x(6)} y={H - 4} textAnchor="middle" className="fill-slate-500" fontSize="11">{pl ? "wydech 6 s" : "out 6 s"}</text>
+        {kropka && <circle cx={kropka[0]} cy={kropka[1]} r="8" fill="#fff" stroke="#ea580c" strokeWidth="3" />}
+      </svg>
+    );
   }
-  const w = (t - 30) % 16;
-  if (w < 4) return { tekst: "Wdech 4", skala: 1.3, cykl: "kwadrat 4-4-4-4" };
-  if (w < 8) return { tekst: "Trzymaj 4", skala: 1.3, cykl: "kwadrat 4-4-4-4" };
-  if (w < 12) return { tekst: "Wydech 4", skala: 0.85, cykl: "kwadrat 4-4-4-4" };
-  return { tekst: "Pusto 4", skala: 0.85, cykl: "kwadrat 4-4-4-4" };
+  // Kwadrat: góra = wdech, prawy bok = trzymaj, dół = wydech, lewy bok = pusto.
+  const A = 30, B = 150;
+  let kropka: [number, number] | null = null;
+  if (postep !== null) {
+    const s = postep * 4, f = s % 1;
+    const bok = Math.floor(s);
+    kropka = bok === 0 ? [A + (B - A) * f, A] : bok === 1 ? [B, A + (B - A) * f] : bok === 2 ? [B - (B - A) * f, B] : [A, B - (B - A) * f];
+  }
+  const L = pl ? ["wdech 4", "trzymaj 4", "wydech 4", "pusto 4"] : ["in 4", "hold 4", "out 4", "empty 4"];
+  return (
+    <svg viewBox="0 0 180 180" className="w-40 sm:w-44" role="img" aria-label={L.join(", ")}>
+      <rect x={A} y={A} width={B - A} height={B - A} rx="6" fill="none" stroke="#f97316" strokeWidth="4" opacity="0.9" />
+      <text x="90" y="20" textAnchor="middle" className="fill-slate-500" fontSize="11">{L[0]} →</text>
+      <text x="168" y="90" textAnchor="middle" className="fill-slate-500" fontSize="11" transform="rotate(90 168 90)">{L[1]} →</text>
+      <text x="90" y="170" textAnchor="middle" className="fill-slate-500" fontSize="11">← {L[2]}</text>
+      <text x="12" y="90" textAnchor="middle" className="fill-slate-500" fontSize="11" transform="rotate(-90 12 90)">{L[3]} →</text>
+      {kropka && <circle cx={kropka[0]} cy={kropka[1]} r="9" fill="#fff" stroke="#ea580c" strokeWidth="3" />}
+    </svg>
+  );
 }
+
+// 14.10: obiekcje z konfiguracji bywają po angielsku (konto zakładane z przykładów EN).
+// Na panelu PL pokazujemy polską nazwę, w danych zostaje oryginał.
+const OBIEKCJE_PL: Record<string, string> = {
+  "too expensive": "Za drogo",
+  "it's too expensive": "Za drogo",
+  "your competitor has the same thing": "Konkurencja ma to samo",
+  "your competitor has the same thing cheaper": "Konkurencja ma to samo taniej",
+  "i need to think about it": "Muszę to przemyśleć",
+  "send me an email": "Proszę przesłać maila",
+  "we already have a supplier": "Mamy już dostawcę",
+  "we already have a lawyer": "Mamy już prawnika",
+  "not now": "Nie teraz",
+  "no budget": "Nie mamy budżetu",
+  "i'm not interested": "Nie jestem zainteresowany",
+  "i need to talk to my partner": "Muszę porozmawiać ze wspólnikiem",
+  "there's no point, we won't win": "To nie ma sensu, nic nie wygramy",
+};
+const nazwaObiekcji = (nazwa: string, jezyk: Jezyk) =>
+  jezyk === "pl" ? OBIEKCJE_PL[nazwa.trim().toLowerCase().replace(/[.!?]+$/, "").replace(/’/g, "'")] ?? nazwa : nazwa;
 
 /** Muzyka z WebAudio: 126 BPM, stopa + hi-hat + bas. Zero plików, zero praw. */
 function startBeat(): { stop: () => void; cisza: (v: boolean) => void } {
@@ -156,7 +216,7 @@ function startBeat(): { stop: () => void; cisza: (v: boolean) => void } {
 
 type Rozpoznawanie = { start: () => void; stop: () => void; onresult: ((e: { resultIndex: number; results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null; onerror: (() => void) | null; continuous: boolean; interimResults: boolean; lang: string };
 
-export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, poprawki, ostatnia }: Props) {
+export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia }: Props) {
   const { t, jezyk } = useT();
   const cudzy = (s: string) => (jezyk === "pl" ? `„${s}”` : `“${s}”`);
   const [krok, setKrok] = useState<Krok>("zapal");
@@ -176,8 +236,14 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
   const [zdanie, setZdanie] = useState(pierwszeZdanie);
   const [rozpoznawanieJest, setRozpoznawanieJest] = useState(true);
 
-  // Kartka (w Bruno)
-  const [k, setK] = useState({
+  // Oddech: najpierw instrukcja techniki, potem ćwiczenie (14.10).
+  const [tech, setTech] = useState<Technika>("sigh");
+  const [cwiczy, setCwiczy] = useState(false);
+  const [tOdd, setTOdd] = useState(0);
+  const oddStart = useRef(0);
+
+  // Kartka wypadła z ekranu (14.10), zostają domyślne obiekcje dla podglądu w trakcie rozmowy.
+  const [k] = useState({
     cel: "",
     pytanie: "",
     ob1: obiekcje[0]?.nazwa ?? "",
@@ -221,8 +287,13 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
     } catch {}
     rozp.current = null;
     setKrok(do_);
-    if (do_ === "oddech" || do_ === "glos" || do_ === "rozmowa") startTimer();
+    if (do_ === "oddech") {
+      setTech("sigh");
+      setCwiczy(false);
+    }
+    if (do_ === "glos" || do_ === "rozmowa") startTimer();
     else stopTimer();
+    if (do_ === "rozmowa") void zapiszKartke();
     if (do_ === "rozmowa") {
       beat.current?.stop();
       beat.current = null;
@@ -232,12 +303,30 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
     if (do_ === "glos") startRozpoznawanie();
   };
 
-  // Oddech: koniec po 60 s.
   useEffect(() => {
-    if (krok === "oddech" && sek >= ODDECH_S) idz("glos");
     if (krok === "glos" && sek >= GLOS_S) zakonczGlos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sek, krok]);
+
+  // Ćwiczenie oddechu: zegar co 100 ms (płynna kropka), po czasie techniki następna instrukcja albo „Głos”.
+  useEffect(() => {
+    if (krok !== "oddech" || !cwiczy) return;
+    oddStart.current = Date.now();
+    setTOdd(0);
+    const id = setInterval(() => {
+      const t = (Date.now() - oddStart.current) / 1000;
+      if (t >= TECHNIKA_S[tech]) {
+        clearInterval(id);
+        setCwiczy(false);
+        if (tech === "sigh") setTech("box");
+        else idz("glos");
+        return;
+      }
+      setTOdd(t);
+    }, 100);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [krok, cwiczy, tech]);
 
   const przelaczMuzyke = () => {
     if (beat.current) {
@@ -335,7 +424,7 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
       const m = policzMetryki([{ rola: "handlowiec", tekst, t: 0 }], s, [], jezyk);
       setGlosWynik({ slowa: m.slowa_handlowca, wypelniacze: m.wypelniacze, naMin: m.wypelniacze_na_min, tempo: Math.round((m.slowa_handlowca / s) * 60) });
     }
-    setKrok("kartka");
+    setKrok("glowa");
   };
 
   const zapiszKartke = async () => {
@@ -367,10 +456,26 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
 
   const czas = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
   const nr = KROKI.findIndex((x) => x.id === krok);
-  const pole = (n: keyof typeof k) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setK((x) => ({ ...x, [n]: e.target.value }));
-  const wyj = (nazwa: string) => obiekcje.find((o) => o.nazwa === nazwa)?.wyjasnienie ?? null;
-  const kartaSparingu = obiekcje.find((o) => o.nazwa === k.ob1)?.karta_id ?? obiekcje.find((o) => o.karta_id)?.karta_id ?? null;
-  const faza = fazaOddechu(sek, jezyk);
+  const ob = (nazwa: string) => nazwaObiekcji(nazwa, jezyk);
+  const f = faza(tech, tOdd, jezyk);
+  const INFO: Record<Technika, { nr: string; tytul: string; opis: string }> = {
+    sigh: {
+      nr: t("Technique 1 of 2", "Technika 1 z 2"),
+      tytul: t("Double inhale", "Podwójny wdech"),
+      opis: t(
+        `Breathe in through your nose for 2 s, then top up with a short 1 s breath. Breathe out slowly through your mouth for 6 s. The fastest known way to slow your heart rate. ${SIGH_RAZY} rounds, ${TECHNIKA_S.sigh} s.`,
+        `Wdech nosem 2 s, potem krótkie dobranie powietrza 1 s. Powolny wydech ustami 6 s. Najszybszy znany sposób na zbicie tętna. ${SIGH_RAZY} razy, ${TECHNIKA_S.sigh} s.`,
+      ),
+    },
+    box: {
+      nr: t("Technique 2 of 2", "Technika 2 z 2"),
+      tytul: t("Box 4-4-4-4", "Kwadrat 4-4-4-4"),
+      opis: t(
+        `In 4 s, hold 4 s, out 4 s, hold empty 4 s. Follow the dot around the square. Steadies your head before the call. ${BOX_RAZY} rounds, ${TECHNIKA_S.box} s.`,
+        `Wdech 4 s, trzymasz 4 s, wydech 4 s, trzymasz pusto 4 s. Idź za kropką po kwadracie. Uspokaja głowę przed rozmową. ${BOX_RAZY} razy, ${TECHNIKA_S.box} s.`,
+      ),
+    },
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -378,7 +483,7 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
           {jezyk === "pl" ? <>Ogień <span className="bruno-gradient-tekst">przed rozmową</span></> : <span className="bruno-gradient-tekst">Fire Up</span>}
         </h1>
-        <p className="text-slate-600 mt-2">{t("5 minutes. Then you call.", "5 minut. Potem dzwonisz.")}</p>
+        <p className="text-slate-600 mt-2">{t("Before a real sales call", "Przed prawdziwą rozmową sprzedażową")}</p>
       </div>
 
       {/* Pasek kroków */}
@@ -419,24 +524,37 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
               <div className="mt-1"><b>{t("Do this differently today:", "Dziś zrób inaczej:")}</b> {ostatnia.poprawka}</div>
             </div>
           )}
-          <p className="text-slate-600">{t(`${imie ? `${imie}, y` : "Y"}ou have a real call coming up. Turn on the music, get hyped, and let's go: breathe, voice, card, mindset.`, `${imie ? `${imie}, m` : "M"}asz za chwilę prawdziwą rozmowę. Włącz muzykę, daj się nakręcić i lecimy: oddech, głos, kartka, głowa.`)}</p>
+          <p className="text-slate-600">{t(`${imie ? `${imie}, y` : "Y"}ou have a real call coming up. Turn on the music, get hyped, and let's go: breathe, voice, mindset.`, `${imie ? `${imie}, m` : "M"}asz za chwilę prawdziwą rozmowę. Włącz muzykę, daj się nakręcić i lecimy: oddech, głos, głowa.`)}</p>
           <button type="button" onClick={() => idz("oddech")} className="bruno-przycisk text-base px-12 py-4">{t("Light the fire", "Zapal ogień")}</button>
         </div>
       )}
 
-      {krok === "oddech" && (
-        <div className="bruno-szklo rounded-3xl p-8 sm:p-10 text-center flex flex-col items-center gap-6 min-h-[26rem] justify-center">
-          <div className="text-xs uppercase tracking-wide text-slate-500">{faza.cykl} · {czas(ODDECH_S - sek)}</div>
-          <div className="relative size-48 sm:size-60 grid place-items-center">
+      {krok === "oddech" && !cwiczy && (
+        <div className="bruno-szklo rounded-3xl p-8 sm:p-10 text-center flex flex-col items-center gap-5 min-h-[26rem] justify-center">
+          <div className="text-xs uppercase tracking-wide text-slate-500">{INFO[tech].nr}</div>
+          <h2 className="bruno-h2 text-2xl">{INFO[tech].tytul}</h2>
+          <GrafikaOddechu tech={tech} postep={null} jezyk={jezyk} />
+          <p className="text-slate-700 max-w-md">{INFO[tech].opis}</p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <button type="button" onClick={() => setCwiczy(true)} className="bruno-przycisk text-base px-10 py-4">{t(`Start (${TECHNIKA_S[tech]} s)`, `Start (${TECHNIKA_S[tech]} s)`)}</button>
+            <button type="button" onClick={() => (tech === "sigh" ? setTech("box") : idz("glos"))} className="bruno-przycisk-2">{t("Skip", "Pomiń")}</button>
+          </div>
+        </div>
+      )}
+
+      {krok === "oddech" && cwiczy && (
+        <div className="bruno-szklo rounded-3xl p-8 sm:p-10 text-center flex flex-col items-center gap-5 min-h-[26rem] justify-center">
+          <div className="text-xs uppercase tracking-wide text-slate-500">{INFO[tech].tytul} · {czas(Math.ceil(TECHNIKA_S[tech] - tOdd))}</div>
+          <div className="relative size-40 sm:size-48 grid place-items-center">
             <div
               className="absolute inset-0 rounded-full blur-2xl transition-transform duration-[900ms] ease-in-out"
-              style={{ transform: `scale(${faza.skala})`, background: "radial-gradient(circle at 45% 40%, #f97316cc 0%, #ea580c 48%, #ea580c00 74%)" }}
+              style={{ transform: `scale(${f.skala})`, background: "radial-gradient(circle at 45% 40%, #f97316cc 0%, #ea580c 48%, #ea580c00 74%)" }}
               aria-hidden
             />
-            <span className="relative bruno-h2 text-2xl text-white drop-shadow-[0_2px_12px_rgba(234,88,12,0.7)]" aria-live="polite">{faza.tekst}</span>
+            <span className="relative bruno-h2 text-2xl text-white drop-shadow-[0_2px_12px_rgba(234,88,12,0.7)]" aria-live="polite">{f.tekst}</span>
           </div>
-          <p className="text-sm text-slate-600 max-w-md">{t("First 30 s: two short breaths in through your nose, one long breath out through your mouth. The fastest known way to slow your heart rate. Then box breathing 4-4-4-4.", "Pierwsze 30 s: dwa krótkie wdechy nosem, jeden długi wydech ustami. Najszybszy znany sposób na zbicie tętna. Potem kwadrat 4-4-4-4.")}</p>
-          <button type="button" onClick={() => idz("glos")} className="bruno-przycisk-2">{t("Skip", "Pomiń")}</button>
+          <GrafikaOddechu tech={tech} postep={f.postep} jezyk={jezyk} />
+          <button type="button" onClick={() => { setCwiczy(false); if (tech === "sigh") setTech("box"); else idz("glos"); }} className="bruno-przycisk-2">{t("Skip", "Pomiń")}</button>
         </div>
       )}
 
@@ -449,83 +567,6 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
             {rozpoznawanieJest ? (transkrypt ? `${t("I hear:", "Słyszę:")} ${cudzy(transkrypt)}` : t("Listening... (mic, Chrome)", "Słucham... (mikrofon, Chrome)")) : t("Your browser can't recognize speech, so I'm only tracking time. Chrome can do it.", "Przeglądarka nie rozpoznaje mowy, liczę tylko czas. Chrome to umie.")}
           </div>
           <button type="button" onClick={zakonczGlos} className="bruno-przycisk">{t("Done, next", "Gotowe, dalej")}</button>
-        </div>
-      )}
-
-      {krok === "kartka" && (
-        <div className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-5">
-          {glosWynik && (
-            <div className="text-sm rounded-2xl bg-white/70 border border-slate-200 p-3 flex flex-wrap gap-x-5 gap-y-1">
-              <span><b>{glosWynik.slowa}</b> {jezyk === "pl" ? "słów" : glosWynik.slowa === 1 ? "word" : "words"}</span>
-              <span><b>{glosWynik.wypelniacze}</b> {jezyk === "pl" ? "wypełniaczy" : glosWynik.wypelniacze === 1 ? "filler" : "fillers"} ({glosWynik.naMin}/min, {glosWynik.naMin <= 2 ? t("clean", "czysto") : glosWynik.naMin <= 5 ? t("OK", "średnio") : t("too many “um”s", "za dużo „yy”")})</span>
-              <span>{t("pace", "tempo")} <b>{glosWynik.tempo}</b> {t("words/min", "słów/min")} ({glosWynik.tempo > 170 ? t("too fast, slow down", "za szybko, zwolnij") : glosWynik.tempo < 90 ? t("slow, good", "wolno, dobrze") : t("normal", "w normie")})</span>
-            </div>
-          )}
-          <div>
-            <h2 className="bruno-h2 text-lg">{t("Call card", "Kartka rozmowy")}</h2>
-            <p className="text-sm text-slate-500">{t("It stays in Bruno. Five things that decide how the call goes.", "Zostaje w Bruno. Pięć rzeczy, które decydują o wyniku.")}</p>
-          </div>
-          <label className="text-sm text-slate-700" htmlFor="cel">
-            {t("1. Goal = dated next step", "1. Cel = następny krok z datą")}
-            <input id="cel" className="bruno-pole mt-1" placeholder={t("e.g. in-person meeting booked for next week, date and time", "np. umówione spotkanie na żywo w przyszłym tygodniu, data i godzina")} value={k.cel} onChange={pole("cel")} maxLength={200} />
-          </label>
-          <label className="text-sm text-slate-700" htmlFor="pytanie">
-            {t("2. Opening question (open: how, what, how much, when)", "2. Pytanie otwierające (otwarte: jak, co, ile, kiedy)")}
-            <input id="pytanie" className="bruno-pole mt-1" placeholder={t("e.g. How do you handle grant paperwork today?", "np. Jak dziś wygląda u Pana rozliczanie dotacji?")} value={k.pytanie} onChange={pole("pytanie")} maxLength={200} />
-          </label>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {([["ob1", "re1"], ["ob2", "re2"]] as const).map(([o, r], i) => (
-              <div key={o} className="rounded-2xl bg-white/60 border border-slate-200 p-3 flex flex-col gap-2">
-                <label className="text-sm text-slate-700" htmlFor={o}>
-                  {i + 3}. {t("Objection you'll hear", "Obiekcja, która padnie")}
-                  <select id={o} className="bruno-pole mt-1" value={k[o]} onChange={pole(o)}>
-                    <option value="">{t("choose", "wybierz")}</option>
-                    {obiekcje.map((x) => (
-                      <option key={x.nazwa} value={x.nazwa}>{x.nazwa}</option>
-                    ))}
-                  </select>
-                </label>
-                {wyj(k[o]) && <div className="text-xs text-slate-500">{t("What the customer means:", "Co klient ma na myśli:")} {wyj(k[o])}</div>}
-                <label className="text-sm text-slate-700" htmlFor={r}>
-                  {t("Your FIRST response (a question or a label, not an argument)", "Twoja PIERWSZA reakcja (pytanie albo etykieta, nie argument)")}
-                  <input id={r} className="bruno-pole mt-1" placeholder={t("e.g. “Compared to what?” / “It sounds like you're worried about paying it back.”", "np. „W porównaniu do czego?” / „Wygląda na to, że boi się Pan zwrotu.”")} value={k[r]} onChange={pole(r)} maxLength={200} />
-                </label>
-              </div>
-            ))}
-          </div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <label className="text-sm text-slate-700" htmlFor="kwota">
-              {t("5. Say the price straight (no “only,” no “just”)", "5. Kwota wprost (bez „tylko”, „jedynie”)")}
-              <input id="kwota" className="bruno-pole mt-1" placeholder={t("e.g. $6,050 total, then silence", "np. 6 050 zł brutto, potem cisza")} value={k.kwota} onChange={pole("kwota")} maxLength={120} />
-            </label>
-            <label className="text-sm text-slate-700" htmlFor="data">
-              {t("Date you'll suggest", "Data, którą zaproponujesz")}
-              <input id="data" className="bruno-pole mt-1" placeholder={t("e.g. Tuesday 10 AM or Thursday 2 PM", "np. wtorek 10:00 albo czwartek 14:00")} value={k.data} onChange={pole("data")} maxLength={120} />
-            </label>
-          </div>
-          {poprawki.length > 0 && (
-            <div className="text-sm rounded-2xl bg-cyan-50/70 border border-cyan-200 p-3">
-              <div className="text-xs font-semibold uppercase tracking-wide text-cyan-800 mb-1">{t("Your open fixes from Bruno", "Twoje otwarte poprawki z Bruno")}</div>
-              <ul className="list-disc pl-5 flex flex-col gap-1">
-                {poprawki.map((p, i) => (
-                  <li key={i}><b>{p.tresc}</b>{p.wzor ? `: ${p.wzor}` : ""}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {produkt && <div className="text-xs text-slate-500">{t("You sell:", "Sprzedajesz:")} {produkt.slice(0, 160)}</div>}
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() => {
-                void zapiszKartke();
-                setKrok("glowa");
-              }}
-              className="bruno-przycisk"
-            >
-              {t("Got it, next", "Mam to, dalej")}
-            </button>
-          </div>
         </div>
       )}
 
@@ -543,25 +584,7 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
             {t("The worst that can happen", "Najgorsze, co może się stać")}
             <input id="najgorszy" className="bruno-pole mt-1" value={najgorszy} onChange={(e) => setNajgorszy(e.target.value)} maxLength={200} />
           </label>
-          <button type="button" onClick={() => idz("sparing")} className="bruno-przycisk">{t("Next", "Dalej")}</button>
-        </div>
-      )}
-
-      {krok === "sparing" && (
-        <div className="bruno-szklo rounded-3xl p-8 sm:p-10 flex flex-col items-center gap-5 text-center">
-          <h2 className="bruno-h2 text-lg">{t("Sparring (optional, 3 minutes)", "Sparing (opcja, 3 minuty)")}</h2>
-          <p className="text-slate-700 max-w-lg">{t(
-            `Bruno will throw ${k.ob1 ? `“${k.ob1}”` : "your toughest objection"} at you. You answer once, get a score, come back here, and make the call.`,
-            `Bruno rzuci Ci ${k.ob1 ? `„${k.ob1}”` : "najtrudniejszą obiekcję"}. Odpowiadasz raz, dostajesz ocenę, wracasz tu i dzwonisz.`,
-          )}</p>
-          <div className="flex flex-wrap gap-3 justify-center">
-            {kartaSparingu ? (
-              <Link href={`/bruno/rozmowa?karta=${encodeURIComponent(kartaSparingu)}`} className="bruno-przycisk-2">{t("Spar with Bruno", "Sparing z Bruno")}</Link>
-            ) : (
-              <Link href="/bruno/rozmowa" className="bruno-przycisk-2">{t("Spar with Bruno", "Sparing z Bruno")}</Link>
-            )}
-            <button type="button" onClick={() => idz("rozmowa")} className="bruno-przycisk text-base px-10 py-4">{t("Calling", "Dzwonię")}</button>
-          </div>
+          <button type="button" onClick={() => idz("rozmowa")} className="bruno-przycisk text-base px-10 py-4">{t("Calling", "Dzwonię")}</button>
         </div>
       )}
 
@@ -572,8 +595,8 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
           <div className="text-left text-sm text-slate-800 bg-white/70 border border-slate-200 rounded-2xl p-4 max-w-md w-full flex flex-col gap-1">
             {k.cel && <div><b>{t("Goal:", "Cel:")}</b> {k.cel}</div>}
             {k.pytanie && <div><b>Start:</b> {k.pytanie}</div>}
-            {k.ob1 && <div><b>{k.ob1}:</b> {k.re1 || t("a question, not an argument", "pytanie, nie argument")}</div>}
-            {k.ob2 && <div><b>{k.ob2}:</b> {k.re2 || t("a question, not an argument", "pytanie, nie argument")}</div>}
+            {k.ob1 && <div><b>{ob(k.ob1)}:</b> {k.re1 || t("a question, not an argument", "pytanie, nie argument")}</div>}
+            {k.ob2 && <div><b>{ob(k.ob2)}:</b> {k.re2 || t("a question, not an argument", "pytanie, nie argument")}</div>}
             {k.kwota && <div><b>{t("Price:", "Kwota:")}</b> {k.kwota}{t(", then silence", ", potem cisza")}</div>}
             {k.data && <div><b>{t("Date:", "Data:")}</b> {k.data}</div>}
           </div>
@@ -604,7 +627,7 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
                 const w = po.obiekcje.includes(o.nazwa);
                 return (
                   <button key={o.nazwa} type="button" aria-pressed={w} onClick={() => setPo((x) => ({ ...x, obiekcje: w ? x.obiekcje.filter((y) => y !== o.nazwa) : [...x.obiekcje, o.nazwa] }))} className={`bruno-pastylka ${w ? "bruno-pastylka-wybrana" : ""}`}>
-                    {w && <span className="mr-1" aria-hidden>✓</span>}{o.nazwa}
+                    {w && <span className="mr-1" aria-hidden>✓</span>}{ob(o.nazwa)}
                   </button>
                 );
               })}
@@ -631,7 +654,7 @@ export default function Ogien({ imie, cytat, produkt, obiekcje, pierwszeZdanie, 
         <div className="bruno-szklo rounded-3xl p-8 sm:p-10 flex flex-col items-center gap-5 text-center">
           <h2 className="bruno-h2 text-2xl">{po.cel === "tak" ? t("Nailed it. That's how it's done.", "Jest. Tak to się robi.") : po.cel === "czesciowo" ? t("A step forward. The next one will be a full win.", "Krok do przodu. Następny będzie pełny.") : t("One “no.” One flashcard. Next call.", "Jedno „nie”. Jedna fiszka. Następna rozmowa.")}</h2>
           {po.krok && <p className="text-slate-700"><b>{t("Next step:", "Następny krok:")}</b> {po.krok}{po.kiedy ? `, ${po.kiedy}` : ""}</p>}
-          {po.obiekcje.length > 0 && <p className="text-sm text-slate-600">{t(`Came up: ${po.obiekcje.join(", ")}. Bruno will bring them back in Drills.`, `Padły: ${po.obiekcje.join(", ")}. Bruno wróci do nich w Treningu.`)}</p>}
+          {po.obiekcje.length > 0 && <p className="text-sm text-slate-600">{t(`Came up: ${po.obiekcje.join(", ")}. Bruno will bring them back in Drills.`, `Padły: ${po.obiekcje.map(ob).join(", ")}. Bruno wróci do nich w Treningu.`)}</p>}
           <div className="flex flex-wrap gap-3 justify-center">
             <button type="button" onClick={() => { setPo({ cel: "", obiekcje: [], krok: "", kiedy: "" }); setZapisStan("idle"); setZapisId(null); setKrok("zapal"); }} className="bruno-przycisk">{t("Next call", "Następna rozmowa")}</button>
             <Link href="/bruno/trening" className="bruno-przycisk-2">{t("Drills", "Trening")}</Link>

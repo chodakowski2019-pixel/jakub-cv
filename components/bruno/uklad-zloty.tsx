@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import PasekZloty from "@/components/bruno/pasek-zloty";
+import NavTel from "@/components/bruno/nav-tel";
 
 // 10.10 (USER_001: „brak paska po lewej, wszystko się rozjechało”): układ Next.js NIE renderuje
 // się od nowa przy przejściu między zakładkami. Gdy pierwszym ekranem był /bruno/panel (własny pasek),
@@ -43,11 +44,15 @@ export default function UkladZloty({
   }
   if (doProfilu) return null;
 
+  // 14.10: na telefonie wszędzie ta sama nawigacja jak w aplikacji (górna belka + dolny pasek), CSS chowa ją na komputerze.
+  const tel = <NavTel dostep={dostep} inicjal={inicjal} free={free} />;
+
   // Panel czarno-złoty ma własny pasek i tło.
-  if (sciezka === "/bruno/panel") return <>{children}</>;
+  if (sciezka === "/bruno/panel") return <>{tel}{children}</>;
 
   return (
     <div className="bz-uklad">
+      {tel}
       <PasekZloty dostep={dostep} inicjal={inicjal} free={free} />
       <div className="bz-tresc">
         <main className="flex-1 px-4 sm:px-6 pb-10 pt-6 sm:pt-8 max-w-5xl w-full mx-auto overflow-x-hidden">{zablokowany ? null : children}</main>

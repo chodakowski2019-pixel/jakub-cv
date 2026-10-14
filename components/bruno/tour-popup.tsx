@@ -97,7 +97,8 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
         <main className="flex-1 min-h-0 flex flex-col items-center justify-center gap-5 px-4 sm:px-6 py-5">
           {/* 13.10 (USER_001): nagłówek nad filmem. */}
           <h1 className="bruno-h2 text-2xl sm:text-3xl text-center">{t("See how to use Bruno AI", "Zobacz, jak korzystać z Bruno AI")}</h1>
-          <div className="relative mx-auto h-[62vh] aspect-[16/10] max-w-full rounded-3xl overflow-hidden bg-white shadow-[0_24px_60px_-20px_rgba(15,23,42,0.25)] border border-white/80">
+          {/* 14.10 (USER_001, telefon): ramka na całą szerokość ekranu (wysokość z proporcji), na komputerze jak było (62vh). */}
+          <div className="relative mx-auto w-full h-auto sm:w-auto sm:h-[62vh] aspect-[16/10] max-w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-white shadow-[0_24px_60px_-20px_rgba(15,23,42,0.25)] border border-white/80">
             <video
               ref={video}
               src={src}

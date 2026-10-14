@@ -89,7 +89,8 @@ export default function RejestracjaForm({ google = false, jezykStart, naDomenieS
     <AuroraShell tytul={x.tytul} etykietaPanelu={x.panel} aktywny={0} kroki={x.kroki.map((etykieta) => ({ etykieta }))}>
       <form key="form" onSubmit={submit} className={`${s.pane} ${s.enter}`}>
         <h2>{x.h2}</h2>
-        <p className={s.lead}>{x.lead}</p>
+        {/* 14.10 (USER_001): na telefonie bez „3 bezpłatne rozmowy. Bez karty.” */}
+        <p className={`${s.lead} ${s.leadBezTelefonu}`}>{x.lead}</p>
         {google && <GooglePrzycisk jezyk={jezyk} />}
 
         <div className={s.f}>

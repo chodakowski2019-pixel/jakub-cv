@@ -152,25 +152,34 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
                   </span>
                   {toDzis && <span className="text-[10px] uppercase tracking-wide" style={{ color: ZLOTO }}>{t("today", "dziś")}</span>}
                 </div>
+                {/* 14.10 (USER_001, telefon): w wąskiej kratce tylko liczby „rozmowy · fiszki”, bez ikon i średniej (jest w Feedbacku). */}
+                {maDane ? (
+                  <div className="sm:hidden text-[11px] font-semibold leading-none mt-1.5 flex items-center gap-1">
+                    {dane.rozmowy ? <span style={{ color: ZLOTO_JASNE }}>{dane.rozmowy}</span> : null}
+                    {dane.rozmowy && dane.fiszki ? <span style={{ color: "rgba(245, 242, 234, 0.4)" }}>·</span> : null}
+                    {dane.fiszki ? <span style={{ color: "rgba(245, 242, 234, 0.75)" }}>{dane.fiszki}</span> : null}
+                  </div>
+                ) : null}
                 {dane?.rozmowy ? (
-                  <div className="text-xs sm:text-sm font-semibold leading-tight mt-1" style={{ color: ZLOTO_JASNE }}>
+                  <div className="hidden sm:block text-sm font-semibold leading-tight mt-1" style={{ color: ZLOTO_JASNE }}>
                     📞 {dane.rozmowy}
                     {dane.srednia !== null ? ` · ${dane.srednia}/10` : ""}
                   </div>
                 ) : null}
                 {dane?.fiszki ? (
-                  <div className="text-xs sm:text-sm font-medium leading-tight mt-0.5" style={{ color: "rgba(245, 242, 234, 0.85)" }}>
+                  <div className="hidden sm:block text-sm font-medium leading-tight mt-0.5" style={{ color: "rgba(245, 242, 234, 0.85)" }}>
                     🃏 {dane.fiszki}
                   </div>
                 ) : null}
                 {toKoniec ? (
-                  <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide leading-tight mt-auto pt-1" style={{ color: ZLOTO_JASNE }}>
-                    {t("access ends", "koniec dostępu")}
+                  <div className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-wide leading-tight mt-auto pt-1" style={{ color: ZLOTO_JASNE }}>
+                    <span className="sm:hidden">{t("end", "koniec")}</span>
+                    <span className="hidden sm:inline">{t("access ends", "koniec dostępu")}</span>
                   </div>
                 ) : null}
               </>
             );
-            const klasa = "min-h-[76px] sm:min-h-[92px] rounded-xl p-2 flex flex-col items-center border transition-colors";
+            const klasa = "min-h-[54px] sm:min-h-[92px] rounded-lg sm:rounded-xl p-1 sm:p-2 flex flex-col items-center border transition-colors";
             return dane?.rozmowaId ? (
               <Link key={k} href={`/bruno/feedback/${dane.rozmowaId}`} className={`${klasa} hover:border-[#d4af5a]`} style={styl} title={t("Open feedback", "Otwórz feedback")}>
                 {tresc}
