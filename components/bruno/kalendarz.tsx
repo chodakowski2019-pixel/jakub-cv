@@ -150,7 +150,8 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
                   <span className={`text-base sm:text-lg leading-none ${toDzis || toKoniec ? "font-bold" : "font-medium"}`} style={{ color: toDzis || toKoniec ? ZLOTO_JASNE : TEKST }}>
                     {d.getDate()}
                   </span>
-                  {toDzis && <span className="text-[10px] uppercase tracking-wide" style={{ color: ZLOTO }}>{t("today", "dziś")}</span>}
+                  {/* 16.10 (USER_001): na telefonie bez „dziś” (słabo widać w małej kratce), dzień wyróżnia ramka. */}
+                  {toDzis && <span className="max-[860px]:hidden text-[10px] uppercase tracking-wide" style={{ color: ZLOTO }}>{t("today", "dziś")}</span>}
                 </div>
                 {/* 14.10 (USER_001, telefon): w wąskiej kratce tylko liczby „rozmowy · fiszki”, bez ikon i średniej (jest w Feedbacku). */}
                 {maDane ? (
