@@ -190,11 +190,12 @@ export default function DostosujForm({ start, oferta }: { start: Konfig; oferta:
           {oferta ? (
             <>
               <p className="bruno-opis text-[13px] text-slate-500 mt-1 mb-3">{t("Paste your website address or pick a PDF. Bruno reads it and fills in what you sell, who the customer is, and the objections. You can edit anything after.", "Wklej adres strony albo wybierz PDF. Bruno przeczyta i wypełni: co sprzedajecie, kim jest klient, jakie obiekcje padają. Potem możesz wszystko poprawić.")}</p>
-              <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+              {/* 15.10 (USER_001): na telefonie opis znika, więc odstęp pod nagłówkiem. */}
+              <div className="flex flex-col sm:flex-row gap-2 sm:items-center max-[860px]:mt-4">
                 <input
                   id="oferta-url"
                   className="bruno-pole flex-1"
-                  placeholder={t("https://yourcompany.com/offer", "https://twojafirma.pl/oferta")}
+                  placeholder={t("www.yourcompany.com/offer", "www.twojafirma.pl/oferta")}
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   onKeyDown={(e) => {

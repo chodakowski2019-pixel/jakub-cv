@@ -77,7 +77,9 @@ export default function ProfilForm({ imieStart }: { imieStart?: string | null })
         <input id="handlowcy" className="bruno-pole" type="number" inputMode="numeric" min={1} max={100000} placeholder={t("e.g. 8", "np. 8")} value={f.handlowcy} onChange={pole("handlowcy")} />
       </div>
       {blad && <p className="text-sm text-red-700" role="alert">{blad}</p>}
-      <button type="submit" disabled={stan === "zapis" || !f.rola || (f.rola === "other" && f.rolaInna.trim().length < 2)} className="bruno-przycisk text-base py-3">
+      <button type="submit" disabled={stan === "zapis" || !f.rola || (f.rola === "other" && f.rolaInna.trim().length < 2)} className={`bruno-przycisk text-base py-3 ${stan === "zapis" ? "bruno-czeka" : ""}`} aria-busy={stan === "zapis"}>
+        {/* 15.10 (USER_001): kręcące się kółko, póki zapis i przejście do panelu trwają. */}
+        {stan === "zapis" && <span className="bruno-kolko" aria-hidden />}
         {stan === "zapis" ? t("Saving...", "Zapisuję...") : t("Start practicing →", "Zaczynam trening →")}
       </button>
     </form>

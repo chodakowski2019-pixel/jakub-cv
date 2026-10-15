@@ -762,4 +762,15 @@ html:has(.bruno.zloty), body:has(.bruno.zloty) { background: #080807; }
     left: 50%; top: 56%; height: 62%; transform: translate(-50%, -50%);
     justify-content: space-between; gap: 0;
   }
+  /* 15.10 (USER_001): fala niżej, w połowie między mikrofonem a „Rozmawiaj” (wcześniej nachodziła na mikrofon) */
+  .bruno.zloty .bpa .fala-lp { top: 17% !important; }
 }
+
+/* 15.10 (USER_001): kręcące się kółko w przycisku podczas zapisu (np. „Poznajmy się”). */
+.bruno .bruno-czeka:disabled { opacity: 1; cursor: progress; }
+.bruno .bruno-kolko {
+  display: inline-block; width: 16px; height: 16px; margin-right: 8px; vertical-align: -2px;
+  border-radius: 50%; border: 2px solid currentColor; border-top-color: transparent;
+  animation: bruno-kolko 0.7s linear infinite;
+}
+@keyframes bruno-kolko { to { transform: rotate(360deg); } }

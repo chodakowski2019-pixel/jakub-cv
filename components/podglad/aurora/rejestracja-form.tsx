@@ -126,7 +126,9 @@ export default function RejestracjaForm({ google = false, jezykStart, naDomenieS
           </p>
         )}
 
-        <button type="submit" disabled={status === "sending" || form.haslo.length < 8 || !form.zgoda} className={s.btnW}>
+        {/* 15.10 (USER_001): zakładanie konta trwa chwilę, więc kręcące się kółko (przycisk pełny, nie wyszarzony). */}
+        <button type="submit" disabled={status === "sending" || form.haslo.length < 8 || !form.zgoda} className={`${s.btnW} ${status === "sending" ? s.btnCzeka : ""}`} aria-busy={status === "sending"}>
+          {status === "sending" && <span className={s.kolko} aria-hidden />}
           {status === "sending" ? x.wysylam : x.wyslij}
         </button>
 

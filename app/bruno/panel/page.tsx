@@ -37,7 +37,7 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
 
   return (
     <div className={`${inter.variable} ${outfit.variable}`} style={{ display: "contents" }}>
-      {pokazTour && <TourPopup src={filmDla(konto).src} okladka={filmDla(konto).okladka} />}
+      {pokazTour && <TourPopup src={filmDla(konto).src} okladka={filmDla(konto).okladka} pion={filmDla(konto).pion} />}
       <PanelA d={d} lp szklo zloty dostep={dostepKonta(konto)} free={dostepKonta(konto).free ? await stanFree(konto) : null} />
     </div>
   );

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useT } from "@/components/bruno/jezyk-kontekst";
+import { FILM_PION_MEDIA } from "@/lib/bruno/film";
 
 // Film oprowadzający przy pierwszym logowaniu (USER_001 2.10, wzór z OMG
 // tour-popup: pokazuje się RAZ, dopóki bruno_konta.tour_obejrzany_at jest puste).
@@ -13,10 +14,21 @@ import { useT } from "@/components/bruno/jezyk-kontekst";
 // Autoodtwarzanie z dźwiękiem blokują przeglądarki, więc najpierw przycisk
 // „Odtwórz". „Pomiń" albo „Zaczynam" oznacza film jako obejrzany.
 
-export default function TourPopup({ src, okladka }: { src: string; okladka?: string }) {
+export default function TourPopup({ src, okladka, pion }: { src: string; okladka?: string; pion?: { src: string; okladka: string } }) {
   const { t } = useT();
   const router = useRouter();
   const [otwarty, setOtwarty] = useState(true);
+  // 15.10 (USER_001): na telefonie film w pionie (9:16), jeśli konto go ma.
+  const [telefon, setTelefon] = useState(false);
+  useEffect(() => {
+    if (!pion) return;
+    const m = window.matchMedia(FILM_PION_MEDIA);
+    const ustaw = () => setTelefon(m.matches);
+    ustaw();
+    m.addEventListener("change", ustaw);
+    return () => m.removeEventListener("change", ustaw);
+  }, [pion]);
+  const wPionie = Boolean(pion && telefon);
   // Portal do kontenera `.bruno`, nie do <body>: popup siedział w `.bruno-ekran`,
   // który ma animację z `transform`, a transform tworzy nowy układ odniesienia
   // dla `position: fixed` (ta sama pułapka co w OMG tour-popup). `.bruno` trzyma
@@ -98,11 +110,13 @@ export default function TourPopup({ src, okladka }: { src: string; okladka?: str
           {/* 13.10 (USER_001): nagłówek nad filmem. */}
           <h1 className="bruno-h2 text-2xl sm:text-3xl text-center">{t("See how to use Bruno AI", "Zobacz, jak korzystać z Bruno AI")}</h1>
           {/* 14.10 (USER_001, telefon): ramka na całą szerokość ekranu (wysokość z proporcji), na komputerze jak było (62vh). */}
-          <div className="relative mx-auto w-full h-auto sm:w-auto sm:h-[62vh] aspect-[16/10] max-w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-white shadow-[0_24px_60px_-20px_rgba(15,23,42,0.25)] border border-white/80">
+          {/* 15.10: film w pionie = ramka 9:16 na całą wolną wysokość (szerokość z proporcji). */}
+          <div className={`relative mx-auto max-w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-white shadow-[0_24px_60px_-20px_rgba(15,23,42,0.25)] border border-white/80 ${wPionie ? "flex-1 min-h-0 aspect-[9/16]" : "w-full h-auto sm:w-auto sm:h-[62vh] aspect-[16/10]"}`}>
             <video
+              key={wPionie ? "pion" : "poziom"}
               ref={video}
-              src={src}
-              poster={okladka}
+              src={wPionie ? pion!.src : src}
+              poster={wPionie ? pion!.okladka : okladka}
               playsInline
               preload="metadata"
               controls={gra}

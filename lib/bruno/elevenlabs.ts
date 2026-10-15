@@ -33,7 +33,7 @@ export const GLOS_BRUNO_K = "XrExE9yKIg1WjnnlVkGX";
  * Agent ElevenLabs pozwala nadpisać per rozmowa: stability, similarity_boost, speed. Inne głosy = ustawienia agenta.
  */
 export function ustawieniaGlosu(jezyk: Jezyk, plec: PlecGlosu): { stability: number; similarityBoost: number; speed: number } | null {
-  if (plec === "k" && jezyk === "pl") return { stability: 0.55, similarityBoost: 0.75, speed: 1.05 };
+  if (plec === "k" && jezyk === "pl") return { stability: 0.5, similarityBoost: 0.75, speed: 1.05 }; // 15.10: głos v3 przyjmuje stability 0 / 0,5 / 1 (było 0,55)
   return null;
 }
 /** Imię klientki, gdy wybrany głos kobiecy (do potwierdzenia przez USER_001). */

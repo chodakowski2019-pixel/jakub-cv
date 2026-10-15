@@ -612,3 +612,25 @@
   height: 1px;
   background: rgba(255, 255, 255, 0.12);
 }
+
+/* 15.10 (USER_001): kręcące się kółko w przycisku, gdy konto się zakłada. */
+.root .btnW.btnCzeka:disabled {
+  opacity: 1;
+  cursor: progress;
+}
+.kolko {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  vertical-align: -3px;
+  border-radius: 50%;
+  border: 2px solid rgba(10, 10, 10, 0.18);
+  border-top-color: #f08a2b;
+  animation: kolko 0.7s linear infinite;
+}
+@keyframes kolko {
+  to {
+    transform: rotate(360deg);
+  }
+}

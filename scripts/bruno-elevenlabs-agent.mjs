@@ -47,18 +47,22 @@ const KONFIG = {
       prompt: {
         // Prompt właściwy przychodzi per rozmowa jako override z serwera Bruno (instrukcjeKlienta).
         prompt: "Jesteś Bruno, klient w treningowej rozmowie sprzedażowej. Mówisz po polsku, krótko, jak człowiek. Nigdy nie mówisz, że jesteś AI.",
-        llm: "gpt-4o",
-        temperature: 0.7,
+        // 15.10 (USER_001: „a, b i c, nie oszczędzać”): mądrzejszy klient = Claude Sonnet 5.5 (było gpt-4o 0,7).
+        llm: "claude-sonnet-5-5",
+        temperature: 0.8,
         max_tokens: 220,
       },
     },
     tts: {
-      // multilingual_v2 = naturalniej niż flash (+0,3 s opóźnienia); stability 0.35 / style 0.3 = więcej emocji (USER_001 2.10).
-      model_id: "eleven_multilingual_v2",
+      // 15.10 (USER_001: Bruno na końcu zdań brzmiał, jakby kończył rozmowę): głos v3 do rozmów w trybie ekspresyjnym,
+      // optymalizacja opóźnienia 3 → 1 (dłuższe kawałki tekstu = naturalna intonacja), dźwięk 16 → 24 kHz. v3: stability 0 / 0,5 / 1.
+      model_id: "eleven_v3_conversational",
+      expressive_mode: true,
+      optimize_streaming_latency: 1,
+      agent_output_audio_format: "pcm_24000",
       voice_id: "iP95p4xoKVk53GoZ742B",
-      stability: 0.35,
+      stability: 0.5,
       similarity_boost: 0.8,
-      style: 0.3,
       speed: 1.0,
     },
     asr: { quality: "high", provider: "scribe_realtime", user_input_audio_format: "pcm_16000", keywords: [] },

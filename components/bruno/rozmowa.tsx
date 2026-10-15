@@ -538,7 +538,8 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
         },
         onMessage: ({ message, role }) => {
           const teraz = Math.max(0, Math.round((Date.now() - start.current) / 1000));
-          const tekst = message?.trim();
+          // 15.10: głos v3 w trybie ekspresyjnym dopisuje znaczniki emocji ([sighs], [slow]); głos je gra, w transkrypcji dla trenera ich nie ma.
+          const tekst = (role === "agent" ? (message ?? "").replace(/\[[^\]]{1,40}\]/g, " ") : (message ?? "")).replace(/\s{2,}/g, " ").trim();
           if (!tekst) return;
           // 9.10: ElevenLabs oddaje tekst handlowca PO jego wypowiedzi, a tekst Bruno PRZED
           // (obie w tej samej sekundzie, więc trener cytował złe czasy). Początek wypowiedzi
@@ -823,11 +824,12 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
                 const wybrany = postac === id;
                 return (
                   <button key={id} type="button" aria-pressed={wybrany} onClick={() => setPostac(id)} className={kafelek(wybrany)}>
-                    <div className="flex items-center gap-2 flex-wrap">
+                    {/* 15.10 (USER_001): kolor i cecha zawsze jedno pod drugim (wcześniej przy dłuższej nazwie cecha stała obok). */}
+                    <div className="flex items-center gap-2">
                       <span className="size-3.5 rounded-full shrink-0" style={{ background: k.kolor }} aria-hidden />
                       <div className="bruno-h2 text-base">{k.nazwa}</div>
-                      <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: `${k.kolor}1a`, color: k.kolor }}>{k.krotko}</span>
                     </div>
+                    <span className="mt-1.5 self-start inline-block text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: `${k.kolor}1a`, color: k.kolor }}>{k.krotko}</span>
                     <div className="bruno-opis text-sm text-slate-600 mt-1">{k.opis}</div>
                   </button>
                 );

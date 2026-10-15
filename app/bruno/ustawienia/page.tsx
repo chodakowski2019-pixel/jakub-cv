@@ -40,8 +40,19 @@ export default async function BrunoUstawieniaPage() {
           controls
           preload="metadata"
           playsInline
-          className="w-full rounded-2xl bg-slate-900 aspect-[16/10]"
+          className={`w-full rounded-2xl bg-slate-900 aspect-[16/10] ${filmDla(konto).pion ? "max-[860px]:hidden" : ""}`}
         />
+        {/* 15.10 (USER_001): na telefonie film w pionie. */}
+        {filmDla(konto).pion && (
+          <video
+            src={filmDla(konto).pion!.src}
+            poster={filmDla(konto).pion!.okladka}
+            controls
+            preload="metadata"
+            playsInline
+            className="min-[861px]:hidden w-full max-w-[420px] mx-auto rounded-2xl bg-slate-900 aspect-[9/16]"
+          />
+        )}
       </section>
       {/* 11.10: dokumenty w jednym miejscu panelu (wcześniej stopka na każdym ekranie). Rozmowy są nagrywane: RODO = łatwy dostęp. */}
       <section className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-3">
