@@ -97,6 +97,8 @@ export async function POST(req: Request) {
 
   const b = await req.json().catch(() => ({}));
   const konfig = await pobierzKonfig(email);
+  // 16.10 (USER_001): głos klienta wybierany w kreatorze (krok 2) ma pierwszeństwo; zapis do konfiguracji robi kreator.
+  if (b.glos === "m" || b.glos === "k") konfig.glos = b.glos;
   await zapewnijKarty(email, konfig, jezyk);
   const postac = postacLubDomyslna(b.postac ?? konfig.postac);
   // Ustawienia wybrane przed rozmową (2.10): tryb, cel, obiekcja.

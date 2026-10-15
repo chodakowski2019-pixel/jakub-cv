@@ -52,6 +52,7 @@ export default async function BrunoRozmowaPage({ searchParams }: { searchParams:
   return (
     <Rozmowa
       postacDomyslna={postacLubDomyslna(konfig.postac)}
+      glosDomyslny={konfig.glos === "k" ? "k" : "m"}
       karta={karta ? { id: karta.id, typ: karta.typ, tresc: karta.typ === "kryterium" ? NAZWY[karta.tresc as keyof typeof NAZWY] ?? karta.tresc : karta.tresc } : null}
       obiekcje={listaObiekcji(konfig.obiekcje)}
       rozmowyDzis={dzis}

@@ -27,6 +27,8 @@ type Stan = "wybor" | "odliczanie" | "laczenie" | "trwa" | "konczenie" | "feedba
 
 type Props = {
   postacDomyslna: PostacId;
+  /** 16.10: głos klienta (m = Bruno, k = Anna), krok 2 kreatora; ten sam zapis co w Ustawieniach. */
+  glosDomyslny?: "m" | "k";
   karta: { id: string; typ: string; tresc: string } | null;
   obiekcje: string[];
   rozmowyDzis: number;
@@ -184,7 +186,7 @@ function KolkoOceny({ etykieta }: { etykieta: string }) {
   );
 }
 
-export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny, free = null }: Props) {
+export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny, free = null }: Props) {
   // 11.10: teksty UI w języku konta (tr, bo `t` jest niżej zmienną trybu). Etykiety z etykiety(jezyk), kolor/ikona z postacie.ts.
   const { t: tr, jezyk, mnoga } = useT();
   const E = etykiety(jezyk);
@@ -205,6 +207,13 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
   const [cel, setCel] = useState<CelId>("spotkanie");
   const [celWlasny, setCelWlasny] = useState("");
   const [postac, setPostac] = useState<PostacId>(postacDomyslna);
+  // 16.10 (USER_001): głos klienta w kreatorze (krok 2). Kobieta = klientka Anna, w rozmowie napis „Anna” zamiast „Bruno”.
+  const [glos, setGlos] = useState<"m" | "k">(glosDomyslny);
+  const wybierzGlos = (g: "m" | "k") => {
+    setGlos(g);
+    void fetch("/api/bruno/konfig", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ glos: g }) }).catch(() => {});
+  };
+  const imieKlienta = glos === "k" ? "Anna" : "Bruno";
   // Poziom trudności (USER_001 2.10): domyślnie średni, czyli to, co Bruno robił dotąd.
   const [poziom, setPoziom] = useState<PoziomId>("sredni");
 
@@ -602,6 +611,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           postac,
+          glos,
           tryb,
           cel,
           cel_wlasny: celWlasny,
@@ -770,8 +780,21 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           </fieldset>
 
           {/* 2. Obiekcja */}
+          {/* 2. Głos klienta (16.10, USER_001): mężczyzna = Bruno, kobieta = Anna. Ten sam wybór co w Ustawieniach. */}
           <fieldset>
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">2.</span>{tr("Which objections do you want to practice?", "Jakie obiekcje chcesz przetrenować")} <span className="text-xs font-normal text-slate-400">{tr("(you can pick more than one)", "(możesz zaznaczyć kilka)")}</span></legend>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">2.</span>{tr("Customer's voice", "Głos klienta")}</legend>
+            <div className="grid grid-cols-2 gap-3 auto-rows-fr">
+              {(["m", "k"] as const).map((g) => (
+                <button key={g} type="button" aria-pressed={glos === g} onClick={() => wybierzGlos(g)} className={kafelek(glos === g)}>
+                  <div className="bruno-h2 text-base">{g === "m" ? tr("Man", "Mężczyzna") : tr("Woman", "Kobieta")}</div>
+                  <span className="mt-1.5 inline-block text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{g === "m" ? "Bruno" : "Anna"}</span>
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">3.</span>{tr("Which objections do you want to practice?", "Jakie obiekcje chcesz przetrenować")} <span className="text-xs font-normal text-slate-400">{tr("(you can pick more than one)", "(możesz zaznaczyć kilka)")}</span></legend>
             {obiekcje.length === 0 ? (
               <p className="text-sm text-slate-600 bruno-szklo rounded-2xl p-4">
                 {tr("You don't have a list of objections yet.", "Nie masz jeszcze listy obiekcji.")}{" "}
@@ -796,7 +819,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
 
           {/* 3. Cel */}
           <fieldset>
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">3.</span>{tr("Call goal", "Cel rozmowy")}</legend>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">4.</span>{tr("Call goal", "Cel rozmowy")}</legend>
             {/* Lista celów zależy od trybu; stała wysokość siatki, żeby zmiana trybu nie przesuwała kroku 4. */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 auto-rows-fr min-h-[11rem] sm:min-h-[8.5rem]">
               {CELE_TRYBU[tryb].map((id) => {
@@ -817,7 +840,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
 
           {/* 4. Typ klienta */}
           <fieldset>
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">4.</span>{tr("Customer type", "Typ klienta")}</legend>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">5.</span>{tr("Customer type", "Typ klienta")}</legend>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-fr">
               {(Object.keys(POSTACIE) as PostacId[]).map((id) => {
                 const k = POSTACIE[id];
@@ -839,7 +862,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
 
           {/* 5. Poziom trudności */}
           <fieldset>
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">5.</span>{tr("Difficulty", "Poziom trudności")} <span className="text-xs font-normal text-slate-400">{tr("(the score uses the same rules at every level)", "(ocena jest wg tej samej rubryki na każdym poziomie)")}</span></legend>
+            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">6.</span>{tr("Difficulty", "Poziom trudności")} <span className="text-xs font-normal text-slate-400">{tr("(the score uses the same rules at every level)", "(ocena jest wg tej samej rubryki na każdym poziomie)")}</span></legend>
             <div className="grid sm:grid-cols-3 gap-3 auto-rows-fr">
               {(Object.keys(POZIOMY) as PoziomId[]).map((id, nr) => {
                 const z = POZIOMY[id];
@@ -869,7 +892,7 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           {/* 6. Rozmowa, którą masz jutro (moduł płatny, 9.10). W trialu: kafelek z kłódką i opisem. */}
           <fieldset>
             <legend className="bruno-h2 text-base mb-2">
-              <span className="bruno-gradient-tekst mr-1.5">6.</span>{tr("Tomorrow's call", "Rozmowa, którą masz jutro")}{" "}
+              <span className="bruno-gradient-tekst mr-1.5">7.</span>{tr("Tomorrow's call", "Rozmowa, którą masz jutro")}{" "}
               <span className="text-xs font-normal text-slate-400">{pelny ? tr("(optional)", "(opcjonalnie)") : tr("(full access)", "(pełny dostęp)")}</span>
             </legend>
             {pelny ? (
@@ -971,9 +994,9 @@ export default function Rozmowa({ postacDomyslna, karta, obiekcje, rozmowyDzis, 
           </div>
 
           <div>
-            <div className="bruno-h2 text-xl">Bruno</div>
+            <div className="bruno-h2 text-xl">{imieKlienta}</div>
             <div className="text-sm mt-1 text-slate-600">
-              {stan === "trwa" ? (mowi === "bruno" ? tr("Bruno is talking", "Bruno mówi") : mowi === "ty" ? tr("Listening to you", "Słucha Cię") : tr("Call in progress", "Rozmowa trwa")) : stan === "odliczanie" ? (tryb === "cold" ? tr("Bruno will pick up the phone in a moment.", "Za chwilę Bruno odbierze telefon.") : tr("Bruno will start the call in a moment.", "Za chwilę Bruno zacznie rozmowę.")) : etap}
+              {stan === "trwa" ? (mowi === "bruno" ? tr(`${imieKlienta} is talking`, `${imieKlienta} mówi`) : mowi === "ty" ? tr("Listening to you", "Słucha Cię") : tr("Call in progress", "Rozmowa trwa")) : stan === "odliczanie" ? (tryb === "cold" ? tr(`${imieKlienta} will pick up the phone in a moment.`, `Za chwilę ${imieKlienta} odbierze telefon.`) : tr(`${imieKlienta} will start the call in a moment.`, `Za chwilę ${imieKlienta} zacznie rozmowę.`)) : etap}
             </div>
           </div>
           </>
