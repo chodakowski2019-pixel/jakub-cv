@@ -417,7 +417,14 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
                     ) : (
                       <span className="mic off" aria-hidden><Ikona nazwa="mikrofon" grubosc={2} /></span>
                     )}
-                    <span className="lab">{d.moznaRozmawiac ? t("Talk", "Rozmawiaj") : d.planZrobiony ? t("Come back tomorrow", "Wróć jutro") : t("Out of minutes", "Limit minut wyczerpany")}</span>
+                    {/* 16.10 (USER_001): „Rozmawiaj” też startuje rozmowę (wcześniej klikał się tylko mikrofon). */}
+                    {d.moznaRozmawiac ? (
+                      <Link href={d.linkRozmowy} className="lab" tabIndex={-1} onPointerEnter={() => setGlosniej(true)} onPointerLeave={() => setGlosniej(false)}>
+                        {t("Talk", "Rozmawiaj")}
+                      </Link>
+                    ) : (
+                      <span className="lab">{d.planZrobiony ? t("Come back tomorrow", "Wróć jutro") : t("Out of minutes", "Limit minut wyczerpany")}</span>
+                    )}
                   </div>
                   {!d.moznaRozmawiac && (
                     <span className="cta stat glass">{d.planZrobiony ? t("Come back tomorrow. We'll email you a reminder in the morning.", "Wróć jutro. Przypomnimy mailem rano.") : t("You've used all your trial minutes.", "Limit minut testu wyczerpany.")}</span>
