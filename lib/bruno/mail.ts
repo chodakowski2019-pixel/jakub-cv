@@ -114,7 +114,6 @@ export function htmlRejestracja(a: { imie: string | null; email: string; kod: st
       ]),
       akapit("Best,"),
     ].join("\n"),
-    drobny: `Bruno AI, Jakub Chodakowski. <a href="https://jakubchodakowski.com/polityka-prywatnosci" style="color:#8a8f98">Privacy Policy</a>`,
   });
 }
 
