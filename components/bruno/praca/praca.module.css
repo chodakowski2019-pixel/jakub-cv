@@ -3548,3 +3548,1045 @@ button.btn {
   opacity: 0.55;
   font-weight: 400;
 }
+.klauzula {
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.klauzula summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: #3a3a3a;
+}
+.klauzula p {
+  margin-top: 8px !important;
+  line-height: 1.5;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 10px 12px;
+  background: #fafaf9;
+  border-radius: 10px;
+}
+
+/* =========== 17.10 v2: panel pracodawcy jak RocketJobs (menu z boku) + Moje konto =========== */
+.panelUklad {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 20px 72px;
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+.panelBok {
+  position: sticky;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.panelFirmaKarta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px;
+}
+.panelFirmaKarta small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+.panelFirmaKarta b {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+.panelFirmaLogo,
+.panelFirmaInicjaly {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  flex: none;
+  object-fit: contain;
+  background: #fff;
+}
+.panelFirmaInicjaly {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--head);
+  font-size: 17px;
+}
+.panelMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.panelMenu button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 46px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: #3a3a3a;
+  cursor: pointer;
+  text-align: left;
+}
+.panelMenu button:hover {
+  background: #ebeae7;
+}
+.panelMenu .panelMenuOn,
+.panelMenu .panelMenuOn:hover {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.panelMenu svg,
+.kontoMenuLista svg,
+.kontoWyloguj svg,
+.kontoBtn svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.panelMenu .panelIle {
+  margin-left: auto;
+}
+.panelTresc {
+  min-width: 0;
+}
+.panelTytul {
+  margin-bottom: 18px !important;
+}
+.panelNaglowek {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 8px 0 18px;
+}
+.panelNaglowek .ofertaH {
+  margin: 0 !important;
+}
+.btnPomarancz {
+  background: linear-gradient(135deg, #f08a2b, #e0457b);
+  margin-top: 0;
+}
+.panelPasek {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.panelPasek .panelZakladki {
+  margin-bottom: 0;
+}
+.panelIleSzary {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.07);
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.panelSzukaj {
+  height: 46px;
+  min-width: 240px;
+  flex: 1;
+  max-width: 360px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0 18px;
+  font: inherit;
+  font-size: 15px;
+  outline: none;
+}
+.panelSzukaj:focus {
+  border-color: var(--ink);
+}
+button.panelWierszLiczba {
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 6px 8px;
+}
+button.panelWierszLiczba:hover {
+  background: var(--soft);
+}
+.konfiguracja {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 16px 20px;
+  margin-bottom: 18px;
+}
+.konfiguracja summary {
+  cursor: pointer;
+  list-style: none;
+}
+.konfiguracja summary::-webkit-details-marker {
+  display: none;
+}
+.konfiguracja summary > span {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+.konfiguracja summary b {
+  font-size: 15.5px;
+}
+.konfiguracja summary small {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.konfigPasek {
+  height: 8px;
+  border-radius: 99px;
+  background: var(--soft);
+  overflow: hidden;
+  max-width: 280px;
+}
+.konfigPasek i {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+  border-radius: 99px;
+}
+.konfiguracja ul {
+  margin-top: 14px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.konfiguracja li {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14.5px;
+  color: var(--muted);
+}
+.konfiguracja li b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.konfiguracja li button {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.krokKolko {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #cfcdc8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.krokOk .krokKolko {
+  background: #1fa463;
+  border-color: #1fa463;
+}
+.krokKolko svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.krokOk b {
+  text-decoration: line-through;
+  color: var(--muted) !important;
+}
+.pustoDuze {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 36px 32px;
+}
+.pustoDuze h2 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  margin-top: 14px !important;
+}
+.pustoDuze p {
+  color: var(--muted);
+  margin-top: 8px !important;
+}
+.pustoCena {
+  margin-top: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: var(--bg);
+  border-radius: 16px;
+  padding: 16px 18px;
+  font-size: 15px;
+}
+.pustoCena b {
+  font-size: 22px;
+  font-family: var(--head);
+  font-weight: 500;
+}
+.pustoCena s {
+  color: var(--grey);
+}
+.pustoCena .btn {
+  margin-top: 0;
+}
+
+/* ustawienia firmy */
+.ustLista {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ustKarta {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 24px;
+  text-decoration: none;
+}
+.ustGlowa {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+.ustGlowa h2 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 20px;
+}
+.ustGlowa p {
+  font-size: 14.5px;
+  color: var(--muted);
+  margin-top: 4px !important;
+}
+.ustIkona {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ustIkona svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: #3a3a3a;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ustKarta .pole {
+  margin-top: 14px;
+}
+.ustKarta .pole > span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3a3a3a;
+}
+.ustKarta .pole input,
+.ustKarta .pole textarea,
+.ustTextarea {
+  background: #fafaf9;
+  border: 1px solid #e6e5e1;
+  border-radius: 12px;
+  height: 46px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 15px;
+  outline: none;
+  width: 100%;
+  color: var(--ink);
+}
+.ustKarta .pole textarea,
+.ustTextarea {
+  height: auto;
+  padding: 12px 14px;
+  line-height: 1.5;
+  resize: vertical;
+  margin-top: 10px;
+}
+.ustKarta .pole input:focus,
+.ustKarta .pole textarea:focus,
+.ustTextarea:focus {
+  background: #fff;
+  border-color: var(--ink);
+}
+.ustStopka {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+.ustStopka .btn {
+  margin-top: 0;
+}
+.ustSekcja {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-top: 14px;
+}
+.ustSekcja summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+}
+.ustSekcja .przelacznikRzad {
+  margin-top: 14px;
+}
+.ustLinkKonto {
+  font-size: 14px;
+  color: var(--muted);
+}
+.ustLinkKonto a {
+  color: var(--ink);
+  font-weight: 500;
+}
+.logoWiersz {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-top: 14px;
+}
+.logoPodglad {
+  width: 96px;
+  height: 96px;
+  border-radius: 20px;
+  background: var(--soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex: none;
+}
+.logoPodglad img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
+}
+.logoPodglad svg {
+  width: 34px;
+  height: 34px;
+  fill: none;
+  stroke: #6b6b6b;
+  stroke-width: 1.6;
+}
+.logoAkcje {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+.logoAkcje .btn {
+  margin-top: 0;
+}
+.logoAkcje small {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* cennik i kontakt */
+.cennikGlowa {
+  text-align: center;
+  padding: 10px 0 4px;
+}
+.cennikSiatka {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.cennikKarta {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+.cennikPromo {
+  border: 2px solid transparent;
+  background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, var(--orange), #e0457b 60%, #9b51e0) border-box;
+}
+.cennikEtykieta {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.cennikCena {
+  font-family: var(--head);
+  font-size: 46px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  margin-top: 10px !important;
+}
+.cennikCena s {
+  font-size: 22px;
+  color: var(--grey);
+}
+.cennikCena small {
+  font-size: 16px;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+.cennikOszcz {
+  font-size: 14px;
+  color: #1c7a4f;
+  font-weight: 500;
+}
+.cennikKarta .btn {
+  margin-top: 16px;
+  justify-content: center;
+}
+.cennikKarta .btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.cennikCechy {
+  margin-top: 18px !important;
+  padding-top: 16px !important;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14.5px;
+}
+.cennikCechy li::before {
+  content: "✓";
+  color: var(--muted);
+  margin-right: 10px;
+}
+.kontaktBaner {
+  border-radius: 24px;
+  padding: 40px 32px;
+  color: #fff;
+  background: radial-gradient(circle at 85% 30%, rgba(240, 138, 43, 0.45), transparent 45%), linear-gradient(135deg, #1a1a1a, #3a3a3a);
+}
+.kontaktBaner h1 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 34px;
+  letter-spacing: -0.02em;
+}
+.kontaktBaner p {
+  color: #d6d6d6;
+  margin-top: 8px !important;
+}
+.kontaktMail {
+  display: block;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Moje konto */
+.kontoBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 12px 0 5px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--ink);
+}
+.kontoAvatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #3a3a3a;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  object-fit: cover;
+}
+img.kontoAvatar {
+  background: #fff;
+  object-fit: contain;
+  border: 1px solid var(--line);
+}
+.kontoBtn svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.15s;
+}
+.kontoMenu {
+  width: 290px;
+  padding: 8px;
+}
+.kontoMenuGlowa {
+  padding: 12px 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.kontoMenuGlowa b {
+  display: block;
+  font-size: 15px;
+}
+.kontoMenuGlowa span {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.kontoMenuLista {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+.kontoMenuLista a,
+.kontoWyloguj {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  font-size: 15px;
+  text-decoration: none;
+  color: #3a3a3a;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+.kontoMenuLista a:hover,
+.kontoWyloguj:hover {
+  background: var(--soft);
+}
+.kontoWyloguj {
+  color: #d9452b;
+  margin-top: 6px;
+}
+
+@media (max-width: 900px) {
+  .panelUklad {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .panelBok {
+    position: static;
+  }
+  .panelFirmaKarta {
+    display: none;
+  }
+  .panelMenu {
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 4px;
+  }
+  .panelMenu button {
+    flex: none;
+    height: 40px;
+    font-size: 14px;
+  }
+  .cennikSiatka {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .kontoBtnTekst {
+    display: none;
+  }
+  .konfiguracja summary > span {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .konfiguracja li {
+    grid-template-columns: 26px 1fr;
+  }
+  .konfiguracja li button {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .panelSzukaj {
+    max-width: none;
+    min-width: 0;
+  }
+  .ustKarta {
+    padding: 18px;
+  }
+  .kontaktBaner {
+    padding: 28px 22px;
+  }
+}
+.panelTresc > *,
+.panelLista,
+.panelWiersz,
+.panelPasek {
+  min-width: 0;
+  max-width: 100%;
+}
+@media (max-width: 700px) {
+  .panelWiersz {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .panelPasek .panelZakladki {
+    width: 100%;
+  }
+}
+@media (max-width: 900px) {
+  /* 1fr ma minimum = treść (pasek menu), więc kolumna rozpychała się poza ekran. */
+  .panelUklad {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .panelBok {
+    min-width: 0;
+  }
+}
+
+/* =========== 18.10: panel kandydata jak RocketJobs =========== */
+.kandKarta {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 22px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+.kandAvatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), #e0457b);
+  color: #fff;
+  font-family: var(--head);
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.kandKarta b {
+  font-size: 17px;
+  font-weight: 600;
+}
+.kandKarta small {
+  font-size: 13px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.kandMenu {
+  gap: 0;
+}
+.kandGrupa {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0;
+}
+.kandGrupa + .kandGrupa {
+  border-top: 1px solid var(--line);
+}
+.pulpitH {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  margin-top: 6px !important;
+}
+.ustKarta > .btn {
+  margin-top: 16px;
+}
+.brunoGradient {
+  border-radius: 22px;
+  padding: 26px 28px;
+  color: #fff;
+  background: radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.25), transparent 40%), linear-gradient(120deg, #f08a2b, #e0457b 55%, #9b51e0);
+}
+.brunoGradient h2 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 24px;
+}
+.brunoGradient p {
+  margin-top: 6px !important;
+  opacity: 0.92;
+  line-height: 1.5;
+}
+.brunoGradient a {
+  display: block;
+  margin-top: 18px;
+  height: 50px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pulpitSekcja {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 21px;
+}
+.pulpitSekcja svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pulpitWiersz {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.licznikiSiatka {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+}
+.licznikKolo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 14px;
+}
+.licznikKolo:hover {
+  background: var(--bg);
+}
+.licznikKolo b {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--head);
+  font-size: 24px;
+  font-weight: 500;
+}
+.licznikKolo span {
+  font-size: 14px;
+  font-weight: 500;
+}
+.pustoIkona {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 16px;
+}
+.pustoIkona > span {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: var(--soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pustoIkona > span svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pustoIkona h2 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 21px;
+  margin-top: 16px !important;
+}
+.pustoIkona p {
+  color: var(--muted);
+  margin-top: 6px !important;
+  max-width: 460px;
+  line-height: 1.5;
+}
+.pustoIkona .btn {
+  margin-top: 18px;
+}
+.aplikacjaWiersz {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+}
+.aplikacjaWiersz .karta {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.aplikacjaWiersz .karta:hover {
+  transform: none;
+}
+.aplikacjaBok {
+  background: var(--bg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--muted);
+}
+.aplikacjaBok b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.wersaliki {
+  text-transform: uppercase;
+  font-family: var(--body) !important;
+  font-size: 14px !important;
+  letter-spacing: 0.06em;
+  font-weight: 600 !important;
+  padding-top: 14px;
+}
+.zgodyLista {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+}
+.zgodaWiersz {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 22px;
+  cursor: pointer;
+}
+.zgodaWiersz + .zgodaWiersz {
+  border-top: 1px solid var(--line);
+}
+.zgodaWiersz b {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.zgodaWiersz small {
+  display: block;
+  font-size: 15px;
+  color: #3a3a3a;
+  margin-top: 6px;
+  line-height: 1.45;
+}
+.ustKarta select {
+  background: #fafaf9;
+  border: 1px solid #e6e5e1;
+  border-radius: 12px;
+  height: 46px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 15px;
+  width: 100%;
+}
+.ustKarta input:disabled {
+  color: var(--muted);
+}
+@media (max-width: 900px) {
+  .kandKarta {
+    display: none;
+  }
+  .kandMenu {
+    flex-direction: row;
+  }
+  .kandGrupa {
+    flex-direction: row;
+    padding: 0;
+    gap: 4px;
+  }
+  .kandGrupa + .kandGrupa {
+    border-top: 0;
+  }
+  .aplikacjaWiersz {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .licznikiSiatka {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .brunoGradient {
+    padding: 22px;
+  }
+}

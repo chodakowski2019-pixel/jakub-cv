@@ -47,7 +47,19 @@ type OfertaPelna = {
 };
 
 /** Oferta bez tokenu i kontaktu: tylko to może trafić do przeglądarki. */
-export type Oferta = Omit<OfertaPelna, "klucz" | "email" | "adzunaCzas" | "adzunaTyp"> & { logo: string | null; zFirmy?: boolean };
+export type Oferta = Omit<OfertaPelna, "klucz" | "email" | "adzunaCzas" | "adzunaTyp"> & {
+  logo: string | null;
+  zFirmy?: boolean;
+  www?: string | null;
+  /** 17.10: klauzula RODO firmy (oferty z panelu). Oferty z Adzuna = KLAUZULA_SALESBRUNO. */
+  klauzula?: string | null;
+  klauzulaPrzyszle?: string | null;
+  klauzulaPrzyszleDomyslnie?: boolean;
+};
+
+/** 17.10: klauzula przy formularzu „Aplikuj” na ofertach z innych źródeł: administratorem danych z formularza jesteśmy my. */
+export const KLAUZULA_SALESBRUNO =
+  "Administratorem Twoich danych z tego formularza jest Jakub Chodakowski, operator serwisu SalesBruno.pl, ul. Koniecpolskiego 12, 78-100 Kołobrzeg, NIP 6711845485, kontakt: jakub@salesbruno.com. Dane przetwarzamy, żeby przekazać Twoje zgłoszenie pracodawcy z ogłoszenia (art. 6 ust. 1 lit. a RODO, Twoja zgoda) i odpowiedzieć na Twoje pytania. Pracodawca, któremu przekażemy zgłoszenie, staje się osobnym administratorem Twoich danych. Dane przechowujemy do 12 miesięcy albo do wycofania zgody. Masz prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia i przenoszenia, wniesienia sprzeciwu oraz skargi do Prezesa UODO. Zgodę możesz wycofać w każdej chwili, pisząc na jakub@salesbruno.com.";
 
 /** Lekka wersja do listy (4 600 ofert): bez opisu, sekcji i źródła. */
 export type OfertaLista = Pick<

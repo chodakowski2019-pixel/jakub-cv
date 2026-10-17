@@ -17,7 +17,9 @@ function rozmiar(b: number) {
 
 export type DaneKandydata = { imie: string | null; email: string; telefon: string | null; cvNazwa: string | null; linkedin: string | null };
 
-export default function Aplikuj({ id, firma, stanowisko, logo, className, kandydat }: { id: string; firma: string; stanowisko: string; logo?: string | null; className?: string; kandydat?: DaneKandydata | null }) {
+export type Klauzule = { tekst: string; przyszle?: string | null; przyszleDomyslnie?: boolean };
+
+export default function Aplikuj({ id, firma, stanowisko, logo, className, kandydat, klauzule }: { id: string; firma: string; stanowisko: string; logo?: string | null; className?: string; kandydat?: DaneKandydata | null; klauzule?: Klauzule }) {
   const [otwarte, setOtwarte] = useState(false);
   const [stan, setStan] = useState<"" | "wysylam" | "gotowe">("");
   const [blad, setBlad] = useState("");
@@ -193,6 +195,20 @@ export default function Aplikuj({ id, firma, stanowisko, logo, className, kandyd
                     Zgadzam się na przekazanie moich danych pracodawcy w celu rekrutacji na to stanowisko. <b className={s.wymagane}>Wymagane</b>
                   </span>
                 </label>
+                {klauzule?.przyszle && (
+                  <label className={s.zgodaKarta}>
+                    <input type="checkbox" name="zgoda_przyszle" defaultChecked={klauzule.przyszleDomyslnie} />
+                    <span>
+                      {klauzule.przyszle} <em className={s.opcjonalne}>nieobowiązkowe</em>
+                    </span>
+                  </label>
+                )}
+                {klauzule?.tekst && (
+                  <details className={s.klauzula}>
+                    <summary>Klauzula informacyjna RODO</summary>
+                    <p>{klauzule.tekst}</p>
+                  </details>
+                )}
                 {blad && <p className={s.blad}>{blad}</p>}
                 <button type="submit" className={`${s.btn} ${s.btnDuzy} ${s.wyslijBtn}`} disabled={stan === "wysylam"}>
                   {stan === "wysylam" ? "Wysyłam…" : "Wyślij zgłoszenie"}

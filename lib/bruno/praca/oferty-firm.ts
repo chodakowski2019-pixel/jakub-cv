@@ -29,7 +29,19 @@ export type OfertaFirmyWiersz = {
   status: StatusFirmy;
   created_at: string;
   wazne_do: string;
+  // 17.10: profil firmy z praca_konta (join).
+  praca_konta?: {
+    logo_url: string | null;
+    nazwa_wyswietlana: string | null;
+    firma: string | null;
+    o_firmie: string | null;
+    www: string | null;
+    klauzula_rodo: string | null;
+    klauzula_przyszle: string | null;
+    klauzula_przyszle_domyslnie: boolean;
+  } | null;
 };
+const Z_PROFILEM = "*, praca_konta(logo_url,nazwa_wyswietlana,firma,o_firmie,www,klauzula_rodo,klauzula_przyszle,klauzula_przyszle_domyslnie)";
 
 const slug = (s: string) =>
   s
@@ -52,7 +64,7 @@ export function doOferty(w: OfertaFirmyWiersz): Oferta {
     id: w.id,
     status: w.status === "aktywna" ? "aktywna" : w.status === "usunieta" ? "usunieta" : "nieaktywna",
     stanowisko: w.stanowisko,
-    firma: w.firma,
+    firma: w.praca_konta?.nazwa_wyswietlana || w.praca_konta?.firma || w.firma,
     miasto: w.miasto ?? "",
     wojewodztwo: w.wojewodztwo ?? "",
     b2b: /b2b/i.test(tekst),
@@ -74,21 +86,25 @@ export function doOferty(w: OfertaFirmyWiersz): Oferta {
     wymagania: w.wymagania ?? [],
     mileWidziane: w.mile_widziane ?? [],
     oferujemy: w.oferujemy ?? [],
-    oFirmie: "",
+    oFirmie: w.praca_konta?.o_firmie ?? "",
     aplikuj: null,
-    logo: null,
+    logo: w.praca_konta?.logo_url ?? null,
     zFirmy: true,
+    www: w.praca_konta?.www ?? null,
+    klauzula: w.praca_konta?.klauzula_rodo ?? null,
+    klauzulaPrzyszle: w.praca_konta?.klauzula_przyszle ?? null,
+    klauzulaPrzyszleDomyslnie: w.praca_konta?.klauzula_przyszle_domyslnie ?? false,
   };
 }
 
 export async function ofertyFirmAktywne(): Promise<Oferta[]> {
-  const { data, error } = await supabaseAdmin.from("praca_oferty_firm").select("*").eq("status", "aktywna").order("created_at", { ascending: false });
+  const { data, error } = await supabaseAdmin.from("praca_oferty_firm").select(Z_PROFILEM).eq("status", "aktywna").order("created_at", { ascending: false });
   if (error) console.error("[praca oferty firm]", error.message);
   return ((data ?? []) as OfertaFirmyWiersz[]).map(doOferty);
 }
 
 export async function wierszOferty(id: string): Promise<OfertaFirmyWiersz | null> {
-  const { data } = await supabaseAdmin.from("praca_oferty_firm").select("*").eq("id", id).maybeSingle();
+  const { data } = await supabaseAdmin.from("praca_oferty_firm").select(Z_PROFILEM).eq("id", id).maybeSingle();
   return (data as OfertaFirmyWiersz | null) ?? null;
 }
 

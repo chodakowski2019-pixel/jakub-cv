@@ -48,7 +48,7 @@ export async function POST(req: Request) {
 
   const { data: zgl, error } = await supabaseAdmin
     .from("praca_zgloszenia")
-    .insert({ oferta_id: oferta.id, kandydat_id: kandydat?.id ?? null, imie, email, telefon, linkedin: linkedin || null, wiadomosc: wiadomosc || null, cv_sciezka: cvSciezka, cv_nazwa: cvNazwa })
+    .insert({ oferta_id: oferta.id, kandydat_id: kandydat?.id ?? null, imie, email, telefon, linkedin: linkedin || null, wiadomosc: wiadomosc || null, cv_sciezka: cvSciezka, cv_nazwa: cvNazwa, zgoda_przyszle: !!f.get("zgoda_przyszle") })
     .select("id")
     .single();
   if (error) console.error("[bruno praca aplikuj] baza", error.message);

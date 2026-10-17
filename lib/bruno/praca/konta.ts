@@ -22,8 +22,35 @@ export type KontoPraca = {
   cv_sciezka: string | null;
   cv_nazwa: string | null;
   created_at: string;
+  // 17.10 v2 (wzór RocketJobs): profil firmy, dane do faktury, klauzule RODO.
+  logo_url: string | null;
+  nazwa_wyswietlana: string | null;
+  o_firmie: string | null;
+  www: string | null;
+  fv_nazwa: string | null;
+  fv_kraj: string | null;
+  fv_adres: string | null;
+  fv_miasto: string | null;
+  fv_kod: string | null;
+  klauzula_rodo: string | null;
+  klauzula_przyszle: string | null;
+  klauzula_przyszle_domyslnie: boolean;
+  // 18.10: kandydat (wzór RocketJobs): profil, preferencje pracy, zgody.
+  miasto: string | null;
+  tytul: string | null;
+  o_mnie: string | null;
+  pref_stanowisko: string | null;
+  pref_miasto: string | null;
+  pref_branza: string | null;
+  pref_tryb: string | null;
+  pref_pensja: number | null;
+  zgoda_oferty: boolean;
+  zgoda_marketing: boolean;
 };
-const POLA = "id,email,typ,imie,telefon,firma,nip,linkedin,cv_sciezka,cv_nazwa,created_at";
+const POLA =
+  "id,email,typ,imie,telefon,firma,nip,linkedin,cv_sciezka,cv_nazwa,created_at,logo_url,nazwa_wyswietlana,o_firmie,www,fv_nazwa,fv_kraj,fv_adres,fv_miasto,fv_kod,klauzula_rodo,klauzula_przyszle,klauzula_przyszle_domyslnie,miasto,tytul,o_mnie,pref_stanowisko,pref_miasto,pref_branza,pref_tryb,pref_pensja,zgoda_oferty,zgoda_marketing";
+
+export { nazwaFirmy, wzorKlauzuli, WZOR_PRZYSZLE } from "./klauzule";
 
 export function typKonta(t: unknown): TypKonta | null {
   return t === "kandydat" || t === "pracodawca" ? t : null;

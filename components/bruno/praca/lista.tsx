@@ -385,7 +385,7 @@ function OknoAlertu({ zamknij, filtr }: { zamknij: () => void; filtr: Record<str
       {stan === "gotowe" ? (
         <div className={s.okno}>
           <h2 className={s.oknoH}>Gotowe!</h2>
-          <p className={s.oknoP}>Nowe oferty dla handlowców wyślemy Ci na maila w każdy poniedziałek.</p>
+          <p className={s.oknoP}>Zapisaliśmy Twoje wyszukiwanie. Nowe oferty z tych filtrów wyślemy Ci na maila.</p>
           <div className={s.oknoAkcje}>
             <button type="button" className={s.btn} onClick={zamknij}>
               Wróć do ofert

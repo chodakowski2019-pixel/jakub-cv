@@ -4,7 +4,8 @@ import { useState } from "react";
 import type { KontoPraca } from "@/lib/bruno/praca/konta";
 import type { OfertaFirmyWiersz } from "@/lib/bruno/praca/oferty-firm";
 import type { Zgloszenie } from "@/app/brunopraca/panel/page";
-import { PanelGlowa, Wyloguj, formatDaty } from "./panel-wspolne";
+import { formatDaty } from "./panel-wspolne";
+import { Cennik, Kontakt, MojeKonto, ProfilFirmy } from "./panel-firmy-ustawienia";
 import s from "./praca.module.css";
 
 const CENA_REGULARNA = 200;
@@ -24,140 +25,252 @@ const STATUS: Record<string, [string, string]> = {
 };
 const STATUS_Z: Record<string, string> = { nowe: "Nowe", obejrzane: "Obejrzane", zaproszone: "Zaproszony na rozmowę", odrzucone: "Odrzucony" };
 
-type Zakladka = "ogloszenia" | "dodaj" | "kandydaci" | "konto";
+// 17.10 v2 (wzór RocketJobs): menu z boku (na telefonie pasek na górze), „Dokończ konfigurację konta”, zakładki ogłoszeń.
+type Zakladka = "ogloszenia" | "dodaj" | "kandydaci" | "firma" | "cennik" | "kontakt" | "konto";
+const MENU: [Zakladka, string, string][] = [
+  ["ogloszenia", "Moje ogłoszenia", "M4 8h16v12H4ZM9 8V5h6v3"],
+  ["dodaj", "Dodaj ogłoszenie", "M12 5v14M5 12h14"],
+  ["kandydaci", "Kandydaci", "M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM2.5 20c.8-3.4 3.3-5.5 6.5-5.5s5.7 2.1 6.5 5.5M16 4.5a3.3 3.3 0 0 1 0 6.3M18.5 14.8c1.6.8 2.7 2.6 3 5.2"],
+  ["firma", "Profil firmy", "M4 5h16v14H4ZM8 10h3M8 14h8M15 9.5h1"],
+  ["cennik", "Cennik", "M12 3v18M16.5 7.5c0-1.7-2-3-4.5-3S7.5 5.8 7.5 7.5 9.5 10 12 10.5s4.5 1.3 4.5 3.2-2 3.3-4.5 3.3-4.5-1.3-4.5-3"],
+  ["kontakt", "Kontakt", "M4 13a8 8 0 0 1 16 0v4a2 2 0 0 1-2 2h-1v-6h3M4 13v4a2 2 0 0 0 2 2h1v-6H4"],
+];
 
 export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }: { konto: KontoPraca; oferty: OfertaFirmyWiersz[]; zgloszenia: Zgloszenie[]; cena: number; zakladka?: string }) {
   // 17.10 (USER_001): pierwsze (najstarsze) ogłoszenie firmy w promocji {cena} zł, kolejne 200 zł / mies.
   const pierwsza = [...oferty].sort((a, b) => a.created_at.localeCompare(b.created_at))[0]?.id;
   const cenaOferty = (id: string) => (id === pierwsza ? cena : CENA_REGULARNA);
-  const [z, setZ] = useState<Zakladka>(zakladka === "dodaj" ? "dodaj" : zakladka === "kandydaci" ? "kandydaci" : zakladka === "konto" ? "konto" : oferty.length ? "ogloszenia" : "dodaj");
+  const startowa = (["dodaj", "kandydaci", "firma", "cennik", "kontakt", "konto"] as Zakladka[]).find((x) => x === zakladka) ?? "ogloszenia";
+  const [z, setZ] = useState<Zakladka>(startowa);
   const [edytowana, setEdytowana] = useState<OfertaFirmyWiersz | null>(null);
   const [filtr, setFiltr] = useState("");
+  const [stanListy, setStanListy] = useState<"aktywna" | "oczekuje" | "wstrzymana">(oferty.some((o) => o.status === "aktywna") ? "aktywna" : "oczekuje");
+  const [szukaj, setSzukaj] = useState("");
   const liczbaZ = (id: string) => zgloszenia.filter((x) => x.oferta_id === id).length;
   const nowych = zgloszenia.filter((x) => x.status === "nowe").length;
   const tytul = (id: string) => oferty.find((o) => o.id === id)?.stanowisko ?? id;
+  const nazwa = konto.nazwa_wyswietlana || konto.firma || "Twoja firma";
+  const idz = (k: Zakladka) => {
+    if (k === "dodaj") setEdytowana(null);
+    setZ(k);
+    window.scrollTo({ top: 0 });
+  };
+
+  // „Dokończ konfigurację konta” (RocketJobs): kroki odhaczają się same.
+  const kroki: [boolean, string, string, Zakladka][] = [
+    [!!konto.logo_url, "Dodaj logo firmy", "Wyświetla się przy każdym ogłoszeniu.", "firma"],
+    [!!konto.nazwa_wyswietlana, "Ustaw nazwę w ogłoszeniach", "Krótka nazwa zamiast pełnej nazwy spółki.", "firma"],
+    [!!konto.klauzula_rodo, "Uzupełnij klauzulę RODO", "Wymagana przy zbieraniu zgłoszeń. Dodamy ją do każdego ogłoszenia.", "firma"],
+    [!!(konto.nip && konto.fv_adres), "Uzupełnij dane do faktury", "NIP i adres, żeby wystawić fakturę.", "firma"],
+    [oferty.length > 0, "Dodaj pierwsze ogłoszenie", `W promocji ${cena} zł / mies. zamiast 200 zł.`, "dodaj"],
+  ];
+  const zrobione = kroki.filter((k) => k[0]).length;
 
   async function status(id: string, nowy: string) {
     if (nowy === "usunieta" && !confirm("Usunąć ogłoszenie? Zniknie z portalu i z panelu.")) return;
     await fetch("/api/bruno/praca/firma/oferta", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ akcja: "status", id, status: nowy }) });
     location.reload();
   }
-
-  const zakladki: [Zakladka, string, number?][] = [
-    ["ogloszenia", "Ogłoszenia", oferty.length],
-    ["dodaj", edytowana ? "Edytuj ogłoszenie" : "Dodaj ogłoszenie"],
-    ["kandydaci", "Kandydaci", nowych || undefined],
-    ["konto", "Konto"],
-  ];
+  const wLiscie = oferty.filter((o) => o.status === stanListy && (!szukaj || o.stanowisko.toLowerCase().includes(szukaj.toLowerCase())));
+  const ileStan = (st: string) => oferty.filter((o) => o.status === st).length;
 
   return (
-    <main className={s.panel2}>
-      <PanelGlowa etykieta="Panel pracodawcy" tytul={konto.firma ?? "Twoja firma"} opis={konto.email} />
-      <div className={s.panelZakladki} role="tablist">
-        {zakladki.map(([k, n, ile]) => (
-          <button
-            type="button"
-            role="tab"
-            aria-selected={z === k}
-            key={k}
-            className={z === k ? s.panelZakladkaOn : ""}
-            onClick={() => {
-              if (k === "dodaj" && z !== "dodaj") setEdytowana(null);
-              setZ(k);
-            }}
-          >
-            {n}
-            {ile ? <span className={s.panelIle}>{ile}</span> : null}
-          </button>
-        ))}
-      </div>
+    <div className={s.panelUklad}>
+      <aside className={s.panelBok}>
+        <div className={s.panelFirmaKarta}>
+          {konto.logo_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={konto.logo_url} alt="" className={s.panelFirmaLogo} />
+          ) : (
+            <span className={s.panelFirmaInicjaly}>{nazwa.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase()}</span>
+          )}
+          <span>
+            <small>Firma</small>
+            <b>{nazwa}</b>
+          </span>
+        </div>
+        <nav className={s.panelMenu}>
+          {MENU.map(([k, n, d]) => (
+            <button type="button" key={k} className={z === k || (k === "firma" && z === "konto") ? s.panelMenuOn : ""} onClick={() => idz(k)}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d={d} />
+              </svg>
+              {k === "dodaj" && edytowana ? "Edytuj ogłoszenie" : n}
+              {k === "kandydaci" && nowych > 0 && <span className={s.panelIle}>{nowych}</span>}
+            </button>
+          ))}
+        </nav>
+      </aside>
 
-      {z === "ogloszenia" &&
-        (oferty.length === 0 ? (
-          <Pusto tytul="Nie masz jeszcze ogłoszeń" opis="Dodaj pierwsze ogłoszenie. Zobaczą je handlowcy z całej Polski." akcja={["Dodaj ogłoszenie", () => setZ("dodaj")]} />
-        ) : (
-          <div className={s.panelLista}>
-            {oferty.map((o) => {
-              const [nazwa, klasa] = STATUS[o.status] ?? ["", ""];
-              return (
-                <div className={s.panelWiersz} key={o.id}>
-                  <div className={s.panelWierszTresc}>
-                    <span className={`${s.statusPig} ${klasa}`}>{nazwa}</span>
-                    <h3>{o.stanowisko}</h3>
-                    <p>
-                      {[o.miasto, o.tryb, `dodano ${formatDaty(o.created_at)}`].filter(Boolean).join(" · ")}
-                    </p>
-                    {o.status === "oczekuje" && (
-                      <p className={s.panelInfo}>
-                        Aktywujemy je po płatności {cenaOferty(o.id)} zł / mies.{o.id === pierwsza ? " (promocja zamiast 200 zł)" : ""} Link do płatności wyślemy na {konto.email}.
-                      </p>
-                    )}
-                  </div>
-                  <div className={s.panelWierszLiczba}>
-                    <b>{liczbaZ(o.id)}</b>
-                    <span>kandydatów</span>
-                  </div>
-                  <div className={s.panelAkcje}>
-                    <a href={`/praca/${o.id}`} target="_blank">
-                      Podgląd
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEdytowana(o);
-                        setZ("dodaj");
-                      }}
-                    >
-                      Edytuj
-                    </button>
-                    {o.status === "wstrzymana" ? (
-                      <button type="button" onClick={() => status(o.id, "oczekuje")}>
-                        Wznów
-                      </button>
-                    ) : (
-                      <button type="button" onClick={() => status(o.id, "wstrzymana")}>
-                        Wstrzymaj
-                      </button>
-                    )}
-                    <button type="button" className={s.panelUsun} onClick={() => status(o.id, "usunieta")}>
-                      Usuń
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ))}
-
-      {z === "dodaj" && <FormularzOferty key={edytowana?.id ?? "nowa"} o={edytowana} cena={oferty.length ? CENA_REGULARNA : cena} promo={!oferty.length} email={konto.email} />}
-
-      {z === "kandydaci" &&
-        (zgloszenia.length === 0 ? (
-          <Pusto tytul="Nie ma jeszcze kandydatów" opis="Zgłoszenia na Twoje ogłoszenia pojawią się tutaj i na Twoim mailu." />
-        ) : (
+      <main className={s.panelTresc}>
+        {z === "ogloszenia" && (
           <>
-            {oferty.length > 1 && (
-              <select className={s.panelSelect} value={filtr} onChange={(e) => setFiltr(e.target.value)} aria-label="Ogłoszenie">
-                <option value="">Wszystkie ogłoszenia</option>
-                {oferty.map((o) => (
-                  <option value={o.id} key={o.id}>
-                    {o.stanowisko}
-                  </option>
-                ))}
-              </select>
+            {zrobione < kroki.length && (
+              <details className={s.konfiguracja} open={zrobione < 2}>
+                <summary>
+                  <span>
+                    <b>Dokończ konfigurację konta</b>
+                    <span className={s.konfigPasek}>
+                      <i style={{ width: `${(zrobione / kroki.length) * 100}%` }} />
+                    </span>
+                    <small>
+                      Ukończono {zrobione} z {kroki.length}
+                    </small>
+                  </span>
+                </summary>
+                <ul>
+                  {kroki.map(([ok, co, opis, gdzie]) => (
+                    <li key={co} className={ok ? s.krokOk : ""}>
+                      <span className={s.krokKolko} aria-hidden="true">
+                        {ok && (
+                          <svg viewBox="0 0 24 24">
+                            <path d="M5 12.5l4.5 4.5L19 7.5" />
+                          </svg>
+                        )}
+                      </span>
+                      <span>
+                        <b>{co}</b> {opis}
+                      </span>
+                      {!ok && (
+                        <button type="button" onClick={() => idz(gdzie)}>
+                          Uzupełnij
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </details>
             )}
-            <div className={s.panelLista}>
-              {zgloszenia
-                .filter((x) => !filtr || x.oferta_id === filtr)
-                .map((x) => (
-                  <Kandydat key={x.id} x={x} stanowisko={tytul(x.oferta_id)} />
-                ))}
+            <div className={s.panelNaglowek}>
+              <h1 className={s.ofertaH}>Zarządzaj rekrutacjami</h1>
+              <button type="button" className={`${s.btn} ${s.btnPomarancz}`} onClick={() => idz("dodaj")}>
+                + Dodaj ogłoszenie o pracę
+              </button>
             </div>
+            <div className={s.panelPasek}>
+              <div className={s.panelZakladki} role="tablist">
+                {(
+                  [
+                    ["aktywna", "Aktywne"],
+                    ["oczekuje", "Czekające"],
+                    ["wstrzymana", "Wstrzymane"],
+                  ] as const
+                ).map(([k, n]) => (
+                  <button type="button" role="tab" aria-selected={stanListy === k} key={k} className={stanListy === k ? s.panelZakladkaOn : ""} onClick={() => setStanListy(k)}>
+                    {n} <span className={s.panelIleSzary}>{ileStan(k)}</span>
+                  </button>
+                ))}
+              </div>
+              <input className={s.panelSzukaj} type="search" placeholder="Wyszukaj ogłoszenie" value={szukaj} onChange={(e) => setSzukaj(e.target.value)} aria-label="Wyszukaj ogłoszenie" />
+            </div>
+            {oferty.length === 0 ? (
+              <div className={s.pustoDuze}>
+                <span className={`${s.statusPig} ${s.statusWstrzymana}`}>● Brak ogłoszeń</span>
+                <h2>Zacznij rekrutować już dziś</h2>
+                <p>Pierwsze ogłoszenie dodasz w kilka minut. Zobaczą je handlowcy z całej Polski.</p>
+                <div className={s.pustoCena}>
+                  <span>
+                    Pierwsze ogłoszenie: <s>200 zł</s> <b>{cena} zł</b> / mies.
+                  </span>
+                  <button type="button" className={s.btn} onClick={() => idz("dodaj")}>
+                    Dodaj ogłoszenie
+                  </button>
+                </div>
+              </div>
+            ) : wLiscie.length === 0 ? (
+              <div className={s.pusto}>
+                <h2>Brak ogłoszeń w tej zakładce</h2>
+              </div>
+            ) : (
+              <div className={s.panelLista}>
+                {wLiscie.map((o) => {
+                  const [nazwaS, klasa] = STATUS[o.status] ?? ["", ""];
+                  return (
+                    <div className={s.panelWiersz} key={o.id}>
+                      <div className={s.panelWierszTresc}>
+                        <span className={`${s.statusPig} ${klasa}`}>{nazwaS}</span>
+                        <h3>{o.stanowisko}</h3>
+                        <p>{[o.miasto, o.tryb, `dodano ${formatDaty(o.created_at)}`].filter(Boolean).join(" · ")}</p>
+                        {o.status === "oczekuje" && (
+                          <p className={s.panelInfo}>
+                            Aktywujemy je po płatności {cenaOferty(o.id)} zł / mies.{o.id === pierwsza ? " (promocja zamiast 200 zł)" : ""} Link do płatności wyślemy na {konto.email}.
+                          </p>
+                        )}
+                      </div>
+                      <button type="button" className={s.panelWierszLiczba} onClick={() => { setFiltr(o.id); idz("kandydaci"); }}>
+                        <b>{liczbaZ(o.id)}</b>
+                        <span>kandydatów</span>
+                      </button>
+                      <div className={s.panelAkcje}>
+                        <a href={`/praca/${o.id}`} target="_blank">
+                          Podgląd
+                        </a>
+                        <button type="button" onClick={() => { setEdytowana(o); setZ("dodaj"); }}>
+                          Edytuj
+                        </button>
+                        {o.status === "wstrzymana" ? (
+                          <button type="button" onClick={() => status(o.id, "oczekuje")}>
+                            Wznów
+                          </button>
+                        ) : (
+                          <button type="button" onClick={() => status(o.id, "wstrzymana")}>
+                            Wstrzymaj
+                          </button>
+                        )}
+                        <button type="button" className={s.panelUsun} onClick={() => status(o.id, "usunieta")}>
+                          Usuń
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </>
-        ))}
+        )}
 
-      {z === "konto" && <KontoFirmy konto={konto} />}
-    </main>
+        {z === "dodaj" && (
+          <>
+            <h1 className={`${s.ofertaH} ${s.panelTytul}`}>{edytowana ? "Edytuj ogłoszenie" : "Dodaj ogłoszenie o pracę"}</h1>
+            <FormularzOferty key={edytowana?.id ?? "nowa"} o={edytowana} cena={oferty.length ? CENA_REGULARNA : cena} promo={!oferty.length} email={konto.email} />
+          </>
+        )}
+
+        {z === "kandydaci" && (
+          <>
+            <h1 className={`${s.ofertaH} ${s.panelTytul}`}>Kandydaci</h1>
+            {zgloszenia.length === 0 ? (
+              <Pusto tytul="Nie ma jeszcze kandydatów" opis="Zgłoszenia na Twoje ogłoszenia pojawią się tutaj i na Twoim mailu." />
+            ) : (
+              <>
+                {oferty.length > 1 && (
+                  <select className={s.panelSelect} value={filtr} onChange={(e) => setFiltr(e.target.value)} aria-label="Ogłoszenie">
+                    <option value="">Wszystkie ogłoszenia</option>
+                    {oferty.map((o) => (
+                      <option value={o.id} key={o.id}>
+                        {o.stanowisko}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <div className={s.panelLista}>
+                  {zgloszenia
+                    .filter((x) => !filtr || x.oferta_id === filtr)
+                    .map((x) => (
+                      <Kandydat key={x.id} x={x} stanowisko={tytul(x.oferta_id)} />
+                    ))}
+                </div>
+              </>
+            )}
+          </>
+        )}
+
+        {z === "firma" && <ProfilFirmy konto={konto} />}
+        {z === "konto" && <MojeKonto konto={konto} />}
+        {z === "cennik" && <Cennik cena={cena} pierwszaWykorzystana={oferty.length > 0} onDodaj={() => idz("dodaj")} />}
+        {z === "kontakt" && <Kontakt />}
+      </main>
+    </div>
   );
 }
 
@@ -328,48 +441,3 @@ function FormularzOferty({ o, cena, promo, email }: { o: OfertaFirmyWiersz | nul
   );
 }
 
-function KontoFirmy({ konto }: { konto: KontoPraca }) {
-  const [stan, setStan] = useState("");
-  return (
-    <form
-      className={s.panelForm}
-      onSubmit={async (e) => {
-        e.preventDefault();
-        setStan("wysylam");
-        const odp = await fetch("/api/bruno/praca/konto/profil", { method: "POST", body: new FormData(e.currentTarget) }).catch(() => null);
-        setStan(odp?.ok ? "zapisane" : "blad");
-      }}
-    >
-      <section className={s.panelSekcja}>
-        <h3>Dane firmy</h3>
-        <div className={s.polaSiatka}>
-          <label className={s.pole}>
-            <span>Nazwa firmy</span>
-            <input name="firma" defaultValue={konto.firma ?? ""} />
-          </label>
-          <label className={s.pole}>
-            <span>NIP</span>
-            <input name="nip" inputMode="numeric" defaultValue={konto.nip ?? ""} />
-          </label>
-        </div>
-        <div className={s.polaSiatka}>
-          <label className={s.pole}>
-            <span>Imię osoby kontaktowej</span>
-            <input name="imie" defaultValue={konto.imie ?? ""} />
-          </label>
-          <label className={s.pole}>
-            <span>Telefon</span>
-            <input name="telefon" type="tel" defaultValue={konto.telefon ?? ""} />
-          </label>
-        </div>
-        <p className={s.drobny}>E-mail konta: {konto.email}</p>
-      </section>
-      <div className={s.panelFormStopka}>
-        <Wyloguj />
-        <button type="submit" className={`${s.btn} ${s.btnDuzy}`} disabled={stan === "wysylam"}>
-          {stan === "wysylam" ? "Zapisuję…" : stan === "zapisane" ? "Zapisane ✓" : "Zapisz"}
-        </button>
-      </div>
-    </form>
-  );
-}

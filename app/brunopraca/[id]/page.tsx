@@ -4,11 +4,12 @@ import AkcjeOferty from "@/components/bruno/praca/akcje-oferty";
 import Aplikuj from "@/components/bruno/praca/aplikuj";
 import Karta from "@/components/bruno/praca/karta";
 import PasekDolny from "@/components/bruno/praca/pasek-dolny";
+import Przegladane from "@/components/bruno/praca/przegladane";
 import PasekFirmy from "@/components/bruno/praca/pasek-firmy";
 import { Inicjaly, KartaFirmy, Stopka, krotkaFirma, opisDni, pensja } from "@/components/bruno/praca/wspolne";
 import { Nav } from "@/components/bruno/praca/nav";
 import s from "@/components/bruno/praca/praca.module.css";
-import { CENA_MIESIAC, dniTemu, ofertaPublicznaLubFirmy, ofertyWidoczne, podgladWszystkich, podobne } from "@/lib/bruno/praca/oferty";
+import { CENA_MIESIAC, KLAUZULA_SALESBRUNO, dniTemu, ofertaPublicznaLubFirmy, ofertyWidoczne, podgladWszystkich, podobne } from "@/lib/bruno/praca/oferty";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 
 // 17.10 (USER_001): oferta pod salesbruno.com/praca/<id>, układ jak Pracuj.pl. Aktywna = dla każdego.
@@ -74,6 +75,7 @@ export default async function Page({ params, searchParams }: Props) {
   const w = await ofertaPublicznaLubFirmy(id, sp.k, konto?.id);
   if (!w) notFound();
   const { oferta: o, wlasciciel, wlascicielPanelu } = w;
+  const klauzule = o.zFirmy && o.klauzula ? { tekst: o.klauzula, przyszle: o.klauzulaPrzyszle, przyszleDomyslnie: o.klauzulaPrzyszleDomyslnie } : { tekst: KLAUZULA_SALESBRUNO };
   const kandydat = konto?.typ === "kandydat" ? { imie: konto.imie, email: konto.email, telefon: konto.telefon, cvNazwa: konto.cv_nazwa, linkedin: konto.linkedin } : null;
   const zl = pensja(o.pensjaMin, o.pensjaMax);
   // 17.10 (USER_001): żadnych wyjść na strony zewnętrzne. Aplikuj = nasz formularz (components/bruno/praca/aplikuj.tsx).
@@ -180,8 +182,12 @@ export default async function Page({ params, searchParams }: Props) {
               </>
             ) : (
               <>
-                <h2 className={s.sekcjaH}>Opis oferty</h2>
-                <p className={s.opis}>{o.opis.replace(/\s*\S*$/, "")}…</p>
+                {o.opis && (
+                  <>
+                    <h2 className={s.sekcjaH}>Opis oferty</h2>
+                    <p className={s.opis}>{o.zFirmy ? o.opis : `${o.opis.replace(/\s*\S*$/, "")}…`}</p>
+                  </>
+                )}
                 {o.umiejetnosci.length > 0 && (
                   <>
                     <h2 className={s.sekcjaH}>Umiejętności</h2>
@@ -208,15 +214,20 @@ export default async function Page({ params, searchParams }: Props) {
               <div>
                 <h2 className={s.sekcjaH}>{krotkaFirma(o.firma)}</h2>
                 <p className={s.firma}>
-                  {o.branza} · {ofertFirmy} {ofertFirmy === 1 ? "oferta" : "ofert"} na salesbruno.com
+                  {o.zFirmy ? o.branza : `${o.branza} · ${ofertFirmy} ${ofertFirmy === 1 ? "oferta" : "ofert"} na salesbruno.com`}
                 </p>
               </div>
             </div>
             {o.oFirmie && <p className={s.opis}>{o.oFirmie}</p>}
+            {o.www && (
+              <a className={s.linkStrzalka} href={o.www.startsWith("http") ? o.www : `https://${o.www}`} target="_blank" rel="noopener">
+                Strona firmy →
+              </a>
+            )}
           </section>
 
           <div className={`${s.oferta} ${s.aplikujDol}`}>
-            <Aplikuj className={`${s.btn} ${s.btnDuzy}`} id={o.id} firma={krotkaFirma(o.firma)} stanowisko={o.stanowisko} logo={o.logo} kandydat={kandydat} />
+            <Aplikuj className={`${s.btn} ${s.btnDuzy}`} id={o.id} firma={krotkaFirma(o.firma)} stanowisko={o.stanowisko} logo={o.logo} kandydat={kandydat} klauzule={klauzule} />
           </div>
           {!o.zFirmy && <p className={s.zrodlo}>Źródło oferty: {o.zrodlo}</p>}
           {reszta.length > 0 && (
@@ -233,7 +244,7 @@ export default async function Page({ params, searchParams }: Props) {
 
         <aside className={s.bok}>
           <div className={s.aplikujKarta}>
-            <Aplikuj className={`${s.btn} ${s.btnDuzy}`} id={o.id} firma={krotkaFirma(o.firma)} stanowisko={o.stanowisko} logo={o.logo} kandydat={kandydat} />
+            <Aplikuj className={`${s.btn} ${s.btnDuzy}`} id={o.id} firma={krotkaFirma(o.firma)} stanowisko={o.stanowisko} logo={o.logo} kandydat={kandydat} klauzule={klauzule} />
             <div className={s.odliczanie}>
               <span className={s.waznoscPasek}>
                 <i style={{ width: `${procent}%` }} />
@@ -252,7 +263,8 @@ export default async function Page({ params, searchParams }: Props) {
         </aside>
       </div>
       <Stopka />
-      <PasekDolny tytul={o.stanowisko} id={o.id} firma={krotkaFirma(o.firma)} logo={o.logo} kandydat={kandydat} />
+      <Przegladane id={o.id} />
+      <PasekDolny tytul={o.stanowisko} id={o.id} firma={krotkaFirma(o.firma)} logo={o.logo} kandydat={kandydat} klauzule={klauzule} />
     </div>
   );
 }

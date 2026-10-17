@@ -1,6 +1,7 @@
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 import s from "./praca.module.css";
 import { SALESBRUNO } from "./wspolne";
+import KontoMenu from "./konto-menu";
 import ZalogujMenu from "./zaloguj-menu";
 
 // 17.10: nawigacja portalu /praca (serwer: czyta sesję praca_sesja). Zalogowany = „Mój panel” zamiast „Zaloguj się”.
@@ -21,9 +22,7 @@ export async function Nav() {
           </a>
         )}
         {konto ? (
-          <a className={s.navCta} href="/praca/panel">
-            Mój panel
-          </a>
+          <KontoMenu imie={konto.imie ?? ""} email={konto.email} typ={konto.typ} logo={konto.logo_url} />
         ) : (
           <ZalogujMenu />
         )}
