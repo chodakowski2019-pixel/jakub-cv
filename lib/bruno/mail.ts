@@ -43,7 +43,7 @@ async function zapiszMail(w: { email: string; rodzaj: RodzajMaila; temat: string
   }
 }
 
-export async function wyslij(args: { do: string; temat: string; html: string; replyTo?: string; rodzaj?: RodzajMaila }) {
+export async function wyslij(args: { do: string; temat: string; html: string; replyTo?: string; rodzaj?: RodzajMaila; zalaczniki?: { filename: string; content: Buffer }[] }) {
   const rodzaj = args.rodzaj ?? "inny";
   if (!mailDziala()) {
     if (process.env.NODE_ENV === "development") {
@@ -61,6 +61,8 @@ export async function wyslij(args: { do: string; temat: string; html: string; re
     replyTo: args.replyTo,
     subject: args.temat,
     html: args.html,
+    // 17.10: załączniki (CV kandydata z salesbruno.com/praca).
+    ...(args.zalaczniki?.length ? { attachments: args.zalaczniki } : {}),
   });
   if (error) {
     await zapiszMail({ email: args.do, rodzaj, temat: args.temat, wynik: "blad", blad: String(error.message).slice(0, 300) });

@@ -94,6 +94,11 @@ export function proxy(request: NextRequest) {
       return NextResponse.redirect(cel, 307);
     }
   }
+  // 17.10 (USER_001): /praca na domenach Bruno = portal ofert pracy dla handlowców (app/brunopraca).
+  // Lokalnie (localhost) też, żeby dopracować bez domeny. jakubchodakowski.com/praca zostaje „Wkrótce”.
+  if ((jezyk || hostBezPortu === "localhost") && (pathname === "/praca" || pathname.startsWith("/praca/"))) {
+    return dalej(request, pathname, jezyk, `/brunopraca${pathname.slice("/praca".length)}`);
+  }
   if (jezyk) {
     const P = SCIEZKI[jezyk];
     // 14.10 (USER_001): / = handlowcy (B2C), /wspolpraca | /business = firmy (B2B).
