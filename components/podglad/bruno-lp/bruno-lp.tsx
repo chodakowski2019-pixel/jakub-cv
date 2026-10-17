@@ -62,7 +62,7 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Give your team Bruno.", "Start with one month."],
     ctaBtn: "I want to try Bruno",
-    ctaBok: "Your first 3 calls with Bruno are free. No card. Then set Bruno up for your whole team.",
+    ctaBok: "Fill in a short form. You get access to a demo call within 24 hours. Then we set Bruno up for your whole team.",
     stopka: "AI sales practice for teams",
   },
   reps: {
@@ -112,7 +112,7 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Daj zespołowi Bruno.", "Zacznij od jednego miesiąca."],
     ctaBtn: "Chcę wypróbować Bruno",
-    ctaBok: "Pierwsze 3 rozmowy z Bruno są za darmo. Bez karty. Potem ustawimy Bruno dla całego zespołu.",
+    ctaBok: "Wypełnij krótki formularz. Dostęp do rozmowy demo dostaniesz w ciągu 24 godzin. Potem ustawimy Bruno dla całego zespołu.",
     stopka: "Trening sprzedaży z AI dla zespołów",
   },
   reps: {
@@ -361,6 +361,7 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
     track("salesai_cta", { przycisk, wersja });
     // 13.10 (USER_001): na stronie dla handlowców każdy przycisk prowadzi do REJESTRACJI (.pl /rejestracja, .com /signup), nie do logowania.
     // 14.10 (USER_001): strona firm też (3 rozmowy za darmo zamiast umawiania demo).
+    // 17.10 (USER_001): Bruno tylko B2B, „rejestracja” = formularz prośby o dostęp (demo, 1 rozmowa, dostęp w 24 h).
     window.location.href = adresStrony(jezyk, "rejestracja", naDomenie);
   };
   // 14.10 (USER_001): link pod przyciskiem na stronie firm → formularz z kalendarzem (Rezerwacja, rozmowa telefoniczna).
@@ -435,7 +436,8 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
             <a href="#korzysci" onClick={doSekcji("korzysci")}>
               {u.wyniki}
             </a>
-            <a href={adresStrony(jezyk, t.linkInny.cel, naDomenie)}>{t.linkInny.tekst}</a>
+            {/* 17.10 (USER_001): Bruno tylko B2B, bez linku „Dla handlowców” (LP handlowców wyłączona). */}
+            {wersja === "reps" && <a href={adresStrony(jezyk, t.linkInny.cel, naDomenie)}>{t.linkInny.tekst}</a>}
           </div>
         </div>
         {/* 9.10 (USER_001): bez przycisku „Menu”; przycisk zapisu w stylu dawnego „Menu” (czarny, biała kropka). */}

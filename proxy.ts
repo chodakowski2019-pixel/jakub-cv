@@ -87,7 +87,7 @@ export function proxy(request: NextRequest) {
       odp.cookies.set("bruno_lang", "en", { maxAge: 60 * 60 * 24 * 365, path: "/", sameSite: "lax" });
       return odp;
     }
-    const plOdpowiednik = pathname === SCIEZKI.en.firmy ? SCIEZKI.pl.firmy : pathname === SCIEZKI.en.handlowcy ? SCIEZKI.pl.handlowcy : null;
+    const plOdpowiednik = pathname === SCIEZKI.en.firmy ? SCIEZKI.pl.firmy : null;
     if (plOdpowiednik && request.headers.get("x-vercel-ip-country") === "PL" && request.cookies.get("bruno_lang")?.value !== "en") {
       const cel = new URL(adresBruno("pl", plOdpowiednik));
       searchParams.forEach((v, k) => cel.searchParams.set(k, v));
@@ -102,7 +102,7 @@ export function proxy(request: NextRequest) {
   if (jezyk) {
     const P = SCIEZKI[jezyk];
     // 14.10 (USER_001): / = handlowcy (B2C), /wspolpraca | /business = firmy (B2B).
-    if (pathname === P.handlowcy) return dalej(request, pathname, jezyk, "/brunoai");
+    // 17.10 (USER_001): Bruno tylko B2B: / = firmy, stare /wspolpraca, /business, /handlowcy, /reps → / (308).
     if (pathname === P.firmy) return dalej(request, pathname, jezyk, "/brunobusiness");
     if (pathname === P.rejestracja) return dalej(request, pathname, jezyk, "/brunorejestracja");
     if (pathname === P.logowanie) return dalej(request, pathname, jezyk, "/bruno");
@@ -118,8 +118,7 @@ export function proxy(request: NextRequest) {
     }
     // Adres z drugiej domeny (np. /reps na .pl): na odpowiednik w tej domenie.
     const inny = SCIEZKI[jezyk === "pl" ? "en" : "pl"];
-    const odpowiednik =
-      pathname === inny.firmy ? P.firmy : pathname === inny.rejestracja ? P.rejestracja : pathname === inny.bezpieczenstwo ? P.bezpieczenstwo : null;
+    const odpowiednik = pathname === inny.rejestracja ? P.rejestracja : pathname === inny.bezpieczenstwo ? P.bezpieczenstwo : null;
     if (odpowiednik) {
       const url = request.nextUrl.clone();
       url.pathname = odpowiednik;

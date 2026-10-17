@@ -8,6 +8,7 @@ type RozmowaSkrot = { email: string; status: string; sekundy: number | null; oce
 type KartaSkrot = { email: string; typ: string; tresc: string; pytanie: string | null; reps: number; lapses: number; last_review: string | null; due: string };
 type MailSkrot = { email: string; rodzaj: string; temat: string | null; wyslano: string; wynik: string; blad: string | null };
 type WejscieSkrot = { email: string; rodzaj: string; zrodlo: string | null; kiedy: string };
+type Prosba = { id: number; utworzono: string; email: string; imie: string; telefon: string | null; firma: string; handlowcy: string; produkt: string; jezyk: string; status: string; decyzja_at: string | null };
 
 export default function AdminForm({ klucz }: { klucz: string }) {
   const [konta, setKonta] = useState<Konto[]>([]);
@@ -19,6 +20,8 @@ export default function AdminForm({ klucz }: { klucz: string }) {
   const [zaint, setZaint] = useState<{ email: string; wiadomosc: string; utworzono: string }[]>([]);
   const [f, setF] = useState({ email: "", imie: "", firma: "", kod: "", dni: 7, limit_min: 63, rozmow_dziennie: 3, fiszek_dziennie: 5, plan: "trial", jezyk: "en", produkt: "", klient: "", obiekcje: "", udana_rozmowa: "", skrypt: "", postac: "czerwony" as PostacId });
   const [stan, setStan] = useState<string>("");
+  const [prosby, setProsby] = useState<Prosba[]>([]);
+  const [stanProsby, setStanProsby] = useState<Record<number, string>>({});
 
   const odswiez = async () => {
     const res = await fetch(`/api/bruno/admin?k=${encodeURIComponent(klucz)}`);
@@ -33,6 +36,22 @@ export default function AdminForm({ klucz }: { klucz: string }) {
     setMaile(d.maile ?? []);
     setWejscia(d.wejscia ?? []);
     setZaint(d.zainteresowani ?? []);
+    setProsby(d.prosby ?? []);
+  };
+
+  // 17.10 (USER_001): „Daj dostęp” = konto demo (1 rozmowa, 3 min) + mail z kodem. Obiecane: do 24 h.
+  const decyzja = async (id: number, akcja: "przyznaj" | "odrzuc") => {
+    if (akcja === "odrzuc" && !confirm("Odrzucić prośbę? Mail nie pójdzie.")) return;
+    setStanProsby((x) => ({ ...x, [id]: "..." }));
+    const res = await fetch(`/api/bruno/admin/prosba?k=${encodeURIComponent(klucz)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, akcja }),
+    });
+    const d = await res.json().catch(() => ({}));
+    const mail = d.mail === "wyslany" ? "mail wysłany" : d.mail === "blad" ? "UWAGA: mail nie poszedł, wyślij kod sam" : "mail pominięty (brak RESEND_API_KEY)";
+    setStanProsby((x) => ({ ...x, [id]: res.ok ? (akcja === "odrzuc" ? "odrzucona" : `konto założone, kod ${d.kod}, ${mail}`) : `Błąd: ${d.blad ?? res.status}` }));
+    if (res.ok) void odswiez();
   };
   useEffect(() => {
     void odswiez();
@@ -76,6 +95,39 @@ export default function AdminForm({ klucz }: { klucz: string }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <section className="bruno-szklo rounded-3xl p-6">
+        <h2 className="bruno-h2 text-lg mb-3">Prośby o dostęp ({prosby.filter((p) => p.status === "nowa").length} nowe)</h2>
+        {prosby.length === 0 ? (
+          <p className="text-sm text-slate-500">Brak próśb.</p>
+        ) : (
+          <ul className="divide-y divide-slate-200/70 text-sm">
+            {prosby.map((p) => {
+              const godzin = Math.floor((Date.now() - new Date(p.utworzono).getTime()) / 3_600_000);
+              return (
+                <li key={p.id} className="py-3 flex flex-col gap-1">
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 items-center">
+                    <span className="font-medium text-slate-900">{p.imie}, {p.firma}</span>
+                    <span className="text-slate-600">{p.email} · {p.telefon ?? "-"}</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{p.handlowcy} handlowców · {p.jezyk}</span>
+                    <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${p.status === "nowa" ? (godzin >= 20 ? "bg-red-100 text-red-800" : "bg-amber-100 text-amber-800") : p.status === "przyznany" ? "bg-teal-100 text-teal-800" : "bg-slate-100 text-slate-500"}`}>
+                      {p.status === "nowa" ? `nowa, ${godzin} h temu` : p.status}
+                    </span>
+                  </div>
+                  <p className="text-slate-700">{p.produkt}</p>
+                  {p.status === "nowa" && (
+                    <div className="flex flex-wrap items-center gap-3 mt-1">
+                      <button type="button" className="bruno-przycisk" onClick={() => void decyzja(p.id, "przyznaj")}>Daj dostęp</button>
+                      <button type="button" className="text-slate-500 underline" onClick={() => void decyzja(p.id, "odrzuc")}>Odrzuć</button>
+                    </div>
+                  )}
+                  {stanProsby[p.id] && <span className="text-slate-600">{stanProsby[p.id]}</span>}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
       <form onSubmit={zapisz} className="bruno-szklo rounded-3xl p-6 flex flex-col gap-4">
         <div className="grid sm:grid-cols-3 gap-3">
           <input className="bruno-pole" placeholder="email *" type="email" required value={f.email} onChange={pole("email")} />
@@ -99,7 +151,7 @@ export default function AdminForm({ klucz }: { klucz: string }) {
             <select className="bruno-pole mt-1" value={f.plan} onChange={pole("plan")}>
               <option value="trial">trial (test, no paid modules)</option>
               <option value="pelny">full (B2B after deal / Bruno Pro: everything)</option>
-              <option value="free">free (B2C sign-up: 3 calls, flashcards, offer import)</option>
+              <option value="free">free (demo B2B: calls = „calls per day”, 17.10: 1)</option>
             </select>
           </label>
           <label className="text-sm text-slate-600">language
@@ -131,9 +183,19 @@ export default function AdminForm({ klucz }: { klucz: string }) {
               <li key={k.email} className="py-2 flex flex-col gap-1">
                 <div className="flex flex-wrap gap-x-4 gap-y-1 items-center">
                   <span className="font-medium text-slate-900">{k.imie ?? ""} {k.firma ? `(${k.firma})` : ""} {k.email}</span>
-                  <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${k.plan === "pelny" ? "bg-teal-100 text-teal-800" : "bg-slate-100 text-slate-600"}`}>{k.plan === "pelny" ? "full" : "trial"}</span>
+                  <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${k.plan === "pelny" ? "bg-teal-100 text-teal-800" : "bg-slate-100 text-slate-600"}`}>{k.plan === "pelny" ? "full" : k.plan === "free" ? "demo" : "trial"}</span>
                   <span className="text-slate-500">{k.start_dostepu ? `start ${new Date(k.start_dostepu).toLocaleDateString("en-US")}` : "never logged in"}, {k.dni} {k.dni === 1 ? "day" : "days"}, {Math.round(k.limit_sekund / 60)} min{k.aktywne ? "" : ", INACTIVE"}</span>
                   <span className="text-slate-500">{statystyki(k.email)}</span>
+                  <button
+                    type="button"
+                    className={k.aktywne ? "text-slate-500 underline" : "text-teal-800 underline font-medium"}
+                    onClick={async () => {
+                      await fetch(`/api/bruno/admin/aktywne?k=${encodeURIComponent(klucz)}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: k.email, aktywne: !k.aktywne }) });
+                      void odswiez();
+                    }}
+                  >
+                    {k.aktywne ? "wyłącz" : "włącz"}
+                  </button>
                   <button type="button" className="text-cyan-800 underline" onClick={() => setFiszkiKonta(otwarte ? null : k.email)}>
                     flashcards {przerobione.length}/{kk.length}
                   </button>

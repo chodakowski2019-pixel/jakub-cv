@@ -101,7 +101,10 @@ const STREFA: Record<"en" | "pl", string | undefined> = { en: undefined, pl: "Eu
 
 const klucz = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () => void; jezyk?: "en" | "pl" }) {
+/** 17.10 (USER_001): z panelu demo (strona „Bruno dla zespołu”) formularz startuje z danymi konta. */
+export type DaneStartowe = { imie?: string | null; email?: string | null; telefon?: string | null; firma?: string | null; produkt?: string | null; handlowcy?: number | null };
+
+export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo = "brunobusiness" }: { onWstecz: () => void; jezyk?: "en" | "pl"; start?: DaneStartowe; zrodlo?: string }) {
   const x = T[jezyk];
   const strefa = STREFA[jezyk];
   /** Dzień slotu ("YYYY-MM-DD") w strefie, w której pokazujemy godziny. */
@@ -114,7 +117,24 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
   const [gotowe, setGotowe] = useState<string | null>(null);
   // 9.10: następny miesiąc widoczny, gdy API odda jego terminy (7 dni przed końcem miesiąca).
   const [przesuniecie, setPrzesuniecie] = useState(0);
-  const [f, setF] = useState({ imie: "", email: "", telefon: "", kraj: jezyk === "pl" ? "PL" : "US", stanowisko: "", handlowcy: "", firma: "", produkt: "", zgoda: false, www: "" });
+  const [f, setF] = useState(() => {
+    // Telefon z konta ma prefiks kraju („+48 600…”): rozbijamy na kraj + numer, jeśli prefiks pasuje.
+    const tel = (dane?.telefon ?? "").trim();
+    const kraj = KRAJE.find((k) => k.prefiks && tel.startsWith(k.prefiks));
+    return {
+      imie: dane?.imie ?? "",
+      email: dane?.email ?? "",
+      // Pole telefonu formatuje same cyfry (wzór kraju), więc bez spacji i myślników.
+      telefon: (kraj ? tel.slice(kraj.prefiks.length) : tel).replace(/\D/g, ""),
+      kraj: kraj?.kod ?? (jezyk === "pl" ? "PL" : "US"),
+      stanowisko: "",
+      handlowcy: dane?.handlowcy ? String(dane.handlowcy) : "",
+      firma: dane?.firma ?? "",
+      produkt: dane?.produkt ?? "",
+      zgoda: false,
+      www: "",
+    };
+  });
   const [wysylam, setWysylam] = useState(false);
   const [blad, setBlad] = useState<string | null>(null);
 
@@ -169,7 +189,7 @@ export default function Rezerwacja({ onWstecz, jezyk = "en" }: { onWstecz: () =>
       const r = await fetch("/api/bruno/demo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...f, telefon: `${KRAJE.find((k) => k.kod === f.kraj)?.prefiks ?? ""} ${f.telefon}`.trim(), handlowcy: Number(f.handlowcy), jezyk, zrodlo: "brunobusiness" }),
+        body: JSON.stringify({ ...f, telefon: `${KRAJE.find((k) => k.kod === f.kraj)?.prefiks ?? ""} ${f.telefon}`.trim(), handlowcy: Number(f.handlowcy), jezyk, zrodlo }),
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok || !d.ok) {

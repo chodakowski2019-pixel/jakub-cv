@@ -4,7 +4,7 @@ import { zalogowanyEmail } from "@/lib/bruno/auth";
 import {
   PLAN_FREE,
   ROZMOWA_SEKUND,
-  ROZMOW_ZA_DARMO,
+  pulaFree,
   rozmowyFreeZuzyte,
   limitDzienny,
   pelnyDostep,
@@ -72,9 +72,11 @@ export async function POST(req: Request) {
   // 10.10: liczą się rozmowy zakończone albo przerwane po ≥ 60 s (`rozmowyFreeZuzyte`), nie każdy wpis.
   if (konto.plan === PLAN_FREE) {
     const zuzyteFree = await rozmowyFreeZuzyte(email);
-    if (zuzyteFree >= ROZMOW_ZA_DARMO) {
+    // 17.10: pula per konto (demo B2B = 1, stare konta B2C = 3).
+    const pula = pulaFree(konto);
+    if (zuzyteFree >= pula) {
       return NextResponse.json(
-        { ok: false, blad: t(`You've used all ${ROZMOW_ZA_DARMO} free calls.`, `Wszystkie ${ROZMOW_ZA_DARMO} bezpłatne rozmowy są już wykorzystane.`), kod: "limit" },
+        { ok: false, blad: pula === 1 ? t("You've used your demo call.", "Rozmowa demo jest już wykorzystana.") : t(`You've used all ${pula} free calls.`, `Wszystkie ${pula} bezpłatne rozmowy są już wykorzystane.`), kod: "limit" },
         { status: 403 },
       );
     }

@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { dostepKonta, pobierzKonto, stanFree } from "@/lib/bruno/db";
+import { dostepKonta, pobierzKonfig, pobierzKonto, stanFree } from "@/lib/bruno/db";
 import { stripeBrunoGotowy } from "@/lib/bruno/stripe";
 import OdblokujForm from "@/components/bruno/odblokuj-form";
 import ProCennik from "@/components/bruno/pro-cennik";
+import ZespolDemo from "@/components/bruno/zespol-demo";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import type { T } from "@/lib/bruno/i18n";
 
@@ -13,6 +14,8 @@ export const dynamic = "force-dynamic";
 // odblokowuje + sam przycisk „Chcę pełen dostęp". USER_001 dostaje mail
 // i dzwoni. Bez ceny i bez pola tekstowego na stronie.
 // 10.10: konto free (B2C) widzi zamiast tego cennik Bruno Pro ze Stripe.
+// 17.10 (USER_001): Bruno tylko B2B. Konto free (demo) widzi stronę „Bruno dla zespołu” BEZ CEN
+// + kalendarz USER_001 (ZespolDemo). Cennik Bruno Pro zostaje tylko jako ekran po płatności (?ok=1).
 
 const kafelki = (t: T) => [
   { tytul: t("An account for every rep", "Konto dla każdego handlowca"), opis: t("Everyone on the team gets their own calls, scores, and review plan.", "Każdy w zespole ma swoje rozmowy, oceny i plan powtórek.") },
@@ -60,7 +63,11 @@ export default async function BrunoOdblokujPage({ searchParams }: { searchParams
   const { t } = await tSerwer();
   const KAFELKI = kafelki(t);
 
-  if (dostep.free || ok === "1") {
+  if (dostep.free && konto) {
+    const konfig = await pobierzKonfig(email);
+    return <ZespolDemo dane={{ imie: konto.imie, email: konto.email, telefon: konto.telefon, firma: konto.firma, produkt: konfig.produkt || null, handlowcy: konto.handlowcy }} />;
+  }
+  if (ok === "1") {
     const free = await stanFree(konto);
     return <ProCennik stripe={stripeBrunoGotowy()} zablokowane={free.zablokowane} zuzyte={free.zuzyte} ok={ok === "1"} />;
   }

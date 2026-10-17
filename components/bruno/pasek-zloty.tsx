@@ -40,8 +40,9 @@ export default function PasekZloty({ dostep, inicjal, free }: { dostep: { ogien:
           <Ikona nazwa="klodka" rozmiar={15} grubosc={2} />
           {free ? (
             <>
-              <span className="bz-dlugi">{t("Free calls", "Bezpłatne rozmowy")}: {free.zuzyte} / {free.zuzyte + free.zostalo} · Bruno Pro</span>
-              <span className="bz-krotki">{free.zuzyte} / {free.zuzyte + free.zostalo} · Pro</span>
+              {/* 17.10 (USER_001): Bruno tylko B2B, zamiast Bruno Pro = „Bruno dla zespołu” (rozmowa z Jakubem). */}
+              <span className="bz-dlugi">{free.zuzyte + free.zostalo === 1 ? t("Demo call", "Rozmowa demo") : t("Free calls", "Bezpłatne rozmowy")}: {free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Bruno for your team", "Bruno dla zespołu")}</span>
+              <span className="bz-krotki">{free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Team", "Zespół")}</span>
             </>
           ) : (
             <>

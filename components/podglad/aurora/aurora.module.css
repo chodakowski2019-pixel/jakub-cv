@@ -272,6 +272,43 @@
 .in input.bad {
   border-color: #7a3434;
 }
+/* 17.10: prośba o dostęp, pole „Co sprzedajecie?” = ten sam wygląd co input. */
+.in textarea {
+  width: 100%;
+  min-height: 86px;
+  background: var(--field);
+  border: 1px solid transparent;
+  border-radius: 9px;
+  padding: 11px 15px;
+  font-size: 15px;
+  line-height: 1.45;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  color: inherit;
+  transition: border-color 0.2s, background 0.2s;
+}
+.in textarea::placeholder {
+  color: #575757;
+}
+.in textarea:hover,
+.in textarea:focus {
+  background: var(--field-h);
+}
+.in textarea:focus {
+  border-color: #4a4a4a;
+}
+.dwa {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 480px) {
+  .dwa {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
 .kod {
   height: 54px !important;
   text-align: center;
@@ -547,7 +584,8 @@
   }
   /* 14.10 (USER_001: „ekran lata na boki”): Safari na iPhonie powiększa stronę po kliknięciu w pole
      z czcionką < 16 px i tak zostaje. Na telefonie pola mają 16 px (na komputerze 15 px bez zmian). */
-  .in input {
+  .in input,
+  .in textarea {
     font-size: 16px;
   }
   .stage h2:has(+ .leadBezTelefonu) {

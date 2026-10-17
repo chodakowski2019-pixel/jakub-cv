@@ -22,7 +22,14 @@ export const ROZMOWA_SEKUND_MAX = ROZMOWA_SEKUND + DOGRYWKA_SEKUND + 30;
 export const ROZMOW_DZIENNIE = 3;
 /** 9.10 (USER_001): konto z rejestracji B2C (plan „free”) = 3 bezpłatne rozmowy łącznie. */
 export const ROZMOW_ZA_DARMO = 3;
+/** 17.10 (USER_001): Bruno tylko B2B. Konto demo (plan „free”, zakłada USER_001 w Adminie) = 1 rozmowa, 3 min. */
+export const ROZMOW_DEMO = 1;
 export const PLAN_FREE = "free";
+/** 17.10: pula darmowych rozmów = `rozmow_dziennie` konta (demo 1, stare konta B2C 3), domyślnie ROZMOW_ZA_DARMO. */
+export function pulaFree(konto: Pick<Konto, "rozmow_dziennie"> | null | undefined): number {
+  const n = Number(konto?.rozmow_dziennie);
+  return Number.isFinite(n) && n > 0 ? n : ROZMOW_ZA_DARMO;
+}
 export function limitDzienny(konto: Pick<Konto, "rozmow_dziennie"> | null | undefined): number {
   const n = Number(konto?.rozmow_dziennie);
   return Number.isFinite(n) && n > 0 ? n : ROZMOW_DZIENNIE;
@@ -109,12 +116,13 @@ export async function rozmowyFreeZuzyte(email: string): Promise<number> {
   return count ?? 0;
 }
 
-export type StanFree = { zuzyte: number; zostalo: number; zablokowane: boolean };
+export type StanFree = { zuzyte: number; zostalo: number; zablokowane: boolean; pula: number };
 /** Stan puli darmowych rozmów. Dla konta spoza planu free: nic nie blokuje. */
 export async function stanFree(konto: Konto | null | undefined): Promise<StanFree> {
-  if (!konto || !planFree(konto)) return { zuzyte: 0, zostalo: ROZMOW_ZA_DARMO, zablokowane: false };
+  const pula = pulaFree(konto);
+  if (!konto || !planFree(konto)) return { zuzyte: 0, zostalo: pula, zablokowane: false, pula };
   const zuzyte = await rozmowyFreeZuzyte(konto.email);
-  return { zuzyte, zostalo: Math.max(0, ROZMOW_ZA_DARMO - zuzyte), zablokowane: zuzyte >= ROZMOW_ZA_DARMO };
+  return { zuzyte, zostalo: Math.max(0, pula - zuzyte), zablokowane: zuzyte >= pula, pula };
 }
 
 export { ETAPY, REJESTRY, etapLubDomyslny, rejestrLubDomyslny, type EtapId, type RejestrId } from "./etapy";

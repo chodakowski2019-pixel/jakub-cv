@@ -30,10 +30,11 @@ const T = {
     resetWroc: "Back to log in",
     zaloguj: "Log in",
     loguje: "Logging in...",
-    brak: "No account yet?",
-    rejestracja: "Sign up",
+    brak: "No access yet?",
+    rejestracja: "Request access",
+    bladBrak: "This email has no account yet. Request access below.",
     bladGoogle: "Google sign-in failed. Try again or use your password.",
-    wygasl: "Your free access has ended.",
+    wygasl: "Your access has ended.",
   },
   pl: {
     nieUdalo: "Zły e-mail albo hasło.",
@@ -53,10 +54,11 @@ const T = {
     resetWroc: "Wróć do logowania",
     zaloguj: "Zaloguj się",
     loguje: "Loguję...",
-    brak: "Nie masz jeszcze konta?",
-    rejestracja: "Zarejestruj się",
+    brak: "Nie masz jeszcze dostępu?",
+    rejestracja: "Poproś o dostęp",
+    bladBrak: "Ten e-mail nie ma jeszcze konta. Poproś o dostęp poniżej.",
     bladGoogle: "Logowanie przez Google nie wyszło. Spróbuj ponownie albo użyj hasła.",
-    wygasl: "Twój bezpłatny dostęp się skończył.",
+    wygasl: "Twój dostęp się skończył.",
   },
 } as const;
 
@@ -75,6 +77,8 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
     const b = new URLSearchParams(window.location.search).get("blad");
     if (b === "google") setBlad(x.bladGoogle);
     if (b === "wygasl") setBlad(x.wygasl);
+    // 17.10: Google nie zakłada już kont (Bruno tylko B2B, dostęp daje USER_001).
+    if (b === "brak") setBlad(x.bladBrak);
   }, [x]);
   const [email, setEmail] = useState("");
   const [kod, setKod] = useState("");

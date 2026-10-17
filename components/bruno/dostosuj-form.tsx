@@ -185,7 +185,7 @@ export default function DostosujForm({ start, oferta }: { start: Konfig; oferta:
         </span>
         <div className="min-w-0 flex-1">
           <div className="bruno-h2 text-[17px] sm:text-lg text-slate-900 leading-tight">
-            {t("Import your offer from a website or PDF", "Wczytaj ofertę ze strony albo z PDF")} {/* 14.10 (USER_001): bez „(wypełnia pola 2-4)”. */}{!oferta && <span className="text-xs font-normal text-slate-400">(Bruno Pro)</span>}
+            {t("Import your offer from a website or PDF", "Wczytaj ofertę ze strony albo z PDF")} {/* 14.10 (USER_001): bez „(wypełnia pola 2-4)”. */}{!oferta && <span className="text-xs font-normal text-slate-400">{t("(full access)", "(pełen dostęp)")}</span>}
           </div>
           {oferta ? (
             <>

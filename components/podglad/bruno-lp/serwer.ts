@@ -22,11 +22,11 @@ const OPISY: Record<CelStrony, Record<Jezyk, { title: string; description: strin
   firmy: {
     en: {
       title: "Bruno AI for sales teams | AI sales practice",
-      description: "Your sales reps practice calls with an AI customer before they talk to a real one. Every call gets a score. Try 3 calls free.",
+      description: "Your sales reps practice calls with an AI customer before they talk to a real one. Every call gets a score. Request a demo call.",
     },
     pl: {
       title: "Bruno AI dla zespołów sprzedaży | Trening sprzedaży z AI",
-      description: "Wasi handlowcy ćwiczą rozmowy z klientem AI, zanim zadzwonią do prawdziwego. Każda rozmowa dostaje ocenę. Wypróbuj 3 rozmowy za darmo.",
+      description: "Wasi handlowcy ćwiczą rozmowy z klientem AI, zanim zadzwonią do prawdziwego. Każda rozmowa dostaje ocenę. Poproś o rozmowę demo.",
     },
   },
   handlowcy: {
@@ -40,8 +40,8 @@ const OPISY: Record<CelStrony, Record<Jezyk, { title: string; description: strin
     },
   },
   rejestracja: {
-    en: { title: "Bruno AI: sign up", description: "Sign up for Bruno AI and get 3 free practice calls with an AI customer. No card." },
-    pl: { title: "Bruno AI: rejestracja", description: "Załóż konto w Bruno AI i odbierz 3 darmowe rozmowy treningowe z klientem AI. Bez karty." },
+    en: { title: "Bruno AI: request access", description: "Request access to Bruno AI for your sales team. You get a demo call within 24 hours." },
+    pl: { title: "Bruno AI: dostęp", description: "Poproś o dostęp do Bruno AI dla Twojego zespołu handlowego. Rozmowę demo dostaniesz w ciągu 24 godzin." },
   },
   logowanie: {
     en: { title: "Bruno AI: log in", description: "Log in to your Bruno AI practice panel." },

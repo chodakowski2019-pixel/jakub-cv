@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import PasekZloty from "@/components/bruno/pasek-zloty";
 import NavTel from "@/components/bruno/nav-tel";
+import ProwadzenieDemo from "@/components/bruno/prowadzenie-demo";
 
 // 10.10 (USER_001: „brak paska po lewej, wszystko się rozjechało”): układ Next.js NIE renderuje
 // się od nowa przy przejściu między zakładkami. Gdy pierwszym ekranem był /bruno/panel (własny pasek),
@@ -19,6 +20,7 @@ export default function UkladZloty({
   inicjal,
   free,
   profilBrak = false,
+  demoEmail = null,
 }: {
   children: React.ReactNode;
   dostep: { ogien: boolean; statystyki: boolean };
@@ -26,6 +28,8 @@ export default function UkladZloty({
   free: { zuzyte: number; zostalo: number; zablokowane: boolean } | null;
   /** 11.10: konto bez profilu (świeża rejestracja) widzi tylko /bruno/start. */
   profilBrak?: boolean;
+  /** 17.10: konto demo (B2B, 1 rozmowa) = przewodnik w chmurkach zamiast filmu. E-mail = klucz postępu. */
+  demoEmail?: string | null;
 }) {
   const sciezka = usePathname() ?? "";
   const router = useRouter();
@@ -45,7 +49,12 @@ export default function UkladZloty({
   if (doProfilu) return null;
 
   // 14.10: na telefonie wszędzie ta sama nawigacja jak w aplikacji (górna belka + dolny pasek), CSS chowa ją na komputerze.
-  const tel = <NavTel dostep={dostep} inicjal={inicjal} free={free} />;
+  const tel = (
+    <>
+      <NavTel dostep={dostep} inicjal={inicjal} free={free} />
+      {demoEmail && <ProwadzenieDemo email={demoEmail} />}
+    </>
+  );
 
   // Panel czarno-złoty ma własny pasek i tło.
   if (sciezka === "/bruno/panel") return <>{tel}{children}</>;

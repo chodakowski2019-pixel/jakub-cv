@@ -1,18 +1,12 @@
-import type { Metadata } from "next";
-import BrunoLp from "@/components/podglad/bruno-lp/bruno-lp";
-import { metadaneBruno, stronaBruno } from "@/components/podglad/bruno-lp/serwer";
+import { redirect } from "next/navigation";
 
-// 9.10 (USER_001, wariant A): LP Bruno, wersja „reps”. Ten sam szablon co druga podstrona, inne teksty.
-// noindex do czasu akceptacji tekstów i wyglądu przez USER_001.
-// 11.10: salesbruno.com/reps (EN) i salesbruno.pl/handlowcy (PL).
+// 9.10 (USER_001, wariant A): LP Bruno, wersja „reps” (handlowcy, B2C).
 // 14.10 (USER_001): strona główna salesbruno.com/ i salesbruno.pl/, w indeksie.
+// 17.10 (USER_001): Bruno TYLKO B2B. LP dla handlowców wyłączona, adres prowadzi na LP firm.
+// Komponent `BrunoLp wersja="reps"` zostaje w kodzie (nic nie kasujemy bez „tak”).
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  return metadaneBruno("handlowcy", searchParams, { index: true, follow: true });
-}
-
 export default async function Page({ searchParams }: Props) {
-  const { jezyk, naDomenie } = await stronaBruno(searchParams);
-  return <BrunoLp wersja="reps" jezykStart={jezyk} naDomenieStart={naDomenie} />;
+  const sp = await searchParams;
+  redirect(`/brunobusiness${"pl" in sp ? "?pl" : ""}`);
 }

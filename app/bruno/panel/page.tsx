@@ -33,7 +33,9 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
   const d = await danePanelu(await jezykZadania());
   // Popup z filmem: przy pierwszym wejściu albo na życzenie (?tour=1 z Ustawień).
   // 12.10 (USER_001): film dla KAŻDEGO konta zaraz po profilu (/bruno/start), potem panel. Zmienia 11.10 („film po zakupie”).
-  const pokazTour = Boolean(konto) && !d.wygasl && (tour === "1" || !konto?.tour_obejrzany_at);
+  // 17.10 (USER_001): konto demo (free, 1 rozmowa) = chmurki (prowadzenie-demo.tsx), bez filmu.
+  const demo = dostepKonta(konto).free && Number(konto?.rozmow_dziennie) === 1;
+  const pokazTour = Boolean(konto) && !demo && !d.wygasl && (tour === "1" || !konto?.tour_obejrzany_at);
 
   return (
     <div className={`${inter.variable} ${outfit.variable}`} style={{ display: "contents" }}>

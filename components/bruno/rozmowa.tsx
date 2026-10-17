@@ -725,7 +725,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
     return (
       <div className="flex flex-col gap-6">
         <h1 className="bruno-h1 text-2xl sm:text-3xl text-center">{tr("Feedback from Bruno", "Feedback od Bruno")}</h1>
-        <FeedbackWidok feedback={feedback} dalej jezyk={jezyk} />
+        <FeedbackWidok feedback={feedback} dalej demo={Boolean(free && free.zuzyte + free.zostalo === 1)} jezyk={jezyk} />
       </div>
     );
   }
@@ -753,7 +753,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           )}
 
           {/* 1. Tryb */}
-          <fieldset>
+          <fieldset data-tour="kreator-1">
             <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">1.</span>{tr("Call type", "Rodzaj rozmowy")}</legend>
             <div className="grid sm:grid-cols-3 gap-3 auto-rows-fr">
               {(Object.keys(TRYBY) as TrybId[]).map((id) => {
@@ -781,7 +781,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
 
           {/* 2. Obiekcja */}
           {/* 2. Głos klienta (16.10, USER_001): mężczyzna = Bruno, kobieta = Anna. Ten sam wybór co w Ustawieniach. */}
-          <fieldset>
+          <fieldset data-tour="kreator-2">
             <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">2.</span>{tr("Customer's voice", "Głos klienta")}</legend>
             <div className="grid grid-cols-2 gap-3 auto-rows-fr">
               {(["m", "k"] as const).map((g) => (
@@ -793,7 +793,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
             </div>
           </fieldset>
 
-          <fieldset>
+          <fieldset data-tour="kreator-3">
             <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">3.</span>{tr("Which objections do you want to practice?", "Jakie obiekcje chcesz przetrenować")} <span className="text-xs font-normal text-slate-400">{tr("(you can pick more than one)", "(możesz zaznaczyć kilka)")}</span></legend>
             {obiekcje.length === 0 ? (
               <p className="text-sm text-slate-600 bruno-szklo rounded-2xl p-4">
@@ -818,7 +818,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           </fieldset>
 
           {/* 3. Cel */}
-          <fieldset>
+          <fieldset data-tour="kreator-4">
             <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">4.</span>{tr("Call goal", "Cel rozmowy")}</legend>
             {/* Lista celów zależy od trybu; stała wysokość siatki, żeby zmiana trybu nie przesuwała kroku 4. */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 auto-rows-fr min-h-[11rem] sm:min-h-[8.5rem]">
@@ -839,7 +839,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           </fieldset>
 
           {/* 4. Typ klienta */}
-          <fieldset>
+          <fieldset data-tour="kreator-5">
             <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">5.</span>{tr("Customer type", "Typ klienta")}</legend>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-fr">
               {(Object.keys(POSTACIE) as PostacId[]).map((id) => {
@@ -861,7 +861,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           </fieldset>
 
           {/* 5. Poziom trudności */}
-          <fieldset>
+          <fieldset data-tour="kreator-6">
             <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">6.</span>{tr("Difficulty", "Poziom trudności")} <span className="text-xs font-normal text-slate-400">{tr("(the score uses the same rules at every level)", "(ocena jest wg tej samej rubryki na każdym poziomie)")}</span></legend>
             <div className="grid sm:grid-cols-3 gap-3 auto-rows-fr">
               {(Object.keys(POZIOMY) as PoziomId[]).map((id, nr) => {
@@ -940,15 +940,15 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           </fieldset>
 
           {free && free.zostalo === 0 ? (
-            <p className="text-center text-slate-600">{tr(`You've used ${free.zuzyte} free ${free.zuzyte === 1 ? "call" : "calls"}.`, `Wykorzystane ${free.zuzyte} ${mnoga(free.zuzyte, ["", ""], ["bezpłatna rozmowa", "bezpłatne rozmowy", "bezpłatnych rozmów"])}.`)} <Link href="/bruno/odblokuj" className="underline">{tr("Unlock Bruno Pro", "Odblokuj Bruno Pro")}</Link>.</p>
+            <p className="text-center text-slate-600">{free.zuzyte + free.zostalo === 1 ? tr("You've used your demo call.", "Rozmowa demo jest już wykorzystana.") : tr(`You've used ${free.zuzyte} free ${free.zuzyte === 1 ? "call" : "calls"}.`, `Wykorzystane ${free.zuzyte} ${mnoga(free.zuzyte, ["", ""], ["bezpłatna rozmowa", "bezpłatne rozmowy", "bezpłatnych rozmów"])}.`)} <Link href="/bruno/odblokuj" className="underline">{tr("Book a call: Bruno for your team", "Umów rozmowę: Bruno dla zespołu")}</Link>.</p>
           ) : planZrobiony ? (
             <p className="text-center text-slate-600">{tr(`Today's plan is done (${rozmowDziennie} ${rozmowDziennie === 1 ? "call" : "calls"}). Come back tomorrow.`, `Plan na dziś zrobiony (${rozmowDziennie} ${mnoga(rozmowDziennie, ["", ""], ["rozmowa", "rozmowy", "rozmów"])}). Wróć jutro.`)}</p>
           ) : brakMinut ? (
             <p className="text-center text-slate-600">{tr("You've used all your trial minutes.", "Limit minut testu wyczerpany.")} <Link href="/bruno/odblokuj" className="underline">{tr("Unlock full access", "Odblokuj pełen dostęp")}</Link>.</p>
           ) : (
             <div className="text-center">
-              <button type="button" onClick={zacznij} disabled={!gotowy} className="bruno-przycisk text-base px-12 py-4">Start</button>
-              {free && <p className="mt-3 text-sm text-slate-500">{tr(`Free calls: ${free.zuzyte} of ${free.zuzyte + free.zostalo}. This will be #${free.zuzyte + 1}.`, `Bezpłatne rozmowy: ${free.zuzyte} z ${free.zuzyte + free.zostalo}. Ta będzie ${free.zuzyte + 1}.`)}</p>}
+              <button type="button" data-tour="start" onClick={zacznij} disabled={!gotowy} className="bruno-przycisk text-base px-12 py-4">Start</button>
+              {free && <p className="mt-3 text-sm text-slate-500">{free.zuzyte + free.zostalo === 1 ? tr("Demo: 1 call, 3 minutes.", "Demo: 1 rozmowa, 3 minuty.") : tr(`Free calls: ${free.zuzyte} of ${free.zuzyte + free.zostalo}. This will be #${free.zuzyte + 1}.`, `Bezpłatne rozmowy: ${free.zuzyte} z ${free.zuzyte + free.zostalo}. Ta będzie ${free.zuzyte + 1}.`)}</p>}
             </div>
           )}
         </>

@@ -144,13 +144,13 @@ function plusyMinusy(f: Feedback, NAZWY: Record<string, string>): { plusy: strin
 }
 
 /** jezyk: komponent bez "use client" (strona serwerowa i rozmowa.tsx), więc język przychodzi propsem. */
-export default function FeedbackWidok({ feedback, dalej, jezyk = "en" }: { feedback: Feedback; dalej?: boolean; jezyk?: Jezyk }) {
+export default function FeedbackWidok({ feedback, dalej, demo, jezyk = "en" }: { feedback: Feedback; dalej?: boolean; demo?: boolean; jezyk?: Jezyk }) {
   const tr = tDla(jezyk);
   const { NAZWY } = etykiety(jezyk);
   const { plusy, minusy } = plusyMinusy(feedback, NAZWY);
   return (
     <div className="flex flex-col gap-5">
-      <div className="bruno-szklo rounded-3xl p-6 sm:p-8 text-center flex flex-col items-center gap-3">
+      <div data-tour="ocena" className="bruno-szklo rounded-3xl p-6 sm:p-8 text-center flex flex-col items-center gap-3">
         <Badge ton="cyjan">{tr("Call score", "Ocena rozmowy")}</Badge>
         <OcenaKolo ocena={feedback.ocena} tr={tr} />
         <p className="text-slate-700 text-[15px]">{feedback.liczba_z_audio}</p>
@@ -158,7 +158,7 @@ export default function FeedbackWidok({ feedback, dalej, jezyk = "en" }: { feedb
 
       {/* 11.10 (USER_001): PLUSY po lewej, MINUSY po prawej, w jednej tabelce (wiersze obok siebie). */}
       {/* 14.10 (USER_001, telefon: „wszystko na siebie nachodzi”): plusy i minusy jedno pod drugim, tabelka od sm. */}
-      <section className="sm:hidden flex flex-col gap-4">
+      <section data-tour="plusy-tel" className="sm:hidden flex flex-col gap-4">
         {[
           { znak: "plus" as const, kolor: "#16a34a", tytul: tr("Pluses", "Plusy"), lista: plusy, prefiks: "+", klasa: "text-green-600" },
           { znak: "minus" as const, kolor: "#dc2626", tytul: tr("Minuses", "Minusy"), lista: minusy, prefiks: "–", klasa: "text-red-600" },
@@ -177,7 +177,7 @@ export default function FeedbackWidok({ feedback, dalej, jezyk = "en" }: { feedb
           </div>
         ))}
       </section>
-      <section className="hidden sm:block bruno-szklo rounded-2xl p-5 overflow-x-auto">
+      <section data-tour="plusy" className="hidden sm:block bruno-szklo rounded-2xl p-5 overflow-x-auto">
         <table className="w-full text-[14px] table-fixed border-collapse">
           <thead>
             <tr>
@@ -241,7 +241,7 @@ export default function FeedbackWidok({ feedback, dalej, jezyk = "en" }: { feedb
         </div>
       )}
 
-      <div className="bruno-szklo rounded-2xl p-5 border-cyan-700/30">
+      <div data-tour="poprawka" className="bruno-szklo rounded-2xl p-5 border-cyan-700/30">
         <div className="flex items-center gap-2 mb-2">
           <Kolko znak="strzalka" kolor="#d4af5a" />
           <Badge ton="cyjan">{tr("Next time", "Następnym razem")}</Badge>
@@ -249,7 +249,15 @@ export default function FeedbackWidok({ feedback, dalej, jezyk = "en" }: { feedb
         <p className="text-[15px] text-slate-900 font-medium leading-relaxed">{feedback.poprawka || tr("None.", "Brak.")}</p>
       </div>
 
-      {dalej && (
+      {/* 17.10 (USER_001): konto demo (1 rozmowa) po ocenie = jedno przejście na stronę „Bruno dla zespołu” z kalendarzem. */}
+      {dalej && demo && (
+        <div data-tour="koniec" className="bruno-szklo rounded-2xl p-6 text-center flex flex-col items-center gap-3">
+          <p className="bruno-h2 text-lg">{tr("Want Bruno for your whole team?", "Chcesz Bruno dla całego zespołu?")}</p>
+          <p className="text-sm text-slate-600 max-w-md">{tr("Book a 30-minute phone call. I'll show you how to set Bruno up for your reps.", "Umów 30-minutową rozmowę telefoniczną. Pokażę, jak ustawić Bruno pod Twoich handlowców.")}</p>
+          <Link href="/bruno/odblokuj" className="bruno-przycisk text-base px-10 py-3">{tr("Book a call", "Umów rozmowę")}</Link>
+        </div>
+      )}
+      {dalej && !demo && (
         <div className="flex flex-wrap gap-3 justify-center pt-2">
           <Link href="/bruno/panel" className="bruno-przycisk">{tr("Back to Home", "Wróć do panelu")}</Link>
           <Link href="/bruno/trening" className="bruno-przycisk-2">{tr("Practice objections in Drills", "Przećwicz obiekcje w Treningu")}</Link>

@@ -5,13 +5,12 @@ import { CIASTECZKO, WAZNOSC_SESJI_S, nowyToken } from "@/lib/bruno/auth";
 import { pobierzKonfig, pobierzKonto, stanDostepu } from "@/lib/bruno/db";
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import { CIASTECZKO_GOOGLE, adresPowrotu, daneZGoogle } from "@/lib/bruno/google";
-import { zalozKontoFree } from "@/lib/bruno/konto-free";
 import { zapiszWejscie } from "@/lib/bruno/wejscia";
 import { jezykDomeny } from "@/lib/bruno/db";
 
 export const dynamic = "force-dynamic";
 
-// Powrót z Google: sprawdzenie stanu, wymiana kodu, konto (istniejące albo nowe free), sesja.
+// Powrót z Google: sprawdzenie stanu, wymiana kodu, konto (tylko istniejące, 17.10), sesja.
 // Nowe konto → „Dostosuj Bruno” (co sprzedajesz), istniejące → panel.
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -27,15 +26,10 @@ export async function GET(req: Request) {
   const dane = await daneZGoogle({ kod, powrot: adresPowrotu(url.origin) });
   if (!dane) return wroc("google");
 
-  let konto = await pobierzKonto(dane.email);
-  let nowe = false;
-  if (!konto) {
-    const z = await zalozKontoFree({ email: dane.email, imie: dane.imie, zKodem: false, zrodlo: "google", jezyk: pl ? "pl" : "en" });
-    if (!z.ok && !z.istnieje) return wroc("google");
-    nowe = z.ok;
-    konto = await pobierzKonto(dane.email);
-    if (!konto) return wroc("google");
-  }
+  // 17.10 (USER_001): Bruno tylko B2B. Google loguje TYLKO istniejące konta, nowe zakłada USER_001
+  // po prośbie o dostęp (formularz /rejestracja). Było: nowe konto free z 3 rozmowami.
+  const konto = await pobierzKonto(dane.email);
+  if (!konto) return wroc("brak");
   if (!stanDostepu(konto).aktywny) return wroc("wygasl");
 
   await supabaseAdmin
@@ -53,5 +47,5 @@ export async function GET(req: Request) {
     maxAge: WAZNOSC_SESJI_S,
   });
   // 11.10: nowe konto (albo bez profilu) uzupełnia profil na /bruno/start, potem panel.
-  return NextResponse.redirect(new URL(nowe || !konto.profil_at ? "/bruno/start" : "/bruno/panel", url.origin));
+  return NextResponse.redirect(new URL(!konto.profil_at ? "/bruno/start" : "/bruno/panel", url.origin));
 }

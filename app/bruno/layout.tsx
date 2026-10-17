@@ -63,7 +63,8 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   return (
     <JezykProvider jezyk={jezyk}>
     <div className={`bruno zloty ${fonty} font-[var(--font-open-sans)]`}>
-      <UkladZloty dostep={dostep} inicjal={inicjal} free={free} profilBrak={profilBrak}>
+      {/* 17.10 (USER_001): konto demo (pula 1 rozmowy) = chmurki krok po kroku zamiast filmu. */}
+      <UkladZloty dostep={dostep} inicjal={inicjal} free={free} profilBrak={profilBrak} demoEmail={free && free.pula === 1 ? email : null}>
         {children}
       </UkladZloty>
       {/* 14.10 (USER_001): dymek czatu usunięty, „Napisz do nas” jest w Ustawieniach (wiadomosc-form.tsx). */}

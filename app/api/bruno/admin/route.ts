@@ -33,7 +33,9 @@ export async function GET(req: Request) {
   // 9.10 (E18): maile wysłane i wejścia (logowania + wejścia z linków w mailach), ostatnie 300.
   const { data: maile } = await supabaseAdmin.from("bruno_maile").select("email, rodzaj, temat, wyslano, wynik, blad").order("wyslano", { ascending: false }).limit(300);
   const { data: wejscia } = await supabaseAdmin.from("bruno_wejscia").select("email, rodzaj, zrodlo, kiedy").order("kiedy", { ascending: false }).limit(300);
-  return NextResponse.json({ ok: true, konta, rozmowy, zainteresowani: zaint, karty: karty ?? [], maile: maile ?? [], wejscia: wejscia ?? [] });
+  // 17.10 (USER_001): prośby o dostęp z formularza (Bruno tylko B2B), najnowsze na górze.
+  const { data: prosby } = await supabaseAdmin.from("bruno_prosby").select("*").order("utworzono", { ascending: false }).limit(200);
+  return NextResponse.json({ ok: true, konta, rozmowy, zainteresowani: zaint, karty: karty ?? [], maile: maile ?? [], wejscia: wejscia ?? [], prosby: prosby ?? [] });
 }
 
 export async function POST(req: Request) {

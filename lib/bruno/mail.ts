@@ -119,6 +119,48 @@ export function htmlRejestracja(a: { imie: string | null; email: string; kod: st
   });
 }
 
+/**
+ * 17.10 (USER_001): Bruno tylko B2B. Mail po akceptacji prośby o dostęp w Adminie:
+ * konto demo = 1 rozmowa po 3 min, Bruno prowadzi krok po kroku (chmurki), na końcu rozmowa z Jakubem.
+ */
+export function htmlDostepDemo(a: { imie: string | null; email: string; kod: string; jezyk: "en" | "pl" }) {
+  const link = `${bazaUrl(a.jezyk)}/login`;
+  const linkSrc = linkZeZrodlem(link, "dostep");
+  const minuty = ROZMOWA_SEKUND / 60;
+  if (a.jezyk === "pl")
+    return kopertaBruno({
+      jezyk: "pl",
+      naglowek: "Twój dostęp do Bruno jest gotowy",
+      tresc: [
+        akapit(`${a.imie ? `Cześć ${a.imie}, p` : "P"}oniżej znajdziesz dane dostępu ⤵️`),
+        tabelaDostepu({ link, login: a.email, kod: a.kod, jezyk: "pl" }),
+        tabelaParami([["Rozmowa demo", `1 po ${minuty} ${minutaSlowoPL(minuty)}`]]),
+        przycisk({ tekst: "Zaloguj się", link: linkSrc }),
+        kroki([
+          "Otwórz stronę w Chrome na komputerze i załóż słuchawki.",
+          "Bruno poprowadzi Cię krok po kroku: co sprzedajesz, jaki klient, potem rozmowa.",
+          "Po rozmowie zobaczysz ocenę i co poprawić.",
+        ]),
+        akapit("Pozdrawiam"),
+      ].join("\n"),
+    });
+  return kopertaBruno({
+    naglowek: "Your Bruno access is ready",
+    tresc: [
+      akapit(`${a.imie ? `Hi ${a.imie}, here` : "Here"} are your login details ⤵️`),
+      tabelaDostepu({ link, login: a.email, kod: a.kod, etykiety: ["Page", "Login", "Login code"] }),
+      tabelaParami([["Demo call", `1, ${minuty} ${minutaSlowo(minuty)}`]]),
+      przycisk({ tekst: "Log in", link: linkSrc }),
+      kroki([
+        "Open the page in Chrome on a computer and put on headphones.",
+        "Bruno walks you through it step by step: what you sell, the customer, then the call.",
+        "After the call you see your score and what to fix.",
+      ]),
+      akapit("Best,"),
+    ].join("\n"),
+  });
+}
+
 /** Mail z dostępem: link, login i kod w jednej tabelce. */
 export function htmlDostep(args: {
   imie: string | null;
@@ -231,7 +273,8 @@ export function htmlPrzypomnienieFree(args: { imie: string | null; jezyk?: strin
             : ile.charAt(0).toUpperCase() + ile.slice(1),
       tresc: [
         tabelaParami([
-          ["Bezpłatne rozmowy", `${args.zuzyte} z ${razem} zrobione`],
+          // 17.10: konto demo (1 rozmowa) = „Rozmowa demo”.
+          razem === 1 ? ["Rozmowa demo", "1, czeka na Ciebie"] : ["Bezpłatne rozmowy", `${args.zuzyte} z ${razem} zrobione`],
           ["Jedna rozmowa", `${minuty} ${minutaSlowoPL(minuty)}`],
           ["Co dostajesz", "ocenę trenera, nagranie, fiszki z Twoich błędów"],
         ]),
@@ -248,7 +291,7 @@ export function htmlPrzypomnienieFree(args: { imie: string | null; jezyk?: strin
     naglowek,
     tresc: [
       tabelaParami([
-        ["Free calls", `${args.zuzyte} of ${razem} done`],
+        razem === 1 ? ["Demo call", "1, waiting for you"] : ["Free calls", `${args.zuzyte} of ${razem} done`],
         ["One call", `${minuty} ${minutaSlowo(minuty)}`],
         ["What you get", "a coach score, the recording, flashcards from your mistakes"],
       ]),

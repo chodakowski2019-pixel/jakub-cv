@@ -370,8 +370,9 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
               <Ikona nazwa="klodka" rozmiar={15} grubosc={2} />
               {free ? (
                 <>
-                  <span className="dlugi">{t("Free calls", "Bezpłatne rozmowy")}: {free.zuzyte} / {free.zuzyte + free.zostalo} · Bruno Pro</span>
-                  <span className="krotki">{free.zuzyte} / {free.zuzyte + free.zostalo} · Pro</span>
+                  {/* 17.10 (USER_001): Bruno tylko B2B, zamiast Bruno Pro = „Bruno dla zespołu”. */}
+                  <span className="dlugi">{free.zuzyte + free.zostalo === 1 ? t("Demo call", "Rozmowa demo") : t("Free calls", "Bezpłatne rozmowy")}: {free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Bruno for your team", "Bruno dla zespołu")}</span>
+                  <span className="krotki">{free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Team", "Zespół")}</span>
                 </>
               ) : (
                 <>
