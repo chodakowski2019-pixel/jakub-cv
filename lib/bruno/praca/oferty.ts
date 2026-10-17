@@ -65,7 +65,9 @@ export function ofertaPoId(id: string): Oferta | null {
   return o && o.status !== "usunieta" ? publiczna(o) : null;
 }
 
-export const CENA_MIESIAC = 50;
+// 17.10 (USER_001): cena ogłoszenia 200 zł / mies., PROMOCJA na pierwsze ogłoszenie firmy: 50 zł / mies.
+export const CENA_REGULARNA = 200;
+export const CENA_MIESIAC = 50; // cena promocyjna pierwszego ogłoszenia
 
 const wszystkie = dane as OfertaPelna[];
 

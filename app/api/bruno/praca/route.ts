@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     await wyslij({
       do: SKRZYNKA_JAKUBA,
       ...(email ? { replyTo: email } : {}),
-      temat: akcja === "aktywuj" ? `Praca: AKTYWACJA ${CENA_MIESIAC} zł/mc, ${oferta.firma}` : `Praca: USUNĄĆ ogłoszenie, ${oferta.firma}`,
+      temat: akcja === "aktywuj" ? `Praca: AKTYWACJA ${CENA_MIESIAC} zł/mc (promocja, normalnie 200 zł), ${oferta.firma}` : `Praca: USUNĄĆ ogłoszenie, ${oferta.firma}`,
       html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>${
         akcja === "aktywuj"
           ? `Firma chce aktywować ogłoszenie (${CENA_MIESIAC} zł/mc). Wyślij link do płatności i zmień status na „aktywna”.`

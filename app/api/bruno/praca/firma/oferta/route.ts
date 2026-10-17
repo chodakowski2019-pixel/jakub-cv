@@ -67,6 +67,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, id: w.id });
   }
 
+  // 17.10: pierwsze ogłoszenie konta = promocja 50 zł / mies., kolejne 200 zł.
+  const { count } = await supabaseAdmin.from("praca_oferty_firm").select("id", { count: "exact", head: true }).eq("konto_id", konto.id);
+  const cena = count ? 200 : 50;
   const id = noweIdOferty(stanowisko, dane.firma);
   const { error } = await supabaseAdmin.from("praca_oferty_firm").insert({ id, konto_id: konto.id, ...dane });
   if (error) {
@@ -78,7 +81,7 @@ export async function POST(req: Request) {
       do: SKRZYNKA_JAKUBA,
       replyTo: konto.email,
       rodzaj: "inny",
-      temat: `Praca: NOWE OGŁOSZENIE do aktywacji (50 zł/mc), ${dane.firma}: ${stanowisko}`,
+      temat: `Praca: NOWE OGŁOSZENIE do aktywacji (${cena} zł/mc${cena === 50 ? ", promocja" : ""}), ${dane.firma}: ${stanowisko}`,
       html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>Pracodawca dodał ogłoszenie w panelu. Status: <b>oczekuje</b>. Wyślij link do płatności, potem zmień status na „aktywna” w tabeli praca_oferty_firm.</p><p><b>Firma:</b> ${esc(dane.firma)}<br/><b>Konto:</b> ${esc(konto.email)}, ${esc(konto.telefon ?? "-")}<br/><b>Stanowisko:</b> ${esc(stanowisko)}<br/><b>Miasto:</b> ${esc(dane.miasto ?? "-")}<br/><b>Id:</b> ${id}</p></div>`,
     });
   } catch (e) {

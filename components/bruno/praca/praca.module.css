@@ -3526,3 +3526,25 @@ button.btn {
   width: 100%;
   margin-top: 12px;
 }
+/* 17.10: promocja na pierwsze ogłoszenie 200 → 50 zł / mies. */
+.promoZnaczek {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #fff1e4;
+  color: #c2620d;
+}
+.cenaStara {
+  font-size: 22px;
+  color: var(--grey);
+  text-decoration-thickness: 2px;
+  margin-right: 4px;
+}
+.cenaStaraJasna {
+  margin-left: 6px;
+  opacity: 0.55;
+  font-weight: 400;
+}

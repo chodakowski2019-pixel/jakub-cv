@@ -77,7 +77,7 @@ export default function PasekFirmy({ id, k, firma, cena }: { id: string; k: stri
         </div>
         <div className={s.wlascicielAkcje}>
           <button type="button" className={s.btn} onClick={() => otworz("aktywuj")}>
-            Przejmij za {cena} zł / mies.
+            Przejmij za {cena} zł / mies. <s className={s.cenaStaraJasna}>200 zł</s>
           </button>
           <button type="button" className={s.usun} onClick={() => otworz("usun")}>
             Nie chcę, usuń ogłoszenie
@@ -97,7 +97,7 @@ export default function PasekFirmy({ id, k, firma, cena }: { id: string; k: stri
           >
             <h2 className={s.oknoH}>Przejmij ogłoszenie</h2>
             <p className={s.oknoP}>
-              {cena} zł miesięcznie, bez umowy. Rezygnujesz jednym mailem.
+              Promocja na pierwsze ogłoszenie: {cena} zł miesięcznie zamiast 200 zł. Bez umowy, rezygnujesz jednym mailem.
             </p>
             <label className={s.pole}>
               <span>E-mail do faktury</span>

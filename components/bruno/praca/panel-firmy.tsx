@@ -7,6 +7,8 @@ import type { Zgloszenie } from "@/app/brunopraca/panel/page";
 import { PanelGlowa, Wyloguj, formatDaty } from "./panel-wspolne";
 import s from "./praca.module.css";
 
+const CENA_REGULARNA = 200;
+
 // 17.10 (USER_001): panel pracodawcy. Zakładki: Ogłoszenia · Dodaj ogłoszenie · Kandydaci · Konto.
 // Nowe ogłoszenie = „Czeka na aktywację” (50 zł/mc, link do płatności wysyła USER_001), potem „Aktywne”.
 const POZIOMY = ["Młodszy specjalista (junior)", "Specjalista (mid / regular)", "Starszy specjalista (senior)", "Kierownik / koordynator", "Menedżer", "Dyrektor"];
@@ -25,6 +27,9 @@ const STATUS_Z: Record<string, string> = { nowe: "Nowe", obejrzane: "Obejrzane",
 type Zakladka = "ogloszenia" | "dodaj" | "kandydaci" | "konto";
 
 export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }: { konto: KontoPraca; oferty: OfertaFirmyWiersz[]; zgloszenia: Zgloszenie[]; cena: number; zakladka?: string }) {
+  // 17.10 (USER_001): pierwsze (najstarsze) ogłoszenie firmy w promocji {cena} zł, kolejne 200 zł / mies.
+  const pierwsza = [...oferty].sort((a, b) => a.created_at.localeCompare(b.created_at))[0]?.id;
+  const cenaOferty = (id: string) => (id === pierwsza ? cena : CENA_REGULARNA);
   const [z, setZ] = useState<Zakladka>(zakladka === "dodaj" ? "dodaj" : zakladka === "kandydaci" ? "kandydaci" : zakladka === "konto" ? "konto" : oferty.length ? "ogloszenia" : "dodaj");
   const [edytowana, setEdytowana] = useState<OfertaFirmyWiersz | null>(null);
   const [filtr, setFiltr] = useState("");
@@ -84,7 +89,7 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
                     </p>
                     {o.status === "oczekuje" && (
                       <p className={s.panelInfo}>
-                        Aktywujemy je po płatności {cena} zł / mies. Link do płatności wyślemy na {konto.email}.
+                        Aktywujemy je po płatności {cenaOferty(o.id)} zł / mies.{o.id === pierwsza ? " (promocja zamiast 200 zł)" : ""} Link do płatności wyślemy na {konto.email}.
                       </p>
                     )}
                   </div>
@@ -124,7 +129,7 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
           </div>
         ))}
 
-      {z === "dodaj" && <FormularzOferty key={edytowana?.id ?? "nowa"} o={edytowana} cena={cena} email={konto.email} />}
+      {z === "dodaj" && <FormularzOferty key={edytowana?.id ?? "nowa"} o={edytowana} cena={oferty.length ? CENA_REGULARNA : cena} promo={!oferty.length} email={konto.email} />}
 
       {z === "kandydaci" &&
         (zgloszenia.length === 0 ? (
@@ -215,7 +220,7 @@ function Kandydat({ x, stanowisko }: { x: Zgloszenie; stanowisko: string }) {
   );
 }
 
-function FormularzOferty({ o, cena, email }: { o: OfertaFirmyWiersz | null; cena: number; email: string }) {
+function FormularzOferty({ o, cena, promo, email }: { o: OfertaFirmyWiersz | null; cena: number; promo: boolean; email: string }) {
   const [stan, setStan] = useState<"" | "wysylam" | "gotowe">("");
   const [blad, setBlad] = useState("");
   const pole = (n: string, etykieta: string, el: React.ReactNode, opcj?: boolean) => (
@@ -245,7 +250,7 @@ function FormularzOferty({ o, cena, email }: { o: OfertaFirmyWiersz | null; cena
         <h2>{o ? "Zapisane!" : "Ogłoszenie dodane!"}</h2>
         {!o && (
           <p>
-            Aktywujemy je po płatności {cena} zł / mies. Link do płatności wyślemy na {email}.
+            Aktywujemy je po płatności {cena} zł / mies.{promo ? " (promocja na pierwsze ogłoszenie, zamiast 200 zł)" : ""} Link do płatności wyślemy na {email}.
           </p>
         )}
         <button type="button" className={s.btn} onClick={() => (location.href = "/praca/panel")}>
@@ -312,7 +317,7 @@ function FormularzOferty({ o, cena, email }: { o: OfertaFirmyWiersz | null; cena
       <div className={s.panelFormStopka}>
         {!o && (
           <p className={s.drobny}>
-            Po dodaniu ogłoszenie czeka na aktywację: {cena} zł / mies., bez umowy.
+            Po dodaniu ogłoszenie czeka na aktywację: {promo ? <><s>200 zł</s> {cena} zł / mies. (promocja na pierwsze ogłoszenie)</> : <>{cena} zł / mies.</>}, bez umowy.
           </p>
         )}
         <button type="submit" className={`${s.btn} ${s.btnDuzy}`} disabled={stan === "wysylam"}>

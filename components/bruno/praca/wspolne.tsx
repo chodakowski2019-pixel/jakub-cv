@@ -30,8 +30,9 @@ export function KartaFirmy({ cena, id, zalogowanyPracodawca }: { cena: number; i
   return (
     <div className={s.firmy} id={id}>
       <h3 className={s.firmyH}>Szukasz handlowca?</h3>
+      <span className={s.promoZnaczek}>Promocja na pierwsze ogłoszenie</span>
       <p className={s.cena}>
-        {cena} zł <small>/ miesiąc za ogłoszenie</small>
+        <s className={s.cenaStara}>200 zł</s> {cena} zł <small>/ miesiąc</small>
       </p>
       {/* 17.10 (USER_001): korzyści w tabelce, zamiast listy z ptaszkami. */}
       <dl className={s.korzysci}>
