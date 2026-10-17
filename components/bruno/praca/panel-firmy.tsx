@@ -46,6 +46,7 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
   const [filtr, setFiltr] = useState("");
   const [stanListy, setStanListy] = useState<"aktywna" | "oczekuje" | "wstrzymana">(oferty.some((o) => o.status === "aktywna") ? "aktywna" : "oczekuje");
   const [szukaj, setSzukaj] = useState("");
+  const [platnoscOk] = useState(() => typeof window !== "undefined" && new URLSearchParams(location.search).get("platnosc") === "ok");
   const liczbaZ = (id: string) => zgloszenia.filter((x) => x.oferta_id === id).length;
   const nowych = zgloszenia.filter((x) => x.status === "nowe").length;
   const tytul = (id: string) => oferty.find((o) => o.id === id)?.stanowisko ?? id;
@@ -55,16 +56,6 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
     setZ(k);
     window.scrollTo({ top: 0 });
   };
-
-  // „Dokończ konfigurację konta” (RocketJobs): kroki odhaczają się same.
-  const kroki: [boolean, string, string, Zakladka][] = [
-    [!!konto.logo_url, "Dodaj logo firmy", "Wyświetla się przy każdym ogłoszeniu.", "firma"],
-    [!!konto.nazwa_wyswietlana, "Ustaw nazwę w ogłoszeniach", "Krótka nazwa zamiast pełnej nazwy spółki.", "firma"],
-    [!!konto.klauzula_rodo, "Uzupełnij klauzulę RODO", "Wymagana przy zbieraniu zgłoszeń. Dodamy ją do każdego ogłoszenia.", "firma"],
-    [!!(konto.nip && konto.fv_adres), "Uzupełnij dane do faktury", "NIP i adres, żeby wystawić fakturę.", "firma"],
-    [oferty.length > 0, "Dodaj pierwsze ogłoszenie", `W promocji ${cena} zł / mies. zamiast 200 zł.`, "dodaj"],
-  ];
-  const zrobione = kroki.filter((k) => k[0]).length;
 
   async function status(id: string, nowy: string) {
     if (nowy === "usunieta" && !confirm("Usunąć ogłoszenie? Zniknie z portalu i z panelu.")) return;
@@ -105,41 +96,15 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
       <main className={s.panelTresc}>
         {z === "ogloszenia" && (
           <>
-            {zrobione < kroki.length && (
-              <details className={s.konfiguracja} open={zrobione < 2}>
-                <summary>
-                  <span>
-                    <b>Dokończ konfigurację konta</b>
-                    <span className={s.konfigPasek}>
-                      <i style={{ width: `${(zrobione / kroki.length) * 100}%` }} />
-                    </span>
-                    <small>
-                      Ukończono {zrobione} z {kroki.length}
-                    </small>
-                  </span>
-                </summary>
-                <ul>
-                  {kroki.map(([ok, co, opis, gdzie]) => (
-                    <li key={co} className={ok ? s.krokOk : ""}>
-                      <span className={s.krokKolko} aria-hidden="true">
-                        {ok && (
-                          <svg viewBox="0 0 24 24">
-                            <path d="M5 12.5l4.5 4.5L19 7.5" />
-                          </svg>
-                        )}
-                      </span>
-                      <span>
-                        <b>{co}</b> {opis}
-                      </span>
-                      {!ok && (
-                        <button type="button" onClick={() => idz(gdzie)}>
-                          Uzupełnij
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </details>
+            {platnoscOk && (
+              <div className={s.platnoscOk}>
+                <span className={s.ptaszekMaly} aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M5 12.5l4.5 4.5L19 7.5" />
+                  </svg>
+                </span>
+                Płatność przyjęta. Ogłoszenie będzie aktywne w ciągu minuty (odśwież stronę).
+              </div>
             )}
             <div className={s.panelNaglowek}>
               <h1 className={s.ofertaH}>Zarządzaj rekrutacjami</h1>
@@ -193,7 +158,7 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
                         <p>{[o.miasto, o.tryb, `dodano ${formatDaty(o.created_at)}`].filter(Boolean).join(" · ")}</p>
                         {o.status === "oczekuje" && (
                           <p className={s.panelInfo}>
-                            Aktywujemy je po płatności {cenaOferty(o.id)} zł / mies.{o.id === pierwsza ? " (promocja zamiast 200 zł)" : ""} Link do płatności wyślemy na {konto.email}.
+                            Czeka na płatność: {cenaOferty(o.id)} zł / mies.{o.id === pierwsza ? " (promocja zamiast 200 zł)" : ""}
                           </p>
                         )}
                       </div>
@@ -202,6 +167,7 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
                         <span>kandydatów</span>
                       </button>
                       <div className={s.panelAkcje}>
+                        {o.status !== "aktywna" && <ZaplacBtn id={o.id} cena={cenaOferty(o.id)} />}
                         <a href={`/praca/${o.id}`} target="_blank">
                           Podgląd
                         </a>
@@ -274,6 +240,32 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
   );
 }
 
+/** 18.10: płatność Stripe (subskrypcja miesięczna) za ogłoszenie z panelu. */
+function ZaplacBtn({ id, cena, duzy, promo }: { id: string; cena: number; duzy?: boolean; promo?: boolean }) {
+  const [stan, setStan] = useState("");
+  return (
+    <>
+      <button
+        type="button"
+        className={duzy ? `${s.btn} ${s.btnDuzy} ${s.btnPomarancz}` : s.zaplacMaly}
+        disabled={stan === "wysylam"}
+        onClick={async () => {
+          setStan("wysylam");
+          const odp = await fetch("/api/bruno/praca/platnosc", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) }).catch(() => null);
+          const j = await odp?.json().catch(() => null);
+          if (j?.url) location.href = j.url;
+          else {
+            setStan("");
+            alert(j?.blad ?? "Nie udało się otworzyć płatności.");
+          }
+        }}
+      >
+        {stan === "wysylam" ? "Otwieram płatność…" : duzy ? <>Zapłać {promo && <s className={s.cenaStaraJasna}>200 zł</s>} {cena} zł / mies. i aktywuj</> : `Zapłać ${cena} zł`}
+      </button>
+    </>
+  );
+}
+
 function Pusto({ tytul, opis, akcja }: { tytul: string; opis: string; akcja?: [string, () => void] }) {
   return (
     <div className={s.pusto}>
@@ -336,6 +328,7 @@ function Kandydat({ x, stanowisko }: { x: Zgloszenie; stanowisko: string }) {
 function FormularzOferty({ o, cena, promo, email }: { o: OfertaFirmyWiersz | null; cena: number; promo: boolean; email: string }) {
   const [stan, setStan] = useState<"" | "wysylam" | "gotowe">("");
   const [blad, setBlad] = useState("");
+  const [noweId, setNoweId] = useState<string | null>(null);
   const pole = (n: string, etykieta: string, el: React.ReactNode, opcj?: boolean) => (
     <label className={s.pole} key={n}>
       <span>
@@ -361,14 +354,19 @@ function FormularzOferty({ o, cena, promo, email }: { o: OfertaFirmyWiersz | nul
           </svg>
         </span>
         <h2>{o ? "Zapisane!" : "Ogłoszenie dodane!"}</h2>
-        {!o && (
-          <p>
-            Aktywujemy je po płatności {cena} zł / mies.{promo ? " (promocja na pierwsze ogłoszenie, zamiast 200 zł)" : ""} Link do płatności wyślemy na {email}.
-          </p>
+        {!o && noweId ? (
+          <>
+            <p>Opłać je, a od razu zobaczą je handlowcy z całej Polski.</p>
+            <ZaplacBtn id={noweId} cena={cena} duzy promo={promo} />
+            <button type="button" className={s.wyczysc} onClick={() => (location.href = "/praca/panel")}>
+              Zapłacę później
+            </button>
+          </>
+        ) : (
+          <button type="button" className={s.btn} onClick={() => (location.href = "/praca/panel")}>
+            Przejdź do ogłoszeń
+          </button>
         )}
-        <button type="button" className={s.btn} onClick={() => (location.href = "/praca/panel")}>
-          Przejdź do ogłoszeń
-        </button>
       </div>
     );
   return (
@@ -386,6 +384,7 @@ function FormularzOferty({ o, cena, promo, email }: { o: OfertaFirmyWiersz | nul
           setStan("");
           return;
         }
+        setNoweId(j.id);
         setStan("gotowe");
       }}
     >
@@ -430,7 +429,7 @@ function FormularzOferty({ o, cena, promo, email }: { o: OfertaFirmyWiersz | nul
       <div className={s.panelFormStopka}>
         {!o && (
           <p className={s.drobny}>
-            Po dodaniu ogłoszenie czeka na aktywację: {promo ? <><s>200 zł</s> {cena} zł / mies. (promocja na pierwsze ogłoszenie)</> : <>{cena} zł / mies.</>}, bez umowy.
+            Po dodaniu ogłoszenie czeka na aktywację: {promo ? <><s>200 zł</s> {cena} zł / mies. (promocja na pierwsze ogłoszenie)</> : <>{cena} zł / mies.</>}.
           </p>
         )}
         <button type="submit" className={`${s.btn} ${s.btnDuzy}`} disabled={stan === "wysylam"}>

@@ -259,7 +259,6 @@ export function Cennik({ cena, pierwszaWykorzystana, onDodaj }: { cena: number; 
           </ul>
         </div>
       </div>
-      <p className={s.drobny}>Ceny netto. Link do płatności wysyłamy mailem po dodaniu ogłoszenia.</p>
     </div>
   );
 }

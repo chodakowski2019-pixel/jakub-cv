@@ -92,7 +92,22 @@ export default function PasekFirmy({ id, k, firma, cena }: { id: string; k: stri
             onSubmit={(e) => {
               e.preventDefault();
               const f = new FormData(e.currentTarget);
-              wyslij("aktywuj", { email: f.get("email"), aplikuj: f.get("aplikuj"), nip: f.get("nip") });
+              // 18.10: przejęcie = płatność Stripe (subskrypcja 50 zł / mies.), powiadomienie USER_001 idzie z webhooka.
+              void (async () => {
+                setBlad("");
+                setWysylam(true);
+                const odp = await fetch("/api/bruno/praca/platnosc", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ id, k, email: f.get("email"), aplikuj: f.get("aplikuj"), nip: f.get("nip") }),
+                }).catch(() => null);
+                const j = await odp?.json().catch(() => null);
+                if (j?.url) location.href = j.url;
+                else {
+                  setWysylam(false);
+                  setBlad(j?.blad ?? "Nie udało się otworzyć płatności.");
+                }
+              })();
             }}
           >
             <h2 className={s.oknoH}>Przejmij ogłoszenie</h2>
@@ -117,7 +132,7 @@ export default function PasekFirmy({ id, k, firma, cena }: { id: string; k: stri
                 Wróć
               </button>
               <button type="submit" className={s.btn} disabled={wysylam}>
-                {wysylam ? "Wysyłam…" : "Przejmij"}
+                {wysylam ? "Otwieram płatność…" : `Przejdź do płatności (${cena} zł / mies.)`}
               </button>
             </div>
           </form>

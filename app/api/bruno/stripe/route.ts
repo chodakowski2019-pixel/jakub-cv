@@ -35,6 +35,10 @@ export async function POST(req: NextRequest) {
       case "checkout.session.completed":
       case "checkout.session.async_payment_succeeded": {
         const s = event.data.object as Stripe.Checkout.Session;
+        if (s.metadata?.produkt === "praca") {
+          await platnoscPraca(s);
+          break;
+        }
         if (s.metadata?.produkt !== "bruno-pro") break;
         // 11.10: rok = płatność jednorazowa (mode payment). Przelewy24 potwierdza później (async_payment_succeeded).
         if (s.mode === "payment" && s.payment_status !== "paid") break;
@@ -84,6 +88,13 @@ export async function POST(req: NextRequest) {
       }
       case "customer.subscription.updated":
       case "customer.subscription.deleted": {
+        // 18.10: anulowana subskrypcja ogłoszenia (portal /praca) = ogłoszenie wstrzymane.
+        const subP = event.data.object as Stripe.Subscription;
+        if (subP.metadata?.produkt === "praca") {
+          const koniec = event.type === "customer.subscription.deleted" || ["canceled", "unpaid", "incomplete_expired"].includes(subP.status);
+          if (koniec && subP.metadata.oferta) await supabaseAdmin.from("praca_oferty_firm").update({ status: "wstrzymana" }).eq("id", subP.metadata.oferta).eq("stripe_sub", subP.id);
+          break;
+        }
         const sub = event.data.object as Stripe.Subscription;
         if (sub.metadata?.produkt !== "bruno-pro") break;
         const email = await emailZSubskrypcji(sub);
@@ -99,4 +110,37 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "handler failed" }, { status: 500 });
   }
   return NextResponse.json({ received: true });
+}
+
+// 18.10 (USER_001): płatność za ogłoszenie na salesbruno.com/praca (Checkout z /api/bruno/praca/platnosc).
+// „panel” = ogłoszenie z panelu pracodawcy → status „aktywna” od razu. „przejecie” = oferta z Adzuna przejęta z linku w mailu → mail do USER_001.
+async function platnoscPraca(s: Stripe.Checkout.Session) {
+  const m = s.metadata ?? {};
+  const subId = typeof s.subscription === "string" ? s.subscription : s.subscription?.id ?? null;
+  const customer = typeof s.customer === "string" ? s.customer : s.customer?.id ?? null;
+  const kwota = `${((s.amount_total ?? 0) / 100).toFixed(0)} ${(s.currency ?? "").toUpperCase()}`;
+  if (m.rodzaj === "panel" && m.oferta) {
+    await supabaseAdmin
+      .from("praca_oferty_firm")
+      .update({ status: "aktywna", stripe_sub: subId, stripe_customer: customer, cena_zl: Number(m.cena) || null, oplacone_od: new Date().toISOString(), wazne_do: new Date(Date.now() + 31 * 86_400_000).toISOString() })
+      .eq("id", m.oferta);
+  }
+  try {
+    await wyslij({
+      do: SKRZYNKA_JAKUBA,
+      rodzaj: "inny",
+      replyTo: m.email,
+      temat: `💰 Praca: opłacone ogłoszenie (${kwota}/mc, ${m.rodzaj === "panel" ? "AKTYWNE automatycznie" : "PRZEJĘCIE, do ręcznego przeniesienia"}): ${m.email}`,
+      html: `<p>Płatność za ogłoszenie na salesbruno.com/praca.</p><p><b>E-mail:</b> ${m.email}<br/><b>Ogłoszenie:</b> ${m.oferta}<br/><b>Kwota:</b> ${kwota} / mies.<br/><b>Rodzaj:</b> ${m.rodzaj}${m.aplikuj ? `<br/><b>Aplikacje na:</b> ${m.aplikuj}` : ""}${m.nip ? `<br/><b>NIP:</b> ${m.nip}` : ""}<br/><b>Subskrypcja:</b> ${subId ?? "-"}</p>${m.rodzaj === "przejecie" ? "<p>Oferta z Adzuna: załóż firmie konto pracodawcy i przenieś ogłoszenie do panelu (status aktywna, stripe_sub).</p>" : ""}`,
+    });
+    if (m.email)
+      await wyslij({
+        do: m.email,
+        rodzaj: "inny",
+        temat: "Ogłoszenie na SalesBruno.pl opłacone",
+        html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>Dzień dobry,</p><p>dziękujemy za płatność (${kwota} / mies.). ${m.rodzaj === "panel" ? "Ogłoszenie jest już widoczne dla handlowców." : "Ogłoszenie przejmiemy na Państwa konto i damy znać mailem."}</p><p>Panel: <a href="https://salesbruno.com/praca/panel">salesbruno.com/praca/panel</a></p><p>Pozdrawiam<br/>Jakub Chodakowski<br/>SalesBruno.pl</p></div>`,
+      });
+  } catch (e) {
+    console.error("[bruno stripe praca] mail", e);
+  }
 }
