@@ -15,7 +15,9 @@ function rozmiar(b: number) {
   return b < 1024 * 1024 ? `${Math.max(1, Math.round(b / 1024))} KB` : `${(b / 1024 / 1024).toFixed(1).replace(".", ",")} MB`;
 }
 
-export default function Aplikuj({ id, firma, stanowisko, logo, className }: { id: string; firma: string; stanowisko: string; logo?: string | null; className?: string }) {
+export type DaneKandydata = { imie: string | null; email: string; telefon: string | null; cvNazwa: string | null; linkedin: string | null };
+
+export default function Aplikuj({ id, firma, stanowisko, logo, className, kandydat }: { id: string; firma: string; stanowisko: string; logo?: string | null; className?: string; kandydat?: DaneKandydata | null }) {
   const [otwarte, setOtwarte] = useState(false);
   const [stan, setStan] = useState<"" | "wysylam" | "gotowe">("");
   const [blad, setBlad] = useState("");
@@ -108,20 +110,25 @@ export default function Aplikuj({ id, firma, stanowisko, logo, className }: { id
                 <div className={s.polaSiatka}>
                   <label className={s.pole}>
                     <span>Imię i nazwisko</span>
-                    <input name="imie" required autoComplete="name" placeholder="Anna Kowalska" />
+                    <input name="imie" required autoComplete="name" placeholder="Anna Kowalska" defaultValue={kandydat?.imie ?? ""} />
                   </label>
                   <label className={s.pole}>
                     <span>Telefon</span>
-                    <input name="telefon" type="tel" required autoComplete="tel" placeholder="500 600 700" />
+                    <input name="telefon" type="tel" required autoComplete="tel" placeholder="500 600 700" defaultValue={kandydat?.telefon ?? ""} />
                   </label>
                 </div>
                 <label className={s.pole}>
                   <span>E-mail</span>
-                  <input name="email" type="email" required autoComplete="email" placeholder="anna@gmail.com" />
+                  <input name="email" type="email" required autoComplete="email" placeholder="anna@gmail.com" defaultValue={kandydat?.email ?? ""} />
                 </label>
 
                 <div className={s.pole}>
                   <span>CV</span>
+                  {!plik && kandydat?.cvNazwa && (
+                    <p className={s.cvZProfilu}>
+                      Wyślemy CV z Twojego profilu: <b>{kandydat.cvNazwa}</b>. Możesz dodać inne poniżej.
+                    </p>
+                  )}
                   {plik ? (
                     <div className={s.plikWybrany}>
                       <span className={s.plikIkona} aria-hidden="true">
@@ -171,7 +178,7 @@ export default function Aplikuj({ id, firma, stanowisko, logo, className }: { id
                   <span>
                     Link do LinkedIn <em className={s.opcjonalne}>nieobowiązkowe</em>
                   </span>
-                  <input name="cv" placeholder="linkedin.com/in/anna-kowalska" />
+                  <input name="cv" placeholder="linkedin.com/in/anna-kowalska" defaultValue={kandydat?.linkedin ?? ""} />
                 </label>
                 <label className={s.pole}>
                   <span>

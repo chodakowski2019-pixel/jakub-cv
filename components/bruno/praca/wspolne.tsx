@@ -1,27 +1,10 @@
 import s from "./praca.module.css";
-import ZalogujMenu from "./zaloguj-menu";
+import DodajOgloszenie from "./dodaj-ogloszenie";
 
 // 17.10: wspólne kawałki portalu /praca (bez stanu, działają w komponentach serwera i przeglądarki).
 // Rejestracja PL żyje na salesbruno.pl (na .com /rejestracja przekierowuje na angielski /signup).
 export const REJESTRACJA = "https://salesbruno.pl/rejestracja?src=praca";
 export const KONTAKT_FIRMY = `mailto:jakub@salesbruno.com?subject=${encodeURIComponent("Ogłoszenie na salesbruno.com/praca")}`;
-
-export function Nav() {
-  return (
-    <nav className={s.nav}>
-      <a className={s.logo} href="/praca">
-        SalesBruno.pl<i className={s.kropka} />
-        <span className={s.logoPraca}>Praca</span>
-      </a>
-      <div className={s.navLinki}>
-        <a className={s.navLink} href="/praca">Oferty pracy</a>
-        <a className={s.navLink} href={SALESBRUNO}>Trening z AI</a>
-        <a className={`${s.navLink} ${s.navObrys}`} href="/praca/pracodawca#dodaj">Dodaj ogłoszenie</a>
-        <ZalogujMenu />
-      </div>
-    </nav>
-  );
-}
 
 // 17.10 (USER_001): oferujemy tylko to, co jest: SalesBruno.pl = trening rozmów sprzedażowych (AI gra klienta). Bez „rekrutera”.
 export const SALESBRUNO = "https://salesbruno.pl/?src=praca";
@@ -43,7 +26,7 @@ const KORZYSCI: [string, string, string][] = [
   ["M4 6h16v12H4ZM4 7l8 6 8-6", "Zgłoszenia do Ciebie", "CV kandydata trafia prosto na Twój mail"],
 ];
 
-export function KartaFirmy({ cena, id }: { cena: number; id?: string }) {
+export function KartaFirmy({ cena, id, zalogowanyPracodawca }: { cena: number; id?: string; zalogowanyPracodawca?: boolean }) {
   return (
     <div className={s.firmy} id={id}>
       <h3 className={s.firmyH}>Szukasz handlowca?</h3>
@@ -64,7 +47,7 @@ export function KartaFirmy({ cena, id }: { cena: number; id?: string }) {
           </div>
         ))}
       </dl>
-      <a className={s.btn} href={KONTAKT_FIRMY}>Dodaj ogłoszenie</a>
+      <DodajOgloszenie className={s.btn} zalogowanyPracodawca={zalogowanyPracodawca} />
     </div>
   );
 }

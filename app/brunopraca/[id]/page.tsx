@@ -5,9 +5,11 @@ import Aplikuj from "@/components/bruno/praca/aplikuj";
 import Karta from "@/components/bruno/praca/karta";
 import PasekDolny from "@/components/bruno/praca/pasek-dolny";
 import PasekFirmy from "@/components/bruno/praca/pasek-firmy";
-import { Inicjaly, KartaFirmy, Nav, Stopka, krotkaFirma, opisDni, pensja } from "@/components/bruno/praca/wspolne";
+import { Inicjaly, KartaFirmy, Stopka, krotkaFirma, opisDni, pensja } from "@/components/bruno/praca/wspolne";
+import { Nav } from "@/components/bruno/praca/nav";
 import s from "@/components/bruno/praca/praca.module.css";
-import { CENA_MIESIAC, dniTemu, ofertaDoPokazania, ofertyWidoczne, podgladWszystkich, podobne } from "@/lib/bruno/praca/oferty";
+import { CENA_MIESIAC, dniTemu, ofertaPublicznaLubFirmy, ofertyWidoczne, podgladWszystkich, podobne } from "@/lib/bruno/praca/oferty";
+import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 
 // 17.10 (USER_001): oferta pod salesbruno.com/praca/<id>, układ jak Pracuj.pl. Aktywna = dla każdego.
 // Nieaktywna = tylko z linku w mailu do firmy (?k=<token>): pasek „Aktywuj za 50 zł / Usuń”.
@@ -21,8 +23,8 @@ const MIES = ["sty", "lut", "mar", "kwi", "maj", "cze", "lip", "sie", "wrz", "pa
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { id } = await params;
   const sp = await searchParams;
-  const w = ofertaDoPokazania(id, sp.k, podgladWszystkich(sp.podglad));
-  if (!w) return { title: "Oferta niedostępna | Bruno AI", robots: { index: false } };
+  const w = await ofertaPublicznaLubFirmy(id, sp.k, (await zalogowanePraca())?.id);
+  if (!w) return { title: "Oferta niedostępna | SalesBruno.pl", robots: { index: false } };
   const { oferta: o } = w;
   const tytul = `${o.stanowisko}, ${o.firma}${o.miasto ? `, ${o.miasto}` : ""}`;
   return {
@@ -68,9 +70,11 @@ export default async function Page({ params, searchParams }: Props) {
   const { id } = await params;
   const sp = await searchParams;
   const podglad = podgladWszystkich(sp.podglad);
-  const w = ofertaDoPokazania(id, sp.k, podglad);
+  const konto = await zalogowanePraca();
+  const w = await ofertaPublicznaLubFirmy(id, sp.k, konto?.id);
   if (!w) notFound();
-  const { oferta: o, wlasciciel } = w;
+  const { oferta: o, wlasciciel, wlascicielPanelu } = w;
+  const kandydat = konto?.typ === "kandydat" ? { imie: konto.imie, email: konto.email, telefon: konto.telefon, cvNazwa: konto.cv_nazwa, linkedin: konto.linkedin } : null;
   const zl = pensja(o.pensjaMin, o.pensjaMax);
   // 17.10 (USER_001): żadnych wyjść na strony zewnętrzne. Aplikuj = nasz formularz (components/bruno/praca/aplikuj.tsx).
   const doKonca = Math.max(0, Math.ceil((Date.parse(o.wazneDo) - Date.now()) / 86_400_000));
@@ -107,6 +111,7 @@ export default async function Page({ params, searchParams }: Props) {
   return (
     <div className={s.root} lang="pl">
       <Nav />
+      {wlascicielPanelu && o.status !== "aktywna" && <p className={`${s.podglad} ${s.podgladFirmy}`}>Podgląd Twojego ogłoszenia. Publicznie pojawi się po aktywacji ({CENA_MIESIAC} zł / mies.).</p>}
       {wlasciciel && o.status === "nieaktywna" && <PasekFirmy id={o.id} k={String(sp.k)} firma={o.firma} cena={CENA_MIESIAC} />}
       <div className={s.uklad}>
         <div className={s.kolumna}>
@@ -211,9 +216,9 @@ export default async function Page({ params, searchParams }: Props) {
           </section>
 
           <div className={`${s.oferta} ${s.aplikujDol}`}>
-            <Aplikuj className={`${s.btn} ${s.btnDuzy}`} id={o.id} firma={krotkaFirma(o.firma)} stanowisko={o.stanowisko} logo={o.logo} />
+            <Aplikuj className={`${s.btn} ${s.btnDuzy}`} id={o.id} firma={krotkaFirma(o.firma)} stanowisko={o.stanowisko} logo={o.logo} kandydat={kandydat} />
           </div>
-          <p className={s.zrodlo}>Źródło oferty: {o.zrodlo}</p>
+          {!o.zFirmy && <p className={s.zrodlo}>Źródło oferty: {o.zrodlo}</p>}
           {reszta.length > 0 && (
             <section>
               <p className={s.etykietaSekcji}>Podobne oferty</p>
@@ -228,7 +233,7 @@ export default async function Page({ params, searchParams }: Props) {
 
         <aside className={s.bok}>
           <div className={s.aplikujKarta}>
-            <Aplikuj className={`${s.btn} ${s.btnDuzy}`} id={o.id} firma={krotkaFirma(o.firma)} stanowisko={o.stanowisko} logo={o.logo} />
+            <Aplikuj className={`${s.btn} ${s.btnDuzy}`} id={o.id} firma={krotkaFirma(o.firma)} stanowisko={o.stanowisko} logo={o.logo} kandydat={kandydat} />
             <div className={s.odliczanie}>
               <span className={s.waznoscPasek}>
                 <i style={{ width: `${procent}%` }} />
@@ -243,11 +248,11 @@ export default async function Page({ params, searchParams }: Props) {
               <Karta o={rekomendowana} href={zPodgladem(`/praca/${rekomendowana.id}`)} teraz={teraz} wyrozniona />
             </div>
           )}
-          {!wlasciciel && <KartaFirmy cena={CENA_MIESIAC} />}
+          {!wlasciciel && konto?.typ !== "kandydat" && <KartaFirmy cena={CENA_MIESIAC} zalogowanyPracodawca={konto?.typ === "pracodawca"} />}
         </aside>
       </div>
       <Stopka />
-      <PasekDolny tytul={o.stanowisko} id={o.id} firma={krotkaFirma(o.firma)} logo={o.logo} />
+      <PasekDolny tytul={o.stanowisko} id={o.id} firma={krotkaFirma(o.firma)} logo={o.logo} kandydat={kandydat} />
     </div>
   );
 }

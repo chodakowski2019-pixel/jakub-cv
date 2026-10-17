@@ -45,6 +45,18 @@ export async function zalozKontoFree(a: {
     console.error("[bruno konto free]", error);
     return { ok: false, istnieje: false, blad: error.message };
   }
+  // 17.10 (USER_001): powiadomienie od razu przy założeniu konta (wcześniej dopiero po profilu, kto go nie wypełnił, przepadał).
+  try {
+    await wyslij({
+      do: SKRZYNKA_JAKUBA,
+      replyTo: a.email,
+      rodzaj: "inny",
+      temat: `Bruno: założone konto (${a.jezyk.toUpperCase()}, ${a.zrodlo === "google" ? "Google" : "formularz"}): ${a.email}`,
+      html: `<h2>Nowe konto Bruno</h2><p><b>E-mail:</b> ${esc(a.email)}<br/><b>Imię:</b> ${esc(a.imie || "-")}<br/><b>Przez:</b> ${a.zrodlo === "google" ? "Google" : "formularz"}<br/><b>Język:</b> ${a.jezyk.toUpperCase()}</p><p>Profil (rola, liczba handlowców) przyjdzie osobnym mailem, gdy go uzupełni.</p>`,
+    });
+  } catch (e) {
+    console.error("[bruno konto free] mail do Jakuba", e);
+  }
   return { ok: true, kod };
 }
 

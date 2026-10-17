@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import dane from "./oferty.json";
+import { doOferty, ofertyFirmAktywne, wierszOferty } from "./oferty-firm";
 import loga from "./loga.json";
 
 // 17.10 (USER_001): portal ofert pracy dla handlowców w Polsce, salesbruno.com/praca.
@@ -46,7 +47,7 @@ type OfertaPelna = {
 };
 
 /** Oferta bez tokenu i kontaktu: tylko to może trafić do przeglądarki. */
-export type Oferta = Omit<OfertaPelna, "klucz" | "email" | "adzunaCzas" | "adzunaTyp"> & { logo: string | null };
+export type Oferta = Omit<OfertaPelna, "klucz" | "email" | "adzunaCzas" | "adzunaTyp"> & { logo: string | null; zFirmy?: boolean };
 
 /** Lekka wersja do listy (4 600 ofert): bez opisu, sekcji i źródła. */
 export type OfertaLista = Pick<
@@ -134,4 +135,31 @@ export function podobne(o: Oferta, wszystkieTez = false, ile = 4): Oferta[] {
   const pula = ofertyWidoczne(wszystkieTez).filter((x) => x.id !== o.id && x.firma !== o.firma);
   const punkty = (x: Oferta) => (x.branza === o.branza ? 2 : 0) + (x.wojewodztwo === o.wojewodztwo ? 1 : 0);
   return pula.sort((a, b) => punkty(b) - punkty(a)).slice(0, ile);
+}
+
+// --- 17.10: oferty z panelu pracodawcy (baza) + oferty z Adzuna (plik) razem ---
+
+/** Publiczna lista: najpierw aktywne ogłoszenia firm z panelu, potem Adzuna. */
+export async function ofertyPubliczne(): Promise<Oferta[]> {
+  return [...(await ofertyFirmAktywne()), ...ofertyWidoczne()];
+}
+
+/** Oferta pod /praca/<id>: plik (Adzuna) albo baza (panel firmy, tylko aktywna albo podgląd właściciela). */
+export async function ofertaPublicznaLubFirmy(id: string, k: unknown, kontoId?: string | null): Promise<{ oferta: Oferta; wlasciciel: boolean; wlascicielPanelu: boolean } | null> {
+  const z = ofertaDoPokazania(id, k);
+  if (z) return { ...z, wlascicielPanelu: false };
+  const w = await wierszOferty(id);
+  if (!w || w.status === "usunieta") return null;
+  const wlascicielPanelu = !!kontoId && kontoId === w.konto_id;
+  if (w.status !== "aktywna" && !wlascicielPanelu) return null;
+  return { oferta: doOferty(w), wlasciciel: false, wlascicielPanelu };
+}
+
+/** Dla „Aplikuj”: oferta z pliku albo aktywna z bazy + e-mail firmy (zgłoszenia na jej skrzynkę). */
+export async function ofertaDoAplikacji(id: string): Promise<{ oferta: Oferta; kontoFirmyId: string | null } | null> {
+  const z = ofertaPoId(id);
+  if (z) return { oferta: z, kontoFirmyId: null };
+  const w = await wierszOferty(id);
+  if (!w || w.status !== "aktywna") return null;
+  return { oferta: doOferty(w), kontoFirmyId: w.konto_id };
 }

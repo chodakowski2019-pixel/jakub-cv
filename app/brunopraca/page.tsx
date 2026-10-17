@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Lista from "@/components/bruno/praca/lista";
-import { Nav, Stopka } from "@/components/bruno/praca/wspolne";
+import { Stopka } from "@/components/bruno/praca/wspolne";
+import { Nav } from "@/components/bruno/praca/nav";
 import s from "@/components/bruno/praca/praca.module.css";
-import { CENA_MIESIAC, doListy, ofertyWidoczne, podgladWszystkich } from "@/lib/bruno/praca/oferty";
+import { CENA_MIESIAC, doListy, ofertyPubliczne, podgladWszystkich } from "@/lib/bruno/praca/oferty";
 
 // 17.10 (USER_001): salesbruno.com/praca = oferty pracy dla handlowców w Polsce.
 // Publicznie tylko AKTYWNE (50 zł/mc). Lokalnie ?podglad=wszystkie pokazuje też nieaktywne.
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const podglad = podgladWszystkich((await searchParams).podglad);
-  const oferty = ofertyWidoczne(podglad).map(doListy);
+  const oferty = (await ofertyPubliczne()).map(doListy);
   return (
     <div className={s.root} lang="pl">
       <Nav />

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Nav, Stopka } from "@/components/bruno/praca/wspolne";
+import { Stopka } from "@/components/bruno/praca/wspolne";
+import { Nav } from "@/components/bruno/praca/nav";
 import { IKONA_KANDYDAT, IKONA_PRACODAWCA, LINKI } from "@/components/bruno/praca/zaloguj-menu";
 import s from "@/components/bruno/praca/praca.module.css";
 

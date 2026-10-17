@@ -4,13 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import s from "./praca.module.css";
 
 // 17.10 (USER_001, wzór RocketJobs): „Zaloguj się” = menu Kandydat / Pracodawca.
-// Kandydat = konto Bruno (panel PL na salesbruno.pl). Pracodawca = strona /praca/pracodawca (panelu firm jeszcze nie ma).
+// 17.10 v2: konta portalu (praca_konta), kandydat i pracodawca → /praca/konto, po zalogowaniu /praca/panel.
 // Na telefonie przycisk prowadzi do strony wyboru /praca/zaloguj (dwie duże karty).
 export const LINKI = {
-  kandydatLogin: "https://salesbruno.pl/login?src=praca",
-  kandydatRejestracja: "https://salesbruno.pl/rejestracja?src=praca",
-  pracodawcaLogin: "/praca/pracodawca",
-  pracodawcaRejestracja: "/praca/pracodawca#dodaj",
+  kandydatLogin: "/praca/konto?typ=kandydat&tryb=logowanie",
+  kandydatRejestracja: "/praca/konto?typ=kandydat&tryb=rejestracja",
+  pracodawcaLogin: "/praca/konto?typ=pracodawca&tryb=logowanie",
+  pracodawcaRejestracja: "/praca/konto?typ=pracodawca&tryb=rejestracja",
 };
 
 export const IKONA_KANDYDAT = "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 12.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6.5 18.5c1.2-2.3 3.2-3.5 5.5-3.5s4.3 1.2 5.5 3.5";

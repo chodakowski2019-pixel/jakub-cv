@@ -38,6 +38,8 @@ export function useZapisane(): [string[], (id: string) => void] {
       localStorage.setItem(KLUCZ, JSON.stringify(nowa));
     } catch {}
     window.dispatchEvent(new Event(ZDARZENIE));
+    // 17.10: zalogowany kandydat ma zapisane też na koncie (bez konta API zwraca 401, nic się nie dzieje).
+    fetch("/api/bruno/praca/zapisane", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, on: nowa.includes(id) }) }).catch(() => {});
   };
   return [lista, przelacz];
 }

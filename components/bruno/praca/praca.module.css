@@ -3106,3 +3106,423 @@ button.btn {
     border-top: 1px solid var(--line);
   }
 }
+
+/* =========================== 17.10: konta i panele =========================== */
+.stronaKonta {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 32px 20px 72px;
+}
+.kontoKarta {
+  background: #fff;
+  border-radius: 26px;
+  padding: 28px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 16px 40px rgba(0, 0, 0, 0.07);
+}
+.kontoForm {
+  display: flex;
+  flex-direction: column;
+}
+.przelacznikTypu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--soft);
+  margin-bottom: 20px;
+}
+.przelacznikTypu button {
+  height: 40px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.przelacznikTypu .typOn {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.kontoH {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  padding-right: 40px;
+}
+.kontoP {
+  font-size: 15px;
+  color: var(--muted);
+  margin-top: 6px !important;
+  margin-bottom: 4px !important;
+  line-height: 1.45;
+}
+.kontoForm .pole {
+  margin-top: 14px;
+}
+.kontoForm .pole > span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3a3a3a;
+}
+.kontoForm .pole input,
+.panelForm .pole input,
+.panelForm .pole textarea,
+.panelForm .pole select {
+  background: #fafaf9;
+  border: 1px solid #e6e5e1;
+  border-radius: 12px;
+  height: 46px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 16px;
+  outline: none;
+  width: 100%;
+  color: var(--ink);
+}
+.panelForm .pole textarea {
+  height: auto;
+  padding: 12px 14px;
+  resize: vertical;
+}
+.kontoForm .pole input:focus,
+.panelForm .pole input:focus,
+.panelForm .pole textarea:focus,
+.panelForm .pole select:focus {
+  background: #fff;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px rgba(11, 11, 11, 0.06);
+}
+.hasloPole {
+  position: relative;
+  display: block;
+}
+.hasloPole button {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--soft);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.kontoZmiana {
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 16px !important;
+}
+.kontoZmiana button {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.cvZProfilu {
+  font-size: 13.5px;
+  color: #1c7a4f;
+  background: #e8f5ee;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px !important;
+}
+
+/* panel */
+.panel2 {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 20px 72px;
+}
+.panelGlowa2 {
+  padding-bottom: 18px;
+}
+.panelGlowa2 .ofertaH {
+  margin-top: 6px !important;
+}
+.panelZakladki {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #ebeae7;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-bottom: 20px;
+  scrollbar-width: none;
+}
+.panelZakladki button {
+  flex: none;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.panelZakladki .panelZakladkaOn {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.panelIle {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--orange);
+  color: #fff;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.panelLista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.panelWiersz {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 20px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px 20px;
+  text-decoration: none;
+}
+.panelWierszLink:hover {
+  border-color: #dedcd7;
+}
+.panelWierszTresc {
+  min-width: 0;
+}
+.panelWierszTresc h3 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  margin-top: 8px !important;
+}
+.panelWierszTresc > p {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 4px !important;
+}
+.panelWierszLiczba {
+  text-align: center;
+  min-width: 80px;
+}
+.panelWierszLiczba b {
+  display: block;
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 26px;
+}
+.panelWierszLiczba span {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.panelAkcje {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+.panelAkcje a,
+.panelAkcje button,
+.panelAkcje select {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+.panelAkcje a:hover,
+.panelAkcje button:hover {
+  border-color: #cfcdc8;
+}
+.panelAkcje .panelUsun {
+  color: #c0392b;
+}
+.panelAkcje .panelCv {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.panelBrak {
+  font-size: 13px;
+  color: var(--grey);
+}
+.statusPig {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+.statusCzeka {
+  background: #fff1e4;
+  color: #c2620d;
+}
+.statusAktywna {
+  background: #e8f5ee;
+  color: #1c7a4f;
+}
+.statusWstrzymana {
+  background: var(--soft);
+  color: var(--muted);
+}
+.panelInfo {
+  font-size: 13px !important;
+  color: #c2620d !important;
+}
+.panelKontakt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.panelKontakt a {
+  color: var(--ink);
+}
+.panelCytat {
+  font-style: italic;
+  color: #3a3a3a !important;
+}
+.panelSelect {
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0 16px;
+  font: inherit;
+  font-size: 14.5px;
+  margin-bottom: 12px;
+}
+.panelForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.panelSekcja {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 20px 22px 22px;
+}
+.panelSekcja h3 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 18px;
+}
+.panelSekcja .pole {
+  margin-top: 14px;
+}
+.panelSekcja .pole > span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3a3a3a;
+}
+.polaSiatka3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.panelSekcja .polaSiatka,
+.panelSekcja .polaSiatka3 {
+  column-gap: 12px;
+}
+.panelFormStopka {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.panelFormStopka .btn {
+  width: auto;
+  padding: 0 28px;
+  margin-left: auto;
+}
+.panelGotowe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.panelGotowe .btn {
+  margin-top: 16px;
+}
+.panelBruno {
+  margin-top: 28px;
+}
+.podgladFirmy {
+  background: #fff1e4;
+  color: #c2620d;
+  border-radius: 12px;
+  padding: 10px 14px;
+  max-width: 1080px;
+  width: calc(100% - 40px);
+}
+.pusto .btn {
+  margin-top: 16px;
+}
+@media (max-width: 700px) {
+  .panelWiersz {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .panelWierszLiczba {
+    text-align: left;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .panelWierszLiczba b {
+    font-size: 20px;
+  }
+  .panelAkcje {
+    justify-content: flex-start;
+  }
+  .polaSiatka3 {
+    grid-template-columns: 1fr;
+  }
+  .kontoKarta {
+    padding: 22px 18px;
+  }
+}
+.panelSekcja .upuszczanie,
+.panelSekcja .plikWybrany {
+  width: 100%;
+  margin-top: 12px;
+}
