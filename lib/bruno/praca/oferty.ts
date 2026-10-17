@@ -73,8 +73,9 @@ const wszystkie = dane as OfertaPelna[];
  * (repo na GitHubie jest publiczne). Ten sam wzór w scripts/bruno-praca-linki.mjs.
  */
 export function tokenOferty(klucz: string): string {
-  const s = process.env.BRUNO_AUTH_SECRET ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!s) throw new Error("Brak BRUNO_AUTH_SECRET w env.");
+  // Klucz Supabase jest i lokalnie, i na Vercelu (BRUNO_AUTH_SECRET jest tylko na Vercelu), więc linki z skryptu pasują do produkcji.
+  const s = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!s) throw new Error("Brak SUPABASE_SERVICE_ROLE_KEY w env.");
   return createHmac("sha256", `praca:${s}`).update(klucz).digest("hex").slice(0, 24);
 }
 function tokenOk(o: OfertaPelna, k: unknown): boolean {

@@ -5,8 +5,8 @@ import { createHmac } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-const s = process.env.BRUNO_AUTH_SECRET ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
-if (!s) throw new Error("Brak BRUNO_AUTH_SECRET (uruchom z --env-file=.env.local)");
+const s = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!s) throw new Error("Brak SUPABASE_SERVICE_ROLE_KEY (uruchom z --env-file=.env.local)");
 const oferty = JSON.parse(readFileSync(path.join(import.meta.dirname, "..", "lib/bruno/praca/oferty.json"), "utf8"));
 for (const id of process.argv.slice(2)) {
   const o = oferty.find((x) => x.id === id);
