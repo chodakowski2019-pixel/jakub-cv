@@ -174,6 +174,10 @@ async function kredytPraca(s: Stripe.Checkout.Session) {
     .from("praca_konta")
     .update({ kredyty: (k.kredyty ?? 0) + 1, ...(kwota <= 50_00 ? { promo_uzyta: true } : {}) })
     .eq("id", k.id);
+  // 18.10 (USER_001: „jak się zaloguje i opłaci, system mu aktywuje”): czekające ogłoszenie (np. przejęte z maila) aktywujemy od razu.
+  const { data: czeka } = await supabaseAdmin.from("praca_oferty_firm").select("id,stanowisko").eq("konto_id", k.id).in("status", ["oczekuje", "wstrzymana"]).order("created_at", { ascending: true }).limit(1);
+  const { aktywujKredytem } = await import("@/lib/bruno/praca/przejecie");
+  const aktywowane = czeka?.[0] && (await aktywujKredytem(k.id, czeka[0].id)) ? czeka[0].stanowisko : null;
   await zapiszPlatnosc({ email: k.email, zdarzenie: "praca-kredyt", session: s.id, subscription: null, customer: typeof s.customer === "string" ? s.customer : s.customer?.id ?? null, kwota, waluta: s.currency, okres: "30 dni", status: s.payment_status });
   const zl = `${(kwota / 100).toFixed(0)} ${(s.currency ?? "").toUpperCase()}`;
   try {
@@ -182,13 +186,13 @@ async function kredytPraca(s: Stripe.Checkout.Session) {
       rodzaj: "inny",
       replyTo: k.email,
       temat: `💰 Praca: opłacone ogłoszenie (${zl}), ${k.firma ?? k.email}`,
-      html: `<p>Firma opłaciła ogłoszenie na salesbruno.com/praca (Payment Link).</p><p><b>Firma:</b> ${k.firma ?? "-"}<br/><b>E-mail:</b> ${k.email}<br/><b>Kwota:</b> ${zl} (30 dni)<br/><b>Opłacone ogłoszenia do wystawienia:</b> ${(k.kredyty ?? 0) + 1}</p>`,
+      html: `<p>Firma opłaciła ogłoszenie na salesbruno.com/praca (Payment Link).</p><p><b>Firma:</b> ${k.firma ?? "-"}<br/><b>E-mail:</b> ${k.email}<br/><b>Kwota:</b> ${zl} (30 dni)<br/><b>${aktywowane ? `Aktywowane automatycznie: ${aktywowane}` : `Opłacone ogłoszenia do wystawienia: ${(k.kredyty ?? 0) + 1}`}</b></p>`,
     });
     await wyslij({
       do: k.email,
       rodzaj: "inny",
-      temat: "Płatność przyjęta: możesz dodać ogłoszenie",
-      html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>Dzień dobry,</p><p>dziękujemy za płatność (${zl}). Możesz teraz dodać ogłoszenie, będzie widoczne przez 30 dni:</p><p><a href="https://salesbruno.com/praca/panel?z=dodaj">salesbruno.com/praca/panel</a></p><p>Pozdrawiam<br/>Jakub Chodakowski<br/>SalesBruno.pl</p></div>`,
+      temat: aktywowane ? "Płatność przyjęta: ogłoszenie jest aktywne" : "Płatność przyjęta: możesz dodać ogłoszenie",
+      html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>Dzień dobry,</p><p>dziękujemy za płatność (${zl}). ${aktywowane ? `Ogłoszenie „${aktywowane}” jest już aktywne i widoczne przez 30 dni. Opis, logo i kandydatów znajdziesz w panelu:` : "Możesz teraz dodać ogłoszenie, będzie widoczne przez 30 dni:"}</p><p><a href="https://salesbruno.com/praca/panel">salesbruno.com/praca/panel</a></p><p>Pozdrawiam<br/>Jakub Chodakowski<br/>SalesBruno.pl</p></div>`,
     });
   } catch (e) {
     console.error("[bruno stripe praca kredyt] mail", e);

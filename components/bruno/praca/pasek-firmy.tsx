@@ -72,13 +72,13 @@ export default function PasekFirmy({ id, k, firma, cena }: { id: string; k: stri
           </span>
           <h2 className={s.wlascicielH}>To ogłoszenie {firma}</h2>
           <p className={s.wlascicielP}>
-            Ogłoszenie już widzą handlowcy z całej Polski. Przejmij je: Twoje logo i opis, zgłoszenia z CV prosto na Twój mail.
+            Ogłoszenie już widzą handlowcy z całej Polski. Przejmij je: załóż konto, opłać {cena} zł (zamiast 200 zł) za 30 dni, a dostaniesz edycję opisu, logo i zgłoszenia z CV prosto na mail.
           </p>
         </div>
         <div className={s.wlascicielAkcje}>
-          <button type="button" className={s.btn} onClick={() => otworz("aktywuj")}>
-            Przejmij za {cena} zł <s className={s.cenaStaraJasna}>200 zł</s>
-          </button>
+          <a className={s.btn} href={`/praca/przejmij?id=${encodeURIComponent(id)}&k=${encodeURIComponent(k)}`}>
+            Przejmij ogłoszenie
+          </a>
           <button type="button" className={s.usun} onClick={() => otworz("usun")}>
             Nie chcę, usuń ogłoszenie
           </button>

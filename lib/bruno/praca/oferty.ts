@@ -155,7 +155,10 @@ export function podobne(o: Oferta, wszystkieTez = false, ile = 4): Oferta[] {
 
 /** Publiczna lista: najpierw aktywne ogłoszenia firm z panelu, potem Adzuna. */
 export async function ofertyPubliczne(): Promise<Oferta[]> {
-  return [...(await ofertyFirmAktywne()), ...ofertyWidoczne()];
+  // 18.10: oferta z Adzuna przejęta przez firmę (aktywna kopia w panelu) = oryginał znika z listy.
+  const { przejeteAktywne } = await import("./przejecie");
+  const przejete = await przejeteAktywne();
+  return [...(await ofertyFirmAktywne()), ...ofertyWidoczne().filter((o) => !przejete.has(o.id))];
 }
 
 /** Oferta pod /praca/<id>: plik (Adzuna) albo baza (panel firmy, tylko aktywna albo podgląd właściciela). */

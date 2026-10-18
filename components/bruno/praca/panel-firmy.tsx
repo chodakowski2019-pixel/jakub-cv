@@ -47,9 +47,16 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka, 
   const [z, setZ] = useState<Zakladka>(startowa);
   const [edytowana, setEdytowana] = useState<OfertaFirmyWiersz | null>(null);
   const [filtr, setFiltr] = useState("");
-  const [stanListy, setStanListy] = useState<"aktywna" | "oczekuje" | "wstrzymana">(oferty.some((o) => o.status === "aktywna") ? "aktywna" : "oczekuje");
+  const [stanListy, setStanListy] = useState<"aktywna" | "oczekuje" | "wstrzymana">(oferty.some((o) => o.status === "oczekuje") ? "oczekuje" : "aktywna");
   const [szukaj, setSzukaj] = useState("");
-  const [platnoscOk] = useState(() => typeof window !== "undefined" && new URLSearchParams(location.search).get("platnosc") === "ok");
+  // Parametry adresu czytamy po zamontowaniu (inaczej serwer i przeglądarka renderują co innego: błąd hydracji).
+  const [platnoscOk, setPlatnoscOk] = useState(false);
+  const [przejete, setPrzejete] = useState<string | null>(null);
+  useEffect(() => {
+    const q = new URLSearchParams(location.search);
+    setPlatnoscOk(q.get("platnosc") === "ok");
+    setPrzejete(q.get("przejete"));
+  }, []);
   // Po powrocie ze Stripe webhook dodaje kredyt w kilka sekund: odśwież stronę do 5 razy, aż się pojawi.
   useEffect(() => {
     if (!platnoscOk || kredyty > 0) return;
@@ -115,6 +122,16 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka, 
       <main className={s.panelTresc}>
         {z === "ogloszenia" && (
           <>
+            {przejete && (
+              <div className={s.platnoscOk}>
+                <span className={s.ptaszekMaly} aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M5 12.5l4.5 4.5L19 7.5" />
+                  </svg>
+                </span>
+                {przejete === "aktywne" ? "Ogłoszenie przejęte i aktywne na 30 dni. Możesz edytować opis i dodać logo." : "Ogłoszenie jest już na Twoim koncie. Opłać je, a aktywujemy je automatycznie. Opis możesz edytować od razu."}
+              </div>
+            )}
             {platnoscOk && (
               <div className={s.platnoscOk}>
                 <span className={s.ptaszekMaly} aria-hidden="true">
@@ -188,14 +205,14 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka, 
                         <h3>{o.stanowisko}</h3>
                         <p>{[o.miasto, o.tryb, `dodano ${formatDaty(o.created_at)}`].filter(Boolean).join(" · ")}</p>
                         {o.status === "aktywna" && !wygaslo && <p className={s.panelInfo}>Ważne jeszcze {dniDo} {dniDo === 1 ? "dzień" : "dni"} (do {formatDaty(o.wazne_do)})</p>}
-                        {o.status === "oczekuje" && <p className={s.panelInfo}>Nieaktywne: aktywuj opłaconym ogłoszeniem (30 dni)</p>}
+                        {o.status === "oczekuje" && <p className={s.panelInfo}>Nieaktywne. Po płatności aktywujemy je automatycznie na 30 dni.</p>}
                       </div>
                       <button type="button" className={s.panelWierszLiczba} onClick={() => { setFiltr(o.id); idz("kandydaci"); }}>
                         <b>{liczbaZ(o.id)}</b>
                         <span>kandydatów</span>
                       </button>
                       <div className={s.panelAkcje}>
-                        {(o.status !== "aktywna" || dniDo <= 5) && <AktywujBtn id={o.id} przedluz={o.status === "aktywna" && !wygaslo} kredyty={kredyty} onKup={() => idz("dodaj")} />}
+                        {(o.status !== "aktywna" || dniDo <= 5) && <AktywujBtn id={o.id} przedluz={o.status === "aktywna" && !wygaslo} kredyty={kredyty} link={promoDostepna ? linki.promo : linki.regularny} cena={promoDostepna ? cena : CENA_REGULARNA} />}
                         <a href={`/praca/${o.id}`} target="_blank">
                           Podgląd
                         </a>
@@ -273,7 +290,7 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka, 
 }
 
 /** 18.10: aktywacja / przedłużenie ogłoszenia opłaconym kredytem; bez kredytu → zakładka z płatnością. */
-function AktywujBtn({ id, przedluz, kredyty, onKup }: { id: string; przedluz: boolean; kredyty: number; onKup: () => void }) {
+function AktywujBtn({ id, przedluz, kredyty, link, cena }: { id: string; przedluz: boolean; kredyty: number; link: string; cena: number }) {
   const [stan, setStan] = useState("");
   return (
     <button
@@ -281,7 +298,7 @@ function AktywujBtn({ id, przedluz, kredyty, onKup }: { id: string; przedluz: bo
       className={s.zaplacMaly}
       disabled={stan === "wysylam"}
       onClick={async () => {
-        if (kredyty <= 0) return onKup();
+        if (kredyty <= 0) return void (location.href = link);
         setStan("wysylam");
         const odp = await fetch("/api/bruno/praca/firma/oferta", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ akcja: "aktywuj", id }) }).catch(() => null);
         const j = await odp?.json().catch(() => null);
@@ -292,7 +309,7 @@ function AktywujBtn({ id, przedluz, kredyty, onKup }: { id: string; przedluz: bo
         }
       }}
     >
-      {stan === "wysylam" ? "Chwileczkę…" : kredyty > 0 ? (przedluz ? "Przedłuż o 30 dni" : "Aktywuj na 30 dni") : przedluz ? "Opłać przedłużenie" : "Opłać i aktywuj"}
+      {stan === "wysylam" ? "Chwileczkę…" : kredyty > 0 ? (przedluz ? "Przedłuż o 30 dni" : "Aktywuj na 30 dni") : przedluz ? `Przedłuż: zapłać ${cena} zł` : `Aktywuj: zapłać ${cena} zł`}
     </button>
   );
 }
