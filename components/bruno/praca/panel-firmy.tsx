@@ -165,7 +165,7 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka, 
                     </button>
                   ) : (
                     <a className={s.btn} href={promoDostepna ? linki.promo : linki.regularny}>
-                      Zapłać {promoDostepna ? cena : CENA_REGULARNA} zł i dodaj ogłoszenie
+                      Dodaj ogłoszenie
                     </a>
                   )}
                 </div>
