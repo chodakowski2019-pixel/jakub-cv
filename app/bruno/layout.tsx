@@ -8,6 +8,7 @@ import UkladZloty from "@/components/bruno/uklad-zloty";
 import { JezykProvider } from "@/components/bruno/jezyk-kontekst";
 import { jezykZHosta } from "@/lib/bruno/domeny";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
+import { IKONY_BRUNO } from "@/components/podglad/bruno-lp/serwer";
 import "./bruno.css";
 
 // Panel testowy Bruno AI (USER_001 30.09): logowanie stałym kodem, dostęp
@@ -22,6 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: t("Bruno AI: Sales Practice", "Bruno AI: panel treningowy"),
     description: t("Practice sales calls with Bruno AI.", "Trening rozmów sprzedażowych z Bruno AI."),
     robots: { index: false, follow: false },
+    icons: IKONY_BRUNO,
   };
 }
 
@@ -32,7 +34,8 @@ const outfit = Outfit({ variable: "--font-outfit", subsets: ["latin", "latin-ext
 const openSans = Open_Sans({ variable: "--font-open-sans", subsets: ["latin", "latin-ext"], weight: ["400", "500", "600"] });
 
 /** 10.10: po 3 darmowych rozmowach konto free widzi tylko te ekrany (reszta → Bruno Pro). */
-const PO_BLOKADZIE = ["/bruno/odblokuj", "/bruno/feedback", "/bruno/ustawienia"];
+// 18.10 (USER_001): po rozmowie demo przewodnik idzie jeszcze przez fiszki, więc Trening zostaje otwarty.
+const PO_BLOKADZIE = ["/bruno/odblokuj", "/bruno/feedback", "/bruno/ustawienia", "/bruno/trening"];
 
 export default async function BrunoLayout({ children }: { children: React.ReactNode }) {
   const email = await zalogowanyEmail();

@@ -225,7 +225,7 @@ export default function Fiszki({ karty, dzis, dziennie, seria, razem, sredniWerd
         </div>
       ) : karta ? (
         <div className="bruno-fiszka-scena">
-          <div key={`${karta.id}-${stan === "wynik" ? "tyl" : "przod"}`} className="bruno-szklo rounded-3xl p-6 sm:p-8 bruno-fiszka">
+          <div key={`${karta.id}-${stan === "wynik" ? "tyl" : "przod"}`} data-tour="fiszka" className="bruno-szklo rounded-3xl p-6 sm:p-8 bruno-fiszka">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="inline-flex items-center rounded-full text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1" style={{ background: `${RODZAJ[karta.typ].kolor}1a`, color: RODZAJ[karta.typ].kolor }}>

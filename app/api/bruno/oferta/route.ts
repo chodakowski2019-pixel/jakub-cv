@@ -132,13 +132,18 @@ export async function POST(req: Request) {
     });
     const blok = odp.content.find((c) => c.type === "tool_use");
     if (!blok || blok.type !== "tool_use") throw new Error(t("The model didn't return a suggestion.", "Model nie zwrócił propozycji."));
-    const r = blok.input as { produkt?: string; klient?: string; obiekcje?: { obiekcja: string; wyjasnienie?: string }[]; argumenty?: string[] };
-    const obiekcje = (r.obiekcje ?? [])
-      .filter((o) => o && typeof o.obiekcja === "string" && o.obiekcja.trim().length >= 3)
+    const r = blok.input as { produkt?: string; klient?: string; obiekcje?: unknown; argumenty?: unknown };
+    // 18.10 (USER_001: „nie udało się wczytać omgplatform.com”): model potrafi oddać listę jako jeden tekst
+    // („- a\n- b”) zamiast tablicy, a `.filter` na tekście wywracał całość. Przyjmujemy oba kształty.
+    const lista = (v: unknown): unknown[] =>
+      Array.isArray(v) ? v : typeof v === "string" ? v.split("\n").map((x) => x.replace(/^\s*[-*•\d.)]+\s*/, "").trim()).filter(Boolean) : [];
+    const obiekcje = lista(r.obiekcje)
+      .map((o) => (typeof o === "string" ? { obiekcja: o.split(" | ")[0], wyjasnienie: o.split(" | ")[1] } : (o as { obiekcja?: string; wyjasnienie?: string })))
+      .filter((o): o is { obiekcja: string; wyjasnienie?: string } => Boolean(o) && typeof o.obiekcja === "string" && o.obiekcja.trim().length >= 3)
       .slice(0, 10)
       .map((o) => (o.wyjasnienie?.trim() ? `${o.obiekcja.trim()} | ${o.wyjasnienie.trim()}` : o.obiekcja.trim()))
       .join("\n");
-    const skrypt = (r.argumenty ?? []).filter((a) => typeof a === "string" && a.trim()).slice(0, 10).map((a) => `- ${a.trim()}`).join("\n");
+    const skrypt = lista(r.argumenty).filter((a): a is string => typeof a === "string" && a.trim().length > 0).slice(0, 10).map((a) => `- ${a.trim()}`).join("\n");
     return NextResponse.json({
       ok: true,
       propozycja: {

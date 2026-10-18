@@ -25,7 +25,8 @@ const OPISY: Record<CelStrony, Record<Jezyk, { title: string; description: strin
       description: "Your sales reps practice calls with an AI customer before they talk to a real one. Every call gets a score. Request a demo call.",
     },
     pl: {
-      title: "Bruno AI dla zespołów sprzedaży | Trening sprzedaży z AI",
+      // 18.10 (USER_001): tytuł karty.
+      title: "Trenuj codziennie, bądź najlepszy",
       description: "Wasi handlowcy ćwiczą rozmowy z klientem AI, zanim zadzwonią do prawdziwego. Każda rozmowa dostaje ocenę. Poproś o rozmowę demo.",
     },
   },
@@ -49,6 +50,19 @@ const OPISY: Record<CelStrony, Record<Jezyk, { title: string; description: strin
   },
 };
 
+/**
+ * 18.10 (USER_001: „dlaczego wciąż zielony?”): przeglądarki trzymały w pamięci zieloną ikonę z /icon.svg
+ * (ten sam adres co jakubchodakowski.com). Strony Bruno wskazują pomarańczową pod własnym adresem, więc
+ * przeglądarka pobiera ją od nowa. `v` podbić przy zmianie ikony.
+ */
+export const IKONY_BRUNO: Metadata["icons"] = {
+  icon: [
+    { url: "/bruno/ikona.svg?v=2", type: "image/svg+xml" },
+    { url: "/bruno/ikona.ico?v=2", sizes: "64x64" },
+  ],
+  apple: [{ url: "/bruno/ikona-apple.png?v=2", sizes: "180x180" }],
+};
+
 /** Metadane: tytuł i opis w języku, canonical na domenę języka, wersje językowe, OG. */
 export async function metadaneBruno(cel: CelStrony, searchParams?: Szukaj, robots?: Metadata["robots"]): Promise<Metadata> {
   const { jezyk } = await stronaBruno(searchParams);
@@ -58,6 +72,7 @@ export async function metadaneBruno(cel: CelStrony, searchParams?: Szukaj, robot
     metadataBase: new URL(DOMENA[jezyk]),
     title,
     description,
+    icons: IKONY_BRUNO,
     alternates: {
       canonical: sciezka,
       languages: { en: `${DOMENA.en}${SCIEZKI.en[cel]}`, pl: `${DOMENA.pl}${SCIEZKI.pl[cel]}`, "x-default": `${DOMENA.en}${SCIEZKI.en[cel]}` },

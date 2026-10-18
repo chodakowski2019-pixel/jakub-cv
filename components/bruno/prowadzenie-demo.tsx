@@ -7,8 +7,9 @@ import { useT } from "@/components/bruno/jezyk-kontekst";
 
 // 17.10 (USER_001): konto DEMO (B2B, 1 rozmowa) nie ogląda filmu. Zamiast niego Bruno prowadzi krok po kroku:
 // chmurka przy każdym polu, reszta ekranu przyciemniona, „Dalej” przechodzi do następnego pola.
-// Kolejność: panel → Dostosuj (produkt, klient, obiekcje) → kreator rozmowy (6 kroków + Start) →
-// ocena po rozmowie → „Umów rozmowę” (strona Bruno dla zespołu z kalendarzem).
+// Kolejność (18.10): panel → Dostosuj: NAJPIERW „Wczytaj ofertę”, potem sprawdzenie i poprawa produktu, klienta,
+// obiekcji → kreator rozmowy (6 kroków + Start) → ocena → fiszki w Treningu → kalendarz („Bruno dla zespołu”).
+// Gdy chmurka jest na ekranie, strona się nie przewija (przewija ją tylko przewodnik do kolejnego pola).
 // Cele = atrybuty data-tour / id w komponentach. Chmurka czeka, aż cel pojawi się na ekranie
 // (ocena dopiero po rozmowie). Postęp w przeglądarce (localStorage), „Pomiń” kończy przewodnik.
 
@@ -31,31 +32,41 @@ const KROKI: Krok[] = [
     sciezka: "/bruno/panel",
     tytul: ["Hi! I'm Bruno", "Cześć! Jestem Bruno"],
     tekst: [
-      "I'll show you around step by step. It takes 5 minutes: first you tell me what you sell, then we have one practice call and you get your score.",
-      "Pokażę Ci wszystko krok po kroku. To 5 minut: najpierw powiesz mi, co sprzedajesz, potem jedna rozmowa treningowa i Twoja ocena.",
+      "I'll show you around step by step. We start with your offer: I read your website and set myself up as your customer.",
+      "Pokażę Ci wszystko krok po kroku. Zaczynamy od Twojej oferty: przeczytam Twoją stronę i ustawię się jako Twój klient.",
     ],
     przejdz: { tekst: ["Let's start", "Zaczynamy"], adres: "/bruno/dostosuj" },
+  },
+  {
+    id: "oferta",
+    sciezka: "/bruno/dostosuj",
+    cel: ['[data-tour="oferta"]'],
+    tytul: ["Load your offer", "Wczytaj ofertę"],
+    tekst: [
+      "Paste your website address or pick a PDF and click Load. I'll fill in the fields below. Then we check them one by one.",
+      "Wklej adres swojej strony albo wybierz PDF i kliknij Wczytaj. Wypełnię pola poniżej. Potem sprawdzimy je po kolei.",
+    ],
   },
   {
     id: "produkt",
     sciezka: "/bruno/dostosuj",
     cel: ["#produkt"],
-    tytul: ["What do you sell?", "Co sprzedajesz?"],
-    tekst: ["We copied it from your form. Add details: price, who it's for, what makes it different.", "Wpisaliśmy to z formularza. Dopisz szczegóły: cena, dla kogo, czym się wyróżnia."],
+    tytul: ["Check: what you sell", "Sprawdź: co sprzedajesz"],
+    tekst: ["Fix anything that's off: price, who it's for, what makes it different.", "Popraw, jeśli coś się nie zgadza: cena, dla kogo, czym się wyróżnia."],
   },
   {
     id: "klient",
     sciezka: "/bruno/dostosuj",
     cel: ["#klient"],
-    tytul: ["Who is your customer?", "Kim jest Twój klient?"],
-    tekst: ["Age, job title, what they're afraid of, who they decide with. I'll play exactly this person.", "Wiek, stanowisko, czego się boi, z kim decyduje. Zagram dokładnie tę osobę."],
+    tytul: ["Check: your customer", "Sprawdź: Twój klient"],
+    tekst: ["Age, job title, what they're afraid of, who they decide with. I'll play exactly this person.", "Wiek, stanowisko, czego się boi, z kim decyduje. Zagram dokładnie tę osobę. Popraw, jeśli trzeba."],
   },
   {
     id: "obiekcje",
     sciezka: "/bruno/dostosuj",
     cel: ["#obiekcje"],
-    tytul: ["Which objections do you hear?", "Jakie obiekcje słyszysz?"],
-    tekst: ["One per line, for example “Too expensive”. I'll use them in the call.", "Jedna w linii, np. „Za drogo”. Użyję ich w rozmowie."],
+    tytul: ["Check: objections", "Sprawdź: obiekcje"],
+    tekst: ["One per line, for example “Too expensive”. Add the ones you hear most. I'll use them in the call.", "Jedna w linii, np. „Za drogo”. Dopisz te, które słyszysz najczęściej. Użyję ich w rozmowie."],
   },
   {
     id: "zapis",
@@ -139,12 +150,36 @@ const KROKI: Krok[] = [
     tekst: ["Your reps get this after every call.", "Twoi handlowcy dostają to po każdej rozmowie."],
   },
   {
-    id: "koniec",
+    id: "do-fiszek",
     sciezka: "/bruno/rozmowa",
-    cel: ['[data-tour="koniec"]'],
+    cel: ['[data-tour="poprawka"]'],
+    tytul: ["Now: flashcards", "Teraz fiszki"],
+    tekst: ["I turned your mistakes from this call into flashcards. Let's see one.", "Z błędów w tej rozmowie zrobiłem fiszki. Zobaczmy jedną."],
+    przejdz: { tekst: ["Go to flashcards", "Przejdź do fiszek"], adres: "/bruno/trening" },
+  },
+  {
+    id: "fiszka",
+    sciezka: "/bruno/trening",
+    cel: ['[data-tour="fiszka"]'],
+    tytul: ["Flashcards from your mistakes", "Fiszki z Twoich błędów"],
+    tekst: [
+      "Objections and moments from your calls. Each one comes back at the right time, so it sticks.",
+      "Obiekcje i momenty z Twoich rozmów. Każda wraca w dobrym momencie, żeby zostało w głowie.",
+    ],
+  },
+  {
+    id: "odpowiedz",
+    sciezka: "/bruno/trening",
+    cel: ["#odp"],
+    tytul: ["Answer like you would to a customer", "Odpowiedz jak klientowi"],
+    tekst: ["Type it or say it out loud, then click Check. The coach scores it and shows a model answer.", "Napisz albo powiedz głosem, potem kliknij Sprawdź. Trener oceni i pokaże wzór odpowiedzi."],
+  },
+  {
+    id: "koniec",
+    sciezka: "/bruno/trening",
     tytul: ["Bruno for your whole team", "Bruno dla całego zespołu"],
-    tekst: ["Book a call with me. I'll show you how to set Bruno up for your reps.", "Umów rozmowę ze mną. Pokażę, jak ustawić Bruno pod Twoich handlowców."],
-    przycisk: ["Done", "Gotowe"],
+    tekst: ["Book an online meeting to talk about Bruno for your team.", "Umów spotkanie online, aby omówić Bruno dla Twojego zespołu."],
+    przejdz: { tekst: ["Book a meeting", "Umów spotkanie"], adres: "/bruno/odblokuj" },
   },
 ];
 
@@ -241,6 +276,30 @@ export default function ProwadzenieDemo({ email }: { email: string }) {
     window.addEventListener("resize", licz);
     return () => window.removeEventListener("resize", licz);
   }, []);
+
+  // 18.10 (USER_001): gdy chmurka jest na ekranie, strony nie da się przewijać. Przewodnik przewija sam
+  // (scrollIntoView działa mimo overflow: hidden), użytkownik nie. Pole w dziurze dalej da się klikać i pisać.
+  const widoczny = Boolean(krok && gotowy);
+  useEffect(() => {
+    if (!widoczny) return;
+    const html = document.documentElement;
+    const body = document.body;
+    const przed = [html.style.overflow, body.style.overflow, html.style.overscrollBehavior];
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    html.style.overscrollBehavior = "none";
+    // iOS Safari ignoruje overflow na body przy przesuwaniu palcem: blokujemy przesuwanie poza polami tekstowymi.
+    const dotyk = (e: TouchEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el?.closest("textarea, [role=dialog]")) return;
+      e.preventDefault();
+    };
+    document.addEventListener("touchmove", dotyk, { passive: false });
+    return () => {
+      [html.style.overflow, body.style.overflow, html.style.overscrollBehavior] = przed;
+      document.removeEventListener("touchmove", dotyk);
+    };
+  }, [widoczny]);
 
   if (!krok || !gotowy) return null;
 

@@ -110,9 +110,9 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
       "Regularny trening według planu podnosi realizację planu o 28% w porównaniu z treningiem od czasu do czasu.",
       "Firmy, które najwięcej inwestują w szkolenia, mają o 218% wyższy dochód na pracownika i o 24% wyższą marżę niż firmy, które inwestują najmniej.",
     ],
-    ctaH: ["Daj zespołowi Bruno.", "Zacznij od jednego miesiąca."],
+    ctaH: ["Daj zespołowi Bruno.", "Sprawdź bezpłatnie"],
     ctaBtn: "Chcę wypróbować Bruno",
-    ctaBok: "Wypełnij krótki formularz. Dostęp do rozmowy demo dostaniesz w ciągu 24 godzin. Potem ustawimy Bruno dla całego zespołu.",
+    ctaBok: "Wypełnij krótki formularz. Dostęp do rozmowy demo otrzymasz w ciągu 24 godzin. Następnie ustawimy Bruno dla całego zespołu.",
     stopka: "Trening sprzedaży z AI dla zespołów",
   },
   reps: {
@@ -365,12 +365,9 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
     window.location.href = adresStrony(jezyk, "rejestracja", naDomenie);
   };
   // 14.10 (USER_001): link pod przyciskiem na stronie firm → formularz z kalendarzem (Rezerwacja, rozmowa telefoniczna).
-  const zespolLink =
-    wersja === "business" ? (
-      <button type="button" className={s.zespolLink} onClick={() => { track("salesai_cta", { przycisk: "zespol", wersja }); setPokazFormularz(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
-        {jezyk === "pl" ? "Chcesz Bruno dla zespołu? Napisz do mnie" : "Want Bruno for your team? Message me"}
-      </button>
-    ) : null;
+  // 18.10 (USER_001): link „Chcesz Bruno dla zespołu? Napisz do mnie” USUNIĘTY. Kalendarz jest teraz po rozmowie demo
+  // (panel → „Bruno dla zespołu”), na stronie zostaje tylko „Chcę wypróbować Bruno” → prośba o dostęp.
+  const zespolLink: React.ReactNode = null;
 
   useEffect(() => {
     try {

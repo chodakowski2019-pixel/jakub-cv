@@ -179,7 +179,7 @@ export default function DostosujForm({ start, oferta }: { start: Konfig; oferta:
   return (
     <form onSubmit={(e) => e.preventDefault()} className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-8">
       {/* 0. Oferta ze strony / PDF */}
-      <section className="flex gap-4">
+      <section data-tour="oferta" className="flex gap-4">
         <span className="hidden sm:grid shrink-0 size-8 place-items-center rounded-full bg-slate-900 text-white text-sm font-bold bruno-h2" aria-hidden>
           {oferta ? "AI" : "🔒"}
         </span>

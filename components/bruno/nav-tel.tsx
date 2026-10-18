@@ -45,7 +45,7 @@ export default function NavTel({ dostep, inicjal, free }: { dostep: { ogien: boo
         <Link href="/bruno/odblokuj" className="bt-pro" aria-current={aktywny("/bruno/odblokuj") ? "page" : undefined}>
           <Ikona nazwa="klodka" rozmiar={14} grubosc={2} />
           {/* 17.10: Bruno tylko B2B, zamiast „Bruno Pro” = „Zespół” (strona Bruno dla zespołu + kalendarz). */}
-          {free ? `${free.zuzyte} / ${free.zuzyte + free.zostalo} · ${t("Team", "Zespół")}` : t("Unlock", "Odblokuj")}
+          {free ? (free.zuzyte + free.zostalo === 1 ? t("Bruno for your team", "Bruno dla zespołu") : `${free.zuzyte} / ${free.zuzyte + free.zostalo} · ${t("Team", "Zespół")}`) : t("Unlock", "Odblokuj")}
         </Link>
       </header>
 

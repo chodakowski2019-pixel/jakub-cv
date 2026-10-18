@@ -12,7 +12,8 @@ import ProwadzenieDemo from "@/components/bruno/prowadzenie-demo";
 // reszta” i blokada konta free po 3 rozmowach żyją więc tutaj, w przeglądarce, przy każdej zmianie adresu.
 
 /** Po 3 darmowych rozmowach konto free widzi tylko te ekrany (reszta → Bruno Pro). */
-const PO_BLOKADZIE = ["/bruno/odblokuj", "/bruno/feedback", "/bruno/ustawienia"];
+// 18.10 (USER_001): po rozmowie demo przewodnik idzie jeszcze przez fiszki, więc Trening zostaje otwarty.
+const PO_BLOKADZIE = ["/bruno/odblokuj", "/bruno/feedback", "/bruno/ustawienia", "/bruno/trening"];
 
 export default function UkladZloty({
   children,

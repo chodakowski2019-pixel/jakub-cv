@@ -23,17 +23,17 @@ export function linkGoogleKalendarz(a: { start: string; minut: number; tytul: st
 const T = {
   en: {
     temat: (kiedy: string) => `Booked: Bruno AI demo, ${kiedy} (UK time)`,
-    zajawka: (kiedy: string) => `Your call with Jakub is booked for ${kiedy} (UK time).`,
-    h1: "Your call is booked",
+    zajawka: (kiedy: string) => `Your online meeting with Jakub is booked for ${kiedy} (UK time).`,
+    h1: "Your meeting is booked",
     czasUK: "UK time",
     hej: (imie: string) => `Hi ${imie},`,
     wstep: "Thanks for booking. Here is everything you need for our call.",
     dlugosc: "Length",
     minut: `${DEMO_MINUT_MAIL} minutes`,
     gdzie: "Where",
-    wideo: "Video call",
+    wideo: "Online meeting",
     telefon: (tel: string) => `Phone call. I will call you at ${tel}.`,
-    linkPozniej: "I will send the link before the call",
+    linkPozniej: "I will send the link before the meeting",
     zKim: "With",
     jakub: "Jakub Chodakowski, Founder of Bruno AI",
     coH: "What happens on the call",
@@ -51,17 +51,17 @@ const T = {
   // 11.10 (USER_001): Bruno w dwóch językach. Wersja PL z fd7de52, czas polski (Europe/Warsaw) zamiast UK.
   pl: {
     temat: (kiedy: string) => `Umówione: demo Bruno AI, ${kiedy} (czas polski)`,
-    zajawka: (kiedy: string) => `Rozmowa z Jakubem umówiona na ${kiedy} (czas polski).`,
-    h1: "Rozmowa umówiona",
+    zajawka: (kiedy: string) => `Spotkanie online z Jakubem umówione na ${kiedy} (czas polski).`,
+    h1: "Spotkanie umówione",
     czasUK: "czas polski",
     hej: (imie: string) => `Cześć ${imie},`,
     wstep: "Dzięki za zapis. Poniżej wszystko, czego potrzebujesz przed rozmową.",
     dlugosc: "Długość",
     minut: `${DEMO_MINUT_MAIL} minut`,
     gdzie: "Gdzie",
-    wideo: "Rozmowa wideo",
+    wideo: "Spotkanie online",
     telefon: (tel: string) => `Rozmowa telefoniczna. Zadzwonię na numer ${tel}.`,
-    linkPozniej: "link wyślę przed rozmową",
+    linkPozniej: "link wyślę przed spotkaniem",
     zKim: "Z kim",
     jakub: "Jakub Chodakowski, założyciel Bruno AI",
     coH: "Jak wygląda rozmowa",
@@ -116,7 +116,8 @@ export function mailPotwierdzenieDemo(a: {
   const kiedyGora = kiedy.charAt(0).toUpperCase() + kiedy.slice(1);
   const link = a.link?.trim() || null;
   const tel = a.telefon?.trim() || null;
-  const gdzieTekst = tel ? x.telefon(tel) : x.wideo;
+  // 18.10 (USER_001): spotkanie online bez linku = „Spotkanie online, link wyślę przed spotkaniem”.
+  const gdzieTekst = tel ? x.telefon(tel) : link ? x.wideo : `${x.wideo}, ${x.linkPozniej}`;
   // 9.10 (USER_001): nazwa wydarzenia w kalendarzu = „Sales AI x [imię]”.
   const tytulKal = `Sales AI x ${a.imie}`;
   const opisKal = `${x.minut}. ${x.co.join(" ")}${link ? ` ${link}` : ""}`;

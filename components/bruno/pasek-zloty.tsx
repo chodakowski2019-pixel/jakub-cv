@@ -41,8 +41,15 @@ export default function PasekZloty({ dostep, inicjal, free }: { dostep: { ogien:
           {free ? (
             <>
               {/* 17.10 (USER_001): Bruno tylko B2B, zamiast Bruno Pro = „Bruno dla zespołu” (rozmowa z Jakubem). */}
-              <span className="bz-dlugi">{free.zuzyte + free.zostalo === 1 ? t("Demo call", "Rozmowa demo") : t("Free calls", "Bezpłatne rozmowy")}: {free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Bruno for your team", "Bruno dla zespołu")}</span>
-              <span className="bz-krotki">{free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Team", "Zespół")}</span>
+              {/* 18.10 (USER_001): konto demo = sam napis „Bruno dla zespołu”, bez licznika. */}
+              {free.zuzyte + free.zostalo === 1 ? (
+                <span>{t("Bruno for your team", "Bruno dla zespołu")}</span>
+              ) : (
+                <>
+                  <span className="bz-dlugi">{t("Free calls", "Bezpłatne rozmowy")}: {free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Bruno for your team", "Bruno dla zespołu")}</span>
+                  <span className="bz-krotki">{free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Team", "Zespół")}</span>
+                </>
+              )}
             </>
           ) : (
             <>

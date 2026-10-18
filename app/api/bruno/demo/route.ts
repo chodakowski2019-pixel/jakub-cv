@@ -123,13 +123,13 @@ export async function PATCH(req: Request) {
   try {
     const r = resend();
     if (r) {
-      // 14.10: rozmowa telefoniczna, w kalendarzu zamiast linku wideo numer, na który dzwoni Jakub.
+      // 14.10: rozmowa telefoniczna. 18.10 (USER_001): SPOTKANIE ONLINE, link Jakub wysyła sam przed spotkaniem.
       const link = "";
       const kiedyUK = new Intl.DateTimeFormat(pl ? "pl-PL" : "en-GB", { timeZone: "Europe/London", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(start);
       const kiedyPL = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(start);
       // 9.10: mail do klienta = szablon w stylu LP (lib/bruno/mail-demo.ts).
-      const m = mailPotwierdzenieDemo({ imie: data.imie, start: start.toISOString(), jezyk: pl ? "pl" : "en", telefon: data.telefon });
-      const ics = zaproszenieIcs({ start: start.toISOString(), tytul: m.tytulKal, opis: m.opisKal, organizator: ORGANIZATOR_DEMO, uczestnik: data.email, uid: data.id, lokalizacja: null, miejsce: `${pl ? "Telefon" : "Phone"}: ${data.telefon}` });
+      const m = mailPotwierdzenieDemo({ imie: data.imie, start: start.toISOString(), jezyk: pl ? "pl" : "en", telefon: null });
+      const ics = zaproszenieIcs({ start: start.toISOString(), tytul: m.tytulKal, opis: m.opisKal, organizator: ORGANIZATOR_DEMO, uczestnik: data.email, uid: data.id, lokalizacja: null, miejsce: pl ? "Online (link w mailu)" : "Online (link by email)" });
       const zalacznik = [{ filename: "bruno-demo.ics", content: Buffer.from(ics).toString("base64") }];
       await r.emails.send({
         from: "Jakub Chodakowski <hello@jakubchodakowski.com>",
@@ -144,8 +144,8 @@ export async function PATCH(req: Request) {
         from: "Bruno AI <hello@jakubchodakowski.com>",
         to: SKRZYNKA_JAKUBA,
         replyTo: data.email,
-        subject: `TELEFON Bruno: ${data.imie}, ${data.firma}, ${data.handlowcy} handl., ${kiedyPL} (PL)`,
-        html: `<h2>Rozmowa TELEFONICZNA umówiona: dzwonisz Ty</h2><p><b>Kiedy:</b> ${kiedyPL} (czas PL) = ${kiedyUK} (UK)</p><p><b>Imię:</b> ${data.imie}<br/><b>E-mail:</b> ${data.email}<br/><b>Telefon:</b> ${data.telefon}<br/><b>Stanowisko:</b> ${data.stanowisko}<br/><b>Handlowców:</b> ${data.handlowcy}<br/><b>Firma:</b> ${esc(data.firma)}<br/><b>Co sprzedają:</b> ${esc(data.produkt ?? "w mailu LEAD")}</p><p>Przed rozmową: wczytaj stronę firmy w „Dostosuj Bruno” (moduł oferty), żeby Bruno grał ich klienta. O umówionej godzinie dzwonisz na ${data.telefon}.</p>`,
+        subject: `SPOTKANIE ONLINE Bruno: ${data.imie}, ${data.firma}, ${data.handlowcy} handl., ${kiedyPL} (PL)`,
+        html: `<h2>Spotkanie ONLINE umówione: wyślij link (Meet / Zoom) na ${data.email}</h2><p><b>Kiedy:</b> ${kiedyPL} (czas PL) = ${kiedyUK} (UK)</p><p><b>Imię:</b> ${data.imie}<br/><b>E-mail:</b> ${data.email}<br/><b>Telefon:</b> ${data.telefon}<br/><b>Stanowisko:</b> ${data.stanowisko}<br/><b>Handlowców:</b> ${data.handlowcy}<br/><b>Firma:</b> ${esc(data.firma)}<br/><b>Co sprzedają:</b> ${esc(data.produkt ?? "w mailu LEAD")}</p><p>Przed rozmową: wczytaj stronę firmy w „Dostosuj Bruno” (moduł oferty), żeby Bruno grał ich klienta. Link do spotkania wysyłasz sam na ${data.email} (klient dostał info „link wyślę przed spotkaniem”). Telefon awaryjny: ${data.telefon}.</p>`,
         attachments: zalacznik,
       });
     }

@@ -253,8 +253,8 @@ export default function FeedbackWidok({ feedback, dalej, demo, jezyk = "en" }: {
       {dalej && demo && (
         <div data-tour="koniec" className="bruno-szklo rounded-2xl p-6 text-center flex flex-col items-center gap-3">
           <p className="bruno-h2 text-lg">{tr("Want Bruno for your whole team?", "Chcesz Bruno dla całego zespołu?")}</p>
-          <p className="text-sm text-slate-600 max-w-md">{tr("Book a 30-minute phone call. I'll show you how to set Bruno up for your reps.", "Umów 30-minutową rozmowę telefoniczną. Pokażę, jak ustawić Bruno pod Twoich handlowców.")}</p>
-          <Link href="/bruno/odblokuj" className="bruno-przycisk text-base px-10 py-3">{tr("Book a call", "Umów rozmowę")}</Link>
+          <p className="text-sm text-slate-600 max-w-md">{tr("Book an online meeting to talk about Bruno for your team.", "Umów spotkanie online, aby omówić Bruno dla Twojego zespołu.")}</p>
+          <Link href="/bruno/odblokuj" className="bruno-przycisk text-base px-10 py-3">{tr("Book a meeting", "Umów spotkanie")}</Link>
         </div>
       )}
       {dalej && !demo && (
