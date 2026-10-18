@@ -111,16 +111,16 @@ export default function Aplikuj({ id, firma, stanowisko, logo, className, kandyd
                 <input name="www" tabIndex={-1} autoComplete="off" className={s.pulapka} aria-hidden="true" />
                 <div className={s.polaSiatka}>
                   <label className={s.pole}>
-                    <span>Imię i nazwisko</span>
+                    <span>Imię i nazwisko <i className={s.gw}>*</i></span>
                     <input name="imie" required autoComplete="name" placeholder="Anna Kowalska" defaultValue={kandydat?.imie ?? ""} />
                   </label>
                   <label className={s.pole}>
-                    <span>Telefon</span>
+                    <span>Telefon <i className={s.gw}>*</i></span>
                     <input name="telefon" type="tel" required autoComplete="tel" placeholder="500 600 700" defaultValue={kandydat?.telefon ?? ""} />
                   </label>
                 </div>
                 <label className={s.pole}>
-                  <span>E-mail</span>
+                  <span>E-mail <i className={s.gw}>*</i></span>
                   <input name="email" type="email" required autoComplete="email" placeholder="anna@gmail.com" defaultValue={kandydat?.email ?? ""} />
                 </label>
 
@@ -192,7 +192,7 @@ export default function Aplikuj({ id, firma, stanowisko, logo, className, kandyd
                 <label className={s.zgodaKarta}>
                   <input type="checkbox" name="zgoda" />
                   <span>
-                    Zgadzam się na przekazanie moich danych pracodawcy w celu rekrutacji na to stanowisko. <b className={s.wymagane}>Wymagane</b>
+                    Zgadzam się na przekazanie moich danych pracodawcy w celu rekrutacji na to stanowisko. <i className={s.gw}>*</i>
                   </span>
                 </label>
                 {klauzule?.przyszle && (

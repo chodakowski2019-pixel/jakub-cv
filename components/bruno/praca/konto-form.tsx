@@ -60,7 +60,7 @@ export default function KontoForm({ typ: typStart = "kandydat", tryb: trybStart 
       {rej && (
         <div className={s.polaSiatka}>
           <label className={s.pole}>
-            <span>Imię</span>
+            <span>Imię <i className={s.gw}>*</i></span>
             <input name="imie" required autoComplete="given-name" placeholder="Anna" />
           </label>
           <label className={s.pole}>
@@ -74,7 +74,7 @@ export default function KontoForm({ typ: typStart = "kandydat", tryb: trybStart 
       {rej && typ === "pracodawca" && (
         <div className={s.polaSiatka}>
           <label className={s.pole}>
-            <span>Nazwa firmy</span>
+            <span>Nazwa firmy <i className={s.gw}>*</i></span>
             <input name="firma" required autoComplete="organization" placeholder="np. Solar Polska" />
           </label>
           <label className={s.pole}>
@@ -86,11 +86,11 @@ export default function KontoForm({ typ: typStart = "kandydat", tryb: trybStart 
         </div>
       )}
       <label className={s.pole}>
-        <span>E-mail</span>
+        <span>E-mail <i className={s.gw}>*</i></span>
         <input name="email" type="email" required autoComplete="email" placeholder={typ === "pracodawca" ? "rekrutacja@firma.pl" : "anna@gmail.com"} />
       </label>
       <label className={s.pole}>
-        <span>Hasło</span>
+        <span>Hasło <i className={s.gw}>*</i></span>
         <span className={s.hasloPole}>
           <input name="haslo" type={pokazHaslo ? "text" : "password"} required minLength={rej ? 8 : 6} autoComplete={rej ? "new-password" : "current-password"} placeholder={rej ? "Co najmniej 8 znaków" : ""} />
           <button type="button" onClick={() => setPokazHaslo(!pokazHaslo)}>
@@ -102,7 +102,7 @@ export default function KontoForm({ typ: typStart = "kandydat", tryb: trybStart 
         <label className={s.zgodaKarta}>
           <input type="checkbox" name="zgoda" required />
           <span>
-            Akceptuję regulamin i politykę prywatności SalesBruno.pl. <b className={s.wymagane}>Wymagane</b>
+            Akceptuję <a href="/praca/regulamin" target="_blank">regulamin</a> i <a href="/praca/polityka-prywatnosci" target="_blank">politykę prywatności</a> SalesBruno.pl. <i className={s.gw}>*</i>
           </span>
         </label>
       )}

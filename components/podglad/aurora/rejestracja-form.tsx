@@ -21,7 +21,6 @@ const T = {
     panel: "Steps to Bruno AI",
     kroki: ["Send the form", "Get access within 24 h", "Practice with Bruno"],
     h2: "Get access to Bruno",
-    lead: "Tell us about your team. You'll get access by email within 24 hours.",
     imie: "First name",
     imiePh: "Adam",
     email: "Work email",
@@ -41,14 +40,13 @@ const T = {
     maKonto: "Already have an account?",
     zaloguj: "Log in",
     okH2: "Thank you!",
-    okTekst: "You'll get your login details by email within 24 hours.",
+    okTekst: "You'll get your login details by email within 24h.",
   },
   pl: {
     tytul: "Otrzymaj dostęp",
     panel: "Kroki do Bruno AI",
     kroki: ["Wyślij formularz", "Dostęp w 24 h", "Trenuj z Bruno"],
     h2: "Otrzymaj dostęp do Bruno",
-    lead: "Napisz parę słów o zespole. Dostęp dostaniesz mailem w ciągu 24 godzin.",
     imie: "Imię",
     imiePh: "Adam",
     email: "E-mail służbowy",
@@ -68,7 +66,7 @@ const T = {
     maKonto: "Masz już konto?",
     zaloguj: "Zaloguj się",
     okH2: "Dziękuję!",
-    okTekst: "Dane logowania dostaniesz mailem w ciągu 24 godzin.",
+    okTekst: "Dane do logowania otrzymasz e-mailem do 24h.",
   },
 } as const;
 
@@ -117,8 +115,8 @@ export default function RejestracjaForm({ jezykStart, naDomenieStart }: { google
         </div>
       ) : (
         <form key="form" onSubmit={submit} className={`${s.pane} ${s.enter}`}>
-          <h2>{x.h2}</h2>
-          <p className={`${s.lead} ${s.leadBezTelefonu}`}>{x.lead}</p>
+          {/* 18.10 (USER_001): bez podtytułu pod nagłówkiem. */}
+          <h2 style={{ marginBottom: 28 }}>{x.h2}</h2>
 
           <div className={s.dwa}>
             <div className={s.f}>

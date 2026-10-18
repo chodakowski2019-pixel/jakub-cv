@@ -115,7 +115,8 @@ export default function Lista({ oferty, cena, teraz, podglad }: { oferty: Oferta
     const l = oferty.filter((o) => pasuje(o));
     if (sort === "wygasa") l.sort((a, b) => a.wazneDo.localeCompare(b.wazneDo));
     else if (sort === "kwota") l.sort((a, b) => Number(!!(b.pensjaMax || b.pensjaMin)) - Number(!!(a.pensjaMax || a.pensjaMin)) || b.dodano.localeCompare(a.dodano));
-    else l.sort((a, b) => b.dodano.localeCompare(a.dodano));
+    // 18.10 (USER_001): przy „Najnowsze” oferty z logo firmy najpierw.
+    else l.sort((a, b) => Number(!!b.logo) - Number(!!a.logo) || b.dodano.localeCompare(a.dodano));
     return l;
   }, [oferty, pasuje, sort]);
 

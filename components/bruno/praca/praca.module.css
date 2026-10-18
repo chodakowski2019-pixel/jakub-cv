@@ -4642,3 +4642,217 @@ img.kontoAvatar {
   color: #fff;
   font-weight: 600;
 }
+
+/* =========== 18.10: gwiazdki, pole telefonu, opis ogłoszenia, cennik w tabeli =========== */
+.gw {
+  font-style: normal;
+  color: #d9452b;
+  margin-left: 2px;
+}
+.polaSiatka {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.pole input,
+.pole textarea,
+.pole select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.tekst {
+  font-size: 16px;
+  line-height: 1.65;
+  color: #2b2b2b;
+}
+.tekst > * + * {
+  margin-top: 14px !important;
+}
+.tekst p {
+  margin: 0;
+}
+.tekstLead {
+  font-weight: 600;
+  color: var(--ink);
+}
+.tekst h3 {
+  font-family: var(--body);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--ink);
+  margin-top: 26px !important;
+}
+.tekst h3 + ul {
+  margin-top: 10px !important;
+}
+.tekst ul {
+  list-style: disc;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tekst li::marker {
+  color: var(--ink);
+}
+.tekst b {
+  font-weight: 700;
+  color: var(--ink);
+}
+.cennikTabelaRamka {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  overflow-x: auto;
+}
+.cennikTabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+.cennikTabela th,
+.cennikTabela td {
+  padding: 16px 20px;
+  text-align: center;
+  border-bottom: 1px solid var(--line);
+}
+.cennikTabela th:first-child,
+.cennikTabela td:first-child {
+  text-align: left;
+  color: #3a3a3a;
+}
+.cennikTabela tr:last-child td {
+  border-bottom: 0;
+}
+.cennikTabela td:not(:first-child) {
+  font-weight: 600;
+  width: 26%;
+}
+.cennikKolPromo {
+  background: #fff8f1;
+}
+.cennikBadge {
+  display: inline-block;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--soft);
+  color: var(--ink);
+  white-space: nowrap;
+}
+.cennikBadgePromo {
+  background: linear-gradient(135deg, #f08a2b, #e0457b);
+  color: #fff;
+}
+.cennikWierszCena b {
+  font-family: var(--head);
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.cennikWierszCena s {
+  color: var(--grey);
+  font-weight: 400;
+  margin-right: 4px;
+}
+.cennikWierszCena small {
+  color: var(--muted);
+  font-weight: 400;
+}
+.cennikWierszCena .cennikOszcz {
+  display: block;
+  font-size: 13px;
+  margin-top: 4px;
+}
+.cennikWierszAkcja .btn {
+  margin-top: 0;
+  width: 100%;
+  justify-content: center;
+}
+.cennikWierszAkcja .btn:disabled {
+  opacity: 0.45;
+}
+@media (max-width: 600px) {
+  .cennikTabela th,
+  .cennikTabela td {
+    padding: 12px 10px;
+    font-size: 13.5px;
+  }
+  .cennikBadge {
+    white-space: normal;
+    font-size: 12px;
+  }
+  .cennikWierszCena b {
+    font-size: 24px;
+  }
+}
+.kupSiatka {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+.kupKarta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: #fff;
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform 0.15s var(--ease), box-shadow 0.15s;
+}
+.kupKarta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+}
+.kupKarta b {
+  font-family: var(--head);
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-top: 6px;
+}
+.kupKarta b s {
+  font-size: 20px;
+  color: var(--grey);
+}
+.kupKarta small {
+  color: var(--muted);
+}
+.kupKarta .btn {
+  margin-top: 10px;
+  width: 100%;
+  justify-content: center;
+}
+.panelNaglowek .statusPig {
+  margin-top: 8px;
+}
+/* 18.10 (USER_001): stopka zawsze na dole ekranu, także na krótkich stronach. */
+.root {
+  display: flex;
+  flex-direction: column;
+}
+:where(.root) > * {
+  width: 100%;
+  flex-shrink: 0;
+}
+.root > .stopka {
+  margin-top: auto;
+}
+.dokument {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 32px 20px 72px;
+}
+.dokument .tekst {
+  margin-top: 24px;
+}
+.dokument .tekst a,
+.zgodaKarta a {
+  color: var(--ink);
+  text-decoration: underline;
+}

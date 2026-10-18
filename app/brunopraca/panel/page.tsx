@@ -7,6 +7,7 @@ import { Stopka } from "@/components/bruno/praca/wspolne";
 import s from "@/components/bruno/praca/praca.module.css";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
+import { linkPlatnosci } from "@/lib/bruno/praca/platnosci";
 import { doOferty, ofertyKonta } from "@/lib/bruno/praca/oferty-firm";
 import { CENA_MIESIAC, doListy, ofertaPoId, ofertyPubliczne, type OfertaLista } from "@/lib/bruno/praca/oferty";
 
@@ -42,7 +43,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     return (
       <div className={s.root} lang="pl">
         <Nav />
-        <PanelFirmy konto={konto} oferty={oferty} zgloszenia={(data ?? []) as Zgloszenie[]} cena={CENA_MIESIAC} zakladka={zakladka} />
+        <PanelFirmy konto={konto} oferty={oferty} zgloszenia={(data ?? []) as Zgloszenie[]} cena={CENA_MIESIAC} zakladka={zakladka} linki={{ promo: linkPlatnosci(true, konto.id, konto.email), regularny: linkPlatnosci(false, konto.id, konto.email) }} />
         <Stopka />
       </div>
     );

@@ -77,7 +77,7 @@ export default function PasekFirmy({ id, k, firma, cena }: { id: string; k: stri
         </div>
         <div className={s.wlascicielAkcje}>
           <button type="button" className={s.btn} onClick={() => otworz("aktywuj")}>
-            Przejmij za {cena} zł / mies. <s className={s.cenaStaraJasna}>200 zł</s>
+            Przejmij za {cena} zł <s className={s.cenaStaraJasna}>200 zł</s>
           </button>
           <button type="button" className={s.usun} onClick={() => otworz("usun")}>
             Nie chcę, usuń ogłoszenie
@@ -112,14 +112,14 @@ export default function PasekFirmy({ id, k, firma, cena }: { id: string; k: stri
           >
             <h2 className={s.oknoH}>Przejmij ogłoszenie</h2>
             <p className={s.oknoP}>
-              Promocja na pierwsze ogłoszenie: {cena} zł miesięcznie zamiast 200 zł. Bez umowy, rezygnujesz jednym mailem.
+              Promocja na pierwsze ogłoszenie: {cena} zł zamiast 200 zł za 30 dni publikacji. Płatność jednorazowa: karta, BLIK albo przelew.
             </p>
             <label className={s.pole}>
-              <span>E-mail do faktury</span>
+              <span>E-mail do faktury <i className={s.gw}>*</i></span>
               <input name="email" type="email" required autoComplete="email" placeholder="rekrutacja@firma.pl" />
             </label>
             <label className={s.pole}>
-              <span>Gdzie kandydaci mają aplikować? (e-mail albo link)</span>
+              <span>Gdzie kandydaci mają aplikować? (e-mail albo link) <i className={s.gw}>*</i></span>
               <input name="aplikuj" required placeholder="praca@firma.pl" />
             </label>
             <label className={s.pole}>
@@ -132,7 +132,7 @@ export default function PasekFirmy({ id, k, firma, cena }: { id: string; k: stri
                 Wróć
               </button>
               <button type="submit" className={s.btn} disabled={wysylam}>
-                {wysylam ? "Otwieram płatność…" : `Przejdź do płatności (${cena} zł / mies.)`}
+                {wysylam ? "Otwieram płatność…" : `Przejdź do płatności (${cena} zł)`}
               </button>
             </div>
           </form>

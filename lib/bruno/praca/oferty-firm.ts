@@ -98,7 +98,7 @@ export function doOferty(w: OfertaFirmyWiersz): Oferta {
 }
 
 export async function ofertyFirmAktywne(): Promise<Oferta[]> {
-  const { data, error } = await supabaseAdmin.from("praca_oferty_firm").select(Z_PROFILEM).eq("status", "aktywna").order("created_at", { ascending: false });
+  const { data, error } = await supabaseAdmin.from("praca_oferty_firm").select(Z_PROFILEM).eq("status", "aktywna").gt("wazne_do", new Date().toISOString()).order("created_at", { ascending: false });
   if (error) console.error("[praca oferty firm]", error.message);
   return ((data ?? []) as OfertaFirmyWiersz[]).map(doOferty);
 }

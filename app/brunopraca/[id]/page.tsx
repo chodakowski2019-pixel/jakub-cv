@@ -6,7 +6,7 @@ import Karta from "@/components/bruno/praca/karta";
 import PasekDolny from "@/components/bruno/praca/pasek-dolny";
 import Przegladane from "@/components/bruno/praca/przegladane";
 import PasekFirmy from "@/components/bruno/praca/pasek-firmy";
-import { Inicjaly, KartaFirmy, Stopka, krotkaFirma, opisDni, pensja } from "@/components/bruno/praca/wspolne";
+import { Inicjaly, KartaFirmy, Stopka, Tekst, krotkaFirma, opisDni, pensja } from "@/components/bruno/praca/wspolne";
 import { Nav } from "@/components/bruno/praca/nav";
 import s from "@/components/bruno/praca/praca.module.css";
 import { CENA_MIESIAC, KLAUZULA_SALESBRUNO, dniTemu, ofertaPublicznaLubFirmy, ofertyWidoczne, podgladWszystkich, podobne } from "@/lib/bruno/praca/oferty";
@@ -53,12 +53,12 @@ const IK = {
   b2b: "M3 12h4l3-3 4 4 3-3h4M7 12l3 3",
 };
 
-function Sekcja({ tytul, punkty, szare }: { tytul: string; punkty: string[]; szare?: boolean }) {
+function Sekcja({ tytul, punkty }: { tytul: string; punkty: string[] }) {
   if (!punkty.length) return null;
   return (
     <>
-      <h2 className={s.sekcjaH}>{tytul}</h2>
-      <ul className={`${s.punktyOferty} ${szare ? s.punktySzare : ""}`}>
+      <h3>{tytul}</h3>
+      <ul>
         {punkty.map((p) => (
           <li key={p}>{p}</li>
         ))}
@@ -113,7 +113,7 @@ export default async function Page({ params, searchParams }: Props) {
   return (
     <div className={s.root} lang="pl">
       <Nav />
-      {wlascicielPanelu && o.status !== "aktywna" && <p className={`${s.podglad} ${s.podgladFirmy}`}>Podgląd Twojego ogłoszenia. Publicznie pojawi się po aktywacji ({CENA_MIESIAC} zł / mies.).</p>}
+      {wlascicielPanelu && o.status !== "aktywna" && <p className={`${s.podglad} ${s.podgladFirmy}`}>Podgląd Twojego ogłoszenia. Publicznie widać je tylko po opłaceniu 30 dni publikacji.</p>}
       {wlasciciel && o.status === "nieaktywna" && <PasekFirmy id={o.id} k={String(sp.k)} firma={o.firma} cena={CENA_MIESIAC} />}
       <div className={s.uklad}>
         <div className={s.kolumna}>
@@ -173,21 +173,18 @@ export default async function Page({ params, searchParams }: Props) {
           </section>
 
           <section className={s.oferta}>
-            {maSekcje ? (
-              <>
+            <p className={s.etykietaSekcji}>Opis stanowiska</p>
+            {o.opis && (o.zFirmy ? <Tekst tekst={o.opis} lead /> : <div className={s.tekst}><p>{`${o.opis.replace(/\s*\S*$/, "")}…`}</p></div>)}
+            {maSekcje && (
+              <div className={s.tekst}>
                 <Sekcja tytul="Twój zakres obowiązków" punkty={o.obowiazki} />
                 <Sekcja tytul="Nasze wymagania" punkty={o.wymagania} />
-                <Sekcja tytul="Mile widziane" punkty={o.mileWidziane} szare />
+                <Sekcja tytul="Mile widziane" punkty={o.mileWidziane} />
                 <Sekcja tytul="To oferujemy" punkty={o.oferujemy} />
-              </>
-            ) : (
+              </div>
+            )}
+            {!maSekcje && (
               <>
-                {o.opis && (
-                  <>
-                    <h2 className={s.sekcjaH}>Opis oferty</h2>
-                    <p className={s.opis}>{o.zFirmy ? o.opis : `${o.opis.replace(/\s*\S*$/, "")}…`}</p>
-                  </>
-                )}
                 {o.umiejetnosci.length > 0 && (
                   <>
                     <h2 className={s.sekcjaH}>Umiejętności</h2>
@@ -218,7 +215,7 @@ export default async function Page({ params, searchParams }: Props) {
                 </p>
               </div>
             </div>
-            {o.oFirmie && <p className={s.opis}>{o.oFirmie}</p>}
+            {o.oFirmie && <Tekst tekst={o.oFirmie} />}
             {o.www && (
               <a className={s.linkStrzalka} href={o.www.startsWith("http") ? o.www : `https://${o.www}`} target="_blank" rel="noopener">
                 Strona firmy →

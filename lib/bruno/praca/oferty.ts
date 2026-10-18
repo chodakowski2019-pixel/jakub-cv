@@ -165,7 +165,8 @@ export async function ofertaPublicznaLubFirmy(id: string, k: unknown, kontoId?: 
   const w = await wierszOferty(id);
   if (!w || w.status === "usunieta") return null;
   const wlascicielPanelu = !!kontoId && kontoId === w.konto_id;
-  if (w.status !== "aktywna" && !wlascicielPanelu) return null;
+  const wazna = w.status === "aktywna" && Date.parse(w.wazne_do) > Date.now();
+  if (!wazna && !wlascicielPanelu) return null;
   return { oferta: doOferty(w), wlasciciel: false, wlascicielPanelu };
 }
 
@@ -174,6 +175,6 @@ export async function ofertaDoAplikacji(id: string): Promise<{ oferta: Oferta; k
   const z = ofertaPoId(id);
   if (z) return { oferta: z, kontoFirmyId: null };
   const w = await wierszOferty(id);
-  if (!w || w.status !== "aktywna") return null;
+  if (!w || w.status !== "aktywna" || Date.parse(w.wazne_do) <= Date.now()) return null;
   return { oferta: doOferty(w), kontoFirmyId: w.konto_id };
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { KontoPraca } from "@/lib/bruno/praca/konta";
 import type { OfertaFirmyWiersz } from "@/lib/bruno/praca/oferty-firm";
 import type { Zgloszenie } from "@/app/brunopraca/panel/page";
@@ -36,10 +36,13 @@ const MENU: [Zakladka, string, string][] = [
   ["kontakt", "Kontakt", "M4 13a8 8 0 0 1 16 0v4a2 2 0 0 1-2 2h-1v-6h3M4 13v4a2 2 0 0 0 2 2h1v-6H4"],
 ];
 
-export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }: { konto: KontoPraca; oferty: OfertaFirmyWiersz[]; zgloszenia: Zgloszenie[]; cena: number; zakladka?: string }) {
+export type LinkiPlatnosci = { promo: string; regularny: string };
+
+export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka, linki }: { konto: KontoPraca; oferty: OfertaFirmyWiersz[]; zgloszenia: Zgloszenie[]; cena: number; zakladka?: string; linki: LinkiPlatnosci }) {
+  // 18.10 (USER_001): najpierw płatność (Stripe Payment Link), potem dodanie ogłoszenia. kredyty = opłacone ogłoszenia do wystawienia.
+  const kredyty = konto.kredyty ?? 0;
+  const promoDostepna = !konto.promo_uzyta;
   // 17.10 (USER_001): pierwsze (najstarsze) ogłoszenie firmy w promocji {cena} zł, kolejne 200 zł / mies.
-  const pierwsza = [...oferty].sort((a, b) => a.created_at.localeCompare(b.created_at))[0]?.id;
-  const cenaOferty = (id: string) => (id === pierwsza ? cena : CENA_REGULARNA);
   const startowa = (["dodaj", "kandydaci", "firma", "cennik", "kontakt", "konto"] as Zakladka[]).find((x) => x === zakladka) ?? "ogloszenia";
   const [z, setZ] = useState<Zakladka>(startowa);
   const [edytowana, setEdytowana] = useState<OfertaFirmyWiersz | null>(null);
@@ -47,6 +50,22 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
   const [stanListy, setStanListy] = useState<"aktywna" | "oczekuje" | "wstrzymana">(oferty.some((o) => o.status === "aktywna") ? "aktywna" : "oczekuje");
   const [szukaj, setSzukaj] = useState("");
   const [platnoscOk] = useState(() => typeof window !== "undefined" && new URLSearchParams(location.search).get("platnosc") === "ok");
+  // Po powrocie ze Stripe webhook dodaje kredyt w kilka sekund: odśwież stronę do 5 razy, aż się pojawi.
+  useEffect(() => {
+    if (!platnoscOk || kredyty > 0) return;
+    let n = 0;
+    try {
+      n = Number(sessionStorage.getItem("praca_odswiez") ?? 0);
+    } catch {}
+    if (n >= 5) return;
+    const t = setTimeout(() => {
+      try {
+        sessionStorage.setItem("praca_odswiez", String(n + 1));
+      } catch {}
+      location.reload();
+    }, 3000);
+    return () => clearTimeout(t);
+  }, [platnoscOk, kredyty]);
   const liczbaZ = (id: string) => zgloszenia.filter((x) => x.oferta_id === id).length;
   const nowych = zgloszenia.filter((x) => x.status === "nowe").length;
   const tytul = (id: string) => oferty.find((o) => o.id === id)?.stanowisko ?? id;
@@ -103,11 +122,14 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
                     <path d="M5 12.5l4.5 4.5L19 7.5" />
                   </svg>
                 </span>
-                Płatność przyjęta. Ogłoszenie będzie aktywne w ciągu minuty (odśwież stronę).
+                {kredyty > 0 ? `Płatność przyjęta. Możesz dodać ogłoszenie (opłacone: ${kredyty}).` : "Płatność przyjęta. Czekamy na potwierdzenie ze Stripe, strona odświeży się sama."}
               </div>
             )}
             <div className={s.panelNaglowek}>
-              <h1 className={s.ofertaH}>Zarządzaj rekrutacjami</h1>
+              <div>
+                <h1 className={s.ofertaH}>Zarządzaj rekrutacjami</h1>
+                <span className={`${s.statusPig} ${kredyty ? s.statusAktywna : s.statusWstrzymana}`}>Opłacone ogłoszenia do wystawienia: {kredyty}</span>
+              </div>
               <button type="button" className={`${s.btn} ${s.btnPomarancz}`} onClick={() => idz("dodaj")}>
                 + Dodaj ogłoszenie o pracę
               </button>
@@ -135,11 +157,17 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
                 <p>Pierwsze ogłoszenie dodasz w kilka minut. Zobaczą je handlowcy z całej Polski.</p>
                 <div className={s.pustoCena}>
                   <span>
-                    Pierwsze ogłoszenie: <s>200 zł</s> <b>{cena} zł</b> / mies.
+                    Pierwsze ogłoszenie: <s>200 zł</s> <b>{cena} zł</b> za 30 dni
                   </span>
-                  <button type="button" className={s.btn} onClick={() => idz("dodaj")}>
-                    Dodaj ogłoszenie
-                  </button>
+                  {kredyty > 0 ? (
+                    <button type="button" className={s.btn} onClick={() => idz("dodaj")}>
+                      Dodaj ogłoszenie
+                    </button>
+                  ) : (
+                    <a className={s.btn} href={promoDostepna ? linki.promo : linki.regularny}>
+                      Zapłać {promoDostepna ? cena : CENA_REGULARNA} zł i dodaj ogłoszenie
+                    </a>
+                  )}
                 </div>
               </div>
             ) : wLiscie.length === 0 ? (
@@ -149,25 +177,25 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
             ) : (
               <div className={s.panelLista}>
                 {wLiscie.map((o) => {
-                  const [nazwaS, klasa] = STATUS[o.status] ?? ["", ""];
+                  // 18.10: płatność jednorazowa za 30 dni. Aktywne po terminie = „Wygasło”, przycisk „Przedłuż”.
+                  const dniDo = Math.ceil((Date.parse(o.wazne_do) - Date.now()) / 86_400_000);
+                  const wygaslo = o.status === "aktywna" && dniDo <= 0;
+                  const [nazwaS, klasa] = wygaslo ? ["Wygasło", s.statusWstrzymana] : STATUS[o.status] ?? ["", ""];
                   return (
                     <div className={s.panelWiersz} key={o.id}>
                       <div className={s.panelWierszTresc}>
                         <span className={`${s.statusPig} ${klasa}`}>{nazwaS}</span>
                         <h3>{o.stanowisko}</h3>
                         <p>{[o.miasto, o.tryb, `dodano ${formatDaty(o.created_at)}`].filter(Boolean).join(" · ")}</p>
-                        {o.status === "oczekuje" && (
-                          <p className={s.panelInfo}>
-                            Czeka na płatność: {cenaOferty(o.id)} zł / mies.{o.id === pierwsza ? " (promocja zamiast 200 zł)" : ""}
-                          </p>
-                        )}
+                        {o.status === "aktywna" && !wygaslo && <p className={s.panelInfo}>Ważne jeszcze {dniDo} {dniDo === 1 ? "dzień" : "dni"} (do {formatDaty(o.wazne_do)})</p>}
+                        {o.status === "oczekuje" && <p className={s.panelInfo}>Nieaktywne: aktywuj opłaconym ogłoszeniem (30 dni)</p>}
                       </div>
                       <button type="button" className={s.panelWierszLiczba} onClick={() => { setFiltr(o.id); idz("kandydaci"); }}>
                         <b>{liczbaZ(o.id)}</b>
                         <span>kandydatów</span>
                       </button>
                       <div className={s.panelAkcje}>
-                        {o.status !== "aktywna" && <ZaplacBtn id={o.id} cena={cenaOferty(o.id)} />}
+                        {(o.status !== "aktywna" || dniDo <= 5) && <AktywujBtn id={o.id} przedluz={o.status === "aktywna" && !wygaslo} kredyty={kredyty} onKup={() => idz("dodaj")} />}
                         <a href={`/praca/${o.id}`} target="_blank">
                           Podgląd
                         </a>
@@ -198,7 +226,11 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
         {z === "dodaj" && (
           <>
             <h1 className={`${s.ofertaH} ${s.panelTytul}`}>{edytowana ? "Edytuj ogłoszenie" : "Dodaj ogłoszenie o pracę"}</h1>
-            <FormularzOferty key={edytowana?.id ?? "nowa"} o={edytowana} cena={oferty.length ? CENA_REGULARNA : cena} promo={!oferty.length} email={konto.email} />
+            {edytowana || kredyty > 0 ? (
+              <FormularzOferty key={edytowana?.id ?? "nowa"} o={edytowana} kredyty={kredyty} />
+            ) : (
+              <KupOgloszenie cena={cena} promo={promoDostepna} linki={linki} />
+            )}
           </>
         )}
 
@@ -233,36 +265,66 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka }
 
         {z === "firma" && <ProfilFirmy konto={konto} />}
         {z === "konto" && <MojeKonto konto={konto} />}
-        {z === "cennik" && <Cennik cena={cena} pierwszaWykorzystana={oferty.length > 0} onDodaj={() => idz("dodaj")} />}
+        {z === "cennik" && <Cennik cena={cena} pierwszaWykorzystana={!promoDostepna} linkPromo={linki.promo} linkRegularny={linki.regularny} />}
         {z === "kontakt" && <Kontakt />}
       </main>
     </div>
   );
 }
 
-/** 18.10: płatność Stripe (subskrypcja miesięczna) za ogłoszenie z panelu. */
-function ZaplacBtn({ id, cena, duzy, promo }: { id: string; cena: number; duzy?: boolean; promo?: boolean }) {
+/** 18.10: aktywacja / przedłużenie ogłoszenia opłaconym kredytem; bez kredytu → zakładka z płatnością. */
+function AktywujBtn({ id, przedluz, kredyty, onKup }: { id: string; przedluz: boolean; kredyty: number; onKup: () => void }) {
   const [stan, setStan] = useState("");
   return (
-    <>
-      <button
-        type="button"
-        className={duzy ? `${s.btn} ${s.btnDuzy} ${s.btnPomarancz}` : s.zaplacMaly}
-        disabled={stan === "wysylam"}
-        onClick={async () => {
-          setStan("wysylam");
-          const odp = await fetch("/api/bruno/praca/platnosc", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) }).catch(() => null);
-          const j = await odp?.json().catch(() => null);
-          if (j?.url) location.href = j.url;
-          else {
-            setStan("");
-            alert(j?.blad ?? "Nie udało się otworzyć płatności.");
-          }
-        }}
-      >
-        {stan === "wysylam" ? "Otwieram płatność…" : duzy ? <>Zapłać {promo && <s className={s.cenaStaraJasna}>200 zł</s>} {cena} zł / mies. i aktywuj</> : `Zapłać ${cena} zł`}
-      </button>
-    </>
+    <button
+      type="button"
+      className={s.zaplacMaly}
+      disabled={stan === "wysylam"}
+      onClick={async () => {
+        if (kredyty <= 0) return onKup();
+        setStan("wysylam");
+        const odp = await fetch("/api/bruno/praca/firma/oferta", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ akcja: "aktywuj", id }) }).catch(() => null);
+        const j = await odp?.json().catch(() => null);
+        if (j?.ok) location.reload();
+        else {
+          setStan("");
+          alert(j?.blad ?? "Nie udało się.");
+        }
+      }}
+    >
+      {stan === "wysylam" ? "Chwileczkę…" : kredyty > 0 ? (przedluz ? "Przedłuż o 30 dni" : "Aktywuj na 30 dni") : przedluz ? "Opłać przedłużenie" : "Opłać i aktywuj"}
+    </button>
+  );
+}
+
+/** 18.10 (USER_001): „najpierw płatność, potem ogłoszenie”. Stripe Payment Link z id konta, po płatności wraca kredyt. */
+function KupOgloszenie({ cena, promo, linki }: { cena: number; promo: boolean; linki: LinkiPlatnosci }) {
+  return (
+    <div className={s.ustLista}>
+      <div className={s.pustoDuze}>
+        <span className={`${s.statusPig} ${s.statusCzeka}`}>Krok 1 z 2: płatność</span>
+        <h2>Najpierw opłać ogłoszenie</h2>
+        <p>Po płatności od razu wrócisz tutaj i dodasz ogłoszenie. Będzie widoczne przez 30 dni. Płatność jednorazowa: karta, BLIK albo przelew, fakturę dostaniesz mailem.</p>
+        <div className={s.kupSiatka}>
+          {promo && (
+            <a className={`${s.kupKarta} ${s.cennikPromo}`} href={linki.promo}>
+              <span className={`${s.cennikBadge} ${s.cennikBadgePromo}`}>Pierwsze ogłoszenie</span>
+              <b>
+                <s>200 zł</s> {cena} zł
+              </b>
+              <small>za 30 dni publikacji</small>
+              <span className={`${s.btn} ${s.btnPomarancz}`}>Zapłać {cena} zł</span>
+            </a>
+          )}
+          <a className={s.kupKarta} href={linki.regularny}>
+            <span className={s.cennikBadge}>{promo ? "Każde kolejne ogłoszenie" : "Ogłoszenie"}</span>
+            <b>{CENA_REGULARNA} zł</b>
+            <small>za 30 dni publikacji</small>
+            <span className={`${s.btn} ${promo ? s.btnJasny : ""}`}>Zapłać {CENA_REGULARNA} zł</span>
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -325,7 +387,7 @@ function Kandydat({ x, stanowisko }: { x: Zgloszenie; stanowisko: string }) {
   );
 }
 
-function FormularzOferty({ o, cena, promo, email }: { o: OfertaFirmyWiersz | null; cena: number; promo: boolean; email: string }) {
+function FormularzOferty({ o, kredyty }: { o: OfertaFirmyWiersz | null; kredyty: number }) {
   const [stan, setStan] = useState<"" | "wysylam" | "gotowe">("");
   const [blad, setBlad] = useState("");
   const [noweId, setNoweId] = useState<string | null>(null);
@@ -354,19 +416,10 @@ function FormularzOferty({ o, cena, promo, email }: { o: OfertaFirmyWiersz | nul
           </svg>
         </span>
         <h2>{o ? "Zapisane!" : "Ogłoszenie dodane!"}</h2>
-        {!o && noweId ? (
-          <>
-            <p>Opłać je, a od razu zobaczą je handlowcy z całej Polski.</p>
-            <ZaplacBtn id={noweId} cena={cena} duzy promo={promo} />
-            <button type="button" className={s.wyczysc} onClick={() => (location.href = "/praca/panel")}>
-              Zapłacę później
-            </button>
-          </>
-        ) : (
-          <button type="button" className={s.btn} onClick={() => (location.href = "/praca/panel")}>
-            Przejdź do ogłoszeń
-          </button>
-        )}
+        {!o && noweId && <p>Ogłoszenie jest aktywne. Handlowcy zobaczą je przez 30 dni.</p>}
+        <button type="button" className={s.btn} onClick={() => (location.href = "/praca/panel")}>
+          Przejdź do ogłoszeń
+        </button>
       </div>
     );
   return (
@@ -390,7 +443,7 @@ function FormularzOferty({ o, cena, promo, email }: { o: OfertaFirmyWiersz | nul
     >
       <section className={s.panelSekcja}>
         <h3>Stanowisko</h3>
-        {pole("stanowisko", "Nazwa stanowiska", <input name="stanowisko" required defaultValue={o?.stanowisko} placeholder="np. Przedstawiciel handlowy B2B" />)}
+        {pole("stanowisko", "Nazwa stanowiska *", <input name="stanowisko" required defaultValue={o?.stanowisko} placeholder="np. Przedstawiciel handlowy B2B" />)}
         <div className={s.polaSiatka}>
           {pole("miasto", "Miasto", <input name="miasto" defaultValue={o?.miasto ?? ""} placeholder="np. Warszawa" />)}
           {pole("wojewodztwo", "Województwo", wybor("wojewodztwo", WOJ, o?.wojewodztwo))}
@@ -415,7 +468,7 @@ function FormularzOferty({ o, cena, promo, email }: { o: OfertaFirmyWiersz | nul
       </section>
       <section className={s.panelSekcja}>
         <h3>Opis</h3>
-        {pole("opis", "Kilka zdań o stanowisku", <textarea name="opis" rows={4} defaultValue={o?.opis ?? ""} placeholder="Czym zajmuje się handlowiec w Twojej firmie i co sprzedaje." />)}
+        {pole("opis", "Opis stanowiska (punkt od „-”, nagłówek kończ „:”)", <textarea name="opis" rows={4} defaultValue={o?.opis ?? ""} placeholder="Czym zajmuje się handlowiec w Twojej firmie i co sprzedaje." />)}
         <div className={s.polaSiatka}>
           {pole("obowiazki", "Zakres obowiązków (każdy w nowej linii)", <textarea name="obowiazki" rows={5} defaultValue={o?.obowiazki?.join("\n")} placeholder={"Pozyskiwanie nowych klientów B2B\nSpotkania u klientów"} />)}
           {pole("wymagania", "Wymagania (każde w nowej linii)", <textarea name="wymagania" rows={5} defaultValue={o?.wymagania?.join("\n")} placeholder={"Doświadczenie w sprzedaży\nPrawo jazdy kat. B"} />)}
@@ -429,7 +482,7 @@ function FormularzOferty({ o, cena, promo, email }: { o: OfertaFirmyWiersz | nul
       <div className={s.panelFormStopka}>
         {!o && (
           <p className={s.drobny}>
-            Po dodaniu ogłoszenie czeka na aktywację: {promo ? <><s>200 zł</s> {cena} zł / mies. (promocja na pierwsze ogłoszenie)</> : <>{cena} zł / mies.</>}.
+            Wykorzystasz 1 opłacone ogłoszenie (masz: {kredyty}). Będzie aktywne od razu przez 30 dni.
           </p>
         )}
         <button type="submit" className={`${s.btn} ${s.btnDuzy}`} disabled={stan === "wysylam"}>

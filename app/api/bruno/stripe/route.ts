@@ -39,6 +39,11 @@ export async function POST(req: NextRequest) {
           await platnoscPraca(s);
           break;
         }
+        // 18.10: Payment Link ogłoszenia (50 / 200 zł) z client_reference_id = id konta pracodawcy → +1 kredyt.
+        if (s.payment_link && s.client_reference_id && /^[0-9a-f-]{36}$/i.test(s.client_reference_id)) {
+          await kredytPraca(s);
+          break;
+        }
         if (s.metadata?.produkt !== "bruno-pro") break;
         // 11.10: rok = płatność jednorazowa (mode payment). Przelewy24 potwierdza później (async_payment_succeeded).
         if (s.mode === "payment" && s.payment_status !== "paid") break;
@@ -116,13 +121,21 @@ export async function POST(req: NextRequest) {
 // „panel” = ogłoszenie z panelu pracodawcy → status „aktywna” od razu. „przejecie” = oferta z Adzuna przejęta z linku w mailu → mail do USER_001.
 async function platnoscPraca(s: Stripe.Checkout.Session) {
   const m = s.metadata ?? {};
+  // 18.10: jednorazowo; BLIK / Przelewy24 potwierdzają później (async_payment_succeeded). Ponowione zdarzenie = bez drugiego przedłużenia.
+  if (s.mode === "payment" && s.payment_status !== "paid") return;
+  const { data: juz } = await supabaseAdmin.from("bruno_platnosci").select("id").eq("stripe_session_id", s.id).eq("status", "paid").limit(1);
+  if (juz && juz.length > 0) return;
+  await zapiszPlatnosc({ email: m.email ?? "", zdarzenie: "praca", session: s.id, subscription: null, customer: typeof s.customer === "string" ? s.customer : s.customer?.id ?? null, kwota: s.amount_total, waluta: s.currency, okres: "30 dni", status: s.payment_status });
   const subId = typeof s.subscription === "string" ? s.subscription : s.subscription?.id ?? null;
   const customer = typeof s.customer === "string" ? s.customer : s.customer?.id ?? null;
   const kwota = `${((s.amount_total ?? 0) / 100).toFixed(0)} ${(s.currency ?? "").toUpperCase()}`;
   if (m.rodzaj === "panel" && m.oferta) {
+    // 30 dni od dziś albo od końca obecnej ważności (przedłużenie przed wygaśnięciem).
+    const { data: w } = await supabaseAdmin.from("praca_oferty_firm").select("status,wazne_do").eq("id", m.oferta).maybeSingle();
+    const od = w?.status === "aktywna" && w.wazne_do && Date.parse(w.wazne_do) > Date.now() ? Date.parse(w.wazne_do) : Date.now();
     await supabaseAdmin
       .from("praca_oferty_firm")
-      .update({ status: "aktywna", stripe_sub: subId, stripe_customer: customer, cena_zl: Number(m.cena) || null, oplacone_od: new Date().toISOString(), wazne_do: new Date(Date.now() + 31 * 86_400_000).toISOString() })
+      .update({ status: "aktywna", stripe_sub: subId, stripe_customer: customer, cena_zl: Number(m.cena) || null, oplacone_od: new Date().toISOString(), wazne_do: new Date(od + 30 * 86_400_000).toISOString() })
       .eq("id", m.oferta);
   }
   try {
@@ -131,16 +144,53 @@ async function platnoscPraca(s: Stripe.Checkout.Session) {
       rodzaj: "inny",
       replyTo: m.email,
       temat: `💰 Praca: opłacone ogłoszenie (${kwota}/mc, ${m.rodzaj === "panel" ? "AKTYWNE automatycznie" : "PRZEJĘCIE, do ręcznego przeniesienia"}): ${m.email}`,
-      html: `<p>Płatność za ogłoszenie na salesbruno.com/praca.</p><p><b>E-mail:</b> ${m.email}<br/><b>Ogłoszenie:</b> ${m.oferta}<br/><b>Kwota:</b> ${kwota} / mies.<br/><b>Rodzaj:</b> ${m.rodzaj}${m.aplikuj ? `<br/><b>Aplikacje na:</b> ${m.aplikuj}` : ""}${m.nip ? `<br/><b>NIP:</b> ${m.nip}` : ""}<br/><b>Subskrypcja:</b> ${subId ?? "-"}</p>${m.rodzaj === "przejecie" ? "<p>Oferta z Adzuna: załóż firmie konto pracodawcy i przenieś ogłoszenie do panelu (status aktywna, stripe_sub).</p>" : ""}`,
+      html: `<p>Płatność za ogłoszenie na salesbruno.com/praca.</p><p><b>E-mail:</b> ${m.email}<br/><b>Ogłoszenie:</b> ${m.oferta}<br/><b>Kwota:</b> ${kwota} (30 dni)<br/><b>Rodzaj:</b> ${m.rodzaj}${m.aplikuj ? `<br/><b>Aplikacje na:</b> ${m.aplikuj}` : ""}${m.nip ? `<br/><b>NIP:</b> ${m.nip}` : ""}<br/><b>Subskrypcja:</b> ${subId ?? "-"}</p>${m.rodzaj === "przejecie" ? "<p>Oferta z Adzuna: załóż firmie konto pracodawcy i przenieś ogłoszenie do panelu (status aktywna, stripe_sub).</p>" : ""}`,
     });
     if (m.email)
       await wyslij({
         do: m.email,
         rodzaj: "inny",
         temat: "Ogłoszenie na SalesBruno.pl opłacone",
-        html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>Dzień dobry,</p><p>dziękujemy za płatność (${kwota} / mies.). ${m.rodzaj === "panel" ? "Ogłoszenie jest już widoczne dla handlowców." : "Ogłoszenie przejmiemy na Państwa konto i damy znać mailem."}</p><p>Panel: <a href="https://salesbruno.com/praca/panel">salesbruno.com/praca/panel</a></p><p>Pozdrawiam<br/>Jakub Chodakowski<br/>SalesBruno.pl</p></div>`,
+        html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>Dzień dobry,</p><p>dziękujemy za płatność (${kwota} za 30 dni). ${m.rodzaj === "panel" ? "Ogłoszenie jest już widoczne dla handlowców." : "Ogłoszenie przejmiemy na Państwa konto i damy znać mailem."}</p><p>Panel: <a href="https://salesbruno.com/praca/panel">salesbruno.com/praca/panel</a></p><p>Pozdrawiam<br/>Jakub Chodakowski<br/>SalesBruno.pl</p></div>`,
       });
   } catch (e) {
     console.error("[bruno stripe praca] mail", e);
+  }
+}
+
+// 18.10 (USER_001): „najpierw płatność, potem ogłoszenie”. Opłacony Payment Link = 1 ogłoszenie do wystawienia (30 dni).
+async function kredytPraca(s: Stripe.Checkout.Session) {
+  if (s.payment_status !== "paid") return; // BLIK / Przelewy24: przyjdzie async_payment_succeeded
+  const { data: juz } = await supabaseAdmin.from("bruno_platnosci").select("id").eq("stripe_session_id", s.id).eq("status", "paid").limit(1);
+  if (juz && juz.length > 0) return;
+  const kontoId = s.client_reference_id!;
+  const { data: k } = await supabaseAdmin.from("praca_konta").select("id,email,firma,kredyty").eq("id", kontoId).maybeSingle();
+  if (!k) {
+    console.error("[bruno stripe praca] brak konta", kontoId, s.id);
+    return;
+  }
+  const kwota = s.amount_total ?? 0;
+  await supabaseAdmin
+    .from("praca_konta")
+    .update({ kredyty: (k.kredyty ?? 0) + 1, ...(kwota <= 50_00 ? { promo_uzyta: true } : {}) })
+    .eq("id", k.id);
+  await zapiszPlatnosc({ email: k.email, zdarzenie: "praca-kredyt", session: s.id, subscription: null, customer: typeof s.customer === "string" ? s.customer : s.customer?.id ?? null, kwota, waluta: s.currency, okres: "30 dni", status: s.payment_status });
+  const zl = `${(kwota / 100).toFixed(0)} ${(s.currency ?? "").toUpperCase()}`;
+  try {
+    await wyslij({
+      do: SKRZYNKA_JAKUBA,
+      rodzaj: "inny",
+      replyTo: k.email,
+      temat: `💰 Praca: opłacone ogłoszenie (${zl}), ${k.firma ?? k.email}`,
+      html: `<p>Firma opłaciła ogłoszenie na salesbruno.com/praca (Payment Link).</p><p><b>Firma:</b> ${k.firma ?? "-"}<br/><b>E-mail:</b> ${k.email}<br/><b>Kwota:</b> ${zl} (30 dni)<br/><b>Opłacone ogłoszenia do wystawienia:</b> ${(k.kredyty ?? 0) + 1}</p>`,
+    });
+    await wyslij({
+      do: k.email,
+      rodzaj: "inny",
+      temat: "Płatność przyjęta: możesz dodać ogłoszenie",
+      html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>Dzień dobry,</p><p>dziękujemy za płatność (${zl}). Możesz teraz dodać ogłoszenie, będzie widoczne przez 30 dni:</p><p><a href="https://salesbruno.com/praca/panel?z=dodaj">salesbruno.com/praca/panel</a></p><p>Pozdrawiam<br/>Jakub Chodakowski<br/>SalesBruno.pl</p></div>`,
+    });
+  } catch (e) {
+    console.error("[bruno stripe praca kredyt] mail", e);
   }
 }

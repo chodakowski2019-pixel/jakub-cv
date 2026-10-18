@@ -7,7 +7,8 @@ import { ofertyKonta, wierszOferty } from "@/lib/bruno/praca/oferty-firm";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// POST /api/bruno/praca/platnosc (18.10, USER_001: „trzeba link do Stripe”): Stripe Checkout, subskrypcja miesięczna w PLN.
+// POST /api/bruno/praca/platnosc (18.10, USER_001: „trzeba link do Stripe”): Stripe Checkout w PLN.
+// 18.10 (USER_001): na razie PŁATNOŚĆ JEDNORAZOWA za 30 dni (karta + BLIK + Przelewy24, faktura ze Stripe); subskrypcja po pierwszych sprzedażach.
 // { id } = ogłoszenie z panelu pracodawcy (zalogowany): pierwsze ogłoszenie konta 50 zł, kolejne 200 zł.
 // { id, k, email } = przejęcie ogłoszenia z linku w mailu (oferta z Adzuna, promocja 50 zł).
 // Webhook /api/bruno/stripe (produkt „praca”) aktywuje ogłoszenie / powiadamia USER_001.
@@ -40,7 +41,8 @@ export async function POST(req: Request) {
     if (!konto || konto.typ !== "pracodawca") return NextResponse.json({ ok: false, blad: "Zaloguj się jako pracodawca." }, { status: 401 });
     const w = await wierszOferty(id);
     if (!w || w.konto_id !== konto.id) return NextResponse.json({ ok: false, blad: "Nie ma takiego ogłoszenia." }, { status: 404 });
-    if (w.status === "aktywna") return NextResponse.json({ ok: false, blad: "To ogłoszenie jest już aktywne." }, { status: 400 });
+    // Aktywne i ważne dłużej niż 5 dni = nie ma czego przedłużać.
+    if (w.status === "aktywna" && Date.parse(w.wazne_do) - Date.now() > 5 * 86_400_000) return NextResponse.json({ ok: false, blad: "To ogłoszenie jest już aktywne." }, { status: 400 });
     const pierwsza = [...(await ofertyKonta(konto.id))].sort((a, c) => a.created_at.localeCompare(c.created_at))[0]?.id;
     cena = id === pierwsza ? CENA_MIESIAC : CENA_REGULARNA;
     email = konto.email;
@@ -50,22 +52,23 @@ export async function POST(req: Request) {
   }
 
   const sesja = await getStripeBruno().checkout.sessions.create({
-    mode: "subscription",
+    mode: "payment",
     line_items: [
       {
         price_data: {
           currency: "pln",
           unit_amount: zl(cena),
-          recurring: { interval: "month" },
-          product_data: { name: `Ogłoszenie na SalesBruno.pl: ${opis}`.slice(0, 250) },
+          product_data: { name: `Ogłoszenie na SalesBruno.pl, 30 dni: ${opis}`.slice(0, 250) },
         },
         quantity: 1,
       },
     ],
     customer_email: email,
+    customer_creation: "always",
     client_reference_id: email,
     metadata,
-    subscription_data: { metadata },
+    payment_intent_data: { metadata },
+    invoice_creation: { enabled: true, invoice_data: { metadata, description: "Ogłoszenie na SalesBruno.pl (30 dni)" } },
     allow_promotion_codes: true,
     tax_id_collection: { enabled: true },
     billing_address_collection: "required",

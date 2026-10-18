@@ -219,45 +219,67 @@ export function MojeKonto({ konto }: { konto: KontoPraca }) {
   );
 }
 
-export function Cennik({ cena, pierwszaWykorzystana, onDodaj }: { cena: number; pierwszaWykorzystana: boolean; onDodaj: () => void }) {
-  const cechy = ["Widoczne na SalesBruno.pl, portalu tylko dla handlowców", "Logo, opis firmy i widełki w ogłoszeniu", "Zgłoszenia z CV na Twój mail i w panelu", "Statusy kandydatów w panelu", "Bez umowy, rezygnujesz, kiedy chcesz"];
+export function Cennik({ cena, pierwszaWykorzystana, linkPromo, linkRegularny }: { cena: number; pierwszaWykorzystana: boolean; linkPromo: string; linkRegularny: string }) {
+  // 18.10 (USER_001): cennik w tabelce, nazwy planów w badge.
+  const cechy = ["Widoczne na SalesBruno.pl, portalu tylko dla handlowców", "Logo, opis firmy i widełki w ogłoszeniu", "Zgłoszenia z CV na Twój mail i w panelu", "Statusy kandydatów w panelu", "30 dni publikacji, płatność jednorazowa"];
   return (
     <div className={s.ustLista}>
       <div className={s.cennikGlowa}>
         <h1 className={s.ofertaH}>Jedna cena. Bez pakietów.</h1>
-        <p className={s.kontoP}>Płacisz miesięcznie za każde aktywne ogłoszenie.</p>
+        <p className={s.kontoP}>Płacisz raz za 30 dni publikacji. Karta, BLIK albo przelew.</p>
       </div>
-      <div className={s.cennikSiatka}>
-        <div className={`${s.cennikKarta} ${s.cennikPromo}`}>
-          <span className={s.cennikEtykieta}>Pierwsze ogłoszenie</span>
-          <p className={s.cennikCena}>
-            <s>200 zł</s> {cena} zł <small>/ mies.</small>
-          </p>
-          <p className={s.cennikOszcz}>Oszczędzasz {200 - cena} zł co miesiąc</p>
-          <button type="button" className={s.btn} onClick={onDodaj} disabled={pierwszaWykorzystana}>
-            {pierwszaWykorzystana ? "Promocja wykorzystana" : "Dodaj ogłoszenie"}
-          </button>
-          <ul className={s.cennikCechy}>
+      <div className={s.cennikTabelaRamka}>
+        <table className={s.cennikTabela}>
+          <thead>
+            <tr>
+              <th />
+              <th className={s.cennikKolPromo}>
+                <span className={`${s.cennikBadge} ${s.cennikBadgePromo}`}>Pierwsze ogłoszenie</span>
+              </th>
+              <th>
+                <span className={s.cennikBadge}>Każde kolejne ogłoszenie</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className={s.cennikWierszCena}>
+              <td>Cena</td>
+              <td className={s.cennikKolPromo}>
+                <s>200 zł</s> <b>{cena} zł</b> <small>/ 30 dni</small>
+                <span className={s.cennikOszcz}>Oszczędzasz {200 - cena} zł</span>
+              </td>
+              <td>
+                <b>200 zł</b> <small>/ 30 dni</small>
+              </td>
+            </tr>
             {cechy.map((c) => (
-              <li key={c}>{c}</li>
+              <tr key={c}>
+                <td>{c}</td>
+                <td className={s.cennikKolPromo}>✓</td>
+                <td>✓</td>
+              </tr>
             ))}
-          </ul>
-        </div>
-        <div className={s.cennikKarta}>
-          <span className={s.cennikEtykieta}>Każde kolejne ogłoszenie</span>
-          <p className={s.cennikCena}>
-            200 zł <small>/ mies.</small>
-          </p>
-          <p className={s.cennikOszcz}>&nbsp;</p>
-          <button type="button" className={`${s.btn} ${s.btnJasny}`} onClick={onDodaj}>
-            Dodaj ogłoszenie
-          </button>
-          <ul className={s.cennikCechy}>
-            {cechy.map((c) => (
-              <li key={c}>{c}</li>
-            ))}
-          </ul>
-        </div>
+            <tr className={s.cennikWierszAkcja}>
+              <td />
+              <td className={s.cennikKolPromo}>
+                {pierwszaWykorzystana ? (
+                  <button type="button" className={s.btn} disabled>
+                    Promocja wykorzystana
+                  </button>
+                ) : (
+                  <a className={s.btn} href={linkPromo}>
+                    Zapłać {cena} zł
+                  </a>
+                )}
+              </td>
+              <td>
+                <a className={`${s.btn} ${s.btnJasny}`} href={linkRegularny}>
+                  Zapłać 200 zł
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );
