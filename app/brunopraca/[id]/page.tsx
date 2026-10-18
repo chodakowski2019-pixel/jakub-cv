@@ -11,6 +11,7 @@ import { Nav } from "@/components/bruno/praca/nav";
 import s from "@/components/bruno/praca/praca.module.css";
 import { CENA_MIESIAC, KLAUZULA_SALESBRUNO, dniTemu, ofertaPublicznaLubFirmy, ofertyWidoczne, podgladWszystkich, podobne } from "@/lib/bruno/praca/oferty";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
+import { strukturaOpisu } from "@/lib/bruno/praca/opis";
 
 // 17.10 (USER_001): oferta pod salesbruno.com/praca/<id>, układ jak Pracuj.pl. Aktywna = dla każdego.
 // Nieaktywna = tylko z linku w mailu do firmy (?k=<token>): pasek „Aktywuj za 50 zł / Usuń”.
@@ -89,6 +90,7 @@ export default async function Page({ params, searchParams }: Props) {
   const data = (d: Date) => `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear()}`;
   const miasto = o.miasto || o.wojewodztwo;
   const ofertFirmy = ofertyWidoczne(podglad || wlasciciel).filter((x) => x.firma === o.firma).length;
+  const struktura = o.zFirmy ? null : strukturaOpisu(o.opis, o.stanowisko);
   const maSekcje = o.obowiazki.length + o.wymagania.length + o.oferujemy.length > 0;
 
   const pigulki: [string, string][] = [
@@ -174,7 +176,16 @@ export default async function Page({ params, searchParams }: Props) {
 
           <section className={s.oferta}>
             <p className={s.etykietaSekcji}>Opis stanowiska</p>
-            {o.opis && (o.zFirmy ? <Tekst tekst={o.opis} lead /> : <div className={s.tekst}><p>{`${o.opis.replace(/\s*\S*$/, "")}…`}</p></div>)}
+            {o.opis && o.zFirmy && <Tekst tekst={o.opis} lead />}
+            {o.opis && !o.zFirmy && struktura && (
+              // 18.10 (USER_001): opis z Adzuna rozbity szablonem na sekcje i punkty (lib/bruno/praca/opis.ts).
+              <div className={s.tekst}>
+                {struktura.lead && <p className={s.tekstLead}>{struktura.lead}{struktura.sekcje.length ? "" : struktura.uciety ? "…" : ""}</p>}
+                {struktura.sekcje.map((x) => (
+                  <Sekcja key={x.tytul} tytul={x.tytul} punkty={x.punkty} />
+                ))}
+              </div>
+            )}
             {maSekcje && (
               <div className={s.tekst}>
                 <Sekcja tytul="Twój zakres obowiązków" punkty={o.obowiazki} />
