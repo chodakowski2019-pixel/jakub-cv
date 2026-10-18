@@ -24,6 +24,10 @@ type Krok = {
   przejdz?: { tekst: [string, string]; adres: string };
   /** Ostatni krok przed rozmową: chmurka znika, przewodnik wraca po rozmowie (ocena). */
   przycisk?: [string, string];
+  /** 18.10: krok bez „Dalej”: kończy się sam, gdy na stronie pojawi się ten selektor (np. oferta wczytana). */
+  czekaNa?: string;
+  /** Link „pomiń ten krok” (np. „Nie mam strony”). */
+  pominKrok?: [string, string];
 };
 
 const KROKI: Krok[] = [
@@ -43,9 +47,19 @@ const KROKI: Krok[] = [
     cel: ['[data-tour="oferta"]'],
     tytul: ["Load your offer", "Wczytaj ofertę"],
     tekst: [
-      "Paste your website address or pick a PDF and click Load. I'll fill in the fields below. Then we check them one by one.",
-      "Wklej adres swojej strony albo wybierz PDF i kliknij Wczytaj. Wypełnię pola poniżej. Potem sprawdzimy je po kolei.",
+      "Paste your website address or pick a PDF. I'll read it and fill in the fields below.",
+      "Wklej adres swojej strony albo wybierz PDF. Przeczytam go i wypełnię pola poniżej.",
     ],
+  },
+  {
+    // 18.10 (USER_001): po wpisaniu adresu osobny krok „kliknij Wczytaj”, dalej dopiero po wczytaniu.
+    id: "wczytaj",
+    sciezka: "/bruno/dostosuj",
+    cel: ['[data-tour="wczytaj"]'],
+    tytul: ["Click Load", "Kliknij Wczytaj"],
+    tekst: ["Reading takes about 30 seconds. Wait until it's done, then we move on.", "Czytanie trwa ok. 30 sekund. Poczekaj do końca, wtedy idziemy dalej."],
+    czekaNa: '[data-tour="oferta"][data-import="ok"]',
+    pominKrok: ["I don't have a website, I'll type it in", "Nie mam strony, wpiszę sam"],
   },
   {
     id: "produkt",
@@ -175,6 +189,17 @@ const KROKI: Krok[] = [
     tekst: ["Type it or say it out loud, then click Check. The coach scores it and shows a model answer.", "Napisz albo powiedz głosem, potem kliknij Sprawdź. Trener oceni i pokaże wzór odpowiedzi."],
   },
   {
+    // 18.10 (USER_001): na fiszkach informacja, że powtórki są bardzo ważne.
+    id: "powtorki",
+    sciezka: "/bruno/trening",
+    cel: ['[data-tour="fiszka"]'],
+    tytul: ["Reviews matter most", "Powtórki są najważniejsze"],
+    tekst: [
+      "Reviews are what make your reps remember. Without them, most of what they practice is gone within a month. I decide when each card comes back.",
+      "Powtórki są bardzo ważne: dzięki nim handlowcy utrwalają wiedzę. Bez powtórek większość tego, co przećwiczyli, znika w miesiąc. Sam pilnuję, kiedy która fiszka ma wrócić.",
+    ],
+  },
+  {
     id: "koniec",
     sciezka: "/bruno/trening",
     tytul: ["Bruno for your whole team", "Bruno dla całego zespołu"],
@@ -244,6 +269,10 @@ export default function ProwadzenieDemo({ email }: { email: string }) {
     let el: HTMLElement | null = null;
     let przewiniety = false;
     const mierz = () => {
+      if (krok.czekaNa && document.querySelector(krok.czekaNa)) {
+        oznacz([krok.id]);
+        return;
+      }
       el = znajdz(krok.cel);
       if (!el) {
         setGotowy(false);
@@ -266,10 +295,14 @@ export default function ProwadzenieDemo({ email }: { email: string }) {
       window.removeEventListener("resize", mierz);
       window.removeEventListener("scroll", mierz);
     };
-  }, [krok]);
+  }, [krok, oznacz]);
 
   // Pozycja chmurki: pod celem, a gdy brak miejsca, nad nim. Bez celu = środek ekranu.
   const [okno, setOkno] = useState({ w: 1024, h: 768 });
+  const [wysokoscChmurki, setWysokoscChmurki] = useState(0);
+  const chmurka = useCallback((el: HTMLDivElement | null) => {
+    if (el) setWysokoscChmurki(el.offsetHeight);
+  }, []);
   useLayoutEffect(() => {
     const licz = () => setOkno({ w: window.innerWidth, h: window.innerHeight });
     licz();
@@ -311,7 +344,12 @@ export default function ProwadzenieDemo({ email }: { email: string }) {
     const pod = ramka.top + ramka.height + MARGINES;
     const miejscePod = okno.h - pod;
     const left = Math.min(Math.max(16, ramka.left + ramka.width / 2 - szer / 2), okno.w - szer - 16);
-    styl = miejscePod > 220 || ramka.top < 240 ? { top: Math.min(pod, okno.h - 240), left, width: szer } : { bottom: okno.h - ramka.top + MARGINES, left, width: szer };
+    // 18.10: wysokość chmurki mierzona (wysokoscChmurki), chmurka zawsze cała na ekranie.
+    // Kolejno: pod celem → nad celem → przyklejona do dołu ekranu (cel wysoki jak fiszka).
+    const h = wysokoscChmurki || 240;
+    const nad = ramka.top - MARGINES - h;
+    const top = miejscePod >= h + 16 ? pod : nad >= 16 ? nad : Math.max(16, okno.h - h - 16);
+    styl = { top, left, width: szer };
   } else {
     styl = { top: "50%", left: "50%", width: szer, transform: "translate(-50%, -50%)" };
   }
@@ -340,9 +378,11 @@ export default function ProwadzenieDemo({ email }: { email: string }) {
         <div className="fixed inset-0" style={{ background: "rgba(0,0,0,0.6)" }} />
       )}
       <div
+        ref={chmurka}
+        key={krok.id}
         role="dialog"
         aria-label={t(...krok.tytul)}
-        className="fixed pointer-events-auto rounded-2xl shadow-2xl p-5 flex flex-col gap-3 transition-[top,left,bottom] duration-300 motion-reduce:transition-none"
+        className="fixed pointer-events-auto rounded-2xl shadow-2xl p-5 flex flex-col gap-3 transition-[top,left] duration-300 motion-reduce:transition-none"
         // Kolory inline: motyw panelu (czarno-złoty) nadpisuje klasy bg-white / text-slate-*.
         style={{ ...styl, background: "#ffffff", color: "#0b0b0b", border: "1px solid rgba(212,175,90,0.6)", backdropFilter: "none" }}
       >
@@ -356,10 +396,17 @@ export default function ProwadzenieDemo({ email }: { email: string }) {
         </div>
         <p className="text-[17px] font-semibold leading-snug" style={{ color: "#0b0b0b" }}>{t(...krok.tytul)}</p>
         <p className="text-[15px] leading-relaxed" style={{ color: "#4a4a4a" }}>{t(...krok.tekst)}</p>
-        <div className="flex justify-end">
-          <button type="button" onClick={dalej} className="rounded-full text-sm font-semibold px-5 py-2.5 active:scale-[0.97] transition-transform" style={{ background: "#0b0b0b", color: "#ffffff" }}>
+        <div className="flex items-center justify-between gap-3">
+          {krok.pominKrok ? (
+            <button type="button" onClick={() => oznacz([krok.id])} className="text-xs underline text-left" style={{ color: "#8a8a8a", background: "none" }}>
+              {t(...krok.pominKrok)}
+            </button>
+          ) : (
+            <span />
+          )}
+          {!krok.czekaNa && <button type="button" onClick={dalej} className="rounded-full text-sm font-semibold px-5 py-2.5 active:scale-[0.97] transition-transform" style={{ background: "#0b0b0b", color: "#ffffff" }}>
             {tekstPrzycisku}
-          </button>
+          </button>}
         </div>
       </div>
     </div>,

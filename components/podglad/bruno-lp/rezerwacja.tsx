@@ -37,7 +37,8 @@ const T = {
     // 18.10 (USER_001): spotkanie ONLINE (było: rozmowa telefoniczna). Telefon zostaje w formularzu do kontaktu.
     telInfo: (_tel: string) => "Online meeting, 30 minutes. I will send you the link by email.",
     wybierz: "Pick a time for your online meeting",
-    okTel: "The meeting link will come by email. Your phone:",
+    okLink: "The meeting link will come by email.",
+    okTel: "Your phone:",
     email: "Work email *",
     warn: "Use an email on your company domain.",
     tel: "Phone *",
@@ -73,7 +74,8 @@ const T = {
     produktNp: "np. fotowoltaika dla domów",
     telInfo: (_tel: string) => "Spotkanie online, 30 minut. Link wyślę mailem.",
     wybierz: "Wybierz termin spotkania online",
-    okTel: "Link do spotkania przyjdzie mailem. Twój telefon:",
+    okLink: "Link do spotkania przyjdzie mailem.",
+    okTel: "Twój telefon:",
     email: "Firmowy e-mail *",
     warn: "Podaj e-mail w domenie firmy.",
     tel: "Telefon *",
@@ -258,7 +260,8 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
             {pelna(gotowe)}
           </p>
           <p className={s.okText} style={{ marginTop: 22 }}>
-            {x.okTel} <b>{telPelny}</b>
+            {/* 18.10 (USER_001): na telefonie w dwóch liniach. */}
+            {x.okLink} <span className="block sm:inline">{x.okTel} <b>{telPelny}</b></span>
           </p>
           <p className={s.okText}>
             {x.okB} <b>{f.email}</b>

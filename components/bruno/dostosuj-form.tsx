@@ -179,7 +179,8 @@ export default function DostosujForm({ start, oferta }: { start: Konfig; oferta:
   return (
     <form onSubmit={(e) => e.preventDefault()} className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-8">
       {/* 0. Oferta ze strony / PDF */}
-      <section data-tour="oferta" className="flex gap-4">
+      {/* 18.10: data-import = stan wczytywania; przewodnik demo czeka na „ok”, zanim pójdzie dalej. */}
+      <section data-tour="oferta" data-import={importStan} className="flex gap-4">
         <span className="hidden sm:grid shrink-0 size-8 place-items-center rounded-full bg-slate-900 text-white text-sm font-bold bruno-h2" aria-hidden>
           {oferta ? "AI" : "🔒"}
         </span>
@@ -211,13 +212,15 @@ export default function DostosujForm({ start, oferta }: { start: Konfig; oferta:
                   disabled={importStan === "czyta"}
                 />
                 <input id="oferta-plik" ref={plik} type="file" accept="application/pdf" className="bruno-pole flex-1 text-sm" onChange={importuj} disabled={importStan === "czyta"} />
-                {importStan === "czyta" ? (
-                  <KolkoPostepu etykieta={t("Reading", "Czytam")} />
-                ) : (
-                  <button type="button" onClick={importuj} className="bruno-przycisk-2 whitespace-nowrap">
-                    {t("Import", "Wczytaj")}
-                  </button>
-                )}
+                <span data-tour="wczytaj" className="inline-flex">
+                  {importStan === "czyta" ? (
+                    <KolkoPostepu etykieta={t("Reading", "Czytam")} />
+                  ) : (
+                    <button type="button" onClick={importuj} className="bruno-przycisk-2 whitespace-nowrap">
+                      {t("Import", "Wczytaj")}
+                    </button>
+                  )}
+                </span>
               </div>
               {importStan === "blad" && importBlad && <p className="text-sm text-red-700 mt-2">{importBlad}</p>}
               {importStan === "ok" && (
