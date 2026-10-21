@@ -2476,6 +2476,8 @@
   .lepki .btnDark {
     width: 100%;
     margin-top: 0;
+    /* 21.10 (USER_001): pogrubiony. */
+    font-weight: 700;
   }
   .navCta {
     display: none;

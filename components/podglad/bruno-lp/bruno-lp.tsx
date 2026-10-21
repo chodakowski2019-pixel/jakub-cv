@@ -35,6 +35,8 @@ type Teksty = {
   korzysc3?: { liczba: string; tytul: string; zrodlo: string };
   ctaH: [string, string];
   ctaBtn: string;
+  /** 21.10 (USER_001): przyklejony przycisk na telefonie, inny tekst niż reszta, pogrubiony. */
+  lepkiCta: string;
   ctaBok: string;
   stopka: string;
 };
@@ -62,6 +64,7 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Give your team Bruno.", "Start with one month."],
     ctaBtn: "I want to try Bruno",
+    lepkiCta: "Book a 20-minute demo",
     // 21.10 (USER_001): przyciski prowadzą do /demo (kalendarz spotkania online), nie do formularza prośby o dostęp.
     ctaBok: "Pick a time. In a 20-minute online meeting I show you Bruno live on your team's toughest objection.",
     stopka: "AI sales practice for teams",
@@ -87,6 +90,7 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Practice with Bruno.", "3 calls free."],
     ctaBtn: "I want free access",
+    lepkiCta: "Start free",
     ctaBok: "Your first 3 calls with Bruno are free. No card.",
     stopka: "AI sales practice for reps",
   },
@@ -113,6 +117,7 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Daj zespołowi Bruno.", "Sprawdź bezpłatnie"],
     ctaBtn: "Chcę wypróbować Bruno",
+    lepkiCta: "Umów 20-minutowe demo",
     ctaBok: "Wybierz termin. Na 20-minutowym spotkaniu online pokażę Ci Bruno na żywo na najtrudniejszej obiekcji Twojego zespołu.",
     stopka: "Trening sprzedaży z AI dla zespołów",
   },
@@ -137,6 +142,7 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Ćwicz z Bruno.", "3 rozmowy za darmo."],
     ctaBtn: "Chcę bezpłatny dostęp",
+    lepkiCta: "Zacznij bezpłatnie",
     ctaBok: "Pierwsze 3 rozmowy z Bruno są za darmo. Bez karty.",
     stopka: "Trening sprzedaży z AI dla handlowców",
   },
@@ -701,7 +707,7 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
           {/* 9.10 (USER_001): przyklejony przycisk zapisu na telefonie. */}
           <div className={s.lepki}>
             <button type="button" className={`${s.btnDark} ${s.btnBig}`} onClick={otworzFormularz(5)}>
-              {t.ctaBtn}
+              {t.lepkiCta}
             </button>
           </div>
 
