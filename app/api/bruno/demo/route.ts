@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { supabaseAdmin } from "@/lib/supabase";
-import { firmowyEmail } from "@/lib/firmowy-email";
 import { SKRZYNKA_JAKUBA } from "@/lib/bruno/mail";
 import { DEMO_MINUT, ORGANIZATOR_DEMO, slotyMiesiaca, zaproszenieIcs } from "@/lib/bruno/demo-terminy";
 import { mailPotwierdzenieDemo } from "@/lib/bruno/mail-demo";
@@ -61,8 +60,9 @@ export async function POST(req: Request) {
   const produkt = String(b.produkt ?? "").trim().slice(0, 200) || null;
   const start = new Date(String(b.start ?? ""));
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !firmowyEmail(email))
-    return NextResponse.json({ blad: T("Use your work email (not Gmail, Yahoo, Outlook.com).", "Podaj firmowy e-mail (nie Gmail, Yahoo, Outlook.com).") }, { status: 400 });
+  // 21.10 (USER_001): każdy poprawny e-mail przechodzi (także gmail), etykieta na stronie zostaje „Firmowy e-mail”.
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return NextResponse.json({ blad: T("Enter a valid email.", "Podaj poprawny e-mail.") }, { status: 400 });
   if (telefon.replace(/\D/g, "").length < 7) return NextResponse.json({ blad: T("Enter a valid phone number.", "Podaj poprawny numer telefonu.") }, { status: 400 });
   if (Number.isNaN(start.getTime()) || !slotyMiesiaca().includes(start.toISOString()))
     return NextResponse.json({ blad: T("This time is not available. Pick another one.", "Ten termin jest niedostępny. Wybierz inny.") }, { status: 400 });

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { track } from "@vercel/analytics";
-import { firmowyEmail } from "@/lib/firmowy-email";
 import s from "./bruno-lp.module.css";
 import TelefonFlaga, { KRAJE } from "./telefon-flaga";
 import { MIESIECY_W_PRZOD } from "@/lib/bruno/demo-terminy";
@@ -38,9 +37,8 @@ const T = {
     rola: "Your role *",
     ilu: "How many sales reps do you have? *",
     np: "e.g. 12",
-    zgoda: "By clicking “Book” you accept the",
+    zgoda: "I accept the",
     polityka: "privacy policy",
-    kontaktH: "Where do I send the meeting link?",
     dalej: "Next",
     braki: "Fill in the fields marked in red.",
     book: "Book",
@@ -77,9 +75,8 @@ const T = {
     rola: "Stanowisko *",
     ilu: "Ilu handlowców masz w zespole? *",
     np: "np. 12",
-    zgoda: "Klikając „Umawiam”, akceptujesz",
+    zgoda: "Akceptuję",
     polityka: "politykę prywatności",
-    kontaktH: "Gdzie wysłać link do spotkania?",
     dalej: "Dalej",
     braki: "Uzupełnij pola zaznaczone na czerwono.",
     book: "Umawiam",
@@ -172,7 +169,8 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
   const godz = (iso: string) => new Date(iso).toLocaleTimeString(x.locale, { hour: "2-digit", minute: "2-digit", timeZone: strefa });
   const krotkaData = (k: string) => new Date(`${k}T12:00:00`).toLocaleDateString(x.locale, { day: "numeric", month: "short" });
   const pelna = (iso: string) => `${new Date(iso).toLocaleDateString(x.locale, { weekday: "long", day: "numeric", month: "long", timeZone: strefa })}, ${godz(iso)}`;
-  const emailZly = f.email.includes("@") && !firmowyEmail(f.email);
+  // 21.10 (USER_001): etykieta „Firmowy e-mail”, ale prywatny (gmail itp.) też przechodzi, bez ostrzeżenia.
+  const emailZly = false;
   // 21.10 (USER_001): przycisk „Dalej” zawsze aktywny; po kliknięciu brakujące pola = czerwony tytuł
   // + przewinięcie do pierwszego. Było: przycisk wyłączony bez stanowiska/zgody i nic nie mówił dlaczego.
   const [probowal, setProbowal] = useState(false);
@@ -180,6 +178,7 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
   const braki = {
     "demo-email": !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim()) || emailZly,
     "demo-tel": f.telefon.replace(/\D/g, "").length < 6,
+    "demo-zgoda": !f.zgoda,
   };
   type Pole = keyof typeof braki;
   const brak = (k: Pole) => probowal && braki[k];
@@ -402,10 +401,7 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
         )}
         {krok === 3 && start && (
           <form onSubmit={zarezerwuj} noValidate className={s.form}>
-            <div className={`${s.kalNaglowek} ${s.kalNaglowekKolumna}`}>
-              <p className={s.kalMiesiac}>{pelna(start)}</p>
-              <span className={s.kalInfo}>{x.kontaktH}</span>
-            </div>
+            {/* 21.10 (USER_001): bez nagłówka (data, „Gdzie wysłać link”), same pola. */}
             <div>
               <label className={etykieta("demo-email")} htmlFor="demo-email">{x.email}</label>
               <input id="demo-email" required type="email" autoComplete="email" aria-invalid={emailZly} className={`${s.input} ${emailZly ? s.inputWarn : ""}`} placeholder={jezyk === "pl" ? "adam@twojafirma.pl" : "james@yourcompany.com"} value={f.email} onChange={pole("email")} />
@@ -416,6 +412,14 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
               <TelefonFlaga id="demo-tel" kraj={f.kraj} numer={f.telefon} onKraj={(k) => setF((v) => ({ ...v, kraj: k }))} onNumer={(n) => setF((v) => ({ ...v, telefon: n }))} placeholder={f.kraj === "US" || f.kraj === "CA" ? "(201) 555-0123" : f.kraj === "GB" ? "7700 900000" : f.kraj === "PL" ? "600 100 200" : "123 456 789"} />
             </div>
             <input tabIndex={-1} autoComplete="off" aria-hidden="true" value={f.www} onChange={pole("www")} style={{ position: "absolute", left: "-9999px", width: 1, height: 1 }} />
+            {/* 21.10 (USER_001): checkbox z polityką prywatności (zamiast zdania pod przyciskiem). */}
+            <label className={`${s.consent} ${brak("demo-zgoda") ? s.consentBrak : ""}`}>
+              <input id="demo-zgoda" type="checkbox" required checked={f.zgoda} onChange={(e) => setF((v) => ({ ...v, zgoda: e.target.checked }))} />
+              <span>
+                {x.zgoda}{" "}
+                <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>{x.polityka}</a>.
+              </span>
+            </label>
             {blad && <p className={s.err}>{blad}</p>}
             {probowal && Object.values(braki).some(Boolean) && <p className={s.err} role="alert">{x.braki}</p>}
             <div className={s.kalAkcje}>
@@ -428,10 +432,6 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
                 {wysylam ? x.zapisuje : x.book}
               </button>
             </div>
-            <p className={s.kalInfo} style={{ textAlign: "center" }}>
-              {x.zgoda}{" "}
-              <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>{x.polityka}</a>.
-            </p>
           </form>
         )}
       </div>
