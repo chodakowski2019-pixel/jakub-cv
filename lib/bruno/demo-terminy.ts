@@ -50,9 +50,12 @@ function slotyJednegoMiesiaca(rok: number, miesiac: number, odDnia: number, gran
   return sloty;
 }
 
+/** 21.10 (USER_001): w kalendarzu bieżący miesiąc + 2 następne, przeklikiwane strzałkami. */
+export const MIESIECY_W_PRZOD = 3;
+
 /**
- * Wolne sloty, bez filtra zajętości: bieżący miesiąc (czas UK), a w ostatnich
- * DNI_PRZED_KONCEM dniach miesiąca także cały następny miesiąc.
+ * Wolne sloty, bez filtra zajętości: od dziś do końca bieżącego miesiąca (czas UK)
+ * + pełne MIESIECY_W_PRZOD - 1 kolejne miesiące. Było (9.10): następny miesiąc dopiero 7 dni przed końcem.
  */
 export function slotyMiesiaca(teraz = new Date()): string[] {
   const c = Object.fromEntries(
@@ -61,11 +64,10 @@ export function slotyMiesiaca(teraz = new Date()): string[] {
   const rok = Number(c.year);
   const miesiac = Number(c.month) - 1;
   const dzien = Number(c.day);
-  const ostatni = new Date(Date.UTC(rok, miesiac + 1, 0)).getUTCDate();
   const granica = teraz.getTime() + MIN_GODZIN_WCZESNIEJ * 3600_000;
   const sloty = slotyJednegoMiesiaca(rok, miesiac, dzien, granica);
-  if (ostatni - dzien < DNI_PRZED_KONCEM) {
-    const nast = new Date(Date.UTC(rok, miesiac + 1, 1));
+  for (let i = 1; i < MIESIECY_W_PRZOD; i++) {
+    const nast = new Date(Date.UTC(rok, miesiac + i, 1));
     sloty.push(...slotyJednegoMiesiaca(nast.getUTCFullYear(), nast.getUTCMonth(), 1, granica));
   }
   return sloty;
@@ -74,7 +76,8 @@ export function slotyMiesiaca(teraz = new Date()): string[] {
 /** Organizator w zaproszeniach .ics = skrzynka, z której wychodzą maile Bruno (ten sam adres co nadawca, inaczej Outlook/Gmail traktują zaproszenie podejrzliwie). */
 export const ORGANIZATOR_DEMO = "hello@jakubchodakowski.com";
 /** 12.10 (E19): link do pliku .ics działa tylko dla terminów do tylu dni w przód. */
-export const ICS_DNI_W_PRZOD = 60;
+// 21.10: 100 dni, bo kalendarz pokazuje 3 miesiące.
+export const ICS_DNI_W_PRZOD = 100;
 
 /**
  * 12.10 (E19): termin z linku `?termin=` w mailu. Przyjmujemy tylko ISO UTC (jak `Date#toISOString`),

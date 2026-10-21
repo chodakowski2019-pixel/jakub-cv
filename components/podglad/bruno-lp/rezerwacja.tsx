@@ -5,6 +5,7 @@ import { track } from "@vercel/analytics";
 import { firmowyEmail } from "@/lib/firmowy-email";
 import s from "./bruno-lp.module.css";
 import TelefonFlaga, { KRAJE } from "./telefon-flaga";
+import { MIESIECY_W_PRZOD } from "@/lib/bruno/demo-terminy";
 
 // Zapis na 30-minutową rozmowę z demo (USER_001 9.10), wersja dla firm (/brunobusiness).
 // 14.10 (USER_001): rozmowa TELEFONICZNA; otwiera ją link „Chcesz Bruno dla zespołu?” na /wspolpraca | /business; + pola firma i produkt.
@@ -27,7 +28,7 @@ const T = {
     produkt: "What do you sell? *",
     produktNp: "e.g. solar panels for homes",
     // 18.10 (USER_001): spotkanie ONLINE (było: rozmowa telefoniczna). Telefon zostaje w formularzu do kontaktu.
-    telInfo: (_tel: string) => "Online meeting, 20 minutes. I will send you the link by email.",
+    telInfo: (_tel: string) => "Online meeting, 20 minutes.",
     wybierz: "Pick a time for your online meeting",
     okLink: "The meeting link will come by email.",
     okTel: "Your phone:",
@@ -66,7 +67,7 @@ const T = {
     firma: "Nazwa firmy *",
     produkt: "Co sprzedajecie? *",
     produktNp: "np. fotowoltaika dla domów",
-    telInfo: (_tel: string) => "Spotkanie online, 20 minut. Link wyślę mailem.",
+    telInfo: (_tel: string) => "Spotkanie online, 20 minut.",
     wybierz: "Wybierz termin spotkania online",
     okLink: "Link do spotkania przyjdzie mailem.",
     okTel: "Twój telefon:",
@@ -268,7 +269,6 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
 
   // Siatka miesiąca od poniedziałku. Bieżący albo następny (jeśli ma terminy).
   const dzis = new Date();
-  const maNastepny = [...poDniach.keys()].some((k) => Number(k.slice(5, 7)) - 1 !== dzis.getMonth());
   const pierwszy = new Date(dzis.getFullYear(), dzis.getMonth() + przesuniecie, 1);
   const poczatek = new Date(pierwszy);
   poczatek.setDate(1 - ((pierwszy.getDay() + 6) % 7));
@@ -288,6 +288,9 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
       <div className={s.formHead}>
         {/* 9.10 (USER_001): bez nagłówka nad krokami. */}
       </div>
+
+      {/* 21.10 (USER_001): „Wybierz termin spotkania online” nad paskiem kroków, tylko w kroku 1. */}
+      {krok === 1 && <h1 className={`${s.kalTytul} ${s.kalTytulGora}`}>{x.wybierz}</h1>}
 
       {/* Pasek kroków: zrobione klikalne (cofanie), bieżący wyróżniony. */}
       <ol className={s.kroki3} aria-label={jezyk === "pl" ? "Kroki" : "Steps"}>
@@ -316,8 +319,6 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
       <div className={s.formCard}>
         {krok === 1 && (
           <div className={s.form}>
-            {/* 14.10 (USER_001): napis nad kalendarzem. */}
-            <h2 className={s.kalTytul}>{x.wybierz}</h2>
             {sloty === null ? (
               <p className={s.okText}>{x.laduje}</p>
             ) : poDniach.size === 0 ? (
@@ -325,13 +326,14 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
             ) : (
               <div className={s.kal}>
                 <div className={s.kalNaglowek}>
-                  {maNastepny && (
-                    <button type="button" className={s.kalNav} disabled={przesuniecie === 0} onClick={() => setPrzesuniecie(0)} aria-label={jezyk === "pl" ? "Poprzedni miesiąc" : "Previous month"}>‹</button>
-                  )}
+                  {/* 21.10 (USER_001): strzałki w kółkach, bieżący miesiąc + 2 następne (MIESIECY_W_PRZOD). */}
+                  <button type="button" className={s.kalNav} disabled={przesuniecie === 0} onClick={() => setPrzesuniecie((p) => Math.max(0, p - 1))} aria-label={jezyk === "pl" ? "Poprzedni miesiąc" : "Previous month"}>
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M15 6l-6 6 6 6" /></svg>
+                  </button>
                   <p className={s.kalMiesiac}>{nazwaMiesiaca}</p>
-                  {maNastepny && (
-                    <button type="button" className={s.kalNav} disabled={przesuniecie === 1} onClick={() => setPrzesuniecie(1)} aria-label={jezyk === "pl" ? "Następny miesiąc" : "Next month"}>›</button>
-                  )}
+                  <button type="button" className={s.kalNav} disabled={przesuniecie >= MIESIECY_W_PRZOD - 1} onClick={() => setPrzesuniecie((p) => Math.min(MIESIECY_W_PRZOD - 1, p + 1))} aria-label={jezyk === "pl" ? "Następny miesiąc" : "Next month"}>
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M9 6l6 6-6 6" /></svg>
+                  </button>
                 </div>
                 <div className={s.kalSiatka}>
                   {x.dniTyg.map((d) => (
@@ -370,7 +372,7 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
           <div className={s.form}>
             <div className={`${s.kalNaglowek} ${s.kalNaglowekKolumna}`}>
               <p className={s.kalMiesiac}>{dzien && new Date(`${dzien}T12:00:00`).toLocaleDateString(x.locale, { weekday: "long", day: "numeric", month: "long" })}</p>
-              <span className={s.kalInfo}>{x.strefa}</span>
+              {/* 21.10 (USER_001): bez „Godziny w czasie polskim” i bez „Link wyślę mailem”. */}
               <span className={s.kalInfo}>{x.telInfo(telPelny)}</span>
             </div>
             {godzinyDnia.length === 0 ? (

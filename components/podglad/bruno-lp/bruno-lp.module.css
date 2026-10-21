@@ -1963,19 +1963,23 @@
   justify-content: center;
   gap: 14px;
 }
+/* 21.10 (USER_001): strzałki miesięcy w kółkach (obwódka, jak przycisk „wstecz”). */
 .kalNav {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
-  border: 0;
-  background: rgba(0, 0, 0, 0.06);
-  font-size: 18px;
-  line-height: 1;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  background: #fff;
   color: var(--ink);
   cursor: pointer;
+  padding: 0;
 }
 .kalNav:hover {
-  background: rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.05);
 }
 .kalNav:disabled {
   opacity: 0.3;
@@ -2839,6 +2843,12 @@
   letter-spacing: -0.02em;
   text-align: center;
   margin: 0;
+}
+/* 21.10 (USER_001): tytuł nad paskiem kroków (krok 1). */
+.kalTytulGora {
+  margin: 0 auto 22px;
+  padding: 0 16px;
+  max-width: 560px;
 }
 
 /* 14.10 (USER_001, telefon): „Zobacz Bruno w środku” jak na komputerze: laptop przyklejony u góry, pod nim kroki,
