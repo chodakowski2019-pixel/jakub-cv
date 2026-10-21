@@ -14,7 +14,7 @@ import { jezykZHosta, type Jezyk } from "@/lib/bruno/domeny";
 // + wersja EN. Język z domeny: salesbruno.com = EN, salesbruno.pl i jakubchodakowski.com = PL.
 // Dwie wersje jako dane (TRESC), jeden układ. Treść EN = tłumaczenie PL, bez zmian merytorycznych.
 
-const AKTUALIZACJA: Record<Jezyk, string> = { pl: "12 października 2026", en: "October 12, 2026" };
+const AKTUALIZACJA: Record<Jezyk, string> = { pl: "21 października 2026", en: "October 21, 2026" };
 
 async function jezykStrony(): Promise<Jezyk> {
   const h = await headers();
@@ -152,6 +152,14 @@ const TRESC: Record<Jezyk, Tresc> = {
               polityka prywatności
             </a>
             .
+          </>,
+          <>
+            <b>Tryb poufny dla firm.</b> Firma z pełnym dostępem może wybrać tryb poufny dla wszystkich kont swojego
+            zespołu. W trybie poufnym nagranie dźwiękowe nie jest zapisywane, a transkrypcja jest usuwana zaraz po
+            wystawieniu oceny. Zostają wyłącznie ocena, komentarze trenera, metryki i statystyki treningu, bez treści
+            rozmowy. Tryb poufny włącza się na wniosek firmy złożony na adres kontaktowy i działa od kolejnej rozmowy
+            po jego włączeniu. Wcześniejsze nagrania i transkrypcje firma może usunąć zgodnie z pkt 7 i polityką
+            prywatności.
           </>,
         ],
       },
@@ -392,6 +400,14 @@ const TRESC: Record<Jezyk, Tresc> = {
               privacy policy
             </a>
             .
+          </>,
+          <>
+            <b>Confidential mode for companies.</b> A company with full access can choose confidential mode for all
+            of its team accounts. In confidential mode the audio recording is not saved and the transcript is deleted
+            right after the call is scored. Only the score, coach comments, metrics and training statistics remain,
+            without the content of the call. Confidential mode is enabled at the company’s request sent to the contact
+            address and applies from the next call after it is enabled. Earlier recordings and transcripts can be
+            deleted by the company as described in section 7 and in the privacy policy.
           </>,
         ],
       },
