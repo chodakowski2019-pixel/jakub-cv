@@ -9,12 +9,9 @@ import { mailPotwierdzenieDemo } from "@/lib/bruno/mail-demo";
 export const dynamic = "force-dynamic";
 
 // Zapis na 30-minutową rozmowę z demo Bruno (USER_001 9.10), strona /brunobusiness.
-// Kreator 3 kroki (jak Gabi, ale w kolejności USER_001): 1 dane → 2 dzień → 3 godzina.
+// 21.10 (USER_001): kreator 1 dzień → 2 godzina → 3 e-mail + telefon; POST na końcu = rezerwacja + maile.
 // GET   = wolne terminy (pon, śr, czw, 3 dziennie, do końca miesiąca).
-// POST  = krok 1: dane osobowe. Lead zapisany OD RAZU (status „lead”), USER_001 dostaje mail,
-//         nawet jeśli ktoś nie wybierze terminu (USER_001: „jak ktoś przejdzie do drugiego kroku,
-//         to się zapisze od razu”). Zwraca id.
-// PATCH = krok 3: { id, start } → status „umowione”, maile z zaproszeniem .ics.
+// POST  = { email, telefon, start } → status „umowione”, maile z zaproszeniem .ics. PATCH usunięty 21.10.
 // Link do rozmowy wideo: BRUNO_DEMO_LINK (pusty = USER_001 wysyła ręcznie).
 // Pola wg Negacza (minimum): imię, firmowy e-mail, telefon, stanowisko, liczba handlowców.
 // 14.10 (USER_001): + nazwa firmy i co sprzedają (kolumna produkt); rozmowa TELEFONICZNA, nie wideo (BRUNO_DEMO_LINK nieużywany).
@@ -42,92 +39,55 @@ export async function GET() {
   }
 }
 
-/** Krok 1: dane osobowe, zapis leada od razu. */
+/**
+ * 21.10 (USER_001): JEDEN zapis na końcu kreatora (1 dzień → 2 godzina → 3 e-mail + telefon).
+ * { email, telefon, start, jezyk, zrodlo } → od razu status „umowione” + maile z zaproszeniem .ics.
+ * Pola imie / firma / handlowcy / produkt / stanowisko = opcjonalne (z panelu demo przychodzą z konta).
+ * Było: POST = lead z 8 polami (status „lead”), PATCH = termin.
+ */
 export async function POST(req: Request) {
   const b = (await req.json().catch(() => ({}))) as Record<string, unknown>;
   const pl = b.jezyk === "pl";
   const T = (en: string, plT: string) => (pl ? plT : en);
-  if (String(b.www ?? "")) return NextResponse.json({ ok: true, id: null });
+  if (String(b.www ?? "")) return NextResponse.json({ ok: true });
 
   const imie = String(b.imie ?? "").trim().slice(0, 80);
   const email = String(b.email ?? "").trim().toLowerCase().slice(0, 120);
   const telefon = String(b.telefon ?? "").replace(/[^\d+]/g, "").slice(0, 20);
   const stanowisko = ROLE.includes(String(b.stanowisko)) ? String(b.stanowisko) : null;
-  const handlowcy = Math.round(Number(b.handlowcy));
+  const handlowcyN = Math.round(Number(b.handlowcy));
+  const handlowcy = Number.isFinite(handlowcyN) && handlowcyN >= 1 && handlowcyN <= 100000 ? handlowcyN : null;
   const nazwaFirmy = String(b.firma ?? "").trim().slice(0, 120);
-  const produkt = String(b.produkt ?? "").trim().slice(0, 200);
+  const produkt = String(b.produkt ?? "").trim().slice(0, 200) || null;
+  const start = new Date(String(b.start ?? ""));
 
-  if (imie.length < 2) return NextResponse.json({ blad: T("Enter your name.", "Podaj imię.") }, { status: 400 });
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !firmowyEmail(email))
     return NextResponse.json({ blad: T("Use your work email (not Gmail, Yahoo, Outlook.com).", "Podaj firmowy e-mail (nie Gmail, Yahoo, Outlook.com).") }, { status: 400 });
   if (telefon.replace(/\D/g, "").length < 7) return NextResponse.json({ blad: T("Enter a valid phone number.", "Podaj poprawny numer telefonu.") }, { status: 400 });
-  if (!stanowisko) return NextResponse.json({ blad: T("Choose your role.", "Wybierz stanowisko.") }, { status: 400 });
-  if (!Number.isFinite(handlowcy) || handlowcy < 1 || handlowcy > 100000)
-    return NextResponse.json({ blad: T("Enter how many sales reps you have.", "Podaj liczbę handlowców.") }, { status: 400 });
-  if (nazwaFirmy.length < 2) return NextResponse.json({ blad: T("Enter your company name.", "Podaj nazwę firmy.") }, { status: 400 });
-  if (produkt.length < 2) return NextResponse.json({ blad: T("Tell me what you sell.", "Napisz, co sprzedajecie.") }, { status: 400 });
-
-  const domena = email.split("@")[1] ?? null;
-  const firma = `${nazwaFirmy}${domena ? ` (${domena})` : ""}`;
-  const wiersz = { start: null, status: "lead", imie, email, telefon, stanowisko, handlowcy, firma, jezyk: pl ? "pl" : "en", zrodlo: String(b.zrodlo ?? "").slice(0, 60) || null };
-  let { data, error } = await supabaseAdmin.from("bruno_demo").insert({ ...wiersz, produkt }).select("id").single();
-  // 14.10: kolumna produkt z lib/bruno/sql/2026-10-14-demo-produkt.sql; bez niej zapis bez produktu (jest w mailu).
-  if (error && (error.code === "PGRST204" || error.code === "42703")) {
-    ({ data, error } = await supabaseAdmin.from("bruno_demo").insert(wiersz).select("id").single());
-  }
-  if (error || !data) {
-    console.error("[bruno demo] lead", error);
-    return NextResponse.json({ blad: T("Could not save. Try again.", "Nie udało się zapisać. Spróbuj ponownie.") }, { status: 500 });
-  }
-
-  try {
-    await resend()?.emails.send({
-      from: "Bruno AI <hello@jakubchodakowski.com>",
-      to: SKRZYNKA_JAKUBA,
-      replyTo: email,
-      subject: `LEAD Bruno (bez terminu jeszcze): ${imie}, ${nazwaFirmy}, ${handlowcy} handl.`,
-      html: `<h2>Nowy lead ze strony firm (krok 1 z 3)</h2><p>Zostawił dane, terminu jeszcze nie wybrał. Jeśli w ciągu kilku minut nie przyjdzie mail „DEMO Bruno”, zadzwoń albo napisz.</p><p><b>Imię:</b> ${esc(imie)}<br/><b>E-mail:</b> ${email}<br/><b>Telefon:</b> ${telefon}<br/><b>Stanowisko:</b> ${stanowisko}<br/><b>Handlowców:</b> ${handlowcy}<br/><b>Firma:</b> ${esc(firma)}<br/><b>Co sprzedają:</b> ${esc(produkt)}<br/><b>Język strony:</b> ${pl ? "PL" : "EN"}</p>`,
-    });
-  } catch (e) {
-    console.error("[bruno demo] mail lead", e);
-  }
-  return NextResponse.json({ ok: true, id: data.id });
-}
-
-/** Krok 3: wybór godziny → rezerwacja. */
-export async function PATCH(req: Request) {
-  const b = (await req.json().catch(() => ({}))) as Record<string, unknown>;
-  const pl = b.jezyk === "pl";
-  const T = (en: string, plT: string) => (pl ? plT : en);
-  const id = String(b.id ?? "");
-  const start = new Date(String(b.start ?? ""));
-  if (!/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ blad: T("Fill in your details first.", "Najpierw uzupełnij dane.") }, { status: 400 });
   if (Number.isNaN(start.getTime()) || !slotyMiesiaca().includes(start.toISOString()))
     return NextResponse.json({ blad: T("This time is not available. Pick another one.", "Ten termin jest niedostępny. Wybierz inny.") }, { status: 400 });
 
-  const { data, error } = await supabaseAdmin
-    .from("bruno_demo")
-    .update({ start: start.toISOString(), status: "umowione" })
-    .eq("id", id)
-    .eq("status", "lead")
-    .select("*")
-    .maybeSingle();
-  if (error) {
-    if (error.code === "23505") return NextResponse.json({ blad: T("Someone just booked this time. Pick another one.", "Ten termin właśnie się zajął. Wybierz inny.") }, { status: 409 });
+  const domena = email.split("@")[1] ?? null;
+  const firma = nazwaFirmy ? `${nazwaFirmy}${domena ? ` (${domena})` : ""}` : domena;
+  const wiersz = { start: start.toISOString(), status: "umowione", imie, email, telefon, stanowisko, handlowcy, firma, jezyk: pl ? "pl" : "en", zrodlo: String(b.zrodlo ?? "").slice(0, 60) || null };
+  let { data, error } = await supabaseAdmin.from("bruno_demo").insert({ ...wiersz, produkt }).select("*").single();
+  // 14.10: kolumna produkt z lib/bruno/sql/2026-10-14-demo-produkt.sql; bez niej zapis bez produktu.
+  if (error && (error.code === "PGRST204" || error.code === "42703")) {
+    ({ data, error } = await supabaseAdmin.from("bruno_demo").insert(wiersz).select("*").single());
+  }
+  if (error || !data) {
+    if (error?.code === "23505") return NextResponse.json({ blad: T("Someone just booked this time. Pick another one.", "Ten termin właśnie się zajął. Wybierz inny.") }, { status: 409 });
     console.error("[bruno demo] rezerwacja", error);
     return NextResponse.json({ blad: T("Could not book. Try again.", "Nie udało się zapisać. Spróbuj ponownie.") }, { status: 500 });
   }
-  if (!data) return NextResponse.json({ blad: T("This booking is already done. Refresh the page.", "Ta rezerwacja jest już zrobiona. Odśwież stronę.") }, { status: 409 });
 
   // Maile: błąd wysyłki nie cofa rezerwacji.
   try {
     const r = resend();
     if (r) {
-      // 14.10: rozmowa telefoniczna. 18.10 (USER_001): SPOTKANIE ONLINE, link Jakub wysyła sam przed spotkaniem.
-      const link = "";
+      // 18.10 (USER_001): SPOTKANIE ONLINE, link Jakub wysyła sam przed spotkaniem.
       const kiedyUK = new Intl.DateTimeFormat(pl ? "pl-PL" : "en-GB", { timeZone: "Europe/London", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(start);
       const kiedyPL = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(start);
-      // 9.10: mail do klienta = szablon w stylu LP (lib/bruno/mail-demo.ts).
       const m = mailPotwierdzenieDemo({ imie: data.imie, start: start.toISOString(), jezyk: pl ? "pl" : "en", telefon: null });
       const ics = zaproszenieIcs({ start: start.toISOString(), tytul: m.tytulKal, opis: m.opisKal, organizator: ORGANIZATOR_DEMO, uczestnik: data.email, uid: data.id, lokalizacja: null, miejsce: pl ? "Online (link w mailu)" : "Online (link by email)" });
       const zalacznik = [{ filename: "bruno-demo.ics", content: Buffer.from(ics).toString("base64") }];
@@ -140,17 +100,18 @@ export async function PATCH(req: Request) {
         text: m.text,
         attachments: zalacznik,
       });
+      const kto = [data.imie, data.firma, data.handlowcy ? `${data.handlowcy} handl.` : null].filter(Boolean).join(", ") || data.email;
       await r.emails.send({
         from: "Bruno AI <hello@jakubchodakowski.com>",
         to: SKRZYNKA_JAKUBA,
         replyTo: data.email,
-        subject: `SPOTKANIE ONLINE Bruno: ${data.imie}, ${data.firma}, ${data.handlowcy} handl., ${kiedyPL} (PL)`,
-        html: `<h2>Spotkanie ONLINE umówione: wyślij link (Meet / Zoom) na ${data.email}</h2><p><b>Kiedy:</b> ${kiedyPL} (czas PL) = ${kiedyUK} (UK)</p><p><b>Imię:</b> ${data.imie}<br/><b>E-mail:</b> ${data.email}<br/><b>Telefon:</b> ${data.telefon}<br/><b>Stanowisko:</b> ${data.stanowisko}<br/><b>Handlowców:</b> ${data.handlowcy}<br/><b>Firma:</b> ${esc(data.firma)}<br/><b>Co sprzedają:</b> ${esc(data.produkt ?? "w mailu LEAD")}</p><p>Przed rozmową: wczytaj stronę firmy w „Dostosuj Bruno” (moduł oferty), żeby Bruno grał ich klienta. Link do spotkania wysyłasz sam na ${data.email} (klient dostał info „link wyślę przed spotkaniem”). Telefon awaryjny: ${data.telefon}.</p>`,
+        subject: `SPOTKANIE ONLINE Bruno: ${kto}, ${kiedyPL} (PL)`,
+        html: `<h2>Spotkanie ONLINE umówione: wyślij link (Meet / Zoom) na ${data.email}</h2><p><b>Kiedy:</b> ${kiedyPL} (czas PL) = ${kiedyUK} (UK)</p><p><b>E-mail:</b> ${data.email}<br/><b>Telefon:</b> ${data.telefon}<br/><b>Imię:</b> ${esc(data.imie || "brak (formularz tylko e-mail + telefon)")}<br/><b>Firma:</b> ${esc(data.firma ?? "")}<br/><b>Stanowisko:</b> ${esc(data.stanowisko ?? "")}<br/><b>Handlowców:</b> ${data.handlowcy ?? ""}<br/><b>Co sprzedają:</b> ${esc(data.produkt ?? "")}<br/><b>Źródło:</b> ${esc(data.zrodlo ?? "")}</p><p>Przed spotkaniem: zadzwoń (${data.telefon}), zapytaj o zespół i obiekcję; wczytaj stronę firmy (${esc(domena ?? "")}) w „Dostosuj Bruno”, żeby Bruno grał ich klienta. Link do spotkania wysyłasz sam na ${data.email}.</p>`,
         attachments: zalacznik,
       });
     }
   } catch (e) {
     console.error("[bruno demo] mail", e);
   }
-  return NextResponse.json({ ok: true, start: start.toISOString() });
+  return NextResponse.json({ ok: true, id: data.id, start: start.toISOString() });
 }

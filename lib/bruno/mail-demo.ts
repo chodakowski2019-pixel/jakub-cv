@@ -26,7 +26,7 @@ const T = {
     zajawka: (kiedy: string) => `Your online meeting with Jakub is booked for ${kiedy} (UK time).`,
     h1: "Your meeting is booked",
     czasUK: "UK time",
-    hej: (imie: string) => `Hi ${imie},`,
+    hej: (imie: string) => (imie ? `Hi ${imie},` : "Hi,"),
     wstep: "Thanks for booking. Here is everything you need for our call.",
     dlugosc: "Length",
     minut: `${DEMO_MINUT_MAIL} minutes`,
@@ -54,7 +54,7 @@ const T = {
     zajawka: (kiedy: string) => `Spotkanie online z Jakubem umówione na ${kiedy} (czas polski).`,
     h1: "Spotkanie umówione",
     czasUK: "czas polski",
-    hej: (imie: string) => `Cześć ${imie},`,
+    hej: (imie: string) => (imie ? `Cześć ${imie},` : "Cześć,"),
     wstep: "Dzięki za zapis. Poniżej wszystko, czego potrzebujesz przed rozmową.",
     dlugosc: "Długość",
     minut: `${DEMO_MINUT_MAIL} minut`,
@@ -119,7 +119,8 @@ export function mailPotwierdzenieDemo(a: {
   // 18.10 (USER_001): spotkanie online bez linku = „Spotkanie online, link wyślę przed spotkaniem”.
   const gdzieTekst = tel ? x.telefon(tel) : link ? x.wideo : `${x.wideo}, ${x.linkPozniej}`;
   // 9.10 (USER_001): nazwa wydarzenia w kalendarzu = „Sales AI x [imię]”.
-  const tytulKal = `Sales AI x ${a.imie}`;
+  // 21.10: formularz bez imienia; wtedy nazwa = „Sales AI x Bruno demo”.
+  const tytulKal = `Sales AI x ${a.imie || "Bruno demo"}`;
   const opisKal = `${x.minut}. ${x.co.join(" ")}${link ? ` ${link}` : ""}`;
   const gcal = linkGoogleKalendarz({ start: a.start, minut: DEMO_MINUT_MAIL, tytul: tytulKal, opis: opisKal });
   // 12.10 (E19): obok Google link do pliku .ics (Apple Calendar, Outlook), bez logowania.

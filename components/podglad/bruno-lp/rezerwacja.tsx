@@ -12,20 +12,12 @@ import TelefonFlaga, { KRAJE } from "./telefon-flaga";
 // Po kroku 1 lead jest zapisany od razu (POST), krok 3 rezerwuje termin (PATCH).
 // Godziny w strefie odwiedzającego. Wygląd = klasy LP.
 
-const ROLE = ["Business Owner / CEO", "Sales Director / Head of Sales", "Sales Team Lead", "Other"];
-const ROLE_PL: Record<string, string> = {
-  "Sales Director / Head of Sales": "Dyrektor sprzedaży",
-  "Sales Team Lead": "Kierownik zespołu sprzedaży",
-  "Business Owner / CEO": "Właściciel / prezes",
-  Other: "Inna rola",
-};
-
 const T = {
   en: {
     h1a: "Book a 20-minute online meeting",
     h1b: "and see Bruno play your customer",
     lead: "Fill in the form below",
-    kroki: ["About you", "Day", "Time"],
+    kroki: ["Day", "Time", "Contact"],
     strefa: "Times in your time zone",
     brak: "No free times left this month. Email hello@jakubchodakowski.com and I will suggest one.",
     laduje: "Loading free times...",
@@ -45,8 +37,9 @@ const T = {
     rola: "Your role *",
     ilu: "How many sales reps do you have? *",
     np: "e.g. 12",
-    zgoda: "I agree to be contacted by email and phone about this meeting. Details in the",
+    zgoda: "By clicking “Book” you accept the",
     polityka: "privacy policy",
+    kontaktH: "Where do I send the meeting link?",
     dalej: "Next",
     braki: "Fill in the fields marked in red.",
     book: "Book",
@@ -64,7 +57,7 @@ const T = {
     h1a: "Umów 20-minutowe spotkanie online",
     h1b: "i zobacz, jak Bruno gra Twojego klienta",
     lead: "Uzupełnij formularz poniżej",
-    kroki: ["O Tobie", "Dzień", "Godzina"],
+    kroki: ["Dzień", "Godzina", "Kontakt"],
     strefa: "Godziny w czasie polskim",
     brak: "W tym miesiącu nie ma już wolnych terminów. Napisz na hello@jakubchodakowski.com, zaproponuję godzinę.",
     laduje: "Wczytuję wolne terminy...",
@@ -83,8 +76,9 @@ const T = {
     rola: "Stanowisko *",
     ilu: "Ilu handlowców masz w zespole? *",
     np: "np. 12",
-    zgoda: "Zgadzam się na kontakt mailowy i telefoniczny w sprawie tego spotkania. Szczegóły w",
-    polityka: "polityce prywatności",
+    zgoda: "Klikając „Umawiam”, akceptujesz",
+    polityka: "politykę prywatności",
+    kontaktH: "Gdzie wysłać link do spotkania?",
     dalej: "Dalej",
     braki: "Uzupełnij pola zaznaczone na czerwono.",
     book: "Umawiam",
@@ -115,7 +109,6 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
   /** Dzień slotu ("YYYY-MM-DD") w strefie, w której pokazujemy godziny. */
   const kluczSlotu = (iso: string) => (strefa ? new Date(iso).toLocaleDateString("sv-SE", { timeZone: strefa }) : klucz(new Date(iso)));
   const [krok, setKrok] = useState<1 | 2 | 3>(1);
-  const [leadId, setLeadId] = useState<string | null>(null);
   const [sloty, setSloty] = useState<string[] | null>(null);
   const [dzien, setDzien] = useState<string | null>(null);
   const [start, setStart] = useState<string | null>(null);
@@ -182,23 +175,19 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
   // 21.10 (USER_001): przycisk „Dalej” zawsze aktywny; po kliknięciu brakujące pola = czerwony tytuł
   // + przewinięcie do pierwszego. Było: przycisk wyłączony bez stanowiska/zgody i nic nie mówił dlaczego.
   const [probowal, setProbowal] = useState(false);
+  // 21.10 (USER_001): tylko e-mail + telefon (Negacz M08: każde pole = mniej zgłoszeń, reszta w rozmowie).
   const braki = {
-    "demo-imie": !f.imie.trim(),
-    "demo-firma": !f.firma.trim(),
     "demo-email": !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim()) || emailZly,
     "demo-tel": f.telefon.replace(/\D/g, "").length < 6,
-    "demo-rola": !f.stanowisko,
-    "demo-produkt": !f.produkt.trim(),
-    "demo-handlowcy": !(Number(f.handlowcy) >= 1),
-    "demo-zgoda": !f.zgoda,
   };
   type Pole = keyof typeof braki;
   const brak = (k: Pole) => probowal && braki[k];
   const etykieta = (k: Pole) => `${s.fLabel} ${brak(k) ? s.fLabelBrak : ""}`;
   const pole =(k: "imie" | "email" | "telefon" | "handlowcy" | "firma" | "produkt" | "www") => (e: React.ChangeEvent<HTMLInputElement>) => setF((v) => ({ ...v, [k]: e.target.value }));
 
-  // Krok 1: dane → lead zapisany od razu.
-  const zapiszDane = async (e: React.FormEvent) => {
+  // 21.10 (USER_001): kolejność 1 dzień → 2 godzina → 3 e-mail + telefon. Jeden zapis (POST) na końcu,
+  // od razu jako spotkanie umówione. Było: dane w kroku 1 (8 pól) i lead zapisany przed wyborem terminu.
+  const zarezerwuj = async (e: React.FormEvent) => {
     e.preventDefault();
     setBlad(null);
     const pierwszy = (Object.keys(braki) as Pole[]).find((k) => braki[k]);
@@ -209,57 +198,30 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
       if (el instanceof HTMLInputElement) el.focus({ preventScroll: true });
       return;
     }
-    if (leadId) {
-      setKrok(2);
-      return;
-    }
+    if (!start || wysylam) return;
     setWysylam(true);
     try {
       const r = await fetch("/api/bruno/demo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...f, telefon: `${KRAJE.find((k) => k.kod === f.kraj)?.prefiks ?? ""} ${f.telefon}`.trim(), handlowcy: Number(f.handlowcy), jezyk, zrodlo }),
-      });
-      const d = await r.json().catch(() => ({}));
-      if (!r.ok || !d.ok) {
-        setBlad(d.blad ?? x.blad);
-        return;
-      }
-      setLeadId(d.id);
-      track("bruno_demo_lead", { handlowcy: Number(f.handlowcy), jezyk });
-      setKrok(2);
-    } catch {
-      setBlad(x.blad);
-    } finally {
-      setWysylam(false);
-    }
-  };
-
-  // Krok 3: godzina → rezerwacja.
-  const zarezerwuj = async (t: string) => {
-    if (!leadId || wysylam) return;
-    setStart(t);
-    setBlad(null);
-    setWysylam(true);
-    try {
-      const r = await fetch("/api/bruno/demo", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: leadId, start: t, jezyk }),
+        body: JSON.stringify({ ...f, telefon: `${KRAJE.find((k) => k.kod === f.kraj)?.prefiks ?? ""} ${f.telefon}`.trim(), handlowcy: Number(f.handlowcy) || null, start, jezyk, zrodlo }),
       });
       const d = await r.json().catch(() => ({}));
       if (r.ok && d.ok) {
-        setGotowe(t);
-        track("bruno_demo", { handlowcy: Number(f.handlowcy), jezyk });
+        setGotowe(start);
+        track("bruno_demo", { jezyk });
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         setBlad(d.blad ?? x.blad);
-        setStart(null);
-        if (r.status === 409) void wczytaj();
+        if (r.status === 409) {
+          // Termin właśnie się zajął: odśwież sloty i wróć do godzin.
+          setStart(null);
+          setKrok(2);
+          void wczytaj();
+        }
       }
     } catch {
       setBlad(x.blad);
-      setStart(null);
     } finally {
       setWysylam(false);
     }
@@ -353,59 +315,6 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
 
       <div className={s.formCard}>
         {krok === 1 && (
-          <form onSubmit={zapiszDane} noValidate className={s.form}>
-            <div>
-              <label className={etykieta("demo-imie")} htmlFor="demo-imie">{x.imie}</label>
-              <input id="demo-imie" required autoComplete="given-name" className={s.input} placeholder={jezyk === "pl" ? "Adam" : "James"} value={f.imie} onChange={pole("imie")} />
-            </div>
-            <div>
-              <label className={etykieta("demo-firma")} htmlFor="demo-firma">{x.firma}</label>
-              <input id="demo-firma" required autoComplete="organization" maxLength={120} className={s.input} value={f.firma} onChange={pole("firma")} />
-            </div>
-            <div>
-              <label className={etykieta("demo-email")} htmlFor="demo-email">{x.email}</label>
-              <input id="demo-email" required type="email" autoComplete="email" aria-invalid={emailZly} className={`${s.input} ${emailZly ? s.inputWarn : ""}`} placeholder={jezyk === "pl" ? "adam@twojafirma.pl" : "james@yourcompany.com"} value={f.email} onChange={pole("email")} />
-              {emailZly && <p className={s.warn}>{x.warn}</p>}
-            </div>
-            <div>
-              <label className={etykieta("demo-tel")} htmlFor="demo-tel">{x.tel}</label>
-              <TelefonFlaga id="demo-tel" kraj={f.kraj} numer={f.telefon} onKraj={(k) => setF((v) => ({ ...v, kraj: k }))} onNumer={(n) => setF((v) => ({ ...v, telefon: n }))} placeholder={f.kraj === "US" || f.kraj === "CA" ? "(201) 555-0123" : f.kraj === "GB" ? "7700 900000" : f.kraj === "PL" ? "600 100 200" : "123 456 789"} />
-            </div>
-            <fieldset id="demo-rola" className={s.fieldset}>
-              <legend className={etykieta("demo-rola")}>{x.rola}</legend>
-              <div className={s.chips}>
-                {ROLE.map((r) => (
-                  <button key={r} type="button" aria-pressed={f.stanowisko === r} onClick={() => setF((v) => ({ ...v, stanowisko: r }))} className={`${s.chip} ${f.stanowisko === r ? s.chipOn : ""}`}>
-                    {jezyk === "pl" ? ROLE_PL[r] : r}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-            <div>
-              <label className={etykieta("demo-produkt")} htmlFor="demo-produkt">{x.produkt}</label>
-              <input id="demo-produkt" required maxLength={200} className={s.input} placeholder={x.produktNp} value={f.produkt} onChange={pole("produkt")} />
-            </div>
-            <div>
-              <label className={etykieta("demo-handlowcy")} htmlFor="demo-handlowcy">{x.ilu}</label>
-              <input id="demo-handlowcy" required type="number" inputMode="numeric" min={1} max={100000} step={1} className={s.input} placeholder={x.np} value={f.handlowcy} onChange={pole("handlowcy")} />
-            </div>
-            <input tabIndex={-1} autoComplete="off" aria-hidden="true" value={f.www} onChange={pole("www")} style={{ position: "absolute", left: "-9999px", width: 1, height: 1 }} />
-            <label className={`${s.consent} ${brak("demo-zgoda") ? s.consentBrak : ""}`}>
-              <input id="demo-zgoda" type="checkbox" required checked={f.zgoda} onChange={(e) => setF((v) => ({ ...v, zgoda: e.target.checked }))} />
-              <span>
-                {x.zgoda}{" "}
-                <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>{x.polityka}</a>.
-              </span>
-            </label>
-            {blad && <p className={s.err}>{blad}</p>}
-            {probowal && Object.values(braki).some(Boolean) && <p className={s.err} role="alert">{x.braki}</p>}
-            <button type="submit" disabled={wysylam} className={`${s.btnDark} ${s.btnBig} ${s.submit}`}>
-              {wysylam ? x.zapisuje : x.dalej}
-            </button>
-          </form>
-        )}
-
-        {krok === 2 && (
           <div className={s.form}>
             {/* 14.10 (USER_001): napis nad kalendarzem. */}
             <h2 className={s.kalTytul}>{x.wybierz}</h2>
@@ -441,7 +350,7 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
                         onClick={() => {
                           setDzien(k);
                           setStart(null);
-                          setKrok(3);
+                          setKrok(2);
                         }}
                         className={`${s.kalDzien} ${wolny ? s.kalWolny : ""} ${dzien === k ? s.kalWybrany : ""} ${toDzis ? s.kalDzis : ""} ${wMiesiacu ? "" : s.kalPoza}`}
                         aria-label={d.toLocaleDateString(x.locale, { weekday: "long", day: "numeric", month: "long" })}
@@ -457,7 +366,7 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
           </div>
         )}
 
-        {krok === 3 && (
+        {krok === 2 && (
           <div className={s.form}>
             <div className={`${s.kalNaglowek} ${s.kalNaglowekKolumna}`}>
               <p className={s.kalMiesiac}>{dzien && new Date(`${dzien}T12:00:00`).toLocaleDateString(x.locale, { weekday: "long", day: "numeric", month: "long" })}</p>
@@ -478,16 +387,50 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
             {blad && <p className={s.err}>{blad}</p>}
             {/* 9.10 (USER_001): wybór godziny zaznacza, „Book” rezerwuje; okrągły przycisk powrotu do dni. */}
             <div className={s.kalAkcje}>
-              <button type="button" className={s.kalWstecz} onClick={() => { setStart(null); setKrok(2); }} aria-label={jezyk === "pl" ? "Wróć do wyboru dnia" : "Back to days"}>
+              <button type="button" className={s.kalWstecz} onClick={() => { setStart(null); setKrok(1); }} aria-label={jezyk === "pl" ? "Wróć do wyboru dnia" : "Back to days"}>
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <path d="M19 12H5M11 6l-6 6 6 6" />
                 </svg>
               </button>
-              <button type="button" className={`${s.btnDark} ${s.btnBig} ${s.kalBook}`} disabled={!start || wysylam} onClick={() => start && zarezerwuj(start)}>
-                {wysylam ? x.zapisuje : x.book}
+              <button type="button" className={`${s.btnDark} ${s.btnBig} ${s.kalBook}`} disabled={!start} onClick={() => start && setKrok(3)}>
+                {x.dalej}
               </button>
             </div>
           </div>
+        )}
+        {krok === 3 && start && (
+          <form onSubmit={zarezerwuj} noValidate className={s.form}>
+            <div className={`${s.kalNaglowek} ${s.kalNaglowekKolumna}`}>
+              <p className={s.kalMiesiac}>{pelna(start)}</p>
+              <span className={s.kalInfo}>{x.kontaktH}</span>
+            </div>
+            <div>
+              <label className={etykieta("demo-email")} htmlFor="demo-email">{x.email}</label>
+              <input id="demo-email" required type="email" autoComplete="email" aria-invalid={emailZly} className={`${s.input} ${emailZly ? s.inputWarn : ""}`} placeholder={jezyk === "pl" ? "adam@twojafirma.pl" : "james@yourcompany.com"} value={f.email} onChange={pole("email")} />
+              {emailZly && <p className={s.warn}>{x.warn}</p>}
+            </div>
+            <div>
+              <label className={etykieta("demo-tel")} htmlFor="demo-tel">{x.tel}</label>
+              <TelefonFlaga id="demo-tel" kraj={f.kraj} numer={f.telefon} onKraj={(k) => setF((v) => ({ ...v, kraj: k }))} onNumer={(n) => setF((v) => ({ ...v, telefon: n }))} placeholder={f.kraj === "US" || f.kraj === "CA" ? "(201) 555-0123" : f.kraj === "GB" ? "7700 900000" : f.kraj === "PL" ? "600 100 200" : "123 456 789"} />
+            </div>
+            <input tabIndex={-1} autoComplete="off" aria-hidden="true" value={f.www} onChange={pole("www")} style={{ position: "absolute", left: "-9999px", width: 1, height: 1 }} />
+            {blad && <p className={s.err}>{blad}</p>}
+            {probowal && Object.values(braki).some(Boolean) && <p className={s.err} role="alert">{x.braki}</p>}
+            <div className={s.kalAkcje}>
+              <button type="button" className={s.kalWstecz} onClick={() => setKrok(2)} aria-label={jezyk === "pl" ? "Wróć do wyboru godziny" : "Back to times"}>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M19 12H5M11 6l-6 6 6 6" />
+                </svg>
+              </button>
+              <button type="submit" disabled={wysylam} className={`${s.btnDark} ${s.btnBig} ${s.kalBook}`}>
+                {wysylam ? x.zapisuje : x.book}
+              </button>
+            </div>
+            <p className={s.kalInfo} style={{ textAlign: "center" }}>
+              {x.zgoda}{" "}
+              <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>{x.polityka}</a>.
+            </p>
+          </form>
         )}
       </div>
     </section>
