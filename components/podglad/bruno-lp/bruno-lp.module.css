@@ -789,6 +789,11 @@
   color: #555;
   margin-bottom: 7px;
 }
+.fLabelBrak,
+.consentBrak,
+.consentBrak a {
+  color: #dc2626 !important;
+}
 .fLabel em {
   font-style: normal;
   color: #9a9a9a;

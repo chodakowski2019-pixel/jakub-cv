@@ -62,7 +62,7 @@ const T = {
     polityka: "politykę prywatności",
     blad: "Coś poszło nie tak. Napisz na hello@jakubchodakowski.com",
     wysylam: "Wysyłam...",
-    wyslij: "Poproś o dostęp →",
+    wyslij: "Chcę otrzymać dostęp →",
     maKonto: "Masz już konto?",
     zaloguj: "Zaloguj się",
     okH2: "Dziękuję!",

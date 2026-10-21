@@ -21,6 +21,7 @@ export default function UkladZloty({
   inicjal,
   free,
   profilBrak = false,
+  ankietaBrak = false,
   demoEmail = null,
 }: {
   children: React.ReactNode;
@@ -29,6 +30,8 @@ export default function UkladZloty({
   free: { zuzyte: number; zostalo: number; zablokowane: boolean } | null;
   /** 11.10: konto bez profilu (świeża rejestracja) widzi tylko /bruno/start. */
   profilBrak?: boolean;
+  /** 21.10: brak ankiety Mazura z ostatnich 30 dni: konto widzi tylko /bruno/ankieta. */
+  ankietaBrak?: boolean;
   /** 17.10: konto demo (B2B, 1 rozmowa) = przewodnik w chmurkach zamiast filmu. E-mail = klucz postępu. */
   demoEmail?: string | null;
 }) {
@@ -37,17 +40,19 @@ export default function UkladZloty({
   const zablokowany = Boolean(free?.zablokowane) && !PO_BLOKADZIE.some((p) => sciezka === p || sciezka.startsWith(`${p}/`));
 
   const doProfilu = profilBrak && sciezka !== "/bruno/start";
+  const doAnkiety = !doProfilu && ankietaBrak && sciezka !== "/bruno/ankieta";
 
   useEffect(() => {
     if (doProfilu) router.replace("/bruno/start");
+    else if (doAnkiety) router.replace("/bruno/ankieta");
     else if (zablokowany) router.replace("/bruno/odblokuj");
-  }, [doProfilu, zablokowany, router]);
+  }, [doProfilu, doAnkiety, zablokowany, router]);
 
-  // 11.10: ekran profilu po rejestracji: bez paska, sam formularz na środku.
-  if (sciezka === "/bruno/start") {
+  // 11.10: ekran profilu po rejestracji: bez paska, sam formularz na środku. 21.10: ankieta Mazura tak samo.
+  if (sciezka === "/bruno/start" || sciezka === "/bruno/ankieta") {
     return <main className="px-4 sm:px-6 pb-10 pt-10 max-w-3xl w-full mx-auto">{children}</main>;
   }
-  if (doProfilu) return null;
+  if (doProfilu || doAnkiety) return null;
 
   // 14.10: na telefonie wszędzie ta sama nawigacja jak w aplikacji (górna belka + dolny pasek), CSS chowa ją na komputerze.
   const tel = (

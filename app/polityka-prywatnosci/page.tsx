@@ -18,7 +18,8 @@ export const metadata: Metadata = {
 };
 
 // 12.10 (E11): retencja ElevenLabs 30 dni → 1 dzień (ustawione 9.10), link do strony „Bezpieczeństwo i dane”.
-const AKTUALIZACJA = "12 października 2026";
+// 21.10: ankieta Mazura w panelu Bruno (sekcja 2).
+const AKTUALIZACJA = "21 października 2026";
 
 function Sekcja({ tytul, children }: { tytul: string; children: React.ReactNode }) {
   return (
@@ -67,6 +68,13 @@ export default function PolitykaPrywatnosciPage() {
               <b>Rozmowy treningowe w Bruno AI:</b> nagranie dźwiękowe rozmowy (Twój głos i głos Bruno), transkrypcja,
               ocena z komentarzami, metryki rozmowy, wybrane przed rozmową ustawienia (tryb, cel, obiekcje, typ
               klienta, poziom trudności) oraz odpowiedzi na fiszki.
+            </li>
+            <li>
+              <b>Ankieta w Bruno AI (przed pierwszym treningiem i co 30 dni):</b> Twoje odpowiedzi na pytania o
+              podejście do sprzedaży i pieniędzy (skala 1-5 i krótkie odpowiedzi tekstowe), wynik na 100 policzony z tych
+              odpowiedzi i data wypełnienia. Wynik widzisz tylko Ty i usługodawca. Służy do pokazania Twojego postępu
+              miesiąc do miesiąca i do wskazówki, nad czym popracować. Nie podejmujemy na jego podstawie żadnych decyzji
+              wobec Ciebie. Trzymamy go tak jak resztę danych konta.
             </li>
             <li>
               <b>Inne formularze na stronie:</b> dane, o które prosi dany formularz (zwykle imię i e-mail).

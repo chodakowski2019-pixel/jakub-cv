@@ -774,3 +774,41 @@ html:has(.bruno.zloty), body:has(.bruno.zloty) { background: #080807; }
   animation: bruno-kolko 0.7s linear infinite;
 }
 @keyframes bruno-kolko { to { transform: rotate(360deg); } }
+
+/* Pasek postępu ankiety (21.10): kolor marki, w złotym układzie złoty. */
+.bruno-pasek { background: linear-gradient(90deg, var(--b-akcent), var(--b-akcent-2)); }
+.bruno-pasek-tlo { background: rgba(255, 255, 255, 0.1); }
+.bruno.zloty .bruno-pasek { background: var(--zl-grad); }
+
+/* Skala 1-5 w ankiecie (21.10): kółko z cyfrą, wybrane złote i większe. */
+.bruno-kolo-wybor { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; background: none; border: 0; padding: 0; cursor: pointer; color: inherit; }
+.bruno-kolo {
+  display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.05);
+  font-size: 1rem; font-weight: 600; transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.bruno-kolo-wybor:hover .bruno-kolo { border-color: rgba(255, 255, 255, 0.4); transform: scale(1.05); }
+.bruno-kolo-wybor[data-on] .bruno-kolo {
+  background: linear-gradient(135deg, var(--b-akcent), var(--b-akcent-2)); border-color: transparent; color: #0b0b0b;
+  transform: scale(1.15); box-shadow: 0 10px 24px -10px rgba(255, 255, 255, 0.35);
+}
+.bruno.zloty .bruno-kolo-wybor[data-on] .bruno-kolo { background: var(--zl-grad); box-shadow: 0 10px 24px -10px rgba(212, 175, 90, 0.8); }
+.bruno-kolo-podpis { font-size: 0.72rem; line-height: 1.15; text-align: center; opacity: 0.55; transition: opacity .18s ease; }
+.bruno-kolo-wybor:hover .bruno-kolo-podpis { opacity: 0.8; }
+.bruno-kolo-wybor[data-on] .bruno-kolo-podpis { opacity: 1; font-weight: 600; }
+@media (min-width: 640px) { .bruno-kolo { width: 3.25rem; height: 3.25rem; font-size: 1.1rem; } .bruno-kolo-podpis { font-size: 0.78rem; } }
+
+/* Kreska między pytaniami ankiety (21.10). */
+.bruno-pytanie + .bruno-pytanie { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 1.5rem; }
+
+/* 21.10: odpowiedziane pytanie przygaszone, aktywne pełną bielą. */
+.bruno-pytanie { transition: opacity .25s ease; }
+.bruno-pytanie[data-gotowe] { opacity: 0.55; }
+.bruno-pytanie[data-gotowe]:hover, .bruno-pytanie[data-gotowe]:focus-within { opacity: 1; }
+
+/* Kółka wyniku ankiety (21.10). */
+.bruno-kolo-pierscien { transition: stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1); }
+.bruno-zmiana { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.55rem; border-radius: 999px; background: rgba(255, 255, 255, 0.08); }
+.bruno-zmiana[data-kierunek="gora"] { color: #7ed994; }
+.bruno-zmiana[data-kierunek="dol"] { color: #ff8a8a; }
+.bruno-zmiana[data-kierunek="zero"] { opacity: 0.6; }

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Poppins, Open_Sans, Outfit } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { dostepKonta, pobierzKonto, stanFree } from "@/lib/bruno/db";
+import { ankietaWymagana } from "@/lib/bruno/ankieta-db";
 import UkladZloty from "@/components/bruno/uklad-zloty";
 import { JezykProvider } from "@/components/bruno/jezyk-kontekst";
 import { jezykZHosta } from "@/lib/bruno/domeny";
@@ -59,6 +60,10 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   // 11.10 (USER_001): po rejestracji (e-mail + hasło) najpierw profil, dopiero potem panel.
   const profilBrak = Boolean(konto && !konto.profil_at);
   if (profilBrak && sciezka && sciezka !== "/bruno/start") redirect("/bruno/start");
+  // 21.10 (USER_001): po profilu ankieta Mazura (przed 1. treningiem i co 30 dni). Bez konta demo
+  // (szef firmy testuje) i bez konta free po blokadzie (ono idzie do „Odblokuj”, inaczej pętla).
+  const ankietaBrak = Boolean(konto && !profilBrak && !free?.zablokowane && (await ankietaWymagana(email, free?.pula === 1)));
+  if (ankietaBrak && sciezka && sciezka !== "/bruno/ankieta") redirect("/bruno/ankieta");
 
   // 10.10 (USER_001: „cały ten Bruno się zmienia”): wszystkie ekrany czarno-złote. Panel ma własny pasek,
   // reszta wspólny; o tym decyduje UkladZloty po adresie w przeglądarce.
@@ -67,7 +72,7 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
     <JezykProvider jezyk={jezyk}>
     <div className={`bruno zloty ${fonty} font-[var(--font-open-sans)]`}>
       {/* 17.10 (USER_001): konto demo (pula 1 rozmowy) = chmurki krok po kroku zamiast filmu. */}
-      <UkladZloty dostep={dostep} inicjal={inicjal} free={free} profilBrak={profilBrak} demoEmail={free && free.pula === 1 ? email : null}>
+      <UkladZloty dostep={dostep} inicjal={inicjal} free={free} profilBrak={profilBrak} ankietaBrak={ankietaBrak} demoEmail={free && free.pula === 1 ? email : null}>
         {children}
       </UkladZloty>
       {/* 14.10 (USER_001): dymek czatu usunięty, „Napisz do nas” jest w Ustawieniach (wiadomosc-form.tsx). */}
