@@ -34,7 +34,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     title: `${tytul} | Praca dla handlowców | Bruno AI`,
     description: o.opis.slice(0, 155),
     alternates: { canonical: `/praca/${o.id}` },
-    openGraph: { title: tytul, description: o.opis.slice(0, 155), url: `/praca/${o.id}`, siteName: "Bruno AI", locale: "pl_PL", images: [{ url: "/bruno/og-bruno.png", width: 1200, height: 630 }] },
+    openGraph: { title: tytul, description: o.opis.slice(0, 155), url: `/praca/${o.id}`, siteName: "Bruno AI", locale: "pl_PL", images: [{ url: "/bruno/og-bruno-2.png", width: 1200, height: 630, alt: "Bruno AI" }] },
     robots: { index: false, follow: false },
   };
 }

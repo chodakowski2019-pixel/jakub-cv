@@ -88,6 +88,15 @@ export function kodPasuje(kod: string, zapisany: string | null | undefined): boo
   }
 }
 
+/** 21.10: podpis prośby o dostęp między krokiem 1 (e-mail + hasło) a krokiem 2 (dane firmy). */
+export function tokenProsby(id: number, email: string): string {
+  return podpisz(`prosba:${id}:${email}`);
+}
+export function tokenProsbyPasuje(id: number, email: string, token: unknown): boolean {
+  const t = String(token ?? "");
+  return t.length > 0 && rowne(t, tokenProsby(id, email));
+}
+
 export function nowyToken(email: string): string {
   const wygasa = Date.now() + WAZNOSC_SESJI_S * 1000;
   const tresc = `${Buffer.from(email).toString("base64url")}.${wygasa}`;

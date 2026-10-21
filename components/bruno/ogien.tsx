@@ -9,7 +9,8 @@ import type { Jezyk } from "@/lib/bruno/i18n";
 
 // „Ogień przed rozmową" (USER_001 9.10). Rytuał 5 minut przed PRAWDZIWYM telefonem:
 // zapal (muzyka + Bruno nakręca + cytat) → oddech (instrukcja + ćwiczenie, 2 techniki) → głos 45 s → głowa →
-// „Dzwonię" (zegar) → 3 pytania po rozmowie → zapis. 14.10: bez kartki i sparingu. Nic na kartkach (USER_001).
+// „Dzwonię" (zegar) → koniec. 14.10: bez kartki i sparingu. 21.10 USER: „tego już nie”, 3 pytania po rozmowie wypadły,
+// zapisuje się tylko czas rozmowy. Nic na kartkach (USER_001).
 // Źródła: cykliczne wzdychanie (Balban, Stanford 2023), „jestem nakręcony" zamiast
 // „uspokój się" (Brooks, Harvard 2014), energia zespołu (USER_001: „byliśmy na pełnej").
 
@@ -26,7 +27,7 @@ type Props = {
 };
 
 // 14.10 (USER_001): kartka i sparing wypadły, oddech dostał instrukcję przed każdą techniką i grafikę.
-type Krok = "zapal" | "oddech" | "glos" | "glowa" | "rozmowa" | "po" | "koniec";
+type Krok = "zapal" | "oddech" | "glos" | "glowa" | "rozmowa" | "koniec";
 const KROKI: { id: Krok; nazwa: string; nazwaPl: string }[] = [
   { id: "zapal", nazwa: "Light it", nazwaPl: "Zapal" },
   { id: "oddech", nazwa: "Breathe", nazwaPl: "Oddech" },
@@ -256,9 +257,6 @@ export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia 
   const [najgorszy, setNajgorszy] = useState(t("I'll hear “no.” One “no” = one flashcard. That's it.", "Usłyszę „nie”. Jedno „nie” = jedna fiszka. Tyle."));
   const [nakrecony, setNakrecony] = useState(false);
 
-  // Po rozmowie
-  const [po, setPo] = useState({ cel: "" as "" | "tak" | "nie" | "czesciowo", obiekcje: [] as string[], krok: "", kiedy: "" });
-  const [zapisStan, setZapisStan] = useState<"idle" | "zapis" | "ok" | "blad">("idle");
 
   const stopTimer = () => {
     if (timer.current) clearInterval(timer.current);
@@ -439,19 +437,15 @@ export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia 
     } catch {}
   };
 
-  const zapiszPo = async () => {
-    setZapisStan("zapis");
-    try {
-      const res = await fetch("/api/bruno/ogien", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: zapisId, po_rozmowie: { ...po, trwala_s: sek } }),
-      });
-      setZapisStan(res.ok ? "ok" : "blad");
-      if (res.ok) setKrok("koniec");
-    } catch {
-      setZapisStan("blad");
-    }
+  // Koniec rozmowy: zapis czasu trwania, bez pytań (21.10).
+  const zakonczRozmowe = () => {
+    stopTimer();
+    setKrok("koniec");
+    void fetch("/api/bruno/ogien", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: zapisId, po_rozmowie: { trwala_s: sek } }),
+    }).catch(() => {});
   };
 
   const czas = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
@@ -498,7 +492,7 @@ export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia 
       )}
 
       {/* Muzyka + Bruno nakręca: widoczne od zapalenia do „Dzwonię" */}
-      {krok !== "rozmowa" && krok !== "po" && krok !== "koniec" && (
+      {krok !== "rozmowa" && krok !== "koniec" && (
         <div className="flex flex-wrap items-center justify-center gap-2">
           <button type="button" onClick={przelaczMuzyke} className={`bruno-pastylka ${muzyka ? "bruno-pastylka-wybrana" : ""}`} aria-pressed={muzyka}>
             {muzyka ? t("■ Music on", "■ Muzyka gra") : t("▶ Music", "▶ Muzyka")}
@@ -600,63 +594,16 @@ export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia 
             {k.kwota && <div><b>{t("Price:", "Kwota:")}</b> {k.kwota}{t(", then silence", ", potem cisza")}</div>}
             {k.data && <div><b>{t("Date:", "Data:")}</b> {k.data}</div>}
           </div>
-          <button type="button" onClick={() => { stopTimer(); setKrok("po"); }} className="bruno-przycisk-2">{t("Call ended", "Rozmowa skończona")}</button>
-        </div>
-      )}
-
-      {krok === "po" && (
-        <div className="bruno-szklo rounded-3xl p-6 sm:p-8 flex flex-col gap-5">
-          <div>
-            <h2 className="bruno-h2 text-lg">{t("After the call: 3 questions", "Po rozmowie: 3 pytania")}</h2>
-            <p className="text-sm text-slate-500">{t(`It lasted ${czas(sek)}. 30 seconds and you're done.`, `Trwała ${czas(sek)}. 30 sekund i masz to z głowy.`)}</p>
-          </div>
-          <fieldset>
-            <legend className="text-sm text-slate-700 mb-2">{t(`1. Did you hit the goal “${k.cel || "dated next step"}”?`, `1. Cel „${k.cel || "następny krok z datą"}” osiągnięty?`)}</legend>
-            <div className="flex gap-2 flex-wrap">
-              {(["tak", "czesciowo", "nie"] as const).map((v) => (
-                <button key={v} type="button" aria-pressed={po.cel === v} onClick={() => setPo((x) => ({ ...x, cel: v }))} className={`bruno-pastylka ${po.cel === v ? "bruno-pastylka-wybrana" : ""}`}>
-                  {v === "tak" ? t("Yes", "Tak") : v === "czesciowo" ? t("Partly", "Częściowo") : t("No", "Nie")}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-          <fieldset>
-            <legend className="text-sm text-slate-700 mb-2">{t("2. Which objections came up?", "2. Które obiekcje padły?")}</legend>
-            <div className="flex gap-2 flex-wrap">
-              {obiekcje.map((o) => {
-                const w = po.obiekcje.includes(o.nazwa);
-                return (
-                  <button key={o.nazwa} type="button" aria-pressed={w} onClick={() => setPo((x) => ({ ...x, obiekcje: w ? x.obiekcje.filter((y) => y !== o.nazwa) : [...x.obiekcje, o.nazwa] }))} className={`bruno-pastylka ${w ? "bruno-pastylka-wybrana" : ""}`}>
-                    {w && <span className="mr-1" aria-hidden>✓</span>}{ob(o.nazwa)}
-                  </button>
-                );
-              })}
-            </div>
-          </fieldset>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <label className="text-sm text-slate-700" htmlFor="po-krok">
-              {t("3. Next step", "3. Następny krok")}
-              <input id="po-krok" className="bruno-pole mt-1" placeholder={t("e.g. meeting at their office / sending a quote / none", "np. spotkanie u klienta / wysyłam ofertę / nie")} value={po.krok} onChange={(e) => setPo((x) => ({ ...x, krok: e.target.value }))} maxLength={200} />
-            </label>
-            <label className="text-sm text-slate-700" htmlFor="po-kiedy">
-              {t("When", "Kiedy")}
-              <input id="po-kiedy" className="bruno-pole mt-1" placeholder={t("e.g. Tuesday 10 AM", "np. wtorek 10:00")} value={po.kiedy} onChange={(e) => setPo((x) => ({ ...x, kiedy: e.target.value }))} maxLength={120} />
-            </label>
-          </div>
-          <div className="flex items-center gap-4 justify-end">
-            {zapisStan === "blad" && <span className="text-sm text-red-700">{t("It didn't save. Try again.", "Nie zapisało się, spróbuj jeszcze raz.")}</span>}
-            <button type="button" onClick={zapiszPo} disabled={zapisStan === "zapis" || !po.cel} className="bruno-przycisk">{zapisStan === "zapis" ? t("Saving...", "Zapisuję...") : t("Save", "Zapisz")}</button>
-          </div>
+          <button type="button" onClick={zakonczRozmowe} className="bruno-przycisk-2">{t("Call ended", "Rozmowa skończona")}</button>
         </div>
       )}
 
       {krok === "koniec" && (
         <div className="bruno-szklo rounded-3xl p-8 sm:p-10 flex flex-col items-center gap-5 text-center">
-          <h2 className="bruno-h2 text-2xl">{po.cel === "tak" ? t("Nailed it. That's how it's done.", "Jest. Tak to się robi.") : po.cel === "czesciowo" ? t("A step forward. The next one will be a full win.", "Krok do przodu. Następny będzie pełny.") : t("One “no.” One flashcard. Next call.", "Jedno „nie”. Jedna fiszka. Następna rozmowa.")}</h2>
-          {po.krok && <p className="text-slate-700"><b>{t("Next step:", "Następny krok:")}</b> {po.krok}{po.kiedy ? `, ${po.kiedy}` : ""}</p>}
-          {po.obiekcje.length > 0 && <p className="text-sm text-slate-600">{t(`Came up: ${po.obiekcje.join(", ")}. Bruno will bring them back in Drills.`, `Padły: ${po.obiekcje.map(ob).join(", ")}. Bruno wróci do nich w Treningu.`)}</p>}
+          <h2 className="bruno-h2 text-2xl">{t("Done. That's how it's done.", "Jest. Tak to się robi.")}</h2>
+          <p className="text-slate-700">{t(`The call lasted ${czas(sek)}.`, `Rozmowa trwała ${czas(sek)}.`)}</p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <button type="button" onClick={() => { setPo({ cel: "", obiekcje: [], krok: "", kiedy: "" }); setZapisStan("idle"); setZapisId(null); setKrok("zapal"); }} className="bruno-przycisk">{t("Next call", "Następna rozmowa")}</button>
+            <button type="button" onClick={() => { setZapisId(null); setKrok("zapal"); }} className="bruno-przycisk">{t("Next call", "Następna rozmowa")}</button>
             <Link href="/bruno/trening" className="bruno-przycisk-2">{t("Drills", "Trening")}</Link>
             <Link href="/bruno/panel" className="bruno-przycisk-2">{t("Home", "Panel")}</Link>
           </div>

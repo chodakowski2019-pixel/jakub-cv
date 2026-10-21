@@ -106,11 +106,11 @@ export default function AdminForm({ klucz }: { klucz: string }) {
               return (
                 <li key={p.id} className="py-3 flex flex-col gap-1">
                   <div className="flex flex-wrap gap-x-4 gap-y-1 items-center">
-                    <span className="font-medium text-slate-900">{p.imie}, {p.firma}</span>
+                    <span className="font-medium text-slate-900">{p.imie || p.firma ? `${p.imie}, ${p.firma}` : "(tylko e-mail i hasło)"}</span>
                     <span className="text-slate-600">{p.email} · {p.telefon ?? "-"}</span>
                     <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{p.handlowcy} handlowców · {p.jezyk}</span>
                     <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${p.status === "nowa" ? (godzin >= 20 ? "bg-red-100 text-red-800" : "bg-amber-100 text-amber-800") : p.status === "przyznany" ? "bg-teal-100 text-teal-800" : "bg-slate-100 text-slate-500"}`}>
-                      {p.status === "nowa" ? `nowa, ${godzin} h temu` : p.status}
+                      {p.status === "nowa" ? `nowa, ${godzin} h temu` : p.status === "krok1" ? `krok 1, bez danych firmy, ${godzin} h temu` : p.status}
                     </span>
                   </div>
                   <p className="text-slate-700">{p.produkt}</p>

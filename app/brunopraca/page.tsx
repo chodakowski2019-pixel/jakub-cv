@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: `${tytul} | Bruno AI`,
   description: opis,
   alternates: { canonical: "/praca" },
-  openGraph: { title: tytul, description: opis, url: "/praca", siteName: "Bruno AI", locale: "pl_PL", type: "website", images: [{ url: "/bruno/og-bruno.png", width: 1200, height: 630 }] },
+  openGraph: { title: tytul, description: opis, url: "/praca", siteName: "Bruno AI", locale: "pl_PL", type: "website", images: [{ url: "/bruno/og-bruno-2.png", width: 1200, height: 630, alt: "Bruno AI" }] },
   // Do startu (pierwsze aktywne ogłoszenia) poza indeksem.
   robots: { index: false, follow: true },
 };

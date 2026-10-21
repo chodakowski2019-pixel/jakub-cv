@@ -18,35 +18,36 @@ export async function stronaBruno(searchParams?: Szukaj): Promise<{ jezyk: Jezyk
   return { jezyk: pl ? "pl" : "en", naDomenie: false };
 }
 
+// 21.10 (USER_001): opisy PL i EN krótkie, po 2-6 słów (pod SMS i WhatsApp).
 const OPISY: Record<CelStrony, Record<Jezyk, { title: string; description: string }>> = {
   firmy: {
     en: {
       title: "Bruno AI for sales teams | AI sales practice",
-      description: "Your sales reps practice calls with an AI customer before they talk to a real one. Every call gets a score. Request a demo call.",
+      description: "AI sales training",
     },
     pl: {
       // 18.10 (USER_001): tytuł karty.
       title: "Trenuj codziennie, bądź najlepszy",
-      description: "Wasi handlowcy ćwiczą rozmowy z klientem AI, zanim zadzwonią do prawdziwego. Każda rozmowa dostaje ocenę. Poproś o rozmowę demo.",
+      description: "Trening sprzedaży z AI",
     },
   },
   handlowcy: {
     en: {
       title: "Bruno AI for sales reps | Practice your next call",
-      description: "Practice your next sales call with an AI customer before it counts. Every call gets a score and a practice plan. Your first 3 calls are free.",
+      description: "Practice a sales call with an AI customer",
     },
     pl: {
       title: "Wykorzystaj swój potencjał | sprzedaży można się nauczyć",
-      description: "Przećwicz rozmowę sprzedażową z klientem AI, zanim zadzwonisz do prawdziwego. Każda rozmowa dostaje ocenę i plan ćwiczeń. Pierwsze 3 rozmowy za darmo.",
+      description: "Przećwicz rozmowę sprzedażową z klientem AI",
     },
   },
   rejestracja: {
-    en: { title: "Bruno AI: request access", description: "Request access to Bruno AI for your sales team. You get a demo call within 24 hours." },
-    pl: { title: "Bruno AI: dostęp", description: "Poproś o dostęp do Bruno AI dla Twojego zespołu handlowego. Rozmowę demo dostaniesz w ciągu 24 godzin." },
+    en: { title: "Bruno AI: request access", description: "Sign up" },
+    pl: { title: "Bruno AI: dostęp", description: "Rejestracja" },
   },
   logowanie: {
-    en: { title: "Bruno AI: log in", description: "Log in to your Bruno AI practice panel." },
-    pl: { title: "Bruno AI: logowanie", description: "Zaloguj się do panelu treningowego Bruno AI." },
+    en: { title: "Bruno AI: log in", description: "Log in" },
+    pl: { title: "Bruno AI: logowanie", description: "Zaloguj się" },
   },
 };
 
@@ -57,10 +58,10 @@ const OPISY: Record<CelStrony, Record<Jezyk, { title: string; description: strin
  */
 export const IKONY_BRUNO: Metadata["icons"] = {
   icon: [
-    { url: "/bruno/ikona.svg?v=2", type: "image/svg+xml" },
-    { url: "/bruno/ikona.ico?v=2", sizes: "64x64" },
+    { url: "/bruno/ikona.svg?v=3", type: "image/svg+xml" },
+    { url: "/bruno/ikona.ico?v=3", sizes: "64x64" },
   ],
-  apple: [{ url: "/bruno/ikona-apple.png?v=2", sizes: "180x180" }],
+  apple: [{ url: "/bruno/ikona-apple.png?v=3", sizes: "180x180" }],
 };
 
 /** Metadane: tytuł i opis w języku, canonical na domenę języka, wersje językowe, OG. */
@@ -84,8 +85,9 @@ export async function metadaneBruno(cel: CelStrony, searchParams?: Szukaj, robot
       siteName: "Bruno AI",
       locale: jezyk === "pl" ? "pl_PL" : "en_US",
       type: "website",
-      // 13.10 (USER_001): handlowcy = zorza z rejestracji + „Bruno AI” (1200x630, pełna szerokość na FB). Reszta = zdjęcie Jakuba.
-      images: cel === "handlowcy" ? [{ url: "/bruno/og-bruno.png", width: 1200, height: 630, alt: "Bruno AI" }] : [{ url: "/jakub.jpg" }],
+      // 21.10 (USER_001): jedna miniaturka na WSZYSTKIE strony Bruno (SMS, WhatsApp, FB, LinkedIn): zorza + „Bruno AI”,
+      // przycięta bliżej logo (og-bruno-2.png). Wcześniej rejestracja i firmy miały kwadratowe jakub.jpg, które się ucinało.
+      images: [{ url: "/bruno/og-bruno-2.png", width: 1200, height: 630, alt: "Bruno AI" }],
     },
     ...(robots ? { robots } : {}),
   };

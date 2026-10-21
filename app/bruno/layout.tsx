@@ -7,7 +7,7 @@ import { dostepKonta, pobierzKonto, stanFree } from "@/lib/bruno/db";
 import { ankietaWymagana } from "@/lib/bruno/ankieta-db";
 import UkladZloty from "@/components/bruno/uklad-zloty";
 import { JezykProvider } from "@/components/bruno/jezyk-kontekst";
-import { jezykZHosta } from "@/lib/bruno/domeny";
+import { DOMENA, jezykZHosta } from "@/lib/bruno/domeny";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { IKONY_BRUNO } from "@/components/podglad/bruno-lp/serwer";
 import "./bruno.css";
@@ -19,12 +19,15 @@ import "./bruno.css";
 
 // 11.10: tytuł karty w języku konta (niezalogowany: domena / ?pl).
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await tSerwer();
+  const { t, jezyk } = await tSerwer();
   return {
+    metadataBase: new URL(DOMENA[jezyk]),
     title: t("Bruno AI: Sales Practice", "Bruno AI: panel treningowy"),
-    description: t("Practice sales calls with Bruno AI.", "Trening rozmów sprzedażowych z Bruno AI."),
+    description: t("Train your sales", "Trenuj sprzedaż"),
     robots: { index: false, follow: false },
     icons: IKONY_BRUNO,
+    // 21.10 (USER_001): ta sama miniaturka co na stronach publicznych, bo linki do panelu idą SMS-em i na WhatsApp.
+    openGraph: { siteName: "Bruno AI", images: [{ url: "/bruno/og-bruno-2.png", width: 1200, height: 630, alt: "Bruno AI" }] },
   };
 }
 

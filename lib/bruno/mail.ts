@@ -123,7 +123,8 @@ export function htmlRejestracja(a: { imie: string | null; email: string; kod: st
  * 17.10 (USER_001): Bruno tylko B2B. Mail po akceptacji prośby o dostęp w Adminie:
  * konto demo = 1 rozmowa po 3 min, Bruno prowadzi krok po kroku (chmurki), na końcu rozmowa z Jakubem.
  */
-export function htmlDostepDemo(a: { imie: string | null; email: string; kod: string; jezyk: "en" | "pl" }) {
+// 21.10: kod null = klient ustawił hasło przy rejestracji, w mailu zamiast kodu „hasło z rejestracji”.
+export function htmlDostepDemo(a: { imie: string | null; email: string; kod: string | null; jezyk: "en" | "pl" }) {
   const link = `${bazaUrl(a.jezyk)}/login`;
   const linkSrc = linkZeZrodlem(link, "dostep");
   const minuty = ROZMOWA_SEKUND / 60;
@@ -133,7 +134,7 @@ export function htmlDostepDemo(a: { imie: string | null; email: string; kod: str
       naglowek: "Twój dostęp do Bruno jest gotowy",
       tresc: [
         akapit(`${a.imie ? `Cześć ${a.imie}, p` : "P"}oniżej znajdziesz dane dostępu ⤵️`),
-        tabelaDostepu({ link, login: a.email, kod: a.kod, jezyk: "pl" }),
+        tabelaDostepu({ link, login: a.email, kod: a.kod ?? "hasło z rejestracji", jezyk: "pl", etykiety: ["Strona", "Login", a.kod ? "Kod logowania" : "Hasło"] }),
         tabelaParami([["Rozmowa demo", `1 po ${minuty} ${minutaSlowoPL(minuty)}`]]),
         przycisk({ tekst: "Zaloguj się", link: linkSrc }),
         kroki([
@@ -148,7 +149,7 @@ export function htmlDostepDemo(a: { imie: string | null; email: string; kod: str
     naglowek: "Your Bruno access is ready",
     tresc: [
       akapit(`${a.imie ? `Hi ${a.imie}, here` : "Here"} are your login details ⤵️`),
-      tabelaDostepu({ link, login: a.email, kod: a.kod, etykiety: ["Page", "Login", "Login code"] }),
+      tabelaDostepu({ link, login: a.email, kod: a.kod ?? "your sign-up password", etykiety: ["Page", "Login", a.kod ? "Login code" : "Password"] }),
       tabelaParami([["Demo call", `1, ${minuty} ${minutaSlowo(minuty)}`]]),
       przycisk({ tekst: "Log in", link: linkSrc }),
       kroki([

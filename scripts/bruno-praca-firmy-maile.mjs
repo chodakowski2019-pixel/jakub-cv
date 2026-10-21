@@ -3,12 +3,15 @@
 // Mała firma = 1-3 oferty u nas, nie agencja rekrutacyjna, nie znana duża marka, ma znalezioną stronę (lib/bruno/praca/loga.json).
 // Mail: strona główna + /kontakt itp., adres w domenie firmy, bez noreply / rodo / iod / hr.
 // Użycie: node --env-file=.env.local scripts/bruno-praca-firmy-maile.mjs [ile=100]
+// 18.10 (USER_001: „zbierz wszystkie maile”): `wszystkie` = każda firma ze znaną stroną (też duże i agencje, kolumna typ),
+// więcej podstron + link „kontakt” ze strony głównej, wynik w jednym pliku SalesAI/sprzedaz/BAZA-MAILI-FIRM.csv.
 import { readFileSync, writeFileSync } from "node:fs";
 import { createHmac } from "node:crypto";
 import { homedir } from "node:os";
 import path from "node:path";
 
-const ILE = Number(process.argv[2] ?? 100);
+const WSZYSTKIE = process.argv[2] === "wszystkie";
+const ILE = WSZYSTKIE ? Infinity : Number(process.argv[2] ?? 100);
 const KORZEN = path.join(import.meta.dirname, "..");
 const oferty = JSON.parse(readFileSync(path.join(KORZEN, "lib/bruno/praca/oferty.json"), "utf8"));
 const loga = JSON.parse(readFileSync(path.join(KORZEN, "lib/bruno/praca/loga.json"), "utf8"));
@@ -24,9 +27,9 @@ const PREF = ["biuro", "kontakt", "info", "office", "sprzedaz", "handel", "sekre
 const liczba = {};
 for (const o of oferty) (liczba[o.firma] ??= []).push(o);
 const kandydaci = Object.entries(liczba)
-  .filter(([f, l]) => l.length <= 3 && !/cukiern|optometr|optyk|administracyjno|call center/i.test(l[0].stanowisko) && loga[f]?.domena && !AGENCJE.test(f) && !DUZE.test(f) && !DUZE.test(loga[f].domena))
+  .filter(([f, l]) => (WSZYSTKIE && loga[f]?.domena) || l.length <= 3 && !/cukiern|optometr|optyk|administracyjno|call center/i.test(l[0].stanowisko) && loga[f]?.domena && !AGENCJE.test(f) && !DUZE.test(f) && !DUZE.test(loga[f].domena))
   .sort((a, b) => b[1][0].dodano.localeCompare(a[1][0].dodano));
-console.log(`Kandydatów (małe firmy ze stroną): ${kandydaci.length}`);
+console.log(`Kandydatów (${WSZYSTKIE ? "wszystkie firmy" : "małe firmy"} ze stroną): ${kandydaci.length}`);
 
 async function pobierz(url) {
   try {
@@ -75,9 +78,23 @@ async function pracownik() {
     const [firma, lista] = kandydaci[i++];
     const domena = loga[firma].domena.replace(/^www\./, "");
     let maile = [];
-    for (const sciezka of ["", "/kontakt", "/kontakt/", "/contact", "/o-nas", "/kontakt.html"]) {
-      maile = maileZ(await pobierz(`https://${domena}${sciezka}`), domena);
+    const sciezki = ["", "/kontakt", "/kontakt/", "/contact", "/o-nas", "/kontakt.html"];
+    if (WSZYSTKIE) sciezki.push("/contact-us", "/o-firmie", "/kontakt.php", "/pl/kontakt", "/en/contact", "/dane-kontaktowe", "/firma");
+    for (const sciezka of sciezki) {
+      const html = await pobierz(`https://${domena}${sciezka}`);
+      maile = maileZ(html, domena);
       if (maile.length) break;
+      // Strona główna bez maila: idź za jej linkiem „kontakt” (często /pl/kontakt-z-nami itp.).
+      if (WSZYSTKIE && sciezka === "") {
+        for (const m of html.matchAll(/href=["']([^"'#]*(?:kontakt|contact)[^"'#]*)["']/gi)) {
+          let url;
+          try { url = new URL(m[1], `https://${domena}/`); } catch { continue; }
+          if (!url.hostname.endsWith(domena)) continue;
+          maile = maileZ(await pobierz(url.href), domena);
+          break;
+        }
+        if (maile.length) break;
+      }
     }
     // 17.10 v2: tylko polskie / unijne skrzynki (obce trafienia: bartleby.com, humangroup.com.co), jeden mail = jedna firma.
     maile = maile.filter((e) => /\.(pl|eu)$/.test(e) && !uzyte.has(e) && !wykluczone.has(e) && !wykluczoneDomeny.has(e.split("@")[1]));
@@ -86,6 +103,7 @@ async function pracownik() {
     const o = lista[0];
     wynik.push({
       firma,
+      typ: AGENCJE.test(firma) ? "agencja" : DUZE.test(firma) || DUZE.test(domena) ? "duża" : lista.length > 3 ? "średnia" : "mała",
       domena,
       email: maile[0],
       inne_maile: maile.slice(1, 3).join(" "),
@@ -96,15 +114,16 @@ async function pracownik() {
       dodano: o.dodano.slice(0, 10),
       link: `https://salesbruno.com/praca/${o.id}?k=${token(o.klucz)}`,
     });
-    process.stdout.write(`\r${wynik.length}/${ILE} (sprawdzone ${i})`);
+    process.stdout.write(`\r${wynik.length} z mailem (sprawdzone ${i}/${kandydaci.length})`);
   }
 }
-await Promise.all(Array.from({ length: 8 }, pracownik));
+await Promise.all(Array.from({ length: WSZYSTKIE ? 12 : 8 }, pracownik));
 wynik.splice(ILE);
 // Połowa na jakubchodakowski.com, połowa na jakub@salesbruno.com (naprzemiennie, żeby branże rozłożyły się równo).
+if (WSZYSTKIE) wynik.sort((a, b) => b.dodano.localeCompare(a.dodano));
 wynik.forEach((w, n) => (w.nadawca = n % 2 === 0 ? "hello@jakubchodakowski.com" : "jakub@salesbruno.com"));
-const kol = ["nadawca", "firma", "email", "inne_maile", "domena", "stanowisko", "miasto", "branza", "ofert", "dodano", "link"];
+const kol = ["nadawca", "firma", ...(WSZYSTKIE ? ["typ"] : []), "email", "inne_maile", "domena", "stanowisko", "miasto", "branza", "ofert", "dodano", "link"];
 const esc = (v) => (/[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v));
-const plik = path.join(homedir(), `Moje-Życie/Biznes/Projekty/SalesAI/sprzedaz/PRACA-FIRMY-${new Date().toISOString().slice(0, 10)}.csv`);
+const plik = path.join(homedir(), "Moje-Życie/Biznes/Projekty/SalesAI/sprzedaz", WSZYSTKIE ? "BAZA-MAILI-FIRM.csv" : `PRACA-FIRMY-${new Date().toISOString().slice(0, 10)}.csv`);
 writeFileSync(plik, [kol.join(","), ...wynik.map((w) => kol.map((k) => esc(w[k] ?? "")).join(","))].join("\n") + "\n");
 console.log(`\nFirm z mailem: ${wynik.length}. Zapis: ${plik}`);

@@ -1,0 +1,604 @@
+/* Podgląd portalu ofert pracy Bruno (15.10). Kolory i fonty = LP salesbruno.com. */
+
+.root {
+  --bg: #f6f6f5;
+  --ink: #0b0b0b;
+  --grey: #a4a4a4;
+  --muted: #6b6b6b;
+  --line: #ebeae7;
+  --card: #ffffff;
+  --soft: #f3f3f1;
+  --orange: #f08a2b;
+  --head: var(--font-bof-head), "Outfit", system-ui, sans-serif;
+  --body: var(--font-bof-body), "Inter", system-ui, sans-serif;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.root *,
+.root *::before,
+.root *::after {
+  box-sizing: border-box;
+}
+.root :where(h1, h2, h3, p, ul, ol, li) {
+  margin: 0;
+  padding: 0;
+}
+.root :where(ul) {
+  list-style: none;
+}
+.root :where(a) {
+  color: inherit;
+  text-decoration: none;
+}
+.root :where(button) {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  background: none;
+}
+.g {
+  color: var(--grey);
+  font-weight: 300;
+}
+.maly {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* nav */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px clamp(16px, 4vw, 48px);
+  background: rgba(246, 246, 245, 0.82);
+  backdrop-filter: saturate(1.4) blur(14px);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--head);
+  font-size: 20px;
+  font-weight: 500;
+}
+.kropka {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.navLink {
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff !important;
+  font-size: 14px;
+}
+
+/* hero */
+.hero {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: clamp(40px, 8vw, 96px) clamp(16px, 4vw, 48px) 32px;
+}
+.h1 {
+  margin-top: 14px !important;
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: clamp(36px, 6.4vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+.liczby {
+  display: flex;
+  gap: clamp(20px, 5vw, 56px);
+  margin-top: 36px;
+  flex-wrap: wrap;
+}
+.liczby div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.liczby b {
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: clamp(26px, 3.4vw, 36px);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.liczby span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* filtry */
+.filtry {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 48px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.przelacznik {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px;
+  border-radius: 999px;
+  background: #eaeae8;
+}
+.przelacznik button {
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  color: var(--muted);
+  transition: background 0.2s, color 0.2s;
+}
+.przelacznik .wl {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.pigulki {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.pigulki::-webkit-scrollbar {
+  display: none;
+}
+.pig {
+  flex: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line) !important;
+  background: #fff !important;
+  font-size: 14px;
+  transition: background 0.2s, color 0.2s;
+}
+.pigWl {
+  background: var(--ink) !important;
+  border-color: var(--ink) !important;
+  color: #fff !important;
+}
+
+/* układ */
+.uklad {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 28px clamp(16px, 4vw, 48px) 80px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 32px;
+  align-items: start;
+}
+.uklad > section {
+  min-width: 0;
+}
+.wynik {
+  font-size: 14px;
+  margin-bottom: 14px !important;
+}
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.karta {
+  padding: 20px;
+  border-radius: 22px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s;
+}
+.karta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+.kartaGora {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.awatar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--soft);
+  font-family: var(--head);
+  font-size: 18px;
+}
+.kartaTekst {
+  min-width: 0;
+}
+.kartaTekst h3 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.kartaTekst p {
+  margin-top: 4px !important;
+  font-size: 14px;
+}
+.tagi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.tag,
+.tagPensja {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--soft);
+  font-size: 13px;
+}
+.tagPensja {
+  background: #fff1e3;
+  color: #a4520f;
+  font-weight: 500;
+}
+.tagCichy {
+  background: none;
+  color: var(--grey);
+}
+.akcje {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.btnCzarny,
+.btnJasny,
+.btnPomarancz {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: transform 0.15s, opacity 0.2s;
+}
+.btnCzarny:active,
+.btnJasny:active,
+.btnPomarancz:active {
+  transform: scale(0.97);
+}
+.btnCzarny {
+  background: var(--ink) !important;
+  color: #fff !important;
+}
+.btnJasny {
+  background: var(--soft);
+}
+.btnPomarancz {
+  background: var(--orange) !important;
+  color: #fff !important;
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 15px;
+}
+.kropkaMala {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff1dc, var(--orange) 55%, #c4581a);
+}
+.wiecej {
+  margin-top: 16px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line) !important;
+  background: #fff !important;
+  font-size: 14px;
+}
+.pusto {
+  padding: 40px 0;
+  color: var(--muted);
+}
+.zrodlo {
+  margin-top: 20px !important;
+  font-size: 12px;
+  color: var(--grey);
+}
+
+/* alert */
+.bok {
+  position: sticky;
+  top: 84px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.alert {
+  padding: 24px;
+  border-radius: 22px;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+.alert h3 {
+  margin-top: 8px !important;
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.alertOpis {
+  margin-top: 8px !important;
+  font-size: 14px;
+  color: var(--muted);
+}
+.alert form,
+.oknoForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.root input[type="email"] {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--soft);
+  font: inherit;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.root input[type="email"]:focus {
+  border-color: var(--ink);
+  background: #fff;
+}
+.drobne {
+  margin-top: 10px !important;
+  font-size: 12px;
+  color: var(--grey);
+  text-align: center;
+}
+.alertOk {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: #fff;
+  font-size: 18px;
+}
+.wstawka {
+  display: none;
+  margin-top: 12px;
+}
+.bokBruno {
+  padding: 24px;
+  border-radius: 22px;
+  background: #170b03;
+  color: #fff;
+  overflow: hidden;
+}
+.bokBruno h3 {
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.2;
+  margin-top: 16px !important;
+}
+.bokBruno p {
+  margin-top: 8px !important;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.66);
+}
+.kula {
+  width: 64px;
+  height: 64px;
+  flex: none;
+}
+
+/* okno próbnej rozmowy */
+.tlo {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(11, 11, 11, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: wejscie 0.2s ease-out;
+}
+.okno {
+  position: relative;
+  width: min(440px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding: 32px 28px 28px;
+  border-radius: 28px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  animation: okno 0.35s cubic-bezier(0.2, 0.9, 0.25, 1.1);
+}
+.zamknij {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--soft) !important;
+  font-size: 20px;
+  line-height: 1;
+}
+.h2 {
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.okno .kula {
+  margin: 6px 0;
+}
+.kulaDuza {
+  width: 140px;
+  height: 140px;
+  margin: 18px 0 !important;
+}
+.oknoOpis {
+  font-size: 15px;
+  color: var(--muted);
+}
+.pytania {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  text-align: left;
+}
+.pytania li {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--soft);
+  font-size: 14px;
+}
+.mowi {
+  font-size: 13px;
+  color: var(--orange);
+  font-weight: 500;
+}
+.cytat {
+  font-family: var(--head);
+  font-size: 19px;
+  line-height: 1.35;
+  margin-bottom: 8px !important;
+}
+.zamazane {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.zamazane div {
+  padding: 14px 8px;
+  border-radius: 14px;
+  background: var(--soft);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.zamazane b {
+  font-family: var(--head);
+  font-size: 22px;
+  font-weight: 400;
+  filter: blur(4px);
+}
+.zamazane span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.oknoForm {
+  width: 100%;
+}
+.zgoda {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: left;
+}
+.zgoda input {
+  accent-color: var(--ink);
+}
+
+.stopka {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 28px clamp(16px, 4vw, 48px);
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+.stopka span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@keyframes wejscie {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes okno {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+}
+@keyframes puls {
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 0 70px rgba(245, 154, 60, 0.7);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kulaDuza,
+  .tlo,
+  .okno {
+    animation: none;
+  }
+}
+
+/* telefon: alert wchodzi między oferty, bok znika */
+@media (max-width: 900px) {
+  .uklad {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bok {
+    display: none;
+  }
+  .wstawka {
+    display: block;
+  }
+  .akcje {
+    flex-wrap: nowrap;
+  }
+  .akcje > * {
+    white-space: nowrap;
+  }
+  .akcje > :first-child {
+    flex: 1;
+  }
+}

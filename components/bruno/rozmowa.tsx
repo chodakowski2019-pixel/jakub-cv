@@ -1,5 +1,6 @@
 "use client";
 
+import KulaOrb from "./kula-orb";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Feedback, Wypowiedz } from "@/lib/bruno/db";
@@ -979,13 +980,10 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           ) : (
           <>
           <div className="relative size-44 sm:size-56 grid place-items-center" aria-hidden={stan !== "odliczanie"}>
-            <div
-              className={`bruno-kula absolute inset-0 rounded-full blur-2xl transition-transform duration-200 ${
-                stan !== "trwa" ? "bruno-kula-czeka" : mowi === "bruno" ? "bruno-kula-mowi" : mowi === "ty" ? "scale-90" : ""
-              }`}
-              // Kula w kolorze wybranego typu klienta (USER_001 2.10), nazwa zawsze „Bruno".
-              style={{ background: `radial-gradient(circle at 45% 40%, ${p.kolor}cc 0%, ${p.kolor} 48%, ${p.kolor}00 74%)` }}
-            />
+            {/* 15.10: kula jak orb z elevenlabs.io (USER_001), dalej w kolorze typu klienta (2.10). */}
+            <div className={`absolute inset-0 transition-transform duration-500 ${mowi === "ty" && stan === "trwa" ? "scale-95" : ""}`}>
+              <KulaOrb kolor={p.kolor} tempo={stan !== "trwa" ? "czeka" : mowi === "bruno" ? "mowi" : mowi === "ty" ? "slucha" : "czeka"} />
+            </div>
             {stan === "odliczanie" && (
               <span key={odliczanie} className="relative bruno-h2 text-7xl text-white drop-shadow-[0_2px_12px_rgba(212,175,90,0.7)] bruno-odliczanie" aria-live="assertive">
                 {odliczanie > 0 ? odliczanie : "Start"}

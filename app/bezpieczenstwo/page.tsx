@@ -32,8 +32,8 @@ export async function generateMetadata({ searchParams }: { searchParams: Szukaj 
   const tytul = j === "en" ? "Security & Data | Bruno AI" : "Bezpieczeństwo i dane | Bruno AI";
   const opis =
     j === "en"
-      ? "How Bruno AI handles your team's data: sub-processors, where data is stored, retention, no model training, encryption, GDPR rights and a signed DPA on request."
-      : "Jak Bruno AI chroni dane Twojego zespołu: podwykonawcy, gdzie leżą dane, retencja, brak uczenia modeli, szyfrowanie, prawa z RODO i umowa powierzenia do podpisu.";
+      ? "Data protection"
+      : "Ochrona danych";
   return {
     metadataBase: new URL(DOMENA[j]),
     title: tytul,
@@ -46,7 +46,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Szukaj 
         "x-default": `${DOMENA.en}${SCIEZKI.en.bezpieczenstwo}`,
       },
     },
-    openGraph: { title: tytul, description: opis, url: sciezka, siteName: "Bruno AI", locale: j === "pl" ? "pl_PL" : "en_US", type: "website", images: [{ url: "/jakub.jpg" }] },
+    openGraph: { title: tytul, description: opis, url: sciezka, siteName: "Bruno AI", locale: j === "pl" ? "pl_PL" : "en_US", type: "website", images: [{ url: "/bruno/og-bruno-2.png", width: 1200, height: 630, alt: "Bruno AI" }] },
     robots: { index: true, follow: true },
   };
 }

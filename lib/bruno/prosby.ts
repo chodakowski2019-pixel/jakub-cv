@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabase";
-import { nowyKod, zaszyfrujKod } from "./auth";
+import { nowyKod, tokenProsby, zaszyfrujKod } from "./auth";
 import { PLAN_FREE, ROZMOWA_SEKUND_MAX, ROZMOW_DEMO, pobierzKonto } from "./db";
 import { zapewnijKarty } from "./fsrs";
 import { SKRZYNKA_JAKUBA, htmlDostepDemo, mailDziala, wyslij } from "./mail";
@@ -23,18 +23,48 @@ export type Prosba = {
   handlowcy: string;
   produkt: string;
   jezyk: string;
-  status: "nowa" | "przyznany" | "odrzucona" | string;
+  /** 21.10: 'krok1' = tylko e-mail + hasło, dane firmy jeszcze nie wpisane. */
+  status: "krok1" | "nowa" | "przyznany" | "odrzucona" | string;
   decyzja_at: string | null;
+  /** 21.10: skrót scrypt hasła z kroku 1 rejestracji. Przy „Daj dostęp” trafia do bruno_konta.kod_hash. */
+  haslo_hash?: string | null;
 };
 
 const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
-export async function zapiszProsbe(a: Omit<Prosba, "id" | "utworzono" | "status" | "decyzja_at">): Promise<{ ok: true } | { ok: false; blad: string }> {
-  const { error } = await supabaseAdmin.from("bruno_prosby").insert(a);
+/**
+ * 21.10 (USER_001): krok 1 rejestracji = e-mail + hasło. Każdy e-mail przechodzi (gmail też).
+ * Wiersz w bruno_prosby ze statusem 'krok1'; powtórny krok 1 tym samym e-mailem nadpisuje hasło.
+ * Zwraca id + podpis, którym krok 2 uzupełnia dane firmy.
+ */
+export async function zapiszKrok1(a: { email: string; haslo: string; jezyk: string }): Promise<{ ok: true; id: number; token: string } | { ok: false; blad: string }> {
+  const haslo_hash = zaszyfrujKod(a.haslo);
+  const { data: jest } = await supabaseAdmin.from("bruno_prosby").select("id, status").eq("email", a.email).in("status", ["krok1", "nowa"]).order("utworzono", { ascending: false }).limit(1).maybeSingle();
+  if (jest?.id) {
+    const { error } = await supabaseAdmin.from("bruno_prosby").update({ haslo_hash, jezyk: a.jezyk }).eq("id", jest.id);
+    if (error) return { ok: false, blad: error.message };
+    return { ok: true, id: jest.id, token: tokenProsby(jest.id, a.email) };
+  }
+  const { data, error } = await supabaseAdmin.from("bruno_prosby").insert({ email: a.email, haslo_hash, jezyk: a.jezyk, status: "krok1" }).select("id").single();
+  if (error || !data) {
+    console.error("[bruno prosba krok1]", error);
+    return { ok: false, blad: error?.message ?? "insert" };
+  }
+  return { ok: true, id: data.id, token: tokenProsby(data.id, a.email) };
+}
+
+/** Krok 2: dane firmy do wiersza z kroku 1, status 'nowa', mail do USER_001 jak dotąd. */
+export async function zapiszKrok2(id: number, a: Omit<Prosba, "id" | "utworzono" | "status" | "decyzja_at">): Promise<{ ok: true } | { ok: false; blad: string }> {
+  const { error } = await supabaseAdmin.from("bruno_prosby").update({ ...a, status: "nowa" }).eq("id", id).eq("email", a.email).in("status", ["krok1", "nowa"]);
   if (error) {
-    console.error("[bruno prosba]", error);
+    console.error("[bruno prosba krok2]", error);
     return { ok: false, blad: error.message };
   }
+  await powiadomJakuba(a);
+  return { ok: true };
+}
+
+async function powiadomJakuba(a: Omit<Prosba, "id" | "utworzono" | "status" | "decyzja_at">) {
   try {
     await wyslij({
       do: SKRZYNKA_JAKUBA,
@@ -46,6 +76,15 @@ export async function zapiszProsbe(a: Omit<Prosba, "id" | "utworzono" | "status"
   } catch (e) {
     console.error("[bruno prosba] mail do Jakuba", e);
   }
+}
+
+export async function zapiszProsbe(a: Omit<Prosba, "id" | "utworzono" | "status" | "decyzja_at">): Promise<{ ok: true } | { ok: false; blad: string }> {
+  const { error } = await supabaseAdmin.from("bruno_prosby").insert(a);
+  if (error) {
+    console.error("[bruno prosba]", error);
+    return { ok: false, blad: error.message };
+  }
+  await powiadomJakuba(a);
   return { ok: true };
 }
 
@@ -58,8 +97,11 @@ export async function przyznajDostep(id: number): Promise<{ ok: true; email: str
   const p = data as Prosba | null;
   if (!p) return { ok: false, blad: "Nie ma takiej prośby." };
   if (await pobierzKonto(p.email)) return { ok: false, blad: `Konto ${p.email} już istnieje. Włącz je w liście kont.` };
+  if (p.status === "krok1") return { ok: false, blad: "Ta osoba nie wpisała jeszcze danych firmy (krok 2)." };
 
-  const kod = nowyKod();
+  // 21.10: hasło z rejestracji (krok 1) idzie do konta; bez niego (stare prośby) losowy kod jak dotąd.
+  const wlasneHaslo = Boolean(p.haslo_hash);
+  const kod = wlasneHaslo ? "" : nowyKod();
   const jezyk = p.jezyk === "en" ? "en" : "pl";
   const teraz = new Date().toISOString();
   const { error } = await supabaseAdmin.from("bruno_konta").insert({
@@ -75,7 +117,7 @@ export async function przyznajDostep(id: number): Promise<{ ok: true; email: str
     aktywne: true,
     plan: PLAN_FREE,
     jezyk,
-    kod_hash: zaszyfrujKod(kod),
+    kod_hash: wlasneHaslo ? p.haslo_hash : zaszyfrujKod(kod),
     nieudane: 0,
     blokada_do: null,
     start_dostepu: null,
@@ -110,7 +152,7 @@ export async function przyznajDostep(id: number): Promise<{ ok: true; email: str
         do: p.email,
         rodzaj: "dostep",
         temat: jezyk === "pl" ? "Twój dostęp do Bruno AI" : "Your Bruno AI access",
-        html: htmlDostepDemo({ imie: p.imie, email: p.email, kod, jezyk }),
+        html: htmlDostepDemo({ imie: p.imie, email: p.email, kod: wlasneHaslo ? null : kod, jezyk }),
       });
       mail = "wyslany";
     } catch (e) {

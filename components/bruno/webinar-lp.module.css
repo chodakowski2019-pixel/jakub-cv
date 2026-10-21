@@ -1,0 +1,574 @@
+/* 16.10: LP webinaru Bruno AI. Tokeny jak bruno-lp.module.css. Wszystko pod .root. */
+.root {
+  --bg: #f6f6f5;
+  --ink: #0b0b0b;
+  --grey: #a4a4a4;
+  --muted: #6b6b6b;
+  --line: #ebeae7;
+  --orange: #f08a2b;
+  --head: var(--font-blp-head), "Outfit", system-ui, sans-serif;
+  --body: var(--font-blp-body), "Inter", system-ui, sans-serif;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.root *,
+.root *::before,
+.root *::after {
+  box-sizing: border-box;
+}
+.root :where(h1, h2, h3, p, ul, li) {
+  margin: 0;
+  padding: 0;
+}
+.root :where(ul) {
+  list-style: none;
+}
+.root :where(a) {
+  color: inherit;
+}
+.g {
+  color: var(--grey);
+  font-weight: 300;
+}
+
+.nav {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 22px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  font-family: var(--head);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.kropka {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+.navCta {
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff !important;
+}
+
+.hero {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 36px 20px 64px;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+.znaczek {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+.live {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--orange);
+  animation: puls 1.6s ease-in-out infinite;
+}
+@keyframes puls {
+  50% {
+    opacity: 0.35;
+  }
+}
+.h1 {
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: clamp(40px, 6vw, 68px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  margin-top: 22px !important;
+}
+/* 21.10 (USER_001): tytuł webinaru zawsze w 2 liniach, każda linia bez łamania. */
+.h1Dwie {
+  font-size: clamp(27px, 3.8vw, 48px);
+}
+.h1Linia {
+  white-space: nowrap;
+}
+.lead {
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-top: 20px !important;
+  max-width: 520px;
+}
+.fakty {
+  margin-top: 32px !important;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--line);
+}
+.fakty li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.fakty b {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.karta {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+  scroll-margin-top: 20px;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.h2 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+.opis {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+  margin-top: -6px !important;
+}
+.pole {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.pole em {
+  font-style: normal;
+  color: var(--grey);
+  font-weight: 400;
+}
+.pole input,
+.pole select {
+  font: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #f9f9f8;
+  outline: none;
+}
+.pole input:focus,
+.pole select:focus {
+  border-color: var(--ink);
+  background: #fff;
+}
+.pulapka {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+.zgoda {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.zgoda input {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--ink);
+  flex: none;
+}
+.blad {
+  color: #c0392b;
+  font-size: 14px;
+}
+.przycisk {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff !important;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 16px 22px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.przycisk:hover {
+  transform: translateY(-1px);
+}
+.przycisk:disabled {
+  opacity: 0.6;
+}
+.gotowe {
+  text-align: center;
+  padding: 30px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+.ptaszek {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: #fff;
+  font-size: 26px;
+  display: grid;
+  place-items: center;
+}
+
+.sekcja {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 56px 20px;
+  border-top: 1px solid var(--line);
+}
+.h2Duzy {
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: clamp(30px, 4vw, 44px);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.siatka {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.kafel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 24px;
+}
+.nr {
+  color: var(--orange);
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 15px;
+}
+.kafel h3 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  margin-top: 14px;
+}
+.kafel p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+.dwie {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+.lista {
+  margin-top: 24px !important;
+}
+.lista li {
+  padding: 14px 0 14px 28px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  font-size: 17px;
+}
+.lista li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 21px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+.liczba {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 32px;
+}
+.wielka {
+  font-family: var(--head);
+  font-size: 84px;
+  font-weight: 300;
+  letter-spacing: -0.05em;
+  color: var(--orange);
+  line-height: 1;
+}
+.liczba p {
+  font-size: 17px;
+  line-height: 1.45;
+  margin-top: 12px;
+}
+.liczba small {
+  display: block;
+  color: var(--grey);
+  font-size: 12px;
+  margin-top: 14px;
+}
+.prowadzacy {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  max-width: 640px;
+}
+.prowadzacy img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+.prowadzacy h3 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 22px;
+}
+.prowadzacy p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+.przyciskDol {
+  margin-top: 32px;
+  max-width: 340px;
+}
+.stopka {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 20px 40px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.zegarBlok {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.zegarNapis {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.zegar {
+  display: flex;
+  gap: 10px;
+}
+.zegarPole {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  min-width: 82px;
+  padding: 12px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.zegarPole b {
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: 38px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.zegarPole:last-child b {
+  color: var(--orange);
+}
+.zegarPole span {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.zegarKoniec {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--head);
+  font-size: 22px;
+}
+.bonus {
+  font-size: 13.5px;
+  text-align: center;
+  color: var(--muted);
+}
+.kalendarz {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.kalendarz a {
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 11px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #f9f9f8;
+}
+.faq {
+  margin-top: 24px;
+  max-width: 760px;
+  border-top: 1px solid var(--line);
+}
+.faq details {
+  border-bottom: 1px solid var(--line);
+  padding: 18px 0;
+}
+.faq summary {
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 500;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+.faq summary::after {
+  content: "+";
+  color: var(--orange);
+  font-size: 22px;
+  line-height: 1;
+}
+.faq details[open] summary::after {
+  content: "−";
+}
+.faq p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.55;
+  margin-top: 10px;
+}
+.koniec {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: flex-start;
+}
+.koniec .przyciskDol {
+  margin-top: 0;
+}
+.pasekTel {
+  display: none;
+}
+
+@media (max-width: 1000px) {
+  .siatka {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .pasekTel {
+    display: block;
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    z-index: 40;
+    text-align: center;
+    text-decoration: none;
+    background: var(--ink);
+    color: #fff !important;
+    border-radius: 999px;
+    padding: 16px;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  .stopka {
+    padding-bottom: 100px;
+  }
+  .zegar {
+    gap: 8px;
+  }
+  .zegarPole {
+    min-width: 0;
+    flex: 1;
+  }
+  .zegarPole b {
+    font-size: 30px;
+  }
+  .navCta {
+    display: none;
+  }
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding-top: 16px;
+  }
+  .siatka,
+  .dwie {
+    grid-template-columns: 1fr;
+  }
+  .karta {
+    padding: 22px;
+  }
+  .lead {
+    font-size: 17px;
+  }
+  .przyciskDol {
+    max-width: none;
+  }
+}
