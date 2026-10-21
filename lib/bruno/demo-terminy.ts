@@ -1,5 +1,5 @@
 // Terminy rozmów sprzedażowych z demo Bruno (USER_001 9.10): 3 sloty dziennie,
-// poniedziałek, środa, czwartek, tylko bieżący miesiąc. Godziny w czasie UK
+// 21.10: wtorek, środa, czwartek, 3 miesiące w przód, wyjątki per dzień w WYJATKI_DNI. Godziny w czasie UK
 // (rynek docelowy), przeglądarka pokazuje je w strefie odwiedzającego.
 // Bez Kalendarza Google: zajętość = tabela bruno_demo (status „umowione”).
 // USER_001 trzyma te godziny wolne w swoim kalendarzu.
@@ -9,8 +9,17 @@ export const DEMO_MINUT = 20;
 export const STREFA_DEMO = "Europe/London";
 /** Godziny w czasie UK: 10:00, 12:00, 14:00 (= 11:00, 13:00, 15:00 w Polsce). */
 export const GODZINY_UK = [10, 12, 14];
-/** Poniedziałek, środa, czwartek (getUTCDay: 1, 3, 4). */
-export const DNI_TYGODNIA = [1, 3, 4];
+/** 21.10 (USER_001): od tygodnia 26.10 wtorek, środa, czwartek (getUTCDay: 2, 3, 4). Było: pon, śr, czw. */
+export const DNI_TYGODNIA = [2, 3, 4];
+/**
+ * 21.10 (USER_001): wyjątki na konkretne dni (czas POLSKI, „HH:MM”). Pusta lista = dzień bez terminów.
+ * Czwartek 22.10 usunięty, piątek 23.10 wyjątkowo 10:00-13:30.
+ */
+export const WYJATKI_DNI: Record<string, string[]> = {
+  "2026-10-22": [],
+  "2026-10-23": ["10:00", "11:00", "12:00", "12:30", "13:00", "13:30"],
+};
+export const STREFA_WYJATKOW = "Europe/Warsaw";
 /** Najkrótszy czas od zapisu do rozmowy. */
 export const MIN_GODZIN_WCZESNIEJ = 12;
 
@@ -22,9 +31,9 @@ function przesuniecie(strefa: string, chwila: Date): number {
   return Math.round((jakoUtc - chwila.getTime()) / 60000);
 }
 
-/** Godzina h:00 danego dnia w strefie → chwila UTC. */
-function wStrefie(rok: number, miesiac: number, dzien: number, h: number, strefa: string): Date {
-  const zgrubnie = new Date(Date.UTC(rok, miesiac, dzien, h));
+/** Godzina h:m danego dnia w strefie → chwila UTC. */
+function wStrefie(rok: number, miesiac: number, dzien: number, h: number, strefa: string, m = 0): Date {
+  const zgrubnie = new Date(Date.UTC(rok, miesiac, dzien, h, m));
   const off = przesuniecie(strefa, zgrubnie);
   const wynik = new Date(zgrubnie.getTime() - off * 60000);
   // Druga iteracja na wypadek zmiany czasu tego dnia.
@@ -40,6 +49,16 @@ function slotyJednegoMiesiaca(rok: number, miesiac: number, odDnia: number, gran
   const ostatni = new Date(Date.UTC(rok, miesiac + 1, 0)).getUTCDate();
   const sloty: string[] = [];
   for (let d = odDnia; d <= ostatni; d++) {
+    const klucz = `${rok}-${String(miesiac + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    const wyjatek = WYJATKI_DNI[klucz];
+    if (wyjatek) {
+      for (const hm of wyjatek) {
+        const [h, m] = hm.split(":").map(Number);
+        const t = wStrefie(rok, miesiac, d, h, STREFA_WYJATKOW, m);
+        if (t.getTime() >= granica) sloty.push(t.toISOString());
+      }
+      continue;
+    }
     const dzienTyg = new Date(Date.UTC(rok, miesiac, d)).getUTCDay();
     if (!DNI_TYGODNIA.includes(dzienTyg)) continue;
     for (const h of GODZINY_UK) {
