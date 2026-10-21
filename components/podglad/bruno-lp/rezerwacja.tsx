@@ -29,8 +29,7 @@ const T = {
     // 18.10 (USER_001): spotkanie ONLINE (było: rozmowa telefoniczna). Telefon zostaje w formularzu do kontaktu.
     telInfo: (_tel: string) => "Online meeting, 20 minutes.",
     wybierz: "Pick a time for your online meeting",
-    okLink: "The meeting link will come by email.",
-    okTel: "Your phone:",
+    okLink: "We sent the meeting link to your email.",
     email: "Work email *",
     warn: "Use an email on your company domain.",
     tel: "Phone *",
@@ -45,9 +44,7 @@ const T = {
     linkedin: "Connect with me on LinkedIn",
     zapisuje: "Saving...",
     wroc: "← Back to Bruno AI",
-    okH: "Your meeting is booked",
-    okA: "We meet on",
-    okB: "The calendar invite is on its way to",
+    okH: "Your meeting is booked!",
     blad: "Something went wrong. Email hello@jakubchodakowski.com",
     dniTyg: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
     locale: "en-GB",
@@ -67,8 +64,7 @@ const T = {
     produktNp: "np. fotowoltaika dla domów",
     telInfo: (_tel: string) => "Spotkanie online, 20 minut.",
     wybierz: "Wybierz termin spotkania online",
-    okLink: "Link do spotkania przyjdzie mailem.",
-    okTel: "Twój telefon:",
+    okLink: "Link do spotkania wysłaliśmy na e-mail.",
     email: "Firmowy e-mail *",
     warn: "Podaj e-mail w domenie firmy.",
     tel: "Telefon *",
@@ -83,9 +79,7 @@ const T = {
     linkedin: "Połączmy się na LinkedInie",
     zapisuje: "Zapisuję...",
     wroc: "← Wróć do Bruno AI",
-    okH: "Spotkanie umówione",
-    okA: "Widzimy się",
-    okB: "Zaproszenie do kalendarza wysłaliśmy na",
+    okH: "Spotkanie umówione!",
     blad: "Coś poszło nie tak. Napisz na hello@jakubchodakowski.com",
     dniTyg: ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"],
     locale: "pl-PL",
@@ -172,7 +166,6 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
   const telPelny = f.telefon ? `${KRAJE.find((k) => k.kod === f.kraj)?.prefiks ?? ""} ${f.telefon}`.trim() : "";
   const godz = (iso: string) => new Date(iso).toLocaleTimeString(x.locale, { hour: "2-digit", minute: "2-digit", timeZone: strefa });
   const krotkaData = (k: string) => new Date(`${k}T12:00:00`).toLocaleDateString(x.locale, { day: "numeric", month: "short" });
-  const pelna = (iso: string) => `${new Date(iso).toLocaleDateString(x.locale, { weekday: "long", day: "numeric", month: "long", timeZone: strefa })}, ${godz(iso)}`;
   // 21.10 (USER_001): etykieta „Firmowy e-mail”, ale prywatny (gmail itp.) też przechodzi, bez ostrzeżenia.
   const emailZly = false;
   // 21.10 (USER_001): przycisk „Dalej” zawsze aktywny; po kliknięciu brakujące pola = czerwony tytuł
@@ -243,21 +236,8 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
           <div className={s.formHead} style={{ marginBottom: 14 }}>
             <h1>{x.okH}</h1>
           </div>
-          <p className={`${s.okText} ${s.okData}`}>
-            {/* 9.10 (USER_001): czarno-biała ikona kalendarza zamiast kolorowego emoji. */}
-            <svg className={s.okIkona} viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
-              <path d="M3.5 10h17M8 3v4M16 3v4" />
-            </svg>
-            {pelna(gotowe)}
-          </p>
-          <p className={s.okText} style={{ marginTop: 22 }}>
-            {/* 18.10 (USER_001): na telefonie w dwóch liniach. */}
-            {x.okLink} <span className="block">{x.okTel} <b>{telPelny}</b></span>
-          </p>
-          <p className={s.okText}>
-            {x.okB} <b>{f.email}</b>
-          </p>
+          {/* 21.10 (USER_001): bez daty, telefonu i adresu e-mail. Zostaje jedno zdanie. */}
+          <p className={s.okText}>{x.okLink}</p>
         </div>
         {/* 9.10 (USER_001): zamiast „Back to Bruno AI” przycisk do LinkedIna. */}
         <a className={s.linkedin} href="https://www.linkedin.com/in/jakub-chodakowski" target="_blank" rel="noopener noreferrer">
