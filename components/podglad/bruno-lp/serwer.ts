@@ -65,6 +65,9 @@ export const IKONY_BRUNO: Metadata["icons"] = {
   icon: [
     { url: "/bruno/ikona.svg?v=3", type: "image/svg+xml" },
     { url: "/bruno/ikona.ico?v=3", sizes: "64x64" },
+    // 21.10: Google w wynikach bierze ikonę tylko w wielokrotności 48 px (ico 64 px pomija).
+    { url: "/bruno/ikona-96.png?v=3", sizes: "96x96", type: "image/png" },
+    { url: "/bruno/ikona-48.png?v=3", sizes: "48x48", type: "image/png" },
   ],
   apple: [{ url: "/bruno/ikona-apple.png?v=3", sizes: "180x180" }],
 };
