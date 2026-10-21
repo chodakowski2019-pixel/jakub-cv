@@ -5,7 +5,7 @@ import { DOMENA, SCIEZKI, jezykZHosta, type Jezyk } from "@/lib/bruno/domeny";
 // 11.10 (USER_001): publiczne strony Bruno na dwóch domenach. Język i metadane liczone na serwerze,
 // żeby strona na salesbruno.pl od razu (bez mignięcia EN) była po polsku, a canonical wskazywał właściwą domenę.
 
-export type CelStrony = "firmy" | "handlowcy" | "rejestracja" | "logowanie";
+export type CelStrony = "firmy" | "handlowcy" | "rejestracja" | "logowanie" | "demo";
 type Szukaj = Promise<Record<string, string | string[] | undefined>> | undefined;
 
 /** Język strony: domena (x-jezyk z proxy / host), a poza domenami Bruno ?pl albo ?lang=pl. */
@@ -48,6 +48,11 @@ const OPISY: Record<CelStrony, Record<Jezyk, { title: string; description: strin
   logowanie: {
     en: { title: "Bruno AI: log in", description: "Log in" },
     pl: { title: "Bruno AI: logowanie", description: "Zaloguj się" },
+  },
+  // 21.10 (USER_001): /demo = kalendarz spotkania online.
+  demo: {
+    en: { title: "Bruno AI: book a demo", description: "Book an online meeting" },
+    pl: { title: "Bruno AI: umów demo", description: "Umów spotkanie online" },
   },
 };
 

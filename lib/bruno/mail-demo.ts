@@ -7,7 +7,7 @@ import { DOMENA } from "./domeny";
 // czcionki z bezpiecznym zapasem (Helvetica/Arial).
 // Bez zależności od reszty kodu, żeby dało się go wywołać ze skryptu (node) i z API.
 
-export const DEMO_MINUT_MAIL = 30;
+export const DEMO_MINUT_MAIL = 20;
 
 const ESC = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 

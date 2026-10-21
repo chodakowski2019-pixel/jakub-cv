@@ -62,7 +62,8 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Give your team Bruno.", "Start with one month."],
     ctaBtn: "I want to try Bruno",
-    ctaBok: "Fill in a short form. You get access to a demo call within 24 hours. Then we set Bruno up for your whole team.",
+    // 21.10 (USER_001): przyciski prowadzą do /demo (kalendarz spotkania online), nie do formularza prośby o dostęp.
+    ctaBok: "Pick a time. In a 20-minute online meeting I show you Bruno live on your team's toughest objection.",
     stopka: "AI sales practice for teams",
   },
   reps: {
@@ -112,7 +113,7 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Daj zespołowi Bruno.", "Sprawdź bezpłatnie"],
     ctaBtn: "Chcę wypróbować Bruno",
-    ctaBok: "Wypełnij krótki formularz. Dostęp do rozmowy demo otrzymasz w ciągu 24 godzin. Następnie ustawimy Bruno dla całego zespołu.",
+    ctaBok: "Wybierz termin. Na 20-minutowym spotkaniu online pokażę Ci Bruno na żywo na najtrudniejszej obiekcji Twojego zespołu.",
     stopka: "Trening sprzedaży z AI dla zespołów",
   },
   reps: {
@@ -362,7 +363,9 @@ export default function BrunoLp({ wersja = "business", zloto = false, jezykStart
     // 13.10 (USER_001): na stronie dla handlowców każdy przycisk prowadzi do REJESTRACJI (.pl /rejestracja, .com /signup), nie do logowania.
     // 14.10 (USER_001): strona firm też (3 rozmowy za darmo zamiast umawiania demo).
     // 17.10 (USER_001): Bruno tylko B2B, „rejestracja” = formularz prośby o dostęp (demo, 1 rozmowa, dostęp w 24 h).
-    window.location.href = adresStrony(jezyk, "rejestracja", naDomenie);
+    // 21.10 (USER_001): KAŻDY przycisk na stronie → podstrona /demo z kalendarzem spotkania online z USER_001
+    // (3 osoby z eventu 20.10, 0 rejestracji: samodzielne konto to za dużo kroków; sprzedaż = spotkanie 20 min).
+    window.location.href = adresStrony(jezyk, "demo", naDomenie);
   };
   // 14.10 (USER_001): link pod przyciskiem na stronie firm → formularz z kalendarzem (Rezerwacja, rozmowa telefoniczna).
   // 18.10 (USER_001): link „Chcesz Bruno dla zespołu? Napisz do mnie” USUNIĘTY. Kalendarz jest teraz po rozmowie demo

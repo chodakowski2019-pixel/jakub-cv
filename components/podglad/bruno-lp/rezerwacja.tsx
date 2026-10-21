@@ -22,7 +22,7 @@ const ROLE_PL: Record<string, string> = {
 
 const T = {
   en: {
-    h1a: "Book a 30-minute online meeting",
+    h1a: "Book a 20-minute online meeting",
     h1b: "and see Bruno play your customer",
     lead: "Fill in the form below",
     kroki: ["About you", "Day", "Time"],
@@ -35,7 +35,7 @@ const T = {
     produkt: "What do you sell? *",
     produktNp: "e.g. solar panels for homes",
     // 18.10 (USER_001): spotkanie ONLINE (było: rozmowa telefoniczna). Telefon zostaje w formularzu do kontaktu.
-    telInfo: (_tel: string) => "Online meeting, 30 minutes. I will send you the link by email.",
+    telInfo: (_tel: string) => "Online meeting, 20 minutes. I will send you the link by email.",
     wybierz: "Pick a time for your online meeting",
     okLink: "The meeting link will come by email.",
     okTel: "Your phone:",
@@ -61,7 +61,7 @@ const T = {
     locale: "en-GB",
   },
   pl: {
-    h1a: "Umów 30-minutowe spotkanie online",
+    h1a: "Umów 20-minutowe spotkanie online",
     h1b: "i zobacz, jak Bruno gra Twojego klienta",
     lead: "Uzupełnij formularz poniżej",
     kroki: ["O Tobie", "Dzień", "Godzina"],
@@ -73,7 +73,7 @@ const T = {
     firma: "Nazwa firmy *",
     produkt: "Co sprzedajecie? *",
     produktNp: "np. fotowoltaika dla domów",
-    telInfo: (_tel: string) => "Spotkanie online, 30 minut. Link wyślę mailem.",
+    telInfo: (_tel: string) => "Spotkanie online, 20 minut. Link wyślę mailem.",
     wybierz: "Wybierz termin spotkania online",
     okLink: "Link do spotkania przyjdzie mailem.",
     okTel: "Twój telefon:",

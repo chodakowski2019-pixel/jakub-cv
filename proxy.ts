@@ -39,7 +39,7 @@ function withLocaleHeader(request: NextRequest, locale: "pl" | "en") {
 }
 
 /** Stare adresy Bruno z jakubchodakowski.com (9-10.10). */
-const STARE_BRUNO = ["/brunobusiness", "/brunoai", "/brunorejestracja", "/bruno"];
+const STARE_BRUNO = ["/brunobusiness", "/brunoai", "/brunorejestracja", "/bruno", "/brunodemo"];
 
 /** Nagłówki dla stron Bruno: ścieżka (blokada free w układzie) i język domeny. */
 function dalej(request: NextRequest, pathname: string, jezyk: Jezyk | null, rewrite?: string) {
@@ -105,10 +105,12 @@ export function proxy(request: NextRequest) {
     // 17.10 (USER_001): Bruno tylko B2B: / = firmy, stare /wspolpraca, /business, /handlowcy, /reps → / (308).
     if (pathname === P.firmy) return dalej(request, pathname, jezyk, "/brunobusiness");
     if (pathname === P.rejestracja) return dalej(request, pathname, jezyk, "/brunorejestracja");
+    // 21.10 (USER_001): /demo = kalendarz spotkania online (app/brunodemo). Każdy przycisk na LP prowadzi tu.
+    if (pathname === P.demo) return dalej(request, pathname, jezyk, "/brunodemo");
     if (pathname === P.logowanie) return dalej(request, pathname, jezyk, "/bruno");
     // 12.10 (E11): /security (EN) = app/bezpieczenstwo. Na .pl adres jest ten sam, więc bez rewrite.
     if (pathname === P.bezpieczenstwo) return dalej(request, pathname, jezyk, pathname === "/bezpieczenstwo" ? undefined : "/bezpieczenstwo");
-    const nowa: Record<string, string> = { "/brunobusiness": P.firmy, "/brunoai": P.handlowcy, "/brunorejestracja": P.rejestracja, "/bruno": P.logowanie, "/bezpieczenstwo": P.bezpieczenstwo };
+    const nowa: Record<string, string> = { "/brunobusiness": P.firmy, "/brunoai": P.handlowcy, "/brunorejestracja": P.rejestracja, "/bruno": P.logowanie, "/bezpieczenstwo": P.bezpieczenstwo, "/brunodemo": P.demo };
     for (const s of STARE_HANDLOWCY) nowa[s] = P.handlowcy;
     if (nowa[pathname]) {
       const url = request.nextUrl.clone();
@@ -135,7 +137,7 @@ export function proxy(request: NextRequest) {
     const j: Jezyk = searchParams.has("pl") ? "pl" : "en";
     const P = SCIEZKI[j];
     const sciezka =
-      pathname === "/brunobusiness" ? P.firmy : pathname === "/brunoai" ? P.handlowcy : pathname === "/brunorejestracja" ? P.rejestracja : pathname === "/bruno" ? P.logowanie : pathname;
+      pathname === "/brunobusiness" ? P.firmy : pathname === "/brunoai" ? P.handlowcy : pathname === "/brunorejestracja" ? P.rejestracja : pathname === "/bruno" ? P.logowanie : pathname === "/brunodemo" ? P.demo : pathname;
     const cel = new URL(adresBruno(j, sciezka));
     searchParams.forEach((v, k) => {
       if (k !== "pl") cel.searchParams.set(k, v);

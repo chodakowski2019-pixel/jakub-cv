@@ -4,7 +4,8 @@
 // Bez Kalendarza Google: zajętość = tabela bruno_demo (status „umowione”).
 // USER_001 trzyma te godziny wolne w swoim kalendarzu.
 
-export const DEMO_MINUT = 30;
+// 21.10 (USER_001): spotkanie 20 min (było 30).
+export const DEMO_MINUT = 20;
 export const STREFA_DEMO = "Europe/London";
 /** Godziny w czasie UK: 10:00, 12:00, 14:00 (= 11:00, 13:00, 15:00 w Polsce). */
 export const GODZINY_UK = [10, 12, 14];
