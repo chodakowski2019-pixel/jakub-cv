@@ -76,7 +76,7 @@ const T = {
     dalej: "Dalej",
     braki: "Uzupełnij pola zaznaczone na czerwono.",
     book: "Umawiam",
-    linkedin: "Połączmy się na LinkedInie",
+    linkedin: "Połączmy się na LinkedIn",
     zapisuje: "Zapisuję...",
     wroc: "← Wróć do Bruno AI",
     okH: "Spotkanie umówione!",
