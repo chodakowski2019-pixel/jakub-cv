@@ -145,6 +145,10 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
   };
   useEffect(() => {
     void wczytaj();
+    // 21.10 (USER_001): zdjęcie z ekranu „Spotkanie umówione” ładujemy z góry (mała wersja 224 px, ok. 10 KB zamiast 82 KB),
+    // żeby po „Umawiam” pokazało się od razu.
+    const img = new Image();
+    img.src = "/jakub-224.jpg";
   }, []);
   // Tylko lokalnie (dev): podgląd kroku 2 i 3 bez wysyłania danych, np. /brunobusiness#demo-krok2.
   useEffect(() => {
@@ -234,7 +238,7 @@ export default function Rezerwacja({ onWstecz, jezyk = "en", start: dane, zrodlo
           {/* 9.10 (USER_001): zdjęcie Jakuba + sama data, podkreślona. */}
           <div className={s.okZdjecie}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/jakub.jpg" alt="Jakub Chodakowski" width={112} height={112} />
+            <img src="/jakub-224.jpg" alt="Jakub Chodakowski" width={112} height={112} />
           </div>
           <div className={s.formHead} style={{ marginBottom: 14 }}>
             <h1>{x.okH}</h1>
