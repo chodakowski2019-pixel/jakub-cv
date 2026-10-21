@@ -49,10 +49,10 @@ const OPISY: Record<CelStrony, Record<Jezyk, { title: string; description: strin
     en: { title: "Bruno AI: log in", description: "Log in" },
     pl: { title: "Bruno AI: logowanie", description: "Zaloguj się" },
   },
-  // 21.10 (USER_001): /demo = kalendarz spotkania online.
+  // 21.10 (USER_001): /spotkanie | /meeting = kalendarz spotkania online (klucz „demo” zostaje w kodzie).
   demo: {
-    en: { title: "Bruno AI: book a demo", description: "Book an online meeting" },
-    pl: { title: "Bruno AI: umów demo", description: "Umów spotkanie online" },
+    en: { title: "Bruno AI: book a meeting", description: "Book an online meeting" },
+    pl: { title: "Bruno AI: umów spotkanie", description: "Umów spotkanie online" },
   },
 };
 

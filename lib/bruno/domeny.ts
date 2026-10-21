@@ -14,10 +14,10 @@ export const DOMENA: Record<Jezyk, string> = {
 // 14.10 (USER_001): strona główna = LP dla handlowców (B2C), LP dla firm (B2B) = /wspolpraca (.pl) i /business (.com).
 // 17.10 (USER_001): Bruno TYLKO B2B. Strona główna = LP dla firm, LP dla handlowców wyłączona.
 // `handlowcy` zostaje jako klucz (stare linki w kodzie), wskazuje na stronę główną firm.
-// 21.10 (USER_001): /demo = podstrona z kalendarzem spotkania online z USER_001 (app/brunodemo). Wszystkie przyciski LP prowadzą tam.
+// 21.10 (USER_001): /spotkanie (.pl) i /meeting (.com) = kalendarz spotkania online z USER_001 (app/brunodemo). Było /demo (308).
 export const SCIEZKI: Record<Jezyk, { firmy: string; handlowcy: string; rejestracja: string; logowanie: string; bezpieczenstwo: string; demo: string }> = {
-  en: { firmy: "/", handlowcy: "/", rejestracja: "/signup", logowanie: "/login", bezpieczenstwo: "/security", demo: "/demo" },
-  pl: { firmy: "/", handlowcy: "/", rejestracja: "/rejestracja", logowanie: "/login", bezpieczenstwo: "/bezpieczenstwo", demo: "/demo" },
+  en: { firmy: "/", handlowcy: "/", rejestracja: "/signup", logowanie: "/login", bezpieczenstwo: "/security", demo: "/meeting" },
+  pl: { firmy: "/", handlowcy: "/", rejestracja: "/rejestracja", logowanie: "/login", bezpieczenstwo: "/bezpieczenstwo", demo: "/spotkanie" },
 };
 
 /** Stare adresy LP (handlowcy sprzed 14.10, firmy sprzed 17.10): przekierowanie 308 na stronę główną. */

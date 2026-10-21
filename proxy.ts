@@ -105,8 +105,14 @@ export function proxy(request: NextRequest) {
     // 17.10 (USER_001): Bruno tylko B2B: / = firmy, stare /wspolpraca, /business, /handlowcy, /reps → / (308).
     if (pathname === P.firmy) return dalej(request, pathname, jezyk, "/brunobusiness");
     if (pathname === P.rejestracja) return dalej(request, pathname, jezyk, "/brunorejestracja");
-    // 21.10 (USER_001): /demo = kalendarz spotkania online (app/brunodemo). Każdy przycisk na LP prowadzi tu.
+    // 21.10 (USER_001): /spotkanie | /meeting = kalendarz spotkania online (app/brunodemo). Każdy przycisk na LP prowadzi tu.
     if (pathname === P.demo) return dalej(request, pathname, jezyk, "/brunodemo");
+    // 21.10 (USER_001): stary adres /demo → nowa nazwa (308).
+    if (pathname === "/demo") {
+      const url = request.nextUrl.clone();
+      url.pathname = P.demo;
+      return NextResponse.redirect(url, 308);
+    }
     if (pathname === P.logowanie) return dalej(request, pathname, jezyk, "/bruno");
     // 12.10 (E11): /security (EN) = app/bezpieczenstwo. Na .pl adres jest ten sam, więc bez rewrite.
     if (pathname === P.bezpieczenstwo) return dalej(request, pathname, jezyk, pathname === "/bezpieczenstwo" ? undefined : "/bezpieczenstwo");
@@ -120,7 +126,7 @@ export function proxy(request: NextRequest) {
     }
     // Adres z drugiej domeny (np. /reps na .pl): na odpowiednik w tej domenie.
     const inny = SCIEZKI[jezyk === "pl" ? "en" : "pl"];
-    const odpowiednik = pathname === inny.rejestracja ? P.rejestracja : pathname === inny.bezpieczenstwo ? P.bezpieczenstwo : null;
+    const odpowiednik = pathname === inny.rejestracja ? P.rejestracja : pathname === inny.bezpieczenstwo ? P.bezpieczenstwo : pathname === inny.demo ? P.demo : null;
     if (odpowiednik) {
       const url = request.nextUrl.clone();
       url.pathname = odpowiednik;
