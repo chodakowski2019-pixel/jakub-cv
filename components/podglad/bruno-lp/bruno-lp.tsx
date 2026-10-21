@@ -64,7 +64,7 @@ const TEKSTY_EN: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Give your team Bruno.", "Start with one month."],
     ctaBtn: "I want to try Bruno",
-    lepkiCta: "Book a 20-minute demo",
+    lepkiCta: "I want to see Bruno",
     // 21.10 (USER_001): przyciski prowadzą do /demo (kalendarz spotkania online), nie do formularza prośby o dostęp.
     ctaBok: "Pick a time. In a 20-minute online meeting I show you Bruno live on your team's toughest objection.",
     stopka: "AI sales practice for teams",
@@ -117,7 +117,7 @@ const TEKSTY_PL: Record<Wersja, Teksty> = {
     ],
     ctaH: ["Daj zespołowi Bruno.", "Sprawdź bezpłatnie"],
     ctaBtn: "Chcę wypróbować Bruno",
-    lepkiCta: "Umów 20-minutowe demo",
+    lepkiCta: "Chcę zobaczyć Bruno",
     ctaBok: "Wybierz termin. Na 20-minutowym spotkaniu online pokażę Ci Bruno na żywo na najtrudniejszej obiekcji Twojego zespołu.",
     stopka: "Trening sprzedaży z AI dla zespołów",
   },
