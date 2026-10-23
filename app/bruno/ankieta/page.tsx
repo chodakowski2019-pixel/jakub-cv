@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { pobierzKonto } from "@/lib/bruno/db";
+import { pobierzKonto, stanDostepu } from "@/lib/bruno/db";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { ANKIETA_DNI, OBSZARY, OBSZARY_WYNIK, policz } from "@/lib/bruno/ankieta";
 import { ankietyKonta } from "@/lib/bruno/ankieta-db";
@@ -18,7 +18,8 @@ export default async function BrunoAnkietaPage() {
   const email = await zalogowanyEmail();
   if (!email) redirect("/bruno");
   const konto = await pobierzKonto(email);
-  if (!konto) redirect("/bruno");
+  // 23.10: wyłączone / wygasłe konto ze starą sesją nie wchodzi w ankietę.
+  if (!konto || !stanDostepu(konto).aktywny) redirect("/bruno");
   const { t, jezyk } = await tSerwer();
   const [ost, poprz] = await ankietyKonta(email, 2);
   const dzien = 24 * 3600 * 1000;

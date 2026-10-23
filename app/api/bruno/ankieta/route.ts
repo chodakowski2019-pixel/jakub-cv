@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
-import { pobierzKonto } from "@/lib/bruno/db";
+import { pobierzKonto, stanDostepu } from "@/lib/bruno/db";
 import { jezykLubDomyslny } from "@/lib/bruno/domeny";
 import { tDla } from "@/lib/bruno/i18n";
 import { PYTANIA, braki, type Odpowiedzi } from "@/lib/bruno/ankieta";
@@ -15,7 +15,8 @@ export async function POST(req: Request) {
   const email = await zalogowanyEmail();
   if (!email) return NextResponse.json({ ok: false }, { status: 401 });
   const konto = await pobierzKonto(email);
-  if (!konto) return NextResponse.json({ ok: false }, { status: 401 });
+  // 23.10: wyłączone / wygasłe konto ze starą sesją nie zapisuje ankiety.
+  if (!konto || !stanDostepu(konto).aktywny) return NextResponse.json({ ok: false }, { status: 403 });
   const jezyk = jezykLubDomyslny(konto.jezyk);
   const t = tDla(jezyk);
 
