@@ -14,7 +14,9 @@ import { jezykZHosta, type Jezyk } from "@/lib/bruno/domeny";
 // + wersja EN. Język z domeny: salesbruno.com = EN, salesbruno.pl i jakubchodakowski.com = PL.
 // Dwie wersje jako dane (TRESC), jeden układ. Treść EN = tłumaczenie PL, bez zmian merytorycznych.
 
-const AKTUALIZACJA: Record<Jezyk, string> = { pl: "21 października 2026", en: "October 21, 2026" };
+// 25.10 (USER_001): OpenAI gpt-5.5 gra klienta w każdej rozmowie (pkt 9), naruszenie do 7 dni, po umowie 14 dni,
+// tryb poufny i odejście handlowca realizowane ręcznie na wniosek firmy mailem (pkt 7 i 12), wzór DPA z umową.
+const AKTUALIZACJA: Record<Jezyk, string> = { pl: "25 października 2026", en: "October 25, 2026" };
 
 async function jezykStrony(): Promise<Jezyk> {
   const h = await headers();
@@ -157,8 +159,8 @@ const TRESC: Record<Jezyk, Tresc> = {
             <b>Tryb poufny dla firm.</b> Firma z pełnym dostępem może wybrać tryb poufny dla wszystkich kont swojego
             zespołu. W trybie poufnym nagranie dźwiękowe nie jest zapisywane, a transkrypcja jest usuwana zaraz po
             wystawieniu oceny. Zostają wyłącznie ocena, komentarze trenera, metryki i statystyki treningu, bez treści
-            rozmowy. Tryb poufny włącza się na wniosek firmy złożony na adres kontaktowy i działa od kolejnej rozmowy
-            po jego włączeniu. Wcześniejsze nagrania i transkrypcje firma może usunąć zgodnie z pkt 7 i polityką
+            rozmowy. Tryb poufny Usługodawca włącza ręcznie na wniosek firmy złożony mailem na adres kontaktowy. Działa od
+            kolejnej rozmowy po jego włączeniu. Wcześniejsze nagrania i transkrypcje firma może usunąć zgodnie z pkt 7 i polityką
             prywatności.
           </>,
         ],
@@ -184,8 +186,10 @@ const TRESC: Record<Jezyk, Tresc> = {
         tytul: "9. Dostępność i dostawcy zewnętrzni",
         akapity: [
           <>
-            Usługa działa w oparciu o dostawców zewnętrznych: głos i rozmowa (ElevenLabs, zapasowo OpenAI), ocena
-            rozmowy i fiszek (Anthropic), płatności (Stripe), baza danych i magazyn nagrań (Supabase), hosting (Vercel),
+            Usługa działa w oparciu o dostawców zewnętrznych: głos i rozmowa (ElevenLabs), model językowy gpt-5.5,
+            który gra klienta w każdej rozmowie i dostaje tekst rozmowy (OpenAI, wywoływany przez ElevenLabs),
+            zapasowa rozmowa głosowa, gdy ElevenLabs nie działa (OpenAI, dostaje dźwięk rozmowy), ocena rozmowy i
+            fiszek (Anthropic), płatności (Stripe), baza danych i magazyn nagrań (Supabase), hosting (Vercel),
             poczta (Resend, Google). Awaria lub zmiana warunków po stronie dostawcy może czasowo ograniczyć działanie
             usługi. Usługodawca informuje o dłuższych przerwach mailem.
           </>,
@@ -236,8 +240,7 @@ const TRESC: Record<Jezyk, Tresc> = {
           <>
             <b>Obowiązki Usługodawcy:</b> przetwarzanie wyłącznie na udokumentowane polecenie klienta, zachowanie
             poufności, stosowanie środków bezpieczeństwa z pkt 13, pomoc w realizacji praw osób i w obowiązkach z art.
-            32-36 RODO, zgłoszenie naruszenia ochrony danych bez zbędnej zwłoki, nie później niż w 48 godzin od jego
-            stwierdzenia.
+            32-36 RODO, zgłoszenie naruszenia ochrony danych bez zbędnej zwłoki, nie później niż 7 dni od jego wykrycia.
           </>,
           <>
             <b>Dalsi przetwarzający:</b> klient wyraża ogólną zgodę na korzystanie z dostawców wymienionych w pkt 9 i w
@@ -245,9 +248,15 @@ const TRESC: Record<Jezyk, Tresc> = {
             zgłosić sprzeciw i wypowiedzieć umowę.
           </>,
           <>
-            <b>Po zakończeniu:</b> dane zostają usunięte albo zwrócone klientowi w ciągu 30 dni od zakończenia
+            <b>Po zakończeniu:</b> dane zostają usunięte albo zwrócone klientowi w ciągu 14 dni od zakończenia
             współpracy, zgodnie z jego wyborem, z wyjątkiem danych, które Usługodawca musi zachować na podstawie
             przepisów.
+          </>,
+          <>
+            <b>Odejście handlowca:</b> firma (szef zespołu) zgłasza odejście handlowca mailem na adres kontaktowy.
+            Usługodawca wyłącza jego konto ręcznie w ciągu 1 dnia roboczego od zgłoszenia. Nagrania i transkrypcje
+            tego handlowca są kasowane po 14 dniach od zgłoszenia. Przed skasowaniem firma może poprosić o eksport
+            jego ocen i statystyk. Licencja przechodzi na nowego handlowca wskazanego przez firmę.
           </>,
           <>
             <b>Kontrola:</b> klient ma prawo do audytu nie częściej niż raz w roku, po uzgodnieniu terminu, albo do
@@ -256,8 +265,8 @@ const TRESC: Record<Jezyk, Tresc> = {
         ],
         po: [
           <>
-            Klient, który potrzebuje odrębnej, podpisanej umowy powierzenia na własnym wzorze, może o nią wystąpić na
-            adres kontaktowy. Aktualna lista podwykonawców z krajem i celem, miejsca przechowywania i okresy
+            Wzór odrębnej umowy powierzenia Usługodawca wysyła razem z umową. Klient, który woli własny wzór, może
+            go przesłać na adres kontaktowy. Aktualna lista podwykonawców z krajem i celem, miejsca przechowywania i okresy
             retencji są na stronie{" "}
             <a className="text-cyan-700 underline underline-offset-2" href="/bezpieczenstwo">
               Bezpieczeństwo i dane
@@ -405,8 +414,8 @@ const TRESC: Record<Jezyk, Tresc> = {
             <b>Confidential mode for companies.</b> A company with full access can choose confidential mode for all
             of its team accounts. In confidential mode the audio recording is not saved and the transcript is deleted
             right after the call is scored. Only the score, coach comments, metrics and training statistics remain,
-            without the content of the call. Confidential mode is enabled at the company’s request sent to the contact
-            address and applies from the next call after it is enabled. Earlier recordings and transcripts can be
+            without the content of the call. The Provider turns on confidential mode by hand at the company’s request sent by
+            email to the contact address. It applies from the next call after it is turned on. Earlier recordings and transcripts can be
             deleted by the company as described in section 7 and in the privacy policy.
           </>,
         ],
@@ -432,8 +441,9 @@ const TRESC: Record<Jezyk, Tresc> = {
         tytul: "9. Availability and third-party providers",
         akapity: [
           <>
-            The service runs on third-party providers: voice and call (ElevenLabs, OpenAI as backup), call and drill
-            scoring (Anthropic), payments (Stripe), database and recording storage (Supabase), hosting (Vercel), email
+            The service runs on third-party providers: voice and call (ElevenLabs), the gpt-5.5 language model that
+            plays the customer in every call and gets the text of the call (OpenAI, called through ElevenLabs), a backup
+            voice call when ElevenLabs is down (OpenAI, gets the call audio), call and drill scoring (Anthropic), payments (Stripe), database and recording storage (Supabase), hosting (Vercel), email
             (Resend, Google). An outage or a change of terms on a provider’s side may temporarily limit the service.
             The Provider informs about longer outages by email.
           </>,
@@ -484,8 +494,8 @@ const TRESC: Record<Jezyk, Tresc> = {
           <>
             <b>Provider’s obligations:</b> processing only on the customer’s documented instructions, confidentiality,
             applying the security measures in section 13, assisting with data subject rights and with obligations under
-            Art. 32-36 GDPR, notifying a personal data breach without undue delay and no later than 48 hours after
-            becoming aware of it.
+            Art. 32-36 GDPR, notifying a personal data breach without undue delay and no later than 7 days after
+            discovering it.
           </>,
           <>
             <b>Sub-processors:</b> the customer gives general consent to the providers listed in section 9 and in the
@@ -493,8 +503,14 @@ const TRESC: Record<Jezyk, Tresc> = {
             terminate the contract.
           </>,
           <>
-            <b>After termination:</b> data is deleted or returned to the customer within 30 days of the end of the
+            <b>After termination:</b> data is deleted or returned to the customer within 14 days of the end of the
             cooperation, at the customer’s choice, except for data the Provider must keep by law.
+          </>,
+          <>
+            <b>When a sales rep leaves:</b> the company (the team lead) reports it by email to the contact address. The
+            Provider turns off that account by hand within 1 business day of the email. Recordings and transcripts of
+            that rep are deleted 14 days after the email. Before that, the company may ask for an export of the rep’s
+            scores and stats. The license moves to a new sales rep named by the company.
           </>,
           <>
             <b>Audit:</b> the customer may audit no more than once a year at an agreed time, or receive written
@@ -503,8 +519,8 @@ const TRESC: Record<Jezyk, Tresc> = {
         ],
         po: [
           <>
-            A customer who needs a separate, signed data processing agreement on its own template may request one at
-            the contact address. The current list of sub-processors with country and purpose, storage locations and
+            The Provider sends its separate data processing agreement template together with the contract. A customer
+            that prefers its own template may send it to the contact address. The current list of sub-processors with country and purpose, storage locations and
             retention periods is on the{" "}
             <a className="text-cyan-700 underline underline-offset-2" href="/bezpieczenstwo">
               Security &amp; Data

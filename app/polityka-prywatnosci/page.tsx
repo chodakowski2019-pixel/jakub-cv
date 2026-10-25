@@ -19,7 +19,9 @@ export const metadata: Metadata = {
 
 // 12.10 (E11): retencja ElevenLabs 30 dni → 1 dzień (ustawione 9.10), link do strony „Bezpieczeństwo i dane”.
 // 21.10: ankieta Mazura w panelu Bruno (sekcja 2).
-const AKTUALIZACJA = "21 października 2026";
+// 25.10 (USER_001): OpenAI gpt-5.5 = model klienta w każdej rozmowie, po współpracy 14 dni, naruszenie do 7 dni,
+// tryb poufny i odejście handlowca. Retencja ElevenLabs sprawdzona przez API 25.10: 1 dzień.
+const AKTUALIZACJA = "25 października 2026";
 
 function Sekcja({ tytul, children }: { tytul: string; children: React.ReactNode }) {
   return (
@@ -59,8 +61,8 @@ export default function PolitykaPrywatnosciPage() {
               obiekcje, opcjonalnie nagrania rozmów sprzedażowych.
             </li>
             <li>
-              <b>Panel Bruno AI (konto testowe i pełne):</b> imię, adres e-mail, nazwa firmy, zaszyfrowany skrót kodu
-              logowania, ustawienia konta i godzina przypomnień. Przy rejestracji lub logowaniu przez Google
+              <b>Panel Bruno AI (konto testowe i pełne):</b> imię, adres e-mail, nazwa firmy, zaszyfrowany skrót
+              hasła, ustawienia konta i godzina przypomnień. Przy rejestracji lub logowaniu przez Google
               dostaję z Twojego konta Google tylko imię i adres e-mail (z informacją, że adres jest potwierdzony).
               Nie dostaję hasła ani dostępu do skrzynki, kontaktów czy plików.
             </li>
@@ -143,12 +145,13 @@ export default function PolitykaPrywatnosciPage() {
               2026 r., więc rozmowy prowadzone od tego dnia nie są używane do uczenia modeli ElevenLabs.
             </li>
             <li>
-              <b>OpenAI, L.L.C.</b> (zapasowy dostawca rozmowy głosowej, używany, gdy ElevenLabs jest niedostępny),
-              USA. Dane przesyłane przez API nie są używane do trenowania modeli OpenAI; logi bezpieczeństwa są
-              kasowane w ciągu 30 dni.
+              <b>OpenAI, L.L.C.</b>, USA. Model językowy gpt-5.5 gra klienta w każdej rozmowie: ElevenLabs przesyła
+              mu tekst rozmowy i ustawienia rozmowy (w tym dane oferty firmy). Gdy ElevenLabs jest niedostępny, OpenAI
+              prowadzi też zapasową rozmowę głosową (gpt-realtime) i wtedy dostaje dźwięk rozmowy. Dane przesyłane przez
+              API nie są używane do trenowania modeli OpenAI; logi bezpieczeństwa są kasowane w ciągu 30 dni.
             </li>
             <li>
-              <b>Anthropic PBC</b> (ocena rozmowy i odpowiedzi na fiszki), USA. Zgodnie z warunkami handlowymi
+              <b>Anthropic PBC</b> (ocena rozmowy i odpowiedzi na fiszki, opracowanie oferty z „Dostosuj Bruno”), USA. Zgodnie z warunkami handlowymi
               Anthropic nie trenuje modeli na treściach klientów; dane są kasowane w ciągu 30 dni.
             </li>
           </ul>
@@ -167,7 +170,7 @@ export default function PolitykaPrywatnosciPage() {
         <Sekcja tytul="5. Jak długo trzymam dane">
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
             <li>Dane z formularza kontaktowego: do wycofania zgody, najdłużej 12 miesięcy od ostatniego kontaktu.</li>
-            <li>Dane z formularza konfiguracyjnego i nagrania: przez czas współpracy i 12 miesięcy po jej zakończeniu.</li>
+            <li>Dane z formularza konfiguracyjnego i nagrania: przez czas współpracy, a po jej zakończeniu usuwane albo zwracane firmie w ciągu 14 dni.</li>
             <li>Jeśli nie dojdzie do współpracy: 12 miesięcy od wysłania formularza.</li>
             <li>
               Konto w panelu Bruno AI: przez czas korzystania z usługi. Konto testowe, z którego nie powstała
@@ -175,10 +178,19 @@ export default function PolitykaPrywatnosciPage() {
             </li>
             <li>
               Nagrania i transkrypcje rozmów treningowych: 12 miesięcy od rozmowy, a w razie zakończenia współpracy,
-              30 dni od jej zakończenia. Kopia po stronie dostawcy głosu znika po 1 dniu, kopie u dostawców oceny
+              14 dni od jej zakończenia. Kopia po stronie dostawcy głosu znika po 1 dniu, kopie u dostawców oceny
               najpóźniej po 30 dniach.
             </li>
             <li>Oceny i statystyki bez nagrania (potrzebne, żeby pokazywać postęp): przez czas korzystania z usługi.</li>
+            <li>
+              Tryb poufny (na wniosek firmy mailem, włączany ręcznie dla całego zespołu): nagrania dźwiękowego nie
+              zapisuję, transkrypcję kasuję zaraz po ocenie. Zostają ocena, metryki i statystyki.
+            </li>
+            <li>
+              Odejście handlowca z firmy: firma (szef) zgłasza je mailem, konto wyłączam w ciągu 1 dnia roboczego, a
+              nagrania i transkrypcje tego handlowca kasuję po 14 dniach. Przed skasowaniem firma może poprosić o
+              eksport jego ocen i statystyk.
+            </li>
           </ul>
           <p>Nagranie konkretnej rozmowy albo wszystkie swoje nagrania kasuję wcześniej na jedno zgłoszenie mailem.</p>
         </Sekcja>
@@ -235,7 +247,7 @@ export default function PolitykaPrywatnosciPage() {
         <Sekcja tytul="9. Bezpieczeństwo">
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
             <li>Połączenie ze stroną i rozmowa głosowa są szyfrowane.</li>
-            <li>Kod logowania przechowuję wyłącznie jako skrót scrypt z losową solą, nigdy jako zwykły tekst.</li>
+            <li>Hasło przechowuję wyłącznie jako skrót scrypt z losową solą, nigdy jako zwykły tekst.</li>
             <li>Po 5 nieudanych próbach logowania konto jest blokowane na 15 minut.</li>
             <li>Nagrania leżą w prywatnym magazynie bez publicznych odnośników.</li>
             <li>Dane każdego konta są filtrowane po jego adresie e-mail: jedno konto nie widzi danych drugiego.</li>
@@ -243,7 +255,7 @@ export default function PolitykaPrywatnosciPage() {
           </ul>
           <p>
             Naruszenie ochrony danych zgłaszam osobom, których dotyczy, i Prezesowi UODO w terminach z art. 33-34
-            RODO, a klientowi biznesowemu w ciągu 48 godzin od jego stwierdzenia.
+            RODO, a klientowi biznesowemu bez zbędnej zwłoki, nie później niż 7 dni od jego wykrycia.
           </p>
         </Sekcja>
 

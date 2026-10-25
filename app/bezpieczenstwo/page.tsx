@@ -10,7 +10,10 @@ import { DOMENA, SCIEZKI, jezykZHosta, type Jezyk } from "@/lib/bruno/domeny";
 // Fakty z polityki prywatności, regulaminu i PLAN.md (SalesAI). Pozycje „to be confirmed” = brak
 // twardego źródła w kodzie / PLAN; nie zgadujemy.
 
-const AKTUALIZACJA: Record<Jezyk, string> = { pl: "12 października 2026", en: "October 12, 2026" };
+// 25.10 (USER_001, BEZPIECZEŃSTWO DANYCH): OpenAI gpt-5.5 = model klienta w każdej rozmowie (LLM agenta ElevenLabs),
+// zgłoszenie naruszenia do 7 dni, po umowie 14 dni, tryb poufny i odejście handlowca (ręcznie, na wniosek mailem),
+// wzór DPA wysyłany razem z umową. Retencja ElevenLabs sprawdzona przez API 25.10: retention_days = 1.
+const AKTUALIZACJA: Record<Jezyk, string> = { pl: "25 października 2026", en: "October 25, 2026" };
 const MAIL = "hello@jakubchodakowski.com";
 
 type Szukaj = Promise<Record<string, string | string[] | undefined>>;
@@ -85,8 +88,8 @@ const TRESC: Record<Jezyk, Tresc> = {
         naglowki: ["Provider", "Country", "What it does", "What data it gets"],
         wiersze: [
           ["ElevenLabs (Eleven Labs Poland sp. z o.o. for EEA users)", "Poland / USA (processing in USA, EU or Singapore)", "Bruno's voice, speech recognition, running the live call", "Audio of the call, transcript"],
-          ["Anthropic PBC", "USA", "Scoring the call and the drill cards (the coach)", "Transcript, call settings, drill answers"],
-          ["OpenAI, L.L.C.", "USA", "Backup voice provider when ElevenLabs is down, transcription", "Audio of the call, transcript"],
+          ["Anthropic PBC", "USA", "Scoring the call and the drill cards (the coach)", "Transcript, call settings, drill answers, your offer data from Customize Bruno"],
+          ["OpenAI, L.L.C.", "USA", "The language model gpt-5.5 that plays the customer in every call (called through ElevenLabs). Backup voice call (gpt-realtime) and its transcription when ElevenLabs is down.", "Every call: the text of the call and the call setup (including your offer data). Backup call only: audio of the call."],
           ["Supabase Inc.", "USA (data region: us-east-1, N. Virginia)", "Database and private storage for recordings", "Account data, transcripts, scores, audio files"],
           ["Vercel Inc.", "USA", "Hosting of the website and the app", "Request logs, data passing through the app"],
           ["Resend Inc.", "USA", "Sending emails (login, reminders, reports)", "Email address, first name, email content"],
@@ -108,7 +111,7 @@ const TRESC: Record<Jezyk, Tresc> = {
           ["Audio recordings", "Private Supabase storage bucket, no public links"],
           ["Copy of the call at the voice provider", "ElevenLabs, deleted after 1 day"],
           ["Copy at the AI coach", "Anthropic, deleted within 30 days"],
-          ["Copy at the backup voice provider", "OpenAI, security logs deleted within 30 days"],
+          ["Copy at the model that plays the customer", "OpenAI, security logs deleted within 30 days"],
           ["Card data", "Stripe only"],
         ],
       },
@@ -117,15 +120,28 @@ const TRESC: Record<Jezyk, Tresc> = {
         naglowki: ["Data", "How long"],
         wiersze: [
           ["Account", "As long as the account is in use"],
-          ["Recordings and transcripts of practice calls", "12 months from the call. When a company contract ends: 30 days after the end."],
+          ["Recordings and transcripts of practice calls", "12 months from the call. When a company contract ends: 14 days after the end."],
           ["Scores and stats without audio", "As long as the service is in use (to show progress)"],
           ["Copy at ElevenLabs", "1 day"],
           ["Copies at Anthropic and OpenAI", "Up to 30 days"],
           ["Contact form data", "Up to 12 months from the last contact"],
           ["Test account with no contract", "Deleted within 3 months after access ends"],
-          ["After a company contract ends", "All data deleted or returned to the company within 30 days, your choice"],
+          ["After a company contract ends", "All data deleted or returned to the company within 14 days, your choice"],
+          ["Confidential mode (on company request)", "No audio is saved. The transcript is deleted right after the call is scored. Only the score, metrics and stats remain."],
+          ["A sales rep leaves the company", "Account turned off within 1 business day of the company's email. Recordings and transcripts of that rep deleted after 14 days."],
         ],
-        po: [<>One email to {MAIL} deletes a single recording or all recordings of an account earlier.</>],
+        po: [
+          <>One email to {MAIL} deletes a single recording or all recordings of an account earlier.</>,
+          <>
+            <b>Confidential mode.</b> Your company can ask for it by email to {MAIL}. We turn it on by hand for all of your team accounts. It applies from
+            the next call after it is on.
+          </>,
+          <>
+            <b>When a sales rep leaves.</b> The company (the team lead) emails {MAIL}. We turn off the account within 1 business day. Before the
+            recordings and transcripts are deleted (14 days), the company can ask for an export of that rep's scores and stats. The license moves
+            to a new sales rep.
+          </>,
+        ],
       },
       {
         tytul: "5. Model training: no",
@@ -161,7 +177,7 @@ const TRESC: Record<Jezyk, Tresc> = {
           ["Data separation", "Every query is filtered by account. One account never sees another's data."],
           ["Limits", "Minute and call limits checked on the server, not in the browser"],
           ["Payments", "Card data goes to Stripe only"],
-          ["Breach notification", "To your company within 48 hours of discovery. To the authority and the people affected within the GDPR deadlines (Art. 33-34)."],
+          ["Breach notification", "To your company without undue delay, no later than 7 days after discovery. To the authority and the people affected within the GDPR deadlines (Art. 33-34)."],
         ],
       },
       {
@@ -191,7 +207,7 @@ const TRESC: Record<Jezyk, Tresc> = {
     dpa: {
       tytul: "10. Data Processing Agreement (Art. 28 GDPR)",
       tekst:
-        "A standard DPA is already part of our Terms of Service (section 12): subject, duration, data types, our duties, sub-processors, deletion after the contract, audit once a year. If your legal team needs a separate, signed DPA, on your template or ours, ask for it. We sign before the first team account goes live.",
+        "A standard DPA is already part of our Terms of Service (section 12): subject, duration, data types, our duties, sub-processors, deletion after the contract, audit once a year. We send our DPA template together with the contract. If your legal team prefers its own template, send it to us. We sign before the first team account goes live.",
       przycisk: "Request a signed DPA",
       temat: "Bruno AI: signed DPA request",
       tresc: "Hi Jakub,\n\nWe would like to sign a Data Processing Agreement for Bruno AI.\n\nCompany:\nCountry:\nNumber of sales reps:\nOur template or yours:\n\nThanks,\n",
@@ -221,8 +237,8 @@ const TRESC: Record<Jezyk, Tresc> = {
         naglowki: ["Dostawca", "Kraj", "Co robi", "Jakie dane dostaje"],
         wiersze: [
           ["ElevenLabs (dla EOG: Eleven Labs Poland sp. z o.o.)", "Polska / USA (przetwarzanie w USA, UE lub Singapurze)", "Głos Bruno, rozpoznawanie mowy, prowadzenie rozmowy", "Dźwięk rozmowy, transkrypcja"],
-          ["Anthropic PBC", "USA", "Ocena rozmowy i fiszek (trener)", "Transkrypcja, ustawienia rozmowy, odpowiedzi na fiszki"],
-          ["OpenAI, L.L.C.", "USA", "Zapasowy dostawca głosu, gdy ElevenLabs nie działa, transkrypcja", "Dźwięk rozmowy, transkrypcja"],
+          ["Anthropic PBC", "USA", "Ocena rozmowy i fiszek (trener)", "Transkrypcja, ustawienia rozmowy, odpowiedzi na fiszki, dane oferty z „Dostosuj Bruno”"],
+          ["OpenAI, L.L.C.", "USA", "Model językowy gpt-5.5, który gra klienta w każdej rozmowie (wywoływany przez ElevenLabs). Zapasowa rozmowa głosowa (gpt-realtime) i jej transkrypcja, gdy ElevenLabs nie działa.", "Każda rozmowa: tekst rozmowy i ustawienia rozmowy (w tym dane z oferty firmy). Tylko rozmowa zapasowa: dźwięk rozmowy."],
           ["Supabase Inc.", "USA (region danych: us-east-1, Wirginia Płn.)", "Baza danych i prywatny magazyn nagrań", "Dane konta, transkrypcje, oceny, pliki audio"],
           ["Vercel Inc.", "USA", "Hosting strony i aplikacji", "Logi żądań, dane przechodzące przez aplikację"],
           ["Resend Inc.", "USA", "Wysyłka maili (logowanie, przypomnienia, raporty)", "Adres e-mail, imię, treść maila"],
@@ -244,7 +260,7 @@ const TRESC: Record<Jezyk, Tresc> = {
           ["Nagrania dźwiękowe", "Prywatny kubełek Supabase, bez publicznych odnośników"],
           ["Kopia rozmowy u dostawcy głosu", "ElevenLabs, kasowana po 1 dniu"],
           ["Kopia u trenera AI", "Anthropic, kasowana w ciągu 30 dni"],
-          ["Kopia u zapasowego dostawcy głosu", "OpenAI, logi bezpieczeństwa kasowane w ciągu 30 dni"],
+          ["Kopia u modelu, który gra klienta", "OpenAI, logi bezpieczeństwa kasowane w ciągu 30 dni"],
           ["Dane karty", "Tylko Stripe"],
         ],
       },
@@ -253,15 +269,27 @@ const TRESC: Record<Jezyk, Tresc> = {
         naglowki: ["Dane", "Jak długo"],
         wiersze: [
           ["Konto", "Przez czas korzystania"],
-          ["Nagrania i transkrypcje rozmów treningowych", "12 miesięcy od rozmowy. Po zakończeniu umowy z firmą: 30 dni od zakończenia."],
+          ["Nagrania i transkrypcje rozmów treningowych", "12 miesięcy od rozmowy. Po zakończeniu umowy z firmą: 14 dni od zakończenia."],
           ["Oceny i statystyki bez nagrania", "Przez czas korzystania (żeby pokazywać postęp)"],
           ["Kopia u ElevenLabs", "1 dzień"],
           ["Kopie u Anthropic i OpenAI", "Do 30 dni"],
           ["Dane z formularza kontaktowego", "Do 12 miesięcy od ostatniego kontaktu"],
           ["Konto testowe bez umowy", "Kasowane w ciągu 3 miesięcy od wygaśnięcia dostępu"],
-          ["Po zakończeniu umowy z firmą", "Wszystkie dane usunięte albo zwrócone firmie w ciągu 30 dni, do wyboru"],
+          ["Po zakończeniu umowy z firmą", "Wszystkie dane usunięte albo zwrócone firmie w ciągu 14 dni, do wyboru"],
+          ["Tryb poufny (na wniosek firmy)", "Nagrania dźwiękowego nie zapisujemy. Transkrypcja kasowana zaraz po ocenie. Zostają ocena, metryki i statystyki."],
+          ["Handlowiec odchodzi z firmy", "Konto wyłączone w ciągu 1 dnia roboczego od maila firmy. Nagrania i transkrypcje tego handlowca kasowane po 14 dniach."],
         ],
-        po: [<>Jeden mail na {MAIL} kasuje wcześniej jedno nagranie albo wszystkie nagrania konta.</>],
+        po: [
+          <>Jeden mail na {MAIL} kasuje wcześniej jedno nagranie albo wszystkie nagrania konta.</>,
+          <>
+            <b>Tryb poufny.</b> Firma prosi o niego mailem na {MAIL}. Włączamy go ręcznie dla wszystkich kont zespołu. Działa od kolejnej rozmowy po
+            włączeniu.
+          </>,
+          <>
+            <b>Odejście handlowca.</b> Firma (szef) zgłasza odejście mailem na {MAIL}. Konto wyłączamy w ciągu 1 dnia roboczego. Przed skasowaniem
+            nagrań i transkrypcji (14 dni) firma może poprosić o eksport ocen i statystyk tego handlowca. Licencja przechodzi na nowego handlowca.
+          </>,
+        ],
       },
       {
         tytul: "5. Uczenie modeli: nie",
@@ -297,7 +325,7 @@ const TRESC: Record<Jezyk, Tresc> = {
           ["Rozdzielenie danych", "Każde zapytanie filtrowane po koncie. Jedno konto nie widzi danych drugiego."],
           ["Limity", "Limity minut i rozmów sprawdzane na serwerze, nie w przeglądarce"],
           ["Płatności", "Dane karty idą tylko do Stripe"],
-          ["Zgłaszanie naruszeń", "Firmie w ciągu 48 godzin od stwierdzenia. Urzędowi i osobom w terminach z RODO (art. 33-34)."],
+          ["Zgłaszanie naruszeń", "Firmie bez zbędnej zwłoki, nie później niż 7 dni od wykrycia. Urzędowi i osobom w terminach z RODO (art. 33-34)."],
         ],
       },
       {
@@ -327,7 +355,7 @@ const TRESC: Record<Jezyk, Tresc> = {
     dpa: {
       tytul: "10. Umowa powierzenia (art. 28 RODO)",
       tekst:
-        "Standardowa umowa powierzenia jest już częścią regulaminu (pkt 12): przedmiot, czas, rodzaj danych, nasze obowiązki, podwykonawcy, usunięcie po umowie, audyt raz w roku. Jeśli Twój dział prawny potrzebuje osobnej, podpisanej umowy, na Waszym albo naszym wzorze, poproś o nią. Podpisujemy przed uruchomieniem pierwszego konta zespołu.",
+        "Standardowa umowa powierzenia jest już częścią regulaminu (pkt 12): przedmiot, czas, rodzaj danych, nasze obowiązki, podwykonawcy, usunięcie po umowie, audyt raz w roku. Wzór umowy powierzenia wysyłamy razem z umową. Jeśli Twój dział prawny woli własny wzór, prześlij go nam. Podpisujemy przed uruchomieniem pierwszego konta zespołu.",
       przycisk: "Poproś o podpisaną umowę powierzenia",
       temat: "Bruno AI: umowa powierzenia do podpisu",
       tresc: "Cześć Jakub,\n\nchcemy podpisać umowę powierzenia danych dla Bruno AI.\n\nFirma:\nKraj:\nLiczba handlowców:\nNasz wzór czy Wasz:\n\nDzięki,\n",
