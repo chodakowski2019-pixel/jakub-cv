@@ -682,3 +682,22 @@
 /* kółko z inicjałem na górze paska (miejsce logo) */
 .bpa.lp.szklo.czarny .me.gora{width:46px;height:46px;margin-bottom:30px;font-size:17px;font-weight:600;flex:0 0 auto;transition:background .25s}
 .bpa.lp.szklo.czarny .me.gora:hover{background:rgba(212,175,90,.12)}
+
+/* 25.10: bez kafelka „Twój typ klienta” dolny rząd ma 2 kolumny */
+.bpa .grid-bot.grid-bot-2{grid-template-columns:1fr 1fr}
+.bpa .grid-bot.grid-bot-2 .prog{grid-column:auto}
+@media (max-width:700px){.bpa .grid-bot.grid-bot-2{grid-template-columns:1fr}}
+
+/* 25.10 (USER_001): plan dnia w kółku na środku górnej części karty z mikrofonem (zamiast „Dziś: N rozmów”) */
+.bpa .hero .plan-kolo{position:absolute;left:50%;top:22px;transform:translateX(-50%);width:132px;height:132px;z-index:2}
+.bpa .hero .plan-kolo svg{width:100%;height:100%;display:block}
+.bpa .hero .plan-kolo-tlo{stroke:rgba(255,255,255,.1)}
+.bpa .hero .plan-kolo-pasek{stroke:#d4af5a;transition:stroke-dasharray .8s cubic-bezier(.22,1,.36,1)}
+.bpa .hero .plan-kolo-tekst{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.05}
+.bpa .hero .plan-kolo-tekst b{font-size:40px;font-weight:600;letter-spacing:-.02em}
+.bpa .hero .plan-kolo-tekst small{font-size:18px;font-weight:500;opacity:.55}
+.bpa .hero .plan-kolo-tekst span{font-size:12px;opacity:.65;margin-top:4px}
+.asset .bpa .hero .plan-kolo-tlo{stroke:#e4e1f5}
+.asset .bpa .hero .plan-kolo-pasek{stroke:#5e52f8}
+/* telefon: mikrofon jest na środku karty, więc kółko idzie w lewy górny róg (miejsce dawnego nagłówka) */
+@media (max-width:860px){.bpa .hero .plan-kolo{width:88px;height:88px;top:16px;left:16px;transform:none}.bpa .hero .plan-kolo-tekst b{font-size:26px}.bpa .hero .plan-kolo-tekst small{font-size:14px}.bpa .hero .plan-kolo-tekst span{font-size:10px}}

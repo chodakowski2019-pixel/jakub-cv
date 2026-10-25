@@ -229,7 +229,7 @@ export async function zalozDemoFirmy(z: Zlecenie, log: (s: string) => void = () 
         jezyk,
         dni: 365,
         limit_sekund: 36_000,
-        rozmow_dziennie: 30,
+        rozmow_dziennie: 5,
         fiszek_dziennie: 50,
         aktywne: true,
         nieudane: 0,

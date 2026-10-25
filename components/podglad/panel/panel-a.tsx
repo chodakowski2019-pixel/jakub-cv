@@ -401,7 +401,17 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
               <section className="grid-top">
                 <article className="card glass hi hero">
                   {lp ? <div className="fala-lp"><FalaGlosu akcentRgb={asset ? "94, 82, 248" : zloty || bialoZloty ? "201, 160, 74" : zielony ? "31, 174, 115" : undefined} bazaRgb={zloty ? "255, 255, 255" : undefined} bazaMnoznik={zloty ? 1.6 : 1} /></div> : <Kula glosniej={glosniej} />}
-                  <h2>{plan}</h2>
+                  {/* 25.10 (USER_001: „5 rozmów na sam środek, w kółku”): plan dnia jako pierścień postępu na środku karty. */}
+                  <div className="plan-kolo" role="img" aria-label={plan}>
+                    <svg viewBox="0 0 120 120" aria-hidden>
+                      <circle cx="60" cy="60" r="52" fill="none" className="plan-kolo-tlo" strokeWidth="7" />
+                      <circle cx="60" cy="60" r="52" fill="none" className="plan-kolo-pasek" strokeWidth="7" strokeLinecap="round" strokeDasharray={`${2 * Math.PI * 52 * Math.min(1, d.dziennie ? d.dzis / d.dziennie : 0)} ${2 * Math.PI * 52}`} transform="rotate(-90 60 60)" />
+                    </svg>
+                    <div className="plan-kolo-tekst">
+                      <b>{d.dzis}<small>/{d.dziennie}</small></b>
+                      <span>{d.planZrobiony ? t("done today", "plan zrobiony") : t("calls today", "rozmów dziś")}</span>
+                    </div>
+                  </div>
                   <div className={`listen ${glosniej ? "live" : ""}`}>
                     {d.moznaRozmawiac ? (
                       <Link href={d.linkRozmowy} className="mic" aria-label={t(`Talk to Bruno: ${p.nazwa} customer`, `Rozmawiaj z Bruno: klient ${p.nazwa.toLowerCase()}`)} onPointerEnter={() => setGlosniej(true)} onPointerLeave={() => setGlosniej(false)} onFocus={() => setGlosniej(true)} onBlur={() => setGlosniej(false)}>
@@ -426,8 +436,8 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
                 <Minuty d={d} />
               </section>
 
-              <section className="grid-bot">
-                <TypKlienta d={d} />
+              <section className="grid-bot grid-bot-2">
+                {/* 25.10 (USER_001): kafelek „Twój typ klienta” usunięty z panelu (komponent TypKlienta zostaje, podglądy go używają). */}
                 <Ocena d={d} />
                 <Fala d={d} />
               </section>
