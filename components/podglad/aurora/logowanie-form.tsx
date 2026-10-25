@@ -108,7 +108,8 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
     });
     if (res.ok) {
       setStan("ok");
-      router.push("/bruno/panel");
+      // 25.10 (USER_001): szef zaczyna od widoku zespołu; /bruno rozdziela (szef → /bruno/szef, reszta → panel).
+      router.push("/bruno");
       router.refresh();
     } else {
       setStan("idle");

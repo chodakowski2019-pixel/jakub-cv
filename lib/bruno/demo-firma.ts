@@ -219,7 +219,7 @@ export async function zalozDemoFirmy(z: Zlecenie, log: (s: string) => void = () 
     const { error: e1 } = await supabaseAdmin.from("bruno_konta").upsert(
       {
         email: emailSzefa,
-        imie: (z.imie ?? "").trim() || (pl ? "Szef" : "Boss"),
+        imie: (z.imie ?? "").trim() || "Jakub",
         firma: nazwa,
         firma_id: id,
         rola: "owner",

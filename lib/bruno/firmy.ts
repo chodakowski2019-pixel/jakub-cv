@@ -13,6 +13,8 @@ export type Firma = {
   jezyk: string;
   demo: boolean;
   demo_dane: unknown | null;
+  /** 25.10: nagłówek panelu szefa po „Zespół” (np. „Jakuba”). Puste = nazwa firmy. */
+  naglowek?: string | null;
   utworzono: string;
 };
 

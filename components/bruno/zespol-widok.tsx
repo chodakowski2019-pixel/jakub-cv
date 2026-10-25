@@ -72,7 +72,7 @@ export default function ZespolWidok({ firma, stat, zespol, jezyk }: { firma: Fir
 
   return (
     <div className="flex flex-col gap-6 bsz">
-      <Naglowek firma={firma} tytul={t("Team", "Zespół")} akcent={firma?.nazwa ?? "Bruno"} podtytul={t("Last 30 days. Click a rep to see their calls.", "Ostatnie 30 dni. Kliknij handlowca, żeby zobaczyć jego rozmowy.")} />
+      <Naglowek firma={firma} tytul={t("Team", "Zespół")} akcent={firma?.naglowek?.trim() || firma?.nazwa || "Bruno"} podtytul={t("Last 30 days. Click a rep to see their calls.", "Ostatnie 30 dni. Kliknij handlowca, żeby zobaczyć jego rozmowy.")} />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Kafelek liczba={zespol.handlowcow} opis={mnoga(jezyk, zespol.handlowcow, ["rep", "reps"], ["handlowiec", "handlowców", "handlowców"])} uwaga={t("on the team", "w zespole")} />

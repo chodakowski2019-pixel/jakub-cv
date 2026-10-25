@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { type DostepLinkow, Ikona, linkiDla, useWyloguj } from "@/components/podglad/panel/wspolne";
 import { useT } from "@/components/bruno/jezyk-kontekst";
 import { Inicjal, type Logo } from "@/components/bruno/pasek-zloty";
-import PrzelacznikWidoku from "@/components/bruno/przelacznik-widoku";
 
 // 14.10 (USER_001: „na telefonie nie może być jak na laptopkach”): panel na telefonie jak aplikacja.
 // Górna belka: inicjał + mała złota pigułka. Dolny pasek: 4 główne zakładki
@@ -49,7 +48,6 @@ export default function NavTel({ dostep, inicjal, logo = null }: { dostep: Doste
         <Link href={dostep.szef ? "/bruno/szef" : "/bruno/panel"} className="bt-ja-link" aria-label={t("Home", "Panel")}>
           <Inicjal inicjal={inicjal} logo={logo} className="bt-ja" />
         </Link>
-        {dostep.szef && <PrzelacznikWidoku className="bt-pro" krotki />}
       </header>
 
       <nav className="bt-dol" aria-label={t("Main menu", "Panel")}>

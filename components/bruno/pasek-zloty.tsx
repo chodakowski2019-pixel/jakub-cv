@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type DostepLinkow, Ikona, linkiDla, useWyloguj } from "@/components/podglad/panel/wspolne";
 import { useT } from "@/components/bruno/jezyk-kontekst";
-import PrzelacznikWidoku from "@/components/bruno/przelacznik-widoku";
 
 // 10.10 (USER_001: „cały ten Bruno się zmienia”): pasek czarno-złoty dla wszystkich ekranów panelu
 // poza /bruno/panel (tam pasek rysuje sam panel). Ten sam wygląd: kółko z inicjałem na górze,
@@ -58,7 +57,8 @@ export default function PasekZloty({ dostep, inicjal, logo = null }: { dostep: D
         <Link href={dom} className="bz-ja-link bz-ja-tel-link" aria-label={t("Home", "Panel")}>
           <Inicjal inicjal={inicjal} logo={logo} className="bz-ja bz-ja-tel" />
         </Link>
-        {dostep.szef ? <PrzelacznikWidoku className="bz-odblokuj" /> : <span className="bz-rosnie" />}
+        {/* 25.10 (USER_001): bez przycisku „Widok handlowca / Widok szefa”. */}
+        <span className="bz-rosnie" />
         <button type="button" className="bz-wyl" onClick={wyloguj} aria-label={t("Log out", "Wyloguj")}><Ikona nazwa="wyjscie" rozmiar={18} /></button>
         <nav className="bz-zakladki" aria-label={t("Main menu", "Panel")}>
           {linki.map((l) => (

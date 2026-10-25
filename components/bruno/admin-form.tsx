@@ -134,7 +134,7 @@ export default function AdminForm({ klucz }: { klucz: string }) {
             <option value="en">EN (salesbruno.com)</option>
           </select>
           <input className="bruno-pole" placeholder="e-mail szefa (puste = szef.<firma>@demo.salesbruno.pl)" value={demo.szef} onChange={(e) => setDemo((x) => ({ ...x, szef: e.target.value }))} />
-          <input className="bruno-pole" placeholder="imię szefa (puste = Szef)" value={demo.imie} onChange={(e) => setDemo((x) => ({ ...x, imie: e.target.value }))} />
+          <input className="bruno-pole" placeholder="imię szefa (puste = Jakub)" value={demo.imie} onChange={(e) => setDemo((x) => ({ ...x, imie: e.target.value }))} />
           <input className="bruno-pole" inputMode="numeric" maxLength={6} placeholder="kod 6 cyfr (puste = losowy)" value={demo.kod} onChange={(e) => setDemo((x) => ({ ...x, kod: e.target.value.replace(/\D/g, "").slice(0, 6) }))} />
         </div>
         <div className="flex flex-wrap items-center gap-3">

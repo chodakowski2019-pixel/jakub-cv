@@ -7,7 +7,6 @@ import Licz from "./licz";
 import { type DostepLinkow, Ikona, linkiDla, rozmowy, useWyloguj } from "./wspolne";
 import "./panel-a.css";
 import { useT } from "@/components/bruno/jezyk-kontekst";
-import PrzelacznikWidoku from "@/components/bruno/przelacznik-widoku";
 import dynamic from "next/dynamic";
 
 // 10.10 (USER_001): wariant „lp” = kolory i styl strony /brunoai; zamiast kuli fala głosu z nagłówka strony.
@@ -373,8 +372,7 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
                 <Pierscien liczba={`${d.dzis}/${d.dziennie}`} opis={t("calls today", "rozmów dziś")} uwaga={d.planZrobiony ? t("today's plan done", "plan dnia zrobiony") : t(`${d.zostaloDzis} left`, `zostało ${d.zostaloDzis}`)} />
               </div>
             )}
-            {/* 25.10 (USER_001): bez „Odblokuj pełen dostęp”. Szef ma tu przełącznik widoku szef ↔ handlowiec. */}
-            {szef && <PrzelacznikWidoku className="btn sec glass upgrade" />}
+            {/* 25.10 (USER_001): bez „Odblokuj pełen dostęp” i bez przełącznika widoku (zakładki w pasku wystarczą). */}
             <button type="button" className="wyl glass" onClick={wyloguj} aria-label={t("Log out", "Wyloguj")}><Ikona nazwa="wyjscie" rozmiar={18} /></button>
           </header>
 
