@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { stronaBruno } from "@/components/podglad/bruno-lp/serwer";
-import { adresStrony } from "@/components/podglad/aurora/jezyk";
+import { SCIEZKI } from "@/lib/bruno/domeny";
 
 export const dynamic = "force-dynamic";
 
@@ -9,9 +9,10 @@ export const dynamic = "force-dynamic";
 // 25.10 (USER_001: „dezaktywuj tą stronę”): rejestracja WYŁĄCZONA. Konta zakłada USER_001 po spotkaniu
 // (Admin / „Demo pod firmę”), więc adres prowadzi na kalendarz spotkania online. Formularz
 // (components/podglad/aurora/rejestracja-form.tsx) zostaje w repo, API rejestracji zwraca 410.
+// Adres liczony tu, nie przez adresStrony z aurora/jezyk.ts: tamten moduł jest „use client” (na serwerze = 500).
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
 export default async function Page({ searchParams }: Props) {
   const { jezyk, naDomenie } = await stronaBruno(searchParams);
-  redirect(adresStrony(jezyk, "demo", naDomenie));
+  redirect(naDomenie ? SCIEZKI[jezyk].demo : `/brunodemo${jezyk === "pl" ? "?pl" : ""}`);
 }
