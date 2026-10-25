@@ -78,11 +78,10 @@ export default function ZespolWidok({ firma, stat, zespol, jezyk, seria, aktywno
     <div className="flex flex-col gap-6 bsz">
       <Naglowek firma={firma} tytul={t("Team", "Zespół")} akcent={firma?.naglowek?.trim() || firma?.nazwa || "Bruno"} podtytul={t("Last 30 days. Click a rep to see their calls.", "Ostatnie 30 dni. Kliknij handlowca, żeby zobaczyć jego rozmowy.")} />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* 25.10 (USER_001): kafelki „rozmów w 7 dni” i „nie ćwiczy” usunięte, zostają 2. */}
+      <div className="grid grid-cols-2 gap-3">
         <Kafelek liczba={zespol.handlowcow} opis={mnoga(jezyk, zespol.handlowcow, ["rep", "reps"], ["handlowiec", "handlowców", "handlowców"])} uwaga={t("on the team", "w zespole")} />
-        <Kafelek liczba={zespol.rozmow7} opis={t("calls in 7 days", "rozmów w 7 dni")} uwaga={t(`goal: ${zespol.handlowcow * 7}`, `cel: ${zespol.handlowcow * 7}`)} opoznienie={120} />
-        <Kafelek liczba={zespol.srednia} dec={1} opis={t("team average", "średnia zespołu")} uwaga={t("out of 10", "na 10")} opoznienie={240} />
-        <Kafelek liczba={zespol.nieCwicza} opis={t("not practicing", "nie ćwiczy")} uwaga={t(`${DNI_BEZ_TRENINGU_ALARM}+ days without a call`, `${DNI_BEZ_TRENINGU_ALARM}+ dni bez rozmowy`)} opoznienie={360} />
+        <Kafelek liczba={zespol.srednia} dec={1} opis={t("team average", "średnia zespołu")} uwaga={t("out of 10", "na 10")} opoznienie={120} />
       </div>
 
       {/* 25.10 (USER_001: „lepsza wizualizacja”): trend zespołu, mapa kryteriów, aktywność 14 dni (zespol-wykresy.tsx). */}
