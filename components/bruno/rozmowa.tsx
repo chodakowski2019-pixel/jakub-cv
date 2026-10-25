@@ -617,7 +617,8 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
       const res = await fetch("/api/bruno/rozmowa/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        // 25.10 (USER_001): zwykła rozmowa = autorski dobór na serwerze (auto). Wysyłamy tylko głos, kartę i obiekcję z fiszki.
+        body: JSON.stringify(jutro ? {
           postac,
           glos,
           tryb,
@@ -627,6 +628,11 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           obiekcje: wybraneObiekcje,
           karta_id: karta?.typ === "kryterium" ? karta.id : null,
           sytuacja: jutro || (pelny && sytuacjaOtwarta) ? sytuacja.trim() || null : null,
+        } : {
+          auto: true,
+          glos,
+          obiekcje: karta?.typ === "obiekcja" ? [karta.tresc] : [],
+          karta_id: karta?.typ === "kryterium" ? karta.id : null,
         }),
       });
       const odp = await res.json();
@@ -726,7 +732,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
 
   const zostalo = dogrywka ? Math.max(0, limit + sekundDogrywki - sekundy) : Math.max(0, limit - sekundy);
   const ostrzezenie = stan === "trwa" && (dogrywka || zostalo <= 15);
-  const gotowy = jutro ? sytuacja.trim().length >= 20 : Boolean(tryb && postac && cel && (cel !== "wlasny" || celWlasny.trim().length >= 3));
+  const gotowy = jutro ? sytuacja.trim().length >= 20 : true;
   const p = POSTACIE[postac];
 
   if (stan === "feedback" && feedback) {
@@ -779,33 +785,20 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
             </fieldset>
           )}
 
-          {/* 1. Tryb */}
-          {!jutro && <fieldset data-tour="kreator-1">
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">1.</span>{tr("Call type", "Rodzaj rozmowy")}</legend>
-            <div className="grid sm:grid-cols-3 gap-3 auto-rows-fr">
-              {(Object.keys(TRYBY) as TrybId[]).map((id) => {
-                const t = TRYBY[id];
-                const wybrany = tryb === id;
-                return (
-                  <button
-                    key={id}
-                    type="button"
-                    aria-pressed={wybrany}
-                    onClick={() => {
-                      setTryb(id);
-                      if (!CELE_TRYBU[id].includes(cel)) setCel(CELE_TRYBU[id][0]);
-                    }}
-                    className={kafelek(wybrany, "min-h-[6.5rem]")}
-                  >
-                    <div className={`mb-2 ${wybrany ? "text-cyan-800" : "text-slate-500"}`}><IkonaTrybu nazwa={t.ikona} /></div>
-                    <div className="bruno-h2 text-base">{t.nazwa}</div>
-                    {/* 25.10 (USER_001): bez opisów trybów („Bruno nie wie, kto dzwoni…”). */}
-                  </button>
-                );
-              })}
+          {/* 25.10 (USER_001: „tylko dymek Bruno i Start, nasz algorytm sam dobiera rozmowę”): zwykła rozmowa bez kreatora.
+              Rodzaj rozmowy, cel, obiekcję, typ klienta i poziom dobiera serwer (lib/bruno/dobor.ts). */}
+          {!jutro && (
+            <div className="flex flex-col items-center gap-5 py-4">
+              <div className="relative size-44 sm:size-56" aria-hidden>
+                <KulaOrb kolor="#d4af5a" tempo="czeka" />
+              </div>
+              <div className="bruno-szklo rounded-2xl px-5 py-4 max-w-md text-center text-slate-700 bruno-dymek-bruno">
+                {tr("I've picked today's call for you. Put on your headphones and hit Start.", "Dobrałem dla Ciebie dzisiejszą rozmowę. Załóż słuchawki i naciśnij Start.")}
+              </div>
             </div>
-          </fieldset>}
+          )}
 
+          {jutro && (<>
           {/* 2. Obiekcja */}
           {/* 2. Głos klienta (16.10, USER_001): mężczyzna = Bruno, kobieta = Anna. Ten sam wybór co w Ustawieniach. */}
           <fieldset data-tour="kreator-2">
@@ -825,116 +818,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
             </div>
           </fieldset>
 
-          {!jutro && <fieldset data-tour="kreator-3">
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">3.</span>{tr("Which objections do you want to practice?", "Jakie obiekcje chcesz przetrenować")} <span className="text-xs font-normal text-slate-400">{tr("(you can pick more than one)", "(możesz zaznaczyć kilka)")}</span></legend>
-            {obiekcje.length === 0 ? (
-              <p className="text-sm text-slate-600 bruno-szklo rounded-2xl p-4">
-                {tr("You don't have a list of objections yet.", "Nie masz jeszcze listy obiekcji.")}{" "}
-                <Link href="/bruno/dostosuj" className="underline">{tr("Add them in “Customize Bruno”", "Dodaj je w „Dostosuj Bruno”")}</Link>
-                {tr(", and Bruno will use the ones your customers usually raise.", ", a Bruno użyje typowych dla Twojego klienta.")}
-              </p>
-            ) : (
-              <div className="flex flex-col gap-3">
-                <div className="flex flex-wrap gap-2">
-                  <button type="button" aria-pressed={losowa} onClick={() => setWybraneObiekcje(["__losowa__"])} className={`bruno-pastylka ${losowa ? "bruno-pastylka-wybrana" : ""}`}>{tr("Random", "Losowa")}</button>
-                  <button type="button" aria-pressed={bezKonkretnej} onClick={() => setWybraneObiekcje([])} className={`bruno-pastylka ${bezKonkretnej ? "bruno-pastylka-wybrana" : ""}`}>{tr("None in particular", "Bez konkretnej")}</button>
-                </div>
-                {/* 25.10 (USER_001: „obiekcje muszą być w tabeli”): wiersz = obiekcja + co klient ma na myśli, klik zaznacza. */}
-                <div className="bruno-szklo rounded-2xl overflow-hidden bruno-obiekcje-tabela" role="table" aria-label={tr("Objections", "Obiekcje")}>
-                  <div className="bruno-obiekcje-wiersz bruno-obiekcje-naglowek" role="row">
-                    <span role="columnheader" />
-                    <span role="columnheader">{tr("Objection", "Obiekcja")}</span>
-                    <span role="columnheader">{tr("What the customer means", "Co klient ma na myśli")}</span>
-                  </div>
-                  {obiekcje.map((o) => {
-                    const w = wybraneObiekcje.includes(o);
-                    return (
-                      <button key={o} type="button" role="row" aria-pressed={w} onClick={() => przelaczObiekcje(o)} className={`bruno-obiekcje-wiersz ${w ? "bruno-obiekcje-on" : ""}`}>
-                        <span role="cell" className="bruno-obiekcje-ptaszek" aria-hidden>{w ? "✓" : ""}</span>
-                        <span role="cell" className="font-semibold text-slate-900">{cudzy(o)}</span>
-                        <span role="cell" className="text-sm text-slate-500">{obiekcjeOpis[o] ?? "–"}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </fieldset>}
-
-          {/* 3. Cel */}
-          {!jutro && <fieldset data-tour="kreator-4">
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">4.</span>{tr("Call goal", "Cel rozmowy")}</legend>
-            {/* Lista celów zależy od trybu; stała wysokość siatki, żeby zmiana trybu nie przesuwała kroku 4. */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 auto-rows-fr min-h-[11rem] sm:min-h-[8.5rem]">
-              {CELE_TRYBU[tryb].map((id) => {
-                const c = CELE[id];
-                const wybrany = cel === id;
-                return (
-                  <button key={id} type="button" aria-pressed={wybrany} onClick={() => setCel(id)} className={kafelek(wybrany, "p-3 flex items-start gap-3")}>
-                    <span className="bruno-cel-emoji" aria-hidden>{EMOJI_CELU[id] ?? "🎯"}</span>
-                    <span className="min-w-0">
-                    <div className="font-semibold text-sm text-slate-900">{c.nazwa}</div>
-                    <div className="bruno-opis text-xs text-slate-500 mt-0.5">{c.opis}</div>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            {cel === "wlasny" && (
-              <input className="bruno-pole mt-3" placeholder={tr("e.g. the customer agrees to an audit next week", "np. klient zgadza się na audyt w przyszłym tygodniu")} value={celWlasny} onChange={(e) => setCelWlasny(e.target.value)} maxLength={300} autoFocus />
-            )}
-          </fieldset>}
-
-          {/* 4. Typ klienta */}
-          {!jutro && <fieldset data-tour="kreator-5">
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">5.</span>{tr("Customer type", "Typ klienta")}</legend>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-fr">
-              {(Object.keys(POSTACIE) as PostacId[]).map((id) => {
-                const k = POSTACIE[id];
-                const wybrany = postac === id;
-                return (
-                  <button key={id} type="button" aria-pressed={wybrany} onClick={() => setPostac(id)} className={kafelek(wybrany)}>
-                    {/* 15.10 (USER_001): kolor i cecha zawsze jedno pod drugim (wcześniej przy dłuższej nazwie cecha stała obok). */}
-                    <div className="flex items-center gap-2">
-                      <span className="size-3.5 rounded-full shrink-0" style={{ background: k.kolor }} aria-hidden />
-                      <div className="bruno-h2 text-base">{k.nazwa}</div>
-                    </div>
-                    <span className="mt-1.5 self-start inline-block text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: `${k.kolor}1a`, color: k.kolor }}>{k.krotko}</span>
-                    <div className="bruno-opis text-sm text-slate-600 mt-1">{k.opis}</div>
-                  </button>
-                );
-              })}
-            </div>
-          </fieldset>}
-
-          {/* 5. Poziom trudności */}
-          {!jutro && <fieldset data-tour="kreator-6">
-            <legend className="bruno-h2 text-base mb-2"><span className="bruno-gradient-tekst mr-1.5">6.</span>{tr("Difficulty", "Poziom trudności")} <span className="text-xs font-normal text-slate-400">{tr("(the score uses the same rules at every level)", "(ocena jest wg tej samej rubryki na każdym poziomie)")}</span></legend>
-            <div className="grid sm:grid-cols-3 gap-3 auto-rows-fr">
-              {(Object.keys(POZIOMY) as PoziomId[]).map((id, nr) => {
-                const z = POZIOMY[id];
-                const wybrany = poziom === id;
-                return (
-                  <button key={id} type="button" aria-pressed={wybrany} onClick={() => setPoziom(id)} className={kafelek(wybrany)}>
-                    <div className="flex items-center gap-2">
-                      <span className="flex items-end gap-0.5" aria-hidden>
-                        {[0, 1, 2].map((i) => (
-                          <span
-                            key={i}
-                            className={`w-1.5 rounded-sm ${i <= nr ? (wybrany ? "bg-cyan-700" : "bg-slate-400") : "bg-slate-200"}`}
-                            style={{ height: `${0.45 + i * 0.3}rem` }}
-                          />
-                        ))}
-                      </span>
-                      <div className="bruno-h2 text-base">{z.nazwa}</div>
-                      <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{z.krotko}</span>
-                    </div>
-                    <div className="bruno-opis text-sm text-slate-600 mt-1">{z.opis}</div>
-                  </button>
-                );
-              })}
-            </div>
-          </fieldset>}
+          </>)}
 
           {/* 25.10 (USER_001): „Rozmowa, którą masz jutro” = osobna zakładka /bruno/jutro (ten komponent z jutro=true). */}
 
@@ -966,12 +850,13 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
               {dogrywka ? `${tr("Overtime: close it", "Dogrywka: domknij")} · ${czas(zostalo)}` : czas(zostalo)}
             </div>
           )}
-          <div className="absolute top-4 left-4 sm:top-5 sm:left-5 hidden sm:flex items-center gap-2 text-xs text-slate-500">
+          {/* 25.10: w zwykłej rozmowie (dobór serwera) bez etykiety trybu, poziomu i koloru klienta: handlowiec ma ich nie znać. */}
+          {jutro && <div className="absolute top-4 left-4 sm:top-5 sm:left-5 hidden sm:flex items-center gap-2 text-xs text-slate-500">
             <span className="size-2.5 rounded-full" style={{ background: p.kolor }} aria-hidden />
             {TRYBY[tryb].nazwa}
             <span className="text-slate-300" aria-hidden>·</span>
             {POZIOMY[poziom].nazwa.toLowerCase()}
-          </div>
+          </div>}
 
           {stan === "konczenie" ? (
             <KolkoOceny etykieta={tr("Scoring your call", "Ocena rozmowy")} />
@@ -980,7 +865,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           <div className="relative size-44 sm:size-56 grid place-items-center" aria-hidden={stan !== "odliczanie"}>
             {/* 15.10: kula jak orb z elevenlabs.io (USER_001), dalej w kolorze typu klienta (2.10). */}
             <div className={`absolute inset-0 transition-transform duration-500 ${mowi === "ty" && stan === "trwa" ? "scale-95" : ""}`}>
-              <KulaOrb kolor={p.kolor} tempo={stan !== "trwa" ? "czeka" : mowi === "bruno" ? "mowi" : mowi === "ty" ? "slucha" : "czeka"} />
+              <KulaOrb kolor={jutro ? p.kolor : "#d4af5a"} tempo={stan !== "trwa" ? "czeka" : mowi === "bruno" ? "mowi" : mowi === "ty" ? "slucha" : "czeka"} />
             </div>
             {stan === "odliczanie" && (
               <span key={odliczanie} className="relative bruno-h2 text-7xl text-white drop-shadow-[0_2px_12px_rgba(212,175,90,0.7)] bruno-odliczanie" aria-live="assertive">
@@ -992,7 +877,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           <div>
             <div className="bruno-h2 text-xl">{imieKlienta}</div>
             <div className="text-sm mt-1 text-slate-600">
-              {stan === "trwa" ? (mowi === "bruno" ? tr(`${imieKlienta} is talking`, `${imieKlienta} mówi`) : mowi === "ty" ? tr("Listening to you", "Słucha Cię") : tr("Call in progress", "Rozmowa trwa")) : stan === "odliczanie" ? (tryb === "cold" ? tr(`${imieKlienta} will pick up the phone in a moment.`, `Za chwilę ${imieKlienta} odbierze telefon.`) : tr(`${imieKlienta} will start the call in a moment.`, `Za chwilę ${imieKlienta} zacznie rozmowę.`)) : etap}
+              {stan === "trwa" ? (mowi === "bruno" ? tr(`${imieKlienta} is talking`, `${imieKlienta} mówi`) : mowi === "ty" ? tr("Listening to you", "Słucha Cię") : tr("Call in progress", "Rozmowa trwa")) : stan === "odliczanie" ? (jutro && tryb !== "cold" ? tr(`${imieKlienta} will start the call in a moment.`, `Za chwilę ${imieKlienta} zacznie rozmowę.`) : tr(`${imieKlienta} will pick up in a moment.`, `Za chwilę ${imieKlienta} odbierze.`)) : etap}
             </div>
           </div>
           </>

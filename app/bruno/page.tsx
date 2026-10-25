@@ -22,7 +22,10 @@ export default async function BrunoLoginPage({ searchParams }: Props) {
   const email = await zalogowanyEmail();
   if (email) {
     // 25.10 (USER_001: „zaczynamy od widoku Zespół”): szef firmy ląduje w panelu szefa.
-    if (!src && czySzef(await pobierzKonto(email))) redirect("/bruno/szef");
+    const konto = await pobierzKonto(email);
+    // 25.10 (USER_001): konto spotkań najpierw „Przygotuj spotkanie” (imię rozmówcy + strona firmy).
+    if (!src && konto?.spotkania) redirect("/bruno/przygotuj");
+    if (!src && czySzef(konto)) redirect("/bruno/szef");
     redirect(src ? `/bruno/panel?src=${encodeURIComponent(String(src))}` : "/bruno/panel");
   }
   // 9.10 (USER_001): logowanie w wyglądzie Aurora, EN domyślnie, PL z ?pl. 11.10: PL też na salesbruno.pl.

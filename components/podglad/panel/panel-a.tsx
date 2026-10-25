@@ -349,7 +349,7 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
           )}
           {linki.map((l) => (
             <span key={l.href} style={{ display: "contents" }}>
-              {l.ikona === "dostosuj" && <div className="sep" />}
+              {l.ikona === "ustawienia" && <div className="sep" />}
               <Link href={l.href} className={`nav ${l.ikona === "panel" ? "on" : ""}`} aria-label={l.nazwa} title={l.nazwa} aria-current={l.ikona === "panel" ? "page" : undefined}>
                 <Ikona nazwa={l.ikona} />
               </Link>

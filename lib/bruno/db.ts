@@ -85,6 +85,8 @@ export type Konto = {
   demo?: boolean | null;
   /** 25.10: zdjęcie handlowca w panelu szefa (handlowcy demo: twarze AI z public/bruno/demo). */
   zdjecie_url?: string | null;
+  /** 25.10: konto do spotkań sprzedażowych (USER_001): po zalogowaniu „Przygotuj spotkanie”. */
+  spotkania?: boolean | null;
 };
 
 /** Czy konto ma moduły płatne (9.10, USER_001: tester w trialu ich nie widzi). */

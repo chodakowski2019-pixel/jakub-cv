@@ -43,7 +43,7 @@ export default function PasekZloty({ dostep, inicjal, logo = null }: { dostep: D
         </Link>
         {linki.map((l) => (
           <span key={l.href} style={{ display: "contents" }}>
-            {l.ikona === "dostosuj" && <div className="bz-sep" />}
+            {l.ikona === "ustawienia" && <div className="bz-sep" />}
             <Link href={l.href} className={`bz-nav ${aktywny(l.href) ? "bz-on" : ""}`} aria-label={l.nazwa} title={l.nazwa} aria-current={aktywny(l.href) ? "page" : undefined}>
               <Ikona nazwa={l.ikona} />
             </Link>

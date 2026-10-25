@@ -51,7 +51,8 @@ export default function UkladZloty({
   }, [doProfilu, doAnkiety, zablokowany, router]);
 
   // 11.10: ekran profilu po rejestracji: bez paska, sam formularz na środku. 21.10: ankieta Mazura tak samo.
-  if (sciezka === "/bruno/start" || sciezka === "/bruno/ankieta") {
+  // 25.10: „Przygotuj spotkanie” (konto spotkań) też bez paska.
+  if (sciezka === "/bruno/start" || sciezka === "/bruno/ankieta" || sciezka === "/bruno/przygotuj") {
     return <main className="px-4 sm:px-6 pb-10 pt-10 max-w-3xl w-full mx-auto">{children}</main>;
   }
   if (doProfilu || doAnkiety) return null;

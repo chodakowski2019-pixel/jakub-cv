@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { dobierzRozmowe } from "@/lib/bruno/dobor";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import {
@@ -99,6 +100,13 @@ export async function POST(req: Request) {
 
   const b = await req.json().catch(() => ({}));
   const konfig = await pobierzKonfig(email);
+  // 25.10 (USER_001): autorski dobór rozmowy. Kreator nie wysyła ustawień, serwer dobiera je z historii (lib/bruno/dobor.ts).
+  // „Rozmowa, którą masz jutro” (sytuacja) i powtórka karty dalej działają: sytuacja jest nadrzędna, karta obiekcji wygrywa.
+  if (b.auto === true) {
+    const dobor = await dobierzRozmowe(email, konfig);
+    // Powtórka konkretnej obiekcji (fiszka z Treningu) ma pierwszeństwo przed doborem.
+    Object.assign(b, { ...dobor, obiekcje: Array.isArray(b.obiekcje) && b.obiekcje.length ? b.obiekcje : dobor.obiekcje });
+  }
   // 16.10 (USER_001): głos klienta wybierany w kreatorze (krok 2) ma pierwszeństwo; zapis do konfiguracji robi kreator.
   if (b.glos === "m" || b.glos === "k") konfig.glos = b.glos;
   await zapewnijKarty(email, konfig, jezyk);

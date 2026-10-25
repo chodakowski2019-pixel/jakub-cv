@@ -57,7 +57,7 @@ function logoZHtml(html: string, baza: URL): string {
   );
 }
 
-export async function czytajStrone(url: string): Promise<{ tekst: string; logo: string; www: string }> {
+export async function czytajStrone(url: string): Promise<{ tekst: string; logo: string; www: string; nazwa: string }> {
   const u = new URL(url.startsWith("http") ? url : `https://${url}`);
   if (!/^https?:$/.test(u.protocol)) throw new Error("Adres musi zaczynać się od https://");
   const odp = await fetch(u.toString(), {
@@ -69,7 +69,12 @@ export async function czytajStrone(url: string): Promise<{ tekst: string; logo: 
   const html = await odp.text();
   const tekst = htmlDoTekstu(html).slice(0, 60_000);
   if (tekst.length < 200) throw new Error("Na stronie prawie nie ma tekstu (ładuje się skryptem). Podaj inny adres, np. podstronę z ofertą.");
-  return { tekst, logo: logoZHtml(html, u), www: u.toString() };
+  // 25.10: nazwa firmy ze strony (og:site_name → <title> do pierwszego „|”, „-”, „–” → domena), do panelu spotkania.
+  const meta = html.match(/<meta[^>]*property=["']og:site_name["'][^>]*>/i)?.[0].match(/content=["']([^"']+)["']/i)?.[1];
+  const tytul = html.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1];
+  const zTytulu = tytul?.split(/\s[|\-–—:]\s/)[0]?.trim();
+  const nazwa = htmlDoTekstu(meta || zTytulu || "").slice(0, 60) || u.hostname.replace(/^www\./, "");
+  return { tekst, logo: logoZHtml(html, u), www: u.toString(), nazwa };
 }
 
 type PolaKonfig = Pick<Konfig, "produkt" | "klient" | "obiekcje" | "skrypt">;
@@ -147,12 +152,16 @@ export type Zlecenie = {
   reset?: boolean;
   /** Nie wołaj modelu (test, brak klucza): wersje domyślne. */
   bezModelu?: boolean;
+  /** 25.10: tekst po „Zespół” w panelu szefa. Puste = nazwa firmy. */
+  naglowek?: string | null;
 };
 
 export type WynikDemo = { firma: Firma; szef: string; kod: string | null; konfig: PolaKonfig; zespol: WynikSeeda; zModelu: boolean; uwagi: string[] };
 
 export async function zalozDemoFirmy(z: Zlecenie, log: (s: string) => void = () => {}): Promise<WynikDemo> {
-  const nazwa = z.nazwa.trim();
+  // 25.10: bez nazwy firmy (panel spotkania) nazwa = ze strony. Strona czytana raz, niżej użyta ponownie.
+  const wczytana = !z.reset && (z.url ?? "").trim() ? await czytajStrone((z.url as string).trim()) : null;
+  const nazwa = z.nazwa.trim() || wczytana?.nazwa || "";
   if (!nazwa) throw new Error("Podaj nazwę firmy.");
   const id = slugFirmy(nazwa);
   if (!id) throw new Error("Nazwa firmy bez liter ani cyfr.");
@@ -176,7 +185,7 @@ export async function zalozDemoFirmy(z: Zlecenie, log: (s: string) => void = () 
     const url = (z.url ?? "").trim();
     if (!url) throw new Error("Podaj adres strony firmy.");
     log(`Czytam ${url}…`);
-    const strona = await czytajStrone(url);
+    const strona = wczytana ?? (await czytajStrone(url));
     log(`Tekst: ${strona.tekst.length} znaków, logo: ${strona.logo}`);
     let pola: PolaKonfig;
     if (modelJest) {
@@ -193,7 +202,7 @@ export async function zalozDemoFirmy(z: Zlecenie, log: (s: string) => void = () 
     }
     const { data: f, error } = await supabaseAdmin
       .from("bruno_firmy")
-      .upsert({ id, nazwa, www: strona.www, logo_url: strona.logo, jezyk, demo: true }, { onConflict: "id" })
+      .upsert({ id, nazwa, www: strona.www, logo_url: strona.logo, jezyk, demo: true, ...(z.naglowek !== undefined ? { naglowek: z.naglowek?.trim() || null } : {}) }, { onConflict: "id" })
       .select("*")
       .single();
     if (error) throw new Error(`firma: ${error.message}`);

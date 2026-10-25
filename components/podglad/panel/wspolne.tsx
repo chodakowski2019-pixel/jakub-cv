@@ -18,7 +18,7 @@ export const LINKI = [
   { href: "/bruno/statystyki", nazwa: "Stats", nazwaPl: "Statystyki", ikona: "statystyki" },
   // 11.10 (USER_001, E32): kalendarz rozmów i treningu, do kiedy trwa dostęp.
   { href: "/bruno/kalendarz", nazwa: "Calendar", nazwaPl: "Kalendarz", ikona: "kalendarz" },
-  { href: "/bruno/dostosuj", nazwa: "Customize Bruno", nazwaPl: "Dostosuj Bruno", ikona: "dostosuj" },
+  // 25.10 (USER_001): „Dostosuj Bruno” znika z menu. Strona /bruno/dostosuj zostaje jako formularz dla firmy po podpisaniu umowy.
   { href: "/bruno/ustawienia", nazwa: "Settings", nazwaPl: "Ustawienia", ikona: "ustawienia" },
 ] as const;
 
@@ -37,7 +37,7 @@ export const linkiDla = (d: boolean | DostepLinkow, jezyk: Jezyk = "en") => {
 /** 11.10: nazwa zakładki w języku konta (PL = nazwy sprzed tłumaczenia, fd7de52). */
 export const nazwaLinku = (l: { nazwa: string; nazwaPl: string }, jezyk: Jezyk = "en") => (jezyk === "pl" ? l.nazwaPl : l.nazwa);
 
-export type NazwaIkony = (typeof LINKI)[number]["ikona"] | "klodka" | "wyjscie" | "mikrofon" | "strzalka";
+export type NazwaIkony = (typeof LINKI)[number]["ikona"] | "dostosuj" | "klodka" | "wyjscie" | "mikrofon" | "strzalka";
 
 export function Ikona({ nazwa, rozmiar = 20, grubosc = 1.7 }: { nazwa: NazwaIkony; rozmiar?: number; grubosc?: number }) {
   const w = { viewBox: "0 0 24 24", width: rozmiar, height: rozmiar, fill: "none", stroke: "currentColor", strokeWidth: grubosc, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
