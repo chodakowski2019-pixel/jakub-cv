@@ -83,6 +83,8 @@ export type Konto = {
   firma_id?: string | null;
   /** 25.10: konto demo (skrypt bruno-demo-firma): bez ankiety Mazura i bez filmu. Handlowcy demo bez kodu. */
   demo?: boolean | null;
+  /** 25.10: zdjęcie handlowca w panelu szefa (handlowcy demo: twarze AI z public/bruno/demo). */
+  zdjecie_url?: string | null;
 };
 
 /** Czy konto ma moduły płatne (9.10, USER_001: tester w trialu ich nie widzi). */

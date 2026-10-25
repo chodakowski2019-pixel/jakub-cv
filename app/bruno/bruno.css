@@ -791,6 +791,12 @@ html:has(.bruno.zloty), body:has(.bruno.zloty) { background: #080807; }
   background: #fff !important; padding: 8px;
 }
 .bsz-logo img { width: 100%; height: 100%; object-fit: contain; }
+/* 25.10: twarz (szef demo, handlowiec) = całe kółko, bez białego tła */
+.bsz-logo.bsz-twarz { padding: 0; border-radius: 50%; background: transparent !important; border: 2px solid rgba(212, 175, 90, 0.6); }
+.bsz-logo.bsz-twarz img { object-fit: cover; }
+.bsz-zdjecie { object-fit: cover; padding: 0; }
+.bz-ja.bz-logo[src^="/bruno/demo/"], .bt-ja.bz-logo[src^="/bruno/demo/"], .bpa .me.me-logo img[src^="/bruno/demo/"] { object-fit: cover; padding: 0; }
+.bpa .me.me-logo:has(img[src^="/bruno/demo/"]) { background: transparent; }
 
 /* przełącznik widoku w pigułce: ikona + tekst */
 .bz-odblokuj svg, .bt-pro svg, .bpa .upgrade svg { flex: 0 0 auto; }

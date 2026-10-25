@@ -45,13 +45,16 @@ export function OcenaKolko({ ocena, rozmiar = 44 }: { ocena: number | null; rozm
   );
 }
 
-export function Naglowek({ firma, tytul, akcent, podtytul }: { firma: Firma | null; tytul: string; akcent: string; podtytul?: string }) {
+export function Naglowek({ firma, tytul, akcent, podtytul, zdjecie }: { firma: Firma | null; tytul: string; akcent: string; podtytul?: string; /** 25.10: twarz zamiast logo (profil handlowca). */ zdjecie?: string | null }) {
+  const obraz = zdjecie ?? firma?.logo_url ?? null;
+  // Zdjęcie (plik .jpg w public/bruno/demo albo twarz handlowca) wypełnia kółko; logo firmy zostaje na białym z marginesem.
+  const twarz = Boolean(zdjecie) || Boolean(obraz?.startsWith("/bruno/demo/"));
   return (
     <div className="flex items-center gap-4">
-      {firma?.logo_url ? (
-        <span className="bsz-logo bruno-szklo">
+      {obraz ? (
+        <span className={`bsz-logo bruno-szklo ${twarz ? "bsz-twarz" : ""}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={firma.logo_url} alt={firma.nazwa} />
+          <img src={obraz} alt={zdjecie ? tytul : (firma?.nazwa ?? "")} />
         </span>
       ) : null}
       <div className="min-w-0">
@@ -116,7 +119,8 @@ export default function ZespolWidok({ firma, stat, zespol, jezyk }: { firma: Fir
             return (
               <Link key={s.email} href={`/bruno/szef/${encodeURIComponent(s.email)}`} className="bsz-wiersz" role="row" style={{ animationDelay: `${80 + i * 60}ms` }}>
                 <span role="cell" className="flex items-center gap-3 min-w-0">
-                  <span className="bsz-inicjal">{s.imie[0]?.toUpperCase()}</span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {s.zdjecie ? <img src={s.zdjecie} alt="" className="bsz-inicjal bsz-zdjecie" /> : <span className="bsz-inicjal">{s.imie[0]?.toUpperCase()}</span>}
                   <span className="min-w-0">
                     <span className="block font-semibold text-slate-900 truncate">{s.imie}</span>
                     <span className="block text-[11px] text-slate-400 truncate">{s.poprawka ?? t("no calls yet", "jeszcze bez rozmów")}</span>

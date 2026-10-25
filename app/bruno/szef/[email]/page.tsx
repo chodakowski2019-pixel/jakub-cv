@@ -33,7 +33,7 @@ export default async function BrunoSzefHandlowiecPage({ params }: { params: Prom
       <div>
         <Link href="/bruno/szef" className="text-sm text-slate-500 hover:text-slate-900">← {t("Team", "Zespół")}</Link>
         <div className="mt-2">
-          <Naglowek firma={firma} tytul={s.imie} akcent="" podtytul={firma?.nazwa ?? undefined} />
+          <Naglowek firma={firma} tytul={s.imie} akcent="" podtytul={firma?.nazwa ?? undefined} zdjecie={s.zdjecie} />
         </div>
       </div>
 

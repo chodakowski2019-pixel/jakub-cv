@@ -18,6 +18,8 @@ export type DemoDane = { wersje: WersjaDemo[]; wygenerowano: string };
 
 type Profil = {
   imie: { pl: string; en: string };
+  /** 25.10: twarz wygenerowana przez AI (public/bruno/demo, z postaci Bliskiej). Nigdy zdjęcia prawdziwych osób. */
+  zdjecie: string;
   typ: "najlepszy" | "najslabszy" | "nie_cwiczy" | "rosnie";
   rozmow: number;
   /** Średnia docelowa. */
@@ -30,11 +32,12 @@ type Profil = {
 };
 
 export const PROFILE_DEMO: Profil[] = [
-  { imie: { pl: "Marek", en: "Mike" }, typ: "najlepszy", rozmow: 8, baza: 8.2, trend: 0.6, slabe: "zamkniecie", przerwa: 0 },
-  { imie: { pl: "Kasia", en: "Kate" }, typ: "najslabszy", rozmow: 7, baza: 4.8, trend: 0.2, slabe: "obiekcje", przerwa: 1 },
-  { imie: { pl: "Tomek", en: "Tom" }, typ: "nie_cwiczy", rozmow: 4, baza: 6.1, trend: -0.4, slabe: "pytania", przerwa: 5 },
-  { imie: { pl: "Ola", en: "Olivia" }, typ: "rosnie", rozmow: 6, baza: 6.5, trend: 2.2, slabe: "otwarcie", przerwa: 0 },
-  { imie: { pl: "Piotr", en: "Peter" }, typ: "rosnie", rozmow: 5, baza: 6.4, trend: 1.4, slabe: "pewnosc", przerwa: 1 },
+  // 25.10 (USER_001): każdy handlowiec ze zdjęciem. Twarze AI są tylko kobiece, więc Marek/Tomek/Piotr → Marta/Natalia/Julia.
+  { imie: { pl: "Marta", en: "Martha" }, zdjecie: "/bruno/demo/marta.jpg", typ: "najlepszy", rozmow: 8, baza: 8.2, trend: 0.6, slabe: "zamkniecie", przerwa: 0 },
+  { imie: { pl: "Kasia", en: "Kate" }, zdjecie: "/bruno/demo/kasia.jpg", typ: "najslabszy", rozmow: 7, baza: 4.8, trend: 0.2, slabe: "obiekcje", przerwa: 1 },
+  { imie: { pl: "Natalia", en: "Natalie" }, zdjecie: "/bruno/demo/natalia.jpg", typ: "nie_cwiczy", rozmow: 4, baza: 6.1, trend: -0.4, slabe: "pytania", przerwa: 5 },
+  { imie: { pl: "Ola", en: "Olivia" }, zdjecie: "/bruno/demo/ola.jpg", typ: "rosnie", rozmow: 6, baza: 6.5, trend: 2.2, slabe: "otwarcie", przerwa: 0 },
+  { imie: { pl: "Julia", en: "Julia" }, zdjecie: "/bruno/demo/julia.jpg", typ: "rosnie", rozmow: 5, baza: 6.4, trend: 1.4, slabe: "pewnosc", przerwa: 1 },
 ];
 
 export const DOMENA_DEMO = "demo.salesbruno.pl";
@@ -337,6 +340,9 @@ export async function zasiejZespol(firma: Firma, konfig: Konfig, dane: DemoDane)
   const jezyk = firma.jezyk === "pl" ? "pl" : "en";
   const obiekcje = listaObiekcji(konfig.obiekcje).slice(0, 6);
   const wynik: WynikSeeda = { handlowcy: [], rozmow: 0 };
+  // Handlowcy demo spoza aktualnej listy (np. stare imiona) = wyłączeni, nie kasowani.
+  const aktualni = PROFILE_DEMO.map((p) => emailHandlowcaDemo(p.imie[jezyk], firma.id));
+  await supabaseAdmin.from("bruno_konta").update({ aktywne: false }).eq("firma_id", firma.id).eq("rola", "rep").eq("demo", true).not("email", "in", `(${aktualni.map((e) => `"${e}"`).join(",")})`);
   for (const p of PROFILE_DEMO) {
     const imie = p.imie[jezyk];
     const email = emailHandlowcaDemo(imie, firma.id);
@@ -344,6 +350,7 @@ export async function zasiejZespol(firma: Firma, konfig: Konfig, dane: DemoDane)
       {
         email,
         imie,
+        zdjecie_url: p.zdjecie,
         firma: firma.nazwa,
         firma_id: firma.id,
         rola: "rep",

@@ -10,6 +10,7 @@ export const KRYTERIA = Object.keys(NAZWY) as Kryterium["nazwa"][];
 export type StatHandlowca = {
   email: string;
   imie: string;
+  zdjecie: string | null;
   rozmow7: number;
   rozmow30: number;
   srednia: number | null;
@@ -29,7 +30,7 @@ const zaokr = (v: number) => Math.round(v * 10) / 10;
 const srednia = (xs: number[]) => (xs.length ? zaokr(xs.reduce((a, b) => a + b, 0) / xs.length) : null);
 const DZIEN = 86_400_000;
 
-export function statystykiHandlowca(konto: Pick<Konto, "email" | "imie">, rozmowy: Rozmowa[]): StatHandlowca {
+export function statystykiHandlowca(konto: Pick<Konto, "email" | "imie" | "zdjecie_url">, rozmowy: Rozmowa[]): StatHandlowca {
   const moje = rozmowy.filter((r) => r.email === konto.email && r.status === "zakonczona").sort((a, b) => b.start.localeCompare(a.start));
   const ocenione = moje.filter((r) => typeof r.ocena === "number");
   const oceny = ocenione.map((r) => r.ocena as number);
@@ -52,6 +53,7 @@ export function statystykiHandlowca(konto: Pick<Konto, "email" | "imie">, rozmow
   return {
     email: konto.email,
     imie: konto.imie?.trim() || konto.email.split("@")[0],
+    zdjecie: konto.zdjecie_url ?? null,
     rozmow7: moje.filter((r) => new Date(r.start).getTime() >= od7).length,
     rozmow30: moje.length,
     srednia: srednia(oceny),
