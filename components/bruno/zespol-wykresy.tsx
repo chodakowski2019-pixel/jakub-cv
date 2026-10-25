@@ -150,18 +150,25 @@ export type WierszMapy = { email: string; imie: string; zdjecie: string | null; 
 export function MapaKryteriow({ wiersze, zespol, nazwy, kolejnosc, jezyk }: { wiersze: WierszMapy[]; zespol: Record<Kryterium["nazwa"], number | null>; nazwy: Record<Kryterium["nazwa"], string>; kolejnosc: Kryterium["nazwa"][]; jezyk: Jezyk }) {
   const [hover, setHover] = useState<{ x: number; y: number; tekst: [string, string] } | null>(null);
   const ref = useRef<HTMLDivElement>(null);
-  const pokaz = (e: React.PointerEvent | React.FocusEvent, imie: string, k: Kryterium["nazwa"], v: number | null) => {
+  const pokaz = (e: React.PointerEvent | React.FocusEvent, imie: string, k: Kryterium["nazwa"], v: number | null, zespolowa = false) => {
     const el = e.currentTarget as HTMLElement;
     const r = el.getBoundingClientRect();
     const o = ref.current?.getBoundingClientRect();
     if (!o) return;
-    const zesp = zespol[k];
-    const roznica = v !== null && zesp !== null ? v - zesp : null;
-    setHover({
-      x: r.left - o.left + r.width / 2,
-      y: r.top - o.top,
-      tekst: [`${imie} · ${nazwy[k]}`, v === null ? "–" : `${liczba(v, jezyk)} / 10${roznica !== null ? ` (${roznica >= 0 ? "+" : ""}${liczba(roznica, jezyk)} ${t(jezyk, "vs team", "vs zespół")})` : ""}`],
-    });
+    let linia: string;
+    if (v === null) linia = "–";
+    else if (zespolowa) {
+      // 25.10 (USER_001): kratka zespołu nie porównuje się sama ze sobą („+0,0 vs zespół”). Pokazuje rozrzut: najlepszy i najsłabszy.
+      const oceny = wiersze.filter((w) => w.kryteria[k] !== null).sort((a, b) => (b.kryteria[k] as number) - (a.kryteria[k] as number));
+      const naj = oceny[0];
+      const slab = oceny[oceny.length - 1];
+      linia = `${liczba(v, jezyk)} / 10${naj && slab && naj !== slab ? ` · ${t(jezyk, "best", "najlepiej")} ${naj.imie} ${liczba(naj.kryteria[k] as number, jezyk)}, ${t(jezyk, "weakest", "najsłabiej")} ${slab.imie} ${liczba(slab.kryteria[k] as number, jezyk)}` : ""}`;
+    } else {
+      const zesp = zespol[k];
+      const roznica = zesp !== null ? v - zesp : null;
+      linia = `${liczba(v, jezyk)} / 10${roznica !== null ? ` (${roznica >= 0 ? "+" : ""}${liczba(roznica, jezyk)} ${t(jezyk, "vs team", "vs zespół")})` : ""}`;
+    }
+    setHover({ x: r.left - o.left + r.width / 2, y: r.top - o.top, tekst: [zespolowa ? `${t(jezyk, "Team average", "Średnia zespołu")} · ${nazwy[k]}` : `${imie} · ${nazwy[k]}`, linia] });
   };
   // 25.10 (USER_001: „wiersz Zespół musi być lepiej widoczny”): kratki zespołu bez koloru skali, ramka + duża liczba.
   const kratka = (v: number | null, slaba: boolean, klucz: string, imie: string, k: Kryterium["nazwa"], zespolowa = false) => {
@@ -172,8 +179,8 @@ export function MapaKryteriow({ wiersze, zespol, nazwy, kolejnosc, jezyk }: { wi
         className={`bwz-kratka ${slaba ? "bwz-slaba" : ""} ${zespolowa ? "bwz-kratka-zespol" : ""}`}
         style={s ? { background: s.tlo, color: s.tekst } : undefined}
         tabIndex={0}
-        onPointerEnter={(e) => pokaz(e, imie, k, v)}
-        onFocus={(e) => pokaz(e, imie, k, v)}
+        onPointerEnter={(e) => pokaz(e, imie, k, v, zespolowa)}
+        onFocus={(e) => pokaz(e, imie, k, v, zespolowa)}
         onPointerLeave={() => setHover(null)}
         onBlur={() => setHover(null)}
         aria-label={`${imie}, ${nazwy[k]}: ${v ?? "–"}`}
