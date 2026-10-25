@@ -20,15 +20,15 @@ const liczba = (v: number, j: Jezyk) => v.toLocaleString(j === "pl" ? "pl-PL" : 
 
 /** 5 stopni złota na ciemnym tle (ocena 1-10). Tekst: jasny na ciemnych, ciemny na jasnych. */
 const STOPNIE = [
-  { od: 0, tlo: "#2b2416", tekst: "#f5f2ea" },
-  { od: 5, tlo: "#4a3b1d", tekst: "#f5f2ea" },
-  { od: 6, tlo: "#7a5f28", tekst: "#f5f2ea" },
-  { od: 7, tlo: "#b8913f", tekst: "#0b0b0b" },
-  { od: 8, tlo: "#ecd08a", tekst: "#0b0b0b" },
+  { od: 0, tlo: "var(--bwz-s0, #2b2416)", tekst: "var(--bwz-t0, #f5f2ea)" },
+  { od: 5, tlo: "var(--bwz-s1, #4a3b1d)", tekst: "var(--bwz-t1, #f5f2ea)" },
+  { od: 6, tlo: "var(--bwz-s2, #7a5f28)", tekst: "var(--bwz-t2, #f5f2ea)" },
+  { od: 7, tlo: "var(--bwz-s3, #b8913f)", tekst: "var(--bwz-t3, #0b0b0b)" },
+  { od: 8, tlo: "var(--bwz-s4, #ecd08a)", tekst: "var(--bwz-t4, #0b0b0b)" },
 ];
 export const stopien = (v: number) => [...STOPNIE].reverse().find((s) => v >= s.od) ?? STOPNIE[0];
-/** Aktywność: 0, 1, 2, 3+ rozmów dziennie. */
-const AKTYWNOSC = ["rgba(255,255,255,0.05)", "#5c4823", "#a8822f", "#ecd08a"];
+/** Aktywność: 0, 1, 2, 3+ rozmów dziennie. 25.10: zmienne CSS, motyw Asset podmienia na fiolet. */
+const AKTYWNOSC = ["var(--bwz-a0, rgba(255,255,255,0.05))", "var(--bwz-a1, #5c4823)", "var(--bwz-a2, #a8822f)", "var(--bwz-a3, #ecd08a)"];
 
 /* ---------- Dymek ---------- */
 function Dymek({ x, y, children }: { x: number; y: number; children: React.ReactNode }) {
@@ -63,9 +63,10 @@ export function TrendZespolu({ seria, jezyk, cel = 7 }: { seria: PunktDnia[]; je
   const sciezka = (pts: [number, number][]) => pts.map(([a, b], i) => `${i ? "L" : "M"}${a.toFixed(1)},${b.toFixed(1)}`).join(" ");
   const pole = (pts: [number, number][]) => `${sciezka(pts)} L${pts[pts.length - 1][0].toFixed(1)},${H - D} L${pts[0][0].toFixed(1)},${H - D} Z`;
 
+  // 25.10: seria tygodniowa z 3 miesięcy. Liczba = średnia ostatnich 4 tygodni, zmiana vs pierwsze 4 tygodnie.
   const zOcena = seria.filter((p) => p.srednia !== null);
-  const pierwsza = zOcena.slice(0, 7);
-  const ostatnia = zOcena.slice(-7);
+  const pierwsza = zOcena.slice(0, 4);
+  const ostatnia = zOcena.slice(-4);
   const sr = (a: PunktDnia[]) => (a.length ? a.reduce((s, p) => s + (p.srednia ?? 0), 0) / a.length : null);
   const teraz = sr(ostatnia);
   const zmiana = teraz !== null && sr(pierwsza) !== null ? teraz - (sr(pierwsza) as number) : null;
@@ -83,7 +84,7 @@ export function TrendZespolu({ seria, jezyk, cel = 7 }: { seria: PunktDnia[]; je
       <div className="flex items-start justify-between gap-4 mb-2">
         <div>
           <h2 className="bruno-h2 text-base">{t(jezyk, "Team average over time", "Średnia zespołu w czasie")}</h2>
-          <p className="text-[12px] text-slate-500 mt-0.5">{t(jezyk, "Average call score per day, last 14 days", "Średnia ocena rozmów dziennie, ostatnie 14 dni")}</p>
+          <p className="text-[12px] text-slate-500 mt-0.5">{t(jezyk, "Average call score per week, last 3 months", "Średnia ocena rozmów tygodniowo, ostatnie 3 miesiące")}</p>
         </div>
         <div className="text-right shrink-0">
           <div className="bruno-h2 text-[2rem] leading-none tabular-nums">{teraz === null ? "–" : liczba(teraz, jezyk)}</div>
@@ -93,7 +94,7 @@ export function TrendZespolu({ seria, jezyk, cel = 7 }: { seria: PunktDnia[]; je
                 {zmiana > 0 ? "▲ +" : zmiana < 0 ? "▼ " : ""}
                 {liczba(zmiana, jezyk)}
               </span>{" "}
-              <span className="text-slate-500">{t(jezyk, "vs previous week", "vs poprzedni tydzień")}</span>
+              <span className="text-slate-500">{t(jezyk, "vs 3 months ago", "vs 3 miesiące temu")}</span>
             </div>
           )}
         </div>
@@ -133,7 +134,7 @@ export function TrendZespolu({ seria, jezyk, cel = 7 }: { seria: PunktDnia[]; je
         </svg>
         {p && hover !== null && (
           <Dymek x={(x(hover) / W) * (ref.current?.clientWidth ?? W)} y={0}>
-            <b>{data(p.dzien)}</b>
+            <b>{t(jezyk, "Week of", "Tydzień od")} {data(p.dzien)}</b>
             <span>{p.srednia === null ? t(jezyk, "no calls", "bez rozmów") : `${t(jezyk, "average", "średnia")} ${liczba(p.srednia, jezyk)} / 10`}</span>
             <span className="text-slate-400">{p.rozmow} {t(jezyk, "calls", "rozmów")}</span>
           </Dymek>

@@ -90,6 +90,21 @@ export function seriaZespolu(rozmowy: Rozmowa[], dni = 30): PunktDnia[] {
   return wynik;
 }
 
+/** 25.10 (USER_001: „na 3 miesiące”): średnia zespołu tygodniowo, ostatnie `tygodni` tygodni. `dzien` = poniedziałek tygodnia. */
+export function seriaTygodniowa(rozmowy: Rozmowa[], tygodni = 13): PunktDnia[] {
+  const dzis = new Date(`${kluczPL(new Date())}T12:00:00`);
+  const poniedzialek = new Date(dzis.getTime() - ((dzis.getDay() + 6) % 7) * DZIEN);
+  const wynik: PunktDnia[] = [];
+  for (let i = tygodni - 1; i >= 0; i--) {
+    const od = new Date(poniedzialek.getTime() - i * 7 * DZIEN);
+    const kOd = kluczPL(od);
+    const kDo = kluczPL(new Date(od.getTime() + 7 * DZIEN));
+    const tyg = rozmowy.filter((r) => r.status === "zakonczona" && kluczPL(new Date(r.start)) >= kOd && kluczPL(new Date(r.start)) < kDo);
+    wynik.push({ dzien: kOd, srednia: srednia(tyg.filter((r) => typeof r.ocena === "number").map((r) => r.ocena as number)), rozmow: tyg.length });
+  }
+  return wynik;
+}
+
 /** Rozmowy handlowca na każdy z ostatnich `dni` dni (siatka aktywności). */
 export function aktywnoscHandlowca(email: string, rozmowy: Rozmowa[], dni = 14): number[] {
   const licz = new Map<string, number>();

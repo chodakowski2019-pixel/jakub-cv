@@ -274,20 +274,35 @@ type WierszRozmowy = {
   dostawca: string;
 };
 
-/** Rozmowy jednego handlowca z profilu: daty w ostatnich 14 dniach, oceny wokół bazy z trendem. */
+/**
+ * Rozmowy jednego handlowca z profilu. Ostatnie 14 dni: `profil.rozmow` rozmów wokół bazy z trendem.
+ * 25.10 (USER_001: „średnia zespołu na 3 miesiące”): do tego HISTORIA dni 15-90, ok. 2 rozmowy tygodniowo,
+ * ocena rośnie od bazy - 1,8 do początku okna ostatnich 14 dni (zespół robi postęp z Bruno).
+ */
 export function rozmowyZProfilu(profil: Profil, email: string, dane: DemoDane, obiekcje: string[], seed: string): WierszRozmowy[] {
   const r = los(ziarno(`${seed}:${email}`));
   const n = profil.rozmow;
   const okno = Math.max(1, 14 - profil.przerwa);
-  const wynik: WierszRozmowy[] = [];
+  const plan: { dniTemu: number; cel: number }[] = [];
+  const startOkna = profil.baza - profil.trend / 2;
+  for (let d = 90; d > 15; d -= 3 + r() * 1.5) {
+    const postep = (90 - d) / 75;
+    plan.push({ dniTemu: d, cel: profil.baza - 1.8 + (startOkna - (profil.baza - 1.8)) * postep + (r() - 0.5) * 1.0 });
+  }
   for (let i = 0; i < n; i++) {
     // i = 0 najstarsza, i = n-1 najnowsza (przerwa dni temu).
-    const dniTemu = profil.przerwa + (okno * (n - 1 - i)) / Math.max(1, n - 1) + (i === n - 1 ? 0 : r() * 0.6);
+    plan.push({
+      dniTemu: profil.przerwa + (okno * (n - 1 - i)) / Math.max(1, n - 1) + (i === n - 1 ? 0 : r() * 0.6),
+      cel: profil.baza + profil.trend * ((n === 1 ? 0.5 : i / (n - 1)) - 0.5) + (r() - 0.5) * 0.8,
+    });
+  }
+  const wynik: WierszRozmowy[] = [];
+  for (let i = 0; i < plan.length; i++) {
+    const { dniTemu, cel } = plan[i];
     const start = new Date(Date.now() - dniTemu * 86_400_000);
     start.setHours(9 + Math.floor(r() * 7), Math.floor(r() * 60), 0, 0);
     // Dzisiejsza rozmowa nie może być „z przyszłości” (godzina 9-15 vs pora uruchomienia seeda).
     if (start.getTime() > Date.now() - 3_600_000) start.setTime(Date.now() - (1 + r() * 2) * 3_600_000);
-    const cel = profil.baza + profil.trend * ((n === 1 ? 0.5 : i / (n - 1)) - 0.5) + (r() - 0.5) * 0.8;
     // Kryteria całkowite wokół celu; najsłabsze niżej. Ocena = średnia ważona z kryteriów (jak u trenera).
     const kryteria = KOLEJNOSC.map((nazwa) => {
       const przes = nazwa === profil.slabe ? -1.8 : (r() - 0.5) * 1.6;

@@ -76,7 +76,7 @@ export default function ZespolWidok({ firma, stat, zespol, jezyk, seria, aktywno
 
   return (
     <div className="flex flex-col gap-6 bsz">
-      <Naglowek firma={firma} tytul={t("Team", "Zespół")} akcent={firma?.naglowek?.trim() || firma?.nazwa || "Bruno"} podtytul={t("Last 30 days. Click a rep to see their calls.", "Ostatnie 30 dni. Kliknij handlowca, żeby zobaczyć jego rozmowy.")} />
+      <Naglowek firma={firma} tytul={t("Team", "Zespół")} akcent={firma?.naglowek?.trim() || firma?.nazwa || "Bruno"} />
 
       {/* 25.10 (USER_001): kafelki „rozmów w 7 dni” i „nie ćwiczy” usunięte, zostają 2. */}
       <div className="grid grid-cols-2 gap-3">
