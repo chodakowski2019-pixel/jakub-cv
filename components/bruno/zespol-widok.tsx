@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Licz from "@/components/podglad/panel/licz";
 import { etykiety } from "@/lib/bruno/etykiety";
-import { locale, mnoga, tDla, type Jezyk } from "@/lib/bruno/i18n";
+import { locale, tDla, type Jezyk } from "@/lib/bruno/i18n";
 import type { Firma } from "@/lib/bruno/firmy";
 import { DNI_BEZ_TRENINGU_ALARM, KRYTERIA, type PunktDnia, type StatHandlowca, type StatZespolu } from "@/lib/bruno/zespol";
 import { MapaKryteriow, MiniWykres, TrendZespolu } from "@/components/bruno/zespol-wykresy";
@@ -78,11 +78,7 @@ export default function ZespolWidok({ firma, stat, zespol, jezyk, seria, oceny }
     <div className="flex flex-col gap-6 bsz">
       <Naglowek firma={firma} tytul={t("Team", "Zespół")} akcent={firma?.naglowek?.trim() || firma?.nazwa || "Bruno"} />
 
-      {/* 25.10 (USER_001): kafelki „rozmów w 7 dni” i „nie ćwiczy” usunięte, zostają 2. */}
-      <div className="grid grid-cols-2 gap-3">
-        <Kafelek liczba={zespol.handlowcow} opis={mnoga(jezyk, zespol.handlowcow, ["rep", "reps"], ["handlowiec", "handlowców", "handlowców"])} uwaga={t("on the team", "w zespole")} />
-        <Kafelek liczba={zespol.srednia} dec={1} opis={t("team average", "średnia zespołu")} uwaga={t("out of 10", "na 10")} opoznienie={120} />
-      </div>
+      {/* 25.10 (USER_001): wszystkie kafelki z liczbami usunięte; średnia zespołu jest na wykresie poniżej. */}
 
       {/* 25.10 (USER_001: „lepsza wizualizacja”): trend zespołu, mapa kryteriów (zespol-wykresy.tsx). Moduł „Trening w ostatnich 14 dniach” usunięty. */}
       <TrendZespolu seria={seria} jezyk={jezyk} />
