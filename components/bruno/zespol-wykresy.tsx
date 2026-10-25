@@ -163,12 +163,13 @@ export function MapaKryteriow({ wiersze, zespol, nazwy, kolejnosc, jezyk }: { wi
       tekst: [`${imie} · ${nazwy[k]}`, v === null ? "–" : `${liczba(v, jezyk)} / 10${roznica !== null ? ` (${roznica >= 0 ? "+" : ""}${liczba(roznica, jezyk)} ${t(jezyk, "vs team", "vs zespół")})` : ""}`],
     });
   };
-  const kratka = (v: number | null, slaba: boolean, klucz: string, imie: string, k: Kryterium["nazwa"]) => {
-    const s = v === null ? null : stopien(v);
+  // 25.10 (USER_001: „wiersz Zespół musi być lepiej widoczny”): kratki zespołu bez koloru skali, ramka + duża liczba.
+  const kratka = (v: number | null, slaba: boolean, klucz: string, imie: string, k: Kryterium["nazwa"], zespolowa = false) => {
+    const s = v === null || zespolowa ? null : stopien(v);
     return (
       <div
         key={klucz}
-        className={`bwz-kratka ${slaba ? "bwz-slaba" : ""}`}
+        className={`bwz-kratka ${slaba ? "bwz-slaba" : ""} ${zespolowa ? "bwz-kratka-zespol" : ""}`}
         style={s ? { background: s.tlo, color: s.tekst } : undefined}
         tabIndex={0}
         onPointerEnter={(e) => pokaz(e, imie, k, v)}
@@ -209,8 +210,9 @@ export function MapaKryteriow({ wiersze, zespol, nazwy, kolejnosc, jezyk }: { wi
               {kolejnosc.map((k) => kratka(w.kryteria[k], w.najslabsze === k, `${w.email}-${k}`, w.imie, k))}
             </div>
           ))}
-          <span className="bwz-osoba bwz-zespol">{t(jezyk, "Team", "Zespół")}</span>
-          {kolejnosc.map((k) => kratka(zespol[k], false, `zespol-${k}`, t(jezyk, "Team", "Zespół"), k))}
+          <span className="bwz-odstep" aria-hidden style={{ gridColumn: `1 / span ${kolejnosc.length + 1}` }} />
+          <span className="bwz-osoba bwz-zespol">{t(jezyk, "Team average", "Średnia zespołu")}</span>
+          {kolejnosc.map((k) => kratka(zespol[k], false, `zespol-${k}`, t(jezyk, "Team", "Zespół"), k, true))}
         </div>
         {hover && (
           <Dymek x={hover.x} y={hover.y}>
@@ -273,7 +275,7 @@ export function MiniWykres({ oceny }: { oceny: number[] }) {
   const ost = oceny[oceny.length - 1];
   return (
     <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} aria-hidden className="block">
-      <path d={d} fill="none" stroke="rgba(245,242,234,0.35)" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
+      <path d={d} fill="none" stroke="var(--bwz-mini, rgba(245,242,234,0.35))" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
       <circle cx={x(oceny.length - 1)} cy={y(ost)} r="3.2" fill="#ecd08a" />
     </svg>
   );

@@ -45,7 +45,7 @@ const PL = {
     pan: { nazwa: "Pan / Pani", opis: "klient indywidualny, urząd, starsza firma" },
     ty: { nazwa: "Na ty", opis: "startup, agencja, branża, w której wszyscy są na ty" },
   } as Record<RejestrId, Etykieta>,
-  NAZWY: { otwarcie: "Otwarcie", pytania: "Pytania", obiekcje: "Obiekcje", zamkniecie: "Zamknięcie", pewnosc: "Pewność siebie" } as Record<keyof typeof NAZWY, string>,
+  NAZWY: { otwarcie: "Otwarcie", pytania: "Pytania", obiekcje: "Obiekcje", zamkniecie: "Zamknięcie", pewnosc: "Mentalność" } as Record<keyof typeof NAZWY, string>,
 };
 
 const EN = {

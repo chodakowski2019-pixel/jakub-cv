@@ -15,9 +15,13 @@ const klucz = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padSta
 
 export type RozmowaKal = { id: string; start: string; ocena: number | null; zakonczona: boolean };
 
-const ZLOTO = "#d4af5a";
-const ZLOTO_JASNE = "#f3dc9c";
-const TEKST = "#f5f2ea";
+// 25.10: kolory przez zmienne CSS, motyw Asset (app/bruno/motyw-asset.css) podmienia je na fiolet.
+const ZLOTO = "var(--k-zloto, #d4af5a)";
+const ZLOTO_JASNE = "var(--k-zloto-jasne, #f3dc9c)";
+const TEKST = "var(--k-tekst, #f5f2ea)";
+const zl = (a: number) => `color-mix(in srgb, ${ZLOTO} ${a * 100}%, transparent)`;
+const tx = (a: number) => `color-mix(in srgb, ${TEKST} ${a * 100}%, transparent)`;
+const bl = (a: number) => `color-mix(in srgb, var(--k-jasny, #fff) ${a * 100}%, transparent)`;
 
 export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }: { rozmowy: RozmowaKal[]; fiszki: string[]; koniecDostepu: string | null; opisKonca: string | null }) {
   const { t, locale, jezyk } = useT();
@@ -79,12 +83,12 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
         {koniec && opisKonca && (
           <div
             className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mt-3 px-5 py-2.5 rounded-full text-sm sm:text-base"
-            style={{ background: "rgba(212, 175, 90, 0.1)", border: `1px solid rgba(212, 175, 90, 0.45)`, color: TEKST, boxShadow: "0 0 32px -8px rgba(212, 175, 90, 0.45)" }}
+            style={{ background: zl(0.1), border: `1px solid ${zl(0.45)}`, color: TEKST, boxShadow: `0 0 32px -8px ${zl(0.45)}` }}
           >
-            <span style={{ color: "rgba(245, 242, 234, 0.8)" }}>{opisKonca}</span>
+            <span style={{ color: tx(0.8) }}>{opisKonca}</span>
             <b style={{ color: ZLOTO_JASNE }}>{dataKonca}</b>
             {dniZostalo !== null && (
-              <span className="text-xs sm:text-sm" style={{ color: "rgba(245, 242, 234, 0.6)" }}>
+              <span className="text-xs sm:text-sm" style={{ color: tx(0.6) }}>
                 · {dniZostalo === 1 ? t("1 day left", "został 1 dzień") : t(`${dniZostalo} days left`, `${dniZostalo} ${dniZostalo >= 2 && dniZostalo <= 4 ? "dni zostały" : "dni zostało"}`)}
               </span>
             )}
@@ -100,7 +104,7 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
         ].map(([n, opis]) => (
           <div key={String(opis)} className="bruno-szklo rounded-2xl px-3 py-4 text-center">
             <div className="bruno-h2 text-3xl sm:text-4xl leading-none" style={{ color: n ? ZLOTO_JASNE : TEKST }}>{n}</div>
-            <div className="text-xs sm:text-sm mt-1.5" style={{ color: "rgba(245, 242, 234, 0.72)" }}>{opis}</div>
+            <div className="text-xs sm:text-sm mt-1.5" style={{ color: tx(0.72) }}>{opis}</div>
           </div>
         ))}
       </div>
@@ -113,7 +117,7 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
         </div>
         <div className="grid grid-cols-7 gap-1.5 sm:gap-2 text-center">
           {nazwyDni.map((d) => (
-            <div key={d} className="text-xs sm:text-sm font-medium uppercase tracking-wide pb-1" style={{ color: "rgba(245, 242, 234, 0.72)" }}>{d}</div>
+            <div key={d} className="text-xs sm:text-sm font-medium uppercase tracking-wide pb-1" style={{ color: tx(0.72) }}>{d}</div>
           ))}
           {komorki.map((d) => {
             const k = klucz(d);
@@ -127,16 +131,16 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
             const maDane = !!dane && dane.rozmowy + dane.fiszki > 0;
 
             const styl: React.CSSProperties = {
-              borderColor: toKoniec ? ZLOTO : zDostepem ? "rgba(212, 175, 90, 0.4)" : inny ? "transparent" : "rgba(255, 255, 255, 0.16)",
+              borderColor: toKoniec ? ZLOTO : zDostepem ? zl(0.4) : inny ? "transparent" : bl(0.16),
               background: toKoniec
-                ? "rgba(212, 175, 90, 0.2)"
+                ? zl(0.2)
                 : zDostepem
-                  ? "rgba(212, 175, 90, 0.08)"
+                  ? zl(0.08)
                   : maDane
-                    ? "rgba(255, 255, 255, 0.05)"
+                    ? bl(0.05)
                     : "transparent",
               boxShadow: toKoniec
-                ? "0 0 0 2px rgba(212, 175, 90, 0.35), 0 0 28px -4px rgba(212, 175, 90, 0.55)"
+                ? `0 0 0 2px ${zl(0.35)}, 0 0 28px -4px ${zl(0.55)}`
                 : toDzis
                   ? `0 0 0 2px ${ZLOTO}`
                   : undefined,
@@ -157,8 +161,8 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
                 {maDane ? (
                   <div className="sm:hidden text-[11px] font-semibold leading-none mt-1.5 flex items-center gap-1">
                     {dane.rozmowy ? <span style={{ color: ZLOTO_JASNE }}>{dane.rozmowy}</span> : null}
-                    {dane.rozmowy && dane.fiszki ? <span style={{ color: "rgba(245, 242, 234, 0.4)" }}>·</span> : null}
-                    {dane.fiszki ? <span style={{ color: "rgba(245, 242, 234, 0.75)" }}>{dane.fiszki}</span> : null}
+                    {dane.rozmowy && dane.fiszki ? <span style={{ color: tx(0.4) }}>·</span> : null}
+                    {dane.fiszki ? <span style={{ color: tx(0.75) }}>{dane.fiszki}</span> : null}
                   </div>
                 ) : null}
                 {dane?.rozmowy ? (
@@ -168,7 +172,7 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
                   </div>
                 ) : null}
                 {dane?.fiszki ? (
-                  <div className="hidden sm:block text-sm font-medium leading-tight mt-0.5" style={{ color: "rgba(245, 242, 234, 0.85)" }}>
+                  <div className="hidden sm:block text-sm font-medium leading-tight mt-0.5" style={{ color: tx(0.85) }}>
                     🃏 {dane.fiszki}
                   </div>
                 ) : null}
@@ -190,12 +194,12 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
             );
           })}
         </div>
-        <div className="bruno-opis flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm mt-5" style={{ color: "rgba(245, 242, 234, 0.72)" }}>
+        <div className="bruno-opis flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm mt-5" style={{ color: tx(0.72) }}>
           <span>📞 {t("calls · average score", "rozmowy · średnia ocena")}</span>
           <span>🃏 {t("flashcards", "fiszki")}</span>
           {koniec && (
             <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block w-3.5 h-3.5 rounded" style={{ background: "rgba(212, 175, 90, 0.2)", border: "1px solid rgba(212, 175, 90, 0.6)" }} />
+              <span className="inline-block w-3.5 h-3.5 rounded" style={{ background: zl(0.2), border: `1px solid ${zl(0.6)}` }} />
               {t("days with access", "dni z dostępem")}
             </span>
           )}

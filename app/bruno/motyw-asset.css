@@ -1,0 +1,235 @@
+/* =====================================================================
+   25.10 (USER_001): MOTYW „ASSET” = styl kancelaria-asset.pl. Klasa .bruno.zloty.asset
+   z app/bruno/layout.tsx (lib/bruno/motyw.ts, BRUNO_MOTYW=asset). Nadpisuje motyw złoty
+   (specyficzność o jedną klasę wyższa). Biel, granat #060513, fiolet #5E52F8, lawenda #F0EEFF.
+   ===================================================================== */
+.bruno.zloty.asset {
+  --as-ink: #060513;
+  --as-fiolet: #5e52f8;
+  --as-fiolet-2: #4337e6;
+  --as-lawenda: #f0eeff;
+  --as-ramka: #e4e1f5;
+  --as-szary: rgba(6, 5, 19, 0.6);
+  --b-akcent: #5e52f8;
+  --b-akcent-2: #4337e6;
+  --b-tekst: #060513;
+  --b-szary: rgba(6, 5, 19, 0.6);
+  --zl-grad: linear-gradient(135deg, #7d73ff 0%, #5e52f8 55%, #4337e6 100%);
+  --zl-szklo: #ffffff;
+  --zl-ramka: #e4e1f5;
+  --zl-linia: rgba(6, 5, 19, 0.08);
+  /* kalendarz (components/bruno/kalendarz.tsx) */
+  --k-zloto: #5e52f8;
+  --k-zloto-jasne: #5e52f8;
+  --k-tekst: #060513;
+  --k-jasny: #060513;
+  /* mapa kryteriów i aktywność (components/bruno/zespol-wykresy.tsx): lawenda → fiolet */
+  --bwz-s0: #f0eeff; --bwz-t0: #060513;
+  --bwz-s1: #dcd8ff; --bwz-t1: #060513;
+  --bwz-s2: #b3abff; --bwz-t2: #060513;
+  --bwz-s3: #7d73ff; --bwz-t3: #ffffff;
+  --bwz-s4: #4337e6; --bwz-t4: #ffffff;
+  --bwz-a0: #f0eeff; --bwz-a1: #c9c5ff; --bwz-a2: #7d73ff; --bwz-a3: #4337e6;
+  color: #060513;
+  background:
+    radial-gradient(45% 40% at 85% 0%, rgba(94, 82, 248, 0.1), transparent 70%),
+    radial-gradient(40% 40% at 10% 100%, rgba(201, 197, 228, 0.35), transparent 70%),
+    #f8f7fd;
+  background-color: #f8f7fd;
+  color-scheme: light;
+}
+html:has(.bruno.zloty.asset), body:has(.bruno.zloty.asset) { background: #f8f7fd; }
+
+/* ---------- pasek, belki ---------- */
+.asset .bz-pasek { box-shadow: 0 1px 2px rgba(6, 5, 19, 0.04), 0 24px 60px -36px rgba(46, 36, 160, 0.3); }
+.asset .bz-ja, .asset .bt-ja { border-color: #5e52f8; color: #5e52f8; }
+.asset .bz-ja:hover { background: #f0eeff; }
+.asset .bz-nav { color: rgba(6, 5, 19, 0.5); }
+.asset .bz-nav:hover { background: #f0eeff; color: #060513; }
+.asset .bz-nav.bz-on { color: #5e52f8; }
+.asset .bz-nav.bz-on::before { background: #5e52f8; box-shadow: none; }
+.asset .bz-sep { background: #e4e1f5; }
+.asset .bz-odblokuj, .asset .bt-pro { color: #fff; box-shadow: 0 12px 30px -14px rgba(94, 82, 248, 0.7); }
+.asset .bz-wyl { color: #060513; }
+.asset .bz-stopka { color: rgba(6, 5, 19, 0.45); }
+.asset .bz-stopka a:hover { color: #060513; }
+@media (max-width: 860px) {
+  .asset .bz-gora, .asset .bt-gora { background: rgba(255, 255, 255, 0.88); }
+  .asset .bz-zakladki a { color: #060513; background: #f0eeff; }
+  .asset .bz-zakladki a.bz-on { color: #fff; }
+  .asset .bt-dol { background: rgba(255, 255, 255, 0.94); }
+  .asset .bt-dol a, .asset .bt-dol button { color: rgba(6, 5, 19, 0.5); }
+  .asset .bt-dol .bt-on, .asset .bt-arkusz .bt-on { color: #5e52f8; background: #f0eeff; }
+  .asset .bt-arkusz { background: #fff; box-shadow: 0 -30px 70px -36px rgba(6, 5, 19, 0.35); }
+  .asset .bt-arkusz-tlo { background: rgba(6, 5, 19, 0.35); }
+  .asset .bt-uchwyt { background: #e4e1f5; }
+  .asset .bt-arkusz a, .asset .bt-arkusz button { color: #060513; }
+  .asset .bt-arkusz button { color: rgba(6, 5, 19, 0.6); }
+}
+
+/* ---------- klasy Bruno ---------- */
+.bruno.zloty.asset .bruno-szklo { box-shadow: 0 1px 2px rgba(6, 5, 19, 0.04), 0 24px 60px -36px rgba(46, 36, 160, 0.28); }
+.bruno.zloty.asset .bruno-szklo.bruno-wybrany { border-color: #5e52f8; background: #f0eeff; box-shadow: 0 0 0 3px rgba(94, 82, 248, 0.15); }
+.bruno.zloty.asset .bruno-przycisk { color: #fff; border-radius: 12px; box-shadow: 0 12px 30px -14px rgba(94, 82, 248, 0.7); }
+.bruno.zloty.asset .bruno-przycisk-2 { background: #fff; border-color: #c9c5e4; color: #060513; border-radius: 12px; }
+.bruno.zloty.asset .bruno-przycisk-2:hover { border-color: #5e52f8; background: #f0eeff; }
+.bruno.zloty.asset .bruno-pole { background: #fff; border-color: #dcd9ee; color: #060513; }
+.bruno.zloty.asset .bruno-pole::placeholder { color: rgba(6, 5, 19, 0.35); }
+.bruno.zloty.asset .bruno-pole:focus { border-color: #5e52f8; box-shadow: 0 0 0 3px rgba(94, 82, 248, 0.15); }
+.bruno.zloty.asset option { background: #fff; color: #060513; }
+.bruno.zloty.asset .bruno-etykieta { color: rgba(6, 5, 19, 0.72); }
+.bruno.zloty.asset .bruno-h1, .bruno.zloty.asset .bruno-h2 { font-weight: 600; letter-spacing: -0.02em; }
+.bruno.zloty.asset .bruno-gradient-tekst { background: none; color: #5e52f8; }
+.bruno.zloty.asset .bruno-kolko-ladowania { border-color: rgba(255, 255, 255, 0.35); border-top-color: #fff; }
+.bruno.zloty.asset .bruno-pastylka { background: #fff; border-color: #dcd9ee; color: #060513; }
+.bruno.zloty.asset .bruno-pastylka:hover { border-color: #5e52f8; }
+.bruno.zloty.asset .bruno-pastylka-wybrana, .bruno.zloty.asset .bruno-pastylka-wybrana:hover { color: #fff; }
+.bruno.zloty.asset .bruno-dymek { color: #fff; box-shadow: 0 12px 30px rgba(94, 82, 248, 0.35); }
+.bruno.zloty.asset .bruno-dymek::after { background: #4337e6; }
+.bruno.zloty.asset .bruno-odblokuj { color: #5e52f8; border-color: #c9c5e4; background: #fff; }
+.bruno.zloty.asset .bruno-wyloguj { color: rgba(6, 5, 19, 0.7); border-color: #c9c5e4; background: #fff; }
+.bruno.zloty.asset .bruno-wyloguj:hover { color: #060513; border-color: #5e52f8; background: #f0eeff; }
+.bruno.zloty.asset .bruno-dymek-kalk { background: #fff; color: #5e52f8; border-color: #c9c5e4; box-shadow: 0 12px 30px rgba(46, 36, 160, 0.18); }
+.bruno.zloty.asset .bruno-kalk-glowny, .bruno.zloty.asset .bruno-kalk-glowny dt, .bruno.zloty.asset .bruno-kalk-glowny dd { color: #fff; }
+.bruno.zloty.asset .bruno-pasek-tlo { background: #e4e1f5; }
+.bruno.zloty.asset .bruno-kolo { border-color: #c9c5e4; background: #fff; }
+.bruno.zloty.asset .bruno-kolo-wybor:hover .bruno-kolo { border-color: #5e52f8; }
+.bruno.zloty.asset .bruno-kolo-wybor[data-on] .bruno-kolo { color: #fff; box-shadow: 0 10px 24px -10px rgba(94, 82, 248, 0.8); }
+.bruno.zloty.asset .bruno-pytanie + .bruno-pytanie { border-top-color: #e4e1f5; }
+.bruno.zloty.asset .bruno-zmiana { background: #f0eeff; }
+.bruno.zloty.asset .bruno-zmiana[data-kierunek="gora"] { color: #15803d; }
+.bruno.zloty.asset .bruno-zmiana[data-kierunek="dol"] { color: #dc2626; }
+.bruno.zloty.asset .bz-numer { color: rgba(94, 82, 248, 0.08); }
+.bruno.zloty.asset .bz-tour { background: #f8f7fd; }
+
+/* ---------- kolory Tailwinda z powrotem na jasne tło ---------- */
+.bruno.zloty.asset .text-slate-900, .bruno.zloty.asset .text-slate-800 { color: #060513; }
+.bruno.zloty.asset .text-slate-700 { color: rgba(6, 5, 19, 0.82); }
+.bruno.zloty.asset .text-slate-600 { color: rgba(6, 5, 19, 0.68); }
+.bruno.zloty.asset .text-slate-500 { color: rgba(6, 5, 19, 0.56); }
+.bruno.zloty.asset .text-slate-400 { color: rgba(6, 5, 19, 0.42); }
+.bruno.zloty.asset .text-slate-300 { color: rgba(6, 5, 19, 0.3); }
+.bruno.zloty.asset [class*="hover:text-slate-"]:hover, .bruno.zloty.asset [class*="hover:text-white"]:hover { color: #5e52f8; }
+.bruno.zloty.asset .text-cyan-800, .bruno.zloty.asset .text-cyan-700, .bruno.zloty.asset .text-teal-800, .bruno.zloty.asset .text-cyan-900 { color: #5e52f8; }
+.bruno.zloty.asset .text-red-700, .bruno.zloty.asset .text-red-600 { color: #dc2626; }
+.bruno.zloty.asset .text-rose-800 { color: #be123c; }
+.bruno.zloty.asset .text-green-600 { color: #15803d; }
+.bruno.zloty.asset .text-amber-900, .bruno.zloty.asset .text-amber-700 { color: #b45309; }
+.bruno.zloty.asset .bg-white, .bruno.zloty.asset .bg-white\/70, .bruno.zloty.asset .bg-white\/60, .bruno.zloty.asset .bg-white\/50 { background-color: #fff; }
+.bruno.zloty.asset .bg-slate-50\/60, .bruno.zloty.asset .bg-slate-100, .bruno.zloty.asset .bg-slate-900\/5 { background-color: #f6f5fc; }
+.bruno.zloty.asset .bg-slate-200, .bruno.zloty.asset .bg-slate-200\/80, .bruno.zloty.asset .bg-slate-200\/70 { background-color: #e4e1f5; }
+.bruno.zloty.asset .bg-slate-400 { background-color: #c9c5e4; }
+.bruno.zloty.asset .bg-cyan-50\/70, .bruno.zloty.asset .bg-cyan-50\/60, .bruno.zloty.asset .bg-teal-50, .bruno.zloty.asset .bg-teal-100,
+.bruno.zloty.asset .bg-cyan-700\/5, .bruno.zloty.asset .bg-cyan-700\/10, .bruno.zloty.asset .bg-cyan-900\/10, .bruno.zloty.asset .bg-teal-900\/10 { background-color: #f0eeff; }
+.bruno.zloty.asset .bg-cyan-700 { background-color: #5e52f8; }
+.bruno.zloty.asset .bg-amber-50\/70, .bruno.zloty.asset .bg-amber-100 { background-color: #fef3c7; }
+.bruno.zloty.asset .bg-rose-900\/10 { background-color: #ffe4e6; }
+.bruno.zloty.asset .border-slate-200, .bruno.zloty.asset .border-slate-200\/80, .bruno.zloty.asset .border-slate-200\/60,
+.bruno.zloty.asset .border-slate-300, .bruno.zloty.asset .border-white\/80 { border-color: #e4e1f5; }
+.bruno.zloty.asset .divide-slate-200\/70 > :not(:last-child) { border-color: #e4e1f5; }
+.bruno.zloty.asset .border-cyan-200, .bruno.zloty.asset .border-teal-200, .bruno.zloty.asset .border-cyan-700\/30,
+.bruno.zloty.asset .border-cyan-700\/40, .bruno.zloty.asset .border-cyan-700\/50, .bruno.zloty.asset .border-cyan-900\/10 { border-color: #c9c5e4; }
+.bruno.zloty.asset .fill-slate-900 { fill: #060513; }
+.bruno.zloty.asset .fill-slate-700 { fill: rgba(6, 5, 19, 0.82); }
+.bruno.zloty.asset .fill-slate-400 { fill: rgba(6, 5, 19, 0.45); }
+.bruno.zloty.asset .fill-cyan-800 { fill: #5e52f8; }
+.bruno.zloty.asset .from-cyan-700, .bruno.zloty.asset .from-cyan-600 { --tw-gradient-from: #7d73ff; }
+.bruno.zloty.asset .to-teal-700 { --tw-gradient-to: #4337e6; }
+.bruno.zloty.asset [class*="from-cyan"].text-white,
+.bruno.zloty.asset [class*="from-cyan"] .text-white\/80,
+.bruno.zloty.asset [class*="from-cyan"] .text-white { color: #fff; }
+.bruno.zloty.asset .bg-slate-900.text-white { background-color: #060513; color: #fff; }
+.bruno.zloty.asset .border-slate-900 { border-color: #060513; }
+
+/* ---------- wykresy i kółka (SVG z kolorem złota w atrybutach) ---------- */
+.asset [stroke="#d4af5a"], .asset [stroke="#e6c77a"] { stroke: #5e52f8; }
+.asset [fill="#d4af5a"], .asset [fill="#e6c77a"], .asset [fill="#ecd08a"] { fill: #5e52f8; }
+.asset [stroke="#12110f"] { stroke: #fff; }
+.asset [stroke^="rgba(212,175,90"] { stroke: #e4e1f5; }
+.asset [fill^="rgba(212,175,90"] { fill: #c9c5e4; }
+.asset stop[stop-color="#f3dc9c"] { stop-color: #7d73ff; }
+.asset stop[stop-color="#d4af5a"] { stop-color: #5e52f8; }
+.asset stop[stop-color="#a8822f"] { stop-color: #4337e6; }
+
+.asset input[type="checkbox"], .asset input[type="radio"], .asset input[type="range"] { accent-color: #5e52f8 !important; }
+
+/* ---------- panel szefa ---------- */
+.asset .bsz .bsz-slabe span:first-child { color: #e11d48; }
+.asset .bsz-wiersz { border-top-color: #eeecf8; }
+.asset .bsz-wiersz:hover, .asset .bsz-rozmowa:hover { background: #f6f5fc; }
+.asset .bsz-naglowek { color: rgba(6, 5, 19, 0.45); }
+.asset .bsz-naglowek:hover { background: none; }
+.asset .bsz-inicjal { border-color: #5e52f8; color: #5e52f8; }
+.asset .bsz-kreski i { background: #e4e1f5; }
+.asset .bsz-kreski i.on { background: #5e52f8; }
+.asset .bsz-pigulka { background: #f0eeff; color: #5e52f8; border-color: #c9c5e4; }
+.asset .bsz-lista > li { border-top-color: #eeecf8; }
+.asset .bsz-logo.bsz-twarz { border-color: #5e52f8; }
+.asset .bz-ja.bz-logo, .asset .bt-ja.bz-logo { border-color: #c9c5e4; }
+.asset .bwz-os { fill: rgba(6, 5, 19, 0.45); }
+.asset .bwz-dymek { background: #fff; border-color: #c9c5e4; color: #060513; box-shadow: 0 16px 40px -12px rgba(46, 36, 160, 0.3); }
+.asset .bwz-legenda, .asset .bwz-kol { color: rgba(6, 5, 19, 0.5); }
+.asset .bwz-osoba { color: #060513; }
+.asset .bwz-osoba img, .asset .bwz-osoba > span { border-color: #c9c5e4; color: #5e52f8; }
+.asset a.bwz-osoba:hover { color: #5e52f8; }
+.asset .bwz-zespol { color: #5e52f8; }
+.asset { --bwz-mini: #a9a3e8; }
+.asset .bwz-odstep { border-bottom-color: #c9c5e4; }
+.asset .bwz-kratka.bwz-kratka-zespol { background: #efedfd; border-color: #5e52f8; color: #2e24a0; }
+.asset .bwz-kratka { background: #f6f5fc; color: rgba(6, 5, 19, 0.45); }
+.asset .bwz-kratka:hover, .asset .bwz-kratka:focus-visible { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #5e52f8; }
+.asset .bwz-slaba { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #fb7185; }
+
+/* ---------- panel główny (PanelA bez „czarny” = jasny .bpa.lp.szklo, akcent fiolet) ---------- */
+.asset .bpa.lp {
+  --ink: #060513; --muted: rgba(6, 5, 19, 0.6);
+  --green: #5e52f8; --green-2: #4337e6; --mint: #5e52f8; --deep: #060513;
+  background: #f8f7fd;
+}
+.asset .bpa.lp.szklo { --plama-1: rgba(94, 82, 248, 0.16); --plama-2: rgba(201, 197, 228, 0.45); --plama-3: rgba(240, 238, 255, 0.8); }
+.asset .bpa.lp.szklo .glass:not(.btn), .asset .bpa.lp.szklo .glass.hi, .asset .bpa.lp.szklo .side, .asset .bpa.lp.szklo .card.hero {
+  background: #fff; border-color: #e4e1f5;
+  box-shadow: 0 1px 2px rgba(6, 5, 19, 0.04), 0 24px 60px -36px rgba(46, 36, 160, 0.28);
+}
+.asset .bpa.lp.szklo .card.hero { background: linear-gradient(150deg, #ffffff 0%, #f0eeff 100%); }
+.asset .bpa.lp .logo { background: #060513; }
+.asset .bpa.lp .logo i, .asset .bpa.lp .badge i, .asset .bpa.lp .blk::after { background: #5e52f8; }
+.asset .bpa.lp .nav { color: rgba(6, 5, 19, 0.5); }
+.asset .bpa.lp .nav:hover { background: #f0eeff; color: #060513; }
+.asset .bpa.lp .nav.on { color: #5e52f8; }
+.asset .bpa.lp .nav.on::before { background: #5e52f8; }
+.asset .bpa.lp .sep { background: #e4e1f5; }
+.asset .bpa.lp .me { border-color: #5e52f8; color: #5e52f8; }
+.asset .bpa.lp .btn.pri, .asset .bpa.lp.szklo .btn.sec.glass, .asset .bpa.lp .btn.sec {
+  background: #5e52f8; border-color: #5e52f8; color: #fff; box-shadow: 0 12px 30px -14px rgba(94, 82, 248, 0.7);
+}
+.asset .bpa.lp .btn.pri:hover, .asset .bpa.lp.szklo .btn.sec.glass:hover, .asset .bpa.lp .btn.sec:hover { background: #4337e6; }
+.asset .bpa.lp .btn.sec svg, .asset .bpa.lp.szklo .btn.sec.glass svg { color: #fff; }
+.asset .bpa.lp .ico { color: #5e52f8; }
+.asset .bpa.lp.szklo .tip, .asset .bpa.lp.szklo .badge, .asset .bpa.lp.szklo .seg, .asset .bpa.lp.szklo .ico,
+.asset .bpa.lp.szklo .toggle button:not(.on), .asset .bpa.lp.szklo .pager .arr button, .asset .bpa.lp.szklo .blk,
+.asset .bpa.lp.szklo .card .glass.tip, .asset .bpa.lp.szklo .card .glass.badge, .asset .bpa.lp.szklo .card .glass.seg,
+.asset .bpa.lp.szklo .card .glass.ico { background: #f0eeff; }
+.asset .bpa.lp.szklo .tip:hover, .asset .bpa.lp.szklo .card .glass.tip:hover { background: #e6e3ff; }
+.asset .bpa.lp .toggle button.on, .asset .bpa.lp .seg button.on, .asset .bpa.lp.szklo .mnav a.on, .asset .bpa.lp .mnav a.on,
+.asset .bpa.lp .pager .arr button:hover, .asset .bpa.lp.szklo .pager .arr button:hover { background: #060513; border-color: #060513; color: #fff; }
+.asset .bpa.lp .tip .lab { color: #5e52f8; }
+.asset .bpa.lp .tip p { color: #060513; }
+.asset .bpa.lp .hero h2 { color: #060513; font-weight: 600; letter-spacing: -0.03em; }
+.asset .bpa.lp .listen .mic { color: #060513; border-color: #c9c5e4; }
+.asset .bpa.lp .listen.live .mic { background: #5e52f8; border-color: #5e52f8; color: #fff; box-shadow: 0 10px 30px -8px rgba(94, 82, 248, 0.7); }
+.asset .bpa.lp .listen .lab { background: #5e52f8; border-color: #5e52f8; color: #fff; }
+.asset .bpa.lp.szklo .ticks i { background: #e4e1f5; }
+.asset .bpa.lp .ticks i.f { background: #060513; }
+.asset .bpa.lp .crit .row:hover .ticks i.f { background: #5e52f8; }
+.asset .bpa.lp .crit .row { color: rgba(6, 5, 19, 0.72); }
+.asset .bpa.lp .wave path.ln { stroke: #5e52f8; }
+.asset .bpa.lp .wave path.area { fill: rgba(94, 82, 248, 0.12); }
+.asset .bpa.lp .wave path[stroke="#fff"] { stroke: #c9c5e4; }
+.asset .bpa.lp .wave circle[fill="#fff"] { stroke: #5e52f8; }
+.asset .bpa.lp .wave path[stroke="#a7f3d0"] { stroke: rgba(94, 82, 248, 0.3); }
+.asset .bpa.lp .wave line[stroke="#a7f3d0"] { stroke: #5e52f8; }
+.asset .bpa.lp .goal { color: #5e52f8; }
+.asset .bpa.lp .dni .on, .asset .bpa.lp .prog .note b { color: #060513; }
+.asset .bpa.lp .tt { background: #060513; border-color: #060513; color: #fff; }
+.asset .bpa.lp .chips b, .asset .bpa.lp .faces b { box-shadow: 0 0 0 2px #fff; }

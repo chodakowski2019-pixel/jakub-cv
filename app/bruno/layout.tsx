@@ -13,7 +13,9 @@ import { JezykProvider } from "@/components/bruno/jezyk-kontekst";
 import { DOMENA, jezykZHosta } from "@/lib/bruno/domeny";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { IKONY_BRUNO } from "@/components/podglad/bruno-lp/serwer";
+import { motywAsset } from "@/lib/bruno/motyw";
 import "./bruno.css";
+import "./motyw-asset.css";
 
 // Panel testowy Bruno AI (USER_001 30.09): logowanie stałym kodem, dostęp
 // 7 dni od pierwszego logowania, 3 rozmowy po 3 minuty dziennie (1.10), feedback
@@ -81,7 +83,7 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   const inicjal = (konto?.imie?.trim()?.[0] ?? email[0] ?? "B").toUpperCase();
   return (
     <JezykProvider jezyk={jezyk}>
-    <div className={`bruno zloty ${fonty} font-[var(--font-open-sans)]`}>
+    <div className={`bruno zloty ${motywAsset() ? "asset" : ""} ${fonty} font-[var(--font-open-sans)]`}>
       <UkladZloty dostep={{ ...dostep, szef }} inicjal={inicjal} free={free} profilBrak={profilBrak} ankietaBrak={ankietaBrak} logo={logo}>
         {children}
       </UkladZloty>

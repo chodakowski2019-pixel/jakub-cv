@@ -5,6 +5,7 @@ import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { zapiszWejscie, zrodloZParametru } from "@/lib/bruno/wejscia";
 import { dostepKonta, pobierzKonto, stanDostepu, stanFree, zamknijPorzucone } from "@/lib/bruno/db";
 import { kontekstFirmy } from "@/lib/bruno/firmy";
+import { motywAsset } from "@/lib/bruno/motyw";
 import { danePanelu } from "@/components/podglad/panel/dane";
 import PanelA from "@/components/podglad/panel/panel-a";
 import { jezykZadania } from "@/lib/bruno/jezyk-serwer";
@@ -35,7 +36,7 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
 
   return (
     <div className={`${inter.variable} ${outfit.variable}`} style={{ display: "contents" }}>
-      <PanelA d={d} lp szklo zloty dostep={{ ...dostep, szef }} free={dostep.free ? await stanFree(konto) : null} logo={logo} />
+      <PanelA d={d} lp szklo zloty={!motywAsset()} asset={motywAsset()} dostep={{ ...dostep, szef }} free={dostep.free ? await stanFree(konto) : null} logo={logo} />
     </div>
   );
 }

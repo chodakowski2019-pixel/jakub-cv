@@ -211,7 +211,7 @@ function Ocena({ d }: { d: DanePanelu }) {
       <div className="sub"><span>{o ? "" : t("No scored calls yet", "Brak ocenionych rozmów")}</span><span>{t("Out of 10", "Na 10")}</span></div>
       <div className="score">{o ? <Licz key={k} do={o.ocena} dec={1} /> : "–"}<small>/10</small></div>
       <div className="crit">
-        {(o?.kryteria ?? (jezyk === "pl" ? ["Otwarcie", "Pytania", "Obiekcje", "Zamknięcie", "Pewność siebie"] : ["Opening", "Questions", "Objections", "Closing", "Confidence"]).map((nazwa) => ({ nazwa, ocena: 0 }))).map((c, ri) => (
+        {(o?.kryteria ?? (jezyk === "pl" ? ["Otwarcie", "Pytania", "Obiekcje", "Zamknięcie", "Mentalność"] : ["Opening", "Questions", "Objections", "Closing", "Confidence"]).map((nazwa) => ({ nazwa, ocena: 0 }))).map((c, ri) => (
           <div className="row" key={c.nazwa}>
             <span>{c.nazwa}</span>
             <div className="ticks">
@@ -321,7 +321,7 @@ function Fala({ d }: { d: DanePanelu }) {
 }
 
 /* ---------- Strona ---------- */
-export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false, zielony = false, szklo = false, zloty = false, bialoZloty = false, pelny = false, dostep, free, logo = null }: { d: DanePanelu; jasne?: boolean; bialeTlo?: boolean; lp?: boolean; zielony?: boolean; szklo?: boolean; zloty?: boolean; bialoZloty?: boolean; pelny?: boolean; dostep?: DostepLinkow; free?: { zuzyte: number; zostalo: number } | null; /** 25.10: logo firmy w kółku paska zamiast inicjału. */ logo?: { url: string | null; nazwa: string } | null }) {
+export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false, zielony = false, szklo = false, zloty = false, bialoZloty = false, asset = false, pelny = false, dostep, free, logo = null }: { d: DanePanelu; jasne?: boolean; bialeTlo?: boolean; lp?: boolean; zielony?: boolean; szklo?: boolean; zloty?: boolean; bialoZloty?: boolean; /** 25.10: motyw Asset (lib/bruno/motyw.ts), fala w fiolecie. */ asset?: boolean; pelny?: boolean; dostep?: DostepLinkow; free?: { zuzyte: number; zostalo: number } | null; /** 25.10: logo firmy w kółku paska zamiast inicjału. */ logo?: { url: string | null; nazwa: string } | null }) {
   // 10.10: prawdziwy panel podaje `dostep` (free bez Statystyk); podglądy dalej `pelny`.
   const { t, jezyk } = useT();
   const linki = linkiDla(dostep ?? pelny, jezyk);
@@ -400,7 +400,7 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
             <>
               <section className="grid-top">
                 <article className="card glass hi hero">
-                  {lp ? <div className="fala-lp"><FalaGlosu akcentRgb={zloty || bialoZloty ? "201, 160, 74" : zielony ? "31, 174, 115" : undefined} bazaRgb={zloty ? "255, 255, 255" : undefined} bazaMnoznik={zloty ? 1.6 : 1} /></div> : <Kula glosniej={glosniej} />}
+                  {lp ? <div className="fala-lp"><FalaGlosu akcentRgb={asset ? "94, 82, 248" : zloty || bialoZloty ? "201, 160, 74" : zielony ? "31, 174, 115" : undefined} bazaRgb={zloty ? "255, 255, 255" : undefined} bazaMnoznik={zloty ? 1.6 : 1} /></div> : <Kula glosniej={glosniej} />}
                   <h2>{plan}</h2>
                   <div className={`listen ${glosniej ? "live" : ""}`}>
                     {d.moznaRozmawiac ? (
