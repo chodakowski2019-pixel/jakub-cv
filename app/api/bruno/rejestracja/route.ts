@@ -18,6 +18,10 @@ export async function POST(req: Request) {
   const b = (await req.json().catch(() => ({}))) as Record<string, unknown>;
   const jezyk = (await jezykDomeny()) ?? (b.jezyk === "en" ? "en" : "pl");
   const T = (en: string, pl: string) => (jezyk === "pl" ? pl : en);
+  // 25.10 (USER_001: „dezaktywuj rejestrację”): nowe prośby nie przechodzą. Konto = po spotkaniu online.
+  if (process.env.BRUNO_REJESTRACJA !== "on") {
+    return NextResponse.json({ ok: false, blad: T("Sign-up is closed. Book an online meeting instead.", "Rejestracja jest wyłączona. Umów spotkanie online.") }, { status: 410 });
+  }
   // Pułapka na boty: ukryte pole.
   if (String(b.www ?? "")) return NextResponse.json({ ok: true, id: 0, token: "" });
 

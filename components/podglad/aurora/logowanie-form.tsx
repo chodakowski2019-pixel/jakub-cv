@@ -206,7 +206,8 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
         </button>
 
         <p className={s.login}>
-          {x.brak} <Link href={adresStrony(jezyk, "rejestracja", naDomenie)}>{x.rejestracja}</Link>
+          {/* 25.10 (USER_001): rejestracja wyłączona, „Chcę otrzymać dostęp” = umów spotkanie online. */}
+          {x.brak} <Link href={adresStrony(jezyk, "demo", naDomenie)}>{x.rejestracja}</Link>
         </p>
         <p className={s.login} style={{ marginTop: 6 }}>
           <a href="#" onClick={(e) => { e.preventDefault(); setReset("formularz"); }}>{x.zapomnialem}</a>
