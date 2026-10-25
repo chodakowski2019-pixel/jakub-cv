@@ -9,6 +9,8 @@ export const LINKI = [
   { href: "/bruno/szef", nazwa: "Team", nazwaPl: "Zespół", ikona: "zespol", szef: true },
   { href: "/bruno/panel", nazwa: "Home", nazwaPl: "Panel", ikona: "panel" },
   { href: "/bruno/rozmowa", nazwa: "Live Call", nazwaPl: "Test", ikona: "test" },
+  // 25.10 (USER_001): „Rozmowa, którą masz jutro” jako osobna zakładka (pełny dostęp).
+  { href: "/bruno/jutro", nazwa: "Tomorrow's Call", nazwaPl: "Jutro", ikona: "jutro", pelny: true },
   // „Ogień” tylko przy pełnym dostępie (jak components/bruno/nav.tsx, 9.10).
   { href: "/bruno/ogien", nazwa: "Fire Up", nazwaPl: "Ogień", ikona: "ogien", pelny: true },
   { href: "/bruno/trening", nazwa: "Drills", nazwaPl: "Trening", ikona: "trening" },
@@ -40,6 +42,8 @@ export type NazwaIkony = (typeof LINKI)[number]["ikona"] | "klodka" | "wyjscie" 
 export function Ikona({ nazwa, rozmiar = 20, grubosc = 1.7 }: { nazwa: NazwaIkony; rozmiar?: number; grubosc?: number }) {
   const w = { viewBox: "0 0 24 24", width: rozmiar, height: rozmiar, fill: "none", stroke: "currentColor", strokeWidth: grubosc, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
   switch (nazwa) {
+    case "jutro":
+      return <svg {...w}><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M3 10h18M8 3v4M16 3v4" /><path d="M12 13v4M10 15h4" /></svg>;
     case "zespol":
       return <svg {...w}><circle cx="9" cy="8" r="3.5" /><circle cx="17" cy="9" r="2.5" /><path d="M2.5 20a6.5 6.5 0 0 1 13 0" /><path d="M15.5 20a5 5 0 0 1 6-4.6" /></svg>;
     case "panel":
