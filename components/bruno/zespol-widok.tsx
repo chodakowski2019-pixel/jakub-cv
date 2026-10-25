@@ -3,7 +3,8 @@ import Licz from "@/components/podglad/panel/licz";
 import { etykiety } from "@/lib/bruno/etykiety";
 import { locale, mnoga, tDla, type Jezyk } from "@/lib/bruno/i18n";
 import type { Firma } from "@/lib/bruno/firmy";
-import { DNI_BEZ_TRENINGU_ALARM, KRYTERIA, type StatHandlowca, type StatZespolu } from "@/lib/bruno/zespol";
+import { DNI_BEZ_TRENINGU_ALARM, KRYTERIA, type PunktDnia, type StatHandlowca, type StatZespolu } from "@/lib/bruno/zespol";
+import { Aktywnosc, MapaKryteriow, MiniWykres, TrendZespolu } from "@/components/bruno/zespol-wykresy";
 
 // 25.10 (USER_001): PANEL SZEFA, ekran nr 1 demo. Logo firmy + „Zespół [Firma]”, 4 kafelki z liczbami,
 // które dobiegają (Licz), tabela handlowców: rozmowy 7 dni, średnia, najsłabsze kryterium, trend,
@@ -67,7 +68,7 @@ export function Naglowek({ firma, tytul, akcent, podtytul, zdjecie }: { firma: F
   );
 }
 
-export default function ZespolWidok({ firma, stat, zespol, jezyk }: { firma: Firma | null; stat: StatHandlowca[]; zespol: StatZespolu; jezyk: Jezyk }) {
+export default function ZespolWidok({ firma, stat, zespol, jezyk, seria, aktywnosc, oceny }: { firma: Firma | null; stat: StatHandlowca[]; zespol: StatZespolu; jezyk: Jezyk; seria: PunktDnia[]; aktywnosc: Record<string, number[]>; oceny: Record<string, number[]> }) {
   const t = tDla(jezyk);
   const { NAZWY } = etykiety(jezyk);
   const dniTemu = (d: number | null) => (d === null ? t("never", "nigdy") : d === 0 ? t("today", "dziś") : d === 1 ? t("yesterday", "wczoraj") : t(`${d} days ago`, `${d} dni temu`));
@@ -84,25 +85,19 @@ export default function ZespolWidok({ firma, stat, zespol, jezyk }: { firma: Fir
         <Kafelek liczba={zespol.nieCwicza} opis={t("not practicing", "nie ćwiczy")} uwaga={t(`${DNI_BEZ_TRENINGU_ALARM}+ days without a call`, `${DNI_BEZ_TRENINGU_ALARM}+ dni bez rozmowy`)} opoznienie={360} />
       </div>
 
-      <section className="bruno-szklo rounded-2xl p-4 sm:p-5">
-        <div className="flex items-baseline justify-between mb-3">
-          <h2 className="bruno-h2 text-base">{t("Team by area", "Zespół na kryterium")}</h2>
-          <span className="text-[11px] text-slate-400">{zespol.najslabsze ? t(`weakest: ${NAZWY[zespol.najslabsze]}`, `najsłabsze: ${NAZWY[zespol.najslabsze]}`) : ""}</span>
-        </div>
-        <ul className="grid sm:grid-cols-5 gap-3">
-          {KRYTERIA.map((k) => (
-            <li key={k} className={zespol.najslabsze === k ? "bsz-slabe" : ""}>
-              <div className="flex items-baseline justify-between text-sm">
-                <span className="text-slate-800 font-medium">{NAZWY[k]}</span>
-                <span className="text-slate-600 tabular-nums">{zespol.kryteria[k] ?? "–"}</span>
-              </div>
-              <div className="h-1.5 mt-1 rounded-full bg-cyan-900/10 overflow-hidden" aria-hidden>
-                <div className="h-full rounded-full bg-gradient-to-r from-cyan-700 to-teal-700 bsz-pasek" style={{ width: `${((zespol.kryteria[k] ?? 0) / 10) * 100}%` }} />
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {/* 25.10 (USER_001: „lepsza wizualizacja”): trend zespołu, mapa kryteriów, aktywność 14 dni (zespol-wykresy.tsx). */}
+      <TrendZespolu seria={seria} jezyk={jezyk} />
+
+      <div className="flex flex-col gap-4">
+        <MapaKryteriow
+          wiersze={posortowani.map((s) => ({ email: s.email, imie: s.imie, zdjecie: s.zdjecie, kryteria: s.kryteria, najslabsze: s.najslabsze, href: `/bruno/szef/${encodeURIComponent(s.email)}` }))}
+          zespol={zespol.kryteria}
+          nazwy={NAZWY}
+          kolejnosc={KRYTERIA}
+          jezyk={jezyk}
+        />
+        <Aktywnosc wiersze={posortowani.map((s) => ({ email: s.email, imie: s.imie, zdjecie: s.zdjecie, dni: aktywnosc[s.email] ?? [] }))} dni={14} jezyk={jezyk} />
+      </div>
 
       <section className="bruno-szklo rounded-2xl overflow-hidden">
         <div className="bsz-tabela" role="table" aria-label={t("Team", "Zespół")}>
@@ -134,7 +129,7 @@ export default function ZespolWidok({ firma, stat, zespol, jezyk }: { firma: Fir
                 </span>
                 <span role="cell"><OcenaKolko ocena={s.srednia} /></span>
                 <span role="cell">{s.najslabsze ? <span className="bsz-pigulka">{NAZWY[s.najslabsze]} {s.kryteria[s.najslabsze]}</span> : <span className="text-slate-400">–</span>}</span>
-                <span role="cell"><Trend v={s.trend} jezyk={jezyk} /></span>
+                <span role="cell" className="flex items-center gap-2"><MiniWykres oceny={oceny[s.email] ?? []} /><Trend v={s.trend} jezyk={jezyk} /></span>
                 <span role="cell" className={alarm ? "text-rose-800 font-medium" : "text-slate-600"}>
                   {alarm && s.dniBezTreningu !== null ? t(`Not practicing for ${s.dniBezTreningu} days`, `Nie ćwiczy od ${s.dniBezTreningu} dni`) : dniTemu(s.dniBezTreningu)}
                 </span>

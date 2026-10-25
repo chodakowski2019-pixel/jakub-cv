@@ -3,7 +3,7 @@ import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonto } from "@/lib/bruno/db";
 import { czySzef, handlowcyFirmy, pobierzFirme, rozmowyZespolu } from "@/lib/bruno/firmy";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
-import { statystykiHandlowca, statystykiZespolu } from "@/lib/bruno/zespol";
+import { aktywnoscHandlowca, ocenyHandlowca, seriaZespolu, statystykiHandlowca, statystykiZespolu } from "@/lib/bruno/zespol";
 import ZespolWidok from "@/components/bruno/zespol-widok";
 
 export const dynamic = "force-dynamic";
@@ -19,5 +19,7 @@ export default async function BrunoSzefPage() {
   const [firma, handlowcy, { jezyk }] = await Promise.all([pobierzFirme(konto.firma_id), handlowcyFirmy(konto.firma_id!), tSerwer()]);
   const rozmowy = await rozmowyZespolu(handlowcy.map((h) => h.email), 30);
   const stat = handlowcy.map((h) => statystykiHandlowca(h, rozmowy));
-  return <ZespolWidok firma={firma} stat={stat} zespol={statystykiZespolu(stat)} jezyk={jezyk} />;
+  const aktywnosc = Object.fromEntries(handlowcy.map((h) => [h.email, aktywnoscHandlowca(h.email, rozmowy, 14)]));
+  const oceny = Object.fromEntries(handlowcy.map((h) => [h.email, ocenyHandlowca(h.email, rozmowy)]));
+  return <ZespolWidok firma={firma} stat={stat} zespol={statystykiZespolu(stat)} jezyk={jezyk} seria={seriaZespolu(rozmowy, 14)} aktywnosc={aktywnosc} oceny={oceny} />;
 }

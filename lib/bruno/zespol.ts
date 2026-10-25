@@ -67,6 +67,41 @@ export function statystykiHandlowca(konto: Pick<Konto, "email" | "imie" | "zdjec
   };
 }
 
+// 25.10 (USER_001: „lepsza wizualizacja panelu”): serie do wykresów panelu szefa.
+const kluczPL = (d: Date) => d.toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
+export type PunktDnia = { dzien: string; srednia: number | null; rozmow: number };
+
+/** Średnia ocen zespołu i liczba rozmów na każdy z ostatnich `dni` dni (dzień bez rozmów: srednia null). */
+export function seriaZespolu(rozmowy: Rozmowa[], dni = 30): PunktDnia[] {
+  const mapa = new Map<string, number[]>();
+  for (const r of rozmowy) {
+    if (r.status !== "zakonczona") continue;
+    const k = kluczPL(new Date(r.start));
+    if (!mapa.has(k)) mapa.set(k, []);
+    if (typeof r.ocena === "number") mapa.get(k)!.push(r.ocena);
+    else mapa.get(k)!.push(NaN);
+  }
+  const wynik: PunktDnia[] = [];
+  for (let i = dni - 1; i >= 0; i--) {
+    const k = kluczPL(new Date(Date.now() - i * DZIEN));
+    const v = mapa.get(k) ?? [];
+    wynik.push({ dzien: k, srednia: srednia(v.filter((x) => !Number.isNaN(x))), rozmow: v.length });
+  }
+  return wynik;
+}
+
+/** Rozmowy handlowca na każdy z ostatnich `dni` dni (siatka aktywności). */
+export function aktywnoscHandlowca(email: string, rozmowy: Rozmowa[], dni = 14): number[] {
+  const licz = new Map<string, number>();
+  for (const r of rozmowy) if (r.email === email && r.status === "zakonczona") licz.set(kluczPL(new Date(r.start)), (licz.get(kluczPL(new Date(r.start))) ?? 0) + 1);
+  return Array.from({ length: dni }, (_, i) => licz.get(kluczPL(new Date(Date.now() - (dni - 1 - i) * DZIEN))) ?? 0);
+}
+
+/** Oceny handlowca od najstarszej do najnowszej (mini-wykres w tabeli). */
+export function ocenyHandlowca(email: string, rozmowy: Rozmowa[]): number[] {
+  return rozmowy.filter((r) => r.email === email && typeof r.ocena === "number").sort((a, b) => a.start.localeCompare(b.start)).map((r) => r.ocena as number);
+}
+
 export type StatZespolu = {
   handlowcow: number;
   rozmow7: number;
