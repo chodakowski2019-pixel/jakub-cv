@@ -2,26 +2,46 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Ikona, linkiDla, useWyloguj } from "@/components/podglad/panel/wspolne";
+import { type DostepLinkow, Ikona, linkiDla, useWyloguj } from "@/components/podglad/panel/wspolne";
 import { useT } from "@/components/bruno/jezyk-kontekst";
+import PrzelacznikWidoku from "@/components/bruno/przelacznik-widoku";
 
 // 10.10 (USER_001: „cały ten Bruno się zmienia”): pasek czarno-złoty dla wszystkich ekranów panelu
 // poza /bruno/panel (tam pasek rysuje sam panel). Ten sam wygląd: kółko z inicjałem na górze,
 // ikony z prawdziwego menu, „Ogień” tylko przy pełnym dostępie, „Statystyki” nie dla free (10.10),
 // wyloguj na dole. Na telefonie: górna belka + zakładki poziomo.
-// Konto free: zamiast „Odblokuj pełen dostęp” jest licznik „Bezpłatne rozmowy X / 3” → Bruno Pro.
+// 25.10 (USER_001): bez „Odblokuj pełen dostęp”. W jego miejscu szef ma przełącznik widoku szef ↔ handlowiec.
+// Konto z firmą: w kółku logo firmy zamiast inicjału.
 
-export default function PasekZloty({ dostep, inicjal, free }: { dostep: { ogien: boolean; statystyki: boolean }; inicjal: string; free?: { zuzyte: number; zostalo: number } | null }) {
+export type Logo = { url: string | null; nazwa: string } | null;
+
+export function Inicjal({ inicjal, logo, className }: { inicjal: string; logo?: Logo; className: string }) {
+  return (
+    <>
+      {logo?.url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logo.url} alt={logo.nazwa} className={`${className} bz-logo`} />
+      ) : (
+        <span className={className}>{inicjal}</span>
+      )}
+    </>
+  );
+}
+
+export default function PasekZloty({ dostep, inicjal, logo = null }: { dostep: DostepLinkow; inicjal: string; free?: { zuzyte: number; zostalo: number } | null; logo?: Logo }) {
   const sciezka = usePathname() ?? "";
   const wyloguj = useWyloguj();
   const { t, jezyk } = useT();
   const linki = linkiDla(dostep, jezyk);
   const aktywny = (href: string) => sciezka === href || sciezka.startsWith(`${href}/`);
+  const dom = dostep.szef ? "/bruno/szef" : "/bruno/panel";
 
   return (
     <>
       <aside className="bz-pasek" aria-label={t("Main menu", "Panel")}>
-        <Link href="/bruno/panel" className="bz-ja" title={t("Home", "Panel")} aria-label={t("Home", "Panel")}>{inicjal}</Link>
+        <Link href={dom} className="bz-ja-link" title={logo?.nazwa ?? t("Home", "Panel")} aria-label={logo?.nazwa ?? t("Home", "Panel")}>
+          <Inicjal inicjal={inicjal} logo={logo} className="bz-ja" />
+        </Link>
         {linki.map((l) => (
           <span key={l.href} style={{ display: "contents" }}>
             {l.ikona === "dostosuj" && <div className="bz-sep" />}
@@ -35,29 +55,10 @@ export default function PasekZloty({ dostep, inicjal, free }: { dostep: { ogien:
       </aside>
 
       <header className="bz-gora">
-        <Link href="/bruno/panel" className="bz-ja bz-ja-tel" aria-label={t("Home", "Panel")}>{inicjal}</Link>
-        <Link href="/bruno/odblokuj" className="bz-odblokuj" aria-current={aktywny("/bruno/odblokuj") ? "page" : undefined}>
-          <Ikona nazwa="klodka" rozmiar={15} grubosc={2} />
-          {free ? (
-            <>
-              {/* 17.10 (USER_001): Bruno tylko B2B, zamiast Bruno Pro = „Bruno dla zespołu” (rozmowa z Jakubem). */}
-              {/* 18.10 (USER_001): konto demo = sam napis „Bruno dla zespołu”, bez licznika. */}
-              {free.zuzyte + free.zostalo === 1 ? (
-                <span>{t("Bruno for your team", "Bruno dla zespołu")}</span>
-              ) : (
-                <>
-                  <span className="bz-dlugi">{t("Free calls", "Bezpłatne rozmowy")}: {free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Bruno for your team", "Bruno dla zespołu")}</span>
-                  <span className="bz-krotki">{free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Team", "Zespół")}</span>
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              <span className="bz-dlugi">{t("Unlock full access", "Odblokuj pełen dostęp")}</span>
-              <span className="bz-krotki">{t("Unlock", "Odblokuj")}</span>
-            </>
-          )}
+        <Link href={dom} className="bz-ja-link bz-ja-tel-link" aria-label={t("Home", "Panel")}>
+          <Inicjal inicjal={inicjal} logo={logo} className="bz-ja bz-ja-tel" />
         </Link>
+        {dostep.szef ? <PrzelacznikWidoku className="bz-odblokuj" /> : <span className="bz-rosnie" />}
         <button type="button" className="bz-wyl" onClick={wyloguj} aria-label={t("Log out", "Wyloguj")}><Ikona nazwa="wyjscie" rozmiar={18} /></button>
         <nav className="bz-zakladki" aria-label={t("Main menu", "Panel")}>
           {linki.map((l) => (

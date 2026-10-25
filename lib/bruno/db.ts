@@ -79,6 +79,10 @@ export type Konto = {
   stripe_customer_id?: string | null;
   stripe_subscription_id?: string | null;
   pro_do?: string | null;
+  /** 25.10: firma (bruno_firmy). Szef (rola owner / sales_director / team_lead) z firmą widzi /bruno/szef. */
+  firma_id?: string | null;
+  /** 25.10: konto demo (skrypt bruno-demo-firma): bez ankiety Mazura i bez filmu. Handlowcy demo bez kodu. */
+  demo?: boolean | null;
 };
 
 /** Czy konto ma moduły płatne (9.10, USER_001: tester w trialu ich nie widzi). */
@@ -96,7 +100,7 @@ export function planFree(konto: Pick<Konto, "plan"> | null | undefined): boolean
  * Dostosuj Bruno razem z „wczytaj ofertę ze strony / PDF". Reszta (Statystyki, Ogień,
  * „Rozmowa, którą masz jutro") = po zakupie Bruno Pro. TRIAL (stare konta firm) jak dotąd.
  */
-export type Dostep = { pelny: boolean; free: boolean; oferta: boolean; sytuacja: boolean; ogien: boolean; statystyki: boolean };
+export type Dostep = { pelny: boolean; free: boolean; oferta: boolean; sytuacja: boolean; ogien: boolean; statystyki: boolean; /** 25.10: zakładka „Zespół” (panel szefa). Ustawia layout z czySzef. */ szef?: boolean };
 export function dostepKonta(konto: Pick<Konto, "plan"> | null | undefined): Dostep {
   const pelny = pelnyDostep(konto);
   const free = planFree(konto);

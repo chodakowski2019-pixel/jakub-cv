@@ -3,11 +3,10 @@ import { redirect } from "next/navigation";
 import { Inter, Outfit } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { zapiszWejscie, zrodloZParametru } from "@/lib/bruno/wejscia";
-import { dostepKonta, pelnyDostep, pobierzKonto, stanDostepu, stanFree, zamknijPorzucone } from "@/lib/bruno/db";
+import { dostepKonta, pobierzKonto, stanDostepu, stanFree, zamknijPorzucone } from "@/lib/bruno/db";
+import { kontekstFirmy } from "@/lib/bruno/firmy";
 import { danePanelu } from "@/components/podglad/panel/dane";
 import PanelA from "@/components/podglad/panel/panel-a";
-import TourPopup from "@/components/bruno/tour-popup";
-import { filmDla } from "@/lib/bruno/film";
 import { jezykZadania } from "@/lib/bruno/jezyk-serwer";
 
 export const dynamic = "force-dynamic";
@@ -15,12 +14,13 @@ export const dynamic = "force-dynamic";
 // 10.10 (USER_001): panel w wyglądzie CZARNY ZE ZŁOTYM (podgląd /podglad/bruno-panel-zloty).
 // Dane: components/podglad/panel/dane.ts (te same funkcje z lib/bruno co poprzedni panel).
 // Układ /bruno nie dokłada tu starego paska, tła ani stopki (nagłówek x-sciezka z proxy.ts).
+// 25.10 (USER_001): bez popupu z filmem (tour-popup.tsx zostaje w repo, odpięty): na demo oprowadza USER_001.
 
 const inter = Inter({ variable: "--font-bpa", subsets: ["latin", "latin-ext"], weight: ["300", "400", "500", "600", "700"] });
 const outfit = Outfit({ variable: "--font-bpa-head", subsets: ["latin", "latin-ext"], weight: ["300", "400", "500", "600"] });
 
-export default async function BrunoPanelPage({ searchParams }: { searchParams: Promise<{ tour?: string; src?: string }> }) {
-  const { tour, src } = await searchParams;
+export default async function BrunoPanelPage({ searchParams }: { searchParams: Promise<{ src?: string }> }) {
+  const { src } = await searchParams;
   const email = await zalogowanyEmail();
   // Niezalogowany z linku w mailu: źródło jedzie na stronę logowania, formularz odda je do logu (E18).
   if (!email) redirect(src ? `/bruno?src=${encodeURIComponent(src)}` : "/bruno");
@@ -30,17 +30,12 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
 
   const konto = await pobierzKonto(email);
   if (konto && stanDostepu(konto).aktywny) await zamknijPorzucone(email);
-  const d = await danePanelu(await jezykZadania());
-  // Popup z filmem: przy pierwszym wejściu albo na życzenie (?tour=1 z Ustawień).
-  // 12.10 (USER_001): film dla KAŻDEGO konta zaraz po profilu (/bruno/start), potem panel. Zmienia 11.10 („film po zakupie”).
-  // 17.10 (USER_001): konto demo (free, 1 rozmowa) = chmurki (prowadzenie-demo.tsx), bez filmu.
-  const demo = dostepKonta(konto).free && Number(konto?.rozmow_dziennie) === 1;
-  const pokazTour = Boolean(konto) && !demo && !d.wygasl && (tour === "1" || !konto?.tour_obejrzany_at);
+  const [d, { szef, logo }] = await Promise.all([danePanelu(await jezykZadania()), kontekstFirmy(konto)]);
+  const dostep = dostepKonta(konto);
 
   return (
     <div className={`${inter.variable} ${outfit.variable}`} style={{ display: "contents" }}>
-      {pokazTour && <TourPopup src={filmDla(konto).src} okladka={filmDla(konto).okladka} pion={filmDla(konto).pion} />}
-      <PanelA d={d} lp szklo zloty dostep={dostepKonta(konto)} free={dostepKonta(konto).free ? await stanFree(konto) : null} />
+      <PanelA d={d} lp szklo zloty dostep={{ ...dostep, szef }} free={dostep.free ? await stanFree(konto) : null} logo={logo} />
     </div>
   );
 }

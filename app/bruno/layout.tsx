@@ -5,7 +5,10 @@ import { Poppins, Open_Sans, Outfit } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { dostepKonta, pobierzKonto, stanFree } from "@/lib/bruno/db";
 import { ankietaWymagana } from "@/lib/bruno/ankieta-db";
+import { kontekstFirmy } from "@/lib/bruno/firmy";
 import UkladZloty from "@/components/bruno/uklad-zloty";
+import CzatDymek from "@/components/bruno/czat-dymek";
+import Kalkulator from "@/components/bruno/kalkulator";
 import { JezykProvider } from "@/components/bruno/jezyk-kontekst";
 import { DOMENA, jezykZHosta } from "@/lib/bruno/domeny";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
@@ -65,8 +68,13 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   if (profilBrak && sciezka && sciezka !== "/bruno/start") redirect("/bruno/start");
   // 21.10 (USER_001): po profilu ankieta Mazura (przed 1. treningiem i co 30 dni). Bez konta demo
   // (szef firmy testuje) i bez konta free po blokadzie (ono idzie do „Odblokuj”, inaczej pętla).
-  const ankietaBrak = Boolean(konto && !profilBrak && !free?.zablokowane && (await ankietaWymagana(email, free?.pula === 1)));
+  // 25.10: konto demo (firma z skryptu bruno-demo-firma) bez ankiety: szef loguje się na spotkaniu i od razu widzi zespół.
+  const demo = Boolean(konto?.demo);
+  const ankietaBrak = Boolean(konto && !profilBrak && !free?.zablokowane && (await ankietaWymagana(email, free?.pula === 1 || demo)));
   if (ankietaBrak && sciezka && sciezka !== "/bruno/ankieta") redirect("/bruno/ankieta");
+
+  // 25.10 (USER_001): firma konta (logo w pasku) i czy to szef (zakładka „Zespół”, przełącznik widoku).
+  const { szef, logo } = await kontekstFirmy(konto);
 
   // 10.10 (USER_001: „cały ten Bruno się zmienia”): wszystkie ekrany czarno-złote. Panel ma własny pasek,
   // reszta wspólny; o tym decyduje UkladZloty po adresie w przeglądarce.
@@ -74,11 +82,16 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   return (
     <JezykProvider jezyk={jezyk}>
     <div className={`bruno zloty ${fonty} font-[var(--font-open-sans)]`}>
-      {/* 17.10 (USER_001): konto demo (pula 1 rozmowy) = chmurki krok po kroku zamiast filmu. */}
-      <UkladZloty dostep={dostep} inicjal={inicjal} free={free} profilBrak={profilBrak} ankietaBrak={ankietaBrak} demoEmail={free && free.pula === 1 ? email : null}>
+      <UkladZloty dostep={{ ...dostep, szef }} inicjal={inicjal} free={free} profilBrak={profilBrak} ankietaBrak={ankietaBrak} logo={logo}>
         {children}
       </UkladZloty>
-      {/* 14.10 (USER_001): dymek czatu usunięty, „Napisz do nas” jest w Ustawieniach (wiadomosc-form.tsx). */}
+      {/* 25.10 (USER_001): dymek czatu zostaje; obok niego kalkulator sprzedażowy (szef i konta demo). */}
+      {!profilBrak && !ankietaBrak && (
+        <>
+          {(szef || demo) && <Kalkulator handlowcy={konto?.handlowcy} />}
+          <CzatDymek />
+        </>
+      )}
     </div>
     </JezykProvider>
   );

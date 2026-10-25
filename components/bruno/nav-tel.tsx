@@ -3,24 +3,29 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Ikona, linkiDla, useWyloguj } from "@/components/podglad/panel/wspolne";
+import { type DostepLinkow, Ikona, linkiDla, useWyloguj } from "@/components/podglad/panel/wspolne";
 import { useT } from "@/components/bruno/jezyk-kontekst";
+import { Inicjal, type Logo } from "@/components/bruno/pasek-zloty";
+import PrzelacznikWidoku from "@/components/bruno/przelacznik-widoku";
 
 // 14.10 (USER_001: „na telefonie nie może być jak na laptopkach”): panel na telefonie jak aplikacja.
-// Górna belka: inicjał + mała złota pigułka (Bruno Pro / licznik free). Dolny pasek: 4 główne zakładki
+// Górna belka: inicjał + mała złota pigułka. Dolny pasek: 4 główne zakładki
 // + „Więcej” (arkusz z resztą: Ogień, Statystyki, Kalendarz, Dostosuj, Ustawienia, Wyloguj).
 // Widoczne tylko do 860 px (CSS w app/bruno/bruno.css, klasy bt-*). Na komputerze bez zmian.
+// 25.10 (USER_001): pigułka = przełącznik widoku szefa (bez „Odblokuj”). Szef ma „Zespół” w dolnym pasku.
 
 const GLOWNE = ["/bruno/panel", "/bruno/rozmowa", "/bruno/trening", "/bruno/feedback"];
+const GLOWNE_SZEFA = ["/bruno/szef", "/bruno/panel", "/bruno/rozmowa", "/bruno/feedback"];
 
-export default function NavTel({ dostep, inicjal, free }: { dostep: { ogien: boolean; statystyki: boolean }; inicjal: string; free?: { zuzyte: number; zostalo: number } | null }) {
+export default function NavTel({ dostep, inicjal, logo = null }: { dostep: DostepLinkow; inicjal: string; free?: { zuzyte: number; zostalo: number } | null; logo?: Logo }) {
   const sciezka = usePathname() ?? "";
   const wyloguj = useWyloguj();
   const { t, jezyk } = useT();
   const [wiecej, setWiecej] = useState(false);
   const linki = linkiDla(dostep, jezyk);
-  const glowne = GLOWNE.map((h) => linki.find((l) => l.href === h)).filter((l): l is (typeof linki)[number] => Boolean(l));
-  const reszta = linki.filter((l) => !GLOWNE.includes(l.href));
+  const glowneHref = dostep.szef ? GLOWNE_SZEFA : GLOWNE;
+  const glowne = glowneHref.map((h) => linki.find((l) => l.href === h)).filter((l): l is (typeof linki)[number] => Boolean(l));
+  const reszta = linki.filter((l) => !glowneHref.includes(l.href));
   const aktywny = (href: string) => sciezka === href || sciezka.startsWith(`${href}/`);
   const wReszcie = reszta.some((l) => aktywny(l.href));
 
@@ -41,12 +46,10 @@ export default function NavTel({ dostep, inicjal, free }: { dostep: { ogien: boo
   return (
     <>
       <header className="bt-gora">
-        <Link href="/bruno/panel" className="bt-ja" aria-label={t("Home", "Panel")}>{inicjal}</Link>
-        <Link href="/bruno/odblokuj" className="bt-pro" aria-current={aktywny("/bruno/odblokuj") ? "page" : undefined}>
-          <Ikona nazwa="klodka" rozmiar={14} grubosc={2} />
-          {/* 17.10: Bruno tylko B2B, zamiast „Bruno Pro” = „Zespół” (strona Bruno dla zespołu + kalendarz). */}
-          {free ? (free.zuzyte + free.zostalo === 1 ? t("Bruno for your team", "Bruno dla zespołu") : `${free.zuzyte} / ${free.zuzyte + free.zostalo} · ${t("Team", "Zespół")}`) : t("Unlock", "Odblokuj")}
+        <Link href={dostep.szef ? "/bruno/szef" : "/bruno/panel"} className="bt-ja-link" aria-label={t("Home", "Panel")}>
+          <Inicjal inicjal={inicjal} logo={logo} className="bt-ja" />
         </Link>
+        {dostep.szef && <PrzelacznikWidoku className="bt-pro" krotki />}
       </header>
 
       <nav className="bt-dol" aria-label={t("Main menu", "Panel")}>

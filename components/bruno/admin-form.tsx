@@ -85,6 +85,32 @@ export default function AdminForm({ klucz }: { klucz: string }) {
   };
 
   const pole = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setF((x) => ({ ...x, [k]: e.target.value }));
+
+  // 25.10 (USER_001): „Demo pod firmę” przed spotkaniem: adres strony + nazwa → firma, szef z kodem, 5 handlowców, 30 rozmów.
+  const [demo, setDemo] = useState({ url: "", nazwa: "", jezyk: "pl", szef: "", imie: "", kod: "" });
+  const [demoStan, setDemoStan] = useState<string>("");
+  const [demoWynik, setDemoWynik] = useState<{ szef: string; kod: string | null; firma: { id: string; nazwa: string; logo_url: string | null }; zespol: { handlowcy: { imie: string; typ: string; rozmow: number }[]; rozmow: number }; zModelu: boolean; uwagi: string[] } | null>(null);
+  const zalozDemo = async (reset: boolean) => {
+    if (!demo.nazwa.trim() || (!reset && !demo.url.trim())) {
+      setDemoStan("Podaj adres strony i nazwę firmy.");
+      return;
+    }
+    setDemoStan(reset ? "Układam handlowców i rozmowy od nowa…" : "Czytam stronę, model układa produkt i rozmowy (do 2 minut)…");
+    setDemoWynik(null);
+    const res = await fetch(`/api/bruno/admin/demo-firma?k=${encodeURIComponent(klucz)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...demo, reset }),
+    });
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setDemoStan(`Błąd: ${d.blad ?? res.status}`);
+      return;
+    }
+    setDemoStan("");
+    setDemoWynik(d);
+    void odswiez();
+  };
   const statystyki = (email: string) => {
     const r = rozmowy.filter((x) => x.email === email);
     const ok = r.filter((x) => x.status === "zakonczona");
@@ -95,6 +121,41 @@ export default function AdminForm({ klucz }: { klucz: string }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <section className="bruno-szklo rounded-3xl p-6 flex flex-col gap-4">
+        <div>
+          <h2 className="bruno-h2 text-lg">Demo pod firmę</h2>
+          <p className="text-sm text-slate-500 mt-1">Adres strony + nazwa → firma z logo, konto szefa z kodem, 5 handlowców i 30 rozmów na ich produkcie. Przed spotkaniem online.</p>
+        </div>
+        <div className="grid sm:grid-cols-3 gap-3">
+          <input className="bruno-pole sm:col-span-2" placeholder="https://firma.pl *" value={demo.url} onChange={(e) => setDemo((x) => ({ ...x, url: e.target.value }))} />
+          <input className="bruno-pole" placeholder="nazwa firmy *" value={demo.nazwa} onChange={(e) => setDemo((x) => ({ ...x, nazwa: e.target.value }))} />
+          <select className="bruno-pole" value={demo.jezyk} onChange={(e) => setDemo((x) => ({ ...x, jezyk: e.target.value }))}>
+            <option value="pl">PL (salesbruno.pl)</option>
+            <option value="en">EN (salesbruno.com)</option>
+          </select>
+          <input className="bruno-pole" placeholder="e-mail szefa (puste = szef.<firma>@demo.salesbruno.pl)" value={demo.szef} onChange={(e) => setDemo((x) => ({ ...x, szef: e.target.value }))} />
+          <input className="bruno-pole" placeholder="imię szefa (puste = Szef)" value={demo.imie} onChange={(e) => setDemo((x) => ({ ...x, imie: e.target.value }))} />
+          <input className="bruno-pole" inputMode="numeric" maxLength={6} placeholder="kod 6 cyfr (puste = losowy)" value={demo.kod} onChange={(e) => setDemo((x) => ({ ...x, kod: e.target.value.replace(/\D/g, "").slice(0, 6) }))} />
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <button type="button" className="bruno-przycisk" onClick={() => void zalozDemo(false)}>Załóż demo</button>
+          <button type="button" className="text-slate-500 underline" onClick={() => void zalozDemo(true)}>Reset handlowców (ta sama nazwa)</button>
+          <span className="text-sm text-slate-600">{demoStan}</span>
+        </div>
+        {demoWynik && (
+          <div className="text-sm flex flex-col gap-2">
+            <p className="text-slate-900">
+              <b>{demoWynik.firma.nazwa}</b> ({demoWynik.firma.id}) · szef <b>{demoWynik.szef}</b>{demoWynik.kod ? <> · kod <b className="tabular-nums">{demoWynik.kod}</b></> : " · kod bez zmian"} · rozmowy {demoWynik.zModelu ? "z modelu" : "domyślne"}
+            </p>
+            <ul className="flex flex-wrap gap-x-4 gap-y-1 text-slate-600">
+              {demoWynik.zespol.handlowcy.map((h) => <li key={h.imie}>{h.imie}: {h.typ}, {h.rozmow} rozmów</li>)}
+            </ul>
+            {demoWynik.uwagi.map((u, i) => <p key={i} className="text-amber-700">{u}</p>)}
+            <p className="text-slate-500">Zaloguj się jako szef na /bruno → zakładka „Zespół”.</p>
+          </div>
+        )}
+      </section>
+
       <section className="bruno-szklo rounded-3xl p-6">
         <h2 className="bruno-h2 text-lg mb-3">Prośby o dostęp ({prosby.filter((p) => p.status === "nowa").length} nowe)</h2>
         {prosby.length === 0 ? (

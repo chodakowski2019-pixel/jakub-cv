@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { DanePanelu } from "./dane";
 import Licz from "./licz";
-import { Ikona, linkiDla, rozmowy, useWyloguj } from "./wspolne";
+import { type DostepLinkow, Ikona, linkiDla, rozmowy, useWyloguj } from "./wspolne";
 import "./panel-a.css";
 import { useT } from "@/components/bruno/jezyk-kontekst";
+import PrzelacznikWidoku from "@/components/bruno/przelacznik-widoku";
 import dynamic from "next/dynamic";
 
 // 10.10 (USER_001): wariant „lp” = kolory i styl strony /brunoai; zamiast kuli fala głosu z nagłówka strony.
@@ -321,7 +322,7 @@ function Fala({ d }: { d: DanePanelu }) {
 }
 
 /* ---------- Strona ---------- */
-export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false, zielony = false, szklo = false, zloty = false, bialoZloty = false, pelny = false, dostep, free }: { d: DanePanelu; jasne?: boolean; bialeTlo?: boolean; lp?: boolean; zielony?: boolean; szklo?: boolean; zloty?: boolean; bialoZloty?: boolean; pelny?: boolean; dostep?: { ogien: boolean; statystyki: boolean }; free?: { zuzyte: number; zostalo: number } | null }) {
+export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false, zielony = false, szklo = false, zloty = false, bialoZloty = false, pelny = false, dostep, free, logo = null }: { d: DanePanelu; jasne?: boolean; bialeTlo?: boolean; lp?: boolean; zielony?: boolean; szklo?: boolean; zloty?: boolean; bialoZloty?: boolean; pelny?: boolean; dostep?: DostepLinkow; free?: { zuzyte: number; zostalo: number } | null; /** 25.10: logo firmy w kółku paska zamiast inicjału. */ logo?: { url: string | null; nazwa: string } | null }) {
   // 10.10: prawdziwy panel podaje `dostep` (free bez Statystyk); podglądy dalej `pelny`.
   const { t, jezyk } = useT();
   const linki = linkiDla(dostep ?? pelny, jezyk);
@@ -330,14 +331,20 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
   const p = d.postacie.find((x) => x.id === d.postac) ?? d.postacie[0];
   const powitanie = d.imie ? t(`Hi, ${d.imie}!`, `Cześć, ${d.imie}!`) : t("Hi!", "Cześć!");
   const plan = d.planZrobiony ? t("Today's plan is done", "Plan na dziś zrobiony") : t(`Today: ${d.zostaloDzis} ${rozmowy(d.zostaloDzis)}`, `Dziś: ${d.zostaloDzis} ${rozmowy(d.zostaloDzis, "pl")}`);
+  const szef = Boolean(dostep && typeof dostep === "object" && dostep.szef);
+  void free;
 
   return (
     <div className={`bpa ${jasne ? "jasne" : ""} ${bialeTlo ? "bialetlo" : ""} ${lp ? "lp" : ""} ${zielony ? "zielony" : ""} ${szklo ? "szklo" : ""} ${zloty ? "czarny" : ""} ${bialoZloty ? "zlotyj" : ""}`}>
       <div className="app">
         <aside className="side">
           {/* 10.10 (USER_001): w czarno-złotym kółko z inicjałem na górze zamiast kropki logo, na dole go nie ma. */}
+          {/* 25.10: konto z firmą = logo firmy w kółku. */}
           {zloty ? (
-            <Link href="/bruno/panel" className="me gora" title={t("Home", "Panel")} aria-label={t("Home", "Panel")}>{d.inicjal}</Link>
+            <Link href={szef ? "/bruno/szef" : "/bruno/panel"} className={`me gora ${logo?.url ? "me-logo" : ""}`} title={logo?.nazwa ?? t("Home", "Panel")} aria-label={logo?.nazwa ?? t("Home", "Panel")}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {logo?.url ? <img src={logo.url} alt={logo.nazwa} /> : d.inicjal}
+            </Link>
           ) : (
             <Link href="/bruno/panel" className="logo" title="Bruno AI" aria-label="Bruno AI"><i /></Link>
           )}
@@ -366,28 +373,8 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
                 <Pierscien liczba={`${d.dzis}/${d.dziennie}`} opis={t("calls today", "rozmów dziś")} uwaga={d.planZrobiony ? t("today's plan done", "plan dnia zrobiony") : t(`${d.zostaloDzis} left`, `zostało ${d.zostaloDzis}`)} />
               </div>
             )}
-            <Link className="btn sec glass upgrade" href="/bruno/odblokuj">
-              <Ikona nazwa="klodka" rozmiar={15} grubosc={2} />
-              {free ? (
-                <>
-                  {/* 17.10 (USER_001): Bruno tylko B2B, zamiast Bruno Pro = „Bruno dla zespołu”. */}
-                  {/* 18.10 (USER_001): konto demo = sam napis „Bruno dla zespołu”, bez licznika. */}
-                  {free.zuzyte + free.zostalo === 1 ? (
-                    <span>{t("Bruno for your team", "Bruno dla zespołu")}</span>
-                  ) : (
-                    <>
-                      <span className="dlugi">{t("Free calls", "Bezpłatne rozmowy")}: {free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Bruno for your team", "Bruno dla zespołu")}</span>
-                      <span className="krotki">{free.zuzyte} / {free.zuzyte + free.zostalo} · {t("Team", "Zespół")}</span>
-                    </>
-                  )}
-                </>
-              ) : (
-                <>
-                  <span className="dlugi">{t("Unlock full access", "Odblokuj pełen dostęp")}</span>
-                  <span className="krotki">{t("Unlock", "Odblokuj")}</span>
-                </>
-              )}
-            </Link>
+            {/* 25.10 (USER_001): bez „Odblokuj pełen dostęp”. Szef ma tu przełącznik widoku szef ↔ handlowiec. */}
+            {szef && <PrzelacznikWidoku className="btn sec glass upgrade" />}
             <button type="button" className="wyl glass" onClick={wyloguj} aria-label={t("Log out", "Wyloguj")}><Ikona nazwa="wyjscie" rozmiar={18} /></button>
           </header>
 
@@ -409,7 +396,7 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
             <section className="card glass wygasl">
               <h2>{t("Your trial has ended", "Dostęp testowy wygasł")}</h2>
               <p>{t(`Your ${d.dni}-day trial is over. Want to keep practicing with Bruno? Get in touch.`, `${d.dni} dni minęło. Jeśli chcesz dalej trenować z Bruno, napisz do nas.`)}</p>
-              <Link href="/bruno/odblokuj" className="cta btn pri">{t("Unlock full access", "Odblokuj pełen dostęp")} <i><Ikona nazwa="strzalka" rozmiar={16} grubosc={2.2} /></i></Link>
+              <Link href="/bruno/ustawienia" className="cta btn pri">{t("Message us", "Napisz do nas")} <i><Ikona nazwa="strzalka" rozmiar={16} grubosc={2.2} /></i></Link>
             </section>
           ) : (
             <>

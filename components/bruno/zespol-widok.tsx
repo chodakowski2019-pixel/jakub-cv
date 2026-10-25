@@ -1,0 +1,145 @@
+import Link from "next/link";
+import Licz from "@/components/podglad/panel/licz";
+import { etykiety } from "@/lib/bruno/etykiety";
+import { locale, mnoga, tDla, type Jezyk } from "@/lib/bruno/i18n";
+import type { Firma } from "@/lib/bruno/firmy";
+import { DNI_BEZ_TRENINGU_ALARM, KRYTERIA, type StatHandlowca, type StatZespolu } from "@/lib/bruno/zespol";
+
+// 25.10 (USER_001): PANEL SZEFA, ekran nr 1 demo. Logo firmy + „Zespół [Firma]”, 4 kafelki z liczbami,
+// które dobiegają (Licz), tabela handlowców: rozmowy 7 dni, średnia, najsłabsze kryterium, trend,
+// ostatnia, „nie ćwiczy od X dni”. Klik w wiersz = profil handlowca. Styl: czarno-złote szkło, klasy bsz-*.
+
+export function Kafelek({ liczba, dec = 0, po = "", opis, uwaga, opoznienie = 0 }: { liczba: number | null; dec?: number; po?: string; opis: string; uwaga?: string; opoznienie?: number }) {
+  return (
+    <div className="bruno-szklo rounded-2xl p-4 sm:p-5 bsz-kafelek">
+      <div className="bruno-h2 text-[1.9rem] leading-none bruno-gradient-tekst tabular-nums">{liczba === null ? "–" : <Licz do={liczba} dec={dec} po={po} opoznienie={opoznienie} />}</div>
+      <div className="text-sm font-semibold text-slate-800 mt-2 leading-tight">{opis}</div>
+      {uwaga && <div className="text-[11px] text-slate-400 mt-0.5">{uwaga}</div>}
+    </div>
+  );
+}
+
+export function Trend({ v, jezyk }: { v: number | null; jezyk: Jezyk }) {
+  if (v === null) return <span className="text-slate-400 text-xs">–</span>;
+  const kierunek = v > 0.2 ? "gora" : v < -0.2 ? "dol" : "zero";
+  return (
+    <span className="bruno-zmiana tabular-nums" data-kierunek={kierunek}>
+      {v > 0 ? "+" : ""}
+      {v.toLocaleString(locale(jezyk), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+    </span>
+  );
+}
+
+export function OcenaKolko({ ocena, rozmiar = 44 }: { ocena: number | null; rozmiar?: number }) {
+  const r = 17;
+  const obwod = 2 * Math.PI * r;
+  const udzial = ocena ? Math.min(1, Math.max(0, ocena / 10)) : 0;
+  return (
+    <svg viewBox="0 0 44 44" width={rozmiar} height={rozmiar} role="img" aria-label={ocena ? `${ocena}/10` : "–"} className="shrink-0">
+      <circle cx="22" cy="22" r={r} fill="none" stroke="rgba(212,175,90,0.14)" strokeWidth="4" />
+      {ocena ? <circle cx="22" cy="22" r={r} fill="none" stroke="#d4af5a" strokeWidth="4" strokeLinecap="round" strokeDasharray={`${obwod * udzial} ${obwod}`} transform="rotate(-90 22 22)" className="bruno-pierscien-wypelnienie" /> : null}
+      <text x="22" y="26" textAnchor="middle" className={ocena ? "fill-slate-900" : "fill-slate-400"} style={{ fontSize: 12.5, fontWeight: 700, fontFamily: "var(--font-outfit), var(--font-poppins)" }}>
+        {ocena === null ? "–" : ocena.toLocaleString("pl-PL", { maximumFractionDigits: 1 })}
+      </text>
+    </svg>
+  );
+}
+
+export function Naglowek({ firma, tytul, akcent, podtytul }: { firma: Firma | null; tytul: string; akcent: string; podtytul?: string }) {
+  return (
+    <div className="flex items-center gap-4">
+      {firma?.logo_url ? (
+        <span className="bsz-logo bruno-szklo">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={firma.logo_url} alt={firma.nazwa} />
+        </span>
+      ) : null}
+      <div className="min-w-0">
+        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem] leading-tight">
+          {tytul} <span className="bruno-gradient-tekst">{akcent}</span>
+        </h1>
+        {podtytul && <p className="text-slate-500 text-sm mt-1">{podtytul}</p>}
+      </div>
+    </div>
+  );
+}
+
+export default function ZespolWidok({ firma, stat, zespol, jezyk }: { firma: Firma | null; stat: StatHandlowca[]; zespol: StatZespolu; jezyk: Jezyk }) {
+  const t = tDla(jezyk);
+  const { NAZWY } = etykiety(jezyk);
+  const dniTemu = (d: number | null) => (d === null ? t("never", "nigdy") : d === 0 ? t("today", "dziś") : d === 1 ? t("yesterday", "wczoraj") : t(`${d} days ago`, `${d} dni temu`));
+  const posortowani = [...stat].sort((a, b) => (b.srednia ?? 0) - (a.srednia ?? 0));
+
+  return (
+    <div className="flex flex-col gap-6 bsz">
+      <Naglowek firma={firma} tytul={t("Team", "Zespół")} akcent={firma?.nazwa ?? "Bruno"} podtytul={t("Last 30 days. Click a rep to see their calls.", "Ostatnie 30 dni. Kliknij handlowca, żeby zobaczyć jego rozmowy.")} />
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <Kafelek liczba={zespol.handlowcow} opis={mnoga(jezyk, zespol.handlowcow, ["rep", "reps"], ["handlowiec", "handlowców", "handlowców"])} uwaga={t("on the team", "w zespole")} />
+        <Kafelek liczba={zespol.rozmow7} opis={t("calls in 7 days", "rozmów w 7 dni")} uwaga={t(`goal: ${zespol.handlowcow * 7}`, `cel: ${zespol.handlowcow * 7}`)} opoznienie={120} />
+        <Kafelek liczba={zespol.srednia} dec={1} opis={t("team average", "średnia zespołu")} uwaga={t("out of 10", "na 10")} opoznienie={240} />
+        <Kafelek liczba={zespol.nieCwicza} opis={t("not practicing", "nie ćwiczy")} uwaga={t(`${DNI_BEZ_TRENINGU_ALARM}+ days without a call`, `${DNI_BEZ_TRENINGU_ALARM}+ dni bez rozmowy`)} opoznienie={360} />
+      </div>
+
+      <section className="bruno-szklo rounded-2xl p-4 sm:p-5">
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="bruno-h2 text-base">{t("Team by area", "Zespół na kryterium")}</h2>
+          <span className="text-[11px] text-slate-400">{zespol.najslabsze ? t(`weakest: ${NAZWY[zespol.najslabsze]}`, `najsłabsze: ${NAZWY[zespol.najslabsze]}`) : ""}</span>
+        </div>
+        <ul className="grid sm:grid-cols-5 gap-3">
+          {KRYTERIA.map((k) => (
+            <li key={k} className={zespol.najslabsze === k ? "bsz-slabe" : ""}>
+              <div className="flex items-baseline justify-between text-sm">
+                <span className="text-slate-800 font-medium">{NAZWY[k]}</span>
+                <span className="text-slate-600 tabular-nums">{zespol.kryteria[k] ?? "–"}</span>
+              </div>
+              <div className="h-1.5 mt-1 rounded-full bg-cyan-900/10 overflow-hidden" aria-hidden>
+                <div className="h-full rounded-full bg-gradient-to-r from-cyan-700 to-teal-700 bsz-pasek" style={{ width: `${((zespol.kryteria[k] ?? 0) / 10) * 100}%` }} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="bruno-szklo rounded-2xl overflow-hidden">
+        <div className="bsz-tabela" role="table" aria-label={t("Team", "Zespół")}>
+          <div className="bsz-wiersz bsz-naglowek" role="row">
+            <span role="columnheader">{t("Rep", "Handlowiec")}</span>
+            <span role="columnheader">{t("7 days", "7 dni")}</span>
+            <span role="columnheader">{t("Average", "Średnia")}</span>
+            <span role="columnheader">{t("Weakest", "Najsłabsze")}</span>
+            <span role="columnheader">{t("Trend", "Trend")}</span>
+            <span role="columnheader">{t("Last call", "Ostatnia")}</span>
+          </div>
+          {posortowani.map((s, i) => {
+            const alarm = s.dniBezTreningu === null || s.dniBezTreningu >= DNI_BEZ_TRENINGU_ALARM;
+            return (
+              <Link key={s.email} href={`/bruno/szef/${encodeURIComponent(s.email)}`} className="bsz-wiersz" role="row" style={{ animationDelay: `${80 + i * 60}ms` }}>
+                <span role="cell" className="flex items-center gap-3 min-w-0">
+                  <span className="bsz-inicjal">{s.imie[0]?.toUpperCase()}</span>
+                  <span className="min-w-0">
+                    <span className="block font-semibold text-slate-900 truncate">{s.imie}</span>
+                    <span className="block text-[11px] text-slate-400 truncate">{s.poprawka ?? t("no calls yet", "jeszcze bez rozmów")}</span>
+                  </span>
+                </span>
+                <span role="cell" className="tabular-nums">
+                  <span className="bsz-kreski" aria-hidden>
+                    {Array.from({ length: 7 }, (_, k) => <i key={k} className={k < Math.min(7, s.rozmow7) ? "on" : ""} />)}
+                  </span>
+                  <span className="text-slate-800 font-medium">{s.rozmow7}</span>
+                </span>
+                <span role="cell"><OcenaKolko ocena={s.srednia} /></span>
+                <span role="cell">{s.najslabsze ? <span className="bsz-pigulka">{NAZWY[s.najslabsze]} {s.kryteria[s.najslabsze]}</span> : <span className="text-slate-400">–</span>}</span>
+                <span role="cell"><Trend v={s.trend} jezyk={jezyk} /></span>
+                <span role="cell" className={alarm ? "text-rose-800 font-medium" : "text-slate-600"}>
+                  {alarm && s.dniBezTreningu !== null ? t(`Not practicing for ${s.dniBezTreningu} days`, `Nie ćwiczy od ${s.dniBezTreningu} dni`) : dniTemu(s.dniBezTreningu)}
+                </span>
+              </Link>
+            );
+          })}
+          {stat.length === 0 && <p className="p-6 text-slate-600 text-sm">{t("No reps in this company yet.", "W tej firmie nie ma jeszcze handlowców.")}</p>}
+        </div>
+      </section>
+    </div>
+  );
+}
