@@ -75,13 +75,14 @@ export default function Kalkulator({ handlowcy }: { handlowcy?: number | null })
     const zwrot = koszt > 0 ? dodatkowy / koszt : 0;
     // Koszt odejścia handlowca: 150 % rocznego wynagrodzenia (PL 2026, PLAN.md „Grupa docelowa”).
     const rotacja = p.pensja * 1.5;
-    // Porównanie roczne: Bruno vs trener na etacie (1 na zespół) vs szkolenia zewnętrzne.
-    const brunoRok = koszt * 12;
-    const trenerRok = p.trener * 12;
-    const szkoleniaRok = p.dzienSzkolenia * p.dniSzkolen;
-    const procentTrenera = trenerRok > 0 ? (brunoRok / trenerRok) * 100 : 0;
-    const rozmowyRok = p.handlowcy * ROZMOWY_MIES * 12;
-    return { przychod, dodatkowy, koszt, zwrot, rotacja, kwartal: dodatkowy * 3, brunoRok, trenerRok, szkoleniaRok, procentTrenera, rozmowyRok };
+    // Porównanie miesięczne (USER_001 26.10): Bruno vs trener na etacie (1 na zespół) vs szkolenia
+    // zewnętrzne rozłożone na 12 miesięcy.
+    const brunoMies = koszt;
+    const trenerMies = p.trener;
+    const szkoleniaMies = (p.dzienSzkolenia * p.dniSzkolen) / 12;
+    const procentTrenera = trenerMies > 0 ? (brunoMies / trenerMies) * 100 : 0;
+    const rozmowyMies = p.handlowcy * ROZMOWY_MIES;
+    return { przychod, dodatkowy, koszt, zwrot, rotacja, kwartal: dodatkowy * 3, brunoMies, trenerMies, szkoleniaMies, procentTrenera, rozmowyMies };
   }, [p, cena]);
 
   const waluta = j === "pl" ? "zł" : "$";
@@ -163,27 +164,27 @@ export default function Kalkulator({ handlowcy }: { handlowcy?: number | null })
                     <div className="font-medium">Bruno</div>
                     <div className="text-[12px] opacity-80">{t(`Every rep, ${ROZMOWY_MIES} practice calls a month`, `Każdy handlowiec, ${ROZMOWY_MIES} rozmów w miesiącu`)}</div>
                   </dt>
-                  <dd className="tabular-nums font-medium shrink-0">{kwota(w.brunoRok)} / {t("yr", "rok")}</dd>
+                  <dd className="tabular-nums font-medium shrink-0">{kwota(w.brunoMies)} / {t("mo", "mies.")}</dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-3 px-3">
                   <dt>
                     <div className="text-slate-800 font-medium">{t("Full-time sales coach", "Trener sprzedaży na etacie")}</div>
                     <div className="text-[12px] text-slate-500">{t("1 coach for the whole team, a few role plays a day", "1 trener na cały zespół, kilka scenek dziennie")}</div>
                   </dt>
-                  <dd className="tabular-nums text-slate-800 font-medium shrink-0">{kwota(w.trenerRok)} / {t("yr", "rok")}</dd>
+                  <dd className="tabular-nums text-slate-800 font-medium shrink-0">{kwota(w.trenerMies)} / {t("mo", "mies.")}</dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-3 px-3">
                   <dt>
                     <div className="text-slate-800 font-medium">{t("Outside training", "Szkolenie zewnętrzne")}</div>
-                    <div className="text-[12px] text-slate-500">{t(`${p.dniSzkolen} days a year`, `${p.dniSzkolen} dni w roku`)}</div>
+                    <div className="text-[12px] text-slate-500">{t(`${p.dniSzkolen} days a year, spread per month`, `${p.dniSzkolen} dni w roku, w przeliczeniu na miesiąc`)}</div>
                   </dt>
-                  <dd className="tabular-nums text-slate-800 font-medium shrink-0">{kwota(w.szkoleniaRok)} / {t("yr", "rok")}</dd>
+                  <dd className="tabular-nums text-slate-800 font-medium shrink-0">{kwota(w.szkoleniaMies)} / {t("mo", "mies.")}</dd>
                 </div>
               </dl>
               <p className="text-[12px] text-slate-600">
                 {t(
-                  `Bruno = ${Math.round(w.procentTrenera)}% of a coach's cost, with ${w.rozmowyRok.toLocaleString("en-US")} practice calls a year.`,
-                  `Bruno = ${Math.round(w.procentTrenera)} % kosztu trenera, a daje ${w.rozmowyRok.toLocaleString("pl-PL")} rozmów treningowych w roku.`,
+                  `Bruno = ${Math.round(w.procentTrenera)}% of a coach's cost, with ${w.rozmowyMies.toLocaleString("en-US")} practice calls a month.`,
+                  `Bruno = ${Math.round(w.procentTrenera)} % kosztu trenera, a daje ${w.rozmowyMies.toLocaleString("pl-PL")} rozmów treningowych w miesiącu.`,
                 )}
               </p>
             </div>
