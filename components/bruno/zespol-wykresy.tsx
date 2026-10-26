@@ -71,6 +71,16 @@ export function TrendZespolu({ seria, jezyk, cel = 7 }: { seria: PunktDnia[]; je
   const teraz = sr(ostatnia);
   const zmiana = teraz !== null && sr(pierwsza) !== null ? teraz - (sr(pierwsza) as number) : null;
 
+  // Miesiące z punktów serii: kolejne indeksy z tym samym miesiącem = jeden pas od połowy odstępu do połowy odstępu.
+  const krok = seria.length > 1 ? (W - L - R) / (seria.length - 1) : W - L - R;
+  const miesiace = seria.reduce<{ klucz: string; nazwa: string; pierwszy: number; ostatni: number }[]>((acc, p, i) => {
+    const klucz = p.dzien.slice(0, 7);
+    const ost = acc[acc.length - 1];
+    if (ost && ost.klucz === klucz) ost.ostatni = i;
+    else acc.push({ klucz, nazwa: new Date(`${p.dzien}T12:00:00`).toLocaleDateString(jezyk === "pl" ? "pl-PL" : "en-US", { month: "long" }), pierwszy: i, ostatni: i });
+    return acc;
+  }, []).map((m) => ({ ...m, od: Math.max(L, x(m.pierwszy) - krok / 2), do: Math.min(W - R, x(m.ostatni) + krok / 2) }));
+
   const ruch = (e: React.PointerEvent<SVGSVGElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
     const px = ((e.clientX - r.left) / r.width) * W;
@@ -107,6 +117,14 @@ export function TrendZespolu({ seria, jezyk, cel = 7 }: { seria: PunktDnia[]; je
               <stop offset="1" stopColor="#d4af5a" stopOpacity="0" />
             </linearGradient>
           </defs>
+          {/* 25.10 (USER_001: „każdy miesiąc lepiej widoczny”): pas na każdy miesiąc (co drugi podświetlony), linia na granicy, nazwa miesiąca pod osią. */}
+          {miesiace.map((m, i) => (
+            <g key={m.klucz}>
+              {i % 2 === 1 && <rect x={m.od} y={G - 6} width={m.do - m.od} height={H - D - G + 6} fill="rgba(245,242,234,0.04)" />}
+              {i > 0 && <line x1={m.od} x2={m.od} y1={G - 6} y2={H - D} stroke="rgba(245,242,234,0.16)" />}
+              <text x={(m.od + m.do) / 2} y={H - 8} textAnchor="middle" className="bwz-os bwz-miesiac">{m.nazwa}</text>
+            </g>
+          ))}
           {[4, 6, 8, 10].map((v) => (
             <g key={v}>
               <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="rgba(255,255,255,0.06)" />
@@ -121,9 +139,6 @@ export function TrendZespolu({ seria, jezyk, cel = 7 }: { seria: PunktDnia[]; je
               {o.length > 1 && <path d={sciezka(o)} fill="none" stroke="#e6c77a" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" className="bwz-linia" />}
               {o.map(([a, b], k) => <circle key={k} cx={a} cy={b} r="3.5" fill="#e6c77a" stroke="#12110f" strokeWidth="1.5" className="bwz-wjazd" />)}
             </g>
-          ))}
-          {[0, Math.floor(seria.length / 2), seria.length - 1].map((i) => (
-            <text key={i} x={x(i)} y={H - 8} textAnchor={i === 0 ? "start" : i === seria.length - 1 ? "end" : "middle"} className="bwz-os">{seria[i] ? data(seria[i].dzien) : ""}</text>
           ))}
           {hover !== null && (
             <g>
@@ -168,7 +183,9 @@ export function MapaKryteriow({ wiersze, zespol, nazwy, kolejnosc, jezyk }: { wi
       const roznica = zesp !== null ? v - zesp : null;
       linia = `${liczba(v, jezyk)} / 10${roznica !== null ? ` (${roznica >= 0 ? "+" : ""}${liczba(roznica, jezyk)} ${t(jezyk, "vs team", "vs zespół")})` : ""}`;
     }
-    setHover({ x: r.left - o.left + r.width / 2, y: r.top - o.top, tekst: [zespolowa ? `${t(jezyk, "Team average", "Średnia zespołu")} · ${nazwy[k]}` : `${imie} · ${nazwy[k]}`, linia] });
+    // 25.10 (USER_001: „przy najeździe źle się wyświetla”): dymek nad kratką wychodził poza kartę w 1. wierszu. Blisko góry = pod kratką.
+    const gora = r.top - o.top;
+    setHover({ x: r.left - o.left + r.width / 2, y: gora < 70 && (ref.current?.scrollWidth ?? 0) > (ref.current?.clientWidth ?? 0) ? r.bottom - o.top + 70 : gora, tekst: [zespolowa ? `${t(jezyk, "Team average", "Średnia zespołu")} · ${nazwy[k]}` : `${imie} · ${nazwy[k]}`, linia] });
   };
   // 25.10 (USER_001: „wiersz Zespół musi być lepiej widoczny”): kratki zespołu bez koloru skali, ramka + duża liczba.
   const kratka = (v: number | null, slaba: boolean, klucz: string, imie: string, k: Kryterium["nazwa"], zespolowa = false) => {
@@ -203,9 +220,9 @@ export function MapaKryteriow({ wiersze, zespol, nazwy, kolejnosc, jezyk }: { wi
           <span>10</span>
         </div>
       </div>
-      <div ref={ref} className="relative overflow-x-auto">
+      <div ref={ref} className="relative max-[860px]:overflow-x-auto">
         <div className="bwz-mapa" style={{ gridTemplateColumns: `minmax(120px, 1.3fr) repeat(${kolejnosc.length}, minmax(64px, 1fr))` }}>
-          <span />
+          <span className="bwz-kol bwz-kol-osoba">{t(jezyk, "Rep", "Handlowiec")}</span>
           {kolejnosc.map((k) => <span key={k} className="bwz-kol">{nazwy[k]}</span>)}
           {wiersze.map((w) => (
             <div key={w.email} style={{ display: "contents" }}>

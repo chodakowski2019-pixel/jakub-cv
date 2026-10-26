@@ -111,7 +111,8 @@ export default function ZespolWidok({ firma, stat, zespol, jezyk, seria, oceny }
                   {s.zdjecie ? <img src={s.zdjecie} alt="" className="bsz-inicjal bsz-zdjecie" /> : <span className="bsz-inicjal">{s.imie[0]?.toUpperCase()}</span>}
                   <span className="min-w-0">
                     <span className="block font-semibold text-slate-900 truncate">{s.imie}</span>
-                    <span className="block text-[11px] text-slate-400 truncate">{s.poprawka ?? t("no calls yet", "jeszcze bez rozmów")}</span>
+                    {/* 25.10 (USER_001): pod imieniem rola zamiast poprawki z ostatniej rozmowy. */}
+                    <span className="block text-[11px] text-slate-400 truncate">{t("Sales rep", "Handlowiec")}</span>
                   </span>
                 </span>
                 <span role="cell"><OcenaKolko ocena={s.srednia} /></span>

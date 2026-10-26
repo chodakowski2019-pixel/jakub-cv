@@ -885,7 +885,10 @@ a.bwz-osoba:hover { color: #f3dc9c; }
   font-variant-numeric: tabular-nums; background: rgba(255, 255, 255, 0.05); color: rgba(245, 242, 234, 0.45); cursor: default;
   transition: transform 0.15s, box-shadow 0.15s; outline: none;
 }
-.bwz-kratka:hover, .bwz-kratka:focus-visible { transform: scale(1.06); box-shadow: 0 0 0 2px #12110f, 0 0 0 4px rgba(245, 242, 234, 0.6); z-index: 2; }
+.bwz-kratka:hover, .bwz-kratka:focus-visible { box-shadow: inset 0 0 0 2px rgba(245, 242, 234, 0.75); z-index: 2; }
+.bwz-slaba:hover, .bwz-slaba:focus-visible { box-shadow: inset 0 0 0 2px #fb7185; }
+.bwz-miesiac { font-size: 12px; font-weight: 600; fill: rgba(245, 242, 234, 0.7); text-transform: capitalize; }
+.bwz-kol-osoba { text-align: left; }
 .bwz-slaba { box-shadow: 0 0 0 2px #12110f, 0 0 0 4px #fb7185; }
 .bwz-znak { position: absolute; top: 3px; left: 6px; font-size: 8px; color: #fda4af; }
 .bwz-dzienka { display: block; width: 100%; height: 28px; border-radius: 6px; }
