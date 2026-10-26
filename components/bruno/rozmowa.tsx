@@ -1,6 +1,7 @@
 "use client";
 
 import KulaOrb from "./kula-orb";
+import OrbBruno from "./orb-bruno";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Feedback, Wypowiedz } from "@/lib/bruno/db";
@@ -754,10 +755,11 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
 
       {stan === "wybor" && (
         <>
-          <div className="text-center">
+          {/* 26.10 (USER_001): zwykła rozmowa bez nagłówka, sama kula na środku ekranu + Start. */}
+          {jutro && <div className="text-center">
             {/* 25.10 (USER_001): bez podtytułu „3 minuty. Ustaw rozmowę i naciśnij Start.” */}
             <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">{jutro ? <>{tr("Tomorrow's", "Rozmowa, którą masz")} <span className="bruno-gradient-tekst">{tr("call", "jutro")}</span></> : <>{tr("Call with", "Rozmowa z")} <span className="bruno-gradient-tekst">Bruno</span></>}</h1>
-          </div>
+          </div>}
 
           {karta?.typ === "kryterium" && (
             <div className="bruno-szklo rounded-2xl p-4 text-sm text-slate-800">
@@ -788,12 +790,10 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           {/* 25.10 (USER_001: „tylko dymek Bruno i Start, nasz algorytm sam dobiera rozmowę”): zwykła rozmowa bez kreatora.
               Rodzaj rozmowy, cel, obiekcję, typ klienta i poziom dobiera serwer (lib/bruno/dobor.ts). */}
           {!jutro && (
-            <div className="flex flex-col items-center gap-5 py-4">
-              <div className="relative size-44 sm:size-56" aria-hidden>
-                <KulaOrb kolor="#d4af5a" tempo="czeka" />
-              </div>
-              <div className="bruno-szklo rounded-2xl px-5 py-4 max-w-md text-center text-slate-700 bruno-dymek-bruno">
-                {tr("I've picked today's call for you. Put on your headphones and hit Start.", "Dobrałem dla Ciebie dzisiejszą rozmowę. Załóż słuchawki i naciśnij Start.")}
+            // 26.10 (USER_001): bez napisu „Dobrałem dla Ciebie…”, nowa kula (orb-bruno.tsx) na środku ekranu.
+            <div className="flex flex-col items-center justify-center min-h-[52vh] pt-6">
+              <div className="relative size-64 sm:size-80">
+                <OrbBruno tempo="czeka" />
               </div>
             </div>
           )}
@@ -865,7 +865,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           <div className="relative size-44 sm:size-56 grid place-items-center" aria-hidden={stan !== "odliczanie"}>
             {/* 15.10: kula jak orb z elevenlabs.io (USER_001), dalej w kolorze typu klienta (2.10). */}
             <div className={`absolute inset-0 transition-transform duration-500 ${mowi === "ty" && stan === "trwa" ? "scale-95" : ""}`}>
-              <KulaOrb kolor={jutro ? p.kolor : "#d4af5a"} tempo={stan !== "trwa" ? "czeka" : mowi === "bruno" ? "mowi" : mowi === "ty" ? "slucha" : "czeka"} />
+              {jutro ? <KulaOrb kolor={p.kolor} tempo={stan !== "trwa" ? "czeka" : mowi === "bruno" ? "mowi" : mowi === "ty" ? "slucha" : "czeka"} /> : <OrbBruno tempo={stan !== "trwa" ? "czeka" : mowi === "bruno" ? "mowi" : mowi === "ty" ? "slucha" : "czeka"} />}
             </div>
             {stan === "odliczanie" && (
               <span key={odliczanie} className="relative bruno-h2 text-7xl text-white drop-shadow-[0_2px_12px_rgba(212,175,90,0.7)] bruno-odliczanie" aria-live="assertive">

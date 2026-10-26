@@ -475,7 +475,7 @@ export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia 
     <div className="flex flex-col gap-6">
       <div className="text-center">
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
-          {jezyk === "pl" ? <>Ogień <span className="bruno-gradient-tekst">przed rozmową</span></> : <span className="bruno-gradient-tekst">Fire Up</span>}
+          {jezyk === "pl" ? <>Strefa <span className="bruno-gradient-tekst">mentalna</span></> : <>Mental <span className="bruno-gradient-tekst">Zone</span></>}
         </h1>
         <p className="text-slate-600 mt-2">{t("Before a real sales call", "Przed prawdziwą rozmową sprzedażową")}</p>
       </div>

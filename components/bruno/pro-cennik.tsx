@@ -17,7 +17,7 @@ export const PRO_PUNKTY = [
   "Stats: score trend, weakest area, minutes",
   "Import your offer from a website or PDF: Bruno knows your product",
   "Tomorrow's call: paste in a real situation, Bruno plays that customer",
-  "Fire Up: a 5-minute warm-up before a real call",
+  "Mental Zone: a 5-minute warm-up before a real call",
   "4 customer types, 3 difficulty levels, your own objections",
 ];
 
@@ -30,7 +30,7 @@ export const PRO_PUNKTY_PL = [
   "Statystyki: trend oceny, najsłabsze kryterium, minuty",
   "Oferta ze strony albo PDF: Bruno zna Twój produkt",
   "„Rozmowa, którą masz jutro”: wklejasz prawdziwą sytuację, Bruno gra tego klienta",
-  "„Ogień przed rozmową”: 5-minutowy rytuał przed prawdziwym telefonem",
+  "„Strefa mentalna”: 5-minutowy rytuał przed prawdziwym telefonem",
   "4 typy klienta, 3 poziomy trudności, własne obiekcje",
 ];
 

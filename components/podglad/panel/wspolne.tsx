@@ -9,10 +9,10 @@ export const LINKI = [
   { href: "/bruno/szef", nazwa: "Team", nazwaPl: "Zespół", ikona: "zespol", szef: true },
   { href: "/bruno/panel", nazwa: "Home", nazwaPl: "Panel", ikona: "panel" },
   { href: "/bruno/rozmowa", nazwa: "Live Call", nazwaPl: "Test", ikona: "test" },
-  // 25.10 (USER_001): „Rozmowa, którą masz jutro” jako osobna zakładka (pełny dostęp).
-  { href: "/bruno/jutro", nazwa: "Tomorrow's Call", nazwaPl: "Jutro", ikona: "jutro", pelny: true },
+  // 26.10 (USER_001): zakładka „Rozmowa, którą masz jutro” usunięta (/bruno/jutro przekierowuje na /bruno/rozmowa).
   // „Ogień” tylko przy pełnym dostępie (jak components/bruno/nav.tsx, 9.10).
-  { href: "/bruno/ogien", nazwa: "Fire Up", nazwaPl: "Ogień", ikona: "ogien", pelny: true },
+  // 26.10 (USER_001): „Ogień przed rozmową” → „Strefa mentalna”.
+  { href: "/bruno/ogien", nazwa: "Mental Zone", nazwaPl: "Strefa mentalna", ikona: "ogien", pelny: true },
   { href: "/bruno/trening", nazwa: "Drills", nazwaPl: "Trening", ikona: "trening" },
   { href: "/bruno/feedback", nazwa: "Feedback", nazwaPl: "Feedback", ikona: "feedback" },
   { href: "/bruno/statystyki", nazwa: "Stats", nazwaPl: "Statystyki", ikona: "statystyki" },
@@ -37,7 +37,7 @@ export const linkiDla = (d: boolean | DostepLinkow, jezyk: Jezyk = "en") => {
 /** 11.10: nazwa zakładki w języku konta (PL = nazwy sprzed tłumaczenia, fd7de52). */
 export const nazwaLinku = (l: { nazwa: string; nazwaPl: string }, jezyk: Jezyk = "en") => (jezyk === "pl" ? l.nazwaPl : l.nazwa);
 
-export type NazwaIkony = (typeof LINKI)[number]["ikona"] | "dostosuj" | "klodka" | "wyjscie" | "mikrofon" | "strzalka";
+export type NazwaIkony = (typeof LINKI)[number]["ikona"] | "dostosuj" | "jutro" | "klodka" | "wyjscie" | "mikrofon" | "strzalka";
 
 export function Ikona({ nazwa, rozmiar = 20, grubosc = 1.7 }: { nazwa: NazwaIkony; rozmiar?: number; grubosc?: number }) {
   const w = { viewBox: "0 0 24 24", width: rozmiar, height: rozmiar, fill: "none", stroke: "currentColor", strokeWidth: grubosc, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };

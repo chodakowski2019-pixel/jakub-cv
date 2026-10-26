@@ -20,12 +20,13 @@ type Pola = {
   pensja: number;
   trener: number;
 };
-const KLUCZ = "bruno_kalkulator";
+// 26.10: nowy klucz, bo pensja jest teraz miesięczna (stary zapis miał roczną).
+const KLUCZ = "bruno_kalkulator_v2";
 
 const DOMYSLNE: Record<"pl" | "en", Pola> = {
   // Cennik PL (26.10): progi 399/379/359/339 zł (pole „cena” w PL nieużywane, liczone z PROGI_PL)
-  pl: { handlowcy: 10, deali: 4, wartosc: 5000, wzrost: 10, cena: 399, pensja: 90_000, trener: 15_000 },
-  en: { handlowcy: 10, deali: 4, wartosc: 2000, wzrost: 10, cena: 79, pensja: 60_000, trener: 7000 },
+  pl: { handlowcy: 10, deali: 4, wartosc: 5000, wzrost: 10, cena: 399, pensja: 7500, trener: 15_000 },
+  en: { handlowcy: 10, deali: 4, wartosc: 2000, wzrost: 10, cena: 79, pensja: 5000, trener: 7000 },
 };
 
 // Progi PL netto za handlowca / mies. Cena progu obowiązuje dla każdego handlowca w zespole.
@@ -72,7 +73,8 @@ export default function Kalkulator({ handlowcy }: { handlowcy?: number | null })
     const koszt = p.handlowcy * cena;
     const zwrot = koszt > 0 ? dodatkowy / koszt : 0;
     // Koszt odejścia handlowca: 150 % rocznego wynagrodzenia (PL 2026, PLAN.md „Grupa docelowa”).
-    const rotacja = p.pensja * 1.5;
+    // 26.10 (USER_001): pole = pensja MIESIĘCZNA, rok = × 12.
+    const rotacja = p.pensja * 12 * 1.5;
     // Porównanie miesięczne (USER_001 26.10): Bruno vs trener na etacie (1 na zespół). Szkoleń nie
     // porównujemy: Bruno to trener, nie szkolenie.
     const brunoMies = koszt;
@@ -123,7 +125,7 @@ export default function Kalkulator({ handlowcy }: { handlowcy?: number | null })
               ) : (
                 pole("cena", "Bruno per seat / month", waluta)
               )}
-              {pole("pensja", t("Rep's yearly pay", "Roczna pensja handlowca"), waluta)}
+              {pole("pensja", t("Rep's monthly pay", "Miesięczna pensja handlowca"), waluta)}
             </div>
             <dl className="bruno-kalk-wyniki grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
               <div>
@@ -148,34 +150,7 @@ export default function Kalkulator({ handlowcy }: { handlowcy?: number | null })
                 <dd className="tabular-nums text-slate-800 font-medium" title={t("150% of yearly pay (PL 2026)", "150 % rocznej pensji (PL 2026)")}>{kwota(w.rotacja)}</dd>
               </div>
             </dl>
-            <div className="flex flex-col gap-3 border-t border-slate-200/70 pt-4">
-              <div className="bruno-h2 text-[14px] text-slate-800">{t("Compared to a sales coach", "Porównanie z trenerem")}</div>
-              <div className="grid grid-cols-1 gap-3">
-                {pole("trener", t("Coach cost / month", "Koszt trenera / mies."), waluta)}
-              </div>
-              <dl className="flex flex-col gap-2 text-sm">
-                <div className="flex items-baseline justify-between gap-3 rounded-2xl p-3 bruno-kalk-glowny">
-                  <dt>
-                    <div className="font-medium">Bruno</div>
-                    <div className="text-[12px] opacity-80">{t(`Every rep, ${ROZMOWY_MIES} practice calls a month`, `Każdy handlowiec, ${ROZMOWY_MIES} rozmów w miesiącu`)}</div>
-                  </dt>
-                  <dd className="tabular-nums font-medium shrink-0">{kwota(w.brunoMies)} / {t("mo", "mies.")}</dd>
-                </div>
-                <div className="flex items-baseline justify-between gap-3 px-3">
-                  <dt>
-                    <div className="text-slate-800 font-medium">{t("Full-time sales coach", "Trener sprzedaży na etacie")}</div>
-                    <div className="text-[12px] text-slate-500">{t("1 coach for the whole team, a few role plays a day", "1 trener na cały zespół, kilka scenek dziennie")}</div>
-                  </dt>
-                  <dd className="tabular-nums text-slate-800 font-medium shrink-0">{kwota(w.trenerMies)} / {t("mo", "mies.")}</dd>
-                </div>
-              </dl>
-              <p className="text-[12px] text-slate-600">
-                {t(
-                  `Bruno = ${Math.round(w.procentTrenera)}% of a coach's cost, with ${w.rozmowyMies.toLocaleString("en-US")} practice calls a month.`,
-                  `Bruno = ${Math.round(w.procentTrenera)} % kosztu trenera, a daje ${w.rozmowyMies.toLocaleString("pl-PL")} rozmów treningowych w miesiącu.`,
-                )}
-              </p>
-            </div>
+            {/* 26.10 (USER_001): sekcja „Porównanie z trenerem” usunięta z kalkulatora. */}
           </div>
         </div>
       )}

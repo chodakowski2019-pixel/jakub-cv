@@ -701,3 +701,20 @@
 .asset .bpa .hero .plan-kolo-pasek{stroke:#5e52f8}
 /* telefon: mikrofon jest na środku karty, więc kółko idzie w lewy górny róg (miejsce dawnego nagłówka) */
 @media (max-width:860px){.bpa .hero .plan-kolo{width:88px;height:88px;top:16px;left:16px;transform:none}.bpa .hero .plan-kolo-tekst b{font-size:26px}.bpa .hero .plan-kolo-tekst small{font-size:14px}.bpa .hero .plan-kolo-tekst span{font-size:10px}}
+
+/* 26.10 (USER_001: „kółko ma być na środku”): karta z kółkiem planu = duże kółko na środku, pod nim „Rozmawiaj”.
+   Fala głosu i okrągły mikrofon schowane (kółko jest głównym elementem). */
+.bpa .hero:has(.plan-kolo) .fala-lp, .bpa .hero:has(.plan-kolo) canvas, .bpa .hero:has(.plan-kolo) .listen .mic{display:none}
+.bpa .hero .plan-kolo{left:50%;top:42%;transform:translate(-50%,-50%);width:220px;height:220px}
+.bpa .hero .plan-kolo-tekst b{font-size:64px}
+.bpa .hero .plan-kolo-tekst small{font-size:26px}
+.bpa .hero .plan-kolo-tekst span{font-size:14px;margin-top:6px}
+.bpa .hero .plan-kolo svg circle{stroke-width:5}
+.bpa .hero .plan-kolo::before{content:"";position:absolute;inset:-26px;border-radius:50%;background:radial-gradient(closest-side,rgba(212,175,90,.18),transparent 70%);z-index:-1}
+.bpa .hero:has(.plan-kolo) .listen{left:50% !important;top:auto !important;bottom:28px !important;height:auto !important;transform:translateX(-50%) !important;justify-content:center !important}
+@media (max-width:860px){
+  .bpa .hero .plan-kolo{left:50%;top:40%;transform:translate(-50%,-50%);width:190px;height:190px}
+  .bpa .hero .plan-kolo-tekst b{font-size:52px}
+  .bpa .hero .plan-kolo-tekst small{font-size:22px}
+  .bpa .hero .plan-kolo-tekst span{font-size:12px}
+}
