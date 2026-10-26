@@ -8,14 +8,39 @@ import { useT } from "@/components/bruno/jezyk-kontekst";
 // ile kosztuje Bruno, po ilu miesiącach się zwraca, i ile kosztuje odejście jednego handlowca.
 // Założenia widoczne i edytowalne (nic nie jest ukryte). Wpisy pamiętane w przeglądarce (localStorage).
 
-type Pola = { handlowcy: number; deali: number; wartosc: number; wzrost: number; cena: number; pensja: number };
+// 26.10 (USER_001): sekcja „Porównanie z alternatywami”. Cenę Bruno porównujemy z wartością i alternatywami
+// (trener na etacie, szkolenie zewnętrzne), nie z kosztem narzędzia. „trener” to osobne pole, NIE „pensja” (rotacja).
+
+type Pola = {
+  handlowcy: number;
+  deali: number;
+  wartosc: number;
+  wzrost: number;
+  cena: number;
+  pensja: number;
+  trener: number;
+  dzienSzkolenia: number;
+  dniSzkolen: number;
+};
 const KLUCZ = "bruno_kalkulator";
 
 const DOMYSLNE: Record<"pl" | "en", Pola> = {
-  // Pilot PL (25.10): 250 zł / stanowisko / mies.
-  pl: { handlowcy: 10, deali: 4, wartosc: 5000, wzrost: 10, cena: 250, pensja: 90_000 },
-  en: { handlowcy: 10, deali: 4, wartosc: 2000, wzrost: 10, cena: 79, pensja: 60_000 },
+  // Cennik PL (26.10): progi 399/379/359/339 zł (pole „cena” w PL nieużywane, liczone z PROGI_PL)
+  pl: { handlowcy: 10, deali: 4, wartosc: 5000, wzrost: 10, cena: 399, pensja: 90_000, trener: 15_000, dzienSzkolenia: 8000, dniSzkolen: 4 },
+  en: { handlowcy: 10, deali: 4, wartosc: 2000, wzrost: 10, cena: 79, pensja: 60_000, trener: 7000, dzienSzkolenia: 3000, dniSzkolen: 4 },
 };
+
+// Progi PL netto za handlowca / mies. Cena progu obowiązuje dla każdego handlowca w zespole.
+const PROGI_PL = [
+  { do: 5, cena: 399, opis: "1-5" },
+  { do: 10, cena: 379, opis: "6-10" },
+  { do: 20, cena: 359, opis: "11-20" },
+  { do: Infinity, cena: 339, opis: "21+" },
+];
+const progPL = (handlowcy: number) => PROGI_PL.find((x) => handlowcy <= x.do) ?? PROGI_PL[PROGI_PL.length - 1];
+
+// Rozmowy treningowe z Bruno: 100 na handlowca / mies.
+const ROZMOWY_MIES = 100;
 
 export default function Kalkulator({ handlowcy }: { handlowcy?: number | null }) {
   const { t, jezyk } = useT();
@@ -40,15 +65,24 @@ export default function Kalkulator({ handlowcy }: { handlowcy?: number | null })
     });
   };
 
+  const prog = progPL(p.handlowcy);
+  const cena = j === "pl" ? prog.cena : p.cena;
+
   const w = useMemo(() => {
     const przychod = p.handlowcy * p.deali * p.wartosc;
     const dodatkowy = (przychod * p.wzrost) / 100;
-    const koszt = p.handlowcy * p.cena;
+    const koszt = p.handlowcy * cena;
     const zwrot = koszt > 0 ? dodatkowy / koszt : 0;
     // Koszt odejścia handlowca: 150 % rocznego wynagrodzenia (PL 2026, PLAN.md „Grupa docelowa”).
     const rotacja = p.pensja * 1.5;
-    return { przychod, dodatkowy, koszt, zwrot, rotacja, kwartal: dodatkowy * 3 };
-  }, [p]);
+    // Porównanie roczne: Bruno vs trener na etacie (1 na zespół) vs szkolenia zewnętrzne.
+    const brunoRok = koszt * 12;
+    const trenerRok = p.trener * 12;
+    const szkoleniaRok = p.dzienSzkolenia * p.dniSzkolen;
+    const procentTrenera = trenerRok > 0 ? (brunoRok / trenerRok) * 100 : 0;
+    const rozmowyRok = p.handlowcy * ROZMOWY_MIES * 12;
+    return { przychod, dodatkowy, koszt, zwrot, rotacja, kwartal: dodatkowy * 3, brunoRok, trenerRok, szkoleniaRok, procentTrenera, rozmowyRok };
+  }, [p, cena]);
 
   const waluta = j === "pl" ? "zł" : "$";
   const kwota = (v: number) => `${Math.round(v).toLocaleString(j === "pl" ? "pl-PL" : "en-US")} ${waluta}`;
@@ -80,7 +114,17 @@ export default function Kalkulator({ handlowcy }: { handlowcy?: number | null })
               {pole("deali", t("Deals per rep / month", "Deali na handlowca / mies."))}
               {pole("wartosc", t("Average deal", "Średni deal"), waluta)}
               {pole("wzrost", t("Win rate lift", "Wzrost skuteczności"), "%")}
-              {pole("cena", t("Bruno per seat / month", "Bruno za stanowisko / mies."), waluta)}
+              {j === "pl" ? (
+                // PL: cena z progu, bez wpisywania (zmienia się sama z liczbą handlowców)
+                <div className="flex flex-col gap-1 text-[12px] text-slate-500">
+                  <span>Bruno za handlowca / mies.</span>
+                  <span className="py-1.5 text-[14px] text-slate-800 tabular-nums">
+                    {prog.cena} zł / handlowca <span className="text-slate-400">(próg {prog.opis})</span>
+                  </span>
+                </div>
+              ) : (
+                pole("cena", "Bruno per seat / month", waluta)
+              )}
               {pole("pensja", t("Rep's yearly pay", "Roczna pensja handlowca"), waluta)}
             </div>
             <dl className="bruno-kalk-wyniki grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
@@ -106,6 +150,43 @@ export default function Kalkulator({ handlowcy }: { handlowcy?: number | null })
                 <dd className="tabular-nums text-slate-800 font-medium" title={t("150% of yearly pay (PL 2026)", "150 % rocznej pensji (PL 2026)")}>{kwota(w.rotacja)}</dd>
               </div>
             </dl>
+            <div className="flex flex-col gap-3 border-t border-slate-200/70 pt-4">
+              <div className="bruno-h2 text-[14px] text-slate-800">{t("Compared to other options", "Porównanie z alternatywami")}</div>
+              <div className="grid grid-cols-3 gap-3">
+                {pole("trener", t("Coach cost / month", "Koszt trenera / mies."), waluta)}
+                {pole("dzienSzkolenia", t("Training day", "Dzień szkolenia"), waluta)}
+                {pole("dniSzkolen", t("Training days / year", "Dni szkoleń w roku"))}
+              </div>
+              <dl className="flex flex-col gap-2 text-sm">
+                <div className="flex items-baseline justify-between gap-3 rounded-2xl p-3 bruno-kalk-glowny">
+                  <dt>
+                    <div className="font-medium">Bruno</div>
+                    <div className="text-[12px] opacity-80">{t(`Every rep, ${ROZMOWY_MIES} practice calls a month`, `Każdy handlowiec, ${ROZMOWY_MIES} rozmów w miesiącu`)}</div>
+                  </dt>
+                  <dd className="tabular-nums font-medium shrink-0">{kwota(w.brunoRok)} / {t("yr", "rok")}</dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-3 px-3">
+                  <dt>
+                    <div className="text-slate-800 font-medium">{t("Full-time sales coach", "Trener sprzedaży na etacie")}</div>
+                    <div className="text-[12px] text-slate-500">{t("1 coach for the whole team, a few role plays a day", "1 trener na cały zespół, kilka scenek dziennie")}</div>
+                  </dt>
+                  <dd className="tabular-nums text-slate-800 font-medium shrink-0">{kwota(w.trenerRok)} / {t("yr", "rok")}</dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-3 px-3">
+                  <dt>
+                    <div className="text-slate-800 font-medium">{t("Outside training", "Szkolenie zewnętrzne")}</div>
+                    <div className="text-[12px] text-slate-500">{t(`${p.dniSzkolen} days a year`, `${p.dniSzkolen} dni w roku`)}</div>
+                  </dt>
+                  <dd className="tabular-nums text-slate-800 font-medium shrink-0">{kwota(w.szkoleniaRok)} / {t("yr", "rok")}</dd>
+                </div>
+              </dl>
+              <p className="text-[12px] text-slate-600">
+                {t(
+                  `Bruno = ${Math.round(w.procentTrenera)}% of a coach's cost, with ${w.rozmowyRok.toLocaleString("en-US")} practice calls a year.`,
+                  `Bruno = ${Math.round(w.procentTrenera)} % kosztu trenera, a daje ${w.rozmowyRok.toLocaleString("pl-PL")} rozmów treningowych w roku.`,
+                )}
+              </p>
+            </div>
           </div>
         </div>
       )}
