@@ -1,5 +1,5 @@
 import { createHash, createHmac, randomBytes, randomInt, scryptSync, timingSafeEqual } from "node:crypto";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 // Logowanie do panelu Bruno AI.
 //
@@ -117,10 +117,18 @@ export function emailZTokenu(token: string | null | undefined): string | null {
   }
 }
 
-/** Kto jest zalogowany (server components i route handlers). */
+/**
+ * Kto jest zalogowany (server components i route handlers).
+ * 27.10 (aplikacja mobilna): ciasteczko ALBO nagłówek `Authorization: Bearer <token>`.
+ * Token ten sam co w ciasteczku (podpis HMAC, 30 dni), apka trzyma go w SecureStore.
+ */
 export async function zalogowanyEmail(): Promise<string | null> {
   const c = await cookies();
-  return emailZTokenu(c.get(CIASTECZKO)?.value);
+  const zCiastka = emailZTokenu(c.get(CIASTECZKO)?.value);
+  if (zCiastka) return zCiastka;
+  const h = await headers();
+  const auth = h.get("authorization") ?? "";
+  return auth.startsWith("Bearer ") ? emailZTokenu(auth.slice(7).trim()) : null;
 }
 
 export function normalizujEmail(surowy: unknown): string | null {

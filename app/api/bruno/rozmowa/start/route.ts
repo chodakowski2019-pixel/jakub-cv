@@ -169,7 +169,8 @@ export async function POST(req: Request) {
   // (tak działają nadpisania w SDK), więc nie ma w nim nic tajnego: to opis klienta z „Dostosuj Bruno".
   if (dostawca === "elevenlabs") {
     try {
-      const polaczenie = polaczenieEl();
+      // 27.10: aplikacja mobilna (@elevenlabs/react-native) łączy się tylko przez WebRTC (LiveKit).
+      const polaczenie = b.aplikacja === true ? "webrtc" : polaczenieEl();
       const [token, pierwsza] = await Promise.all([
         polaczenie === "webrtc" ? tokenRozmowyEl() : podpisanyUrlEl(),
         pierwszaWypowiedz({ tryb, postac, konfig, obiekcja: wybrane[0] ?? obiekcja, sytuacja, jezyk }),

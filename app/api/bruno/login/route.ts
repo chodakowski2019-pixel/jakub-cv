@@ -79,8 +79,11 @@ export async function POST(req: Request) {
     // 9.10 (E18): log logowania ze źródłem (`?src=` z linku w mailu, przekazane przez formularz).
     await zapiszWejscie({ email, rodzaj: "logowanie", zrodlo: zrodloZParametru(typeof b.src === "string" ? b.src : null), agent: req.headers.get("user-agent") });
 
+    const token = nowyToken(email);
+    // 27.10: aplikacja mobilna dostaje token w odpowiedzi (trzyma go w SecureStore, wysyła jako Bearer).
+    if (b?.aplikacja === true) return NextResponse.json({ ok: true, token, jezyk });
     const c = await cookies();
-    c.set(CIASTECZKO, nowyToken(email), {
+    c.set(CIASTECZKO, token, {
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
