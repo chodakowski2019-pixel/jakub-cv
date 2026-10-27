@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import s from "./webinar-lp.module.css";
-import { WEBINAR } from "@/lib/bruno/webinar";
+import { WEBINAR, webinarLinkGoogle } from "@/lib/bruno/webinar";
 
 // 16.10 (USER_001): LP zapisu na webinar, styl salesbruno.com (jasne tło, Outfit + Inter, pomarańcz).
 // Formularz → /api/bruno/webinar = tylko powiadomienie do USER_001. Link do webinaru USER_001 wysyła sam.
@@ -41,32 +41,29 @@ const TEKSTY = {
     ],
   },
   firmy: {
-    // 21.10 (USER_001): tytuł z zaproszeń na LinkedIn.
-    h1: "Jak zwiększyć sprzedaż\nu\u00a0handlowców dzięki\u00a0AI",
-    h1Szary: "", // 21.10 (USER_001): bez podtytułu
-    lead: "Każdy spalony lead to pieniądze z reklamy i czas zespołu.",
-    plan: [
-      ["19:00", "Ile kosztuje Cię handlowiec, który uczy się na klientach", "Policzymy spalone leady i miesiące, zanim nowa osoba zacznie sprzedawać."],
-      ["19:15", "Trening zespołu z AI na żywo", "AI gra Waszego klienta z Waszymi obiekcjami. Trener od razu ocenia rozmowę."],
-      ["19:35", "10 minut dziennie w zespole", "Jak wprowadzić codzienny trening, żeby handlowcy go robili, a Ty nie musiał pilnować."],
-      ["19:50", "Twoje pytania", "Pytasz o swój zespół, branżę i klientów. Odpowiadam na żywo."],
-    ],
-    dla: ["Prowadzisz firmę z zespołem sprzedaży", "Jesteś dyrektorem albo kierownikiem sprzedaży", "Zatrudniasz nowych handlowców i nie masz czasu ich szkolić"],
+    // 27.10 (USER_001): nowy temat dla właścicieli firm (decyzja 27.10). Tytuł i plan z lib/bruno/webinar.ts.
+    h1: "Jak sprawić, żeby handlowcy\nrobili 100\u00a0% planu sprzedaży",
+    h1Szary: WEBINAR.podtytul,
+    lead: "Wyszkol tych, których masz, zamiast szukać nowych. W 60 minut: 3 powody, dla których zespół nie robi planu, 4 sposoby na trening i jeden pokazany na żywo.",
+    plan: WEBINAR.plan,
+    dla: ["Prowadzisz firmę z zespołem sprzedaży", "Jesteś dyrektorem albo kierownikiem sprzedaży", "Zespół robi 60-80 % planu, a Ty nie masz czasu go szkolić"],
     liczba: "4,7 mies.",
     liczbaOpis: "Tyle średnio trwa wdrożenie nowego handlowca, zanim zacznie sprzedawać na pełnych obrotach. Przez ten czas uczy się na Twoich klientach.",
     zrodlo: "The Bridge Group, badanie 2025, 351 firm",
-    bonus: "🎁 Każdy uczestnik: bezpłatny trening rozmowy z AI dla swojej firmy",
+    bonus: "",
     faq: [
       ["Ile to kosztuje?", "Nic. Webinar jest bezpłatny."],
-      ["Gdzie się odbywa?", "Online, na Zoomie. Link wyślę na maila przed startem. Wystarczy telefon albo komputer, kamera nie jest potrzebna."],
+      ["Gdzie się odbywa?", "Online, na Zoomie. Link dostaniesz na maila od razu po zapisie, a potem przypomnienie dzień przed i godzinę przed. Wystarczy telefon albo komputer, kamera nie jest potrzebna."],
       ["Czy będzie nagranie?", "Nie. Nie będzie dostępnego nagrania ze spotkania, dlatego zapisz je w kalendarzu."],
       ["Mogę przyjść z kierownikiem sprzedaży?", "Tak. Każdy niech zapisze się osobno, link przyjdzie na jego maila."],
+      ["Czy to sprzedaż czegoś?", "Przez 50 minut nie. Na końcu powiem, jak umówić bezpłatną rozmowę o Twoim zespole, jeśli zechcesz."],
       ["Kto prowadzi?", "Jakub Chodakowski, CEO."],
     ],
   },
 } satisfies Record<WersjaWebinaru, unknown>;
-const GCAL = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Webinar: jak zwiększyć sprzedaż u handlowców dzięki AI")}&dates=${WEBINAR.ics}/${WEBINAR.icsKoniec}&details=${encodeURIComponent("Link do webinaru przyjdzie na maila. salesbruno.com/webinar-firmy")}`;
-const ICS = `data:text/calendar;charset=utf-8,${encodeURIComponent(["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Jakub Chodakowski//Webinar//PL", "BEGIN:VEVENT", `UID:webinar-${WEBINAR.ics}@salesbruno.com`, "DTSTAMP:20261021T000000Z", `DTSTART:${WEBINAR.ics}`, `DTEND:${WEBINAR.icsKoniec}`, "SUMMARY:Webinar: jak zwiększyć sprzedaż u handlowców dzięki AI", "DESCRIPTION:Link do webinaru przyjdzie na maila.", "BEGIN:VALARM", "TRIGGER:-PT30M", "ACTION:DISPLAY", "DESCRIPTION:Webinar za 30 minut", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n"))}`;
+// 27.10: kalendarz z linkiem Zoom w opisie (Google) i plik .ics z naszej domeny (ten sam co w mailach).
+const GCAL = webinarLinkGoogle();
+const ICS = "/api/bruno/webinar/ics";
 
 /** Zegar do startu. Do zamontowania w przeglądarce pokazuje kreski (bez różnicy serwer/przeglądarka). */
 function Zegar({ maly }: { maly?: boolean }) {
@@ -191,11 +188,11 @@ export default function WebinarLp({ wersja = "handlowcy" }: { wersja?: WersjaWeb
             <div className={s.gotowe}>
               <div className={s.ptaszek}>✓</div>
               <h2 className={s.h2}>Jesteś zapisany!</h2>
-              <p className={s.opis}>Link do Zooma dostaniesz na maila przed startem. Do zobaczenia: {WEBINAR.dzien}, {WEBINAR.godzina}.</p>
+              <p className={s.opis}>Link do Zooma właśnie poszedł na Twojego maila (sprawdź też „Oferty” albo spam). Do zobaczenia: {WEBINAR.dzien}, {WEBINAR.godzina}.</p>
               <p className={s.opis}>Webinar jest bez nagrania. Zapisz go w kalendarzu:</p>
               <div className={s.kalendarz}>
                 <a href={GCAL} target="_blank" rel="noopener">Kalendarz Google</a>
-                <a href={ICS} download="webinar-28-10.ics">Apple / Outlook</a>
+                <a href={ICS} download={`webinar-${WEBINAR.klucz}.ics`}>Apple / Outlook</a>
               </div>
             </div>
           ) : (

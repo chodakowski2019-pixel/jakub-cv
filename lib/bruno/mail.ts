@@ -26,7 +26,7 @@ export function mailDziala() {
  * Rodzaj maila = klucz w `bruno_maile` i w `?src=` linku (9.10, E18: „nie wiemy, czy
  * przypomnienia dochodzą i czy ktoś z nich wchodzi"). Wejście z linku ląduje w `bruno_wejscia`.
  */
-export type RodzajMaila = "dostep" | "przypomnienie" | "niezalogowany" | "inny";
+export type RodzajMaila = "dostep" | "przypomnienie" | "niezalogowany" | "webinar" | "inny";
 
 /** Dopisuje `?src=mail-<rodzaj>` do linku, żeby wejście dało się przypisać do maila. */
 export function linkZeZrodlem(link: string, rodzaj: RodzajMaila): string {
@@ -43,7 +43,18 @@ async function zapiszMail(w: { email: string; rodzaj: RodzajMaila; temat: string
   }
 }
 
-export async function wyslij(args: { do: string; temat: string; html: string; replyTo?: string; rodzaj?: RodzajMaila; zalaczniki?: { filename: string; content: Buffer }[] }) {
+export async function wyslij(args: {
+  do: string;
+  temat: string;
+  html: string;
+  replyTo?: string;
+  rodzaj?: RodzajMaila;
+  zalaczniki?: { filename: string; content: Buffer }[];
+  /** 27.10: inny nadawca (webinar = „Jakub Chodakowski <hello@…>”, bez „Bruno AI”). */
+  od?: string;
+  /** 27.10: wysyłka zaplanowana w Resend (ISO 8601), np. przypomnienie godzinę przed webinarem. */
+  scheduledAt?: string;
+}): Promise<{ ok: true; pominiety?: boolean; id?: string | null }> {
   const rodzaj = args.rodzaj ?? "inny";
   if (!mailDziala()) {
     if (process.env.NODE_ENV === "development") {
@@ -56,20 +67,21 @@ export async function wyslij(args: { do: string; temat: string; html: string; re
   }
   const resend = new Resend(process.env.RESEND_API_KEY);
   const { data, error } = await resend.emails.send({
-    from: NADAWCA,
+    from: args.od ?? NADAWCA,
     to: args.do,
     replyTo: args.replyTo,
     subject: args.temat,
     html: args.html,
     // 17.10: załączniki (CV kandydata z salesbruno.com/praca).
     ...(args.zalaczniki?.length ? { attachments: args.zalaczniki } : {}),
+    ...(args.scheduledAt ? { scheduledAt: args.scheduledAt } : {}),
   });
   if (error) {
     await zapiszMail({ email: args.do, rodzaj, temat: args.temat, wynik: "blad", blad: String(error.message).slice(0, 300) });
     throw new Error(`Resend: ${error.message}`);
   }
   await zapiszMail({ email: args.do, rodzaj, temat: args.temat, wynik: "wyslany", resend_id: data?.id ?? null });
-  return { ok: true };
+  return { ok: true, id: data?.id ?? null };
 }
 
 const minutaSlowo = (m: number) => (m === 1 ? "minute" : "minutes");

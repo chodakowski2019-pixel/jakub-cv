@@ -5,6 +5,7 @@ import { htmlNieZalogowany, htmlPrzypomnienie, htmlPrzypomnienieFree, wyslij } f
 import { dociagnijNagraniaEl } from "@/lib/bruno/nagrania";
 import { mnoga, tDla } from "@/lib/bruno/i18n";
 import { wylaczPro } from "@/lib/bruno/stripe";
+import { webinarCron } from "@/lib/bruno/webinar-cron";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -55,6 +56,12 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, godzinaPL, pominieto: `nie ${tylkoOGodzinie}:00 PL` });
   }
   const konserwacja = wymus || params.get("konserwacja") === "1" || godzinaPL === GODZINA_KONSERWACJI;
+
+  // 27.10: przypomnienia o webinarze (dzień przed i w dniu, w przebiegu o 8:00 PL). Błąd tu nie zatrzymuje reszty crona.
+  const webinar = await webinarCron(teraz).catch((e) => {
+    console.error("[bruno przypomnienia] webinar", e);
+    return { blad: String(e) };
+  });
 
   // 11.10: roczny Bruno Pro jest płatnością jednorazową (bez subskrypcji), więc po 365 dniach wygaszamy go tu.
   // Tylko konta z `pro_do` i bez subskrypcji Stripe: firmy B2B (pro_do puste) i subskrypcje (Stripe pilnuje sam) bez zmian.
@@ -194,5 +201,5 @@ export async function GET(req: Request) {
     }
   }
 
-  return NextResponse.json({ ok: true, godzinaPL, wymus, konserwacja, wyslane, niezalogowani, free, pominiete, wygasle, nagrania });
+  return NextResponse.json({ ok: true, godzinaPL, wymus, konserwacja, wyslane, niezalogowani, free, pominiete, wygasle, nagrania, webinar });
 }
