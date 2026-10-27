@@ -21,9 +21,10 @@ export default function PasekRinesk({ dostep, inicjal, logo = null, plan = null,
   const aktywny = (href: string) => sciezka === href || sciezka.startsWith(`${href}/`);
   const dom = dostep.szef ? "/bruno/szef" : "/bruno/panel";
   const sekcje: { tytul: string; linki: ({ href: string; nazwa: string; ikona: Parameters<typeof Ikona>[0]["nazwa"]; licznik?: string } | undefined)[] }[] = [
+    // 27.10 (USER_001): „Wgląd / Zespół” na samej górze (szef zaczyna od zespołu).
+    { tytul: t("Insights", "Wgląd"), linki: [L("zespol")] },
     { tytul: t("General", "Ogólne"), linki: [L("panel"), L("test"), L("trening") && { ...L("trening")!, licznik: fiszki ? String(fiszki) : undefined }] },
     { tytul: t("Tools", "Narzędzia"), linki: [L("ogien"), L("feedback"), L("statystyki"), L("kalendarz")] },
-    { tytul: t("Insights", "Wgląd"), linki: [L("zespol")] },
     { tytul: t("Other", "Inne"), linki: [L("ustawienia"), { href: "/bruno/dostosuj", nazwa: t("Customize Bruno", "Dostosuj Bruno"), ikona: "dostosuj" }] },
   ];
   const zostalo = plan ? Math.max(0, plan.dziennie - plan.dzis) : 0;
