@@ -1,0 +1,112 @@
+/* Wersja W panelu Bruno (27.10): wzór VogueAI (Taqwah), na biało. Wszystko pod .bpw. */
+.bpw{--tlo:#f6f6f8;--karta:#fff;--ink:#141416;--muted:#7a7a85;--slaby:#b3b3bc;--lila:#a78bfa;--lila-c:#7c6cf0;--lila-j:#ede9fe;--ramka:rgba(20,20,22,.06);
+  min-height:100vh;background:var(--tlo);color:var(--ink);font-family:var(--font-bpw),"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.bpw *{box-sizing:border-box;margin:0;padding:0}
+.bpw a{color:inherit;text-decoration:none}
+.bpw button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.bpw h1{font-size:28px;font-weight:500;letter-spacing:-.02em}
+.bpw h2{font-size:21px;font-weight:500;letter-spacing:-.01em;line-height:1.2}
+.bpw .przyk{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slaby);margin-left:10px;font-weight:600}
+
+/* nawigacja */
+.bpw .nav{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--ramka)}
+.bpw .logo{color:var(--lila);font-size:26px;line-height:1}
+.bpw .nav nav{flex:1;display:flex;justify-content:center;gap:4px}
+.bpw .nav nav a{height:34px;padding:0 14px;border-radius:99px;display:inline-flex;align-items:center;font-size:12.5px;color:#444;transition:background .15s,color .15s,transform .12s ease-out}
+.bpw .nav nav a:hover{background:#f1f1f4}
+.bpw .nav nav a:active{transform:scale(.97)}
+.bpw .nav nav a.on{background:#141416;color:#fff}
+.bpw .ik{display:flex;gap:8px}
+.bpw .ik button{width:32px;height:32px;border-radius:10px;background:#f1f1f4;display:grid;place-items:center;color:#444;transition:transform .12s ease-out}
+.bpw .ik button:active{transform:scale(.94)}
+.bpw .ik .lila{background:var(--lila-j);color:var(--lila-c);font-size:16px}
+
+/* główna */
+.bpw main{padding:22px 28px 32px}
+.bpw .gora{display:flex;align-items:center;gap:40px;margin-bottom:18px}
+.bpw .dostep small{font-size:11px;color:var(--muted);display:block;margin-bottom:6px}
+.bpw .aw{display:flex}
+.bpw .aw img{width:28px;height:28px;border-radius:7px;object-fit:cover;border:2px solid #fff;margin-left:-6px}
+.bpw .aw img:first-child{margin-left:0}
+.bpw .sp{flex:1}
+.bpw .akcje{display:flex;gap:6px}
+.bpw .akcje button,.bpw .akcje a{height:30px;min-width:30px;padding:0 10px;border-radius:7px;background:#fff;border:1px solid var(--ramka);font-size:11px;color:#777;display:inline-flex;align-items:center;gap:6px;transition:transform .12s ease-out,background .15s}
+.bpw .akcje button:hover,.bpw .akcje a:hover{background:#fafafa;color:#141416}
+.bpw .akcje button:active,.bpw .akcje a:active{transform:scale(.96)}
+.bpw .kol{display:grid;grid-template-columns:1fr 380px;gap:14px;align-items:stretch}
+.bpw .lewa{display:grid;gap:14px;align-content:start}
+.bpw .karta{background:var(--karta);border-radius:16px;padding:20px 22px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.bpw .hd{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.bpw .ikk{display:flex;gap:6px}
+.bpw .ikk button,.bpw .kropki,.bpw .lila-panel .hd button{width:30px;height:30px;border-radius:8px;background:#f3f3f6;display:grid;place-items:center;color:#555;font-size:12px}
+
+/* karta z krzywymi i linijką */
+.bpw .leg{display:flex;gap:16px;font-size:11px;color:#333;margin-bottom:4px}
+.bpw .leg span{display:flex;align-items:center;gap:6px}
+.bpw .leg i{width:7px;height:7px;border-radius:50%}
+.bpw .krzywe{position:relative;height:170px}
+.bpw .krzywe svg{width:100%;height:100%;display:block}
+.bpw .et{position:absolute;top:18px;transform:translateX(12px);line-height:1.1}
+.bpw .et small{font-size:10px;color:var(--muted);display:block}
+.bpw .et b{font-size:20px;font-weight:500}
+.bpw .linijka{display:flex;justify-content:space-between;align-items:flex-end;height:26px;margin-top:-6px}
+.bpw .linijka i{width:1px;height:14px;background:#cfcfd6}
+.bpw .linijka i.d{height:26px;background:#9a9aa3}
+.bpw .skala{display:flex;justify-content:space-between;font-size:10px;color:var(--slaby);margin-top:6px}
+
+/* dwie karty */
+.bpw .dwie{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
+.bpw .wloski{display:block;width:100%;height:100%}
+.bpw .prod-wrap{display:grid;grid-template-columns:22px 1fr 120px;gap:10px;align-items:end}
+.bpw .osy{display:flex;flex-direction:column;justify-content:space-between;height:150px;font-size:9.5px;color:var(--slaby);text-align:right}
+.bpw .wl{height:170px;display:flex;flex-direction:column}
+.bpw .wl .wloski{height:150px}
+.bpw .pod{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:6px}
+.bpw .pod span{flex:1;text-align:center}
+.bpw .pod .on{color:var(--ink);font-weight:600}
+.bpw .bok small{font-size:10.5px;color:var(--muted);display:block}
+.bpw .bok > b{font-size:26px;font-weight:500;display:block;letter-spacing:-.02em}
+.bpw .bok > em{font-style:normal;font-size:10px;display:block;margin:2px 0 10px}
+.bpw .z{color:#1aa85a}.bpw .c{color:#e24a3b}
+.bpw .mini{background:#f6f6f8;border-radius:8px;padding:7px 10px;margin-top:6px;display:grid;grid-template-columns:14px 1fr;column-gap:6px;align-items:center}
+.bpw .mini i{font-style:normal;font-size:10px;grid-row:span 2}
+.bpw .mini small{font-size:9.5px}
+.bpw .mini b{font-size:13px;font-weight:500}
+.bpw .cel > small{font-size:10.5px;color:var(--muted);display:block}
+.bpw .duza{font-size:22px;font-weight:500;display:block;letter-spacing:-.01em}
+.bpw .duza span{font-size:12px;color:var(--muted);font-weight:400}
+.bpw .cel-wrap{display:grid;grid-template-columns:22px 1fr;gap:8px;margin-top:10px;align-items:stretch}
+.bpw .cel-wrap .osy{height:120px}
+.bpw .cel-wrap svg{width:100%;height:120px;display:block;touch-action:pan-y}
+
+/* lawendowy panel */
+.bpw .lila-panel{position:relative;border-radius:18px;padding:24px 22px;color:#fff;display:flex;flex-direction:column;gap:14px;overflow:hidden;
+  background:radial-gradient(80% 60% at 70% 10%,#d8ccff,transparent 60%),linear-gradient(170deg,#c9b6ff 0%,#b39cf9 50%,#a78bfa 100%)}
+.bpw .lila-panel h2{font-size:30px;line-height:1.1}
+.bpw .lila-panel p{font-size:12px;color:rgba(255,255,255,.85);max-width:260px}
+.bpw .lila-panel .hd button{background:rgba(255,255,255,.22);color:#fff}
+.bpw .wsk{position:relative;margin-top:8px}
+.bpw .wsk svg{width:100%;height:auto;display:block}
+.bpw .wsk-et{position:absolute;left:50%;top:62%;transform:translateX(-50%);text-align:center;background:#fff;color:#4a35b8;border-radius:6px;padding:4px 8px;font-size:10px;line-height:1.1}
+.bpw .wsk-et b{display:block;font-size:12px}
+.bpw .wsk-et small{color:#7c6cf0}
+.bpw .trzy{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bpw .trzy div{border:1px solid rgba(255,255,255,.5);border-radius:8px;padding:8px 10px;text-align:center}
+.bpw .trzy small{font-size:9.5px;display:block;opacity:.85}
+.bpw .trzy b{font-size:17px;font-weight:500}
+.bpw .wzrost{position:relative;padding-top:6px}
+.bpw .wzrost small{font-size:10.5px;display:block;margin-bottom:6px}
+.bpw .osy-b{position:absolute;right:0;top:24px;height:110px;display:flex;flex-direction:column;justify-content:space-between;font-size:8.5px;opacity:.7}
+.bpw .wzrost .wloski{height:110px;width:calc(100% - 24px)}
+.bpw .wzrost .pod{width:calc(100% - 24px);color:rgba(255,255,255,.8)}
+.bpw .proc{font-size:30px;font-weight:400;display:block;margin-top:8px}
+.bpw .btn{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#4a35b8;border-radius:99px;padding:11px 18px;font-size:13px;font-weight:600;align-self:flex-start;transition:transform .12s ease-out}
+.bpw .btn:active{transform:scale(.96)}
+.bpw .dzis-et{position:absolute;right:22px;bottom:22px;font-size:11px;opacity:.8}
+
+@keyframes bpw-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.bpw .karta,.bpw .lila-panel{animation:bpw-rise .55s cubic-bezier(.2,.8,.2,1) both}
+.bpw .dwie .karta:nth-child(2){animation-delay:.08s}.bpw .lila-panel{animation-delay:.12s}
+@media (prefers-reduced-motion:reduce){.bpw *{animation:none!important;transition:none!important}}
+@media (max-width:1100px){.bpw .kol{grid-template-columns:1fr}.bpw .nav nav{display:none}}
+@media (max-width:700px){.bpw main{padding:14px}.bpw .dwie{grid-template-columns:1fr}.bpw .gora{flex-wrap:wrap;gap:14px}.bpw .akcje .szer{display:none}.bpw .prod-wrap{grid-template-columns:22px 1fr}.bpw .bok{grid-column:1/-1}}

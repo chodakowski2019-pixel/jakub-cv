@@ -5,7 +5,8 @@ import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { zapiszWejscie, zrodloZParametru } from "@/lib/bruno/wejscia";
 import { dostepKonta, pobierzKonto, stanDostepu, stanFree, zamknijPorzucone } from "@/lib/bruno/db";
 import { kontekstFirmy } from "@/lib/bruno/firmy";
-import { motywAsset } from "@/lib/bruno/motyw";
+import { motywAsset, motywRinesk } from "@/lib/bruno/motyw";
+import PanelRinesk from "@/components/bruno/panel-rinesk";
 import { danePanelu } from "@/components/podglad/panel/dane";
 import PanelA from "@/components/podglad/panel/panel-a";
 import { jezykZadania } from "@/lib/bruno/jezyk-serwer";
@@ -33,6 +34,12 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
   if (konto && stanDostepu(konto).aktywny) await zamknijPorzucone(email);
   const [d, { szef, logo }] = await Promise.all([danePanelu(await jezykZadania()), kontekstFirmy(konto)]);
   const dostep = dostepKonta(konto);
+
+  // 27.10 (USER_001: „Rinesk wygrywa”): domyślny panel = styl Rinesk (components/bruno/panel-rinesk.tsx), belka i szerokość z układu.
+  if (motywRinesk()) {
+    const inicjal = (konto?.imie?.trim()?.[0] ?? email[0] ?? "B").toUpperCase();
+    return <PanelRinesk d={d} dostep={{ ...dostep, szef }} logo={logo} inicjal={inicjal} />;
+  }
 
   return (
     <div className={`${inter.variable} ${outfit.variable}`} style={{ display: "contents" }}>

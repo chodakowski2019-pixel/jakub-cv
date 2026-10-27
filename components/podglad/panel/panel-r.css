@@ -1,0 +1,97 @@
+/* Wersja R panelu Bruno (27.10): wzór Rinesk call-centre, na biało. Wszystko pod .bpr. */
+.bpr{--tlo:#f2f3f5;--karta:#fff;--ink:#141416;--muted:#7d7f87;--slaby:#b4b6bd;--zol:#e9f542;--zol-c:#d9e000;--ramka:rgba(20,20,22,.06);
+  min-height:100vh;background:var(--tlo);color:var(--ink);font-family:var(--font-bpr),"Outfit",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.bpr *{box-sizing:border-box;margin:0;padding:0}
+.bpr a{color:inherit;text-decoration:none}
+.bpr button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.bpr h1{font-size:30px;font-weight:500;letter-spacing:-.01em}
+.bpr h2{font-size:21px;font-weight:500}
+.bpr h3{font-size:16px;font-weight:500;margin-top:4px}
+
+/* nawigacja */
+.bpr .nav{display:flex;align-items:center;gap:16px;padding:14px 32px;background:#fff;border-bottom:1px solid var(--ramka)}
+.bpr .logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
+.bpr .logo i{width:20px;height:20px;border-radius:5px 5px 5px 12px;background:var(--zol);display:block}
+.bpr .nav nav{flex:1;display:flex;justify-content:center;gap:2px}
+.bpr .nav nav a{height:34px;padding:0 16px;border-radius:99px;display:inline-flex;align-items:center;font-size:12.5px;color:#555;transition:background .15s,transform .12s ease-out}
+.bpr .nav nav a:hover{background:#f1f1f4}
+.bpr .nav nav a:active{transform:scale(.97)}
+.bpr .nav nav a.on{background:#141416;color:#fff}
+.bpr .ik{display:flex;align-items:center;gap:8px}
+.bpr .ik button{width:30px;height:30px;border-radius:50%;background:#f1f1f4;color:#555;font-size:13px}
+.bpr .ik img{width:32px;height:32px;border-radius:9px;object-fit:cover;cursor:pointer}
+
+/* główna */
+.bpr main{padding:20px 32px 32px;display:grid;gap:16px}
+.bpr .hero{position:relative;background:#fff;border-radius:26px;padding:26px 30px 24px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:18px 28px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.bpr .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(55% 50% at 80% 25%,rgba(233,245,66,.22),transparent 60%),radial-gradient(45% 45% at 15% 85%,rgba(20,20,22,.04),transparent 60%);pointer-events:none}
+.bpr .hero > *{position:relative}
+.bpr .lider{display:flex;align-items:center;gap:12px}
+.bpr .lider img{width:46px;height:46px;border-radius:12px;object-fit:cover}
+.bpr .lider small{font-size:10.5px;color:var(--muted);display:block}
+.bpr .lider b{font-size:14px;font-weight:500}
+.bpr .btn{margin-left:14px;background:var(--zol);color:#141416;border-radius:99px;padding:11px 20px;font-size:13px;font-weight:500;transition:transform .12s ease-out,filter .15s}
+.bpr .btn:hover{filter:brightness(.97)}
+.bpr .btn:active{transform:scale(.96)}
+.bpr .okr{width:38px;height:38px;border-radius:50%;background:#f1f1f4;display:grid;place-items:center;font-size:15px;color:#333}
+.bpr .okr.duzy{position:absolute;right:30px;top:26px;width:46px;height:46px;border-radius:14px;background:#f6f6f8}
+.bpr .hej{padding-right:70px}
+.bpr .hej p{font-size:22px;color:var(--muted);font-weight:300;margin-top:2px}
+.bpr .bok{display:flex;gap:18px}
+.bpr .ikonki{display:flex;flex-direction:column;gap:14px;padding-top:4px}
+.bpr .ikonki span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:#444;background:#f6f6f8}
+.bpr .ikonki span:first-child{background:#141416;color:#fff}
+.bpr .opis p{font-size:11.5px;color:var(--muted);margin-top:6px;max-width:280px;line-height:1.45}
+.bpr .opis p b{color:#141416;font-weight:500}
+.bpr .wielka{font-size:72px;font-weight:400;letter-spacing:-.03em;line-height:1;margin-top:18px}
+.bpr .leg{display:grid;gap:6px;margin-top:10px;font-size:11px;color:var(--muted)}
+.bpr .leg span{display:flex;align-items:center;gap:8px}
+.bpr .leg b{margin-left:auto;color:#141416;font-weight:500}
+.bpr .leg i{width:14px;height:2px;border-radius:2px}
+.bpr .zol{background:var(--zol-c)}.bpr .bia{background:#141416}.bpr .sza{background:#cfd1d6}
+.bpr .wyk{display:flex;flex-direction:column}
+.bpr .tyg{display:flex;justify-content:space-between;font-size:10.5px;color:var(--slaby);padding:0 50px 0 0;margin-bottom:8px}
+.bpr .wyk-wrap{position:relative;flex:1}
+.bpr .wyk-wrap svg{width:calc(100% - 44px);height:150px;display:block;touch-action:pan-y}
+.bpr .osie{position:absolute;right:0;top:0;height:150px;display:flex;flex-direction:column;justify-content:space-between;font-size:9.5px;color:var(--slaby);text-align:right;width:36px}
+.bpr .tt{position:absolute;top:-14px;transform:translateX(-50%);background:#fff;border:1px solid var(--ramka);border-radius:10px;padding:8px 10px;font-size:10px;color:var(--muted);box-shadow:0 10px 30px -14px rgba(0,0,0,.25);white-space:nowrap;pointer-events:none;display:grid;gap:2px}
+.bpr .tt b{font-size:10.5px;color:#141416;font-weight:500}
+.bpr .tt em{font-style:normal;color:#141416;font-weight:600}
+
+/* zakładki */
+.bpr .zak{display:flex;gap:4px;padding:0 6px;overflow-x:auto;scrollbar-width:none}
+.bpr .zak::-webkit-scrollbar{display:none}
+.bpr .zak button{flex:0 0 auto;font-size:12px;color:var(--muted);padding:8px 14px;border-bottom:2px solid transparent;transition:color .15s}
+.bpr .zak button.on{color:#141416;border-color:#141416}
+.bpr .zak .kr{margin-left:auto}
+
+/* rząd kart */
+.bpr .rzad{display:grid;grid-template-columns:1.5fr .8fr 1.4fr .9fr;gap:14px}
+.bpr .karta{background:#fff;border-radius:18px;padding:18px 20px;box-shadow:0 1px 2px rgba(0,0,0,.03);display:flex;flex-direction:column;gap:8px}
+.bpr .karta > small,.bpr .hd small{font-size:11px;color:var(--muted)}
+.bpr .hd{display:flex;justify-content:space-between;align-items:center}
+.bpr .roz,.bpr .sel{font-size:11px;color:var(--muted)}
+.bpr table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}
+.bpr th{font-weight:400;font-size:10.5px;color:var(--slaby);text-align:left;padding:6px 0;border-bottom:1px solid var(--ramka)}
+.bpr th:not(:first-child),.bpr td:not(:first-child){text-align:right}
+.bpr td{padding:10px 0;border-bottom:1px solid var(--ramka)}
+.bpr td a{display:flex;align-items:center;gap:10px}
+.bpr td img{width:32px;height:32px;border-radius:9px;object-fit:cover}
+.bpr td b{font-weight:500;display:block}
+.bpr td small{font-size:10px;color:var(--muted)}
+.bpr td.ok{color:#1a7f3c}
+.bpr .wsk .duza{font-size:40px;font-weight:300;letter-spacing:-.02em}
+.bpr .wsk .duza span{font-size:18px;color:var(--muted)}
+.bpr .wsk svg,.bpr .prog svg{width:100%;height:auto;display:block;margin-top:auto}
+.bpr .dol{margin-top:auto;padding-top:8px;border-top:1px solid var(--ramka);font-size:11px;color:var(--muted)}
+.bpr .czas .leg{grid-auto-flow:column;justify-content:start;gap:14px;margin-top:2px}
+.bpr .czas svg{width:100%;height:120px;display:block}
+.bpr .pod{display:flex;justify-content:space-between;font-size:10px;color:var(--slaby)}
+.bpr .leg.kol{margin-top:10px}
+
+@keyframes bpr-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.bpr .hero,.bpr .karta{animation:bpr-rise .55s cubic-bezier(.2,.8,.2,1) both}
+.bpr .rzad .karta:nth-child(2){animation-delay:.06s}.bpr .rzad .karta:nth-child(3){animation-delay:.12s}.bpr .rzad .karta:nth-child(4){animation-delay:.18s}
+@media (prefers-reduced-motion:reduce){.bpr *{animation:none!important;transition:none!important}}
+@media (max-width:1100px){.bpr .rzad{grid-template-columns:1fr 1fr}.bpr .nav nav{display:none}}
+@media (max-width:760px){.bpr main{padding:14px}.bpr .hero{grid-template-columns:1fr;padding:20px}.bpr .hej{padding-right:0}.bpr .okr.duzy{display:none}.bpr .rzad{grid-template-columns:1fr}.bpr .wielka{font-size:56px}}

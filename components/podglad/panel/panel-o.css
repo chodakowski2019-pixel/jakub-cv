@@ -1,0 +1,114 @@
+/* Wersja O panelu Bruno (27.10): wzór OpsPulse (Orbix), mrożone szkło. Wszystko pod .bpo. */
+.bpo{--ink:#1b1c1f;--muted:#6b6d75;--slaby:#a3a5ad;--szklo:rgba(255,255,255,.52);--szklo-k:rgba(255,255,255,.78);--zol:#ffe14d;
+  min-height:100vh;background:#e6e7ea;color:var(--ink);font-family:var(--font-bpo),"Outfit",system-ui,sans-serif;-webkit-font-smoothing:antialiased;position:relative;isolation:isolate;padding:22px}
+.bpo *{box-sizing:border-box;margin:0;padding:0}
+.bpo a{color:inherit;text-decoration:none}
+.bpo button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.bpo h3{font-size:17px;font-weight:500}
+/* rozmyte tło: szaro-niebieska mgła + żółta plama */
+.bpo .tlo{position:fixed;inset:0;z-index:-1;overflow:hidden;background:linear-gradient(160deg,#dfe2e8,#eceef2 50%,#e9e3c8)}
+.bpo .tlo i{position:absolute;border-radius:50%;filter:blur(70px);display:block}
+.bpo .tlo .p1{width:70vw;height:60vh;left:20%;top:-10%;background:radial-gradient(circle,#ffd84a 0%,#ffe9a0 40%,transparent 70%);opacity:.9}
+.bpo .tlo .p2{width:50vw;height:50vh;left:-10%;top:10%;background:radial-gradient(circle,#8e9ab0 0%,#b9c2d3 40%,transparent 70%);opacity:.8}
+.bpo .tlo .p3{width:40vw;height:40vh;right:-5%;bottom:-10%;background:radial-gradient(circle,#f3efc7,transparent 70%)}
+.bpo .rama{max-width:1240px;margin:0 auto;border-radius:30px;padding:22px 26px 26px;background:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.7);backdrop-filter:blur(30px) saturate(130%);-webkit-backdrop-filter:blur(30px) saturate(130%);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 30px 80px -40px rgba(40,40,60,.35);display:grid;gap:16px}
+
+/* szkło */
+.bpo .szklo{background:var(--szklo);border:1px solid rgba(255,255,255,.85);border-radius:18px;padding:16px 18px;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 10px 30px -22px rgba(40,40,60,.3)}
+.bpo .hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.bpo .hd button{color:var(--muted);letter-spacing:1px}
+.bpo .przyk{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slaby);margin-left:8px;font-weight:500}
+.bpo .st{font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:6px;background:rgba(27,28,31,.06);color:#444;white-space:nowrap}
+.bpo .st.ok{background:rgba(47,160,74,.14);color:#1f7a37}
+.bpo .st.x{background:rgba(229,72,77,.14);color:#b3262b}
+
+/* góra */
+.bpo .gora{display:flex;align-items:center;gap:16px}
+.bpo .logo{font-size:15px;font-weight:600;color:#1b1c1f}
+.bpo .gora nav{flex:1;display:flex;justify-content:center;gap:6px}
+.bpo .gora nav a,.bpo .gora nav button{height:34px;min-width:34px;padding:0 9px;border-radius:99px;display:inline-flex;align-items:center;gap:6px;background:var(--szklo);border:1px solid rgba(255,255,255,.85);font-size:12.5px;color:#333;transition:transform .12s ease-out,background .15s}
+.bpo .gora nav a:hover,.bpo .gora nav button:hover{background:var(--szklo-k)}
+.bpo .gora nav a:active{transform:scale(.95)}
+.bpo .gora nav a.on{background:#fff;padding:0 14px;font-weight:500;box-shadow:0 4px 14px -8px rgba(0,0,0,.3)}
+.bpo .ik{display:flex;align-items:center;gap:8px}
+.bpo .ik button{width:34px;height:34px;border-radius:50%;background:var(--szklo);border:1px solid rgba(255,255,255,.85);font-size:14px;color:#333}
+.bpo .jez{height:34px;padding:0 14px;border-radius:99px;background:var(--szklo);border:1px solid rgba(255,255,255,.85);font-size:12.5px;display:inline-flex;align-items:center;gap:6px}
+.bpo .ik img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #fff}
+
+/* witaj + akcje */
+.bpo .witaj{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.bpo h1{font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.1}
+.bpo .witaj p{font-size:12px;color:var(--muted);margin-top:4px}
+.bpo .akcje{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.bpo .pig{height:38px;padding:0 16px;border-radius:99px;display:inline-flex;align-items:center;gap:8px;font-size:12.5px;background:var(--szklo);border:1px solid rgba(255,255,255,.9);color:#222;transition:transform .12s ease-out,background .15s,filter .15s}
+.bpo .pig:hover{background:var(--szklo-k)}
+.bpo .pig:active{transform:scale(.96)}
+.bpo .pig.zol{background:var(--zol);border-color:var(--zol);font-weight:500;margin-left:14px;box-shadow:0 10px 24px -14px rgba(255,200,0,.9)}
+.bpo .pig.zol:hover{filter:brightness(1.03)}
+
+/* siatka: kroki / przestrzeń / puls */
+.bpo .siatka{display:grid;grid-template-columns:290px 1fr 290px;gap:16px;min-height:250px}
+.bpo .kroki p{font-size:11.5px;color:var(--muted);margin:4px 0 12px;line-height:1.45}
+.bpo .pasek{position:relative;height:7px;border-radius:99px;background:rgba(255,255,255,.7);margin-bottom:14px}
+.bpo .pasek i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:#2fa04a;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.bpo .pasek b{position:absolute;right:0;top:-18px;font-size:10.5px;color:#1f7a37;font-weight:500}
+.bpo .kroki ul{list-style:none;display:grid;gap:10px;background:rgba(255,255,255,.45);border-radius:12px;padding:12px}
+.bpo .kroki li{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--ink)}
+.bpo .kroki li i{width:16px;height:16px;border-radius:50%;border:1.5px solid #9a9ca3;flex:0 0 auto;position:relative}
+.bpo .kroki li.ok{color:var(--muted)}
+.bpo .kroki li.ok i{border-color:#2fa04a;background:#2fa04a}
+.bpo .kroki li.ok i::after{content:"";position:absolute;left:5px;top:2px;width:4px;height:7px;border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg)}
+.bpo .luk{position:relative;margin:4px 0 8px}
+.bpo .luk svg{width:100%;height:auto;display:block}
+.bpo .luk-et{position:absolute;left:50%;top:48%;transform:translateX(-50%);text-align:center}
+.bpo .luk-et small{font-size:10.5px;color:var(--muted);display:block}
+.bpo .luk-et b{font-size:28px;font-weight:500;letter-spacing:-.02em}
+.bpo .puls table{width:100%;border-collapse:collapse;font-size:11px;background:rgba(255,255,255,.5);border-radius:10px;overflow:hidden}
+.bpo .puls td{padding:7px 10px;border-top:1px solid rgba(255,255,255,.8)}
+.bpo .puls td:last-child{text-align:right}
+
+/* KPI */
+.bpo .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.bpo .k{position:relative}
+.bpo .k .hd small{font-size:12px;color:var(--muted)}
+.bpo .k .w{display:flex;align-items:center;gap:8px;margin-top:6px}
+.bpo .k .w b{font-size:22px;font-weight:500;letter-spacing:-.01em}
+.bpo .k .s{font-size:10.5px;color:var(--slaby);display:block;margin-top:2px}
+.bpo .k .proc{position:absolute;right:50%;top:70px;font-size:10px;color:var(--muted);font-style:normal}
+.bpo .k .wl{display:block;width:100%;height:42px;margin-top:22px}
+
+/* dół */
+.bpo .dol{display:grid;grid-template-columns:1fr 1.1fr;gap:14px}
+.bpo .plan > small{font-size:12px;color:var(--muted)}
+.bpo .duza{font-size:26px;font-weight:500;display:block;letter-spacing:-.01em;margin-top:2px}
+.bpo .duza span{font-size:13px;color:var(--muted);font-weight:400}
+.bpo .plan .w{display:flex;align-items:center;gap:8px;margin:8px 0 14px;font-size:11px;color:var(--muted)}
+.bpo .segm-et{display:flex;font-size:12px;font-weight:500;margin-bottom:4px}
+.bpo .segm{display:flex;gap:4px;height:22px;margin-bottom:10px}
+.bpo .segm i{display:block;height:100%;border-radius:4px}
+.bpo .segm .nieb{background:repeating-linear-gradient(90deg,#3b82f6 0 2px,transparent 2px 5px)}
+.bpo .segm .pom{background:#f0803c}
+.bpo .segm .ziel{display:flex;gap:4px}
+.bpo .segm .ziel b{flex:1;background:#2fa04a;border-radius:4px}
+.bpo .leg{display:flex;gap:16px;font-size:11px;color:#333;margin-bottom:12px}
+.bpo .leg span{display:flex;align-items:center;gap:6px}
+.bpo .leg i{width:7px;height:7px;border-radius:50%}
+.bpo .leg .nieb{background:#3b82f6}.bpo .leg .pom{background:#f0803c}.bpo .leg .ziel{background:#2fa04a}
+.bpo .pewn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.55);border-radius:10px;padding:9px 12px;font-size:12px;color:var(--muted)}
+.bpo .pewn b{margin-left:auto;color:var(--ink);font-weight:500;font-size:13px}
+.bpo .pewn small{font-size:10.5px}
+.bpo .strum .hd h3{display:flex;align-items:center;gap:8px}
+.bpo .kropa{width:8px;height:8px;border-radius:50%;background:#2fa04a;box-shadow:0 0 0 3px rgba(47,160,74,.2)}
+.bpo .ost{font-size:10.5px;color:var(--muted);background:rgba(255,255,255,.6);border-radius:6px;padding:3px 8px}
+.bpo .strum table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:12px;background:rgba(255,255,255,.5);border-radius:12px;overflow:hidden}
+.bpo .strum th{font-weight:400;font-size:10.5px;color:var(--muted);text-align:left;padding:8px 12px}
+.bpo .strum td{padding:10px 12px;border-top:1px solid rgba(255,255,255,.8)}
+.bpo .strum th:last-child,.bpo .strum td:last-child{text-align:right}
+
+@keyframes bpo-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.bpo .szklo{animation:bpo-rise .55s cubic-bezier(.2,.8,.2,1) both}
+.bpo .kpi .szklo:nth-child(2){animation-delay:.05s}.bpo .kpi .szklo:nth-child(3){animation-delay:.1s}.bpo .kpi .szklo:nth-child(4){animation-delay:.15s}.bpo .dol .szklo{animation-delay:.2s}
+@media (prefers-reduced-motion:reduce){.bpo *{animation:none!important;transition:none!important}}
+@media (prefers-reduced-transparency:reduce){.bpo .szklo,.bpo .rama{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}}
+@media (max-width:1100px){.bpo .siatka{grid-template-columns:1fr 1fr}.bpo .srodek{display:none}.bpo .kpi{grid-template-columns:1fr 1fr}.bpo .gora nav{display:none}}
+@media (max-width:700px){.bpo{padding:10px}.bpo .rama{padding:16px;border-radius:20px}.bpo .siatka,.bpo .kpi,.bpo .dol{grid-template-columns:1fr}.bpo .witaj{flex-direction:column}.bpo .akcje{justify-content:flex-start}.bpo h1{font-size:28px}}

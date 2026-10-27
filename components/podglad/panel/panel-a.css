@@ -718,3 +718,289 @@
   .bpa .hero .plan-kolo-tekst small{font-size:22px}
   .bpa .hero .plan-kolo-tekst span{font-size:12px}
 }
+
+/* ---------- 27.10 (USER_001): MORSKI, styl Attis Broker + POMARAŃCZ ze strony www (var(--ak)) (/podglad/bruno-panel-morski) ----------
+   v1: sztormowe niebo i morze w tle (WebGL, morze.tsx), grafitowe szkło z cienką złotą krawędzią,
+   pomarańcz var(--ak) ze strony salesbruno.pl (27.10, USER_001: „złoty nie pasuje, pomarańczowy jak na www”) (liczby, pasek kółka, „Rozmawiaj”, aktywna zakładka), serif (Cormorant) w nagłówkach
+   i liczbach, wersaliki z rozstrzelonym drukiem w podpisach. v2 (jasne chmury + liny mostu) odrzucona.
+   Nakłada się na .lp.szklo.czarny, dlatego każdy selektor ma pełny prefiks. */
+.bpa.lp.szklo.czarny.morski{
+  --ink:#f4f2ec;--muted:rgba(244,242,236,.66);--deep:#0f1113;
+  /* akcent domyślny = STAL (metaliczna szarość); warianty niżej: morski-szampan, morski-lod */
+  --ak:#b8c0c8;--ak-j:#eef1f4;--ak-c:#7d8791;--ak-rgb:184,192,200;
+  --green:var(--ak);--green-2:var(--ak-c);--mint:var(--ak);
+  --zloto:linear-gradient(135deg,var(--ak-j) 0%,var(--ak) 45%,var(--ak-c) 100%);
+  background:#15181b;
+}
+.bpa.lp.szklo.czarny.morski::before,.bpa.lp.szklo.czarny.morski::after{display:none}
+.bpa.morski .morze{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.bpa.morski .morze canvas{position:absolute;inset:0;width:100%;height:100%;filter:saturate(.55) contrast(1.05)}
+.bpa.morski .morze::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,12,14,.08),rgba(10,12,14,.3) 70%,rgba(10,12,14,.6))}
+
+/* szkło: grafit, złota krawędź, prostsze rogi */
+.bpa.lp.szklo.czarny.morski .glass:not(.btn),
+.bpa.lp.szklo.czarny.morski .glass.hi,
+.bpa.lp.szklo.czarny.morski .side{
+  background:linear-gradient(160deg,rgba(28,31,35,.76),rgba(18,20,23,.68));
+  border:1px solid rgba(var(--ak-rgb),.22);
+  backdrop-filter:blur(22px) saturate(120%);-webkit-backdrop-filter:blur(22px) saturate(120%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 30px 70px -36px rgba(0,0,0,.9);
+}
+.bpa.lp.szklo.czarny.morski .card.hero{background:linear-gradient(160deg,rgba(20,23,27,.4),rgba(12,14,17,.55));border-color:rgba(var(--ak-rgb),.3)}
+.bpa.lp.szklo.czarny.morski .card{border-radius:18px}
+.bpa.lp.szklo.czarny.morski .card:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 30px 70px -30px rgba(0,0,0,1),0 0 0 1px rgba(var(--ak-rgb),.4)}
+.bpa.lp.szklo.czarny.morski .side{border-radius:18px}
+.bpa.lp.szklo.czarny.morski .chip{border-radius:12px}
+.bpa.lp.szklo.czarny.morski .chip:hover,.bpa.lp.szklo.czarny.morski .wyl:hover{background:rgba(var(--ak-rgb),.1)}
+
+/* pasek boczny */
+.bpa.lp.szklo.czarny.morski .me,.bpa.lp.szklo.czarny.morski .me.gora{border:1px solid rgba(var(--ak-rgb),.75);color:var(--ak-j);background:transparent;font-family:var(--font-bpa-head),"Cormorant Garamond",serif;font-weight:500;font-size:21px}
+.bpa.lp.szklo.czarny.morski .me.gora:hover{background:rgba(var(--ak-rgb),.12)}
+.bpa.lp.szklo.czarny.morski .nav{color:rgba(244,242,236,.5);border-radius:8px}
+.bpa.lp.szklo.czarny.morski .nav:hover{background:rgba(255,255,255,.07);color:#fff}
+.bpa.lp.szklo.czarny.morski .nav.on{color:var(--ak-j)}
+.bpa.lp.szklo.czarny.morski .nav.on::before{background:var(--ak);box-shadow:0 0 10px rgba(var(--ak-rgb),.6);width:2px}
+.bpa.lp.szklo.czarny.morski .sep{background:rgba(var(--ak-rgb),.22)}
+
+/* znak: złote kółko z literą + kreska + nazwa wersalikami (jak w nagłówku brokera) */
+.bpa.morski .znak{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.bpa.morski .znak .ring{width:40px;height:40px;border-radius:50%;border:1.5px solid rgba(var(--ak-rgb),.9);display:grid;place-items:center;position:relative;flex:0 0 auto}
+.bpa.morski .znak .ring::before{content:"";position:absolute;left:-7px;right:-7px;top:62%;height:1px;background:linear-gradient(90deg,rgba(var(--ak-rgb),.8) 0 26%,transparent 26% 74%,rgba(var(--ak-rgb),.8) 74%)}
+.bpa.morski .znak .ring b{font-family:var(--font-bpa-head),"Cormorant Garamond",serif;font-weight:500;font-size:24px;line-height:1;position:relative;z-index:1;padding:0 3px;transform:translateY(-1px);background:var(--zloto);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bpa.morski .znak .kreska{width:1px;height:34px;background:rgba(var(--ak-rgb),.5)}
+.bpa.morski .znak .nazwa{font-family:var(--font-bpa-head),"Cormorant Garamond",serif;font-size:21px;line-height:1;letter-spacing:.24em;text-transform:uppercase;color:#f4f2ec;font-weight:500}
+.bpa.morski .znak .nazwa small{display:block;font-size:12px;letter-spacing:.34em;margin-top:3px;color:var(--ak)}
+.bpa.morski .znak .haslo{font-size:13px;color:var(--muted);letter-spacing:.05em;margin-left:6px}
+
+/* typografia: serif w nagłówkach i liczbach, drobne podpisy wersalikami */
+.bpa.lp.szklo.czarny.morski .hello h1{font-family:var(--font-bpa-head),"Cormorant Garamond",serif;font-weight:500;font-size:36px;letter-spacing:-.005em;line-height:1.05}
+.bpa.lp.szklo.czarny.morski .hd h3,.bpa.lp.szklo.czarny.morski .mins h3{font-family:var(--font-bpa-head),"Cormorant Garamond",serif;font-weight:500;font-size:22px;letter-spacing:.01em}
+.bpa.lp.szklo.czarny.morski .sub,.bpa.lp.szklo.czarny.morski .crit .row,.bpa.lp.szklo.czarny.morski .crit .row span,.bpa.lp.szklo.czarny.morski .dni,.bpa.lp.szklo.czarny.morski .big .u,.bpa.lp.szklo.czarny.morski .prog .note{text-transform:uppercase;letter-spacing:.12em;font-size:10.5px}
+.bpa.lp.szklo.czarny.morski .big .u{font-size:12px;letter-spacing:.2em}
+.bpa.lp.szklo.czarny.morski .prog .note b{letter-spacing:.06em;font-size:11px}
+.bpa.lp.szklo.czarny.morski .chip b{font-family:var(--font-bpa-head),"Cormorant Garamond",serif;font-weight:500;font-size:30px;background:var(--zloto);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bpa.lp.szklo.czarny.morski .chip > span{font-weight:500;letter-spacing:.02em}
+.bpa.lp.szklo.czarny.morski .mins p{letter-spacing:.01em}
+.bpa.lp.szklo.czarny.morski .crit .row{color:rgba(244,242,236,.78)}
+.bpa.lp.szklo.czarny.morski .dni{color:rgba(244,242,236,.6)}
+.bpa.lp.szklo.czarny.morski .tip p{color:rgba(244,242,236,.86)}
+
+/* kółko planu i „Rozmawiaj”: złoto, prostokątny złoty przycisk z rozstrzelonym drukiem */
+.bpa.lp.szklo.czarny.morski .hero .plan-kolo-tlo{stroke:rgba(255,255,255,.1)}
+.bpa.lp.szklo.czarny.morski .hero .plan-kolo-pasek{stroke:var(--ak)}
+.bpa.lp.szklo.czarny.morski .hero .plan-kolo::before{background:radial-gradient(closest-side,rgba(var(--ak-rgb),.2),transparent 70%)}
+.bpa.lp.szklo.czarny.morski .hero .plan-kolo-tekst b{font-family:var(--font-bpa-head),"Cormorant Garamond",serif;font-weight:500;background:var(--zloto);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bpa.lp.szklo.czarny.morski .hero .plan-kolo-tekst b small{-webkit-text-fill-color:rgba(244,242,236,.55);color:rgba(244,242,236,.55)}
+.bpa.lp.szklo.czarny.morski .hero .plan-kolo-tekst span{text-transform:uppercase;letter-spacing:.16em;font-size:11px}
+.bpa.lp.szklo.czarny.morski .listen .lab{border-radius:4px;text-transform:uppercase;letter-spacing:.18em;font-size:12.5px;font-weight:600;padding:13px 30px;background:var(--zloto);color:#0f1113;box-shadow:0 12px 30px -14px rgba(var(--ak-rgb),.7)}
+.bpa.lp.szklo.czarny.morski .listen .lab:hover{filter:brightness(1.08)}
+
+/* reakcja na naciśnięcie (apple-design: feedback na pointer-down, nie na puszczenie) */
+.bpa.lp.szklo.czarny.morski .listen .lab,.bpa.lp.szklo.czarny.morski .btn,.bpa.lp.szklo.czarny.morski .toggle button,.bpa.lp.szklo.czarny.morski .seg button,.bpa.lp.szklo.czarny.morski .chip,.bpa.lp.szklo.czarny.morski .nav{transition:transform .12s ease-out,background .25s,color .25s,box-shadow .25s}
+.bpa.lp.szklo.czarny.morski .listen .lab:active,.bpa.lp.szklo.czarny.morski .btn:active,.bpa.lp.szklo.czarny.morski .toggle button:active,.bpa.lp.szklo.czarny.morski .seg button:active,.bpa.lp.szklo.czarny.morski .nav:active{transform:scale(.96)}
+
+/* drobne elementy: mniejsze promienie, złoto */
+.bpa.lp.szklo.czarny.morski .toggle button{border-radius:8px;font-family:var(--font-bpa-head),"Cormorant Garamond",serif;font-size:18px;font-weight:500}
+.bpa.lp.szklo.czarny.morski .seg,.bpa.lp.szklo.czarny.morski .badge,.bpa.lp.szklo.czarny.morski .tip .lab{border-radius:6px}
+.bpa.lp.szklo.czarny.morski .seg button{border-radius:4px;text-transform:uppercase;letter-spacing:.1em;font-size:10.5px}
+.bpa.lp.szklo.czarny.morski .badge{text-transform:uppercase;letter-spacing:.12em;font-size:11px}
+.bpa.lp.szklo.czarny.morski .badge i{background:var(--ak);box-shadow:0 0 8px rgba(var(--ak-rgb),.6)}
+.bpa.lp.szklo.czarny.morski .ico,.bpa.lp.szklo.czarny.morski .card .glass.ico{border-radius:8px;color:var(--ak)}
+.bpa.lp.szklo.czarny.morski .blk{border-radius:3px}
+.bpa.lp.szklo.czarny.morski .ticks i{border-radius:2px}
+.bpa.lp.szklo.czarny.morski .ticks i.f{background:linear-gradient(180deg,var(--ak-j),var(--ak-c))}
+.bpa.lp.szklo.czarny.morski .crit .row:hover .ticks i.f{background:#fff}
+.bpa.lp.szklo.czarny.morski .toggle button.on,.bpa.lp.szklo.czarny.morski .seg button.on,.bpa.lp.szklo.czarny.morski .pager .arr button:hover{background:var(--zloto);color:#0f1113}
+
+/* wykres: złoty */
+.bpa.lp.szklo.czarny.morski .wave path.ln{stroke:var(--ak-j)}
+.bpa.lp.szklo.czarny.morski .wave path.area{fill:rgba(var(--ak-rgb),.14)}
+.bpa.lp.szklo.czarny.morski .wave path[stroke="#a7f3d0"]{stroke:rgba(var(--ak-rgb),.35)}
+.bpa.lp.szklo.czarny.morski .wave line[stroke="#a7f3d0"]{stroke:var(--ak)}
+.bpa.lp.szklo.czarny.morski .wave circle[fill="#fff"]{fill:#15181b;stroke:var(--ak-j)}
+.bpa.lp.szklo.czarny.morski .goal{color:var(--ak)}
+.bpa.lp.szklo.czarny.morski .dni .on{color:var(--ak-j)}
+.bpa.lp.szklo.czarny.morski .tt{background:#f4f2ec;color:#0f1113}
+.bpa.lp.szklo.czarny.morski .mnav a.on{background:var(--zloto);color:#0f1113}
+
+@media (prefers-reduced-transparency:reduce){
+  .bpa.lp.szklo.czarny.morski .glass:not(.btn),.bpa.lp.szklo.czarny.morski .side,.bpa.lp.szklo.czarny.morski .card.hero{background:#1a1d21;backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+@media (max-width:620px){
+  .bpa.morski .znak .haslo{display:none}
+  .bpa.lp.szklo.czarny.morski .hello h1{font-size:28px}
+}
+
+/* ---------- 27.10 (USER_001: „złoty i pomarańcz nie pasują, może cienki szary, metaliczny?”): 3 akcenty ----------
+   /podglad/bruno-panel-morski/stal · /szampan · /lod */
+.bpa.lp.szklo.czarny.morski.morski-stal{--ak:#b8c0c8;--ak-j:#eef1f4;--ak-c:#7d8791;--ak-rgb:184,192,200}
+.bpa.lp.szklo.czarny.morski.morski-szampan{--ak:#d6cdbb;--ak-j:#f5f0e6;--ak-c:#9c927d;--ak-rgb:214,205,187}
+.bpa.lp.szklo.czarny.morski.morski-lod{--ak:#9fb3c8;--ak-j:#dbe6f0;--ak-c:#5f7890;--ak-rgb:159,179,200}
+/* ciemny tekst na jasnym akcencie (przyciski, aktywne zakładki) */
+.bpa.lp.szklo.czarny.morski .listen .lab,.bpa.lp.szklo.czarny.morski .toggle button.on,.bpa.lp.szklo.czarny.morski .seg button.on,.bpa.lp.szklo.czarny.morski .pager .arr button:hover,.bpa.lp.szklo.czarny.morski .mnav a.on{color:#0f1113}
+
+/* ---------- 27.10 (USER_001): REVOLUT (/podglad/bruno-panel-revolut) ----------
+   Jasne tło, białe karty z dużym promieniem bez ramki, czarny tekst, gruby Inter z ciasnym trackingiem,
+   czarne pigułki jako przyciski, niebieski akcent w liczbach i wykresie, pastelowy holograficzny gradient na karcie z kółkiem. */
+.bpa.lp.revolut{
+  --ink:#191c1f;--muted:#6f7681;--stroke:transparent;--green:#0a6cff;--green-2:#0557d1;--mint:#0a6cff;--deep:#191c1f;
+  color:var(--ink);background:#f3f4f6;
+}
+.bpa.lp.revolut .glass,.bpa.lp.revolut .glass.hi{background:#fff;border:0;box-shadow:0 1px 2px rgba(25,28,31,.04),0 8px 24px -18px rgba(25,28,31,.18)}
+.bpa.lp.revolut .card{border-radius:24px}
+.bpa.lp.revolut .card:hover{transform:none;box-shadow:0 1px 2px rgba(25,28,31,.05),0 16px 40px -24px rgba(25,28,31,.25)}
+.bpa.lp.revolut .side{background:#fff;border:0;border-radius:24px;box-shadow:0 1px 2px rgba(25,28,31,.04)}
+.bpa.lp.revolut .logo{background:#191c1f}
+.bpa.lp.revolut .logo i{background:#fff;box-shadow:none;animation:none;width:12px;height:12px}
+.bpa.lp.revolut .nav{color:#8a919c;border-radius:14px}
+.bpa.lp.revolut .nav:hover{background:#f3f4f6;color:#191c1f;transform:none}
+.bpa.lp.revolut .nav.on{color:#191c1f;background:#f3f4f6}
+.bpa.lp.revolut .nav.on::before{display:none}
+.bpa.lp.revolut .sep{background:#eceef1}
+.bpa.lp.revolut .me{border:0;background:#191c1f;color:#fff;font-weight:600}
+.bpa.lp.revolut h1,.bpa.lp.revolut h2,.bpa.lp.revolut h3{font-family:var(--font-bpa),"Inter",system-ui,sans-serif}
+.bpa.lp.revolut .hello h1{font-weight:700;font-size:32px;letter-spacing:-.03em}
+.bpa.lp.revolut .hd h3,.bpa.lp.revolut .mins h3{font-weight:600;font-size:17px;letter-spacing:-.015em}
+.bpa.lp.revolut .sub{font-size:13px}
+.bpa.lp.revolut .chip{background:#fff;border-radius:18px;padding:12px 18px 12px 14px}
+.bpa.lp.revolut .chip:hover{background:#fff;transform:translateY(-1px)}
+.bpa.lp.revolut .chip b{font-weight:700;letter-spacing:-.04em;font-size:26px}
+.bpa.lp.revolut .chip > span{font-weight:500;color:#191c1f}
+.bpa.lp.revolut .wyl:hover{background:#eceef1}
+/* karta z kółkiem: pastelowy gradient Revoluta */
+.bpa.lp.revolut .card.hero{background:linear-gradient(135deg,#e9efff 0%,#f1ecff 48%,#ffeef4 100%);border:0}
+.bpa.lp.revolut .hero .plan-kolo-tlo{stroke:rgba(25,28,31,.08)}
+.bpa.lp.revolut .hero .plan-kolo-pasek{stroke:#0a6cff}
+.bpa.lp.revolut .hero .plan-kolo::before{background:radial-gradient(closest-side,rgba(255,255,255,.7),transparent 70%)}
+.bpa.lp.revolut .hero .plan-kolo-tekst b{font-weight:700;letter-spacing:-.05em;color:#191c1f}
+.bpa.lp.revolut .hero .plan-kolo-tekst small{color:#6f7681;opacity:1;font-weight:500}
+.bpa.lp.revolut .hero .plan-kolo-tekst span{color:#6f7681;opacity:1;font-weight:500;font-size:13px}
+.bpa.lp.revolut .listen .lab{background:#191c1f;color:#fff;border:0;border-radius:999px;font-size:15px;font-weight:600;padding:14px 32px;backdrop-filter:none;-webkit-backdrop-filter:none;transition:transform .12s ease-out,background .2s}
+.bpa.lp.revolut .listen .lab:hover{background:#2b2f34}
+.bpa.lp.revolut .listen .lab:active{transform:scale(.96)}
+/* plan dnia */
+.bpa.lp.revolut .badge{background:#f3f4f6;font-weight:600;color:#191c1f}
+.bpa.lp.revolut .badge i{background:#0a6cff;box-shadow:none}
+.bpa.lp.revolut .blk{background:#f3f4f6;border:0;border-radius:6px}
+.bpa.lp.revolut .blk::after{background:#0a6cff}
+.bpa.lp.revolut .blk.f{box-shadow:none}
+.bpa.lp.revolut .toggle button{background:#f3f4f6;border:0;font-weight:600;transition:transform .12s ease-out,background .2s,color .2s}
+.bpa.lp.revolut .toggle button:hover{background:#e6e8ec;transform:none}
+.bpa.lp.revolut .toggle button:active{transform:scale(.94)}
+.bpa.lp.revolut .toggle button.on{background:#191c1f;color:#fff}
+.bpa.lp.revolut .big .n{font-family:var(--font-bpa),"Inter",sans-serif;font-weight:700;letter-spacing:-.05em;text-shadow:none;color:#191c1f}
+.bpa.lp.revolut .big .u{font-weight:500;font-size:15px}
+/* oceny i wykres */
+.bpa.lp.revolut .ico{background:#f3f4f6;color:#191c1f;border-radius:14px}
+.bpa.lp.revolut .seg{background:#f3f4f6;border:0}
+.bpa.lp.revolut .seg button{font-weight:600}
+.bpa.lp.revolut .seg button.on{background:#191c1f;color:#fff}
+.bpa.lp.revolut .score,.bpa.lp.revolut .prog .pct,.bpa.lp.revolut .pager .c,.bpa.lp.revolut .hd .r{font-family:var(--font-bpa),"Inter",sans-serif;font-weight:700;letter-spacing:-.05em}
+.bpa.lp.revolut .crit .row{color:#191c1f;font-weight:500}
+.bpa.lp.revolut .ticks i{background:#f3f4f6;border-radius:3px}
+.bpa.lp.revolut .ticks i.f{background:#0a6cff;box-shadow:none}
+.bpa.lp.revolut .crit .row:hover .ticks i.f{background:#191c1f}
+.bpa.lp.revolut .wave path.ln{stroke:#0a6cff}
+.bpa.lp.revolut .wave path.area{fill:rgba(10,108,255,.1)}
+.bpa.lp.revolut .wave path[stroke="#a7f3d0"]{stroke:rgba(10,108,255,.25)}
+.bpa.lp.revolut .wave line[stroke="#a7f3d0"]{stroke:#c9ced6}
+.bpa.lp.revolut .wave line[stroke="#fff"]{stroke:#c9ced6}
+.bpa.lp.revolut .wave path[stroke="#fff"]{stroke:#d9dde3}
+.bpa.lp.revolut .wave circle[fill="#fff"]{stroke:#0a6cff}
+.bpa.lp.revolut .goal{color:#6f7681}
+.bpa.lp.revolut .dni{color:#8a919c;font-weight:500}
+.bpa.lp.revolut .dni .on{color:#191c1f}
+.bpa.lp.revolut .prog .note{color:#6f7681}
+.bpa.lp.revolut .prog .note b{color:#191c1f;font-weight:600}
+.bpa.lp.revolut .tt{background:#191c1f;color:#fff;border:0;border-radius:12px}
+.bpa.lp.revolut .mnav a{background:#fff;font-weight:600}
+.bpa.lp.revolut .mnav a.on{background:#191c1f;border-color:#191c1f;color:#fff}
+
+/* ---------- 27.10 (USER_001: „lód, ale na biało”): MORSKI BIAŁY (/podglad/bruno-panel-morski/lod-bialy) ----------
+   To samo co morski (serif, wersaliki, kółko), ale: morze rozjaśnione mleczną mgłą, białe szkło, ciemny grafitowy tekst,
+   akcent = ciemniejszy stalowy błękit (żeby było go widać na bieli). Klasa nakłada się na .morski.morski-lod. */
+.bpa.lp.szklo.czarny.morski.morski-bialy{
+  --ink:#1c2128;--muted:rgba(28,33,40,.6);--deep:#1c2128;
+  --ak:#5f7890;--ak-j:#8ea3b8;--ak-c:#3f5468;--ak-rgb:95,120,144;
+  --green:var(--ak);--green-2:var(--ak-c);--mint:var(--ak);
+  color:var(--ink);background:#e9edf1;
+}
+.bpa.lp.szklo.czarny.morski.morski-bialy .morze canvas{filter:saturate(.35) contrast(.95) brightness(1.15)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .morze::after{background:linear-gradient(180deg,rgba(236,240,244,.62),rgba(236,240,244,.74) 60%,rgba(236,240,244,.86))}
+
+/* białe szkło */
+.bpa.lp.szklo.czarny.morski.morski-bialy .glass:not(.btn),
+.bpa.lp.szklo.czarny.morski.morski-bialy .glass.hi,
+.bpa.lp.szklo.czarny.morski.morski-bialy .side{
+  background:linear-gradient(160deg,rgba(255,255,255,.82),rgba(255,255,255,.66));
+  border:1px solid rgba(var(--ak-rgb),.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 24px 60px -36px rgba(28,33,40,.35);
+}
+.bpa.lp.szklo.czarny.morski.morski-bialy .card.hero{background:linear-gradient(160deg,rgba(255,255,255,.6),rgba(255,255,255,.42));border-color:rgba(var(--ak-rgb),.38)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .card:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 30px 70px -34px rgba(28,33,40,.4),0 0 0 1px rgba(var(--ak-rgb),.45)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .chip:hover,.bpa.lp.szklo.czarny.morski.morski-bialy .wyl:hover{background:rgba(255,255,255,.95)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .hello h1,.bpa.lp.szklo.czarny.morski.morski-bialy .hero h2{color:var(--ink);text-shadow:none}
+
+/* pasek boczny i znak */
+.bpa.lp.szklo.czarny.morski.morski-bialy .me,.bpa.lp.szklo.czarny.morski.morski-bialy .me.gora{border-color:rgba(var(--ak-rgb),.8);color:var(--ak-c)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .me.gora:hover{background:rgba(var(--ak-rgb),.12)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .nav{color:rgba(28,33,40,.5)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .nav:hover{background:rgba(var(--ak-rgb),.1);color:var(--ink)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .nav.on{color:var(--ak-c)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .nav.on::before{background:var(--ak-c);box-shadow:none}
+.bpa.lp.szklo.czarny.morski.morski-bialy .sep{background:rgba(var(--ak-rgb),.3)}
+.bpa.morski.morski-bialy .znak .ring{border-color:rgba(var(--ak-rgb),.95)}
+.bpa.morski.morski-bialy .znak .ring::before{background:linear-gradient(90deg,rgba(var(--ak-rgb),.9) 0 26%,transparent 26% 74%,rgba(var(--ak-rgb),.9) 74%)}
+.bpa.morski.morski-bialy .znak .kreska{background:rgba(var(--ak-rgb),.6)}
+.bpa.morski.morski-bialy .znak .nazwa{color:var(--ink)}
+.bpa.morski.morski-bialy .znak .nazwa small{color:var(--ak-c)}
+
+/* tekst w kafelkach */
+.bpa.lp.szklo.czarny.morski.morski-bialy .crit .row{color:rgba(28,33,40,.72)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .dni{color:rgba(28,33,40,.55)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .dni .on{color:var(--ak-c)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .tip p{color:rgba(28,33,40,.85)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .prog .note b{color:var(--ink)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .score small,.bpa.lp.szklo.czarny.morski.morski-bialy .big .u{color:var(--muted);-webkit-text-fill-color:var(--muted)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .hero .plan-kolo-tekst b small{-webkit-text-fill-color:rgba(28,33,40,.5);color:rgba(28,33,40,.5)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .hero .plan-kolo-tlo{stroke:rgba(28,33,40,.08)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .hero .plan-kolo::before{background:radial-gradient(closest-side,rgba(255,255,255,.8),transparent 70%)}
+
+/* elementy: białe mleczne pola, ciemny stalowy błękit na aktywnych, biały tekst na akcencie */
+.bpa.lp.szklo.czarny.morski.morski-bialy .tip,
+.bpa.lp.szklo.czarny.morski.morski-bialy .badge,
+.bpa.lp.szklo.czarny.morski.morski-bialy .seg,
+.bpa.lp.szklo.czarny.morski.morski-bialy .ico,
+.bpa.lp.szklo.czarny.morski.morski-bialy .card .glass.ico,
+.bpa.lp.szklo.czarny.morski.morski-bialy .toggle button:not(.on),
+.bpa.lp.szklo.czarny.morski.morski-bialy .pager .arr button,
+.bpa.lp.szklo.czarny.morski.morski-bialy .blk,
+.bpa.lp.szklo.czarny.morski.morski-bialy .card .glass.tip,
+.bpa.lp.szklo.czarny.morski.morski-bialy .card .glass.badge,
+.bpa.lp.szklo.czarny.morski.morski-bialy .card .glass.seg{background:rgba(var(--ak-rgb),.08);border-color:rgba(var(--ak-rgb),.18)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .ticks i{background:rgba(var(--ak-rgb),.12)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .ticks i.f{background:linear-gradient(180deg,var(--ak-j),var(--ak-c))}
+.bpa.lp.szklo.czarny.morski.morski-bialy .crit .row:hover .ticks i.f{background:var(--ink)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .seg button{color:var(--muted)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .tip .lab{background:rgba(255,255,255,.9);color:var(--ink)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .listen .lab,
+.bpa.lp.szklo.czarny.morski.morski-bialy .toggle button.on,
+.bpa.lp.szklo.czarny.morski.morski-bialy .seg button.on,
+.bpa.lp.szklo.czarny.morski.morski-bialy .pager .arr button:hover,
+.bpa.lp.szklo.czarny.morski.morski-bialy .mnav a.on{background:linear-gradient(135deg,var(--ak) 0%,var(--ak-c) 100%);color:#fff}
+.bpa.lp.szklo.czarny.morski.morski-bialy .listen .lab{box-shadow:0 12px 30px -14px rgba(var(--ak-rgb),.8)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .mnav a{background:rgba(255,255,255,.8);color:var(--ink)}
+
+/* wykres */
+.bpa.lp.szklo.czarny.morski.morski-bialy .wave path.ln{stroke:var(--ak-c)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .wave path.area{fill:rgba(var(--ak-rgb),.16)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .wave path[stroke="#a7f3d0"]{stroke:rgba(var(--ak-rgb),.3)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .wave path[stroke="#fff"]{stroke:rgba(28,33,40,.2)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .wave line[stroke="#a7f3d0"]{stroke:var(--ak)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .wave line[stroke="#fff"]{stroke:rgba(28,33,40,.3)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .wave circle[fill="#fff"]{fill:#fff;stroke:var(--ak-c)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .goal{color:var(--ak-c)}
+.bpa.lp.szklo.czarny.morski.morski-bialy .tt{background:var(--ink);color:#fff}
+@media (prefers-reduced-transparency:reduce){
+  .bpa.lp.szklo.czarny.morski.morski-bialy .glass:not(.btn),.bpa.lp.szklo.czarny.morski.morski-bialy .side,.bpa.lp.szklo.czarny.morski.morski-bialy .card.hero{background:#fff}
+}

@@ -11,6 +11,8 @@ import dynamic from "next/dynamic";
 
 // 10.10 (USER_001): wariant „lp” = kolory i styl strony /brunoai; zamiast kuli fala głosu z nagłówka strony.
 const FalaGlosu = dynamic(() => import("@/components/podglad/bruno-lp/voice-canvas"), { ssr: false });
+// 27.10 (USER_001): wariant „morski” (styl Attis Broker) = sztormowe morze w tle.
+const Morze = dynamic(() => import("./morze"), { ssr: false });
 
 // Wersja A panelu Bruno (6.10): wzór fitness-dashboard.html (jasny, zieleń Bruno,
 // pasek ikon z lewej, karta z kulą głosu). Dane = prawdziwy panel.
@@ -321,7 +323,7 @@ function Fala({ d }: { d: DanePanelu }) {
 }
 
 /* ---------- Strona ---------- */
-export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false, zielony = false, szklo = false, zloty = false, bialoZloty = false, asset = false, pelny = false, dostep, free, logo = null }: { d: DanePanelu; jasne?: boolean; bialeTlo?: boolean; lp?: boolean; zielony?: boolean; szklo?: boolean; zloty?: boolean; bialoZloty?: boolean; /** 25.10: motyw Asset (lib/bruno/motyw.ts), fala w fiolecie. */ asset?: boolean; pelny?: boolean; dostep?: DostepLinkow; free?: { zuzyte: number; zostalo: number } | null; /** 25.10: logo firmy w kółku paska zamiast inicjału. */ logo?: { url: string | null; nazwa: string } | null }) {
+export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false, zielony = false, szklo = false, zloty = false, bialoZloty = false, asset = false, morski = false, klasa = "", pelny = false, dostep, free, logo = null }: { d: DanePanelu; jasne?: boolean; bialeTlo?: boolean; lp?: boolean; zielony?: boolean; szklo?: boolean; zloty?: boolean; bialoZloty?: boolean; /** 25.10: motyw Asset (lib/bruno/motyw.ts), fala w fiolecie. */ asset?: boolean; /** 27.10: styl Attis Broker: grafit, srebro, serif, sztormowe morze w tle (razem z lp + szklo + zloty). */ morski?: boolean; /** 27.10: dodatkowa klasa motywu (akcent morskiego: morski-stal / morski-szampan / morski-lod; albo revolut). */ klasa?: string; pelny?: boolean; dostep?: DostepLinkow; free?: { zuzyte: number; zostalo: number } | null; /** 25.10: logo firmy w kółku paska zamiast inicjału. */ logo?: { url: string | null; nazwa: string } | null }) {
   // 10.10: prawdziwy panel podaje `dostep` (free bez Statystyk); podglądy dalej `pelny`.
   const { t, jezyk } = useT();
   const linki = linkiDla(dostep ?? pelny, jezyk);
@@ -334,7 +336,8 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
   void free;
 
   return (
-    <div className={`bpa ${jasne ? "jasne" : ""} ${bialeTlo ? "bialetlo" : ""} ${lp ? "lp" : ""} ${zielony ? "zielony" : ""} ${szklo ? "szklo" : ""} ${zloty ? "czarny" : ""} ${bialoZloty ? "zlotyj" : ""}`}>
+    <div className={`bpa ${jasne ? "jasne" : ""} ${bialeTlo ? "bialetlo" : ""} ${lp ? "lp" : ""} ${zielony ? "zielony" : ""} ${szklo ? "szklo" : ""} ${zloty ? "czarny" : ""} ${bialoZloty ? "zlotyj" : ""} ${morski ? "morski" : ""} ${klasa}`}>
+      {morski && <Morze />}
       <div className="app">
         <aside className="side">
           {/* 10.10 (USER_001): w czarno-złotym kółko z inicjałem na górze zamiast kropki logo, na dole go nie ma. */}
@@ -363,6 +366,14 @@ export default function PanelA({ d, jasne = false, bialeTlo = false, lp = false,
         <main>
           <header className="top">
             <div className="hello">
+              {morski && (
+                <div className="znak" aria-label="Bruno AI">
+                  <span className="ring"><b>B</b></span>
+                  <span className="kreska" aria-hidden />
+                  <span className="nazwa">Bruno<small>AI</small></span>
+                  <span className="haslo">{t("Sales coach for your team", "Trener handlowców")}</span>
+                </div>
+              )}
               <h1>{powitanie}</h1>
             </div>
             <div className="sp" />

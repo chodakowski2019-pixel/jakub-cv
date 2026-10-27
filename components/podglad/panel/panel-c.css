@@ -1,0 +1,189 @@
+/* Wersja C panelu Bruno (27.10): kokpit Alexatel + wykresy Rabbet + pasek exon. Wszystko pod .bpc.
+   Motyw ciemny domyślnie, .jasny = biały. */
+.bpc{
+  --tlo:#141416;--pole:#1b1b1e;--karta:#232327;--karta-2:#2a2a2f;--linia:rgba(255,255,255,.07);
+  --ink:#f2f2f4;--muted:#9a9aa3;--slaby:#6c6c75;
+  --lila:#b9a7f7;--roz:#f0a6d6;--brzo:#f5c7ae;--nieb-j:#9db4ff;
+  --lim:#d6ff4b;--nieb:#6f8dff;--czer:#ff5c5c;
+  --ziel-tlo:#223a2c;--ziel:#bfe8c9;--fiol-tlo:#3a2b47;--fiol:#e4cdf5;
+  --r:20px;
+  min-height:100vh;background:var(--tlo);color:var(--ink);font-family:var(--font-bpc),"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+}
+.bpc.jasny{
+  --tlo:#eef0f3;--pole:#f6f7f9;--karta:#ffffff;--karta-2:#f1f2f5;--linia:rgba(20,20,22,.07);
+  --ink:#141416;--muted:#6b6b74;--slaby:#9a9aa3;
+  --lila:#7c5cf0;--roz:#e06ab8;--brzo:#f0956a;--nieb-j:#3b6cff;
+  --lim:#86b900;--nieb:#3b6cff;--czer:#ef4444;
+  --ziel-tlo:#dff5e5;--ziel:#1e6b3a;--fiol-tlo:#ece2fb;--fiol:#5b3ea8;
+}
+.bpc *{box-sizing:border-box;margin:0;padding:0}
+.bpc a{color:inherit;text-decoration:none}
+.bpc button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.bpc input{font:inherit;color:inherit;border:0;background:none;outline:none;width:100%}
+.bpc input::placeholder{color:var(--slaby)}
+.bpc h3{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.bpc .ukl{display:flex;min-height:100vh}
+
+/* ---------- 3. pasek (exon) ---------- */
+.bpc .pasek{width:224px;flex:0 0 224px;padding:22px 14px 16px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh;border-right:1px solid var(--linia)}
+.bpc .logo{display:flex;align-items:center;gap:10px;padding:0 8px 22px;font-size:19px;font-weight:700;letter-spacing:-.02em}
+.bpc .logo i{width:26px;height:26px;border-radius:8px;background:radial-gradient(circle at 35% 35%,var(--lila),var(--roz));display:block}
+.bpc .logo img{width:26px;height:26px;border-radius:8px;object-fit:cover}
+.bpc .logo span{color:var(--lila);margin-left:4px;font-weight:600}
+.bpc nav{display:flex;flex-direction:column;gap:2px}
+.bpc nav a{display:flex;align-items:center;gap:10px;height:38px;padding:0 10px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--muted);transition:background .15s,color .15s,transform .12s ease-out}
+.bpc nav a:hover{background:var(--karta);color:var(--ink)}
+.bpc nav a:active{transform:scale(.98)}
+.bpc nav a.on{background:var(--karta-2);color:var(--ink);font-weight:600}
+.bpc.jasny nav a.on{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.bpc nav a span{flex:1}
+.bpc nav .live{font-size:10.5px;font-weight:700;background:#1f8a4c;color:#fff;padding:2px 7px;border-radius:99px;letter-spacing:.02em}
+.bpc nav .kropa{width:7px;height:7px;border-radius:50%;background:#f5c542;margin-right:4px}
+.bpc .grow{flex:1}
+.bpc .dol a{height:34px}
+.bpc .plan{margin-top:10px;border-radius:14px;padding:14px;background:linear-gradient(135deg,#2c57d6,#4f7cf0 60%,#6c93f7);color:#fff;box-shadow:0 12px 30px -16px rgba(44,87,214,.8)}
+.bpc .plan b{font-size:14px;font-weight:700;display:block}
+.bpc .plan p{font-size:12px;opacity:.85;margin:4px 0 12px;line-height:1.4}
+.bpc .plan .btn{display:block;text-align:center;background:#fff;color:#1f3f9c;font-weight:600;font-size:13px;height:34px;line-height:34px;border-radius:8px;transition:transform .12s ease-out,filter .15s}
+.bpc .plan .btn:hover{filter:brightness(1.05)}
+.bpc .plan .btn:active{transform:scale(.97)}
+.bpc .ja{display:flex;align-items:center;gap:10px;padding:14px 6px 0}
+.bpc .ja div{flex:1;min-width:0;line-height:1.2}
+.bpc .ja b{font-size:13px;font-weight:600;display:block}
+.bpc .ja small{font-size:11.5px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bpc .ja button{color:var(--muted);width:30px;height:30px;border-radius:8px;display:grid;place-items:center}
+.bpc .ja button:hover{background:var(--karta);color:var(--ink)}
+.bpc .aw{width:34px;height:34px;border-radius:50%;display:inline-grid;place-items:center;font-weight:700;font-size:13px;background:linear-gradient(135deg,var(--lila),var(--roz));color:#1b1b1e;flex:0 0 auto}
+.bpc.jasny .aw{color:#fff}
+.bpc .aw.duzy{width:40px;height:40px;font-size:15px}
+.bpc .aw.bruno{background:radial-gradient(circle at 35% 35%,#fff,var(--lila) 60%,#6a4fd8)}
+
+/* ---------- 1. kokpit (Alexatel) ---------- */
+.bpc main{flex:1;min-width:0;padding:18px 24px 28px}
+.bpc .gora{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.bpc .gora h1{font-size:26px;font-weight:600;letter-spacing:-.02em;flex:1}
+.bpc .szukaj{display:flex;align-items:center;gap:10px;width:300px;height:44px;padding:0 18px;border-radius:99px;background:var(--karta);color:var(--muted)}
+.bpc.jasny .szukaj{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.bpc .okr{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--ink);background:var(--karta);transition:transform .12s ease-out,background .15s}
+.bpc .okr:hover{background:var(--karta-2)}
+.bpc .okr:active{transform:scale(.94)}
+.bpc .kol{display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start}
+.bpc .lewa{background:var(--pole);border-radius:26px;padding:18px;display:flex;flex-direction:column;gap:16px}
+.bpc.jasny .lewa{background:#e6e8ec}
+
+/* kafle z ✓ */
+.bpc .kafle{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.bpc .kafel{background:var(--karta);border-radius:var(--r);padding:18px 18px 16px;transition:transform .15s ease-out,background .15s}
+.bpc .kafel:hover{transform:translateY(-2px);background:var(--karta-2)}
+.bpc .kafel:active{transform:scale(.985)}
+.bpc .kafel-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px}
+.bpc .ik{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#1b1b1e}
+.bpc .ik.lila{background:var(--lila)}.bpc .ik.nieb{background:var(--nieb-j)}.bpc .ik.brzo{background:var(--brzo)}
+.bpc.jasny .ik{color:#fff}
+.bpc .kafel ul{list-style:none;display:grid;gap:8px}
+.bpc .kafel li{display:flex;gap:8px;font-size:12px;color:var(--muted);line-height:1.35}
+.bpc .chk{width:14px;height:14px;border-radius:50%;border:1.4px solid var(--muted);flex:0 0 auto;position:relative;margin-top:1px}
+.bpc .chk::after{content:"";position:absolute;left:3.5px;top:1.5px;width:4px;height:7px;border:solid var(--muted);border-width:0 1.4px 1.4px 0;transform:rotate(45deg)}
+
+/* karty */
+.bpc .karta{background:var(--karta);border-radius:var(--r);padding:18px 20px}
+.bpc .hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.bpc .przyk{font-size:10.5px;font-weight:600;color:var(--slaby);margin-left:8px;text-transform:uppercase;letter-spacing:.08em}
+.bpc .zak{display:flex;gap:18px;font-size:14px}
+.bpc .zak button{color:var(--muted);padding:4px 0;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.bpc .zak button.on{color:var(--ink);border-color:var(--lila)}
+.bpc .kropki{color:var(--muted);letter-spacing:1px}
+
+/* 2. wykres liniowy (Rabbet) */
+.bpc .wyk-wrap{position:relative}
+.bpc .wyk{display:block;width:100%;height:auto;touch-action:pan-y}
+.bpc .siatka{stroke:var(--linia)}
+.bpc .os{font-size:10.5px;fill:var(--slaby)}
+.bpc .kursor{stroke:var(--muted);stroke-dasharray:3 4}
+.bpc .kropka{fill:var(--karta);stroke-width:2.2}
+.bpc .tt{position:absolute;top:8px;transform:translateX(-50%);pointer-events:none;opacity:0;transition:opacity .15s;background:var(--karta-2);border:1px solid var(--linia);border-radius:10px;padding:8px 10px;font-size:11.5px;display:grid;gap:3px;white-space:nowrap;box-shadow:0 10px 30px -14px rgba(0,0,0,.6)}
+.bpc.jasny .tt{background:#fff}
+.bpc .tt.on{opacity:1}
+.bpc .tt b{font-size:12px}
+.bpc .tt span{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.bpc .tt i{width:7px;height:7px;border-radius:50%}
+.bpc .legenda{display:flex;gap:22px;justify-content:center;margin-top:8px;font-size:12px;color:var(--muted)}
+.bpc .legenda span{display:flex;align-items:center;gap:6px}
+.bpc .legenda .m{width:9px;height:9px;border-radius:50%;border:2px solid;background:var(--karta)}
+.bpc .legenda em{width:14px;height:2px;display:block}
+.bpc .legenda .m + em{margin-left:-8px;width:10px}
+
+/* lista wierszy (Current Partnerships) */
+.bpc .lista{display:grid;gap:10px}
+.bpc .lista h3{margin:4px 0 2px;font-size:19px}
+.bpc .wiersz{display:grid;grid-template-columns:44px 1.1fr 1.6fr auto;align-items:center;gap:16px;background:var(--karta);border-radius:16px;padding:12px 16px;transition:background .15s}
+.bpc .wiersz:hover{background:var(--karta-2)}
+.bpc .ik-okr{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff}
+.bpc .kto b{display:block;font-size:14.5px;font-weight:600}
+.bpc .kto small{color:var(--muted);font-size:12px}
+.bpc .opis span{display:block;font-size:13.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bpc .opis .link{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--lila);margin-top:3px}
+.bpc .pig{font-size:13px;font-weight:600;padding:9px 16px;border-radius:99px;white-space:nowrap}
+.bpc .pig.ziel{background:var(--ziel-tlo);color:var(--ziel)}
+.bpc .pig.fiol{background:var(--fiol-tlo);color:var(--fiol)}
+
+/* prawa kolumna */
+.bpc .prawa{display:grid;gap:12px;align-content:start;padding-top:6px}
+.bpc .prawa h3{font-size:16px;margin-top:8px}
+.bpc .prawa .hd{margin:0}
+.bpc .plus{font-size:12.5px;color:var(--lila);font-weight:600}
+.bpc .operator{display:flex;align-items:center;gap:10px;background:var(--lila);color:#1b1b1e;border-radius:12px;padding:10px 12px;font-size:13.5px;transition:transform .12s ease-out,filter .15s}
+.bpc.jasny .operator{color:#fff}
+.bpc .operator b{flex:1;font-weight:600}
+.bpc .operator i{font-style:normal;letter-spacing:1px}
+.bpc .operator:hover{filter:brightness(1.05)}
+.bpc .operator:active{transform:scale(.98)}
+.bpc .operator .aw{background:#fff;color:#4a35b8}
+
+/* radar (Rabbet) */
+.bpc .radar svg{width:100%;height:auto;display:block}
+.bpc .siatka-r{fill:none;stroke:var(--linia)}
+.bpc .r-naz{font-size:10.5px;fill:var(--muted)}
+.bpc .r-wart{font-size:12px;font-weight:700}
+.bpc .r-roz{font-size:9.5px;font-weight:500}
+.bpc .radar .legenda{margin-top:2px;gap:16px}
+
+/* wiadomości (Messages) */
+.bpc .wiad{list-style:none;display:grid;gap:12px}
+.bpc .wiad li{display:flex;align-items:center;gap:10px}
+.bpc .aw.mala{width:32px;height:32px;font-size:12.5px;background:var(--karta-2);color:var(--ink)}
+.bpc .aw.mala.ok{background:var(--ziel-tlo);color:var(--ziel)}
+.bpc .aw.mala.zle{background:#4a2630;color:#ffb3b3}
+.bpc.jasny .aw.mala.zle{background:#fde2e2;color:#b42318}
+.bpc .wiad b{font-size:13px;font-weight:600;display:block}
+.bpc .wiad small{font-size:12px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:230px}
+
+/* wpis (Update News) i żetony (Send Messages) */
+.bpc .wpis{display:flex;align-items:center;gap:8px;background:var(--karta);border-radius:12px;padding:0 10px 0 14px;height:42px;font-size:12.5px}
+.bpc.jasny .wpis{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.bpc .wpis button{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--muted)}
+.bpc .wpis button:hover{color:var(--ink);background:var(--karta-2)}
+.bpc .zetony{display:flex;flex-wrap:wrap;gap:8px}
+.bpc .zetony > span{display:inline-flex;align-items:center;gap:7px;background:var(--karta);border-radius:99px;padding:4px 8px 4px 4px;font-size:12.5px;font-weight:500}
+.bpc.jasny .zetony > span{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.bpc .aw.mini{width:24px;height:24px;font-size:13px;font-style:normal}
+.bpc .zetony button{color:var(--muted);font-size:14px;line-height:1;padding:0 2px}
+.bpc .zetony button:hover{color:var(--ink)}
+
+@keyframes bpc-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.bpc .kafel,.bpc .karta,.bpc .wiersz,.bpc .prawa > *{animation:bpc-rise .6s cubic-bezier(.2,.8,.2,1) both}
+.bpc .kafle .kafel:nth-child(2){animation-delay:.05s}.bpc .kafle .kafel:nth-child(3){animation-delay:.1s}
+.bpc .wykres{animation-delay:.12s}.bpc .lista .wiersz:nth-child(2){animation-delay:.16s}.bpc .lista .wiersz:nth-child(3){animation-delay:.2s}.bpc .lista .wiersz:nth-child(4){animation-delay:.24s}.bpc .lista .wiersz:nth-child(5){animation-delay:.28s}
+@media (prefers-reduced-motion:reduce){.bpc *{animation:none!important;transition:none!important}}
+
+@media (max-width:1200px){.bpc .kol{grid-template-columns:1fr}.bpc .prawa{grid-template-columns:1fr 1fr;column-gap:22px}.bpc .prawa h3{grid-column:1/-1}}
+@media (max-width:980px){.bpc .pasek{display:none}.bpc .szukaj{width:200px}}
+@media (max-width:720px){
+  .bpc main{padding:14px}
+  .bpc .kafle{grid-template-columns:1fr}
+  .bpc .wiersz{grid-template-columns:40px 1fr auto;row-gap:6px}
+  .bpc .wiersz .opis{grid-column:2/-1}
+  .bpc .prawa{grid-template-columns:1fr}
+  .bpc .szukaj{display:none}
+  .bpc .gora h1{font-size:22px}
+}

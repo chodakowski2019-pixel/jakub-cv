@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import PasekZloty, { type Logo } from "@/components/bruno/pasek-zloty";
 import NavTel from "@/components/bruno/nav-tel";
+import PasekRinesk, { type PlanDnia } from "@/components/bruno/pasek-rinesk";
+import KolumnaRinesk, { type DaneKolumny } from "@/components/bruno/kolumna-rinesk";
 import type { DostepLinkow } from "@/components/podglad/panel/wspolne";
 
 // 10.10 (USER_001: „brak paska po lewej, wszystko się rozjechało”): układ Next.js NIE renderuje
@@ -25,6 +27,10 @@ export default function UkladZloty({
   profilBrak = false,
   ankietaBrak = false,
   logo = null,
+  rinesk = false,
+  plan = null,
+  fiszki = 0,
+  kolumna = null,
 }: {
   children: React.ReactNode;
   dostep: DostepLinkow;
@@ -36,6 +42,14 @@ export default function UkladZloty({
   ankietaBrak?: boolean;
   /** 25.10: logo firmy (bruno_firmy) w kółku paska zamiast inicjału. */
   logo?: Logo;
+  /** 27.10: motyw Rinesk: górna belka z pigułkami i jedna szerokość treści dla wszystkich ekranów (także /bruno/panel). */
+  rinesk?: boolean;
+  /** 27.10: plan dnia do karty na dole lewego paska. */
+  plan?: PlanDnia | null;
+  /** 27.10: fiszki do powtórki (licznik przy „Trening”). */
+  fiszki?: number;
+  /** 27.10: prawa kolumna (Rozmowa z Bruno, Wiadomości, Zapytaj, Trenuj z), tylko na /bruno/panel i /bruno/szef. */
+  kolumna?: DaneKolumny | null;
 }) {
   const sciezka = usePathname() ?? "";
   const router = useRouter();
@@ -59,6 +73,19 @@ export default function UkladZloty({
 
   // 14.10: na telefonie wszędzie ta sama nawigacja jak w aplikacji (górna belka + dolny pasek), CSS chowa ją na komputerze.
   const tel = <NavTel dostep={dostep} inicjal={inicjal} free={free} logo={logo} />;
+
+  // 27.10: Rinesk: ta sama belka i szerokość na każdym ekranie.
+  if (rinesk) {
+    const zKolumna = Boolean(kolumna) && (sciezka === "/bruno/panel" || sciezka === "/bruno/szef");
+    return (
+      <div className={`br-uklad ${zKolumna ? "br-z-kolumna" : ""}`}>
+        {tel}
+        <PasekRinesk dostep={dostep} inicjal={inicjal} logo={logo} plan={plan} fiszki={fiszki} />
+        <main className="br-tresc">{zablokowany ? null : children}</main>
+        {zKolumna && kolumna && <KolumnaRinesk dane={kolumna} />}
+      </div>
+    );
+  }
 
   // Panel czarno-złoty ma własny pasek i tło.
   if (sciezka === "/bruno/panel") return <>{tel}{children}</>;

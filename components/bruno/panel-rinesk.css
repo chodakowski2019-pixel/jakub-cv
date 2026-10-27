@@ -1,0 +1,99 @@
+/* Prawdziwy panel handlowca w stylu Rinesk (27.10). Klasy brp-*. Kolory z motyw-rinesk.css. */
+.brp { display: grid; gap: 16px; font-family: var(--font-outfit), system-ui, sans-serif; color: #141416; }
+.brp h1 { font-size: 30px; font-weight: 500; letter-spacing: -0.01em; }
+.brp h2 { font-size: 21px; font-weight: 500; }
+.brp h3 { font-size: 16px; font-weight: 500; margin-top: 2px; }
+.brp a { text-decoration: none; color: inherit; }
+
+/* hero */
+.brp-hero { position: relative; background: #fff; border-radius: 26px; padding: 26px 30px 24px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 18px 28px; overflow: hidden; box-shadow: 0 1px 2px rgba(20, 20, 22, 0.03); border: 1px solid #ececef; }
+.brp-hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(55% 50% at 80% 25%, rgba(233, 245, 66, 0.22), transparent 60%), radial-gradient(45% 45% at 15% 85%, rgba(20, 20, 22, 0.04), transparent 60%); pointer-events: none; }
+.brp-hero > * { position: relative; }
+.brp-wygasl { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.brp-wygasl p { color: #7d7f87; max-width: 480px; }
+.brp-lider { display: flex; align-items: center; gap: 12px; }
+.brp-lider img { width: 46px; height: 46px; border-radius: 12px; object-fit: cover; }
+.brp-inicjal { width: 46px; height: 46px; border-radius: 12px; background: #141416; color: #fff; display: grid; place-items: center; font-weight: 600; font-size: 17px; }
+.brp-lider small { font-size: 10.5px; color: #7d7f87; display: block; }
+.brp-lider b { font-size: 14px; font-weight: 500; }
+.brp-btn { margin-left: 14px; background: #e9f542; color: #141416; border-radius: 999px; padding: 11px 20px; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; transition: transform 0.12s ease-out, filter 0.15s; white-space: nowrap; }
+.brp-btn:hover { filter: brightness(0.97); }
+.brp-btn:active { transform: scale(0.96); }
+.brp-btn-off { background: #f1f1f4; color: #7d7f87; }
+.brp-btn-mala { margin: auto 0 0; align-self: flex-start; padding: 9px 16px; font-size: 12.5px; }
+.brp-okr { width: 38px; height: 38px; border-radius: 50%; background: #f1f1f4; display: grid; place-items: center; color: #333; transition: background 0.15s; }
+.brp-okr:hover { background: #e6e7eb; }
+.brp-okr-duzy { position: absolute; right: 30px; top: 26px; width: 46px; height: 46px; border-radius: 14px; background: #f6f6f8; }
+.brp-hej { padding-right: 70px; }
+.brp-hej p { font-size: 20px; color: #7d7f87; font-weight: 300; margin-top: 2px; line-height: 1.25; }
+.brp-bok { display: flex; gap: 18px; }
+.brp-ikonki { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
+.brp-ikonki a { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #444; background: #f6f6f8; transition: background 0.15s, color 0.15s; }
+.brp-ikonki a:first-child { background: #141416; color: #fff; }
+.brp-ikonki a:hover { background: #e9f542; color: #141416; }
+.brp-opis p { font-size: 11.5px; color: #7d7f87; margin-top: 6px; max-width: 300px; line-height: 1.45; }
+.brp-opis p b { color: #141416; font-weight: 500; }
+.brp-wielka { font-size: 72px; font-weight: 400; letter-spacing: -0.03em; line-height: 1; margin-top: 16px; font-variant-numeric: tabular-nums; }
+.brp-leg { display: grid; gap: 6px; margin-top: 10px; font-size: 11px; color: #7d7f87; }
+.brp-leg span { display: flex; align-items: center; gap: 8px; }
+.brp-leg b { margin-left: auto; color: #141416; font-weight: 500; }
+.brp-leg i { width: 14px; height: 2px; border-radius: 2px; flex: 0 0 auto; }
+.brp-zol { background: #d9e000; } .brp-czar { background: #141416; } .brp-sza { background: #cfd1d6; }
+.brp-wyk { display: flex; flex-direction: column; }
+.brp-tyg { display: flex; justify-content: space-between; font-size: 10.5px; color: #b4b6bd; padding-right: 50px; margin-bottom: 8px; }
+.brp-wyk-wrap { position: relative; flex: 1; }
+.brp-wyk-wrap svg { width: calc(100% - 44px); height: 150px; display: block; touch-action: pan-y; }
+.brp-osie { position: absolute; right: 0; top: 28px; height: 90px; display: flex; flex-direction: column; justify-content: space-between; font-size: 9.5px; color: #b4b6bd; text-align: right; width: 36px; }
+.brp-tt { position: absolute; top: -14px; transform: translateX(-50%); background: #fff; border: 1px solid #ececef; border-radius: 10px; padding: 8px 10px; font-size: 10px; color: #7d7f87; box-shadow: 0 10px 30px -14px rgba(0, 0, 0, 0.25); white-space: nowrap; pointer-events: none; display: grid; gap: 2px; }
+.brp-tt b { font-size: 10.5px; color: #141416; font-weight: 500; }
+.brp-tt em { font-style: normal; color: #141416; font-weight: 600; }
+
+/* zakładki */
+.brp-zak { display: flex; gap: 4px; padding: 0 6px; overflow-x: auto; scrollbar-width: none; }
+.brp-zak::-webkit-scrollbar { display: none; }
+.brp-zak a { flex: 0 0 auto; font-size: 12.5px; color: #7d7f87; padding: 8px 14px; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+.brp-zak a:hover { color: #141416; border-color: #141416; }
+
+/* rząd kart */
+.brp-rzad { display: grid; grid-template-columns: 1.5fr 0.8fr 1.4fr 0.9fr; gap: 14px; }
+.brp-karta { background: #fff; border-radius: 18px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(20, 20, 22, 0.03); border: 1px solid #ececef; display: flex; flex-direction: column; gap: 8px; min-height: 300px; }
+.brp-karta > small, .brp-hd small { font-size: 11px; color: #7d7f87; }
+.brp-hd { display: flex; justify-content: space-between; align-items: center; }
+.brp-roz, .brp-sel { font-size: 11px; color: #7d7f87; }
+.brp-tab table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 6px; }
+.brp-tab th { font-weight: 400; font-size: 10.5px; color: #b4b6bd; text-align: left; padding: 6px 0; border-bottom: 1px solid #ececef; }
+.brp-tab td { padding: 10px 0; border-bottom: 1px solid #ececef; }
+.brp-tab td:nth-child(2) { text-align: right; padding-right: 12px; font-weight: 500; white-space: nowrap; }
+.brp-tab td:last-child { width: 38%; }
+.brp-ok { color: #1a7f3c; } .brp-zle { color: #c2410c; }
+.brp-kreska { display: block; height: 4px; border-radius: 99px; background: #eceef2; overflow: hidden; }
+.brp-kreska b { display: block; height: 100%; background: #d9e000; border-radius: 99px; transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.brp-pusto { font-size: 12.5px; color: #7d7f87; line-height: 1.5; margin-top: 8px; }
+.brp-pusto a { color: #141416; font-weight: 500; text-decoration: underline; }
+.brp-duza { font-size: 40px; font-weight: 300; letter-spacing: -0.02em; line-height: 1; }
+.brp-duza span { font-size: 18px; color: #7d7f87; }
+.brp-wsk svg, .brp-plan svg { width: 100%; height: auto; display: block; margin-top: auto; }
+.brp-dol { margin-top: auto; padding-top: 8px; border-top: 1px solid #ececef; font-size: 11px; color: #7d7f87; }
+.brp-leg-rzad { grid-auto-flow: column; justify-content: start; gap: 14px; margin-top: 2px; }
+.brp-leg-rzad b { margin-left: 2px; }
+.brp-leg-kol { margin-top: 10px; }
+.brp-czas svg { width: 100%; height: 120px; display: block; }
+.brp-pod { display: flex; justify-content: space-between; font-size: 10px; color: #b4b6bd; padding: 0 6px; }
+.brp-pod .brp-on { color: #141416; font-weight: 600; }
+
+@keyframes brp-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.brp-hero, .brp-karta { animation: brp-rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.brp-rzad .brp-karta:nth-child(2) { animation-delay: 0.06s; } .brp-rzad .brp-karta:nth-child(3) { animation-delay: 0.12s; } .brp-rzad .brp-karta:nth-child(4) { animation-delay: 0.18s; }
+@media (prefers-reduced-motion: reduce) { .brp * { animation: none !important; transition: none !important; } }
+@media (max-width: 1100px) { .brp-rzad { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 760px) {
+  .brp-hero { grid-template-columns: 1fr; padding: 20px; gap: 16px; }
+  .brp-hej { padding-right: 0; }
+  .brp-hej p { font-size: 17px; }
+  .brp-okr-duzy { display: none; }
+  .brp-rzad { grid-template-columns: 1fr; }
+  .brp-karta { min-height: 0; }
+  .brp-wielka { font-size: 56px; }
+  .brp-lider { flex-wrap: wrap; }
+  .brp-btn { margin-left: 0; }
+}
