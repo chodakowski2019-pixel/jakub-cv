@@ -42,7 +42,7 @@ const TEKSTY = {
   },
   firmy: {
     // 27.10 (USER_001): nowy temat dla właścicieli firm (decyzja 27.10). Tytuł i plan z lib/bruno/webinar.ts.
-    h1: "Jak sprawić, żeby handlowcy\nrobili 100\u00a0% planu sprzedaży",
+    h1: "Jak sprawić, żeby handlowcy\nrobili 100\u00a0% planu sprzedaży\ndzięki\u00a0AI",
     h1Szary: WEBINAR.podtytul,
     lead: "Wyszkol tych, których masz, zamiast szukać nowych. W 60 minut: 3 powody, dla których zespół nie robi planu, 4 sposoby na trening i jeden pokazany na żywo.",
     plan: WEBINAR.plan,

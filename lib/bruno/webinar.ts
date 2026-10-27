@@ -17,9 +17,9 @@ export const WEBINAR = {
   godzina: "19:00",
   ics: "20261104T180000Z",
   icsKoniec: "20261104T190000Z",
-  tytul: "Jak sprawić, żeby handlowcy robili 100 % planu sprzedaży",
+  tytul: "Jak sprawić, żeby handlowcy robili 100 % planu sprzedaży dzięki AI", // 27.10 (USER_001): + „dzięki AI”
   /** Druga linia pod tytułem (szara). */
-  podtytul: "bez szukania nowych i bez drogich szkoleń",
+  podtytul: "bez szukania nowych handlowców",
   // 27.10 (USER_001): link Zoom ustawiony przez USER_001.
   zoom: "https://us05web.zoom.us/j/81028613140?pwd=6DyIsCre9Ufkias6LaP8erbpvbSFZt.1",
   zoomId: "810 2861 3140",
