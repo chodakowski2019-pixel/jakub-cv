@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { Ikona } from "@/components/podglad/panel/wspolne";
 import { useT } from "@/components/bruno/jezyk-kontekst";
 
@@ -17,16 +16,6 @@ export type DaneKolumny = { postac: string; zdjecie: string | null; inicjal: str
 
 export default function KolumnaRinesk({ dane }: { dane: DaneKolumny }) {
   const { t } = useT();
-  const [tekst, setTekst] = useState("");
-  const [stan, setStan] = useState<"idle" | "wysylanie" | "ok" | "blad">("idle");
-  const wyslij = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (tekst.trim().length < 2) return;
-    setStan("wysylanie");
-    const res = await fetch("/api/bruno/wiadomosc", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tekst: `[${t("Ask Bruno", "Zapytaj Bruno")}] ${tekst}` }) });
-    setStan(res.ok ? "ok" : "blad");
-    if (res.ok) setTekst("");
-  };
   return (
     <aside className="brr" aria-label={t("Talk to Bruno", "Rozmowa z Bruno")}>
       <div className="brr-hd"><h3>{t("Talk to Bruno", "Rozmowa z Bruno")}</h3><Link href="/bruno/rozmowa" className="brr-plus">+ {t("Start", "Start")}</Link></div>
@@ -63,19 +52,7 @@ export default function KolumnaRinesk({ dane }: { dane: DaneKolumny }) {
         <p className="brr-pusto">{t("After the first scored call Bruno writes here what to fix.", "Po pierwszej ocenionej rozmowie Bruno napisze tu, co poprawić.")}</p>
       )}
 
-      <h3>{t("Ask Bruno", "Zapytaj Bruno")}</h3>
-      <form className="brr-wpis" onSubmit={wyslij}>
-        <input value={tekst} onChange={(e) => setTekst(e.target.value)} placeholder={stan === "ok" ? t("Sent. We'll reply by email.", "Wysłane. Odpowiemy mailem.") : t("How do I handle “too expensive”?", "Jak zbić „za drogo”?")} aria-label={t("Ask Bruno", "Zapytaj Bruno")} maxLength={500} />
-        <button type="submit" aria-label={t("Send", "Wyślij")} disabled={stan === "wysylanie"}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 3L10 14M21 3l-7 18-4-7-7-4z" /></svg></button>
-      </form>
-      {stan === "blad" && <small className="brr-blad">{t("Couldn't send. Try again.", "Nie wysłano. Spróbuj jeszcze raz.")}</small>}
-
-      <h3>{t("Train with", "Trenuj z")}</h3>
-      <div className="brr-zetony">
-        {dane.zetony.map((z) => (
-          <Link key={z.href} href={z.href}><i style={{ background: z.kolor }} />{z.nazwa}</Link>
-        ))}
-      </div>
+      {/* 27.10 (USER_001): „Zapytaj Bruno” i „Trenuj z” usunięte (pytania idą przez dymek czatu w rogu). */}
     </aside>
   );
 }

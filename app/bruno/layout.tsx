@@ -131,9 +131,8 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
         {children}
       </UkladZloty>
       {/* 25.10 (USER_001): dymek czatu zostaje; obok niego kalkulator sprzedażowy (szef i konta demo). */}
-      {/* 27.10 (USER_001: „usuwamy”): w motywie Rinesk bez pływającego kalkulatora i dymka czatu (nachodziły na prawą kolumnę,
-          „Zapytaj Bruno” jest w kolumnie). W starym motywie zostają. */}
-      {!profilBrak && !ankietaBrak && !motywRinesk() && (
+      {/* 27.10 (USER_001): kółka (kalkulator + dymek czatu) ZOSTAJĄ; z prawej kolumny wylatują „Zapytaj Bruno” i „Trenuj z”. */}
+      {!profilBrak && !ankietaBrak && (
         <>
           {(szef || demo) && <Kalkulator handlowcy={konto?.handlowcy} />}
           <CzatDymek />
