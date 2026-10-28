@@ -3,12 +3,12 @@ import { notFound, redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonto } from "@/lib/bruno/db";
 import { etykiety } from "@/lib/bruno/etykiety";
-import { czySzef, handlowiecFirmy, pobierzFirme, rozmowyZespolu } from "@/lib/bruno/firmy";
+import { czySzef, handlowcyFirmy, handlowiecFirmy, pobierzFirme, rozmowyZespolu } from "@/lib/bruno/firmy";
 import { locale, mnoga } from "@/lib/bruno/i18n";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { postacLubDomyslna } from "@/lib/bruno/postacie";
-import { KRYTERIA, statystykiHandlowca } from "@/lib/bruno/zespol";
-import { Slupki, rozmowyNaDni } from "@/components/bruno/statystyki";
+import { KRYTERIA, ocenyHandlowca, tygodnieRozmow, statystykiHandlowca, statystykiZespolu } from "@/lib/bruno/zespol";
+import { MiniWykres, RadarHandlowca, RozmowyTygodniowo } from "@/components/bruno/zespol-wykresy";
 import { Kafelek, Naglowek, OcenaKolko, Trend } from "@/components/bruno/zespol-widok";
 
 export const dynamic = "force-dynamic";
@@ -24,9 +24,13 @@ export default async function BrunoSzefHandlowiecPage({ params }: { params: Prom
   const { email: surowy } = await params;
   const handlowiec = await handlowiecFirmy(konto.firma_id!, decodeURIComponent(surowy).toLowerCase());
   if (!handlowiec) notFound();
-  const [firma, rozmowy, { t, jezyk }] = await Promise.all([pobierzFirme(konto.firma_id), rozmowyZespolu([handlowiec.email], 30), tSerwer()]);
+  // 28.10: cały zespół (30 dni) do średniej zespołu na radarze.
+  const [firma, zespol, { t, jezyk }] = await Promise.all([pobierzFirme(konto.firma_id), handlowcyFirmy(konto.firma_id!), tSerwer()]);
+  const rozmowyWszystkie = await rozmowyZespolu(zespol.map((h) => h.email), 30);
+  const rozmowy = rozmowyWszystkie.filter((r) => r.email === handlowiec.email);
   const { NAZWY, POSTACIE } = etykiety(jezyk);
   const s = statystykiHandlowca(handlowiec, rozmowy);
+  const sredniaZespolu = zespol.length > 1 ? statystykiZespolu(zespol.map((h) => statystykiHandlowca(h, rozmowyWszystkie.filter((r) => r.email === h.email)))).kryteria : null;
 
   return (
     <div className="flex flex-col gap-6 bsz">
@@ -41,34 +45,24 @@ export default async function BrunoSzefHandlowiecPage({ params }: { params: Prom
         <Kafelek liczba={s.rozmow30} opis={t("calls in 30 days", "rozmów w 30 dni")} uwaga={t(`${s.rozmow7} in the last 7`, `${s.rozmow7} w ostatnich 7`)} />
         <Kafelek liczba={s.srednia} dec={1} opis={t("average score", "średnia ocena")} uwaga={t("out of 10", "na 10")} opoznienie={120} />
         <Kafelek liczba={s.najlepsza} opis={t("best call", "najlepsza rozmowa")} uwaga={t("out of 10", "na 10")} opoznienie={240} />
-        <div className="bruno-szklo rounded-2xl p-4 sm:p-5 bsz-kafelek">
-          <div className="text-[1.9rem] leading-none"><Trend v={s.trend} jezyk={jezyk} /></div>
-          <div className="text-sm font-semibold text-slate-800 mt-2 leading-tight">{t("trend", "trend")}</div>
-          <div className="text-[11px] text-slate-400 mt-0.5">{t("last 3 vs previous 3", "3 ostatnie vs 3 wcześniejsze")}</div>
+        {/* 28.10 (USER_001: „ładniej”): kafelek trendu = pigułka ze zmianą + mini-wykres ocen + opis. */}
+        <div className="bruno-szklo rounded-2xl p-4 sm:p-5 bsz-kafelek bsz-trend">
+          <div className="bsz-trend-gora">
+            <Trend v={s.trend} jezyk={jezyk} />
+            <MiniWykres oceny={ocenyHandlowca(handlowiec.email, rozmowy)} />
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-slate-800 leading-tight">{t("Trend", "Trend")}</div>
+            <div className="text-[11px] text-slate-400 mt-0.5">{t("last 3 calls vs the 3 before", "3 ostatnie rozmowy vs 3 poprzednie")}</div>
+          </div>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-start">
-        <Slupki dni={rozmowyNaDni(rozmowy, 14, jezyk)} cel={3} tytul={t("Calls in the last 14 days", "Rozmowy w ostatnich 14 dniach")} jezyk={jezyk} />
-        <section className="bruno-szklo rounded-2xl p-4 sm:p-5">
-          <div className="flex items-baseline justify-between mb-3">
-            <h2 className="bruno-h2 text-base">{t("Average per area", "Średnia na kryterium")}</h2>
-            <span className="text-[11px] text-slate-400">{s.najslabsze ? t(`weakest: ${NAZWY[s.najslabsze]}`, `najsłabsze: ${NAZWY[s.najslabsze]}`) : t("scale 1-10", "skala 1-10")}</span>
-          </div>
-          <ul className="flex flex-col gap-3">
-            {KRYTERIA.map((k) => (
-              <li key={k} className={s.najslabsze === k ? "bsz-slabe" : ""}>
-                <div className="flex items-baseline justify-between text-sm">
-                  <span className="text-slate-800 font-medium">{NAZWY[k]}</span>
-                  <span className="text-slate-600 tabular-nums">{s.kryteria[k] ?? "–"}</span>
-                </div>
-                <div className="h-1.5 mt-1 rounded-full bg-cyan-900/10 overflow-hidden" aria-hidden>
-                  <div className="h-full rounded-full bg-gradient-to-r from-cyan-700 to-teal-700 bsz-pasek" style={{ width: `${((s.kryteria[k] ?? 0) / 10) * 100}%` }} />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {/* 28.10 (USER_001): tygodniowo zamiast 14 dni. */}
+        <RozmowyTygodniowo tygodnie={tygodnieRozmow(rozmowy, 8)} jezyk={jezyk} tytul={t("Calls per week", "Rozmowy tygodniowo")} />
+        {/* 28.10 (USER_001): radar 5 kryteriów zamiast listy z paskami. */}
+        <RadarHandlowca kryteria={s.kryteria} zespol={sredniaZespolu} nazwy={NAZWY} kolejnosc={KRYTERIA} jezyk={jezyk} najslabsze={s.najslabsze} />
       </div>
 
       <section className="bruno-szklo rounded-2xl overflow-hidden">

@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import type { Kryterium } from "@/lib/bruno/db";
-import type { PunktDnia } from "@/lib/bruno/zespol";
+import type { PunktDnia, TydzienRozmow } from "@/lib/bruno/zespol";
 
 // 25.10 (USER_001: „lepsza wizualizacja panelu szefa”). Wykresy wg skilla dataviz:
 // - TREND ZESPOŁU: jedna seria (średnia dnia), linia 2 px + delikatne pole, krzyżyk i dymek przy najeździe,
@@ -93,8 +93,8 @@ export function TrendZespolu({ seria, jezyk, cel = 7 }: { seria: PunktDnia[]; je
     <section className="bruno-szklo rounded-2xl p-4 sm:p-5 bwz-karta">
       <div className="flex items-start justify-between gap-4 mb-2">
         <div>
-          <h2 className="bruno-h2 text-base">{t(jezyk, "Team average over time", "Średnia zespołu w czasie")}</h2>
-          <p className="text-[12px] text-slate-500 mt-0.5">{t(jezyk, "Average call score per week, last 3 months", "Średnia ocena rozmów tygodniowo, ostatnie 3 miesiące")}</p>
+          {/* 28.10 (USER_001): tytuł „Średnia zespołu”, bez podtytułu. */}
+          <h2 className="bruno-h2 text-base">{t(jezyk, "Team average", "Średnia zespołu")}</h2>
         </div>
         <div className="text-right shrink-0">
           <div className="bruno-h2 text-[2rem] leading-none tabular-nums">{teraz === null ? "–" : liczba(teraz, jezyk)}</div>
@@ -121,10 +121,13 @@ export function TrendZespolu({ seria, jezyk, cel = 7 }: { seria: PunktDnia[]; je
           {miesiace.map((m, i) => (
             <g key={m.klucz}>
               {i % 2 === 1 && <rect x={m.od} y={G - 6} width={m.do - m.od} height={H - D - G + 6} fill="rgba(245,242,234,0.04)" />}
-              {i > 0 && <line x1={m.od} x2={m.od} y1={G - 6} y2={H - D} stroke="rgba(245,242,234,0.16)" />}
+              {i > 0 && <line x1={m.od} x2={m.od} y1={G - 6} y2={H - D + 10} stroke="rgba(245,242,234,0.16)" className="bwz-granica" />}
               <text x={(m.od + m.do) / 2} y={H - 8} textAnchor="middle" className="bwz-os bwz-miesiac">{m.nazwa}</text>
             </g>
           ))}
+          {/* 28.10 (USER_001: „oddzielić każdy miesiąc i dni w nim lekką kreską”): oś dolna + kreska na każdy tydzień (kolory w motyw-rinesk.css). */}
+          <line x1={L} x2={W - R} y1={H - D} y2={H - D} stroke="rgba(245,242,234,0.16)" className="bwz-granica" />
+          {seria.map((p, i) => <line key={p.dzien} x1={x(i)} x2={x(i)} y1={H - D} y2={H - D + 5} stroke="rgba(245,242,234,0.16)" className="bwz-tyk" />)}
           {[4, 6, 8, 10].map((v) => (
             <g key={v}>
               <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="rgba(255,255,255,0.06)" />
@@ -148,7 +151,7 @@ export function TrendZespolu({ seria, jezyk, cel = 7 }: { seria: PunktDnia[]; je
           )}
         </svg>
         {p && hover !== null && (
-          <Dymek x={(x(hover) / W) * (ref.current?.clientWidth ?? W)} y={0}>
+          <Dymek x={(x(hover) / W) * (ref.current?.clientWidth ?? W)} y={((p.srednia === null ? G : y(Math.max(min, p.srednia))) / H) * ((ref.current?.clientWidth ?? W) * (H / W)) - 6}>
             <b>{t(jezyk, "Week of", "Tydzień od")} {data(p.dzien)}</b>
             <span>{p.srednia === null ? t(jezyk, "no calls", "bez rozmów") : `${t(jezyk, "average", "średnia")} ${liczba(p.srednia, jezyk)} / 10`}</span>
             <span className="text-slate-400">{p.rozmow} {t(jezyk, "calls", "rozmów")}</span>
@@ -212,7 +215,7 @@ export function MapaKryteriow({ wiersze, zespol, nazwy, kolejnosc, jezyk }: { wi
       <div className="flex items-start justify-between gap-4 mb-3">
         <div>
           <h2 className="bruno-h2 text-base">{t(jezyk, "Who needs coaching, and in what", "Kto w czym potrzebuje treningu")}</h2>
-          <p className="text-[12px] text-slate-500 mt-0.5">{t(jezyk, "Average per area, last 30 days. ▼ = rep's weakest area.", "Średnia na kryterium, ostatnie 30 dni. ▼ = najsłabsze kryterium handlowca.")}</p>
+          <p className="text-[12px] text-slate-500 mt-0.5">{t(jezyk, "Average per area, last 30 days.", "Średnia na kryterium, ostatnie 30 dni.")}</p>
         </div>
         <div className="bwz-legenda" aria-hidden>
           <span>1</span>
@@ -302,5 +305,105 @@ export function MiniWykres({ oceny }: { oceny: number[] }) {
       <path d={d} fill="none" stroke="var(--bwz-mini, rgba(245,242,234,0.35))" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
       <circle cx={x(oceny.length - 1)} cy={y(ost)} r="3.2" fill="#ecd08a" />
     </svg>
+  );
+}
+
+/* ---------- Radar handlowca (28.10) ---------- */
+// 28.10 (USER_001: „diagram z 5 punktami” na profilu handlowca zamiast listy „Średnia na kryterium”, wzór Rabbet):
+// limonka = handlowiec (30 dni), czarna przerywana = średnia zespołu. Przy każdej osi liczba handlowca,
+// najsłabsze kryterium na czerwono. Kolory w motyw-rinesk.css (.bwz-radar-*), domyślnie złoto.
+export function RadarHandlowca({ kryteria, zespol, nazwy, kolejnosc, jezyk, najslabsze }: { kryteria: Record<Kryterium["nazwa"], number | null>; zespol: Record<Kryterium["nazwa"], number | null> | null; nazwy: Record<Kryterium["nazwa"], string>; kolejnosc: Kryterium["nazwa"][]; jezyk: Jezyk; najslabsze: Kryterium["nazwa"] | null }) {
+  const W = 420;
+  const H = 300;
+  const cx = W / 2;
+  const cy = H / 2 + 6;
+  const Rr = 104;
+  const n = kolejnosc.length;
+  const kat = (i: number) => -Math.PI / 2 + (i * 2 * Math.PI) / n;
+  const pkt = (i: number, v: number) => [cx + Math.cos(kat(i)) * Rr * (v / 10), cy + Math.sin(kat(i)) * Rr * (v / 10)] as const;
+  const wielokat = (d: Record<Kryterium["nazwa"], number | null>) => kolejnosc.map((k, i) => pkt(i, Math.max(0, Math.min(10, d[k] ?? 0))).map((v) => v.toFixed(1)).join(",")).join(" ");
+  const brak = kolejnosc.every((k) => kryteria[k] === null);
+  return (
+    <section className="bruno-szklo rounded-2xl p-4 sm:p-5 bwz-karta">
+      <div className="flex items-baseline justify-between mb-1">
+        <h2 className="bruno-h2 text-base">{t(jezyk, "Skills", "Umiejętności")}</h2>
+        <span className="text-[11px] text-slate-400">{t(jezyk, "last 30 days, scale 1-10", "ostatnie 30 dni, skala 1-10")}</span>
+      </div>
+      {brak ? (
+        <p className="text-sm text-slate-500 py-8 text-center">{t(jezyk, "No scored calls yet.", "Brak ocenionych rozmów.")}</p>
+      ) : (
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto block" role="img" aria-label={t(jezyk, "Skills radar", "Radar umiejętności")}>
+          {[2, 4, 6, 8, 10].map((v) => (
+            <polygon key={v} points={kolejnosc.map((_, i) => pkt(i, v).map((q) => q.toFixed(1)).join(",")).join(" ")} fill="none" stroke="rgba(245,242,234,0.12)" className="bwz-radar-siatka" />
+          ))}
+          {kolejnosc.map((_, i) => {
+            const [a, b] = pkt(i, 10);
+            return <line key={i} x1={cx} y1={cy} x2={a} y2={b} stroke="rgba(245,242,234,0.12)" className="bwz-radar-siatka" />;
+          })}
+          {zespol && <polygon points={wielokat(zespol)} fill="none" stroke="rgba(245,242,234,0.6)" strokeWidth="1.5" strokeDasharray="4 4" strokeLinejoin="round" className="bwz-radar-zespol" />}
+          <polygon points={wielokat(kryteria)} fill="rgba(230,199,122,0.25)" stroke="#e6c77a" strokeWidth="2" strokeLinejoin="round" className="bwz-radar-ja bwz-wjazd" />
+          {kolejnosc.map((k, i) => {
+            const v = kryteria[k];
+            const [a, b] = pkt(i, Math.max(0, Math.min(10, v ?? 0)));
+            const [lx, ly] = pkt(i, 13.2);
+            const kotwica = Math.abs(lx - cx) < 8 ? "middle" : lx < cx ? "end" : "start";
+            return (
+              <g key={k}>
+                {v !== null && <circle cx={a} cy={b} r="4" fill="#e6c77a" stroke="#12110f" strokeWidth="1.5" className="bwz-radar-kropka bwz-wjazd" />}
+                <text x={lx} y={ly - 3} textAnchor={kotwica} className="bwz-os bwz-radar-nazwa">{nazwy[k]}</text>
+                <text x={lx} y={ly + 13} textAnchor={kotwica} className={`bwz-os bwz-radar-wartosc ${najslabsze === k ? "bwz-radar-slabe" : ""}`}>{v === null ? "–" : liczba(v, jezyk)}</text>
+              </g>
+            );
+          })}
+        </svg>
+      )}
+      {/* 28.10 (USER_001): legenda tylko „średnia zespołu”; bez „handlowiec” i „▼ najsłabsze”. */}
+      {zespol && (
+        <div className="flex gap-4 text-[11px] text-slate-500 mt-1">
+          <span className="flex items-center gap-1.5"><i className="inline-block w-3.5 border-t border-dashed bwz-leg-zespol" style={{ borderColor: "rgba(245,242,234,0.6)" }} /> {t(jezyk, "team average", "średnia zespołu")}</span>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ---------- Rozmowy tygodniowo (28.10) ---------- */
+// 28.10 (USER_001: „z 14 dni zrobić wykres tygodniowy, ładniej”): ostatnie 8 tygodni (pn-nd, Europe/Warsaw),
+// słupek = liczba rozmów, liczba nad słupkiem, bieżący tydzień podświetlony, podpis = data poniedziałku.
+export function RozmowyTygodniowo({ tygodnie, jezyk, tytul }: { tygodnie: TydzienRozmow[]; jezyk: Jezyk; tytul: string }) {
+  const W = 420;
+  const H = 210;
+  const G = 26;
+  const D = 30;
+  const L = 8;
+  const max = Math.max(1, ...tygodnie.map((w) => w.rozmow));
+  const szer = (W - 2 * L) / tygodnie.length;
+  const sl = Math.min(34, szer * 0.56);
+  const y = (v: number) => G + (H - G - D) * (1 - v / max);
+  const data = (k: string) => new Date(`${k}T12:00:00`).toLocaleDateString(jezyk === "pl" ? "pl-PL" : "en-US", { day: "numeric", month: "short" });
+  const razem = tygodnie.reduce((a, w) => a + w.rozmow, 0);
+  return (
+    <section className="bruno-szklo rounded-2xl p-4 sm:p-5 bwz-karta">
+      <div className="flex items-baseline justify-between mb-1">
+        <h2 className="bruno-h2 text-base">{tytul}</h2>
+        <span className="text-[11px] text-slate-400">{razem} {t(jezyk, "in 8 weeks", "w 8 tygodni")}</span>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto block" role="img" aria-label={`${tytul}: ${tygodnie.map((w) => `${data(w.od)} ${w.rozmow}`).join(", ")}`}>
+        <line x1={L} x2={W - L} y1={y(0)} y2={y(0)} stroke="rgba(245,242,234,0.16)" className="bwz-granica" />
+        {tygodnie.map((w, i) => {
+          const x = L + i * szer + (szer - sl) / 2;
+          const h = Math.max(0, y(0) - y(w.rozmow));
+          return (
+            <g key={w.od}>
+              <title>{`${t(jezyk, "week of", "tydzień od")} ${data(w.od)}: ${w.rozmow}`}</title>
+              <rect x={x} y={y(0) - 3} width={sl} height="3" rx="1.5" className="bwz-tyg-cien" fill="rgba(245,242,234,0.08)" />
+              {h > 0 && <rect x={x} y={y(w.rozmow)} width={sl} height={h} rx="7" className={`bwz-tyg-slupek ${w.biezacy ? "bwz-tyg-teraz" : ""} bwz-wjazd`} fill={w.biezacy ? "#e6c77a" : "rgba(230,199,122,0.4)"} />}
+              <text x={x + sl / 2} y={(w.rozmow ? y(w.rozmow) : y(0)) - 8} textAnchor="middle" className={`bwz-tyg-liczba ${w.biezacy ? "bwz-tyg-liczba-teraz" : ""}`} style={{ fontSize: 12, fontWeight: 600 }}>{w.rozmow}</text>
+              <text x={x + sl / 2} y={H - 9} textAnchor="middle" className={`bwz-os ${w.biezacy ? "bwz-tyg-os-teraz" : ""}`} style={{ fontSize: 10.5 }}>{w.biezacy ? t(jezyk, "now", "teraz") : data(w.od)}</text>
+            </g>
+          );
+        })}
+      </svg>
+    </section>
   );
 }

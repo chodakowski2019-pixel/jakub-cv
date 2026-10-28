@@ -6,8 +6,9 @@ import { useT } from "@/components/bruno/jezyk-kontekst";
 
 // 11.10 (USER_001, E32): zakładka „Kalendarz”. Miesiąc z rozmowami (liczba, średnia ocena) i fiszkami
 // w każdym dniu, dzisiaj, i do kiedy trwa dostęp (koniec testu albo opłaconego Bruno Pro).
-// 12.10 (USER_001): dni z dostępem (od dziś do końca) lekko podświetlone złotem, dzień końca wyraźny,
-// większe liczby i ikony, mocniejsze ramki. Dni po końcu dostępu przygaszone.
+// 28.10 (USER_001: „czytelniej”): nowy układ w stylu Rinesk (CSS .bk-* w motyw-rinesk.css): nagłówek z lewej,
+// miesiąc i strzałki z prawej, 3 kafelki z liczbami, kratki z pastylkami „2 rozmowy · 8,0” i „11 fiszek”
+// zamiast emoji, dziś = czarne kółko z numerem, dni z dostępem = delikatna limonka, koniec dostępu = ramka.
 
 export type DzienKalendarza = { rozmowy: number; srednia: number | null; fiszki: number; rozmowaId: string | null };
 
@@ -15,16 +16,8 @@ const klucz = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padSta
 
 export type RozmowaKal = { id: string; start: string; ocena: number | null; zakonczona: boolean };
 
-// 25.10: kolory przez zmienne CSS, motyw Asset (app/bruno/motyw-asset.css) podmienia je na fiolet.
-const ZLOTO = "var(--k-zloto, #d4af5a)";
-const ZLOTO_JASNE = "var(--k-zloto-jasne, #f3dc9c)";
-const TEKST = "var(--k-tekst, #f5f2ea)";
-const zl = (a: number) => `color-mix(in srgb, ${ZLOTO} ${a * 100}%, transparent)`;
-const tx = (a: number) => `color-mix(in srgb, ${TEKST} ${a * 100}%, transparent)`;
-const bl = (a: number) => `color-mix(in srgb, var(--k-jasny, #fff) ${a * 100}%, transparent)`;
-
 export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }: { rozmowy: RozmowaKal[]; fiszki: string[]; koniecDostepu: string | null; opisKonca: string | null }) {
-  const { t, locale, jezyk } = useT();
+  const { t, locale, jezyk, mnoga } = useT();
   // Dni liczone w strefie czasowej przeglądarki (handlowiec w UK, USA albo w Polsce widzi swoje dni).
   const dni = useMemo(() => {
     const m: Record<string, DzienKalendarza & { suma: number; ocen: number }> = {};
@@ -73,52 +66,41 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
   const rozmowWMiesiacu = wMiesiacu.reduce((a, [, v]) => a + v.rozmowy, 0);
   const fiszekWMiesiacu = wMiesiacu.reduce((a, [, v]) => a + v.fiszki, 0);
   const dniAktywnych = wMiesiacu.filter(([, v]) => v.rozmowy + v.fiszki > 0).length;
+  const ocenyMiesiaca = wMiesiacu.flatMap(([, v]) => (v.srednia !== null ? [v.srednia] : []));
+  const sredniaMiesiaca = ocenyMiesiaca.length ? Math.round((ocenyMiesiaca.reduce((a, b) => a + b, 0) / ocenyMiesiaca.length) * 10) / 10 : null;
+  const liczba = (v: number) => v.toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const toMiesiacDzis = miesiac.getFullYear() === dzis.getFullYear() && miesiac.getMonth() === dzis.getMonth();
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="text-center">
-        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
-          <span className="bruno-gradient-tekst">{t("Calendar", "Kalendarz")}</span>
-        </h1>
-        {koniec && opisKonca && (
-          <div
-            className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mt-3 px-5 py-2.5 rounded-full text-sm sm:text-base"
-            style={{ background: zl(0.1), border: `1px solid ${zl(0.45)}`, color: TEKST, boxShadow: `0 0 32px -8px ${zl(0.45)}` }}
-          >
-            <span style={{ color: tx(0.8) }}>{opisKonca}</span>
-            <b style={{ color: ZLOTO_JASNE }}>{dataKonca}</b>
-            {dniZostalo !== null && (
-              <span className="text-xs sm:text-sm" style={{ color: tx(0.6) }}>
-                · {dniZostalo === 1 ? t("1 day left", "został 1 dzień") : t(`${dniZostalo} days left`, `${dniZostalo} ${dniZostalo >= 2 && dniZostalo <= 4 ? "dni zostały" : "dni zostało"}`)}
-              </span>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="grid grid-cols-3 gap-3 max-w-xl w-full mx-auto">
-        {[
-          [rozmowWMiesiacu, t("calls", "rozmów")],
-          [fiszekWMiesiacu, t("flashcards", "fiszek")],
-          [dniAktywnych, t("active days", "dni z treningiem")],
-        ].map(([n, opis]) => (
-          <div key={String(opis)} className="bruno-szklo rounded-2xl px-3 py-4 text-center">
-            <div className="bruno-h2 text-3xl sm:text-4xl leading-none" style={{ color: n ? ZLOTO_JASNE : TEKST }}>{n}</div>
-            <div className="text-xs sm:text-sm mt-1.5" style={{ color: tx(0.72) }}>{opis}</div>
-          </div>
-        ))}
-      </div>
-
-      <section className="bruno-szklo rounded-3xl p-4 sm:p-6">
-        <div className="flex items-center justify-between mb-4">
-          <button type="button" className="bruno-przycisk-2 px-4 py-2 text-base" onClick={() => setMiesiac(new Date(miesiac.getFullYear(), miesiac.getMonth() - 1, 1))} aria-label={t("Previous month", "Poprzedni miesiąc")}>←</button>
-          <div className="bruno-h2 text-xl sm:text-2xl capitalize" style={{ color: TEKST }}>{tytul}</div>
-          <button type="button" className="bruno-przycisk-2 px-4 py-2 text-base" onClick={() => setMiesiac(new Date(miesiac.getFullYear(), miesiac.getMonth() + 1, 1))} aria-label={t("Next month", "Następny miesiąc")}>→</button>
+    <div className="flex flex-col gap-5 bk">
+      <div className="bk-naglowek">
+        <div>
+          <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]"><span className="bruno-gradient-tekst">{t("Calendar", "Kalendarz")}</span></h1>
+          {koniec && opisKonca && (
+            <p className="bk-dostep">
+              {opisKonca} <b>{dataKonca}</b>
+              {dniZostalo !== null && <span> · {dniZostalo === 1 ? t("1 day left", "został 1 dzień") : t(`${dniZostalo} days left`, `${dniZostalo} ${dniZostalo >= 2 && dniZostalo <= 4 ? "dni zostały" : "dni zostało"}`)}</span>}
+            </p>
+          )}
         </div>
-        <div className="grid grid-cols-7 gap-1.5 sm:gap-2 text-center">
-          {nazwyDni.map((d) => (
-            <div key={d} className="text-xs sm:text-sm font-medium uppercase tracking-wide pb-1" style={{ color: tx(0.72) }}>{d}</div>
-          ))}
+        <div className="bk-nav">
+          <button type="button" onClick={() => setMiesiac(new Date(miesiac.getFullYear(), miesiac.getMonth() - 1, 1))} aria-label={t("Previous month", "Poprzedni miesiąc")}>‹</button>
+          <b className="capitalize">{tytul}</b>
+          <button type="button" onClick={() => setMiesiac(new Date(miesiac.getFullYear(), miesiac.getMonth() + 1, 1))} aria-label={t("Next month", "Następny miesiąc")}>›</button>
+          {!toMiesiacDzis && <button type="button" className="bk-dzis" onClick={() => setMiesiac(new Date(dzis.getFullYear(), dzis.getMonth(), 1))}>{t("Today", "Dziś")}</button>}
+        </div>
+      </div>
+
+      <div className="bk-kafelki">
+        <div className="bk-kafelek"><b>{rozmowWMiesiacu}</b><span>{mnoga(rozmowWMiesiacu, ["call", "calls"], ["rozmowa", "rozmowy", "rozmów"])}</span><small>{t("this month", "w tym miesiącu")}</small></div>
+        <div className="bk-kafelek"><b>{sredniaMiesiaca === null ? "–" : liczba(sredniaMiesiaca)}</b><span>{t("average score", "średnia ocena")}</span><small>{t("out of 10", "na 10")}</small></div>
+        <div className="bk-kafelek"><b>{fiszekWMiesiacu}</b><span>{mnoga(fiszekWMiesiacu, ["flashcard", "flashcards"], ["fiszka", "fiszki", "fiszek"])}</span><small>{t("answered", "odpowiedzianych")}</small></div>
+        <div className="bk-kafelek"><b>{dniAktywnych}</b><span>{t("active days", "dni z treningiem")}</span><small>{t("calls or flashcards", "rozmowy albo fiszki")}</small></div>
+      </div>
+
+      <section className="bk-siatka-karta">
+        <div className="bk-siatka" role="grid">
+          {nazwyDni.map((d) => <div key={d} className="bk-dzien-nazwa">{d}</div>)}
           {komorki.map((d) => {
             const k = klucz(d);
             const dane = dni[k];
@@ -129,81 +111,31 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
             const zDostepem = !!kluczKonca && k >= kluczDzis && k <= kluczKonca;
             const poKoncu = !!kluczKonca && k > kluczKonca;
             const maDane = !!dane && dane.rozmowy + dane.fiszki > 0;
-
-            const styl: React.CSSProperties = {
-              borderColor: toKoniec ? ZLOTO : zDostepem ? zl(0.4) : inny ? "transparent" : bl(0.16),
-              background: toKoniec
-                ? zl(0.2)
-                : zDostepem
-                  ? zl(0.08)
-                  : maDane
-                    ? bl(0.05)
-                    : "transparent",
-              boxShadow: toKoniec
-                ? `0 0 0 2px ${zl(0.35)}, 0 0 28px -4px ${zl(0.55)}`
-                : toDzis
-                  ? `0 0 0 2px ${ZLOTO}`
-                  : undefined,
-              opacity: inny ? 0.3 : poKoncu ? 0.55 : 1,
-              color: TEKST,
-            };
-
+            const klasa = ["bk-kratka", inny ? "bk-inny" : "", toDzis ? "bk-dzis-kratka" : "", toKoniec ? "bk-koniec" : "", zDostepem ? "bk-z-dostepem" : "", poKoncu ? "bk-po" : "", maDane ? "bk-ma" : ""].filter(Boolean).join(" ");
             const tresc = (
               <>
-                <div className="flex items-baseline gap-1">
-                  <span className={`text-base sm:text-lg leading-none ${toDzis || toKoniec ? "font-bold" : "font-medium"}`} style={{ color: toDzis || toKoniec ? ZLOTO_JASNE : TEKST }}>
-                    {d.getDate()}
-                  </span>
-                  {/* 16.10 (USER_001): na telefonie bez „dziś” (słabo widać w małej kratce), dzień wyróżnia ramka. */}
-                  {toDzis && <span className="max-[860px]:hidden text-[10px] uppercase tracking-wide" style={{ color: ZLOTO }}>{t("today", "dziś")}</span>}
-                </div>
-                {/* 14.10 (USER_001, telefon): w wąskiej kratce tylko liczby „rozmowy · fiszki”, bez ikon i średniej (jest w Feedbacku). */}
-                {maDane ? (
-                  <div className="sm:hidden text-[11px] font-semibold leading-none mt-1.5 flex items-center gap-1">
-                    {dane.rozmowy ? <span style={{ color: ZLOTO_JASNE }}>{dane.rozmowy}</span> : null}
-                    {dane.rozmowy && dane.fiszki ? <span style={{ color: tx(0.4) }}>·</span> : null}
-                    {dane.fiszki ? <span style={{ color: tx(0.75) }}>{dane.fiszki}</span> : null}
-                  </div>
-                ) : null}
+                <span className="bk-numer">{d.getDate()}</span>
                 {dane?.rozmowy ? (
-                  <div className="hidden sm:block text-sm font-semibold leading-tight mt-1" style={{ color: ZLOTO_JASNE }}>
-                    📞 {dane.rozmowy}
-                    {dane.srednia !== null ? ` · ${dane.srednia}/10` : ""}
-                  </div>
+                  <span className="bk-pig bk-pig-rozmowy" title={t("calls · average score", "rozmowy · średnia ocena")}>
+                    {dane.rozmowy} {mnoga(dane.rozmowy, ["call", "calls"], ["rozmowa", "rozmowy", "rozmów"])}{dane.srednia !== null ? ` · ${liczba(dane.srednia)}` : ""}
+                  </span>
                 ) : null}
-                {dane?.fiszki ? (
-                  <div className="hidden sm:block text-sm font-medium leading-tight mt-0.5" style={{ color: tx(0.85) }}>
-                    🃏 {dane.fiszki}
-                  </div>
-                ) : null}
-                {toKoniec ? (
-                  <div className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-wide leading-tight mt-auto pt-1" style={{ color: ZLOTO_JASNE }}>
-                    <span className="sm:hidden">{t("end", "koniec")}</span>
-                    <span className="hidden sm:inline">{t("access ends", "koniec dostępu")}</span>
-                  </div>
-                ) : null}
+                {dane?.fiszki ? <span className="bk-pig bk-pig-fiszki">{dane.fiszki} {mnoga(dane.fiszki, ["flashcard", "flashcards"], ["fiszka", "fiszki", "fiszek"])}</span> : null}
+                {toKoniec ? <span className="bk-pig bk-pig-koniec">{t("access ends", "koniec dostępu")}</span> : null}
               </>
             );
-            const klasa = "min-h-[54px] sm:min-h-[92px] rounded-lg sm:rounded-xl p-1 sm:p-2 flex flex-col items-center border transition-colors";
             return dane?.rozmowaId ? (
-              <Link key={k} href={`/bruno/feedback/${dane.rozmowaId}`} className={`${klasa} hover:border-[#d4af5a]`} style={styl} title={t("Open feedback", "Otwórz feedback")}>
-                {tresc}
-              </Link>
+              <Link key={k} href={`/bruno/feedback/${dane.rozmowaId}`} className={klasa} role="gridcell" title={t("Open feedback", "Otwórz feedback")}>{tresc}</Link>
             ) : (
-              <div key={k} className={klasa} style={styl}>{tresc}</div>
+              <div key={k} className={klasa} role="gridcell">{tresc}</div>
             );
           })}
         </div>
-        <div className="bruno-opis flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm mt-5" style={{ color: tx(0.72) }}>
-          <span>📞 {t("calls · average score", "rozmowy · średnia ocena")}</span>
-          <span>🃏 {t("flashcards", "fiszki")}</span>
-          {koniec && (
-            <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block w-3.5 h-3.5 rounded" style={{ background: zl(0.2), border: `1px solid ${zl(0.6)}` }} />
-              {t("days with access", "dni z dostępem")}
-            </span>
-          )}
-          <span>{t("Click a day with a call to open its feedback.", "Kliknij dzień z rozmową, żeby otworzyć feedback.")}</span>
+        <div className="bk-legenda">
+          <span><i className="bk-pig bk-pig-rozmowy" /> {t("calls · average score", "rozmowy · średnia ocena")}</span>
+          <span><i className="bk-pig bk-pig-fiszki" /> {t("flashcards", "fiszki")}</span>
+          {koniec && <span><i className="bk-leg-dostep" /> {t("days with access", "dni z dostępem")}</span>}
+          <span className="bk-leg-info">{t("Click a day with a call to open its feedback.", "Kliknij dzień z rozmową, żeby otworzyć feedback.")}</span>
         </div>
       </section>
     </div>

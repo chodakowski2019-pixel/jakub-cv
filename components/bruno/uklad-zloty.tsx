@@ -76,7 +76,8 @@ export default function UkladZloty({
 
   // 27.10: Rinesk: ta sama belka i szerokość na każdym ekranie.
   if (rinesk) {
-    const zKolumna = Boolean(kolumna) && (sciezka === "/bruno/panel" || sciezka === "/bruno/szef");
+    // 28.10 (USER_001): prawa kolumna TYLKO na /bruno/szef (Panel bez niej).
+    const zKolumna = Boolean(kolumna) && sciezka === "/bruno/szef";
     return (
       <div className={`br-uklad ${zKolumna ? "br-z-kolumna" : ""}`}>
         {tel}

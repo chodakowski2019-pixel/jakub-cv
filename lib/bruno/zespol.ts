@@ -141,3 +141,31 @@ export function statystykiZespolu(stat: StatHandlowca[]): StatZespolu {
     kryteria,
   };
 }
+
+// 28.10: rozmowy tygodniowo (pn-nd, Europe/Warsaw) do wykresu na profilu handlowca (serwer).
+export type TydzienRozmow = { od: string; rozmow: number; biezacy: boolean };
+export function tygodnieRozmow(rozmowy: { start: string; status?: string | null }[], tygodni = 8): TydzienRozmow[] {
+  const klucz = (d: Date) => d.toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
+  const poniedzialek = (iso: string) => {
+    const d = new Date(`${iso}T12:00:00`);
+    const dz = (d.getDay() + 6) % 7;
+    d.setDate(d.getDate() - dz);
+    return klucz(d);
+  };
+  const licznik = new Map<string, number>();
+  for (const r of rozmowy) {
+    if (r.status === "przerwana") continue;
+    const k = poniedzialek(klucz(new Date(r.start)));
+    licznik.set(k, (licznik.get(k) ?? 0) + 1);
+  }
+  const dzis = poniedzialek(klucz(new Date()));
+  const wynik: TydzienRozmow[] = [];
+  for (let i = tygodni - 1; i >= 0; i--) {
+    const d = new Date(`${dzis}T12:00:00`);
+    d.setDate(d.getDate() - i * 7);
+    const k = klucz(d);
+    wynik.push({ od: k, rozmow: licznik.get(k) ?? 0, biezacy: k === dzis });
+  }
+  return wynik;
+}
+

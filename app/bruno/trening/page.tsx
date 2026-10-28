@@ -6,6 +6,7 @@ import { limitFiszek, pobierzKonfig, pobierzKonto, poczatekDniaPL, stanDostepu, 
 import { zapewnijKarty } from "@/lib/bruno/fsrs";
 import Fiszki, { type FiszkaKarta } from "@/components/bruno/fiszki";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
+import { obiekcjeZWyjasnieniem } from "@/lib/bruno/obiekcje";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,8 @@ export default async function BrunoTreningPage({ searchParams }: { searchParams:
   if (!konto || !stanDostepu(konto).aktywny) redirect("/bruno/panel");
 
   const konfig = await pobierzKonfig(email);
-  await zapewnijKarty(email, konfig);
+  // 28.10: talia w języku konta (wcześniej domyślnie EN).
+  await zapewnijKarty(email, konfig, konto.jezyk === "pl" ? "pl" : "en");
   const { karta: kartaId } = await searchParams;
 
   const [karty, fiszkiDzis, wszystkieFiszki] = await Promise.all([
@@ -44,8 +46,10 @@ export default async function BrunoTreningPage({ searchParams }: { searchParams:
   ]);
 
   const teraz = Date.now();
+  // 28.10: karty „obiekcja” tylko z aktualnej konfiguracji (stare, np. angielskie z poprzednich ustawień, znikają).
+  const obiekcjeKonfig = new Set(obiekcjeZWyjasnieniem(konfig.obiekcje).map((o) => o.nazwa));
   const obiekcje = karty
-    .filter((k) => k.typ !== "kryterium")
+    .filter((k) => k.typ !== "kryterium" && (k.typ !== "obiekcja" || obiekcjeKonfig.has(k.tresc)))
     .map<FiszkaKarta>((k) => ({ id: k.id, typ: k.typ as FiszkaKarta["typ"], tresc: k.tresc, pytanie: k.pytanie ?? null, kategoria: k.kategoria ?? null, due: k.due, naCzas: new Date(k.due).getTime() <= teraz, reps: k.reps, lapses: k.lapses }))
     .sort((a, b) => Number(b.naCzas) - Number(a.naCzas) || new Date(a.due).getTime() - new Date(b.due).getTime());
   // Karta z linku (np. z „Do powtórki") idzie na początek.

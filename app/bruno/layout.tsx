@@ -105,10 +105,13 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
     if (szef && konto.firma_id) {
       const handlowcy = (await handlowcyFirmy(konto.firma_id)).filter((h) => h.email !== email);
       const rozmowy = await rozmowyZespolu(handlowcy.map((h) => h.email), 30);
+      // 28.10 (USER_001): pod imieniem TYLKO „śr. rozmów 8,42/10” (średnia ocen z 30 dni, 2 miejsca po przecinku).
       wiadomosci = handlowcy
         .map((h) => {
-          const r = rozmowy.find((x) => x.email === h.email && typeof x.ocena === "number");
-          return r ? { imie: h.imie ?? h.email, zdjecie: h.zdjecie_url ?? null, tekst: `${r.ocena}/10 · ${klient(r.postac)} · ${kiedy(r.start)}${r.feedback?.poprawka ? `: ${r.feedback.poprawka}` : ""}`, href: `/bruno/szef/${encodeURIComponent(h.email)}` } : null;
+          const oceny = rozmowy.filter((x) => x.email === h.email && typeof x.ocena === "number").map((x) => x.ocena as number);
+          if (!oceny.length) return null;
+          const sr = (oceny.reduce((a, b) => a + b, 0) / oceny.length).toLocaleString(jezyk === "pl" ? "pl-PL" : "en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          return { imie: h.imie ?? h.email, zdjecie: h.zdjecie_url ?? null, tekst: jezyk === "pl" ? `śr. rozmów ${sr}/10` : `avg. calls ${sr}/10`, href: `/bruno/szef/${encodeURIComponent(h.email)}` };
         })
         .filter((x): x is NonNullable<typeof x> => Boolean(x))
         .slice(0, 5);

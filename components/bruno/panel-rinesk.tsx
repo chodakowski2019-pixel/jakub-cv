@@ -21,7 +21,8 @@ function wygladz(pts: [number, number][]) {
   return s;
 }
 
-export default function PanelRinesk({ d, dostep, logo = null, inicjal }: { d: DanePanelu; dostep: DostepLinkow; logo?: Logo; inicjal: string }) {
+// 28.10 (USER_001): „Cześć” + wykres po LEWEJ, „Twoje rozmowy” po PRAWEJ (CSS order); zamiast logo firmy zdjęcie osoby.
+export default function PanelRinesk({ d, dostep, logo = null, inicjal, zdjecie = null }: { d: DanePanelu; dostep: DostepLinkow; logo?: Logo; inicjal: string; /** 28.10: zdjęcie zalogowanego (albo kogoś z zespołu), zamiast logo. */ zdjecie?: string | null }) {
   const { t, jezyk } = useT();
   const pl = (v: number, dec = 1) => v.toLocaleString(jezyk === "pl" ? "pl-PL" : "en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec });
   const [hover, setHover] = useState<number | null>(null);
@@ -62,7 +63,10 @@ export default function PanelRinesk({ d, dostep, logo = null, inicjal }: { d: Da
     <div className="brp">
       <section className="brp-hero">
         <div className="brp-lider">
-          {logo?.url ? (
+          {zdjecie ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={zdjecie} alt="" className="brp-foto" />
+          ) : logo?.url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={logo.url} alt={logo.nazwa} />
           ) : (
@@ -74,7 +78,7 @@ export default function PanelRinesk({ d, dostep, logo = null, inicjal }: { d: Da
           ) : (
             <span className="brp-btn brp-btn-off">{d.planZrobiony ? t("Come back tomorrow", "Wróć jutro") : t("Out of minutes", "Limit minut")}</span>
           )}
-          <Link href="/bruno/trening" className="brp-okr" aria-label={t("Drills", "Trening")} title={t("Drills", "Trening")}><Ikona nazwa="trening" rozmiar={16} /></Link>
+          {/* 28.10 (USER_001): kółko „Trening” obok „Rozmawiaj” usunięte. */}
         </div>
         <div className="brp-hej">
           <h1>{d.imie ? t(`Hey, ${d.imie}!`, `Cześć, ${d.imie}!`) : t("Hey!", "Cześć!")} 👋</h1>
@@ -83,16 +87,10 @@ export default function PanelRinesk({ d, dostep, logo = null, inicjal }: { d: Da
         {!d.skonfigurowany && <Link href="/bruno/dostosuj" className="brp-okr brp-okr-duzy" aria-label={t("Customize Bruno", "Dostosuj Bruno")} title={t("Customize Bruno", "Dostosuj Bruno")}><Ikona nazwa="dostosuj" rozmiar={18} /></Link>}
 
         <div className="brp-bok">
-          <div className="brp-ikonki">
-            <Link href={d.linkRozmowy} aria-label={t("Live call", "Test")}><Ikona nazwa="test" rozmiar={13} grubosc={2} /></Link>
-            <Link href="/bruno/trening" aria-label={t("Drills", "Trening")}><Ikona nazwa="trening" rozmiar={13} grubosc={2} /></Link>
-            <Link href="/bruno/feedback" aria-label={t("Feedback", "Feedback")}><Ikona nazwa="feedback" rozmiar={13} grubosc={2} /></Link>
-            {dostep.ogien && <Link href="/bruno/ogien" aria-label={t("Mental zone", "Strefa mentalna")}><Ikona nazwa="ogien" rozmiar={13} grubosc={2} /></Link>}
-            <Link href="/bruno/kalendarz" aria-label={t("Calendar", "Kalendarz")}><Ikona nazwa="kalendarz" rozmiar={13} grubosc={2} /></Link>
-          </div>
+          {/* 28.10 (USER_001): kolumna ikonek usunięta. */}
           <div className="brp-opis">
             <h2>{t("Your calls", "Twoje rozmowy")}</h2>
-            <p>{t("Everything from your training calls with Bruno: scores, criteria, drills.", "Wszystko z Twoich rozmów treningowych z Bruno: oceny, kryteria, fiszki.")} <Link href="/bruno/feedback"><b>{t("See feedback", "Zobacz feedback")}</b></Link></p>
+            {/* 28.10 (USER_001): opis „Wszystko z Twoich rozmów…” usunięty. */}
             <div className="brp-wielka"><Licz do={d.ocenionych} /></div>
             <div className="brp-leg">
               <span><i className="brp-zol" />{t("Scored calls", "Rozmów ocenionych")}<b>{d.ocenionych}</b></span>
@@ -112,8 +110,9 @@ export default function PanelRinesk({ d, dostep, logo = null, inicjal }: { d: Da
               {dni14.map((x, i) => <line key={`d${i}`} x1={X(i)} x2={X(i)} y1={126} y2={126 + (x.wartosc / max) * 14} stroke={i === h ? "#141416" : "#e6e7eb"} strokeWidth="1.4" strokeLinecap="round" />)}
               <line x1={X(7) - (W - 16) / 26} x2={X(7) - (W - 16) / 26} y1={30} y2={140} stroke="#e6e7eb" strokeDasharray="2 4" />
             </svg>
-            <div className="brp-osie">{[d.dziennie, 0].map((v, i) => <span key={i}>{v}</span>)}</div>
-            <div className="brp-tt" style={{ left: `${(X(h) / W) * 100}%`, transform: `translateX(${h >= 11 ? "-100%" : h <= 1 ? "0" : "-50%"})` }}>
+            {/* 28.10 (USER_001): oś = ocena 10 / 5 / 0 (zakres krzywej), dymek nad punktem krzywej w dniu, na który najechano. */}
+            <div className="brp-osie">{[10, 5, 0].map((v) => <span key={v}>{v}</span>)}</div>
+            <div className="brp-tt" style={{ left: `${(X(h) / W) * 100}%`, top: `${(krzywa[h][1] / H) * 240 - 12}px`, transform: `translate(${h >= 11 ? "-100%" : h <= 1 ? "0" : "-50%"}, -100%)` }}>
               <b>{data(h)}</b>
               <span><em>{dni14[h].wartosc}</em> {rozmowy(dni14[h].wartosc, jezyk)}</span>
               <span><em>{dni14[h].srednia !== null ? pl(dni14[h].srednia as number) : "–"}</em> {t("score", "ocena")}</span>
@@ -122,9 +121,7 @@ export default function PanelRinesk({ d, dostep, logo = null, inicjal }: { d: Da
         </div>
       </section>
 
-      <nav className="brp-zak" aria-label={t("Sections", "Sekcje")}>
-        {zak.map((z) => <Link key={z.href} href={z.href}>{z.n}</Link>)}
-      </nav>
+      {/* 28.10 (USER_001): rząd zakładek (Test / Trening / …) usunięty. */}
 
       <section className="brp-rzad">
         <div className="brp-karta brp-tab">
@@ -155,16 +152,7 @@ export default function PanelRinesk({ d, dostep, logo = null, inicjal }: { d: Da
           <small className="brp-dol">{d.srednia?.opis ?? t("From all scored calls", "Ze wszystkich ocenionych rozmów")}</small>
         </div>
 
-        <div className="brp-karta brp-czas">
-          <div className="brp-hd"><small>{t("Score over time", "Ocena w czasie")}</small><span className="brp-sel">{t("7 days", "7 dni")}</span></div>
-          <div className="brp-leg brp-leg-rzad"><span><i className="brp-zol" />{t("Last call", "Ostatnia")}<b>{ost !== null ? pl(ost) : "–"}</b></span><span><i className="brp-czar" />{t("Best day", "Najlepszy dzień")}<b>{maOceny ? pl(Math.max(...d.dni7.map((x) => x.srednia ?? 0))) : "–"}</b></span></div>
-          <svg viewBox="0 0 320 120" preserveAspectRatio="none" aria-hidden>
-            {d.dni7.map((x, i) => Array.from({ length: 4 }, (_, k) => { const v = x.srednia ?? 0; const xx = 10 + i * 44 + k * 9; return <line key={`${i}-${k}`} x1={xx} x2={xx} y1={100} y2={100 - Math.max(3, (v / 10) * 82)} stroke={v >= 7 ? "#d9e000" : v ? "#c9ccd2" : "#eceef2"} strokeWidth="2.2" strokeLinecap="round" />; }))}
-          </svg>
-          <div className="brp-pod">{d.dni7.map((x) => <span key={x.podpis} className={x.dzis ? "brp-on" : ""}>{x.etykieta}</span>)}</div>
-          <small className="brp-dol">{t("Four bars per day = calls that day", "Cztery kreski na dzień = ocena tego dnia")}</small>
-        </div>
-
+        {/* 28.10 (USER_001): karta „Ocena w czasie” usunięta. */}
         <div className="brp-karta brp-plan">
           <small>{t("Today's plan", "Plan dnia")}</small>
           <h3>{d.planZrobiony ? t("Done for today", "Zrobiony na dziś") : t(`${d.zostaloDzis} ${rozmowy(d.zostaloDzis)} left`, `Zostało ${d.zostaloDzis} ${rozmowy(d.zostaloDzis, "pl")}`)}</h3>

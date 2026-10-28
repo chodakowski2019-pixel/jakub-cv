@@ -17,8 +17,9 @@ export type DaneKolumny = { postac: string; zdjecie: string | null; inicjal: str
 export default function KolumnaRinesk({ dane }: { dane: DaneKolumny }) {
   const { t } = useT();
   return (
-    <aside className="brr" aria-label={t("Talk to Bruno", "Rozmowa z Bruno")}>
-      <div className="brr-hd"><h3>{t("Talk to Bruno", "Rozmowa z Bruno")}</h3><Link href="/bruno/rozmowa" className="brr-plus">+ {t("Start", "Start")}</Link></div>
+    <aside className="brr" aria-label={t("Training", "Trening")}>
+      {/* 28.10 (USER_001): nagłówek „Trening”, bez „+ Start”, karta jasnoszara z napisem „Zacznij rozmowę”. */}
+      <div className="brr-hd"><h3>{t("Training", "Trening")}</h3></div>
       <Link href="/bruno/rozmowa" className="brr-operator">
         {dane.zdjecie ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -26,12 +27,12 @@ export default function KolumnaRinesk({ dane }: { dane: DaneKolumny }) {
         ) : (
           <span className="brr-aw">{dane.inicjal}</span>
         )}
-        <b>Bruno · {dane.postac}</b>
+        <b>{t("Start a call", "Zacznij rozmowę")}</b>
         <Ikona nazwa="test" rozmiar={17} grubosc={1.8} />
         <i>⋮</i>
       </Link>
 
-      <h3>{t("Messages", "Wiadomości")}</h3>
+      <h3>{t("Team", "Zespół")}</h3>
       {dane.wiadomosci.length ? (
         <ul className="brr-wiad">
           {dane.wiadomosci.map((w, i) => (

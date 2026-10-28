@@ -472,28 +472,19 @@ export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia 
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="text-center">
-        <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
-          {jezyk === "pl" ? <>Strefa <span className="bruno-gradient-tekst">mentalna</span></> : <>Mental <span className="bruno-gradient-tekst">Zone</span></>}
-        </h1>
-        <p className="text-slate-600 mt-2">{t("Before a real sales call", "Przed prawdziwą rozmową sprzedażową")}</p>
-      </div>
-
-      {/* Pasek kroków */}
-      {krok !== "koniec" && (
-        <ol className="flex flex-wrap justify-center gap-1.5 text-xs" aria-label={t("Steps", "Kroki")}>
-          {KROKI.map((x, i) => (
-            <li key={x.id} className={`px-2.5 py-1 rounded-full border ${i === nr ? "bg-slate-900 text-white border-slate-900" : i < nr ? "bg-teal-50 text-teal-800 border-teal-200" : "bg-white/60 text-slate-500 border-slate-200"}`}>
-              {i + 1}. {t(x.nazwa, x.nazwaPl)}
-            </li>
-          ))}
-        </ol>
-      )}
+    // 28.10 (USER_001: „czytelniej”): nagłówek z lewej, przyciski z prawej; kroki jako pionowa lista z lewej, treść kroku z prawej (CSS .brg-* w motyw-rinesk.css).
+    <div className="flex flex-col gap-6 brg">
+      <div className="brg-naglowek">
+        <div>
+          <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">
+            {jezyk === "pl" ? <>Strefa <span className="bruno-gradient-tekst">mentalna</span></> : <>Mental <span className="bruno-gradient-tekst">Zone</span></>}
+          </h1>
+          <p className="text-slate-600 mt-2">{t("Before a real sales call", "Przed prawdziwą rozmową sprzedażową")}</p>
+        </div>
 
       {/* Muzyka + Bruno nakręca: widoczne od zapalenia do „Dzwonię" */}
       {krok !== "rozmowa" && krok !== "koniec" && (
-        <div className="flex flex-wrap items-center justify-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2 brg-akcje">
           <button type="button" onClick={przelaczMuzyke} className={`bruno-pastylka ${muzyka ? "bruno-pastylka-wybrana" : ""}`} aria-pressed={muzyka}>
             {muzyka ? t("■ Music on", "■ Muzyka gra") : t("▶ Music", "▶ Muzyka")}
           </button>
@@ -503,7 +494,22 @@ export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia 
           {hypeStan === "blad" && <span className="text-xs text-red-700">{t("That didn't work. Try again in a moment.", "Nie udało się. Spróbuj za chwilę.")}</span>}
         </div>
       )}
-      {hypeTekst && krok !== "koniec" && <p className="text-center text-slate-800 italic max-w-xl mx-auto">{cudzy(hypeTekst)}</p>}
+      </div>
+      {hypeTekst && krok !== "koniec" && <p className="text-center text-slate-800 italic max-w-xl mx-auto brg-hype">{cudzy(hypeTekst)}</p>}
+
+      <div className="brg-uklad">
+      {/* Pasek kroków */}
+      {krok !== "koniec" && (
+        <ol className="brg-kroki" aria-label={t("Steps", "Kroki")}>
+          {KROKI.map((x, i) => (
+            <li key={x.id} className={i === nr ? "brg-on" : i < nr ? "brg-done" : ""} aria-current={i === nr ? "step" : undefined}>
+              <i>{i < nr ? "✓" : i + 1}</i>
+              <span>{t(x.nazwa, x.nazwaPl)}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+      <div className="brg-tresc">
 
       {krok === "zapal" && (
         <div className="bruno-szklo rounded-3xl p-8 sm:p-10 text-center flex flex-col items-center gap-6">
@@ -512,10 +518,10 @@ export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia 
             <footer className="text-sm text-slate-500 mt-2">{cytat.autor}</footer>
           </blockquote>
           {ostatnia && (
-            <div className="text-sm text-slate-700 bruno-szklo rounded-2xl p-4 max-w-xl">
-              <div className="text-xs font-semibold uppercase tracking-wide text-cyan-800 mb-1">{t("From your last call with Bruno", "Z ostatniej rozmowy z Bruno")} ({ostatnia.ocena}/10)</div>
-              <div><b>{t("What worked:", "Zagrało:")}</b> {ostatnia.wygrana}</div>
-              <div className="mt-1"><b>{t("Do this differently today:", "Dziś zrób inaczej:")}</b> {ostatnia.poprawka}</div>
+            <div className="brg-ostatnia">
+              <div className="brg-ost-hd"><span>{t("From your last call with Bruno", "Z ostatniej rozmowy z Bruno")}</span><b>{ostatnia.ocena}/10</b></div>
+              <div className="brg-ost-rz"><i>✓</i><div><small>{t("What worked", "Zagrało")}</small>{ostatnia.wygrana}</div></div>
+              <div className="brg-ost-rz"><i>→</i><div><small>{t("Do this differently today", "Dziś zrób inaczej")}</small>{ostatnia.poprawka}</div></div>
             </div>
           )}
           <p className="text-slate-600">{t(`${imie ? `${imie}, y` : "Y"}ou have a real call coming up. Turn on the music, get hyped, and let's go: breathe, voice, mindset.`, `${imie ? `${imie}, m` : "M"}asz za chwilę prawdziwą rozmowę. Włącz muzykę, daj się nakręcić i lecimy: oddech, głos, głowa.`)}</p>
@@ -609,6 +615,8 @@ export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia 
           </div>
         </div>
       )}
+      </div>
+      </div>
     </div>
   );
 }

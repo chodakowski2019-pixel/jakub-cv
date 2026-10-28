@@ -8,6 +8,7 @@ import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { postacLubDomyslna } from "@/lib/bruno/postacie";
 import { obiekcjeZWyjasnieniem } from "@/lib/bruno/obiekcje";
 import Rozmowa from "@/components/bruno/rozmowa";
+import { motywRinesk } from "@/lib/bruno/motyw";
 
 
 /** 25.10: wspólne dla /bruno/rozmowa i /bruno/jutro („Rozmowa, którą masz jutro”, osobna zakładka). */
@@ -65,6 +66,7 @@ export default async function StronaRozmowy({ searchParams, jutro }: { searchPar
       free={dostepKonta(konto).free ? await stanFree(konto) : null}
       obiekcjeOpis={Object.fromEntries(obiekcjeZWyjasnieniem(konfig.obiekcje).map((o) => [o.nazwa, o.wyjasnienie]))}
       jutro={jutro}
+      rinesk={motywRinesk()}
     />
   );
 }

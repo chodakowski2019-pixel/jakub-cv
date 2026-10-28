@@ -339,7 +339,9 @@ html:has(.bruno.zloty.rinesk), body:has(.bruno.zloty.rinesk) { background: #f2f3
 .brr-operator:active { transform: scale(0.98); }
 .brr-aw { width: 38px; height: 38px; border-radius: 8px; background: #fff; color: #4a35b8; display: grid; place-items: center; font-weight: 700; font-size: 14px; flex: 0 0 auto; }
 .brr-aw-sz { border-radius: 50%; width: 40px; height: 40px; background: #141416; color: #fff; }
-.brr-wiad { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.brr-wiad { list-style: none; margin: 0; padding: 0; display: grid; }
+.brr-wiad li { padding: 10px 0; border-top: 1px solid #ececef; }
+.brr-wiad li:first-child { border-top: 0; padding-top: 2px; }
 .brr-wiad a { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
 .brr-wiad img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: 0 0 auto; }
 .brr-wiad div { min-width: 0; }
@@ -382,3 +384,186 @@ html:has(.bruno.zloty.rinesk), body:has(.bruno.zloty.rinesk) { background: #f2f3
 /* panel handlowca obok prawej kolumny: 4 karty w 2 rzędach, żeby nic się nie ściskało */
 .br-z-kolumna .brp-rzad { grid-template-columns: 1fr 1fr; }
 .br-z-kolumna .brp-karta { min-height: 260px; }
+
+/* 28.10 (USER_001): wykres „Średnia zespołu w czasie”: granice miesięcy + kreski tygodni; karta „Zacznij rozmowę” jasnoszara; mniejsze logo firmy. */
+.rinesk .bwz-granica { stroke: #d9dbe0; }
+.rinesk .bwz-tyk { stroke: #e3e4e8; }
+.rinesk .brr-operator { background: #f1f1f4; color: #141416; }
+.rinesk .brr-operator:hover { filter: brightness(0.97); }
+.rinesk .brr-operator img, .rinesk .brr-aw { width: 30px; height: 30px; border-radius: 7px; }
+.rinesk .brr-aw { background: #141416; color: #fff; }
+.rinesk .brl-logo img { width: 18px; height: 18px; border-radius: 4px; }
+/* 28.10 (USER_001): nagłówek „Zespół T-Mobile” bez logo (twarz handlowca na profilu zostaje). */
+.rinesk .bsz-logo:not(.bsz-twarz) { display: none; }
+
+/* 28.10 (USER_001): nagłówki tabeli zespołu pogrubione. */
+.rinesk .bsz-naglowek { font-weight: 700; color: rgba(20, 20, 22, 0.7); }
+
+/* 28.10 (USER_001): radar umiejętności na profilu handlowca. */
+.rinesk .bwz-radar-siatka { stroke: #e3e4e8; }
+.rinesk .bwz-radar-zespol { stroke: #141416; }
+.rinesk .bwz-radar-ja { fill: rgba(233, 245, 66, 0.35); stroke: #d9e000; }
+.rinesk .bwz-radar-kropka { fill: #d9e000; stroke: #fff; }
+.rinesk .bwz-radar-nazwa { fill: #7d7f87; font-size: 11px; }
+.rinesk .bwz-radar-wartosc { fill: #141416; font-size: 13px; font-weight: 600; }
+.rinesk .bwz-radar-slabe { fill: #e11d48; color: #e11d48; }
+.rinesk .bwz-leg-ja { background: #d9e000 !important; }
+.rinesk .bwz-leg-zespol { border-color: #141416 !important; }
+
+/* 28.10 (USER_001): rozmowy tygodniowo + kafelek trendu na profilu handlowca. */
+.rinesk .bwz-tyg-cien { fill: #ececef; }
+.rinesk .bwz-tyg-slupek { fill: #eef2a8; }
+.rinesk .bwz-tyg-teraz { fill: #d9e000; }
+.rinesk .bwz-tyg-liczba { fill: #7d7f87; }
+.rinesk .bwz-tyg-liczba-teraz { fill: #141416; }
+.rinesk .bwz-tyg-os-teraz { fill: #141416; font-weight: 600; }
+.rinesk .bsz-trend { display: flex; flex-direction: column; gap: 8px; }
+.rinesk .bsz-trend-gora { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.rinesk .bsz-trend-gora .bruno-zmiana { font-size: 1.5rem; padding: 4px 12px; border-radius: 999px; }
+.rinesk .bsz-trend svg { width: 96px; height: 34px; }
+
+/* 28.10 (USER_001): ekran rozmowy: kula WebGL + nagłówek nad Startem. */
+/* 28.10 (USER_001: „obniż i wyśrodkuj”): kula + tytuł + Start w pionie na środku ekranu. */
+.rinesk .brz-start { gap: 26px; padding-top: max(40px, calc(50vh - 250px)); }
+.rinesk .brz-start + * { margin-top: 4px; }
+.rinesk .brz-kula { width: 240px; height: 240px; }
+.rinesk .brz-tekst { text-align: center; }
+.rinesk .brz-tekst h1 { font-size: 28px; font-weight: 500; letter-spacing: -0.01em; }
+.rinesk .brz-tekst p { color: #7d7f87; max-width: 440px; margin: 6px auto 0; line-height: 1.5; }
+
+/* 28.10 (USER_001): Strefa mentalna: nagłówek z lewej, kroki pionowo, treść z prawej. */
+.rinesk .brg-naglowek { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.rinesk .brg-naglowek h1 { text-align: left; font-size: 30px; font-weight: 500; }
+.rinesk .brg-naglowek p { margin-top: 2px; }
+.rinesk .brg-akcje { justify-content: flex-end; }
+.rinesk .brg-uklad { display: grid; grid-template-columns: 232px minmax(0, 1fr); gap: 16px; align-items: start; }
+.rinesk .brg-kroki { background: #fff; border: 1px solid #ececef; border-radius: 18px; padding: 10px; display: flex; flex-direction: column; gap: 4px; margin: 0; list-style: none; }
+.rinesk .brg-kroki li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; color: #7d7f87; font-size: 13.5px; }
+.rinesk .brg-kroki li i { width: 26px; height: 26px; border-radius: 50%; background: #f1f1f4; display: grid; place-items: center; font-style: normal; font-size: 12px; font-weight: 600; color: #141416; flex: 0 0 auto; }
+.rinesk .brg-kroki li.brg-on { background: #141416; color: #fff; }
+.rinesk .brg-kroki li.brg-on i { background: #e9f542; color: #141416; }
+.rinesk .brg-kroki li.brg-done { color: #141416; }
+.rinesk .brg-kroki li.brg-done i { background: #e9f542; }
+.rinesk .brg-tresc > .bruno-szklo { border-radius: 18px; }
+.rinesk .brg-ostatnia { width: 100%; max-width: 620px; background: #f6f6f8; border-radius: 14px; padding: 14px 16px; text-align: left; display: flex; flex-direction: column; gap: 10px; }
+.rinesk .brg-ost-hd { display: flex; justify-content: space-between; align-items: center; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #7d7f87; }
+.rinesk .brg-ost-hd b { font-size: 13px; letter-spacing: 0; text-transform: none; background: #e9f542; border-radius: 999px; padding: 2px 10px; color: #141416; }
+.rinesk .brg-ost-rz { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: #141416; line-height: 1.45; }
+.rinesk .brg-ost-rz i { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 1px solid #e3e4e8; display: grid; place-items: center; font-style: normal; font-size: 12px; flex: 0 0 auto; margin-top: 1px; }
+.rinesk .brg-ost-rz small { display: block; font-size: 11px; color: #7d7f87; }
+@media (max-width: 860px) {
+  .rinesk .brg-uklad { grid-template-columns: 1fr; }
+  .rinesk .brg-kroki { flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+  .rinesk .brg-kroki li { flex: 0 0 auto; }
+  .rinesk .brg-naglowek h1 { font-size: 26px; }
+}
+
+/* 28.10 (USER_001): Kalendarz w stylu Rinesk (components/bruno/kalendarz.tsx). */
+.bk-naglowek { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.bk-naglowek h1 { text-align: left; font-size: 30px; font-weight: 500; }
+.bk-dostep { font-size: 13px; color: #7d7f87; margin-top: 4px; }
+.bk-dostep b { color: #141416; font-weight: 500; }
+.bk-nav { display: flex; align-items: center; gap: 4px; background: #fff; border: 1px solid #ececef; border-radius: 999px; padding: 4px; }
+.bk-nav button { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 18px; color: #141416; background: transparent; transition: background 0.15s; }
+.bk-nav button:hover { background: #f1f1f4; }
+.bk-nav b { font-weight: 500; font-size: 14px; padding: 0 10px; min-width: 150px; text-align: center; }
+.bk-nav .bk-dzis { width: auto; border-radius: 999px; padding: 0 12px; font-size: 12px; background: #141416; color: #fff; }
+.bk-kafelki { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.bk-kafelek { background: #fff; border: 1px solid #ececef; border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; }
+.bk-kafelek b { font-size: 30px; font-weight: 400; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.bk-kafelek span { font-size: 13px; font-weight: 500; margin-top: 8px; }
+.bk-kafelek small { font-size: 11px; color: #7d7f87; margin-top: 2px; }
+.bk-siatka-karta { background: #fff; border: 1px solid #ececef; border-radius: 18px; padding: 16px; }
+.bk-siatka { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.bk-dzien-nazwa { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #7d7f87; text-align: center; padding: 4px 0 8px; }
+.bk-kratka { min-height: 92px; border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 4px; background: #f6f6f8; border: 1px solid transparent; text-decoration: none; color: #141416; transition: border-color 0.15s, transform 0.12s; }
+a.bk-kratka:hover { border-color: #141416; }
+a.bk-kratka:active { transform: scale(0.98); }
+.bk-numer { font-size: 13px; font-weight: 500; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; }
+.bk-inny { opacity: 0.35; background: transparent; }
+.bk-z-dostepem { background: #f8fad8; }
+.bk-po { opacity: 0.55; }
+.bk-dzis-kratka .bk-numer { background: #141416; color: #fff; }
+.bk-koniec { border-color: #d9e000; box-shadow: 0 0 0 2px rgba(233, 245, 66, 0.6); }
+.bk-pig { display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 500; line-height: 1.2; padding: 3px 7px; border-radius: 999px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.bk-pig-rozmowy { background: #e9f542; color: #141416; }
+.bk-pig-fiszki { background: #fff; border: 1px solid #e3e4e8; color: #141416; }
+.bk-pig-koniec { background: #141416; color: #fff; margin-top: auto; }
+.bk-legenda { display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: center; font-size: 12px; color: #7d7f87; margin-top: 14px; }
+.bk-legenda span { display: inline-flex; align-items: center; gap: 6px; }
+.bk-legenda i.bk-pig { width: 18px; height: 12px; padding: 0; }
+.bk-leg-dostep { width: 18px; height: 12px; border-radius: 4px; background: #f8fad8; border: 1px solid #e3e4e8; display: inline-block; }
+.bk-leg-info { margin-left: auto; }
+@media (max-width: 860px) {
+  .bk-kafelki { grid-template-columns: 1fr 1fr; }
+  .bk-kratka { min-height: 58px; padding: 5px; gap: 2px; }
+  .bk-pig { font-size: 9.5px; padding: 2px 5px; }
+  .bk-naglowek h1 { font-size: 26px; }
+  .bk-nav b { min-width: 0; }
+  .bk-leg-info { display: none; }
+}
+
+/* 28.10 (USER_001): Podsumowanie tygodnia (app/bruno/tydzien). */
+.btw-naglowek { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.btw-naglowek h1 { text-align: left; font-size: 30px; font-weight: 500; }
+.btw-btn { background: #e9f542; color: #141416; border-radius: 999px; padding: 10px 18px; font-size: 13px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; transition: transform 0.12s, filter 0.15s; }
+.btw-btn:hover { filter: brightness(0.97); } .btw-btn:active { transform: scale(0.96); }
+.btw-btn-2 { background: #141416; color: #fff; }
+.btw-kafelki { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.btw-kafelek { background: #fff; border: 1px solid #ececef; border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; }
+.btw-kafelek b { font-size: 30px; font-weight: 400; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.btw-kafelek span { font-size: 13px; font-weight: 500; margin-top: 8px; }
+.btw-zmiana { font-size: 11px; color: #7d7f87; margin-top: 3px; }
+.btw-zmiana[data-k="gora"] { color: #1a7f3c; } .btw-zmiana[data-k="dol"] { color: #c2410c; }
+.btw-uklad { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.btw-karta { background: #fff; border: 1px solid #ececef; border-radius: 18px; padding: 18px 20px; }
+.btw-hd { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.btw-hd h2 { font-size: 16px; font-weight: 500; }
+.btw-hd span { font-size: 11px; color: #7d7f87; white-space: nowrap; }
+.btw-pusto { font-size: 13px; color: #7d7f87; padding: 10px 0; }
+.btw-pusto a { color: #141416; font-weight: 500; text-decoration: underline; }
+.btw-lista { list-style: none; margin: 0; padding: 0; }
+.btw-lista li { border-top: 1px solid #ececef; }
+.btw-lista a { display: flex; align-items: center; gap: 12px; padding: 10px 0; text-decoration: none; color: #141416; }
+.btw-lista b { display: block; font-size: 13.5px; font-weight: 500; }
+.btw-lista small { display: block; font-size: 12px; color: #7d7f87; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btw-lista small em { font-style: normal; background: #f1f1f4; border-radius: 999px; padding: 1px 7px; margin-right: 6px; color: #141416; font-size: 11px; }
+.btw-lista i { font-style: normal; color: #b4b6bd; font-size: 18px; }
+.btw-plan { background: #141416; color: #fff; border-color: #141416; }
+.btw-plan .btw-hd h2 { color: #fff; } .btw-plan .btw-hd span { color: rgba(255, 255, 255, 0.55); }
+.btw-plan-lista { list-style: none; margin: 0; padding: 0; counter-reset: krok; display: flex; flex-direction: column; gap: 10px; }
+.btw-plan-lista li { counter-increment: krok; display: grid; grid-template-columns: 28px 1fr; gap: 0 10px; padding: 10px 0; border-top: 1px solid rgba(255, 255, 255, 0.12); }
+.btw-plan-lista li::before { content: counter(krok); grid-row: span 2; width: 26px; height: 26px; border-radius: 50%; background: #e9f542; color: #141416; display: grid; place-items: center; font-size: 12px; font-weight: 600; }
+.btw-plan-lista b { font-size: 13.5px; font-weight: 500; }
+.btw-plan-lista span { font-size: 12.5px; color: rgba(255, 255, 255, 0.7); line-height: 1.45; }
+.btw-plan .btw-pusto { color: rgba(255, 255, 255, 0.7); }
+.btw-plan-btns { display: flex; gap: 8px; margin-top: 14px; }
+.btw-plan .btw-btn-2 { background: #fff; color: #141416; }
+@media (max-width: 1100px) { .btw-uklad { grid-template-columns: 1fr; } }
+@media (max-width: 860px) { .btw-kafelki { grid-template-columns: 1fr 1fr; } .btw-naglowek h1 { font-size: 26px; } }
+
+/* 28.10 (USER_001): kula Bruno w limonce, płynny środek = shader zorzy (components/bruno/kula-limonka.tsx). */
+.kl { --kl-czas: 16s; position: relative; width: 100%; height: 100%; }
+.kl-cien { position: absolute; left: 8%; right: 8%; bottom: -9%; height: 24%; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(150, 165, 0, 0.5), rgba(150, 165, 0, 0) 70%); filter: blur(12px); animation: kl-cien 5s ease-in-out infinite; }
+.kl-kula {
+  position: absolute; inset: 0; border-radius: 50%; overflow: hidden; isolation: isolate; transform: translateZ(0);
+  background: radial-gradient(circle at 32% 26%, #fdfee2 0%, #e3ef3a 34%, #9eab00 80%, #5e6a00 100%);
+  box-shadow: 0 34px 70px -34px rgba(110, 125, 0, 0.7);
+  animation: kl-oddech 5s ease-in-out infinite;
+}
+.kl-kula canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.kl-fallback { background: linear-gradient(180deg, #fbfdd0 0%, #d4e000 35%, #5c6d00 70%, #1f2600 100%); }
+.kl-szklo { position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.12) 16%, rgba(255, 255, 255, 0) 38%), radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 60%, rgba(20, 30, 0, 0.45) 100%); }
+.kl-blask { position: absolute; left: 17%; top: 9%; width: 40%; height: 26%; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 70%); filter: blur(3px); transform: rotate(-18deg); pointer-events: none; }
+.kl-rim { position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4), inset 0 -2px 6px rgba(255, 255, 255, 0.15); pointer-events: none; }
+.kl-pierscien { position: absolute; inset: -4%; border-radius: 50%; border: 1.5px solid rgba(200, 214, 0, 0.5); opacity: 0; animation: kl-fala 4.5s ease-out infinite; }
+.kl-p2 { animation-delay: 2.25s; }
+.kl-mowi .kl-pierscien { animation-duration: 1.8s; }
+.kl-mowi .kl-p2 { animation-delay: 0.9s; }
+.kl-mowi .kl-kula { animation: kl-puls 1.1s ease-in-out infinite; }
+@keyframes kl-oddech { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+@keyframes kl-cien { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.06); opacity: 1; } }
+@keyframes kl-fala { 0% { transform: scale(0.96); opacity: 0.55; } 100% { transform: scale(1.3); opacity: 0; } }
+@keyframes kl-puls { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+@media (prefers-reduced-motion: reduce) { .kl-kula, .kl-pierscien, .kl-cien { animation: none; } .kl-pierscien { display: none; } }

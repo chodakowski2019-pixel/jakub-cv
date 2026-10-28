@@ -4,7 +4,7 @@ import { Inter, Outfit } from "next/font/google";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { zapiszWejscie, zrodloZParametru } from "@/lib/bruno/wejscia";
 import { dostepKonta, pobierzKonto, stanDostepu, stanFree, zamknijPorzucone } from "@/lib/bruno/db";
-import { kontekstFirmy } from "@/lib/bruno/firmy";
+import { handlowcyFirmy, kontekstFirmy } from "@/lib/bruno/firmy";
 import { motywAsset, motywRinesk } from "@/lib/bruno/motyw";
 import PanelRinesk from "@/components/bruno/panel-rinesk";
 import { danePanelu } from "@/components/podglad/panel/dane";
@@ -38,7 +38,9 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
   // 27.10 (USER_001: „Rinesk wygrywa”): domyślny panel = styl Rinesk (components/bruno/panel-rinesk.tsx), belka i szerokość z układu.
   if (motywRinesk()) {
     const inicjal = (konto?.imie?.trim()?.[0] ?? email[0] ?? "B").toUpperCase();
-    return <PanelRinesk d={d} dostep={{ ...dostep, szef }} logo={logo} inicjal={inicjal} />;
+    // 28.10 (USER_001): zdjęcie zalogowanego; bez zdjęcia = pierwsza osoba z zespołu ze zdjęciem.
+    const zdjecie = konto?.zdjecie_url ?? (konto?.firma_id ? (await handlowcyFirmy(konto.firma_id)).find((h) => h.zdjecie_url)?.zdjecie_url ?? null : null);
+    return <PanelRinesk d={d} dostep={{ ...dostep, szef }} logo={logo} inicjal={inicjal} zdjecie={zdjecie} />;
   }
 
   return (

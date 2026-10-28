@@ -7,7 +7,8 @@ import { useEffect, useRef } from "react";
 
 const VS = `attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
 const FS = `precision highp float;
-uniform vec2 R;uniform float T;
+uniform vec2 R;uniform float T;uniform vec2 Z;
+uniform vec3 C0,C1,C2,C3,C4,C5,C6;
 float h(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
   return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
@@ -20,14 +21,9 @@ void main(){
   vec2 q=vec2(fbm(p*1.3+vec2(t,-t*.6)),fbm(p*1.3+vec2(4.2-t*.7,1.3+t)));
   float w=fbm(p*1.8+q*1.6+vec2(0.,t*1.4));
   float cur=fbm(vec2(p.x*3.2+q.x*2.+t*1.5,p.y*.45-t*.4));
-  float y=uv.y+(w-.5)*.16+(cur-.5)*.04;
-  vec3 c0=vec3(.02,.012,.004);
-  vec3 c1=vec3(.078,.04,.012);
-  vec3 c2=vec3(.18,.085,.025);
-  vec3 c3=vec3(.42,.19,.05);
-  vec3 c4=vec3(.88,.48,.14);
-  vec3 c5=vec3(.98,.78,.55);
-  vec3 c6=vec3(1.,.96,.9);
+  float yz=Z.x+uv.y*(Z.y-Z.x);
+  float y=yz+(w-.5)*.16+(cur-.5)*.04;
+  vec3 c0=C0,c1=C1,c2=C2,c3=C3,c4=C4,c5=C5,c6=C6;
   vec3 col=c0;
   col=mix(col,c1,smoothstep(.0,.3,y));
   col=mix(col,c2,smoothstep(.28,.5,y));
@@ -35,10 +31,10 @@ void main(){
   col=mix(col,c4,smoothstep(.66,.86,y));
   col=mix(col,c5,smoothstep(.86,.96,y));
   col=mix(col,c6,smoothstep(.95,1.06,y));
-  float band=smoothstep(.4,.7,uv.y)*(1.-smoothstep(.75,1.,uv.y));
+  float band=smoothstep(.4,.7,yz)*(1.-smoothstep(.75,1.,yz));
   float rib=pow(cur,2.2)*band;
-  col+=vec3(.62,.32,.1)*rib*.3;
-  col+=vec3(.55,.33,.18)*pow(w,3.)*band*.35;
+  col+=c4*.7*rib*.3;
+  col+=c5*.6*pow(w,3.)*band*.35;
   col=mix(col,col*vec3(1.06,1.,.88),smoothstep(.2,.8,fbm(p*.7+t)));
   float vg=smoothstep(1.25,.25,length((uv-vec2(.5,.55))*vec2(1.,1.2)));
   col*=mix(.82,1.,vg);
@@ -47,8 +43,18 @@ void main(){
   gl_FragColor=vec4(col,1.);
 }`;
 
-export default function AuroraCanvas({ fallbackClass }: { fallbackClass: string }) {
+// 28.10: `predkosc` = mnożnik czasu (kula Bruno: czeka 1, słucha 1,8, mówi 3,2). Zmiana w locie, bez restartu shadera.
+// `zakres` = jaki wycinek zorzy (0 = czerń na dole, 1 = jasny szczyt) wypełnia płótno; kula Bruno bierze [0.22, 1.04], żeby pomarańcz był w środku.
+// 28.10: `kolory` = 7 barw od dołu (ciemno) do szczytu (jasno); domyślnie pomarańczowa zorza z rejestracji.
+export const ZORZA_POMARANCZ = ["#050301", "#140a03", "#2e1606", "#6b3010", "#e07a24", "#fac78c", "#fff5e6"];
+const hex = (h: string): [number, number, number] => [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255];
+export default function AuroraCanvas({ fallbackClass, predkosc = 1, zakres = [0, 1], kolory = ZORZA_POMARANCZ }: { fallbackClass: string; predkosc?: number; zakres?: [number, number]; kolory?: string[] }) {
+  const paleta = kolory.join(",");
   const ref = useRef<HTMLCanvasElement>(null);
+  const predkoscRef = useRef(predkosc);
+  useEffect(() => {
+    predkoscRef.current = predkosc;
+  }, [predkosc]);
 
   useEffect(() => {
     const c = ref.current;
@@ -81,13 +87,21 @@ export default function AuroraCanvas({ fallbackClass }: { fallbackClass: string 
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     const uR = gl.getUniformLocation(pr, "R");
     const uT = gl.getUniformLocation(pr, "T");
+    const uZ = gl.getUniformLocation(pr, "Z");
+    gl.uniform2f(uZ, zakres[0], zakres[1]);
+    paleta.split(",").slice(0, 7).forEach((k, i) => { const [r, g, b] = hex(k); gl.uniform3f(gl.getUniformLocation(pr, `C${i}`), r, g, b); });
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
     const t0 = performance.now();
+    // Czas shadera liczony przyrostowo, żeby zmiana prędkości nie skakała.
+    let czas = 12;
+    let poprz = t0;
     const rysuj = (now: number) => {
+      czas += ((now - poprz) / 1000) * predkoscRef.current;
+      poprz = now;
       gl.uniform2f(uR, c.width, c.height);
-      gl.uniform1f(uT, reduce ? 12 : (now - t0) / 1000 + 12);
+      gl.uniform1f(uT, reduce ? 12 : czas);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
     const rozmiar = () => {
@@ -118,7 +132,7 @@ export default function AuroraCanvas({ fallbackClass }: { fallbackClass: string 
       gl.deleteShader(fs);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  }, [fallbackClass]);
+  }, [fallbackClass, zakres[0], zakres[1], paleta]);
 
   return <canvas ref={ref} aria-hidden />;
 }

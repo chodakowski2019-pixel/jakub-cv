@@ -49,7 +49,8 @@ export function OcenaKolko({ ocena, rozmiar = 44 }: { ocena: number | null; rozm
 export function Naglowek({ firma, tytul, akcent, podtytul, zdjecie }: { firma: Firma | null; tytul: string; akcent: string; podtytul?: string; /** 25.10: twarz zamiast logo (profil handlowca). */ zdjecie?: string | null }) {
   const obraz = zdjecie ?? firma?.logo_url ?? null;
   // Zdjęcie (plik .jpg w public/bruno/demo albo twarz handlowca) wypełnia kółko; logo firmy zostaje na białym z marginesem.
-  const twarz = Boolean(zdjecie) || Boolean(obraz?.startsWith("/bruno/demo/"));
+  // 28.10: logo firmy (np. .svg T-Mobile) w public/bruno/demo to NIE twarz; w motywie Rinesk logo w nagłówku jest ukryte (CSS).
+  const twarz = Boolean(zdjecie) || Boolean(obraz?.startsWith("/bruno/demo/") && /\.jpe?g$/i.test(obraz));
   return (
     <div className="flex items-center gap-4">
       {obraz ? (
@@ -83,24 +84,15 @@ export default function ZespolWidok({ firma, stat, zespol, jezyk, seria, oceny }
       {/* 25.10 (USER_001: „lepsza wizualizacja”): trend zespołu, mapa kryteriów (zespol-wykresy.tsx). Moduł „Trening w ostatnich 14 dniach” usunięty. */}
       <TrendZespolu seria={seria} jezyk={jezyk} />
 
-      <div className="flex flex-col gap-4">
-        <MapaKryteriow
-          wiersze={posortowani.map((s) => ({ email: s.email, imie: s.imie, zdjecie: s.zdjecie, kryteria: s.kryteria, najslabsze: s.najslabsze, href: `/bruno/szef/${encodeURIComponent(s.email)}` }))}
-          zespol={zespol.kryteria}
-          nazwy={NAZWY}
-          kolejnosc={KRYTERIA}
-          jezyk={jezyk}
-        />
-      </div>
-
+      {/* 28.10 (USER_001): tabela zespołu NAD „Kto w czym potrzebuje treningu”. */}
       <section className="bruno-szklo rounded-2xl overflow-hidden">
         <div className="bsz-tabela" role="table" aria-label={t("Team", "Zespół")}>
           {/* 25.10 (USER_001): kolumny „7 dni” i „Najsłabsze” usunięte. */}
           <div className="bsz-wiersz bsz-naglowek" role="row">
-            <span role="columnheader">{t("Rep", "Handlowiec")}</span>
+            <span role="columnheader">{t("Team", "Zespół")}</span>
             <span role="columnheader">{t("Average", "Średnia")}</span>
             <span role="columnheader">{t("Trend", "Trend")}</span>
-            <span role="columnheader">{t("Last call", "Ostatnia")}</span>
+            <span role="columnheader">{t("Last call", "Ostatnia rozmowa")}</span>
           </div>
           {posortowani.map((s, i) => {
             const alarm = s.dniBezTreningu === null || s.dniBezTreningu >= DNI_BEZ_TRENINGU_ALARM;
@@ -126,6 +118,16 @@ export default function ZespolWidok({ firma, stat, zespol, jezyk, seria, oceny }
           {stat.length === 0 && <p className="p-6 text-slate-600 text-sm">{t("No reps in this company yet.", "W tej firmie nie ma jeszcze handlowców.")}</p>}
         </div>
       </section>
+
+      <div className="flex flex-col gap-4">
+        <MapaKryteriow
+          wiersze={posortowani.map((s) => ({ email: s.email, imie: s.imie, zdjecie: s.zdjecie, kryteria: s.kryteria, najslabsze: s.najslabsze, href: `/bruno/szef/${encodeURIComponent(s.email)}` }))}
+          zespol={zespol.kryteria}
+          nazwy={NAZWY}
+          kolejnosc={KRYTERIA}
+          jezyk={jezyk}
+        />
+      </div>
     </div>
   );
 }

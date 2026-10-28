@@ -68,9 +68,14 @@ export default function KulaOrb({
   kolor = "#f08a2b",
   tempo = "czeka",
   className,
+  jasny,
+  ciemny,
 }: {
   kolor?: string;
   tempo?: TempoKuli;
+  /** 28.10: własne tony (motyw Rinesk, limonka): wzór z koloru klienta daje dla limonki brązowy cień. */
+  jasny?: string;
+  ciemny?: string;
   className?: string;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -104,8 +109,10 @@ export default function KulaOrb({
     const u = (nazwa: string) => gl.getUniformLocation(prog, nazwa);
     const [r, g, b] = rgb(kolor);
     gl.uniform3f(u("baza"), r, g, b);
-    gl.uniform3f(u("jasny"), r + (1 - r) * 0.72, g + (1 - g) * 0.62, b + (1 - b) * 0.45);
-    gl.uniform3f(u("ciemny"), r * 0.72, g * 0.26, b * 0.22);
+    const [jr, jg, jb] = jasny ? rgb(jasny) : [r + (1 - r) * 0.72, g + (1 - g) * 0.62, b + (1 - b) * 0.45];
+    const [cr, cg, cb] = ciemny ? rgb(ciemny) : [r * 0.72, g * 0.26, b * 0.22];
+    gl.uniform3f(u("jasny"), jr, jg, jb);
+    gl.uniform3f(u("ciemny"), cr, cg, cb);
 
     const rozmiar = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -140,7 +147,7 @@ export default function KulaOrb({
       gl.deleteProgram(prog);
       gl.deleteBuffer(buf);
     };
-  }, [kolor]);
+  }, [kolor, jasny, ciemny]);
 
   return <canvas ref={ref} className={className} style={{ width: "100%", height: "100%", display: "block" }} aria-hidden />;
 }

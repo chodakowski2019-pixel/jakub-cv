@@ -469,7 +469,11 @@ export async function pobierzRozmowe(email: string, id: string): Promise<Rozmowa
 const TALIA_EN = new Set(WIEDZA.map((w) => w.tresc));
 const TALIA_PL = new Set(WIEDZA_PL.map((w) => w.tresc));
 /** 11.10: karta wiedzy pokazuje się tylko z talii języka konta (konto EN nie widzi polskich i odwrotnie). */
-const aktualna = (jezyk?: string | null) => (k: Karta) => k.typ !== "wiedza" || (jezyk === "pl" ? TALIA_PL : TALIA_EN).has(k.tresc);
+// 28.10 (USER_001: „dlaczego fiszki po angielsku?”): karty „poprawka” (z feedbacku) tylko w języku konta;
+// język poznajemy po polskich znakach w treści (jak /bruno/ogien). „wiedza” = talia języka, reszta bez zmian.
+const poPolskuKarta = (k: Karta) => /[ąćęłńóśźż]/i.test(`${k.tresc} ${k.pytanie ?? ""} ${k.wzor ?? ""}`);
+const aktualna = (jezyk?: string | null) => (k: Karta) =>
+  k.typ === "wiedza" ? (jezyk === "pl" ? TALIA_PL : TALIA_EN).has(k.tresc) : k.typ === "poprawka" ? poPolskuKarta(k) === (jezyk === "pl") : true;
 
 export async function kartyDoPowtorki(email: string, limit = 10, jezyk?: string | null): Promise<Karta[]> {
   const { data } = await supabaseAdmin

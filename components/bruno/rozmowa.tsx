@@ -2,6 +2,7 @@
 
 import KulaOrb from "./kula-orb";
 import OrbBruno from "./orb-bruno";
+import KulaLimonka from "./kula-limonka";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Feedback, Wypowiedz } from "@/lib/bruno/db";
@@ -46,6 +47,8 @@ type Props = {
   obiekcjeOpis?: Record<string, string | null>;
   /** 25.10 (USER_001): zakładka „Rozmowa, którą masz jutro” = ten sam komponent, tylko sytuacja + głos + Start. */
   jutro?: boolean;
+  /** 28.10: motyw Rinesk = kula WebGL (kula-orb.tsx) w limonce + nagłówek nad Startem. */
+  rinesk?: boolean;
 };
 
 /** 25.10 (USER_001: „cel rozmowy z obrazkami”): emoji przy celu. */
@@ -195,7 +198,7 @@ function KolkoOceny({ etykieta }: { etykieta: string }) {
   );
 }
 
-export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny, free = null, obiekcjeOpis = {}, jutro = false }: Props) {
+export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny, free = null, obiekcjeOpis = {}, jutro = false, rinesk = false }: Props) {
   // 11.10: teksty UI w języku konta (tr, bo `t` jest niżej zmienną trybu). Etykiety z etykiety(jezyk), kolor/ikona z postacie.ts.
   const { t: tr, jezyk, mnoga } = useT();
   const E = etykiety(jezyk);
@@ -791,10 +794,17 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
               Rodzaj rozmowy, cel, obiekcję, typ klienta i poziom dobiera serwer (lib/bruno/dobor.ts). */}
           {!jutro && (
             // 26.10 (USER_001): bez napisu „Dobrałem dla Ciebie…”, nowa kula (orb-bruno.tsx) na środku ekranu.
-            <div className="flex flex-col items-center justify-center min-h-[52vh] pt-6">
-              <div className="relative size-64 sm:size-80">
-                <OrbBruno tempo="czeka" />
+            // 28.10 (USER_001: „prawdziwa kula”): w Rinesk kula WebGL w limonce + „Rozmowa z Bruno” i jedno zdanie, co się stanie.
+            <div className={`flex flex-col items-center justify-center pt-6 ${rinesk ? "brz-start" : "min-h-[52vh]"}`}>
+              <div className={`relative ${rinesk ? "brz-kula" : "size-64 sm:size-80"}`}>
+                {rinesk ? <KulaLimonka tempo="czeka" /> : <OrbBruno tempo="czeka" />}
               </div>
+              {rinesk && (
+                <div className="brz-tekst">
+                  <h1>{tr("Call with Bruno", "Rozmowa z Bruno")}</h1>
+                  {/* 28.10 (USER_001): zdanie „Bruno sam dobiera klienta…” usunięte. */}
+                </div>
+              )}
             </div>
           )}
 
@@ -865,7 +875,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
           <div className="relative size-44 sm:size-56 grid place-items-center" aria-hidden={stan !== "odliczanie"}>
             {/* 15.10: kula jak orb z elevenlabs.io (USER_001), dalej w kolorze typu klienta (2.10). */}
             <div className={`absolute inset-0 transition-transform duration-500 ${mowi === "ty" && stan === "trwa" ? "scale-95" : ""}`}>
-              {jutro ? <KulaOrb kolor={p.kolor} tempo={stan !== "trwa" ? "czeka" : mowi === "bruno" ? "mowi" : mowi === "ty" ? "slucha" : "czeka"} /> : <OrbBruno tempo={stan !== "trwa" ? "czeka" : mowi === "bruno" ? "mowi" : mowi === "ty" ? "slucha" : "czeka"} />}
+              {jutro ? <KulaOrb kolor={p.kolor} tempo={stan !== "trwa" ? "czeka" : mowi === "bruno" ? "mowi" : mowi === "ty" ? "slucha" : "czeka"} /> : rinesk ? <KulaLimonka tempo={stan !== "trwa" ? "czeka" : mowi === "bruno" ? "mowi" : mowi === "ty" ? "slucha" : "czeka"} /> : <OrbBruno tempo={stan !== "trwa" ? "czeka" : mowi === "bruno" ? "mowi" : mowi === "ty" ? "slucha" : "czeka"} />}
             </div>
             {stan === "odliczanie" && (
               <span key={odliczanie} className="relative bruno-h2 text-7xl text-white drop-shadow-[0_2px_12px_rgba(212,175,90,0.7)] bruno-odliczanie" aria-live="assertive">
