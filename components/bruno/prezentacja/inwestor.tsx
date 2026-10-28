@@ -74,11 +74,7 @@ function SlajdTytul() {
         <span style={METAL}>Bruno AI</span>
       </h1>
       <p className="mt-5 max-w-2xl text-xl text-[var(--tekst-cichy)] sm:text-2xl">
-        Handlowcy ćwiczą rozmowy z klientem AI codziennie.
-        Szef widzi, kto w czym jest słaby.
-      </p>
-      <p className="mt-8 text-sm text-[var(--tekst-cichy)]">
-        Jakub Chodakowski · salesbruno.pl · październik 2026
+        Trening handlowców
       </p>
     </div>
   );
@@ -103,16 +99,22 @@ function SlajdProblem() {
           przypis="rekrutacja, wdrożenie, utracona sprzedaż"
         />
         <Statka
-          wartosc="25-50 tys. $"
+          wartosc="93-185 tys. zł"
           opis="za jednorazowe szkolenie sprzedażowe dla firmy"
           przypis="raz w roku, potem nikt tego nie powtarza"
         />
       </div>
-      <p className="mx-auto mt-6 max-w-3xl text-center text-base text-[var(--tekst-cichy)]">
-        Szef firmy z 5-50 handlowcami nie ma czasu ćwiczyć z każdym. Nie wie,
-        kto przegrywa na obiekcji o cenę, a kto na zamknięciu. Dowiaduje się
-        dopiero z wyniku na koniec miesiąca.
-      </p>
+      <div className="mt-4">
+        <Tabela
+          kompakt
+          naglowki={["Szef firmy z 5-50 handlowcami", "Skutek"]}
+          wiersze={[
+            ["Nie ma czasu ćwiczyć z każdym", "handlowcy ćwiczą na prawdziwych klientach"],
+            ["Nie wie, kto przegrywa na obiekcji o cenę, a kto na zamknięciu", "szkoli wszystkich tak samo"],
+            ["Widzi tylko wynik na koniec miesiąca", "reaguje, gdy sprzedaż już przepadła"],
+          ]}
+        />
+      </div>
       <Zrodla
         linki={[
           { nazwa: "RepCard: rotacja handlowców w terenie", url: "https://repcard.com/glossary/sales-rep-turnover.md" },
@@ -163,29 +165,38 @@ function SlajdRozwiazanie() {
 /* 4. Produkt: zrzuty ekranu */
 function SlajdProdukt() {
   const zrzuty = [
-    { src: "/bruno/zrzuty/pl-rozmowa.webp", podpis: "Rozmowa z klientem AI" },
-    { src: "/bruno/zrzuty/pl-feedback.webp", podpis: "Ocena trenera po rozmowie" },
-    { src: "/bruno/zrzuty/pl-panel.webp", podpis: "Panel handlowca" },
+    { src: "/bruno/zrzuty/rinesk-szef.jpg", podpis: "Panel szefa: średnia zespołu i trend" },
+    { src: "/bruno/zrzuty/rinesk-profil.jpg", podpis: "Profil handlowca: umiejętności" },
+    { src: "/bruno/zrzuty/rinesk-panel.jpg", podpis: "Panel handlowca: rozmowy i ocena" },
   ];
   return (
     <div className="w-full max-w-6xl">
-      <Naglowek kompakt nad="Produkt">
-        Działa <span style={METAL}>dziś</span>: web + aplikacja iOS
+      <Naglowek kompakt nad="System">
+        Produkt <span style={METAL}>SaaS</span>
       </Naglowek>
       <div className="grid gap-4 sm:grid-cols-3">
         {zrzuty.map((z) => (
           <div key={z.src} className={`${SZKLO} overflow-hidden`}>
-            <img src={z.src} alt={z.podpis} className="h-[38vh] w-full bg-[#f7f7f8] object-contain" />
+            <img src={z.src} alt={z.podpis} className="aspect-[16/10] w-full object-cover object-left-top" />
             <div className="border-t border-[var(--ramka)] px-4 py-2.5 text-center text-sm font-medium text-[var(--tekst)]">
               {z.podpis}
             </div>
           </div>
         ))}
       </div>
-      <p className="mx-auto mt-5 max-w-3xl text-center text-sm text-[var(--tekst-cichy)]">
-        Głos ElevenLabs, trener Claude, fiszki FSRS. Dane w UE, nagrania
-        kasowane wg umowy powierzenia. Demo na żywo: salesbruno.pl.
-      </p>
+      <div className="mt-4">
+        <Tabela
+          kompakt
+          naglowki={["Część", "Technologia"]}
+          wiersze={[
+            ["Głos klienta AI", "ElevenLabs"],
+            ["Trener oceniający rozmowy", "Claude (Anthropic)"],
+            ["Powtórki", "fiszki FSRS"],
+            ["Dane", "w UE, nagrania kasowane wg umowy powierzenia"],
+            ["Demo na żywo", "salesbruno.pl"],
+          ]}
+        />
+      </div>
     </div>
   );
 }
@@ -206,14 +217,14 @@ function SlajdWyniki() {
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
         <Statka wartosc="445" opis="rozmów z Bruno w systemie" przypis="1 258 minut treningu" />
         <Statka wartosc="3" opis="umówione dema z nowymi firmami" przypis="do 12.11.2026" />
-        <Statka wartosc="v1.0" opis="aplikacja iOS gotowa" przypis="październik 2026" />
+        <Statka wartosc="v1.0" opis="aplikacja iOS prawie gotowa" przypis="październik 2026" />
       </div>
       <PaskiWielkosci
         tytul="Płacący handlowcy w firmach"
         wiersze={[
           { nazwa: "Firma OZE nr 1", wartosc: 6, etykieta: "6 handlowców · 2 394 zł/mc" },
           { nazwa: "Firma OZE nr 2", wartosc: 5, etykieta: "5 handlowców · 1 995 zł/mc" },
-          { nazwa: "Firma OZE nr 3", wartosc: 3, etykieta: "3 handlowców · 1 197 zł/mc" },
+          { nazwa: "Ewatex", wartosc: 3, etykieta: "3 handlowców · 1 197 zł/mc" },
         ]}
       />
     </div>
@@ -229,14 +240,14 @@ function SlajdRynek() {
       </Naglowek>
       <div className="mb-4 grid gap-4 sm:grid-cols-3">
         <Statka
-          wartosc="8,46 mld $"
+          wartosc="31,3 mld zł"
           opis="rynek szkoleń sprzedażowych na świecie (2025)"
-          delta="16,9 mld $ w 2032"
+          delta="62,5 mld zł w 2032"
         />
         <Statka
-          wartosc="43%"
-          opis="liderów enablementu już używa AI do ćwiczenia rozmów"
-          przypis="3 lata temu prawie 0"
+          wartosc="11,8 mld zł"
+          opis="oprogramowanie do szkoleń sprzedaży, świat"
+          przypis="38,5% Ameryka Północna"
         />
         <Statka
           wartosc="87%"
@@ -244,25 +255,22 @@ function SlajdRynek() {
           przypis="Salesforce, State of Sales 2026"
         />
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Statka
-          wartosc="3,2 mld $"
-          opis="oprogramowanie do szkoleń sprzedaży, świat"
-          przypis="38,5% Ameryka Północna"
-        />
-        <Statka
-          wartosc="952 tys."
-          opis="osób w sprzedaży i marketingu w Wielkiej Brytanii"
-          przypis="nasz rynek nr 1 za granicą"
-        />
-      </div>
+      <Tabela
+        kompakt
+        naglowki={["Rynek", "Ludzie w sprzedaży", "Co liczone", "Dla Bruno"]}
+        wiersze={[
+          ["🇬🇧 Wielka Brytania", "952 tys.", "sprzedaż i marketing", "rynek nr 1 za granicą"],
+          ["🇺🇸 USA", "13,4 mln", "sprzedaż (z handlem detalicznym)", "największy rynek, najwyższa cena"],
+        ]}
+      />
       <Zrodla
         linki={[
           { nazwa: "Coherent Market Insights" },
-          { nazwa: "Allego 2025" },
+          { nazwa: "MarketIntelo" },
           { nazwa: "Salesforce State of Sales 2026" },
           { nazwa: "Statista UK Q1 2025" },
-          { nazwa: "MarketIntelo" },
+          { nazwa: "BLS: sprzedawcy w USA, V 2024", url: "https://www.bls.gov/opub/ted/2025/recognizing-sales-workers-on-salesperson-day.htm" },
+          { nazwa: "kurs 1 $ ≈ 3,7 zł" },
         ]}
       />
     </div>
@@ -287,9 +295,9 @@ function SlajdKonkurencja() {
         ]}
         wiersze={[
           { nazwa: "Bruno AI", opis: "klient AI + trener + fiszki, PL", od: 380, do_: 399, etykieta: "399 zł netto/mc", akcent: true },
-          { nazwa: "Hyperbound (USA)", opis: "AI do ćwiczenia rozmów, EN", od: 370, do_: 925, etykieta: "100-250 $/mc" },
-          { nazwa: "Szkolenie stacjonarne", opis: "trener w firmie, raz w roku", od: 515, do_: 1030, etykieta: "25-50 tys. $ / 15 osób / rok" },
-          { nazwa: "John Barrows", opis: "kursy wideo, bez AI", od: 145, do_: 160, etykieta: "ok. 42 $/os./mc" },
+          { nazwa: "Hyperbound (USA)", opis: "AI do ćwiczenia rozmów, EN", od: 370, do_: 925, etykieta: "370-925 zł/mc" },
+          { nazwa: "Szkolenie stacjonarne", opis: "trener w firmie, raz w roku", od: 515, do_: 1030, etykieta: "515-1 030 zł/mc (93-185 tys. zł / 15 osób / rok)" },
+          { nazwa: "John Barrows", opis: "kursy wideo, bez AI", od: 145, do_: 160, etykieta: "ok. 155 zł/mc" },
         ]}
       />
       <p className="mx-auto mt-6 max-w-3xl text-center text-base text-[var(--tekst-cichy)]">
@@ -347,7 +355,7 @@ function SlajdOferta() {
         <div className={`${SZKLO} overflow-hidden text-center`}>
           <div className="border-b border-[var(--ramka)] bg-[rgba(20,20,22,0.04)] px-6 py-2.5 text-xs uppercase tracking-[0.2em] text-[var(--tekst-cichy)]">Pilot</div>
           <div className="px-6 py-4 text-4xl font-bold text-[var(--tekst)]">3 × 399 zł<span className="text-lg font-normal text-[var(--tekst-cichy)]">/mc</span></div>
-          <div className="border-t border-[var(--ramka)] px-6 py-2.5 text-sm text-[var(--tekst-cichy)]">3 handlowców, 3 miesiące, 3 591 zł netto z góry</div>
+          <div className="border-t border-[var(--ramka)] px-6 py-2.5 text-sm text-[var(--tekst-cichy)]">3 handlowców, 3 miesiące, 3 591 zł netto</div>
         </div>
         <div className={`${SZKLO} overflow-hidden border-2 border-[var(--akcent)] text-center`}>
           <div className="border-b border-[var(--ramka)] bg-[rgba(233,245,66,0.35)] px-6 py-2.5 text-xs uppercase tracking-[0.2em] text-[var(--tekst)]">Zespół</div>
@@ -356,9 +364,9 @@ function SlajdOferta() {
         </div>
       </div>
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
-        <Statka wartosc="ok. 90%" opis="marży brutto" przypis="minuta AI ok. 0,40 zł, 100 min / handlowca / mc" />
+        <Statka wartosc="249 zł" opis="zostaje z 1 handlowca miesięcznie" przypis="399 zł minus 150 zł na AI = 62% marży" />
         <Statka wartosc="4,8 tys. zł" opis="rocznie z 1 handlowca" przypis="firma 10 osób = 48 tys. zł/rok" />
-        <Statka wartosc="100-250 $" opis="za handlowca w USA" przypis="ta sama usługa, wyższa cena" />
+        <Statka wartosc="370-925 zł" opis="za handlowca w USA" przypis="ta sama usługa, wyższa cena" />
       </div>
     </div>
   );
@@ -369,13 +377,13 @@ function SlajdPozyskiwanie() {
   const etapy = [
     { tytul: "1. Event", opis: "networking (BNI, grupy biznesowe), webinar dla właścicieli firm, LinkedIn: 6 branż" },
     { tytul: "2. Demo 20 min", opis: "online, z decydentem, Bruno gra klienta firmy na żywo, na jej obiekcji" },
-    { tytul: "3. Pilot", opis: "3 handlowców × 3 mies., płatny z góry, start w poniedziałek" },
+    { tytul: "3. Pilot", opis: "3 handlowców × 3 mies." },
     { tytul: "4. Zespół", opis: "po 8 tygodniach cały zespół, raport dla szefa z liczbami" },
   ];
   return (
     <div className="w-full max-w-5xl">
       <Naglowek kompakt nad="Pozyskiwanie klientów">
-        Lejek <span style={METAL}>sprawdzony na 3 firmach</span>
+        Jak <span style={METAL}>pozyskujemy firmy</span>
       </Naglowek>
       <div className="grid gap-4 sm:grid-cols-4">
         {etapy.map((e) => (
@@ -388,35 +396,6 @@ function SlajdPozyskiwanie() {
         <Statka wartosc="0 zł" opis="wydane na reklamy do dziś" przypis="koszt = czas założyciela" />
         <Statka wartosc="6" opis="branż na start" przypis="OZE, motoryzacja, nieruchomości, ubezpieczenia, kredyty i leasing, call center" />
         <Statka wartosc="UK" opis="za granicą: cold mail + LinkedIn" przypis="po 10 case'ach z Polski" />
-      </div>
-    </div>
-  );
-}
-
-/* 11. Zespół */
-function SlajdZespol() {
-  return (
-    <div className="w-full max-w-5xl">
-      <Naglowek kompakt nad="Zespół">
-        Kto <span style={METAL}>to robi</span>
-      </Naglowek>
-      <div className="grid gap-4 sm:grid-cols-[1.2fr_1fr]">
-        <Karta tytul="Jakub Chodakowski, założyciel">
-          <ul className="list-disc space-y-1.5 pl-4">
-            <li>Technologia + sprzedaż w jednej osobie</li>
-            <li>Sam zbudował Bruno: web, panel szefa, aplikacja iOS, w 5 tygodni</li>
-            <li>Sam sprzedał pierwsze 3 firmy: event, demo, pilot</li>
-            <li>Wcześniej: platforma edukacyjna OMG, lovemyself.pl (system dla gabinetów)</li>
-          </ul>
-        </Karta>
-        <Karta tytul="Zatrudnienia z inwestycji">
-          <ul className="list-disc space-y-1.5 pl-4">
-            <li>I 2027: osoba do wdrożeń i obsługi firm</li>
-            <li>I 2027: handlowiec B2B w Polsce</li>
-            <li>II poł. 2027: szef sprzedaży UK</li>
-            <li>2028: programista + zespół sprzedaży USA</li>
-          </ul>
-        </Karta>
       </div>
     </div>
   );
@@ -442,8 +421,7 @@ function SlajdPlanKlientow() {
         ]}
       />
       <p className="mx-auto mt-5 max-w-3xl text-center text-sm text-[var(--tekst-cichy)]">
-        MRR liczone ostrożnie: średnio 400 zł za handlowca miesięcznie
-        (Polska 399 zł, UK ok. 79 $, USA 100-150 $). Średnia firma: 8 handlowców.
+        MRR = handlowcy × 399 zł miesięcznie. Średnia firma rośnie z 5 do 8 handlowców.
       </p>
     </div>
   );
@@ -461,39 +439,34 @@ function SlajdFinanse() {
         grupy={[
           {
             tytul: "2027",
-            a: { wartosc: 2.2, etykieta: "2,2" },
-            b: { wartosc: 3.0, etykieta: "3,0" },
-            wynik: { tekst: "-0,8 mln zł", ton: "zly" },
-            podpisy: ["handlowcy na koniec roku: 800", "średnio płacących: ~450"],
+            a: { wartosc: 1.9, etykieta: "1,9" },
+            b: { wartosc: 3.6, etykieta: "3,6" },
+            wynik: { tekst: "-1,7 mln zł", ton: "zly" },
+            podpisy: ["handlowcy na koniec roku: 800", "średnio płacących: ~400"],
           },
           {
             tytul: "2028",
-            a: { wartosc: 8.2, etykieta: "8,2" },
-            b: { wartosc: 6.4, etykieta: "6,4" },
-            wynik: { tekst: "+1,8 mln zł", ton: "dobry" },
+            a: { wartosc: 8.1, etykieta: "8,1" },
+            b: { wartosc: 8.7, etykieta: "8,7" },
+            wynik: { tekst: "-0,6 mln zł", ton: "zly" },
             podpisy: ["handlowcy na koniec roku: 2 500", "średnio płacących: ~1 700"],
           },
           {
             tytul: "2029",
-            a: { wartosc: 17.8, etykieta: "17,8" },
-            b: { wartosc: 11.5, etykieta: "11,5" },
-            wynik: { tekst: "+6,3 mln zł", ton: "dobry" },
-            podpisy: ["handlowcy na koniec roku: 5 000", "średnio płacących: ~3 700"],
+            a: { wartosc: 18.4, etykieta: "18,4" },
+            b: { wartosc: 16.4, etykieta: "16,4" },
+            wynik: { tekst: "+2,0 mln zł", ton: "dobry" },
+            podpisy: ["handlowcy na koniec roku: 5 000", "średnio płacących: ~3 850"],
           },
           {
             tytul: "2030",
-            a: { wartosc: 31.2, etykieta: "31,2" },
-            b: { wartosc: 18.5, etykieta: "18,5" },
-            wynik: { tekst: "+12,7 mln zł", ton: "dobry" },
-            podpisy: ["handlowcy na koniec roku: 8 000", "średnio płacących: ~6 500"],
+            a: { wartosc: 31.6, etykieta: "31,6" },
+            b: { wartosc: 27.1, etykieta: "27,1" },
+            wynik: { tekst: "+4,5 mln zł", ton: "dobry" },
+            podpisy: ["handlowcy na koniec roku: 8 000", "średnio płacących: ~6 600"],
           },
         ]}
       />
-      <p className="mx-auto mt-5 max-w-3xl text-center text-sm text-[var(--tekst-cichy)]">
-        Przychód = średnia liczba płacących handlowców × 400 zł × 12 miesięcy.
-        Koszty: zespół, sprzedaż, minuty AI (ok. 10% przychodu). 2027 to rok
-        inwestycji, od 2028 firma zarabia.
-      </p>
     </div>
   );
 }
@@ -503,24 +476,24 @@ function SlajdZwrot() {
   return (
     <div className="w-full max-w-5xl">
       <Naglowek kompakt nad="Inwestycja">
-        3 mln zł za <span style={METAL}>20% udziałów</span>
+        3 mln zł za <span style={METAL}>5% udziałów</span>
       </Naglowek>
       <div className="grid gap-4 sm:grid-cols-[1fr_1.6fr]">
         <Kolumny
           wysokosc={230}
           dane={[
-            { wartosc: 1.26, etykieta: "1,26 mln zł", podpisy: ["2029", "zysk firmy +6,3 mln zł"] },
-            { wartosc: 2.54, etykieta: "2,54 mln zł", podpisy: ["2030", "zysk firmy +12,7 mln zł"] },
+            { wartosc: 0.1, etykieta: "100 tys. zł", podpisy: ["2029", "zysk firmy +2,0 mln zł"] },
+            { wartosc: 0.225, etykieta: "225 tys. zł", podpisy: ["2030", "zysk firmy +4,5 mln zł"] },
           ]}
         />
         <div className="flex flex-col gap-4">
-          <Statka wartosc="38,4 mln zł" opis="ARR na koniec 2030" przypis="8 000 handlowców × 400 zł × 12" />
+          <Statka wartosc="38,3 mln zł" opis="ARR na koniec 2030" przypis="8 000 handlowców × 399 zł × 12" />
           <Statka wartosc="192-307 mln zł" opis="wycena firmy w 2030" przypis="mnożnik 5-8× ARR dla SaaS" />
-          <Statka wartosc="38-61 mln zł" opis="wartość pakietu 20%" przypis="13-20× zwrotu w 4 lata" />
+          <Statka wartosc="9,6-15,3 mln zł" opis="wartość pakietu 5%" przypis="3,2-5,1× zwrotu w 4 lata" />
         </div>
       </div>
       <p className="mx-auto mt-4 max-w-3xl text-center text-sm text-[var(--tekst-cichy)]">
-        Po lewej: dywidenda z 20% udziałów. Wycena przed inwestycją: 12 mln zł.
+        Po lewej: 5% zysku firmy (cały zysk na dywidendę). Wycena przed inwestycją: 57 mln zł.
       </p>
       <Zrodla
         linki={[
@@ -537,7 +510,7 @@ function SlajdTransze() {
     { kwota: "1 mln zł", kamien: "Podpisanie umowy", termin: "XI 2026", opis: "zespół w Polsce, 300 handlowców do VI 2027" },
     { kwota: "1 mln zł", kamien: "300 handlowców", termin: "VI 2027", opis: "wejście do UK i Irlandii, szef sprzedaży UK" },
     { kwota: "1 mln zł", kamien: "800 handlowców", termin: "XII 2027", opis: "skalowanie UK, przygotowanie USA" },
-    { kwota: "🎯", kamien: "8 000 handlowców", termin: "2030", opis: "31,2 mln zł przychodu" },
+    { kwota: "🎯", kamien: "8 000 handlowców", termin: "2030", opis: "31,6 mln zł przychodu" },
   ];
   return (
     <div className="w-full max-w-5xl">
@@ -577,7 +550,7 @@ function SlajdBudzet() {
   const pozycje = [
     { nazwa: "Marketing i sprzedaż", procent: 56, etykieta: "56%", kwota: "560 tys. zł", opis: "eventy, webinary, LinkedIn, treści wideo, remarketing" },
     { nazwa: "Zespół", procent: 24, etykieta: "24%", kwota: "240 tys. zł", opis: "założyciel, wdrożenia, handlowiec B2B" },
-    { nazwa: "Technologia", procent: 11, etykieta: "11%", kwota: "110 tys. zł", opis: "minuty AI, serwery w UE, aplikacja iOS i Android" },
+    { nazwa: "Technologia", procent: 11, etykieta: "11%", kwota: "110 tys. zł", opis: "serwery w UE, aplikacja iOS i Android, rozwój produktu (minuty AI płacone z abonamentów)" },
     { nazwa: "Prawne i administracja", procent: 5, etykieta: "5%", kwota: "50 tys. zł", opis: "sp. z o.o., umowa inwestycyjna, RODO, znak towarowy" },
     { nazwa: "Bufor", procent: 4, etykieta: "4%", kwota: "40 tys. zł", opis: "rezerwa bezpieczeństwa" },
   ];
@@ -623,7 +596,7 @@ function SlajdEkspansja() {
     { flaga: "🇵🇱", kraj: "Polska", kiedy: "teraz", co: "laboratorium produktu, pierwsze case'y, networking" },
     { flaga: "🇬🇧", kraj: "Wielka Brytania", kiedy: "II poł. 2027", co: "952 tys. osób w sprzedaży, cold mail B2B legalny" },
     { flaga: "🇮🇪", kraj: "Irlandia", kiedy: "2028", co: "europejskie centra Google, Salesforce, HubSpot, tysiące SDR-ów" },
-    { flaga: "🇺🇸", kraj: "USA", kiedy: "koniec 2028", co: "największy rynek, 100-250 $ za handlowca" },
+    { flaga: "🇺🇸", kraj: "USA", kiedy: "koniec 2028", co: "największy rynek, 370-925 zł za handlowca" },
   ];
   return (
     <div className="w-full max-w-5xl">
@@ -641,10 +614,6 @@ function SlajdEkspansja() {
           </div>
         ))}
       </div>
-      <p className="mx-auto mt-6 max-w-3xl text-center text-base text-[var(--tekst-cichy)]">
-        Bruno mówi po polsku i po angielsku (głos brytyjski i amerykański).
-        Ten sam produkt, ta sama rubryka, inny język.
-      </p>
       <Zrodla linki={[{ nazwa: "Statista UK Q1 2025" }, { nazwa: "research rynków Bruno 08.10.2026" }]} />
     </div>
   );
@@ -690,7 +659,6 @@ const SLAJDY = [
   SlajdPrzewagi,
   SlajdOferta,
   SlajdPozyskiwanie,
-  SlajdZespol,
   SlajdPlanKlientow,
   SlajdFinanse,
   SlajdZwrot,
