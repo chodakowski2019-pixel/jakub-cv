@@ -5,13 +5,14 @@ import { GLOSOWKA_MAX_SEKUND, type Firma, type Pytanie, type Rola } from "@/lib/
 
 // 28.10 (USER_001): formularz CRM po demo, styl LP Bruno / webinaru (webinar-lp.module.css):
 // tło #f6f6f5, czerń #0b0b0b, pomarańczowa kropka #f08a2b, białe karty 22 px z ramką #ebeae7, czarny przycisk-pigułka.
-// Nagłówek „Formularz CRM” (USER_001 28.10). Pytanie z `glosowka` ma nagrywanie w przeglądarce (MediaRecorder, do 20 min),
+// Nagłówek „Formularz CRM” (USER_001 28.10). Telefon (28.10, „lata na boki”): pola 16 px (Safari nie powiększa),
+// kontener overflow-x hidden + overflow-wrap anywhere, karty min-w-0. Pytanie z `glosowka` ma nagrywanie w przeglądarce (MediaRecorder, do 20 min),
 // plik idzie przy wysyłce prosto do Supabase Storage przez podpisany URL (/api/bruno/formularz/nagranie).
 type Props = { firma: Firma; rola: Rola; pytania: Pytanie[] };
 
-const karta = "bg-white border border-[#ebeae7] rounded-[22px] p-6 sm:p-[30px] shadow-[0_20px_60px_rgba(0,0,0,.05)]";
+const karta = "min-w-0 w-full bg-white border border-[#ebeae7] rounded-[22px] p-5 sm:p-[30px] shadow-[0_20px_60px_rgba(0,0,0,.05)]";
 const pole =
-  "w-full bg-[#fafaf9] border border-[#e6e5e1] rounded-[12px] px-4 py-3 text-[15px] text-[#0b0b0b] placeholder-[#a4a4a4] focus:outline-none focus:border-[#0b0b0b] focus:bg-white transition-colors";
+  "w-full min-w-0 bg-[#fafaf9] border border-[#e6e5e1] rounded-[12px] px-4 py-3 text-[16px] text-[#0b0b0b] placeholder-[#a4a4a4] focus:outline-none focus:border-[#0b0b0b] focus:bg-white transition-colors";
 const etykieta = "block text-[13px] font-medium text-[#0b0b0b] mb-1.5";
 const pigulka = (akt: boolean) =>
   `px-4 py-2 rounded-full text-[14px] font-medium border transition-colors ${akt ? "bg-[#0b0b0b] text-white border-[#0b0b0b]" : "bg-white border-[#e6e5e1] hover:border-[#0b0b0b]"}`;
@@ -96,7 +97,7 @@ function Glosowka({ onBlob }: { onBlob: (b: Blob | null) => void }) {
       )}
       {stan === "gotowe" && url && (
         <>
-          <audio controls src={url} className="h-10 max-w-full" />
+          <audio controls src={url} className="h-10 w-full max-w-[320px]" />
           <span className="text-[13px] text-[#6b6b6b]">{mmss(sek)}, wyśle się razem z formularzem</span>
           <button type="button" onClick={usun} className="text-[13px] underline text-[#6b6b6b]">Usuń i nagraj jeszcze raz</button>
         </>
@@ -163,7 +164,7 @@ export default function FormularzFirmy({ firma, rola, pytania }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f6f5] text-[#0b0b0b] font-[var(--font-blp-body)] antialiased">
+    <div className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#f6f6f5] text-[#0b0b0b] font-[var(--font-blp-body)] antialiased [overflow-wrap:anywhere]">
       <nav className="max-w-[760px] mx-auto px-5 py-[22px] flex items-center justify-between">
         <span className="font-[var(--font-blp-head)] font-semibold text-[17px] tracking-[-0.02em] inline-flex items-center gap-1">
           Jakub Chodakowski <span className="w-[7px] h-[7px] rounded-full bg-[#f08a2b]" />
