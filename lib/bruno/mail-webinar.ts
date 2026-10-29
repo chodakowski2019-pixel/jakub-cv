@@ -20,8 +20,6 @@ export const NADAWCA_WEBINARU = `Jakub Chodakowski <${ADRES_WEBINARU}>`;
 /** Klauzula z pop-upu, powtórzona w mailu potwierdzającym (Aniserowicz 02-07: „bo nie wiemy, kto wpisał adres”). */
 export const KLAUZULA_WEBINARU =
   "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o treningu handlowców z AI. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości. Jeśli to nie Ty podałeś ten adres, po prostu zignoruj tę wiadomość: bez kliknięcia nic więcej nie wyślę.";
-/** Dane nadawcy w stopce każdego maila (Aniserowicz 01-08: dane działalności przy masowej wysyłce). */
-const NADAWCA_DANE = "Jakub Chodakowski, NIP 6711845485";
 
 const F = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 const esc = (s: string) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -45,10 +43,10 @@ const przyciskPotwierdz = (tekst: string, link: string) =>
  * i link wypisania (gdy jest token). Zajawka = ukryty tekst podglądu w skrzynce.
  */
 function koperta(a: { tresc: string; zajawka?: string; wypisz?: string; bezPodpisu?: boolean; ps?: string }) {
+  // 29.10 (USER_001): bez linii „Jakub Chodakowski, NIP · e-mail” pod PS; zostaje tylko „Wypisz się”, gdy jest token.
   const stopka = [
-    `<p style="margin:28px 0 0 0;font-family:${F};font-size:13px;line-height:1.6;color:#777777">${esc(NADAWCA_DANE)} · <a href="mailto:${ADRES_WEBINARU}" style="color:#777777">${ADRES_WEBINARU}</a></p>`,
     a.wypisz
-      ? `<p style="margin:6px 0 0 0;font-family:${F};font-size:13px;line-height:1.6;color:#777777">Dostajesz tę wiadomość, bo zapisałeś się na webinar na salesbruno.pl. Nie chcesz więcej wiadomości o webinarze? <a href="${esc(a.wypisz)}" style="color:#777777;text-decoration:underline">Wypisz się</a> (jedno kliknięcie, bez pytań).</p>`
+      ? `<p style="margin:28px 0 0 0;font-family:${F};font-size:13px;line-height:1.6;color:#777777">Dostajesz tę wiadomość, bo zapisałeś się na webinar na salesbruno.pl. Nie chcesz więcej wiadomości o webinarze? <a href="${esc(a.wypisz)}" style="color:#777777;text-decoration:underline">Wypisz się</a> (jedno kliknięcie, bez pytań).</p>`
       : "",
   ].join("");
   return `<!doctype html>
@@ -99,7 +97,6 @@ export function mailWebinarPotwierdz(a: { imie: string | null; link: string }): 
         ]),
         p(`Jeśli ta wiadomość trafiła do „Ofert” albo spamu, przenieś ją do głównej skrzynki i dodaj adres <b>${ADRES_WEBINARU}</b> do kontaktów. Wtedy link i przypomnienia też tam trafią.`),
         p("Widzimy się w środę."),
-        `<p style="margin:0 0 18px 0;font-family:${F};font-size:12px;line-height:1.55;color:#777777">${esc(KLAUZULA_WEBINARU)}</p>`,
       ].join("\n"),
     }),
   };
@@ -120,6 +117,7 @@ export function mailWebinarPotwierdzenie(a: Odbiorca): MailWebinaru {
         p(hej(a.imie)),
         p(`zapis potwierdzony. Widzimy się <b>${esc(WEBINAR.dzien)}, ${esc(WEBINAR.dataDluga)}, o ${esc(WEBINAR.godzina)}</b> na Zoomie (ID spotkania ${esc(WEBINAR.zoomId)}, 60 minut).`),
         linia("Link do spotkania na Zoomie", WEBINAR.zoom),
+        p(`<a href="${esc(WEBINAR.zoom)}" style="font-size:13px;color:#555555;word-break:break-all">${esc(WEBINAR.zoom)}</a>`),
         kalendarz(a.baza),
         p("<b>Plan 60 minut:</b>"),
         lista(WEBINAR.plan.map(([g, h]) => `<b>${esc(g)}</b> ${esc(h)}`)),
