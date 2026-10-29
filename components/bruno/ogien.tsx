@@ -515,7 +515,6 @@ export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia 
         <div className="bruno-szklo rounded-3xl p-8 sm:p-10 text-center flex flex-col items-center gap-6">
           <blockquote className="max-w-xl">
             <p className="bruno-h2 text-xl sm:text-2xl text-slate-900 leading-snug">{cudzy(cytat.tekst)}</p>
-            <footer className="text-sm text-slate-500 mt-2">{cytat.autor}</footer>
           </blockquote>
           {ostatnia && (
             <div className="brg-ostatnia">
@@ -574,7 +573,6 @@ export default function Ogien({ imie, cytat, obiekcje, pierwszeZdanie, ostatnia 
         <div className="bruno-szklo rounded-3xl p-8 sm:p-10 flex flex-col items-center gap-6 text-center">
           <blockquote className="max-w-xl">
             <p className="bruno-h2 text-xl text-slate-900 leading-snug">{cudzy(cytat.tekst)}</p>
-            <footer className="text-sm text-slate-500 mt-2">{cytat.autor}</footer>
           </blockquote>
           <p className="text-slate-700 max-w-lg">{t("Not “calm down.” Fear and excitement are the same heartbeat. Only the label is different. Say it out loud:", "Nie „uspokój się”. Strach i ekscytacja to to samo tętno, różni je tylko etykieta. Powiedz na głos:")}</p>
           <button type="button" onClick={() => setNakrecony(true)} aria-pressed={nakrecony} className={`${nakrecony ? "bruno-przycisk" : "bruno-przycisk-2"} text-xl px-10 py-5`}>
