@@ -50,10 +50,13 @@ const KONFIG = {
         // 16.10: Claude Sonnet 5.5 przez ElevenLabs = 4-7,7 s do odpowiedzi (rozmowa „tragiczna”), cofnięte. Test opóźnień:
         // gpt-4o 0,5-0,7 s, gpt-5.5 0,56-0,60 s (mądrzejszy, ta sama szybkość) → gpt-5.5.
         llm: "gpt-5.5",
-        temperature: 0.7,
+        // 29.10: 0,7 → 0,5 (model gubił polskie znaki: „zalatwiało”).
+        temperature: 0.5,
         max_tokens: 220,
       },
     },
+    // 29.10 (USER_001 milczał, a szum z tła przerwał Bruno w 46 s): ignoruj głosy i dźwięki z tła, przerywa tylko mówiący.
+    vad: { background_voice_detection: true },
     tts: {
       // 16.10: v3 ekspresyjny ucinał wypowiedzi na znacznikach („No dobrze, [”), cofnięte do multilingual_v2.
       // Zostaje optymalizacja opóźnienia 3 → 1 (dłuższe kawałki tekstu = naturalna intonacja końcówek, 15.10).

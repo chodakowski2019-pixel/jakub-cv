@@ -34,6 +34,8 @@ export const GLOS_BRUNO_K = "XrExE9yKIg1WjnnlVkGX";
  */
 export function ustawieniaGlosu(jezyk: Jezyk, plec: PlecGlosu): { stability: number; similarityBoost: number; speed: number } | null {
   if (plec === "k" && jezyk === "pl") return { stability: 0.5, similarityBoost: 0.75, speed: 1.05 }; // 15.10: głos v3 przyjmuje stability 0 / 0,5 / 1 (było 0,55)
+  // 29.10 (USER_001: „dziwny głos”): męski PL (Adam) brał stabilność 0,35 z agenta, ustawioną pod głos EN (Chris). Głos pływał.
+  if (plec === "m" && jezyk === "pl") return { stability: 0.55, similarityBoost: 0.8, speed: 1.0 };
   return null;
 }
 /** Imię klientki, gdy wybrany głos kobiecy (do potwierdzenia przez USER_001). */
