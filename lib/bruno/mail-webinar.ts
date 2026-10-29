@@ -10,7 +10,10 @@ import { WEBINAR, webinarLinkGoogle } from "./webinar.ts";
 // 29.10 (USER_001): maile wychodzą z jakub@salesbruno.com, nie z hello@jakubchodakowski.com.
 
 export const ADRES_WEBINARU = "jakub@salesbruno.com";
-export const NADAWCA_WEBINARU = `Jakub Chodakowski <${ADRES_WEBINARU}>`;
+// ⛔ 29.10 TYMCZASOWO: salesbruno.com nie jest zweryfikowana w Resend („The salesbruno.com domain is not verified”, test
+// produkcyjny 16:18). Do czasu weryfikacji koperta idzie z hello@jakubchodakowski.com, odpowiedzi (reply-to) trafiają na
+// jakub@salesbruno.com. Po weryfikacji domeny: NADAWCA_WEBINARU = `Jakub Chodakowski <${ADRES_WEBINARU}>`.
+export const NADAWCA_WEBINARU = "Jakub Chodakowski <hello@jakubchodakowski.com>";
 /** Klauzula z pop-upu, powtórzona w mailu potwierdzającym (Aniserowicz 02.07: „bo nie wiemy, kto wpisał adres”). */
 export const KLAUZULA_WEBINARU =
   "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o treningu handlowców z AI. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości. Jeśli to nie Ty podałeś ten adres, po prostu zignoruj tę wiadomość: bez kliknięcia nic więcej nie wyślę.";

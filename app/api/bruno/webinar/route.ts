@@ -73,8 +73,9 @@ export async function POST(req: Request) {
     });
   } catch (e) {
     console.error("[bruno webinar] powiadomienie", e);
-    // Uczestnik ma już mail potwierdzający albo wiersz w bazie; brak powiadomienia do USER_001 nie psuje zapisu.
-    if (m0 === "blad") return NextResponse.json({ ok: false, blad: "Zapis się urwał. Spróbuj ponownie." }, { status: 500 });
+    // Brak powiadomienia do USER_001 nie psuje zapisu, jeśli mail potwierdzający wyszedł.
   }
+  // Bez maila potwierdzającego uczestnik nigdy nie dostanie linku, więc mówimy to wprost (Aniserowicz: nie zostawiaj go w próżni).
+  if (m0 === "blad") return NextResponse.json({ ok: false, blad: "Zapis się urwał: mail potwierdzający nie wyszedł. Spróbuj za chwilę." }, { status: 500 });
   return NextResponse.json({ ok: true });
 }
