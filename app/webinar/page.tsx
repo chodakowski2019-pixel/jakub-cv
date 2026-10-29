@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import WebinarLp from "@/components/bruno/webinar-lp";
+import WebinarLpZapis from "@/components/bruno/webinar-lp-zapis";
 import { WEBINAR } from "@/lib/bruno/webinar";
 
 // 16.10 (USER_001): LP webinaru, salesbruno.com/webinar. 21.10: Bruno = tylko B2B (17.10), więc ta sama wersja „firmy” co /webinar-firmy.
@@ -26,5 +26,6 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <WebinarLp wersja="firmy" />;
+  // 29.10 (USER_001: „na podstronie webinar”): krótka strona zapisu wg Aniserowicza, motyw błękitny, double opt-in.
+  return <WebinarLpZapis motyw="blekit" dziekiUrl="/webinar/dzieki" />;
 }
