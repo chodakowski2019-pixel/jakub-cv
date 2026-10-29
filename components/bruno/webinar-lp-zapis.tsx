@@ -59,6 +59,17 @@ const T = {
   },
 };
 
+/** Stopka strony (Aniserowicz 07-04: dane administratora + regulamin + polityka na każdej stronie zapisu). */
+function Stopka() {
+  return (
+    <footer className={s.stopka}>
+      <span>Jakub Chodakowski, NIP 6711845485 · {NADAWCA_ADRES}</span>
+      <a href="/polityka-prywatnosci">Polityka prywatności</a>
+      <a href="/regulamin">Regulamin</a>
+    </footer>
+  );
+}
+
 function Zegar({ maly }: { maly?: boolean }) {
   const [teraz, setTeraz] = useState<number | null>(null);
   useEffect(() => {
@@ -258,11 +269,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
         {T.przycisk}
       </a>
 
-      <footer className={s.stopka}>
-        <span>Jakub Chodakowski</span>
-        <a href="/polityka-prywatnosci">Polityka prywatności</a>
-        <a href="/regulamin">Regulamin</a>
-      </footer>
+      <Stopka />
 
       {/* POP-UP z formularzem (Aniserowicz 02.04: po kliknięciu decyzja jest podjęta, okienko tylko ją domyka). */}
       {otwarte && (
@@ -341,11 +348,7 @@ export function WebinarDzieki({ motyw = "pomarancz" }: { motyw?: MotywZapisu }) 
           <Zegar />
         </div>
       </main>
-      <footer className={s.stopka}>
-        <span>Jakub Chodakowski</span>
-        <a href="/polityka-prywatnosci">Polityka prywatności</a>
-        <a href="/regulamin">Regulamin</a>
-      </footer>
+      <Stopka />
     </div>
   );
 }
@@ -389,11 +392,33 @@ export function WebinarDziekiBardzo({ motyw = "pomarancz" }: { motyw?: MotywZapi
           <Zegar />
         </div>
       </main>
-      <footer className={s.stopka}>
-        <span>Jakub Chodakowski</span>
-        <a href="/polityka-prywatnosci">Polityka prywatności</a>
-        <a href="/regulamin">Regulamin</a>
-      </footer>
+      <Stopka />
+    </div>
+  );
+}
+
+/** Strona po kliknięciu „Wypisz się” w mailu (Aniserowicz 01-05: jedno kliknięcie, bez pytań, potwierdzenie na stronie). */
+export function WebinarWypisano({ motyw = "pomarancz" }: { motyw?: MotywZapisu }) {
+  return (
+    <div className={`${s.root} ${s.zapis} ${s.zapisA} ${MOTYW_KLASA[motyw]} bruno-lp-jasne`}>
+      <nav className={s.nav}>
+        <span className={s.logo}>
+          Jakub Chodakowski<i className={s.kropka} />
+        </span>
+      </nav>
+      <main className={s.dzieki}>
+        <div className={s.ptaszek}>✓</div>
+        <h1 className={`${s.h1} ${s.h1Dwie}`}>Wypisano.</h1>
+        <p className={s.dziekiLead}>
+          Nie dostaniesz już ode mnie wiadomości o webinarze.
+          <br />
+          Jeśli to pomyłka, zapisz się jeszcze raz na stronie webinaru.
+        </p>
+        <a className={`${s.przycisk} ${s.przyciskDuzy} ${s.dziekiPrzycisk}`} href="/webinar">
+          Strona webinaru »
+        </a>
+      </main>
+      <Stopka />
     </div>
   );
 }

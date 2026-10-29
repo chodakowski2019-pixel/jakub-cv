@@ -34,10 +34,10 @@ export const WEBINAR = {
   plan: [
     // Każdy punkt kończy się efektem „dzięki temu…” (Popiel M8 L01).
     ["19:00", "Dlaczego nie wiesz, co handlowcy mówią klientom", "3 powody, dla których zespół nie robi planu: nie umie, nie chce, system nie działa. Dzięki temu przestaniesz leczyć wszystko jednym szkoleniem i rozpoznasz, który problem masz u siebie."],
-    ["19:12", "4 sposoby na wyszkolenie zespołu", "Trener z zewnątrz, szef szkoli sam, słuchanie nagrań, trening z AI. Cena, ile Twoich godzin zjada, czy efekt zostaje. Dzięki temu wybierzesz świadomie, nie z przyzwyczajenia."],
+    ["19:15", "4 sposoby na wyszkolenie zespołu", "Trener z zewnątrz, szef szkoli sam, słuchanie nagrań, trening z AI. Cena, ile Twoich godzin zjada, czy efekt zostaje. Dzięki temu wybierzesz świadomie, nie z przyzwyczajenia."],
     ["19:30", "Na żywo: handlowiec kontra klient AI", "AI gra trudnego klienta z branży. Po 3 minutach ocena: otwarcie, pytania, obiekcje, zamknięcie. Dzięki temu zobaczysz, jak wygląda ocena, zanim jej zaufasz u siebie."],
-    ["19:42", "Panel szefa: kontrola bez pilnowania", "Kto ćwiczył dziś, kto od tygodnia nie, kto nie domyka, kto rośnie. Dzięki temu rozmowa 1:1 zaczyna się od liczb, nie od „jak idzie?”."],
-    ["19:50", "Pytania i co dalej", "Pytasz o swój zespół. Odpowiadam na żywo."],
+    ["19:45", "Panel szefa: kontrola bez pilnowania", "Kto ćwiczył dziś, kto od tygodnia nie, kto nie domyka, kto rośnie. Dzięki temu rozmowa 1:1 zaczyna się od liczb, nie od „jak idzie?”."],
+    ["20:00", "Pytania i co dalej", "Pytasz o swój zespół. Odpowiadam na żywo."],
   ] as [string, string, string][],
 };
 

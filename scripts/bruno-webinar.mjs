@@ -27,7 +27,7 @@ async function lista() {
   if (error) throw error;
   const zr = {};
   for (const z of data) zr[z.zrodlo ?? "-"] = (zr[z.zrodlo ?? "-"] ?? 0) + 1;
-  console.table(data.map((z) => ({ imie: z.imie, email: z.email, zrodlo: z.zrodlo ?? "-", zapisano: z.zapisano.slice(0, 16), potw: z.potwierdzono ? z.potwierdzono.slice(0, 16) : "-", M0: !!z.mail_potwierdz, link: !!z.mail_potwierdzenie, M1: !!z.mail_jutro, M2: !!z.mail_dzis, M3: !!z.resend_za_godzine, M4: !!z.resend_start, obecnosc: z.obecnosc ?? "-", M5: !!z.mail_po })));
+  console.table(data.map((z) => ({ imie: z.imie, email: z.email, zrodlo: z.zrodlo ?? "-", zapisano: z.zapisano.slice(0, 16), potw: z.potwierdzono ? z.potwierdzono.slice(0, 16) : "-", M0: !!z.mail_potwierdz, link: !!z.mail_potwierdzenie, M1: !!z.mail_jutro, M2: !!z.mail_dzis, M3: !!z.resend_za_godzine, M4: !!z.resend_start, obecnosc: z.obecnosc ?? "-", M5: !!z.mail_po, wypisany: !!z.wypisano })));
   console.log(`Razem: ${data.length}. Źródła:`, zr);
 }
 
@@ -72,11 +72,11 @@ async function po() {
     }
     return;
   }
-  const { data, error } = await sb.from("bruno_webinar_zapisy").select("*").eq("webinar", WEBINAR_KLUCZ).not("obecnosc", "is", null).not("potwierdzono", "is", null).is("mail_po", null);
+  const { data, error } = await sb.from("bruno_webinar_zapisy").select("*").eq("webinar", WEBINAR_KLUCZ).not("obecnosc", "is", null).not("potwierdzono", "is", null).is("wypisano", null).is("mail_po", null);
   if (error) throw error;
   const wyslij = args.includes("--wyslij");
   for (const z of data) {
-    const m = mailWebinarPo({ imie: z.imie, grupa: z.obecnosc });
+    const m = mailWebinarPo({ imie: z.imie, grupa: z.obecnosc, wypisz: z.token ? `https://salesbruno.pl/api/bruno/webinar/wypisz?t=${z.token}` : undefined });
     if (!wyslij) {
       console.log(`[podgląd] ${z.email} (${z.obecnosc}): ${m.temat}`);
       continue;

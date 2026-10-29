@@ -35,7 +35,7 @@ export async function GET(req: Request) {
   // Mail z linkiem Zoom tylko raz (kolumna `mail_potwierdzenie`), nawet gdy ktoś kliknie link drugi raz.
   if (!z.mail_potwierdzenie) {
     try {
-      const m = mailWebinarPotwierdzenie({ imie: z.imie, baza });
+      const m = mailWebinarPotwierdzenie({ imie: z.imie, baza, wypisz: `${baza}/api/bruno/webinar/wypisz?t=${token}` });
       await wyslij({ do: z.email, od: NADAWCA_WEBINARU, replyTo: ADRES_WEBINARU, rodzaj: "webinar", temat: m.temat, html: m.html });
       await supabaseAdmin.from("bruno_webinar_zapisy").update({ mail_potwierdzenie: new Date().toISOString() }).eq("id", z.id);
     } catch (e) {
