@@ -70,7 +70,8 @@ const KONFIG = {
       speed: 1.0,
       // 29.10 (USER_001: „efekt jak w rozmowie”): mały pokój = lekki ogon po każdej kwestii (ucinanie zniknęło).
       // Filtr `phone` COFNIĘTY 29.10 (USER_001: „pogorszyła się barwa głosu”).
-      audio_effects: { distance: 0, send_level: 0.35, pan: 0, environment_id: "small_room" },
+      // `filter_preset_id: null` jawnie: PATCH nie kasuje pola, gdy je pominąć (sprawdzone 29.10).
+      audio_effects: { distance: 0, send_level: 0.35, pan: 0, filter_preset_id: null, environment_id: "small_room" },
       // 29.10 (USER_001: v4_turbo gorzej wymawia cyfry): ElevenLabs zamienia liczby na słowa po stronie TTS (było: tylko instrukcja w prompcie).
       text_normalisation_type: "elevenlabs",
     },
