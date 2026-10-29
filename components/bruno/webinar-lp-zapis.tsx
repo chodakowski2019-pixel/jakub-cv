@@ -63,7 +63,7 @@ const T = {
 function Stopka() {
   return (
     <footer className={s.stopka}>
-      <span>Jakub Chodakowski, NIP 6711845485 · {NADAWCA_ADRES}</span>
+      <span>Jakub Chodakowski · {NADAWCA_ADRES}</span>
       <a href="/polityka-prywatnosci">Polityka prywatności</a>
       <a href="/regulamin">Regulamin</a>
     </footer>
@@ -186,6 +186,14 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
             <br />
             <span className={s.g}>{T.h1Szary}</span>
           </h1>
+          {/* 29.10 (USER_001): na telefonie zdjęcie od razu pod „Bez pilnowania ich.”. */}
+          <div className={`${s.heroFoto} ${s.heroFotoTel}`}>
+            <img src="/bruno/jakub-webinar.jpg?v=2" alt="Jakub Chodakowski" width={960} height={863} />
+            <div className={s.heroFotoPodpis}>
+              <b>Jakub Chodakowski, CEO</b>
+              <span>prowadzi webinar</span>
+            </div>
+          </div>
           <p className={s.wstepZapis}>{T.wstep}</p>
           <ul className={s.punktyZapis}>
             {T.punkty.map((p) => (
@@ -200,7 +208,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
             </p>
           </div>
         </div>
-        <div className={s.heroFoto}>
+        <div className={`${s.heroFoto} ${s.heroFotoKomp}`}>
           {/* 29.10 (USER_001): kadr ucięty nad zaokrągleniem koszuli, dół prosty (public/bruno/jakub-webinar.jpg = /jakub.jpg bez dolnych 110 px). */}
           <img src="/bruno/jakub-webinar.jpg?v=2" alt="Jakub Chodakowski" width={960} height={863} />
           <div className={s.heroFotoPodpis}>
@@ -215,7 +223,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
         <div className={s.prowadzacyZapis}>
           <img src="/jakub.jpg" alt="Jakub Chodakowski" width={88} height={88} />
           <p>
-            <b>Jakub Chodakowski, CEO.</b> {T.prowadzacy}
+            <b className={s.bioImie}>Jakub Chodakowski, CEO.</b> {T.prowadzacy}
           </p>
         </div>
       </section>
@@ -333,9 +341,10 @@ export function WebinarDzieki({ motyw = "pomarancz" }: { motyw?: MotywZapisu }) 
           Dzięki, to <span className={s.pom}>prawie</span> wszystko!
         </h1>
         <p className={s.dziekiLead}>
-          Masz miejsce na webinarze: {WEBINAR.dzien}, {WEBINAR.dataDluga}, {WEBINAR.godzina}.
+          Masz miejsce na webinarze:
           <br />
-          Zostały 2 rzeczy:
+          {WEBINAR.dzien}, {WEBINAR.dataDluga}, {WEBINAR.godzina}.
+          <span className={s.dziekiOdstep}>Zostały 2 rzeczy:</span>
         </p>
         {/* Aniserowicz 02.06: „dostaniesz maila, poszukaj go w spamie / ofertach, MUSISZ kliknąć”. Nadawca podany wprost. */}
         <ol className={s.dziekiKroki}>
