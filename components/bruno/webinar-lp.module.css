@@ -286,6 +286,24 @@
   border-radius: 18px;
   padding: 24px;
 }
+/* 29.10: sekcja „Znasz to?” (bóle właścicieli z rozmów), 2 kolumny, cudzysłów zamiast numeru. */
+.siatkaCytaty {
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (max-width: 640px) {
+  .siatkaCytaty {
+    grid-template-columns: 1fr;
+  }
+}
+.cytat .nr {
+  font-size: 44px;
+  line-height: 0.6;
+  display: block;
+  height: 22px;
+}
+.cytat h3 {
+  font-size: 22px;
+}
 .nr {
   color: var(--orange);
   font-family: var(--head);
@@ -570,5 +588,1445 @@
   }
   .przyciskDol {
     max-width: none;
+  }
+}
+
+/* 29.10 v2: nowe sekcje wg kursu LP (wezwanie, otwarcie pytaniami, koszt, historia, wyobraź sobie, 3 liczby, ostrzeżenie, P.S.). */
+.wezwanie {
+  margin-top: 22px !important;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.wezwanie + .h1 {
+  margin-top: 10px !important;
+}
+.otwarcie {
+  margin-top: 22px;
+  max-width: 520px;
+}
+.otwarcieWstep {
+  font-family: var(--head);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px !important;
+}
+.otwarcie ul li {
+  font-family: var(--head);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  padding: 6px 0 6px 22px;
+  position: relative;
+}
+.otwarcie ul li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 16px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+.otwarcie .lead {
+  margin-top: 14px !important;
+}
+.przyciskPod {
+  margin-top: 12px !important;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+  text-align: center;
+}
+.koniec .przyciskPod {
+  max-width: 340px;
+  text-align: left;
+}
+.opisSekcji {
+  margin-top: 18px !important;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 460px;
+}
+.koszt li {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.koszt li b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.koszt li:last-child {
+  border-bottom: 0;
+}
+.koszt li:last-child b {
+  color: var(--orange);
+}
+.historia {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 32px;
+  align-items: start;
+  max-width: 860px;
+}
+.historia img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.historia p {
+  margin-top: 16px !important;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 640px;
+}
+.historia .h2Duzy + p {
+  margin-top: 22px !important;
+}
+.podpis {
+  display: block;
+  margin-top: 18px;
+  font-family: var(--head);
+  font-size: 15px;
+  font-weight: 500;
+}
+.ctaSrodek {
+  max-width: 860px;
+  padding-left: 152px;
+}
+.ctaSrodek .przyciskDol {
+  margin-top: 24px;
+}
+.wyobraz {
+  background: var(--ink);
+  color: #fff;
+  border-radius: 26px;
+  padding: 44px 40px;
+}
+.wyobraz .h2Duzy {
+  color: #fff;
+}
+.wyobraz .g {
+  color: #8d8d8d;
+}
+.wyobraz p {
+  margin-top: 18px !important;
+  font-size: 19px;
+  line-height: 1.55;
+  max-width: 720px;
+  color: #e6e6e6;
+}
+.wyobraz .wyobrazPod {
+  font-size: 14px;
+  color: #a4a4a4;
+  margin-top: 26px !important;
+}
+.liczby {
+  display: grid;
+  gap: 14px;
+}
+.liczby .liczba {
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: 175px 1fr;
+  gap: 18px;
+  align-items: center;
+}
+.liczby .wielka {
+  font-size: 40px;
+  white-space: nowrap;
+}
+.liczby .liczba p {
+  font-size: 15px;
+  margin-top: 0;
+}
+.liczby .liczba small {
+  grid-column: 2;
+  margin-top: 0;
+}
+.ostrzezenie {
+  max-width: 640px;
+  margin: 0 0 26px !important;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.ps {
+  max-width: 560px;
+  margin: 28px 0 0 !important;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+@media (max-width: 760px) {
+  .historia {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .historia img {
+    width: 88px;
+    height: 88px;
+  }
+  .ctaSrodek {
+    padding-left: 0;
+  }
+  .wyobraz {
+    padding: 30px 22px;
+  }
+  .liczby .liczba {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .liczby .liczba small {
+    grid-column: 1;
+  }
+  .otwarcieWstep {
+  font-family: var(--head);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px !important;
+}
+.otwarcie ul li {
+    font-size: 18px;
+  }
+}
+
+/* 29.10: KRÓTKA strona zapisu (/podglad/webinar-zapis): wszystko ważne nad linią, plan jako lista, nie kafle. */
+.navData {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--muted);
+}
+.heroZapis {
+  padding-bottom: 40px;
+  grid-template-areas: "gora karta" "dol karta";
+  grid-template-rows: auto 1fr;
+  row-gap: 0;
+}
+.heroGora {
+  grid-area: gora;
+}
+.heroZapis .karta {
+  grid-area: karta;
+  align-self: start;
+}
+.heroDol {
+  grid-area: dol;
+}
+.wstepZapis {
+  margin-top: 26px !important;
+}
+.wstepZapis {
+  margin-top: 26px !important;
+  font-family: var(--head);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.punktyZapis {
+  margin-top: 10px !important;
+  max-width: 560px;
+}
+.punktyZapis li {
+  padding: 10px 0 10px 28px;
+  position: relative;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.punktyZapis li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 19px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+.prowadzacyZapis {
+  margin-top: 26px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  max-width: 560px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.prowadzacyZapis img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+.prowadzacyZapis p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.prowadzacyZapis b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.formData {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  margin: -6px 0 6px !important;
+}
+.sekcjaZapis {
+  padding: 48px 20px;
+}
+.planZapis {
+  margin: 24px 0 0 !important;
+  padding: 0 !important;
+  list-style: none;
+}
+.planZapis li {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--head);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.planZapis li:last-child {
+  border-bottom: 0;
+}
+@media (max-width: 860px) {
+  .navData {
+    display: none;
+  }
+  .heroZapis {
+    grid-template-areas: "gora" "karta" "dol";
+    grid-template-rows: auto auto auto;
+  }
+  .heroZapis .karta {
+    margin-top: 24px;
+  }
+}
+
+/* 29.10 UX/UI krótkiej strony zapisu (.zapis): czytelniej i wyraźniej, treści bez zmian. */
+.zapis .nav {
+  padding-top: 26px;
+}
+.zapis .navData {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 14px;
+  color: var(--ink);
+}
+.zapis .heroZapis {
+  padding-top: 40px;
+  padding-bottom: 56px;
+  column-gap: 64px;
+}
+.zapis .znaczek {
+  font-size: 14px;
+  padding: 9px 16px;
+}
+.zapis .h1Dwie {
+  font-size: clamp(32px, 4.4vw, 56px);
+  margin-top: 24px !important;
+  line-height: 1.04;
+}
+.zapis .wstepZapis {
+  margin-top: 34px !important;
+  font-size: 22px;
+}
+.zapis .punktyZapis {
+  margin-top: 8px !important;
+  max-width: 580px;
+}
+.zapis .punktyZapis li {
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1.55;
+  padding: 14px 0 14px 36px;
+  border-bottom: 1px solid var(--line);
+}
+.zapis .punktyZapis li:last-child {
+  border-bottom: 0;
+}
+.zapis .punktyZapis li::before {
+  content: "";
+  left: 0;
+  top: 20px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--orange) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7.5'/></svg>") center / 13px no-repeat;
+}
+.zapis .prowadzacyZapis {
+  margin-top: 28px;
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  align-items: center;
+  gap: 18px;
+  max-width: 580px;
+}
+.zapis .prowadzacyZapis img {
+  width: 68px;
+  height: 68px;
+}
+.zapis .prowadzacyZapis p {
+  font-size: 15.5px;
+  line-height: 1.55;
+}
+.zapis .karta {
+  padding: 34px 32px 30px;
+  border-radius: 26px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.08);
+}
+.zapis .h2 {
+  font-size: 30px;
+}
+.zapis .formData {
+  margin: 2px 0 10px !important;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: #fff6ec;
+  color: #7a4312;
+  font-size: 14px;
+  align-self: flex-start;
+}
+.zapis .formData .live {
+  animation: none;
+  opacity: 1;
+}
+.zapis .pole input {
+  padding: 15px 16px;
+  border-radius: 14px;
+  font-size: 16px;
+}
+.zapis .pole {
+  font-size: 14px;
+}
+.zapis .zegarKarta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2px;
+}
+.zapis .zegarKarta .zegarNapis {
+  margin: 0;
+}
+.zegarMaly {
+  gap: 6px;
+}
+.zegarMaly .zegarPole {
+  min-width: 54px;
+  padding: 7px 6px 6px;
+  border-radius: 12px;
+  background: #f9f9f8;
+}
+.zegarMaly .zegarPole b {
+  font-size: 20px;
+}
+.zegarMaly .zegarPole span {
+  font-size: 10.5px;
+}
+.zapis .przycisk {
+  font-size: 17px;
+  font-weight: 600;
+  padding: 18px 24px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+}
+.zapis .przycisk:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+}
+.zapis .przyciskPod {
+  font-size: 13.5px;
+}
+.zapis .sekcjaZapis {
+  padding: 60px 20px;
+}
+.zapis .dwie {
+  align-items: start;
+}
+.zapis .planZapis {
+  margin-top: 28px !important;
+  display: grid;
+  gap: 10px;
+}
+.zapis .planZapis li {
+  grid-template-columns: 66px 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  font-size: 18px;
+}
+.zapis .planGodz {
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--orange);
+  background: #fff6ec;
+  border-radius: 999px;
+  padding: 5px 0;
+  text-align: center;
+}
+.zapis .liczba {
+  padding: 36px;
+  border-radius: 26px;
+  margin-top: 28px;
+}
+.zapis .liczba p {
+  font-size: 18px;
+  color: var(--ink);
+}
+.zapis .faq {
+  margin-top: 24px;
+  max-width: 760px;
+}
+.zapis .faq details {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 4px 20px;
+  margin-bottom: 10px;
+}
+.zapis .faq summary {
+  font-size: 18px;
+  padding: 16px 32px 16px 0;
+}
+.zapis .faq p {
+  font-size: 16px;
+  padding-bottom: 18px;
+}
+.zapis .koniec {
+  padding-top: 20px;
+  border-top: 0;
+}
+.zapis .koniecKarta {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 48px 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 22px;
+}
+.zapis .koniecKarta .h2Duzy {
+  margin: 0;
+}
+.zapis .koniecKarta .zegar {
+  margin: 0;
+}
+.zapis .koniecKarta .przyciskDol {
+  margin-top: 0;
+  width: 100%;
+  max-width: 380px;
+}
+.zapis .koniecKarta .przyciskPod {
+  margin-top: -6px !important;
+  text-align: center;
+  max-width: 420px;
+}
+.zapis .stopka {
+  justify-content: center;
+}
+@media (max-width: 860px) {
+  .zapis .heroZapis {
+    padding-top: 24px;
+    padding-bottom: 40px;
+  }
+  .zapis .znaczek {
+    font-size: 13px;
+    line-height: 1.35;
+    text-align: left;
+  }
+  .zapis .h1Dwie {
+    font-size: clamp(30px, 8.6vw, 40px);
+  }
+  .zapis .karta {
+    padding: 26px 20px 24px;
+  }
+  .zapis .h2 {
+    font-size: 26px;
+  }
+  .zapis .przycisk {
+    font-size: 15.5px;
+    padding: 17px 16px;
+    white-space: nowrap;
+  }
+  .zapis .punktyZapis li {
+    font-size: 17px;
+  }
+  .zapis .prowadzacyZapis {
+    align-items: flex-start;
+    padding: 18px;
+  }
+  .zapis .prowadzacyZapis img {
+    width: 56px;
+    height: 56px;
+  }
+  .zapis .sekcjaZapis {
+    padding: 44px 20px;
+  }
+  .zapis .planZapis li {
+    font-size: 16.5px;
+    padding: 14px 14px;
+    grid-template-columns: 60px 1fr;
+  }
+  .zapis .liczba {
+    padding: 28px 24px;
+  }
+  .zapis .koniecKarta {
+    padding: 34px 22px;
+    gap: 18px;
+  }
+  .zapis .koniecKarta .h2Duzy {
+    font-size: 30px;
+  }
+  .zapis .faq summary {
+    font-size: 16.5px;
+  }
+}
+
+/* 29.10 poprawki po zrzutach: karta formularza szersza (pigułka daty, przycisk i zegar w 1 linii), telefon bez wychodzenia poza ekran. */
+.zapis .heroZapis {
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+  column-gap: 48px;
+}
+.zapis .formData {
+  font-size: 13.5px;
+  white-space: nowrap;
+}
+.zapis .zegarKarta {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.zapis .przycisk {
+  white-space: nowrap;
+  font-size: 16.5px;
+}
+@media (max-width: 860px) {
+  .zapis .heroZapis {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .zapis .heroGora,
+  .zapis .heroDol,
+  .zapis .karta {
+    min-width: 0;
+  }
+  .zapis .h1Linia {
+    white-space: normal;
+  }
+  .zapis .h1Dwie {
+    font-size: clamp(28px, 8vw, 38px);
+  }
+  .zapis .znaczek {
+    white-space: normal;
+    max-width: 100%;
+  }
+  .zapis .formData {
+    white-space: normal;
+    font-size: 13px;
+  }
+  .zapis .przycisk {
+    font-size: 15px;
+  }
+}
+/* 29.10: h1 na desktopie w całości w kolumnie (szersza lewa kolumna, mniejsza czcionka). */
+@media (min-width: 861px) {
+  .zapis .heroZapis {
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.92fr);
+    column-gap: 44px;
+  }
+  .zapis .h1Dwie {
+    font-size: clamp(30px, 3.3vw, 42px);
+  }
+  .zapis .znaczek {
+    font-size: 13.5px;
+  }
+}
+/* 29.10: prowadzący = osobna sekcja; końcowa karta wyśrodkowana. */
+.zapis .sekcjaProwadzacy {
+  padding: 40px 20px;
+}
+.zapis .sekcjaProwadzacy .prowadzacyZapis {
+  margin: 0 auto;
+  max-width: 760px;
+  padding: 26px 30px;
+  border-radius: 22px;
+  gap: 24px;
+}
+.zapis .sekcjaProwadzacy .prowadzacyZapis img {
+  width: 88px;
+  height: 88px;
+}
+.zapis .sekcjaProwadzacy .prowadzacyZapis p {
+  font-size: 17px;
+  line-height: 1.6;
+}
+.zapis .koniecKarta {
+  margin: 0 auto;
+  max-width: 680px;
+}
+@media (max-width: 860px) {
+  .zapis .sekcjaProwadzacy .prowadzacyZapis {
+    padding: 20px;
+    gap: 16px;
+  }
+  .zapis .sekcjaProwadzacy .prowadzacyZapis img {
+    width: 60px;
+    height: 60px;
+  }
+  .zapis .sekcjaProwadzacy .prowadzacyZapis p {
+    font-size: 15.5px;
+  }
+}
+
+/* 29.10 MOTYWY krótkiej strony zapisu (ten sam układ, inne kolory). */
+/* LIMONKA = styl panelu Bruno (Rinesk): biel, czerń, limonka #e9f542. */
+.mLimonka {
+  --bg: #f2f3f5;
+  --orange: #111111;
+  --lim: #e9f542;
+}
+.mLimonka .kropka,
+.mLimonka .live,
+.mLimonka .punktyZapis li::before {
+  background-color: var(--lim);
+}
+.mLimonka .punktyZapis li::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7.5'/></svg>");
+}
+.mLimonka .przycisk,
+.mLimonka .pasekTel {
+  background: var(--lim);
+  color: #111 !important;
+  box-shadow: 0 10px 24px rgba(233, 245, 66, 0.35);
+}
+.mLimonka .formData,
+.mLimonka .planGodz {
+  background: #f6fbb9;
+  color: #2a2f00;
+}
+.mLimonka .wielka,
+.mLimonka .zegarPole:last-child b {
+  color: #111;
+}
+.mLimonka .wielka {
+  background: var(--lim);
+  display: inline-block;
+  padding: 0 14px;
+  border-radius: 16px;
+}
+.mLimonka .karta {
+  border: 2px solid #111;
+  box-shadow: none;
+}
+.mLimonka .faq summary::after {
+  color: #111;
+}
+
+/* NOC = ciemny grafit, pomarańcz zostaje akcentem, przycisk pomarańczowy. */
+.mNoc {
+  --bg: #0f1115;
+  --ink: #f5f6f8;
+  --grey: #6f7580;
+  --muted: #aab0ba;
+  --line: #262a32;
+  --karta: #171a20;
+}
+.mNoc .karta,
+.mNoc .prowadzacyZapis,
+.mNoc .planZapis li,
+.mNoc .liczba,
+.mNoc .faq details,
+.mNoc .koniecKarta,
+.mNoc .zegarPole,
+.mNoc .znaczek,
+.mNoc .navData {
+  background: var(--karta);
+  border-color: var(--line);
+}
+.mNoc .karta {
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+.mNoc .pole input {
+  background: #0f1115;
+  border-color: #2f343d;
+  color: var(--ink);
+}
+.mNoc .pole input:focus {
+  border-color: var(--orange);
+  background: #0f1115;
+}
+.mNoc .pole input::placeholder {
+  color: #6f7580;
+}
+.mNoc .zegarMaly .zegarPole {
+  background: #0f1115;
+}
+.mNoc .formData,
+.mNoc .planGodz {
+  background: rgba(240, 138, 43, 0.14);
+  color: #ffb46b;
+}
+.mNoc .przycisk,
+.mNoc .pasekTel {
+  background: var(--orange);
+  color: #111 !important;
+  box-shadow: 0 10px 28px rgba(240, 138, 43, 0.35);
+}
+.mNoc .zgoda input {
+  accent-color: var(--orange);
+}
+.mNoc .g {
+  color: #7d838e;
+}
+.mNoc .stopka,
+.mNoc .zgoda,
+.mNoc .przyciskPod,
+.mNoc .liczba small {
+  color: #8a909b;
+}
+
+/* BŁĘKIT = chłodny, „bankowy”: jasne tło, granat, akcent #0a6cff. */
+.mBlekit {
+  --bg: #f4f6fb;
+  --ink: #0b1a33;
+  --muted: #55627a;
+  --grey: #93a0b8;
+  --line: #dfe5f0;
+  --orange: #0a6cff;
+}
+.mBlekit .formData,
+.mBlekit .planGodz {
+  background: #e8f0ff;
+  color: #0a4fbd;
+}
+.mBlekit .przycisk,
+.mBlekit .pasekTel {
+  background: #0a6cff;
+  color: #fff !important;
+  box-shadow: 0 10px 28px rgba(10, 108, 255, 0.3);
+}
+.mBlekit .karta {
+  box-shadow: 0 30px 80px rgba(11, 26, 51, 0.1);
+}
+.mBlekit .zgoda input {
+  accent-color: #0a6cff;
+}
+.mBlekit .koniecKarta {
+  background: #0b1a33;
+  color: #fff;
+  border-color: #0b1a33;
+}
+.mBlekit .koniecKarta .h2Duzy,
+.mBlekit .koniecKarta .przyciskPod {
+  color: #fff;
+}
+.mBlekit .koniecKarta .g {
+  color: #8fa3c7;
+}
+.mBlekit .koniecKarta .zegarPole {
+  background: #15274a;
+  border-color: #23375e;
+  color: #fff;
+}
+.mBlekit .koniecKarta .zegarPole span {
+  color: #8fa3c7;
+}
+/* 29.10 (USER_001): zegar „Start za” w karcie wyśrodkowany. */
+.zapis .zegarKarta {
+  align-items: center;
+  margin: 6px 0 4px;
+}
+
+/* 29.10 ANISEROWICZ (.zapisA): przycisk zamiast formularza nad linią, zdjęcie autora w hero, pop-up z formularzem, strona „Dzięki”. */
+.zapisA .heroA {
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  grid-template-areas: "gora foto";
+  align-items: center;
+  column-gap: 56px;
+  padding-top: 36px;
+  padding-bottom: 60px;
+}
+.zapisA .heroGora {
+  grid-area: gora;
+}
+.zapisA .heroFoto {
+  grid-area: foto;
+  position: relative;
+  justify-self: end;
+  width: min(100%, 360px);
+}
+.zapisA .heroFoto img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 960 / 863;
+  object-fit: cover;
+  border-radius: 32px;
+  display: block;
+  box-shadow: 0 30px 80px rgba(11, 26, 51, 0.16);
+}
+.zapisA .heroFotoPodpis {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+.zapisA .heroFotoPodpis b {
+  font-family: var(--head);
+  font-weight: 600;
+  font-size: 14px;
+  color: #0b0b0b;
+}
+.zapisA .heroFotoPodpis span {
+  font-size: 12px;
+  color: #6b6b6b;
+}
+.zapisA .ctaHero {
+  margin-top: 30px;
+  max-width: 580px;
+}
+.zapisA .przyciskDuzy {
+  width: 100%;
+  font-size: 19px;
+  padding: 21px 28px;
+  white-space: normal;
+}
+.zapisA .ctaData {
+  margin-top: 14px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.zapisA .ctaData .live {
+  animation: none;
+}
+.zapisA .koniecKarta .przyciskDol {
+  max-width: 460px;
+}
+.zapisA .pasekTel {
+  cursor: pointer;
+}
+/* pop-up */
+.tlo {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(11, 15, 25, 0.62);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: tlo 0.18s ease-out;
+}
+@keyframes tlo {
+  from {
+    opacity: 0;
+  }
+}
+.okno {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  background: #fff;
+  border-radius: 26px;
+  padding: 30px 30px 26px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.35);
+  animation: okno 0.22s ease-out;
+  color: #0b0b0b;
+}
+@keyframes okno {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+}
+.oknoZamknij {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 0;
+  background: #f0f1f4;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: #0b0b0b;
+}
+.oknoGlowa {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding-right: 40px;
+}
+.oknoGlowa img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+.oknoGlowa .h2 {
+  font-size: 24px;
+}
+.oknoPod {
+  font-size: 13.5px;
+  color: #6b6b6b;
+  margin-top: 2px !important;
+}
+.oknoPrzypomnienie {
+  margin: 18px 0 16px !important;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff6ec;
+  color: #7a4312;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.mBlekit .oknoPrzypomnienie {
+  background: #e8f0ff;
+  color: #0a4fbd;
+}
+.mLimonka .oknoPrzypomnienie {
+  background: #f6fbb9;
+  color: #2a2f00;
+}
+.mNoc .okno {
+  background: #171a20;
+  color: #f5f6f8;
+}
+.mNoc .oknoZamknij {
+  background: #262a32;
+  color: #f5f6f8;
+}
+.mNoc .oknoPod,
+.mNoc .klauzula {
+  color: #aab0ba;
+}
+.okno .pole input {
+  background: #f7f8fa;
+  border-color: #e3e6ec;
+  color: #0b0b0b;
+}
+.mNoc .okno .pole input {
+  background: #0f1115;
+  border-color: #2f343d;
+  color: #f5f6f8;
+}
+.klauzula {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #6b6b6b;
+  margin-top: -2px !important;
+}
+.klauzula a {
+  text-decoration: underline;
+}
+/* strona „Dzięki” */
+.dzieki {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+}
+.dzieki .dziekiKroki {
+  text-align: left;
+}
+.dzieki .dziekiZegar {
+  align-items: center;
+}
+.dzieki .h1 {
+  margin-top: 6px !important;
+}
+.pom {
+  color: var(--orange);
+}
+.dziekiLead {
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.dziekiKroki {
+  margin: 8px 0 0 !important;
+  padding: 0 !important;
+  list-style: none;
+  counter-reset: krok;
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+.dziekiKroki li {
+  counter-increment: krok;
+  position: relative;
+  padding: 20px 22px 20px 64px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.dziekiKroki li::before {
+  content: counter(krok);
+  position: absolute;
+  left: 20px;
+  top: 18px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: #fff;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+}
+.dziekiKroki b {
+  color: var(--ink);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+}
+.dziekiKroki code {
+  font-family: var(--body);
+  font-weight: 600;
+  color: var(--ink);
+  background: #f0f1f4;
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+.dziekiKroki .kalendarz {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.dziekiZegar {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+@media (max-width: 860px) {
+  .zapisA .heroA {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "gora" "foto";
+    row-gap: 28px;
+    padding-bottom: 40px;
+  }
+  .zapisA .heroFoto {
+    justify-self: stretch;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .zapisA .przyciskDuzy {
+    font-size: 17px;
+    padding: 18px 20px;
+  }
+  .okno {
+    padding: 24px 20px 20px;
+    border-radius: 20px;
+  }
+  .dziekiKroki li {
+    padding-left: 56px;
+  }
+  .dziekiKroki li::before {
+    left: 14px;
+  }
+}
+/* 29.10: przycisk „Link do spotkania” na stronie Dzięki bardzo. */
+.dzieki .dziekiPrzycisk {
+  width: 100%;
+  max-width: 420px;
+  text-decoration: none;
+}
+
+/* 29.10 (USER_001: „nowocześniej: gradienty, szkło”): styl 2025/26 dla motywu błękitnego: mgławicowe gradienty w tle (mesh),
+   mrożone szkło (backdrop-filter) na pasku i kartach, gradientowy przycisk z poświatą, gradientowy tekst akcentu, większe
+   promienie, delikatne ziarno, cienka linia pod paskiem, uniesienie kart przy najechaniu. Treści bez zmian. */
+.zapis .nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  max-width: none;
+  padding-left: max(20px, calc((100vw - 1120px) / 2 + 20px));
+  padding-right: max(20px, calc((100vw - 1120px) / 2 + 20px));
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
+.zapisA .heroA {
+  position: relative;
+}
+/* 29.10 (USER_001: „bez gradientu w tle”): bloby wyłączone, reszta efektów zostaje. */
+.bloby {
+  display: none;
+  position: absolute;
+  top: -140px;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.bloby i {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  animation: blob 18s ease-in-out infinite alternate;
+}
+.bloby i:nth-child(1) {
+  width: 520px;
+  height: 520px;
+  left: -140px;
+  top: 40px;
+  background: radial-gradient(circle at 30% 30%, #8fb8ff, transparent 65%);
+}
+.bloby i:nth-child(2) {
+  width: 460px;
+  height: 460px;
+  right: -80px;
+  top: -40px;
+  background: radial-gradient(circle at 60% 40%, #c7b6ff, transparent 65%);
+  animation-delay: -6s;
+}
+.bloby i:nth-child(3) {
+  width: 380px;
+  height: 380px;
+  right: 24%;
+  bottom: -120px;
+  background: radial-gradient(circle at 50% 50%, #ffd6b0, transparent 65%);
+  animation-delay: -12s;
+}
+@keyframes blob {
+  to {
+    transform: translate3d(40px, 30px, 0) scale(1.08);
+  }
+}
+.zapisA .heroGora,
+.zapisA .heroFoto {
+  position: relative;
+  z-index: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bloby i {
+    animation: none;
+  }
+}
+/* motyw błękitny: szkło, gradienty, poświaty */
+.mBlekit {
+  --bg: #f3f6fc;
+  --szklo: rgba(255, 255, 255, 0.62);
+  --szklo-ramka: rgba(255, 255, 255, 0.8);
+  --grad: linear-gradient(135deg, #2b7bff 0%, #0a6cff 45%, #5b4bff 100%);
+}
+.mBlekit .znaczek,
+.mBlekit .prowadzacyZapis,
+.mBlekit .planZapis li,
+.mBlekit .liczba,
+.mBlekit .faq details {
+  background: var(--szklo);
+  border: 1px solid var(--szklo-ramka);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 12px 40px rgba(11, 26, 51, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.mBlekit .planZapis li,
+.mBlekit .faq details,
+.mBlekit .prowadzacyZapis {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.mBlekit .planZapis li:hover,
+.mBlekit .faq details:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 18px 50px rgba(11, 26, 51, 0.1);
+}
+.mBlekit .przycisk,
+.mBlekit .pasekTel {
+  background: var(--grad);
+  box-shadow: 0 12px 30px rgba(10, 108, 255, 0.35), 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+  position: relative;
+  overflow: hidden;
+}
+.mBlekit .przycisk::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.28) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+}
+.mBlekit .przycisk:hover::after {
+  transform: translateX(120%);
+}
+.mBlekit .przycisk:hover {
+  box-shadow: 0 18px 40px rgba(10, 108, 255, 0.42), 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+}
+.mBlekit .h1 .g,
+.mBlekit .pom,
+.mBlekit .wielka {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.mBlekit .h1 .g {
+  font-weight: 300;
+  opacity: 0.85;
+}
+.mBlekit .heroFoto img {
+  border-radius: 36px;
+  box-shadow: 0 40px 90px rgba(11, 26, 51, 0.22);
+}
+.mBlekit .heroFoto::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 39px;
+  background: var(--grad);
+  opacity: 0.55;
+  filter: blur(14px);
+  z-index: -1;
+}
+.mBlekit .heroFotoPodpis {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+.mBlekit .planGodz,
+.mBlekit .formData,
+.mBlekit .oknoPrzypomnienie {
+  background: linear-gradient(135deg, #e6efff, #ece8ff);
+}
+.mBlekit .koniecKarta {
+  background: radial-gradient(120% 140% at 10% 0%, #1b3a73 0%, #0b1a33 55%, #0a1430 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 40px 90px rgba(11, 26, 51, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+.mBlekit .koniecKarta::before {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  right: -140px;
+  top: -200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(91, 75, 255, 0.55), transparent 65%);
+  filter: blur(30px);
+  pointer-events: none;
+}
+.mBlekit .koniecKarta > * {
+  position: relative;
+}
+.mBlekit .koniecKarta .zegarPole {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+}
+.mBlekit .okno {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+.mBlekit .tlo {
+  background: rgba(11, 26, 51, 0.55);
+}
+.mBlekit .dziekiKroki li {
+  background: var(--szklo);
+  border: 1px solid var(--szklo-ramka);
+  backdrop-filter: blur(16px);
+}
+.mBlekit .dziekiKroki li::before {
+  background: var(--grad);
+}
+/* ziarno na tle: subtelne, bez obrazka */
+.mBlekit.zapis::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
+}
+.mBlekit.zapis > * {
+  position: relative;
+  z-index: 1;
+}
+.mBlekit.zapis > .nav {
+  z-index: 20;
+}
+@media (max-width: 860px) {
+  .bloby i {
+    filter: blur(50px);
+    opacity: 0.45;
+  }
+  .bloby i:nth-child(1) {
+    width: 320px;
+    height: 320px;
+    left: -120px;
+  }
+  .bloby i:nth-child(2) {
+    width: 300px;
+    height: 300px;
+    right: -120px;
+  }
+  .bloby i:nth-child(3) {
+    display: none;
   }
 }

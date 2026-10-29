@@ -17,9 +17,11 @@ export const WEBINAR = {
   godzina: "19:00",
   ics: "20261104T180000Z",
   icsKoniec: "20261104T190000Z",
-  tytul: "Jak sprawić, żeby handlowcy robili 100 % planu sprzedaży dzięki AI", // 27.10 (USER_001): + „dzięki AI”
-  /** Druga linia pod tytułem (szara). */
-  podtytul: "bez szukania nowych handlowców",
+  // 29.10 (USER_001: „tytuł zmieniamy”): wzór Popiela „Jak [korzyść] bez [ból]”. Zastępuje „…planu sprzedaży dzięki AI” (27.10).
+  // Temat w Zoomie zmienia USER_001 ręcznie. Grafiki (OG, post, reklamy) przerobione 29.10.
+  tytul: "Jak sprawić, żeby handlowcy robili 100 % planu, bez siedzenia obok każdego z nich",
+  /** Druga linia pod tytułem (szara). 29.10: właściciel chce KONTROLI w liczbach (rozmowa z Mauricio). */
+  podtytul: "Bez pilnowania ich.", // 29.10 (USER_001)
   // 27.10 (USER_001): link Zoom ustawiony przez USER_001.
   zoom: "https://us05web.zoom.us/j/81028613140?pwd=6DyIsCre9Ufkias6LaP8erbpvbSFZt.1",
   zoomId: "810 2861 3140",
@@ -28,11 +30,13 @@ export const WEBINAR = {
   /** Strona zapisu (do maili i postów). */
   lp: "https://salesbruno.pl/webinar",
   /** Plan 60 minut (LP + mail potwierdzenia). */
+  // 29.10 (USER_001, rozmowa z Mauricio): plan pod właściciela / dyrektora: kontrola, dane, czas szefa, „nikt nie będzie z tego korzystał”.
   plan: [
-    ["19:00", "Dlaczego zespół nie robi planu", "3 powody: nie umie, nie chce, system nie działa. Który jest u Ciebie i ile Cię kosztuje."],
-    ["19:12", "4 sposoby na wyszkolenie zespołu", "Trener z zewnątrz, szef szkoli sam, słuchanie nagrań, trening z AI. Plusy, minusy i ceny każdego."],
-    ["19:30", "Na żywo: handlowiec kontra klient AI", "AI gra trudnego klienta z Twojej branży. Po rozmowie ocena i co poprawić."],
-    ["19:42", "10 minut dziennie, które robią sami", "Jak wdrożyć codzienny trening tak, żeby działał bez Twojego pilnowania."],
+    // Każdy punkt kończy się efektem „dzięki temu…” (Popiel M8 L01).
+    ["19:00", "Dlaczego nie wiesz, co handlowcy mówią klientom", "3 powody, dla których zespół nie robi planu: nie umie, nie chce, system nie działa. Dzięki temu przestaniesz leczyć wszystko jednym szkoleniem i rozpoznasz, który problem masz u siebie."],
+    ["19:12", "4 sposoby na wyszkolenie zespołu", "Trener z zewnątrz, szef szkoli sam, słuchanie nagrań, trening z AI. Cena, ile Twoich godzin zjada, czy efekt zostaje. Dzięki temu wybierzesz świadomie, nie z przyzwyczajenia."],
+    ["19:30", "Na żywo: handlowiec kontra klient AI", "AI gra trudnego klienta z branży. Po 3 minutach ocena: otwarcie, pytania, obiekcje, zamknięcie. Dzięki temu zobaczysz, jak wygląda ocena, zanim jej zaufasz u siebie."],
+    ["19:42", "Panel szefa: kontrola bez pilnowania", "Kto ćwiczył dziś, kto od tygodnia nie, kto nie domyka, kto rośnie. Dzięki temu rozmowa 1:1 zaczyna się od liczb, nie od „jak idzie?”."],
     ["19:50", "Pytania i co dalej", "Pytasz o swój zespół. Odpowiadam na żywo."],
   ] as [string, string, string][],
 };

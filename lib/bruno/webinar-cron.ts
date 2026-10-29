@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { wyslij } from "./mail";
-import { NADAWCA_WEBINARU, mailWebinarDzis, mailWebinarJutro, mailWebinarStart, mailWebinarZaGodzine } from "./mail-webinar";
+import { ADRES_WEBINARU, NADAWCA_WEBINARU, mailWebinarDzis, mailWebinarJutro, mailWebinarStart, mailWebinarZaGodzine } from "./mail-webinar";
 import { DOMENA } from "./domeny";
 import { WEBINAR, dataPLDzis } from "./webinar";
 
@@ -10,16 +10,17 @@ import { WEBINAR, dataPLDzis } from "./webinar";
 //  - w dniu (4.11, 8:00): M2 „dziś” do każdego bez `mail_dzis` + plan w Resend (scheduledAt): M3 18:00, M4 18:55.
 // Kto zapisze się 4.11 po 8:00, dostaje M0 (z linkiem) i nic więcej: cron już nie biegnie, a to wystarcza.
 // Każdy krok pilnuje własnej kolumny, więc drugi przebieg tego samego dnia nic nie dubluje.
+// 29.10 (double opt-in, Aniserowicz): przypomnienia TYLKO do potwierdzonych (`potwierdzono` nie null). Niepotwierdzony = brak zgody.
 
 type Zapis = { id: number; imie: string; email: string; mail_jutro: string | null; mail_dzis: string | null; resend_za_godzine: string | null; resend_start: string | null };
 
-const REPLY_TO = "hello@jakubchodakowski.com";
+const REPLY_TO = ADRES_WEBINARU;
 
 export async function webinarCron(teraz = new Date()): Promise<{ dzien: string; jutro: number; dzis: number; zaplanowane: number; bledy: number } | { dzien: string; pominieto: string }> {
   const dzien = dataPLDzis(teraz);
   if (dzien !== WEBINAR.dataPLDzienPrzed && dzien !== WEBINAR.dataPL) return { dzien, pominieto: "nie dzień webinaru ani dzień przed" };
 
-  const { data, error } = await supabaseAdmin.from("bruno_webinar_zapisy").select("id, imie, email, mail_jutro, mail_dzis, resend_za_godzine, resend_start").eq("webinar", WEBINAR.klucz);
+  const { data, error } = await supabaseAdmin.from("bruno_webinar_zapisy").select("id, imie, email, mail_jutro, mail_dzis, resend_za_godzine, resend_start").eq("webinar", WEBINAR.klucz).not("potwierdzono", "is", null);
   if (error) {
     console.error("[bruno webinar cron] baza", error.message);
     return { dzien, pominieto: `baza: ${error.message}` };

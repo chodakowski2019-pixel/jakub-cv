@@ -4,10 +4,16 @@ import { WEBINAR, webinarLinkGoogle } from "./webinar.ts";
 
 // 27.10 (USER_001): sekwencja maili do zapisanych na webinar (śr 4.11 19:00). Każdy mail niesie link do Zooma.
 // Nadawca = Jakub Chodakowski (21.10: na webinarze „nie piszemy o Bruno”), więc koperta bez napisu „BRUNO AI”.
-// Kolejność: potwierdzenie (od razu) → „jutro” (3.11 8:00) → „dziś” (4.11 8:00) → „za godzinę” (18:00) → „startujemy” (18:55).
-// Po webinarze 3 maile ręcznie skryptem (scripts/bruno-webinar.mjs): byli do końca / wyszli wcześniej / nie przyszli.
+// 29.10 (USER_001, Aniserowicz 02.05-02.07 DOUBLE OPT-IN): M0 = „Potwierdzam zapis »” (bez linku Zoom) → klik = zgoda
+// → M0b „Masz miejsce” z linkiem Zoom → „jutro” (3.11 8:00) → „dziś” (4.11 8:00) → „za godzinę” (18:00) → „startujemy” (18:55).
+// M1-M5 tylko do potwierdzonych. Po webinarze 3 maile ręcznie skryptem (scripts/bruno-webinar.mjs).
+// 29.10 (USER_001): maile wychodzą z jakub@salesbruno.com, nie z hello@jakubchodakowski.com.
 
-export const NADAWCA_WEBINARU = "Jakub Chodakowski <hello@jakubchodakowski.com>";
+export const ADRES_WEBINARU = "jakub@salesbruno.com";
+export const NADAWCA_WEBINARU = `Jakub Chodakowski <${ADRES_WEBINARU}>`;
+/** Klauzula z pop-upu, powtórzona w mailu potwierdzającym (Aniserowicz 02.07: „bo nie wiemy, kto wpisał adres”). */
+export const KLAUZULA_WEBINARU =
+  "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o treningu handlowców z AI. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości. Jeśli to nie Ty podałeś ten adres, po prostu zignoruj tę wiadomość: bez kliknięcia nic więcej nie wyślę.";
 
 const CZCIONKA = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 const CZCIONKA_NAGLOWKA = "'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
@@ -57,15 +63,43 @@ function kalendarz(baza: string) {
 
 export type MailWebinaru = { temat: string; html: string };
 
-/** M0: potwierdzenie zapisu, od razu po formularzu. Link Zoom + kalendarz + plan. */
+/**
+ * M0: mail POTWIERDZAJĄCY (double opt-in), od razu po formularzu. Bez linku Zoom.
+ * Wg Aniserowicza 02.07: nad przyciskiem powitanie + dzięki + „MUSISZ kliknąć, inaczej nic nie wyślę”; przycisk duży;
+ * pod przyciskiem klauzula, kolejne kroki, prośba o kontakty i przeniesienie do Inboxa; pozdrowienia; PS.
+ */
+export function mailWebinarPotwierdz(a: { imie: string | null; link: string }): MailWebinaru {
+  return {
+    temat: `Potwierdź zapis na webinar (${WEBINAR.dzien} ${WEBINAR.data}, ${WEBINAR.godzina})`,
+    html: koperta({
+      naglowek: "Jeszcze jedno kliknięcie",
+      zajawka: "Kliknij „Potwierdzam zapis”, a wyślę Ci link do spotkania.",
+      tresc: [
+        akapit(`${hej(a.imie)} dziękuję za zapis na webinar „${esc(WEBINAR.tytul)}”.`),
+        akapit(`<b>Żeby dokończyć zapis, musisz kliknąć przycisk poniżej.</b> Bez tego nie wyślę Ci linku do spotkania ani żadnej innej wiadomości.`),
+        przycisk({ tekst: "Potwierdzam zapis »", link: a.link }),
+        kroki(
+          ["Po kliknięciu od razu dostaniesz mail z linkiem do spotkania na Zoomie i z planem 60 minut.", `Dzień przed (${WEBINAR.dataPLDzienPrzed.slice(8)}.11) i godzinę przed startem przypomnę mailem.`, "Nagrania nie będzie, więc wpisz termin do kalendarza (linki będą w następnym mailu)."],
+          { tytul: "Co dalej" },
+        ),
+        akapit(`Jeśli ta wiadomość trafiła do „Ofert” albo spamu, przenieś ją do głównej skrzynki i dodaj adres <b>${esc(ADRES_WEBINARU)}</b> do kontaktów. Wtedy link i przypomnienia też tam trafią.`),
+        akapit("Widzimy się w środę. Pozdrawiam"),
+        akapit(`PS Najważniejsze w tym mailu to przycisk wyżej. Bez kliknięcia nie ma miejsca na liście.`),
+        akapit(esc(KLAUZULA_WEBINARU), { maly: true }),
+      ].join("\n"),
+    }),
+  };
+}
+
+/** M0b: po kliknięciu w link potwierdzający. Link Zoom + kalendarz + plan. (Do 29.10 szło od razu po zapisie.) */
 export function mailWebinarPotwierdzenie(a: { imie: string | null; baza: string }): MailWebinaru {
   return {
-    temat: `Twoje miejsce na webinarze: ${WEBINAR.dzien} ${WEBINAR.data}, ${WEBINAR.godzina}`,
+    temat: `Masz miejsce na webinarze: ${WEBINAR.dzien} ${WEBINAR.data}, ${WEBINAR.godzina}. Link w środku`,
     html: koperta({
-      naglowek: "Jesteś zapisany",
+      naglowek: "Masz miejsce",
       zajawka: `Link do Zooma w środku. ${WEBINAR.tytul}.`,
       tresc: [
-        akapit(`${hej(a.imie)} dziękuję za zapis na webinar „${esc(WEBINAR.tytul)}”. Poniżej wszystko, czego potrzebujesz ⤵️`),
+        akapit(`${hej(a.imie)} zapis potwierdzony. Poniżej wszystko, czego potrzebujesz ⤵️`),
         tabelaTerminu(),
         przycisk({ tekst: "Link do Zooma", link: WEBINAR.zoom }),
         kalendarz(a.baza),
