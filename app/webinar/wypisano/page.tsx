@@ -5,5 +5,5 @@ import { WebinarWypisano } from "@/components/bruno/webinar-lp-zapis";
 export const metadata: Metadata = { title: "Wypisano | Jakub Chodakowski", robots: { index: false, follow: false } };
 
 export default function Page() {
-  return <WebinarWypisano motyw="blekit" />;
+  return <WebinarWypisano motyw="elmatic" />;
 }

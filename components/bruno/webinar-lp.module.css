@@ -2035,3 +2035,296 @@
     display: none;
   }
 }
+
+/* 29.10 (USER_001: „kolorystyka i UX jak elmatic.net/local-ai-day-2026”, teksty bez zmian): MOTYW ELMATIC.
+   Z ich strony: tło granat #0E1116 → #11151B/#181C23, ramki #2B3240, akcent #1D71B8 (przycisk) i #3BA9F2 (etykiety, linki),
+   tekst #EAEAEA, przygaszony #9AA7B8 / #6F7E90; Poppins lekki (300-400) w nagłówkach; obrysowana pigułka nad nagłówkiem;
+   etykiety sekcji małe, wersalikami, błękitne; karty z cienką ramką bez cienia; zegar z pionowymi kreskami; plan jako oś czasu. */
+.mElm {
+  --bg: #0e1116;
+  --ink: #eaeaea;
+  --muted: #9aa7b8;
+  --grey: #6f7e90;
+  --line: #2b3240;
+  --orange: #3ba9f2;
+  --head: var(--font-elm), "Poppins", system-ui, sans-serif;
+  --body: var(--font-elm), "Poppins", system-ui, sans-serif;
+  --karta: #11151b;
+  --akc: #1d71b8;
+  background: radial-gradient(1200px 520px at 50% -120px, #15283d 0%, #0e1116 62%) no-repeat, #0e1116;
+  color: var(--ink);
+}
+.mElm .nav {
+  background: rgba(14, 17, 22, 0.82);
+  border-bottom: 1px solid #1c222c;
+}
+.mElm .logo {
+  color: #eaeaea;
+}
+.mElm .kropka,
+.mElm .live {
+  background: #3ba9f2;
+}
+.mElm .live {
+  animation: none;
+}
+/* pigułka nad nagłówkiem: obrys, wersaliki, błękit */
+.mElm .znaczek {
+  background: transparent;
+  border: 1px solid #1d71b8;
+  color: #3ba9f2;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+}
+.mElm .znaczek .live {
+  display: none;
+}
+.mElm .h1 {
+  font-weight: 600; /* 29.10 (USER_001): pogrubione; szara linia zostaje 300 */
+  letter-spacing: -0.01em;
+  color: #eaeaea;
+}
+.mElm .h1 .g {
+  color: #9aa7b8;
+  font-weight: 300;
+}
+.mElm .h2Duzy {
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.mElm .h2Duzy .g {
+  color: #6f7e90;
+}
+.mElm .wstepZapis {
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #3ba9f2;
+}
+.mElm .punktyZapis li {
+  color: #c6d0dc;
+  font-weight: 300;
+  border-bottom-color: #1c222c;
+}
+.mElm .punktyZapis li::before {
+  background: transparent url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233BA9F2' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7.5'/></svg>") center / 14px no-repeat;
+  border: 1px solid #2b3240;
+}
+/* przycisk: pełny niebieski, pigułka, wersaliki jak u nich */
+.mElm .przycisk,
+.mElm .pasekTel {
+  background: #1d71b8;
+  color: #ffffff !important;
+  box-shadow: 0 10px 30px rgba(29, 113, 184, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+.mElm .przyciskDuzy {
+  font-size: 15px;
+}
+.mElm .przycisk:hover {
+  background: #2580cc;
+}
+.mElm .ctaData {
+  color: #9aa7b8;
+  font-weight: 400;
+}
+/* zdjęcie: ciemna ramka, bez poświaty */
+.mElm .heroFoto img {
+  border-radius: 20px;
+  border: 1px solid #2b3240;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+.mElm .heroFotoPodpis {
+  background: rgba(14, 17, 22, 0.86);
+  border: 1px solid #2b3240;
+}
+.mElm .heroFotoPodpis b {
+  color: #eaeaea;
+}
+.mElm .heroFotoPodpis span {
+  color: #3ba9f2;
+}
+/* karty: tło #11151B, cienka ramka #2B3240, bez cienia */
+.mElm .prowadzacyZapis,
+.mElm .liczba,
+.mElm .faq details,
+.mElm .koniecKarta {
+  background: #11151b;
+  border: 1px solid #2b3240;
+  box-shadow: none;
+}
+.mElm .prowadzacyZapis b {
+  color: #eaeaea;
+}
+.mElm .prowadzacyZapis p {
+  color: #9aa7b8;
+  font-weight: 300;
+}
+.mElm .sekcja {
+  border-top-color: #1c222c;
+}
+/* plan = oś czasu jak „Agenda” u nich */
+.mElm .planZapis {
+  gap: 0;
+  border-left: 1px solid #2b3240;
+  margin-left: 6px !important;
+}
+.mElm .planZapis li {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 12px 0 18px 26px;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  position: relative;
+  color: #eaeaea;
+  font-weight: 400;
+}
+.mElm .planZapis li::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 17px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #1d71b8;
+  box-shadow: 0 0 0 4px rgba(29, 113, 184, 0.18);
+}
+.mElm .planGodz {
+  background: transparent;
+  color: #3ba9f2;
+  padding: 0;
+  text-align: left;
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  font-family: var(--body);
+}
+.mElm .wielka {
+  color: #3ba9f2;
+  font-weight: 300;
+}
+.mElm .liczba p {
+  color: #c6d0dc;
+  font-weight: 300;
+}
+.mElm .liczba small {
+  color: #6f7e90;
+}
+.mElm .faq summary {
+  color: #eaeaea;
+  font-weight: 400;
+}
+.mElm .faq summary::after {
+  color: #3ba9f2;
+}
+.mElm .faq p {
+  color: #9aa7b8;
+  font-weight: 300;
+}
+/* zegar: duże liczby, pionowe kreski, małe etykiety wersalikami (jak „DO WYDARZENIA ZOSTAŁO”) */
+.mElm .zegar {
+  gap: 0;
+}
+.mElm .zegarPole {
+  background: transparent;
+  border: 0;
+  border-right: 1px solid #2b3240;
+  border-radius: 0;
+  min-width: 86px;
+}
+.mElm .zegarPole:last-child {
+  border-right: 0;
+}
+.mElm .zegarPole b {
+  color: #eaeaea;
+  font-weight: 500;
+}
+.mElm .zegarPole:last-child b {
+  color: #eaeaea;
+}
+.mElm .zegarPole span,
+.mElm .zegarNapis {
+  color: #6f7e90;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 10.5px;
+}
+.mElm .koniecKarta .h2Duzy {
+  color: #eaeaea;
+}
+.mElm .stopka {
+  color: #6f7e90;
+  border-top-color: #1c222c;
+}
+/* pop-up i strony „Dzięki” */
+.mElm .tlo {
+  background: rgba(5, 8, 12, 0.72);
+}
+.mElm .okno {
+  background: #11151b;
+  color: #eaeaea;
+  border: 1px solid #2b3240;
+}
+.mElm .oknoZamknij {
+  background: #181c23;
+  color: #eaeaea;
+}
+.mElm .oknoPod,
+.mElm .klauzula {
+  color: #9aa7b8;
+}
+.mElm .oknoPrzypomnienie {
+  background: rgba(29, 113, 184, 0.12);
+  color: #8fcaf6;
+  border: 1px solid rgba(59, 169, 242, 0.25);
+}
+.mElm .okno .pole {
+  color: #c6d0dc;
+}
+.mElm .okno .pole input {
+  background: #0e1116;
+  border-color: #2b3240;
+  color: #eaeaea;
+}
+.mElm .okno .pole input:focus {
+  border-color: #3ba9f2;
+}
+.mElm .ptaszek,
+.mElm .dziekiKroki li::before {
+  background: #1d71b8;
+}
+.mElm .pom {
+  color: #3ba9f2;
+}
+.mElm .dziekiLead {
+  color: #9aa7b8;
+}
+.mElm .dziekiKroki li {
+  background: #11151b;
+  border-color: #2b3240;
+  color: #9aa7b8;
+}
+.mElm .dziekiKroki b,
+.mElm .dziekiKroki code {
+  color: #eaeaea;
+}
+.mElm .dziekiKroki code {
+  background: #181c23;
+}
+.mElm .kalendarz a {
+  background: transparent;
+  border: 1px solid #2b3240;
+  color: #eaeaea;
+}
+/* 29.10 (USER_001): krótka strona zapisu: bez linii nad listą pytań (karty mają własne ramki). */
+.zapis .faq {
+  border-top: 0;
+}

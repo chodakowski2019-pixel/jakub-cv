@@ -99,8 +99,9 @@ function Zegar({ maly }: { maly?: boolean }) {
 }
 
 // 29.10 (USER_001: „zmienić kolorystycznie”): motywy do wyboru, ten sam układ i teksty. Podglądy /podglad/webinar-zapis/<motyw>.
-export type MotywZapisu = "pomarancz" | "limonka" | "noc" | "blekit";
-const MOTYW_KLASA: Record<MotywZapisu, string> = { pomarancz: "", limonka: s.mLimonka, noc: s.mNoc, blekit: s.mBlekit };
+// 29.10 (USER_001): motyw „elmatic” = kolorystyka i UX strony Local AI Day (elmatic.net): granat, cienkie ramki, błękit, Poppins.
+export type MotywZapisu = "pomarancz" | "limonka" | "noc" | "blekit" | "elmatic";
+const MOTYW_KLASA: Record<MotywZapisu, string> = { pomarancz: "", limonka: s.mLimonka, noc: s.mNoc, blekit: s.mBlekit, elmatic: s.mElm };
 
 export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { motyw?: MotywZapisu; dziekiUrl?: string }) {
   const router = useRouter();
@@ -258,7 +259,9 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
       <section className={`${s.sekcja} ${s.koniec}`}>
         <div className={s.koniecKarta}>
           <h2 className={s.h2Duzy}>
-            {WEBINAR.dzien[0].toUpperCase() + WEBINAR.dzien.slice(1)}, {WEBINAR.godzina}. <span className={s.g}>Do zobaczenia.</span>
+            {WEBINAR.dzien[0].toUpperCase() + WEBINAR.dzien.slice(1)}, {WEBINAR.godzina}.
+            <br />
+            <span className={s.g}>Do zobaczenia.</span>
           </h2>
           <Zegar />
           {przycisk(s.przyciskDol)}

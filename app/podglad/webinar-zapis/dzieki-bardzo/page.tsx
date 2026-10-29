@@ -5,5 +5,5 @@ import { WebinarDziekiBardzo } from "@/components/bruno/webinar-lp-zapis";
 export const metadata: Metadata = { title: "Masz miejsce na webinarze | Jakub Chodakowski", robots: { index: false, follow: false } };
 
 export default function Page() {
-  return <WebinarDziekiBardzo motyw="blekit" />;
+  return <WebinarDziekiBardzo motyw="elmatic" />;
 }

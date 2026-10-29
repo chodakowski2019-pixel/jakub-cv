@@ -53,7 +53,9 @@ export async function POST(req: Request) {
   } else {
     try {
       const m = mailWebinarPotwierdz({ imie, link: `${baza}/api/bruno/webinar/potwierdz?t=${token}` });
-      await wyslij({ do: email, od: NADAWCA_WEBINARU, replyTo: ADRES_WEBINARU, rodzaj: "webinar", temat: m.temat, html: m.html });
+      const r = await wyslij({ do: email, od: NADAWCA_WEBINARU, replyTo: ADRES_WEBINARU, rodzaj: "webinar", temat: m.temat, html: m.html });
+      // 29.10: lokalnie (bez RESEND_API_KEY) mail jest pomijany; wtedy NIE udajemy sukcesu (zapis USER_001 przez localhost bez maila).
+      if (r.pominiety) throw new Error("mail pominięty: brak RESEND_API_KEY (localhost); zapisuj się na salesbruno.pl");
       m0 = "wyslane";
       await supabaseAdmin.from("bruno_webinar_zapisy").update({ mail_potwierdz: new Date().toISOString() }).eq("webinar", WEBINAR.klucz).eq("email", email);
     } catch (e) {

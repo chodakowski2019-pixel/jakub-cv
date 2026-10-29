@@ -27,5 +27,5 @@ export const metadata: Metadata = {
 
 export default function Page() {
   // 29.10 (USER_001: „na podstronie webinar”): krótka strona zapisu wg Aniserowicza, motyw błękitny, double opt-in.
-  return <WebinarLpZapis motyw="blekit" dziekiUrl="/webinar/dzieki" />;
+  return <WebinarLpZapis motyw="elmatic" dziekiUrl="/webinar/dzieki" />;
 }

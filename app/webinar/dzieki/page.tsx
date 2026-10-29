@@ -5,5 +5,5 @@ import { WebinarDzieki } from "@/components/bruno/webinar-lp-zapis";
 export const metadata: Metadata = { title: "Dzięki, to prawie wszystko | Jakub Chodakowski", robots: { index: false, follow: false } };
 
 export default function Page() {
-  return <WebinarDzieki motyw="blekit" />;
+  return <WebinarDzieki motyw="elmatic" />;
 }
