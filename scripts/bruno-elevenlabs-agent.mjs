@@ -60,12 +60,16 @@ const KONFIG = {
     tts: {
       // 16.10: v3 ekspresyjny ucinał wypowiedzi na znacznikach („No dobrze, [”), cofnięte do multilingual_v2.
       // Zostaje optymalizacja opóźnienia 3 → 1 (dłuższe kawałki tekstu = naturalna intonacja końcówek, 15.10).
-      model_id: "eleven_multilingual_v2",
-      optimize_streaming_latency: 1,
+      // 29.10 (USER_001 wybrał z 5 próbek: „2-v4_turbo to najlepsze”; koniec kwestii gaśnie 0,15-0,2 s zamiast „brzytwy”).
+      // Sprawdzone: wszystkie 4 głosy (Adam PL, Aleksandra PL, Chris EN, Matilda EN) działają z v4_turbo.
+      model_id: "eleven_v4_turbo",
+      // optimize_streaming_latency usunięte 29.10: wg docs ElevenLabs pole martwe, ignorowane.
       voice_id: "iP95p4xoKVk53GoZ742B",
       stability: 0.35,
       similarity_boost: 0.8,
       speed: 1.0,
+      // 29.10 (USER_001: „efekt jak w rozmowie”): filtr telefonu + mały pokój = lekki ogon po każdej kwestii.
+      audio_effects: { distance: 0, send_level: 0.35, pan: 0, filter_preset_id: "phone", environment_id: "small_room" },
     },
     asr: { quality: "high", provider: "scribe_realtime", user_input_audio_format: "pcm_16000", keywords: [] },
     turn: { turn_timeout: 8.0, mode: "turn", turn_eagerness: "normal" },
