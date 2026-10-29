@@ -2328,3 +2328,27 @@
 .zapis .faq {
   border-top: 0;
 }
+
+/* 29.10: link do spotkania na „Dzięki bardzo”: podświetlony i podkreślony tekst zamiast przycisku. */
+.dziekiLink {
+  font-family: var(--head);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--orange) !important;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+  background: color-mix(in srgb, var(--orange) 14%, transparent);
+  padding: 6px 14px;
+  border-radius: 10px;
+}
+.dziekiLink:hover {
+  background: color-mix(in srgb, var(--orange) 24%, transparent);
+}
+.dziekiLinkPelny {
+  font-size: 13px;
+  color: var(--muted) !important;
+  word-break: break-all;
+  max-width: 560px;
+  margin-top: -6px;
+}

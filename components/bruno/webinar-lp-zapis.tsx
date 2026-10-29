@@ -375,8 +375,12 @@ export function WebinarDziekiBardzo({ motyw = "pomarancz" }: { motyw?: MotywZapi
           <br />
           Link do spotkania wysłałem też mailem.
         </p>
-        <a className={`${s.przycisk} ${s.przyciskDuzy} ${s.dziekiPrzycisk}`} href={WEBINAR.zoom} target="_blank" rel="noopener">
+        {/* 29.10 (USER_001): link podświetlony i podkreślony, nie przycisk; pełny adres pod spodem do skopiowania. */}
+        <a className={s.dziekiLink} href={WEBINAR.zoom} target="_blank" rel="noopener">
           Link do spotkania »
+        </a>
+        <a className={s.dziekiLinkPelny} href={WEBINAR.zoom} target="_blank" rel="noopener">
+          {WEBINAR.zoom}
         </a>
         <ol className={s.dziekiKroki}>
           <li>
