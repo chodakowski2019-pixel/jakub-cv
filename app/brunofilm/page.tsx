@@ -10,7 +10,7 @@ const poppins = Poppins({ subsets: ["latin", "latin-ext"], weight: ["400", "500"
 export const viewport: Viewport = { width: "device-width", initialScale: 1 };
 
 export const metadata: Metadata = {
-  title: "Bruno AI w 75 sekund",
+  title: "Demo Bruno AI",
   description: "Zobacz, jak Bruno AI trenuje Twoich handlowców i co widzisz jako szef.",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
 };
