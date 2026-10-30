@@ -29,13 +29,7 @@
   font-weight: 600;
   letter-spacing: -1.2px;
   line-height: 1.12;
-  margin: 0 0 14px;
-}
-.podtytul {
-  color: #9aa7b8;
-  font-size: clamp(16px, 2vw, 19px);
-  margin: 0 auto 34px;
-  max-width: 640px;
+  margin: 0 0 34px;
 }
 .ramka {
   padding: 1.5px;
@@ -50,28 +44,9 @@
   border-radius: 21px;
   background: #0b0e13;
 }
-.przycisk {
-  display: inline-block;
-  margin-top: 36px;
-  padding: 17px 32px;
-  border-radius: 999px;
-  background: #3ba9f2;
-  color: #0b0e13;
-  font-weight: 600;
-  font-size: 17px;
-  text-decoration: none;
-  transition: transform 0.15s ease, background 0.15s ease;
-}
-.przycisk:hover {
-  background: #62bbf5;
-  transform: translateY(-1px);
-}
 @media (max-width: 600px) {
   .ramka,
   .film {
     border-radius: 14px;
-  }
-  .przycisk {
-    display: block;
   }
 }
