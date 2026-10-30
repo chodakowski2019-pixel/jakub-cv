@@ -107,6 +107,12 @@ export function proxy(request: NextRequest) {
     if (pathname === P.rejestracja) return dalej(request, pathname, jezyk, "/brunorejestracja");
     // 21.10 (USER_001): /spotkanie | /meeting = kalendarz spotkania online (app/brunodemo). Każdy przycisk na LP prowadzi tu.
     if (pathname === P.demo) return dalej(request, pathname, jezyk, "/brunodemo");
+    // 30.10 (USER_001): salesbruno.pl/demo = film o korzyściach (app/brunofilm, noindex). Na .com zostaje przekierowanie.
+    if (jezyk === "pl" && pathname === "/demo") {
+      const odp = dalej(request, pathname, jezyk, "/brunofilm");
+      odp.headers.set("X-Robots-Tag", "noindex, nofollow");
+      return odp;
+    }
     // 21.10 (USER_001): stary adres /demo → nowa nazwa (308).
     if (pathname === "/demo") {
       const url = request.nextUrl.clone();

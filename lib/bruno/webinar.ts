@@ -26,7 +26,7 @@ export const WEBINAR = {
   zoom: "https://us05web.zoom.us/j/81028613140?pwd=6DyIsCre9Ufkias6LaP8erbpvbSFZt.1",
   zoomId: "810 2861 3140",
   /** Bezpłatna rozmowa demo po webinarze (Negacz, lejek #7: ostatnie 5-10 min = konsultacja do 5 dni). */
-  demo: "https://salesbruno.pl/demo?src=webinar",
+  demo: "https://salesbruno.pl/spotkanie?src=webinar", // 30.10: /demo = film, kalendarz = /spotkanie
   /** Strona zapisu (do maili i postów). */
   lp: "https://salesbruno.pl/webinar",
   /** Plan 60 minut (LP + mail potwierdzenia). */
