@@ -35,7 +35,7 @@ export async function GET(req: Request) {
   // Mail z linkiem Zoom tylko raz (kolumna `mail_potwierdzenie`), nawet gdy ktoś kliknie link drugi raz.
   if (!z.mail_potwierdzenie) {
     try {
-      const m = mailWebinarPotwierdzenie({ imie: z.imie, baza, wypisz: `${baza}/api/bruno/webinar/wypisz?t=${token}` });
+      const m = mailWebinarPotwierdzenie({ imie: z.imie, baza, wypisz: `${baza}/api/bruno/webinar/wypisz?t=${token}`, test: `${baza}/webinar/dzieki-bardzo?t=${token}#test` });
       await wyslij({ do: z.email, od: NADAWCA_WEBINARU, replyTo: ADRES_WEBINARU, rodzaj: "webinar", temat: m.temat, html: m.html });
       await supabaseAdmin.from("bruno_webinar_zapisy").update({ mail_potwierdzenie: new Date().toISOString() }).eq("id", z.id);
     } catch (e) {
@@ -43,5 +43,6 @@ export async function GET(req: Request) {
       // Strona „Dzięki bardzo” i tak pokazuje link do Zooma, więc uczestnik nie zostaje bez linku.
     }
   }
-  return NextResponse.redirect(`${baza}/webinar/dzieki-bardzo`, 302);
+  // 31.10 (USER_001): token w adresie, bo na tej stronie od razu robi test predyspozycji (wynik przypisany do zapisu).
+  return NextResponse.redirect(`${baza}/webinar/dzieki-bardzo?t=${token}`, 302);
 }

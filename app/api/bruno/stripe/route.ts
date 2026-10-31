@@ -39,6 +39,11 @@ export async function POST(req: NextRequest) {
           await platnoscPraca(s);
           break;
         }
+        // 30.10 (USER_001): kurs B2C (salesbruno.pl/kursy/<slug>). Nie włącza Bruno Pro: konto zakłada USER_001 po telefonie.
+        if (s.metadata?.produkt === "kurs") {
+          await platnoscKurs(s);
+          break;
+        }
         // 18.10: Payment Link ogłoszenia (50 / 200 zł) z client_reference_id = id konta pracodawcy → +1 kredyt.
         if (s.payment_link && s.client_reference_id && /^[0-9a-f-]{36}$/i.test(s.client_reference_id)) {
           await kredytPraca(s);
@@ -196,5 +201,41 @@ async function kredytPraca(s: Stripe.Checkout.Session) {
     });
   } catch (e) {
     console.error("[bruno stripe praca kredyt] mail", e);
+  }
+}
+
+// 30.10 (USER_001): płatność za kurs B2C. Zapis w bruno_platnosci + bruno_kursy_zapisy (etap „opłacony”), mail do USER_001
+// (zadzwonić w 24 h, założyć konto Bruno) i do kursanta. Ponowione zdarzenie = bez drugiego zapisu.
+async function platnoscKurs(s: Stripe.Checkout.Session) {
+  const m = s.metadata ?? {};
+  if (s.payment_status !== "paid") return;
+  const { data: juz } = await supabaseAdmin.from("bruno_platnosci").select("id").eq("stripe_session_id", s.id).eq("status", "paid").limit(1);
+  if (juz && juz.length > 0) return;
+  const email = (s.customer_details?.email ?? "").toLowerCase();
+  const imie = s.customer_details?.name ?? "";
+  const telefon = s.customer_details?.phone ?? "";
+  const customer = typeof s.customer === "string" ? s.customer : s.customer?.id ?? null;
+  const kwota = `${((s.amount_total ?? 0) / 100).toFixed(0)} ${(s.currency ?? "").toUpperCase()}`;
+  const plan = m.plan === "miesiac" ? "miesiac" : "z-gory";
+  await zapiszPlatnosc({ email, zdarzenie: "kurs", session: s.id, customer, kwota: s.amount_total, waluta: s.currency, okres: `kurs:${m.kurs}:${plan}`, status: s.payment_status });
+  const { error } = await supabaseAdmin.from("bruno_kursy_zapisy").insert({ kurs: m.kurs, imie: imie || email, email, telefon, plan, zrodlo: m.zrodlo || "platnosc", etap: "opłacony" });
+  if (error) console.error("[bruno stripe kurs] zapis", error.message);
+  try {
+    await wyslij({
+      do: SKRZYNKA_JAKUBA,
+      rodzaj: "inny",
+      replyTo: email || undefined,
+      temat: `💰 Kurs: ${m.kurs} (${kwota}, ${plan === "z-gory" ? "z góry" : "1. rata"}${m.promo === "tak" ? ", -50 %" : ""}): ${imie || email}`,
+      html: `<p>Nowa płatność za kurs.</p><p><b>Kurs:</b> ${m.kurs}<br/><b>Imię:</b> ${imie}<br/><b>E-mail:</b> ${email}<br/><b>Telefon:</b> ${telefon}<br/><b>Kwota:</b> ${kwota}<br/><b>Plan:</b> ${plan}<br/><b>Rabat:</b> ${m.promo}<br/><b>Źródło:</b> ${m.zrodlo || "-"}</p><p>Zadzwoń w 24 h i załóż konto Bruno.${plan === "miesiac" ? " Kolejne 2 raty: wyślij link przed końcem miesiąca." : ""}</p>`,
+    });
+    if (email)
+      await wyslij({
+        do: email,
+        rodzaj: "inny",
+        temat: "Witaj na kursie sprzedaży Bruno AI",
+        html: `<p>Cześć${imie ? ` ${imie.split(" ")[0]}` : ""},</p><p>dziękuję za zapis. Płatność ${kwota} dotarła.</p><p>W ciągu 24 godzin zadzwonię do Ciebie, ustalimy start i dostaniesz dostęp do treningu z Bruno.</p><p>Jakub Chodakowski</p>`,
+      });
+  } catch (e) {
+    console.error("[bruno stripe kurs] mail", e);
   }
 }

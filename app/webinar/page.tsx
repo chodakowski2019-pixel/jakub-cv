@@ -5,8 +5,8 @@ import { WEBINAR } from "@/lib/bruno/webinar";
 // 16.10 (USER_001): LP webinaru, salesbruno.com/webinar. 21.10: Bruno = tylko B2B (17.10), więc ta sama wersja „firmy” co /webinar-firmy.
 // 21.10: termin i tytuł z lib/bruno/webinar.ts. 27.10: śr 4.11 19:00, temat „100 % planu sprzedaży” (decyzja 27.10).
 const tytul = `${WEBINAR.tytul}. Bezpłatny webinar, ${WEBINAR.dzien} ${WEBINAR.data}, ${WEBINAR.godzina}`;
-// 29.10: opis pod właściciela (kontrola, liczby), po rozmowie z Mauricio.
-const opis = "60 minut na żywo dla właścicieli firm i dyrektorów sprzedaży. Jak oddać codzienny trening AI i widzieć w liczbach, kto ćwiczy, z czym ma problem i kto robi postęp. Rozmowa z klientem AI na żywo.";
+// 31.10 (USER_001): webinar B2B odwołany, ten adres = webinar dla osób, które chcą zostać handlowcami (grupa A).
+const opis = "60 minut na żywo dla osób, które chcą zacząć pracę w sprzedaży, także bez doświadczenia. Czy się nadajesz, ile zarabia początkujący handlowiec, pierwsza rozmowa z klientem AI na żywo i plan na 3 miesiące.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://salesbruno.com"),

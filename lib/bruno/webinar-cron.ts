@@ -29,19 +29,24 @@ export async function webinarCron(teraz = new Date()): Promise<{ dzien: string; 
   const zapisy = (data ?? []) as Zapis[];
   const baza = DOMENA.pl;
   const wynik = { dzien, jutro: 0, dzis: 0, zaplanowane: 0, bledy: 0 };
+  // 31.10 (USER_001): kto nie zrobił testu predyspozycji, dostaje w M1 i M2 link do niego. Brak tabeli = link do wszystkich.
+  const { data: testy, error: eTesty } = await supabaseAdmin.from("bruno_kursy_testy").select("email").eq("zrodlo", `webinar:${WEBINAR.klucz}`);
+  if (eTesty) console.error("[bruno webinar cron] testy", eTesty.message);
+  const zTestem = new Set((testy ?? []).map((x: { email: string }) => x.email));
 
   for (const z of zapisy) {
     const wypisz = z.token ? `${baza}/api/bruno/webinar/wypisz?t=${z.token}` : undefined;
+    const test = z.token && !zTestem.has(z.email) ? `${baza}/webinar/dzieki-bardzo?t=${z.token}#test` : undefined;
     try {
       if (dzien === WEBINAR.dataPLDzienPrzed && !z.mail_jutro) {
-        const m = mailWebinarJutro({ imie: z.imie, baza, wypisz });
+        const m = mailWebinarJutro({ imie: z.imie, baza, wypisz, test });
         await wyslij({ do: z.email, od: NADAWCA_WEBINARU, replyTo: REPLY_TO, rodzaj: "webinar", temat: m.temat, html: m.html });
         await supabaseAdmin.from("bruno_webinar_zapisy").update({ mail_jutro: new Date().toISOString() }).eq("id", z.id);
         wynik.jutro++;
       }
       if (dzien === WEBINAR.dataPL) {
         if (!z.mail_dzis) {
-          const m = mailWebinarDzis({ imie: z.imie, baza, wypisz });
+          const m = mailWebinarDzis({ imie: z.imie, baza, wypisz, test });
           await wyslij({ do: z.email, od: NADAWCA_WEBINARU, replyTo: REPLY_TO, rodzaj: "webinar", temat: m.temat, html: m.html });
           await supabaseAdmin.from("bruno_webinar_zapisy").update({ mail_dzis: new Date().toISOString() }).eq("id", z.id);
           wynik.dzis++;

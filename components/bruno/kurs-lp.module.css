@@ -1,0 +1,507 @@
+/* 30.10 (USER_001): strona kursu B2C. Bazą jest webinar-lp.module.css (root + motyw Elmatic), tu tylko to,
+   czego motyw nie ma: karta ceny, kafle, cytaty, gwarancja, historia, listy. Kolory z motywu Elmatic. */
+.heroKursu {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 36px 20px 64px;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+.h1 {
+  font-size: clamp(34px, 4.1vw, 54px) !important;
+  line-height: 1.08 !important;
+}
+.navCta {
+  background: #1d71b8 !important;
+  color: #fff !important;
+  border: 0 !important;
+}
+.otwarcie {
+  margin-top: 26px;
+  color: #c6d0dc;
+}
+.otwarcie ul {
+  margin: 12px 0 14px !important;
+  display: grid;
+  gap: 8px;
+}
+.otwarcie li {
+  padding-left: 26px;
+  position: relative;
+  font-size: 17px;
+}
+.otwarcie li::before {
+  content: "?";
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #1d71b8;
+  color: #3ba9f2;
+  font-size: 11px;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+}
+.otwarciePo {
+  color: #9aa7b8;
+  font-size: 16px;
+  line-height: 1.55;
+}
+.fakty {
+  margin-top: 26px !important;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: #2b3240;
+  border: 1px solid #2b3240;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.fakty li {
+  background: #0e1116;
+  padding: 14px 16px;
+  font-size: 14.5px;
+  color: #c6d0dc;
+}
+.fakty b {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6f7e90;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+/* karta ceny */
+.karta {
+  background: #11151b;
+  border: 1px solid #2b3240;
+  border-radius: 22px;
+  padding: 28px;
+  scroll-margin-top: 90px;
+  position: sticky;
+  top: 90px;
+}
+.kartaStatyczna {
+  position: static;
+  max-width: 560px;
+  margin: 32px auto 0;
+}
+.promoPasek {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.rabat {
+  background: #e5484d;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+.promoNapis {
+  color: #9aa7b8;
+  font-size: 13px;
+  text-align: right;
+}
+.zegar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid #2b3240;
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+.zegarPole {
+  text-align: center;
+  padding: 10px 4px;
+  border-right: 1px solid #2b3240;
+}
+.zegarPole:last-child {
+  border-right: 0;
+}
+.zegarPole b {
+  display: block;
+  font-size: 30px;
+  font-weight: 500;
+  color: #eaeaea;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.zegarPole span {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6f7e90;
+}
+.opcja {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 1px solid #2b3240;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  border-radius: 16px;
+  padding: 16px 18px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: border-color 120ms ease-out, transform 100ms ease-out;
+}
+.opcja:active {
+  transform: scale(0.99);
+}
+.opcjaWl {
+  border-color: #3ba9f2;
+  background: rgba(59, 169, 242, 0.08);
+}
+.opcjaGora {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+.opcjaNazwa {
+  font-weight: 500;
+  font-size: 15px;
+}
+.polecana {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #3ba9f2;
+  margin-left: 8px;
+}
+.cena {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.stara {
+  color: #6f7e90;
+  text-decoration: line-through;
+  font-size: 16px;
+  font-weight: 400;
+  margin-right: 8px;
+}
+.opcjaPod {
+  color: #9aa7b8;
+  font-size: 13.5px;
+  margin-top: 4px !important;
+}
+.kup {
+  width: 100%;
+  margin-top: 8px;
+  min-height: 58px;
+  font-size: 17px !important;
+}
+.kupPod {
+  text-align: center;
+  color: #6f7e90;
+  font-size: 13px;
+  margin-top: 12px !important;
+  line-height: 1.5;
+}
+.blad {
+  color: #ff8f8f;
+  font-size: 14px;
+  margin-top: 10px !important;
+  text-align: center;
+}
+
+/* sekcje */
+.etykieta {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #3ba9f2;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+.opisSekcji {
+  color: #9aa7b8;
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 720px;
+  margin-top: 14px !important;
+}
+.siatka {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+.siatka2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.kafel {
+  background: #11151b;
+  border: 1px solid #2b3240;
+  border-radius: 18px;
+  padding: 24px;
+}
+.kafel h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 8px !important;
+  color: #eaeaea;
+}
+.kafel p {
+  color: #9aa7b8;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.kafelAkcent {
+  border-color: #1d71b8;
+  background: linear-gradient(160deg, rgba(29, 113, 184, 0.18), #11151b 60%);
+}
+.nr {
+  display: block;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #3ba9f2;
+  margin-bottom: 10px;
+}
+.cudzyslow {
+  font-size: 34px;
+  line-height: 0.6;
+  color: #1d71b8;
+  display: block;
+  margin-bottom: 10px;
+}
+.punkty {
+  display: grid;
+  gap: 9px;
+  margin-top: 12px !important;
+}
+.punkty li {
+  position: relative;
+  padding-left: 24px;
+  color: #c6d0dc;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.punkty li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1px solid #2b3240;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233BA9F2' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7.5'/></svg>") center / 10px no-repeat;
+}
+.nie li::before {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e5484d' stroke-width='3' stroke-linecap='round'><path d='M7 7l10 10M17 7L7 17'/></svg>") center / 9px no-repeat;
+}
+.dzieki {
+  margin-top: 14px !important;
+  padding-top: 12px;
+  border-top: 1px solid #1c222c;
+  color: #eaeaea !important;
+  font-size: 14.5px !important;
+}
+.koszt {
+  display: grid;
+  gap: 16px;
+}
+.koszt li {
+  color: #c6d0dc;
+  font-size: 17px;
+  line-height: 1.6;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #1c222c;
+}
+.koszt b {
+  color: #eaeaea;
+  font-weight: 600;
+}
+.dwie {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 48px;
+  align-items: start;
+}
+.historia {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.historia img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #2b3240;
+}
+.historia p {
+  color: #c6d0dc;
+  font-size: 17px;
+  line-height: 1.65;
+  margin-top: 14px !important;
+}
+.podpis {
+  display: block;
+  margin-top: 16px;
+  color: #6f7e90;
+  font-size: 14px;
+}
+.chipy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+.chip {
+  border: 1px solid #2b3240;
+  border-radius: 999px;
+  padding: 9px 15px;
+  font-size: 14.5px;
+  color: #c6d0dc;
+}
+.wyobraz {
+  border-left: 2px solid #1d71b8;
+  padding-left: 24px;
+}
+.wyobraz p {
+  color: #c6d0dc;
+  font-size: 18px;
+  line-height: 1.65;
+  margin-top: 14px !important;
+}
+.gwarancja {
+  border: 1px solid #1d71b8;
+  border-radius: 24px;
+  padding: 32px;
+  background: linear-gradient(160deg, rgba(29, 113, 184, 0.16), #11151b 70%);
+}
+.gwarancja ol {
+  margin-top: 22px !important;
+  display: grid;
+  gap: 14px;
+  counter-reset: g;
+  list-style: none;
+}
+.gwarancja li {
+  counter-increment: g;
+  position: relative;
+  padding-left: 44px;
+  color: #c6d0dc;
+  font-size: 16.5px;
+  line-height: 1.55;
+}
+.gwarancja li::before {
+  content: counter(g);
+  position: absolute;
+  left: 0;
+  top: -2px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #1d71b8;
+  color: #3ba9f2;
+  font-weight: 600;
+  font-size: 14px;
+  display: grid;
+  place-items: center;
+}
+.gwarancja b {
+  color: #eaeaea;
+}
+.ctaSrodek {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+.ctaSrodek a {
+  min-width: 300px;
+}
+.ostrzezenie {
+  max-width: 720px;
+  margin: 0 auto 28px !important;
+  color: #c6d0dc;
+  font-size: 18px;
+  line-height: 1.65;
+  text-align: center;
+}
+.ps {
+  max-width: 720px;
+  margin: 28px auto 0 !important;
+  color: #9aa7b8;
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: center;
+}
+.koniec {
+  text-align: center;
+}
+.porownanie {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 28px;
+}
+.wielka {
+  display: block;
+  font-size: 34px;
+  font-weight: 600;
+  color: #eaeaea;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.zrodlo {
+  display: block;
+  margin-top: 10px;
+  color: #6f7e90;
+  font-size: 12.5px;
+}
+
+@media (max-width: 900px) {
+  .heroKursu,
+  .dwie {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .karta {
+    position: static;
+  }
+  .siatka2,
+  .porownanie {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .historia {
+    grid-template-columns: 1fr;
+  }
+  .fakty {
+    grid-template-columns: 1fr;
+  }
+  .karta,
+  .gwarancja {
+    padding: 20px;
+  }
+  .ctaSrodek a {
+    min-width: 0;
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .opcja {
+    transition: none;
+  }
+}

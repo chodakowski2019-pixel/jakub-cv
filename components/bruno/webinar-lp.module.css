@@ -2380,3 +2380,21 @@
     margin-bottom: 4px;
   }
 }
+
+/* 31.10 (USER_001): test predyspozycji na stronie „Masz miejsce”, przed webinarem. */
+.dziekiTest {
+  width: 100%;
+  max-width: 640px;
+  margin: 40px auto 8px;
+  padding: 28px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: left;
+}
+.dziekiTest .h2Duzy {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.dziekiTest .dziekiLead {
+  text-align: center;
+  margin-bottom: 22px;
+}

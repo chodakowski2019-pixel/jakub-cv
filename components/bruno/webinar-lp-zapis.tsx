@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import s from "./webinar-lp.module.css";
 import { WEBINAR, webinarLinkGoogle } from "@/lib/bruno/webinar";
+import Test from "@/app/brunokursy/test/test";
 
 // 29.10 (USER_001: „LP pod zapisy na webinar, nie LP sprzedażowe”): KRÓTKA strona zapisu. Wzór: Perspective, Sequel,
 // eWebinar, Unbounce (nagłówek = wynik + odbiorca, 3-5 punktów, prowadzący jako dowód, bez nawigacji).
@@ -23,31 +24,35 @@ const ICS = "/api/bruno/webinar/ics";
 /** Nadawca maila z linkiem Zoom (do strony „Dzięki” i okienka). */
 export const NADAWCA_ADRES = "jakub@salesbruno.com";
 
+// 31.10 (USER_001): webinar B2B odwołany, strona = webinar dla grupy A (chcą ZOSTAĆ handlowcami). Teksty z badania
+// SalesAI/sprzedaz/badanie-b2c/A-cytaty.md: „czy mnie wezmą bez doświadczenia” (33), prowizja na minusie (21),
+// „wciskanie kitu” (19), strach przed telefonem (11), zarobki 4 500-8 000 zł (17).
 const T = {
-  badge: "Dla właścicieli firm i dyrektorów sprzedaży z zespołem 3-50 handlowców",
-  h1: "Jak sprawić, żeby handlowcy\nrobili 100 % planu?",
-  h1Szary: "Bez pilnowania ich.",
+  badge: "Dla osób, które chcą zacząć pracę w sprzedaży, także bez doświadczenia",
+  h1: "Jak zostać handlowcem\nw 3 miesiące?",
+  h1Szary: "Bez doświadczenia i bez wciskania kitu.",
   wstep: "W 60 minut, na żywo, dowiesz się:",
   punkty: [
-    "skąd się bierze 70 % wykonanego planu zamiast 100 %",
-    "jak odzyskać godzinę dziennie na powtarzaniu handlowcom tego samego",
-    "jak mieć pełną kontrolę nad zespołem bez pilnowania go",
-    "jak wygląda rozmowa handlowca z klientem AI",
+    "czy nadajesz się do sprzedaży i w jakiej branży odnajdziesz się najlepiej",
+    "ile naprawdę zarabia początkujący handlowiec i jak nie trafić na „prowizję na minusie”",
+    "jak przestać bać się telefonu do obcej osoby",
+    "jak w 3 miesiące przejść od zera do pierwszej pracy w sprzedaży",
   ],
   przycisk: "Chcę zarezerwować miejsce »",
   plan: [
-    ["19:00", "Skąd się bierze 70 % planu zamiast 100"],
-    ["19:15", "4 sposoby na wyszkolenie zespołu"],
-    ["19:30", "Na żywo: handlowiec kontra klient AI"],
-    ["19:45", "Panel szefa: kontrola bez pilnowania"],
-    ["20:00", "Pytania i co dalej"],
+    ["19:00", "Czy nadajesz się do sprzedaży? 3 style handlowca"],
+    ["19:15", "Ile naprawdę zarabia początkujący handlowiec"],
+    ["19:30", "Na żywo: pierwsza rozmowa z klientem AI"],
+    ["19:45", "Plan na 3 miesiące: od zera do pierwszej pracy"],
+    ["20:00", "Pytania"],
   ] as [string, string][],
-  prowadzacy: "Sam byłem handlowcem, którego szef szkolił jednym spotkaniem: prezentacja i „radź sobie sam”. Dziś zbudowałem AI, które gra klienta i ocenia rozmowę, a szef widzi wynik w panelu.",
-  liczba: ["+34 %", "Tyle więcej spraw na godzinę załatwiali handlowcy, którym pomagało AI.", "Brynjolfsson, Li, Raymond, Quarterly Journal of Economics, 2025, 5 179 osób"] as [string, string, string],
+  prowadzacy: "Sam zaczynałem w sprzedaży bez przygotowania: jedno spotkanie, prezentacja i „radź sobie sam”. Uczyłem się na prawdziwych klientach i traciłem ich. Dziś zbudowałem AI, które gra klienta i ocenia każdą rozmowę, żebyś pierwsze setki rozmów przegadał z nim, a nie z klientem.",
+  liczba: ["+34 %", "Tyle więcej spraw na godzinę załatwiali pracownicy, którym pomagało AI. Najwięcej zyskali najmniej doświadczeni.", "Brynjolfsson, Li, Raymond, Quarterly Journal of Economics, 2025, 5 179 osób"] as [string, string, string],
   faq: [
+    ["Nie mam żadnego doświadczenia. Czy to dla mnie?", "Tak. Webinar jest właśnie dla osób, które zaczynają od zera: po szkole, z produkcji, ze sklepu, z call center. Przed webinarem zrobisz krótki test, a na żywo powiem, co z niego wynika."],
+    ["Czy to webinar sprzedażowy?", "Mówię wprost: na końcu opowiem o 3-miesięcznym szkoleniu z gwarancją pracy. Nie musisz nic kupować. Wszystko, co pokażę wcześniej, przyda Ci się i bez szkolenia."],
     ["Gdzie się odbywa?", "Online, na Zoomie. Link otrzymasz na e-mail zaraz po potwierdzeniu zapisu, a potem przypomnienie dzień przed i godzinę przed. Wystarczy telefon albo komputer, kamera jest zbędna."],
     ["Czy będzie nagranie?", "Webinar jest tylko na żywo, bez nagrania, dlatego zapisz go w kalendarzu."],
-    ["Moi handlowcy omijają nawet CRM. To też ominą.", "CRM omijają, bo to dla nich dodatkowa robota bez korzyści dla nich samych. Tu handlowiec od razu dostaje ocenę, co poprawić, żeby sprzedawać więcej. A Ty widzisz w panelu, kto ćwiczył. Na webinarze pokażę, jak to uruchomić."],
   ] as [string, string][],
   // Pop-up (Aniserowicz 02.04: nagłówek, zdjęcie, „sprawdź maila”, pola, wielki przycisk, klauzula).
   okno: {
@@ -55,7 +60,7 @@ const T = {
     pod: `${WEBINAR.dzien}, ${WEBINAR.dataDluga}, ${WEBINAR.godzina}, Zoom`,
     przypomnienie: "Po zapisie kliknij „Potwierdzam zapis” w e-mailu. Wtedy otrzymasz link do spotkania.",
     przycisk: "Zapisuję się »",
-    klauzula: "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o treningu handlowców z AI. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości.",
+    klauzula: "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o szkoleniach sprzedaży z AI. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości.",
   },
 };
 
@@ -134,7 +139,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
       body: JSON.stringify({
         imie: f.get("imie"),
         email: f.get("email"),
-        grupa: "firmy",
+        grupa: "kursy",
         // Zgoda = kliknięcie przycisku pod klauzulą (Aniserowicz: klauzula zamiast checkboxa).
         zgoda: true,
         www: f.get("www"),
@@ -303,8 +308,8 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
                 <input name="imie" required autoComplete="given-name" placeholder="np. Anna" autoFocus />
               </label>
               <label className={s.pole}>
-                <span>E-mail firmowy</span>
-                <input name="email" type="email" required autoComplete="email" placeholder="anna@twojafirma.pl" />
+                <span>E-mail</span>
+                <input name="email" type="email" required autoComplete="email" placeholder="anna@gmail.com" />
               </label>
               <input name="www" tabIndex={-1} autoComplete="off" className={s.pulapka} aria-hidden />
               {blad && <p className={s.blad}>{blad}</p>}
@@ -366,7 +371,7 @@ export function WebinarDzieki({ motyw = "pomarancz" }: { motyw?: MotywZapisu }) 
 }
 
 /** Strona „Dzięki bardzo” po kliknięciu w link potwierdzający (Aniserowicz 02.06): link do spotkania, kalendarz, kontakty, Inbox. */
-export function WebinarDziekiBardzo({ motyw = "pomarancz" }: { motyw?: MotywZapisu }) {
+export function WebinarDziekiBardzo({ motyw = "pomarancz", token }: { motyw?: MotywZapisu; token?: string }) {
   return (
     <div className={`${s.root} ${s.zapis} ${s.zapisA} ${MOTYW_KLASA[motyw]} bruno-lp-jasne`}>
       <nav className={s.nav}>
@@ -391,6 +396,16 @@ export function WebinarDziekiBardzo({ motyw = "pomarancz" }: { motyw?: MotywZapi
         <a className={s.dziekiLinkPelny} href={WEBINAR.zoom} target="_blank" rel="noopener">
           {WEBINAR.zoom}
         </a>
+        {/* 31.10 (USER_001): test predyspozycji zaraz po potwierdzeniu, przed webinarem. O 19:00 omawiam wyniki. */}
+        {token && (
+          <section className={s.dziekiTest} id="test">
+            <h2 className={s.h2Duzy}>
+              Zanim się spotkamy: <span className={s.g}>jaki handlowiec z Ciebie?</span>
+            </h2>
+            <p className={s.dziekiLead}>10 pytań, 2 minuty. Na początku webinaru omawiam wyniki, więc zrób go teraz.</p>
+            <Test token={token} />
+          </section>
+        )}
         <ol className={s.dziekiKroki}>
           <li>
             <b>Zapisz webinar w kalendarzu.</b> Nagrania nie będzie.

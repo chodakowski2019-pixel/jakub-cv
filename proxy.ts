@@ -99,6 +99,10 @@ export function proxy(request: NextRequest) {
   if ((jezyk || hostBezPortu === "localhost") && (pathname === "/praca" || pathname.startsWith("/praca/"))) {
     return dalej(request, pathname, jezyk, `/brunopraca${pathname.slice("/praca".length)}`);
   }
+  // 30.10 (USER_001): /kursy = kursy sprzedaży B2C z gwarancją pracy (app/brunokursy), tylko .pl i localhost.
+  if ((jezyk === "pl" || hostBezPortu === "localhost") && (pathname === "/kursy" || pathname.startsWith("/kursy/"))) {
+    return dalej(request, pathname, jezyk, `/brunokursy${pathname.slice("/kursy".length)}`);
+  }
   if (jezyk) {
     const P = SCIEZKI[jezyk];
     // 14.10 (USER_001): / = handlowcy (B2C), /wspolpraca | /business = firmy (B2B).

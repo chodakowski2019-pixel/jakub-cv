@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   const imie = String(b.imie ?? "").trim().slice(0, 80);
   const email = String(b.email ?? "").trim().toLowerCase().slice(0, 160);
   if (imie.length < 2) return NextResponse.json({ ok: false, blad: "Wpisz imię." }, { status: 400 });
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return NextResponse.json({ ok: false, blad: "Wpisz poprawny e-mail firmowy." }, { status: 400 });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return NextResponse.json({ ok: false, blad: "Wpisz poprawny e-mail." }, { status: 400 });
   if (!b.zgoda) return NextResponse.json({ ok: false, blad: "Zaakceptuj politykę prywatności." }, { status: 400 });
 
   const zrodlo = String(b.zrodlo ?? "").slice(0, 120);
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
       do: SKRZYNKA_JAKUBA,
       replyTo: email,
       temat: `Webinar ${WEBINAR.data}: ${ponownie ? "ponowny zapis" : "nowy zapis"}, ${imie} (${email.split("@")[1]})`,
-      html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>${ponownie ? "Ponowny zapis" : "Nowy zapis"} na webinar („${WEBINAR.tytul}”, ${WEBINAR.dzien} ${WEBINAR.data}, ${WEBINAR.godzina}). Link Zoom dostanie po kliknięciu „Potwierdzam zapis”.</p><table>${wiersz("Imię", imie)}${wiersz("E-mail firmowy", email)}${wiersz("Źródło", zrodlo)}${wiersz("Mail „potwierdź zapis”", m0)}</table></div>`,
+      html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>${ponownie ? "Ponowny zapis" : "Nowy zapis"} na webinar („${WEBINAR.tytul}”, ${WEBINAR.dzien} ${WEBINAR.data}, ${WEBINAR.godzina}). Link Zoom dostanie po kliknięciu „Potwierdzam zapis”.</p><table>${wiersz("Imię", imie)}${wiersz("E-mail", email)}${wiersz("Źródło", zrodlo)}${wiersz("Mail „potwierdź zapis”", m0)}</table></div>`,
     });
   } catch (e) {
     console.error("[bruno webinar] powiadomienie", e);
