@@ -25,9 +25,10 @@ export type Kurs = {
   slowa: string[];
 };
 
+// 31.10 (USER_001): 1 200 zł z góry i 500 zł/mies. to ceny PO przecenie -50 %. Ceny bazowe: 2 400 i 1 000.
 export const CENA = {
-  miesiac: 500,
-  zGory: 1200,
+  miesiac: 1000,
+  zGory: 2400,
   miesiecy: 3,
 };
 

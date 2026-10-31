@@ -307,11 +307,11 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
             <form onSubmit={wyslij} className={s.form}>
               <label className={s.pole}>
                 <span>Imię</span>
-                <input name="imie" required autoComplete="given-name" placeholder="np. Anna" autoFocus />
+                <input name="imie" required autoComplete="given-name" placeholder="np. Jakub" autoFocus />
               </label>
               <label className={s.pole}>
                 <span>E-mail</span>
-                <input name="email" type="email" required autoComplete="email" placeholder="anna@gmail.com" />
+                <input name="email" type="email" required autoComplete="email" placeholder="jakub@gmail.com" />
               </label>
               <input name="www" tabIndex={-1} autoComplete="off" className={s.pulapka} aria-hidden />
               {blad && <p className={s.blad}>{blad}</p>}
