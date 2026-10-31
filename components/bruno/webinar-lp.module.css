@@ -2398,3 +2398,13 @@
   text-align: center;
   margin-bottom: 22px;
 }
+/* 31.10 (USER_001): na telefonie nagłówek testu w dokładnie 2 liniach. */
+.dziekiTest .h2Duzy .g {
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .dziekiTest .h2Duzy {
+    font-size: 26px !important;
+    line-height: 1.2 !important;
+  }
+}

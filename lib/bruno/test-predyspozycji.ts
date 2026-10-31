@@ -1,4 +1,4 @@
-// 30.10 (USER_001): test predyspozycji dla osób, które nie wiedzą, jaki kurs wybrać. 10 pytań → e-mail → profil + 1 kurs.
+// 30.10 (USER_001): test predyspozycji dla osób, które nie wiedzą, jaki kurs wybrać. pytania → e-mail → profil + 1 kurs.
 // Bez rozmowy z Bruno (USER_001 30.10). Strona salesbruno.pl/kursy/test, wynik liczy się tutaj (serwer i przeglądarka).
 import { KURSY, kursPoSlugu, type Kurs } from "./kursy";
 
@@ -11,6 +11,7 @@ const TEREN = { "oze-start": 2, "przedstawiciel-handlowy-start": 2, "nieruchomos
 const SALON = { "samochody-start": 2, "telekomunikacja-start": 2, "nieruchomosci-start": 1, "finanse-kredyty-start": 1 };
 const ZDALNIE = { "telesprzedaz-start": 2, "b2b-sdr-start": 2 };
 
+// 31.10 (USER_001): z 10 pytań zostały 4 (usunięte 3, 5, 7, 8, 9, 10). Styl liczy się z pytania o motywację.
 export const PYTANIA: Pytanie[] = [
   {
     id: "doswiadczenie",
@@ -31,15 +32,6 @@ export const PYTANIA: Pytanie[] = [
     ],
   },
   {
-    id: "komu",
-    tekst: "Komu wolisz sprzedawać?",
-    opcje: [
-      { tekst: "Zwykłym ludziom", styl: { doradca: 1 }, kursy: { "nieruchomosci-start": 1, "oze-start": 1, "ubezpieczenia-start": 1, "samochody-start": 1, "finanse-kredyty-start": 1 } },
-      { tekst: "Firmom", styl: { negocjator: 2 }, kursy: { "b2b-sdr-start": 2, "b2b-pro": 2, "oze-pro": 1, "przedstawiciel-handlowy-start": 1 } },
-      { tekst: "Obojętnie", kursy: { "podstawy-sprzedazy": 1 } },
-    ],
-  },
-  {
     id: "temat",
     tekst: "Co Cię najbardziej ciekawi?",
     opcje: [
@@ -54,15 +46,6 @@ export const PYTANIA: Pytanie[] = [
     ],
   },
   {
-    id: "odmowa",
-    tekst: "Klient mówi „nie”. Co czujesz?",
-    opcje: [
-      { tekst: "Zniechęcenie", styl: { doradca: 1 }, kursy: { "podstawy-sprzedazy": 1 } },
-      { tekst: "Ciekawość, dlaczego", styl: { doradca: 2 } },
-      { tekst: "Chęć, żeby spróbować jeszcze raz", styl: { lowca: 2 }, kursy: { "telesprzedaz-start": 1, "zamykanie-pro": 1 } },
-    ],
-  },
-  {
     id: "motywacja",
     tekst: "Co Cię bardziej motywuje?",
     opcje: [
@@ -70,38 +53,6 @@ export const PYTANIA: Pytanie[] = [
       { tekst: "Prowizja bez limitu", styl: { lowca: 2 }, kursy: { "nieruchomosci-start": 1, "oze-start": 1, "zamykanie-pro": 1 } },
       { tekst: "Pensja plus prowizja", styl: { negocjator: 1 } },
     ],
-  },
-  {
-    id: "rozmowy",
-    tekst: "Jaki rytm pracy Ci pasuje?",
-    opcje: [
-      { tekst: "Dużo krótkich rozmów dziennie", styl: { lowca: 2 }, kursy: { "telesprzedaz-start": 2, "telekomunikacja-start": 1, "b2b-sdr-start": 1 } },
-      { tekst: "Kilka spotkań z jednym klientem", styl: { doradca: 2 }, kursy: { "nieruchomosci-start": 1, "finanse-kredyty-start": 1, "oze-start": 1 } },
-      { tekst: "Długie negocjacje przez tygodnie", styl: { negocjator: 2 }, kursy: { "b2b-pro": 2, "oze-pro": 2, "nieruchomosci-pro": 1 } },
-    ],
-  },
-  {
-    id: "liczby",
-    tekst: "Jak u Ciebie z liczbami?",
-    opcje: [
-      { tekst: "Lubię liczyć", styl: { negocjator: 1 }, kursy: { "finanse-kredyty-start": 2, "oze-start": 1 } },
-      { tekst: "Dam radę", kursy: {} },
-      { tekst: "Wolę ich unikać", kursy: { "telesprzedaz-start": 1, "samochody-start": 1 } },
-    ],
-  },
-  {
-    id: "jazda",
-    tekst: "Lubisz jeździć samochodem?",
-    opcje: [
-      { tekst: "Tak, mogę jeździć codziennie", kursy: { "przedstawiciel-handlowy-start": 2, "przedstawiciel-medyczny-start": 2, "oze-start": 1 } },
-      { tekst: "Mam prawo jazdy, ale wolę nie", kursy: { "samochody-start": 1, "nieruchomosci-start": 1 } },
-      { tekst: "Nie mam prawa jazdy", kursy: { "telesprzedaz-start": 2, "b2b-sdr-start": 2, "telekomunikacja-start": 1 } },
-    ],
-  },
-  {
-    id: "czas",
-    tekst: "Ile czasu dziennie dasz na naukę?",
-    opcje: [{ tekst: "15 minut" }, { tekst: "30 minut" }, { tekst: "Godzinę i więcej", styl: { lowca: 1 } }],
   },
 ];
 

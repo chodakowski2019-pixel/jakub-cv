@@ -401,10 +401,13 @@ export function WebinarDziekiBardzo({ motyw = "pomarancz", token }: { motyw?: Mo
         {/* 31.10 (USER_001): test predyspozycji zaraz po potwierdzeniu, przed webinarem. O 19:00 omawiam wyniki. */}
         {token && (
           <section className={s.dziekiTest} id="test">
+            {/* 31.10 (USER_001): w 2 liniach, bez „10 pytań, 2 minuty”. */}
             <h2 className={s.h2Duzy}>
-              Zanim się spotkamy: <span className={s.g}>jaki handlowiec z Ciebie?</span>
+              Zanim się spotkamy:
+              <br />
+              <span className={s.g}>Jakim jesteś handlowcem?</span>
             </h2>
-            <p className={s.dziekiLead}>10 pytań, 2 minuty. Na początku webinaru omawiam wyniki, więc zrób go teraz.</p>
+            <p className={s.dziekiLead}>Na początku webinaru omawiam wyniki, więc zrób go teraz.</p>
             <Test token={token} />
           </section>
         )}

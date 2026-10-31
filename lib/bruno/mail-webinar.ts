@@ -92,7 +92,7 @@ export function mailWebinarPotwierdz(a: { imie: string | null; link: string }): 
         przyciskPotwierdz("Potwierdzam zapis", a.link),
         p("<b>Co dalej:</b>"),
         lista([
-          "Po kliknięciu od razu zobaczysz link do spotkania na Zoomie i krótki test (2 minuty), który omówię na webinarze.",
+          "Po kliknięciu od razu zobaczysz link do spotkania na Zoomie i krótki test (4 pytania), który omówię na webinarze.",
           `Dzień przed (${WEBINAR.dataPLDzienPrzed.slice(8)}.11) i godzinę przed startem przypomnę mailem.`,
           "Nagrania nie będzie, więc wpisz termin do kalendarza (linki będą w następnym mailu).",
         ]),
@@ -123,7 +123,7 @@ export function mailWebinarPotwierdzenie(a: Odbiorca): MailWebinaru {
         p("<b>Plan 60 minut:</b>"),
         lista(WEBINAR.plan.map(([g, h]) => `<b>${esc(g)}</b> ${esc(h)}`)),
         a.test
-          ? p(`Zanim się spotkamy, zrób jedną rzecz: <b>test „Jaki handlowiec z Ciebie?”</b>, 10 pytań, 2 minuty. Na początku webinaru omawiam wyniki. <a href="${esc(a.test)}" style="color:#111111;font-weight:700">Robię test »</a>`)
+          ? p(`Zanim się spotkamy, zrób jedną rzecz: <b>test „Jakim jesteś handlowcem?”</b>, 4 pytania. Na początku webinaru omawiam wyniki. <a href="${esc(a.test)}" style="color:#111111;font-weight:700">Robię test »</a>`)
           : p("Twój wynik testu już mam. Na początku webinaru powiem, co z niego wynika."),
       ].join("\n"),
     }),
@@ -136,7 +136,7 @@ export function mailWebinarJutro(a: Odbiorca): MailWebinaru {
     temat: `Jutro ${WEBINAR.godzina}: ${WEBINAR.tytul.toLowerCase()}`,
     html: koperta({
       ps: a.test
-        ? `Nie masz jeszcze wyniku testu (2 minuty), a od niego zaczynam: <a href="${esc(a.test)}" style="color:#111111;font-weight:700">robię test »</a>`
+        ? `Nie masz jeszcze wyniku testu (4 pytania), a od niego zaczynam: <a href="${esc(a.test)}" style="color:#111111;font-weight:700">robię test »</a>`
         : "Odpisz na tego maila jednym zdaniem: <b>co Cię najbardziej powstrzymuje przed pracą w sprzedaży</b>. Czytam każdą odpowiedź i odpowiem na webinarze.",
       zajawka: "Link do Zooma w środku. 60 minut, bez nagrania.",
       wypisz: a.wypisz,
@@ -167,7 +167,7 @@ export function mailWebinarDzis(a: Odbiorca): MailWebinaru {
         lista([
           "Komputer albo telefon z Zoomem (działa też w przeglądarce).",
           "Słuchawki.",
-          a.test ? `Wynik testu „Jaki handlowiec z Ciebie?”: <a href="${esc(a.test)}" style="color:#111111">zrób go teraz, 2 minuty</a>.` : "Twój wynik testu, który już zrobiłeś.",
+          a.test ? `Wynik testu „Jakim jesteś handlowcem?”: <a href="${esc(a.test)}" style="color:#111111">zrób go teraz, 4 pytania</a>.` : "Twój wynik testu, który już zrobiłeś.",
         ]),
       ].join("\n"),
     }),
