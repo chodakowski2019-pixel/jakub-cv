@@ -1,0 +1,737 @@
+/* 31.10 (USER_001): układ 1:1 jak czytelnia lovemyself (zwiazki-lp/src/app/blog), kolory Bruno:
+   ciemne tło, pomarańcz = marka (etykiety, linki, przyciski), błękit = ramki „W skrócie”.
+   Szerokości jak tam: listy 1152 px (max-w-6xl), tekst 768 px (max-w-3xl), okładka 1024 px (max-w-5xl). */
+.strona {
+  --tlo: #0e1116;
+  --karta: rgba(255, 255, 255, 0.035);
+  --ramka: rgba(255, 255, 255, 0.09);
+  --tekst: #eaeaea;
+  --szary: #9aa3ae;
+  --marka: #ff8a3d;
+  --marka-miekka: rgba(255, 138, 61, 0.1);
+  --blekit: #8fd0ff;
+  --blekit-miekki: rgba(59, 169, 242, 0.09);
+  min-height: 100vh;
+  background: var(--tlo);
+  color: var(--tekst);
+  font-family: var(--font-elm), "Poppins", system-ui, sans-serif;
+  line-height: 1.6;
+}
+.display {
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+/* ── PASEK GÓRNY ── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 64px;
+  background: rgba(14, 17, 22, 0.8);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 1px solid var(--ramka);
+}
+.navWnetrze {
+  max-width: 1152px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+}
+.logo img {
+  border-radius: 9px;
+}
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 0.95rem;
+}
+.menu a {
+  color: var(--szary);
+  text-decoration: none;
+}
+.menu a:hover {
+  color: var(--tekst);
+}
+
+/* ── KONTENERY ── */
+.w6 {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.w5 {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.w3 {
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ── NAGŁÓWEK (warm-glow) ── */
+.hero {
+  border-bottom: 1px solid var(--ramka);
+  background:
+    radial-gradient(60% 50% at 50% 0%, rgba(255, 138, 61, 0.12) 0%, transparent 70%),
+    radial-gradient(40% 40% at 85% 15%, rgba(59, 169, 242, 0.1) 0%, transparent 70%),
+    var(--tlo);
+}
+.heroWnetrze {
+  padding-top: 64px;
+  padding-bottom: 64px;
+}
+.brow {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--marka);
+  text-decoration: none;
+}
+.h1 {
+  max-width: 768px;
+  margin: 16px 0 0;
+  font-size: clamp(3rem, 7vw, 4.5rem);
+  line-height: 1.02;
+}
+.h1Temat {
+  max-width: 768px;
+  margin: 16px 0 0;
+  font-size: clamp(2.6rem, 6vw, 4rem);
+  line-height: 1.04;
+}
+.lead {
+  max-width: 672px;
+  margin: 24px 0 0;
+  font-size: 1.125rem;
+  line-height: 1.65;
+  color: var(--szary);
+}
+.cytatHero {
+  max-width: 672px;
+  margin: 24px 0 0;
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  line-height: 1.3;
+  color: var(--szary);
+}
+.licznik {
+  margin: 24px 0 0;
+  font-size: 0.875rem;
+  color: var(--szary);
+}
+.akcje {
+  margin-top: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.przycisk {
+  display: inline-block;
+  padding: 14px 32px;
+  border-radius: 999px;
+  background: var(--marka);
+  color: #111;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.przycisk:hover {
+  background: #ff9d5c;
+}
+.notka {
+  font-size: 0.875rem;
+  color: var(--szary);
+}
+
+/* ── PASEK GRUP (sticky pod nawigacją) ── */
+.pasek {
+  position: sticky;
+  top: 64px;
+  z-index: 40;
+  border-bottom: 1px solid var(--ramka);
+  background: rgba(14, 17, 22, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.pasekWnetrze {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.pigulka {
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--ramka);
+  background: var(--karta);
+  color: var(--tekst);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+.pigulka:hover {
+  border-color: rgba(255, 138, 61, 0.5);
+  color: var(--marka);
+}
+
+/* ── OKŁADKA (bez zdjęć: gradient grupy + nazwa) ── */
+.okladka {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: 22px;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.okladka::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(70% 60% at 85% 10%, rgba(255, 255, 255, 0.14), transparent 70%);
+  transition: transform 0.7s;
+}
+.okladka span {
+  position: relative;
+  z-index: 1;
+}
+.og1 {
+  background: linear-gradient(135deg, #ff8a3d 0%, #b8461a 55%, #2a1408 100%);
+}
+.og2 {
+  background: linear-gradient(135deg, #3ba9f2 0%, #1d5f96 55%, #0b1d2e 100%);
+}
+.og3 {
+  background: linear-gradient(135deg, #8a6cf0 0%, #45338f 55%, #15102c 100%);
+}
+.grupaLink:hover .okladka::after {
+  transform: scale(1.04);
+}
+
+/* ── WYRÓŻNIONY ── */
+.wyrozniony {
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+.grupaLink {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.wyroznionySiatka {
+  display: grid;
+  gap: 32px;
+}
+@media (min-width: 1024px) {
+  .wyroznionySiatka {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+}
+.wyroznionyOkladka {
+  aspect-ratio: 4 / 3;
+  border-radius: 2rem;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  padding: 32px;
+}
+.etykieta {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--marka);
+}
+.wyroznionyTytul {
+  margin: 12px 0 0;
+  font-size: clamp(2.2rem, 4.5vw, 3rem);
+  line-height: 1.08;
+}
+.czytaj {
+  display: inline-block;
+  margin-top: 24px;
+  padding-bottom: 2px;
+  border-bottom: 2px solid var(--marka);
+  color: var(--marka);
+  font-weight: 500;
+}
+
+/* ── SEKCJE GRUP + KAFLE ── */
+.sekcja {
+  margin-top: 64px;
+  padding-top: 40px;
+  border-top: 1px solid var(--ramka);
+  scroll-margin-top: 128px;
+}
+.sekcjaGlowa {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.h2 {
+  margin: 0;
+  font-size: clamp(1.9rem, 4vw, 2.25rem);
+}
+.h2 a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.h2 a:hover {
+  color: var(--marka);
+}
+.h2Maly {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.podpis {
+  max-width: 672px;
+  margin: 8px 0 0;
+  color: var(--szary);
+}
+.siatka {
+  margin-top: 32px;
+  display: grid;
+  gap: 24px;
+}
+@media (min-width: 640px) {
+  .siatka {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .siatka {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.kafelOkladka {
+  aspect-ratio: 16 / 10;
+  border-radius: 1rem;
+  font-size: 1.15rem;
+}
+.kafelTytul {
+  margin: 16px 0 0;
+  font-size: 1.45rem;
+  line-height: 1.15;
+  transition: color 0.2s;
+}
+.grupaLink:hover .kafelTytul,
+.grupaLink:hover .wyroznionyTytul {
+  color: var(--marka);
+}
+.kafelOpis {
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--szary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.kafelMeta {
+  margin: 12px 0 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--szary);
+}
+.wszystko {
+  display: inline-block;
+  margin-top: 24px;
+  padding-bottom: 2px;
+  border-bottom: 2px solid var(--marka);
+  color: var(--marka);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* ── ARTYKUŁ: NAGŁÓWEK ── */
+.artGlowa {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+.okruszki {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--szary);
+}
+.okruszki a {
+  color: var(--szary);
+  text-decoration: none;
+}
+.okruszki a:hover {
+  color: var(--marka);
+}
+.artH1 {
+  margin: 20px 0 0;
+  font-size: clamp(2.5rem, 6vw, 3.6rem);
+  line-height: 1.03;
+}
+.artOpis {
+  margin: 20px 0 0;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--szary);
+}
+.meta {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--ramka);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  font-size: 0.875rem;
+  color: var(--szary);
+}
+.kropka {
+  color: var(--ramka);
+}
+.skrot {
+  margin-top: 28px;
+  padding: 20px;
+  border-radius: 1rem;
+  border: 1px solid rgba(59, 169, 242, 0.3);
+  background: var(--blekit-miekki);
+}
+.skrotEtykieta {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--blekit);
+}
+.skrotTekst {
+  margin: 8px 0 0;
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+.artOkladka {
+  aspect-ratio: 21 / 9;
+  border-radius: 2rem;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  padding: 32px;
+}
+
+/* ── KARTA (spis, źródła) ── */
+.karta {
+  border-radius: 1.5rem;
+  background: var(--karta);
+  border: 1px solid var(--ramka);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+.spis {
+  margin-top: 48px;
+  padding: 24px;
+}
+.spisEtykieta {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--szary);
+}
+.spis ol {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+.spis li {
+  display: flex;
+  gap: 12px;
+}
+.spisNr {
+  flex: none;
+  width: 20px;
+  font-size: 0.875rem;
+  color: var(--marka);
+}
+.spis a {
+  font-size: 0.98rem;
+  line-height: 1.35;
+  color: var(--tekst);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.spis a:hover {
+  color: var(--marka);
+}
+
+/* ── TREŚĆ (.artykul z lovemyself) ── */
+.tresc {
+  margin-top: 48px;
+  font-size: 1.1875rem;
+  line-height: 1.75;
+  color: rgba(234, 234, 234, 0.88);
+}
+.tresc > p + p {
+  margin-top: 1.35em;
+}
+.tresc p {
+  margin: 20px 0 0;
+}
+.tresc h2 {
+  margin: 56px 0 0;
+  font-size: clamp(1.9rem, 4vw, 2.3rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #fff;
+  scroll-margin-top: 96px;
+}
+.tresc h2 + p {
+  font-size: 1.25rem;
+}
+.tresc h3 {
+  margin: 36px 0 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #fff;
+}
+.tresc strong {
+  color: #fff;
+  font-weight: 600;
+}
+.tresc a {
+  color: var(--marka);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.tresc ul,
+.tresc ol {
+  margin: 24px 0 0;
+  padding-left: 24px;
+  display: grid;
+  gap: 12px;
+}
+.tresc li {
+  padding-left: 4px;
+}
+.tresc li::marker {
+  color: var(--marka);
+  font-weight: 600;
+}
+.tresc blockquote {
+  margin: 40px 0;
+  padding-left: 24px;
+  border-left: 2px solid var(--marka);
+  font-size: clamp(1.6rem, 3vw, 1.85rem);
+  line-height: 1.35;
+  color: #fff;
+}
+.tresc hr {
+  margin: 40px 0 0;
+  border: 0;
+  border-top: 1px solid var(--ramka);
+}
+.tresc :global(.tabela) {
+  margin-top: 24px;
+  overflow-x: auto;
+}
+.tresc table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95em;
+}
+.tresc th,
+.tresc td {
+  padding: 8px 12px;
+  border: 1px solid var(--ramka);
+  vertical-align: top;
+}
+.tresc th {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-weight: 600;
+}
+@media (max-width: 640px) {
+  .tresc {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+  .tresc h2 + p {
+    font-size: 1.125rem;
+  }
+}
+
+/* ── ŹRÓDŁA ── */
+.zrodla {
+  margin-top: 64px;
+  padding: 28px;
+}
+.zrodla h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.zrodlaOpis {
+  margin: 8px 0 0;
+  font-size: 0.875rem;
+  color: var(--szary);
+}
+.zrodla ol {
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 20px;
+}
+.zrodla li {
+  display: flex;
+  gap: 16px;
+}
+.zrodlaNr {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--marka-miekka);
+  color: var(--marka);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.zrodlaTeza {
+  margin: 0;
+  line-height: 1.6;
+}
+.zrodla a {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.875rem;
+  color: var(--szary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.zrodla a:hover {
+  color: var(--marka);
+}
+
+/* ── WEZWANIE (aside z lovemyself) ── */
+.wezwanie {
+  margin-top: 48px;
+  padding: 32px;
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 138, 61, 0.25);
+  background: var(--marka-miekka);
+}
+.wezwanieTytul {
+  margin: 0;
+  font-size: 1.8rem;
+  line-height: 1.2;
+}
+.wezwanieTekst {
+  margin: 12px 0 0;
+  line-height: 1.65;
+  color: rgba(234, 234, 234, 0.8);
+}
+.drugiLink {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(234, 234, 234, 0.7);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.drugiLink:hover {
+  color: var(--marka);
+}
+
+/* ── AUTOR ── */
+.autor {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: 32px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--szary);
+}
+.autor img {
+  border-radius: 999px;
+  object-fit: cover;
+  flex: none;
+}
+.autor strong {
+  color: var(--tekst);
+}
+
+/* ── POWIĄZANE ── */
+.powiazane {
+  margin-top: 64px;
+  margin-bottom: 96px;
+  padding-top: 40px;
+  border-top: 1px solid var(--ramka);
+}
+.powiazaneSiatka {
+  margin-top: 24px;
+  display: grid;
+  gap: 24px;
+}
+@media (min-width: 640px) {
+  .powiazaneSiatka {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.powiazaneOkladka {
+  aspect-ratio: 16 / 10;
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  padding: 16px;
+}
+.powiazaneTytul {
+  margin: 12px 0 0;
+  font-size: 1.125rem;
+  line-height: 1.2;
+  transition: color 0.2s;
+}
+.grupaLink:hover .powiazaneTytul {
+  color: var(--marka);
+}
+.pigulki {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dol {
+  padding-bottom: 96px;
+}
+
+.stopka {
+  border-top: 1px solid var(--ramka);
+  padding: 32px 20px;
+  font-size: 0.875rem;
+  color: var(--szary);
+  text-align: center;
+}

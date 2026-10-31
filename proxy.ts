@@ -103,6 +103,10 @@ export function proxy(request: NextRequest) {
   if ((jezyk === "pl" || hostBezPortu === "localhost") && (pathname === "/kursy" || pathname.startsWith("/kursy/"))) {
     return dalej(request, pathname, jezyk, `/brunokursy${pathname.slice("/kursy".length)}`);
   }
+  // 31.10 (USER_001): /blog = blog Bruno PL pod SEO (app/brunoblog), tylko .pl i localhost.
+  if ((jezyk === "pl" || hostBezPortu === "localhost") && (pathname === "/blog" || pathname.startsWith("/blog/"))) {
+    return dalej(request, pathname, jezyk, `/brunoblog${pathname.slice("/blog".length)}`);
+  }
   if (jezyk) {
     const P = SCIEZKI[jezyk];
     // 14.10 (USER_001): / = handlowcy (B2C), /wspolpraca | /business = firmy (B2B).

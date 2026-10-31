@@ -1,4 +1,5 @@
 import { DOMENA, SCIEZKI, jezykZHosta } from "@/lib/bruno/domeny";
+import { GRUPY, stronaGrupy, wszystkieArtykuly } from "@/lib/bruno/blog";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,9 @@ function wpisy(host: string | null): string[] {
   if (j) {
     const P = SCIEZKI[j];
     const d = DOMENA[j];
-    return [P.firmy, P.demo, P.bezpieczenstwo, "/regulamin", "/polityka-prywatnosci"].map((s) => `${d}${s === "/" ? "" : s}`);
+    // 31.10: na .pl także blog (lista, strony grup, artykuły).
+    const blog = j === "pl" ? ["/blog", ...GRUPY.filter((g) => stronaGrupy(g.slug)).map((g) => `/blog/temat/${g.slug}`), ...wszystkieArtykuly().map((a) => `/blog/${a.slug}`)] : [];
+    return [P.firmy, P.demo, P.bezpieczenstwo, "/regulamin", "/polityka-prywatnosci", ...blog].map((s) => `${d}${s === "/" ? "" : s}`);
   }
   return ["https://jakubchodakowski.com", "https://jakubchodakowski.com/en"];
 }
