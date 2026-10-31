@@ -23,9 +23,9 @@ export const WEBINAR = {
   // 29.10 (USER_001: „tytuł zmieniamy”): wzór Popiela „Jak [korzyść] bez [ból]”. Zastępuje „…planu sprzedaży dzięki AI” (27.10).
   // Temat w Zoomie zmienia USER_001 ręcznie. Grafiki (OG, post, reklamy) przerobione 29.10.
   // 31.10: grupa A. Wzór Popiela „Jak [korzyść] bez [ból]”: ból nr 1 = brak doświadczenia (33 cytaty), nr 4 = „wciskanie kitu” (19).
-  tytul: "Jak zostać handlowcem w 3 miesiące, bez doświadczenia",
+  tytul: "Jak zostać handlowcem w 3 miesiące", // 31.10: jak temat w Zoomie
   /** Druga linia pod tytułem (szara). */
-  podtytul: "I bez wciskania ludziom kitu.",
+  podtytul: "Bez wciskania kitu.",
   // 27.10 (USER_001): link Zoom ustawiony przez USER_001.
   zoom: "https://us05web.zoom.us/j/81028613140?pwd=6DyIsCre9Ufkias6LaP8erbpvbSFZt.1",
   zoomId: "810 2861 3140",
@@ -39,9 +39,9 @@ export const WEBINAR = {
   plan: [
     // Każdy punkt kończy się efektem „dzięki temu…” (Popiel M8 L01).
     ["19:00", "Czy nadajesz się do sprzedaży? 3 style handlowca", "Omawiam wyniki testu, który zrobisz przed webinarem: Łowca, Doradca, Negocjator. Dzięki temu wiesz, w jakiej sprzedaży odnajdziesz się najlepiej, zanim wyślesz pierwsze CV."],
-    ["19:15", "Ile naprawdę zarabia początkujący handlowiec", "Branże, widełki, pensja podstawowa kontra sama prowizja. Dzięki temu nie wejdziesz w pracę z „prowizją na minusie”, własnym autem i własnym paliwem."],
-    ["19:30", "Na żywo: pierwsza rozmowa z klientem AI", "AI gra klienta, który mówi „nie mam czasu” i „muszę się zastanowić”. Po rozmowie ocena i 3 rzeczy do poprawy. Dzięki temu zobaczysz, że strach przed telefonem da się wyćwiczyć, zanim zadzwonisz do prawdziwego klienta."],
-    ["19:45", "Plan na 3 miesiące: od zera do pierwszej pracy", "Co robisz tydzień po tygodniu, egzamin, certyfikat i jak łączymy Cię z firmą. Dzięki temu wiesz dokładnie, gdzie będziesz w 4. miesiącu."],
+    ["19:15", "Ile naprawdę zarabia początkujący handlowiec", "Branże, widełki, pensja podstawowa kontra sama prowizja. Dzięki temu wybierzesz firmę z dobrą pensją, uczciwą prowizją i autem służbowym."],
+    ["19:30", "Plan na 3 miesiące: od zera do pierwszej pracy", "Co robisz tydzień po tygodniu, egzamin, certyfikat i jak łączymy Cię z firmą. Dzięki temu wiesz dokładnie, gdzie będziesz w 4. miesiącu."],
+    ["19:45", "Na żywo: pierwsza rozmowa z klientem AI", "AI gra klienta, który mówi „nie mam czasu” i „muszę się zastanowić”. Po rozmowie ocena i 3 rzeczy do poprawy. Dzięki temu zobaczysz, że strach przed telefonem da się wyćwiczyć, zanim zadzwonisz do prawdziwego klienta."],
     ["20:00", "Pytania", "Pytasz o swoją sytuację. Odpowiadam na żywo."],
   ] as [string, string, string][],
 };

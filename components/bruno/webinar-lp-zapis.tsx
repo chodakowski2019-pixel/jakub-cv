@@ -28,13 +28,13 @@ export const NADAWCA_ADRES = "jakub@salesbruno.com";
 // SalesAI/sprzedaz/badanie-b2c/A-cytaty.md: „czy mnie wezmą bez doświadczenia” (33), prowizja na minusie (21),
 // „wciskanie kitu” (19), strach przed telefonem (11), zarobki 4 500-8 000 zł (17).
 const T = {
-  badge: "Dla osób, które chcą zacząć pracę w sprzedaży, także bez doświadczenia",
+  badge: "Dla osób, które chcą zacząć pracę w sprzedaży",
   h1: "Jak zostać handlowcem\nw 3 miesiące?",
-  h1Szary: "Bez doświadczenia i bez wciskania kitu.",
+  h1Szary: "Bez wciskania kitu.", // 31.10 (USER_001)
   wstep: "W 60 minut, na żywo, dowiesz się:",
   punkty: [
     "czy nadajesz się do sprzedaży i w jakiej branży odnajdziesz się najlepiej",
-    "ile naprawdę zarabia początkujący handlowiec i jak nie trafić na „prowizję na minusie”",
+    "ile zarabia początkujący handlowiec i jak wybrać firmę z dobrą pensją i prowizją",
     "jak przestać bać się telefonu do obcej osoby",
     "jak w 3 miesiące przejść od zera do pierwszej pracy w sprzedaży",
   ],
@@ -42,15 +42,17 @@ const T = {
   plan: [
     ["19:00", "Czy nadajesz się do sprzedaży? 3 style handlowca"],
     ["19:15", "Ile naprawdę zarabia początkujący handlowiec"],
-    ["19:30", "Na żywo: pierwsza rozmowa z klientem AI"],
-    ["19:45", "Plan na 3 miesiące: od zera do pierwszej pracy"],
+    ["19:30", "Plan na 3 miesiące: od zera do pierwszej pracy"],
+    ["19:45", "Na żywo: pierwsza rozmowa z klientem AI"],
     ["20:00", "Pytania"],
   ] as [string, string][],
-  prowadzacy: "Sam zaczynałem w sprzedaży bez przygotowania: jedno spotkanie, prezentacja i „radź sobie sam”. Uczyłem się na prawdziwych klientach i traciłem ich. Dziś zbudowałem AI, które gra klienta i ocenia każdą rozmowę, żebyś pierwsze setki rozmów przegadał z nim, a nie z klientem.",
-  liczba: ["+34 %", "Tyle więcej spraw na godzinę załatwiali pracownicy, którym pomagało AI. Najwięcej zyskali najmniej doświadczeni.", "Brynjolfsson, Li, Raymond, Quarterly Journal of Economics, 2025, 5 179 osób"] as [string, string, string],
+  // 31.10 (USER_001): bio = krótko doświadczenie, bez Bruno. Fakty z CV (components/about-me.tsx).
+  prowadzacy: "Gdy miałem 16 lat, zaczynałem od sprzedaży waty cukrowej na końcu molo w Kołobrzegu. Później była fotowoltaika, startupy i sprzedaż do urzędów miast. Przeszedłem przez wszystkie rodzaje sprzedaży i wiem jedno: sprzedaży może nauczyć się każdy.",
+  // 31.10 (USER_001): liczba o zarobkach handlowców, związana z tematem webinaru.
+  // 31.10 (USER_001): konkretna liczba ofert zamiast %. 19 % z 762 827 ogłoszeń Pracuj.pl w 2025 = ok. 145 000.
+  liczba: ["145 000", "Tyle ofert pracy w sprzedaży opublikowano w 2025 roku na samym Pracuj.pl. Sprzedaż to najczęściej rekrutowana specjalizacja w Polsce. Praca czeka.", "Pracuj.pl, rynek pracy w sprzedaży 2025: 19 % z 762 827 ogłoszeń"] as [string, string, string],
   faq: [
-    ["Nie mam żadnego doświadczenia. Czy to dla mnie?", "Tak. Webinar jest właśnie dla osób, które zaczynają od zera: po szkole, z produkcji, ze sklepu, z call center. Przed webinarem zrobisz krótki test, a na żywo powiem, co z niego wynika."],
-    ["Czy to webinar sprzedażowy?", "Mówię wprost: na końcu opowiem o 3-miesięcznym szkoleniu z gwarancją pracy. Nie musisz nic kupować. Wszystko, co pokażę wcześniej, przyda Ci się i bez szkolenia."],
+    ["Nie mam żadnego doświadczenia. Czy to dla mnie?", "Tak. Webinar jest właśnie dla osób, które zaczynają od zera: po szkole, z produkcji, ze sklepu, z call center."],
     ["Gdzie się odbywa?", "Online, na Zoomie. Link otrzymasz na e-mail zaraz po potwierdzeniu zapisu, a potem przypomnienie dzień przed i godzinę przed. Wystarczy telefon albo komputer, kamera jest zbędna."],
     ["Czy będzie nagranie?", "Webinar jest tylko na żywo, bez nagrania, dlatego zapisz go w kalendarzu."],
   ] as [string, string][],
