@@ -541,12 +541,15 @@
   color: var(--marka);
   font-weight: 600;
 }
+/* Cytaty w artykułach to głównie wzory maili i gotowe zdania, więc zwykły rozmiar tekstu, nie wielki wyróżnik. */
 .tresc blockquote {
-  margin: 40px 0;
-  padding-left: 24px;
+  margin: 28px 0;
+  padding: 16px 20px;
   border-left: 2px solid var(--marka);
-  font-size: clamp(1.6rem, 3vw, 1.85rem);
-  line-height: 1.35;
+  border-radius: 0 12px 12px 0;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 1.05rem;
+  line-height: 1.65;
   color: #fff;
 }
 .tresc hr {

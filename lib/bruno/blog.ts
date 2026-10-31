@@ -248,7 +248,8 @@ export function renderujMarkdown(md: string): string {
     lista = null;
   };
   const zamknijCytat = () => {
-    if (cytat?.length) out.push(`<blockquote>${inline(cytat.join(" "))}</blockquote>`);
+    // Każda linia „>” w osobnym wierszu: wzory maili w artykułach to cytaty linia po linii.
+    if (cytat?.length) out.push(`<blockquote>${cytat.map(inline).join("<br />")}</blockquote>`);
     cytat = null;
   };
   const zamknijWszystko = () => {

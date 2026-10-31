@@ -1,10 +1,10 @@
 ---
 tytul: "Jak zostać handlowcem bez doświadczenia: plan na 2026"
-opis: "Ile zarabia handlowiec, czego szukają firmy, jak przejść rekrutację bez doświadczenia i jak nie trafić na pracę za samą prowizję. Konkretny plan krok po kroku."
+opis: "Ile zarabia handlowiec, czego szukają firmy, jak przejść rekrutację bez doświadczenia i nie trafić na pracę za samą prowizję. Plan krok po kroku."
 data: 2026-10-31
 czas: 12
-zrodla: "8 310 zł | mediana wynagrodzenia przedstawiciela handlowego w Polsce, brutto miesięcznie, połowa zarabia 6 750-10 300 zł | wynagrodzenia.pl, Ogólnopolskie Badanie Wynagrodzeń | https://wynagrodzenia.pl/moja-placa/ile-zarabia-przedstawiciel-handlowy; 7 690,82 zł | mediana wynagrodzeń w całej gospodarce, luty 2026, brutto | GUS, za podatki.biz | https://www.podatki.biz/artykuly/gus-mediana-wynagrodzen-w-lutym-2026-r-to-769082-zl_16_63150.htm; 5 000-8 500 zł | łączne wynagrodzenie juniora w sprzedaży (0-2 lata), brutto miesięcznie | Freenance, Zarobki w sprzedaży 2026 | https://freenance.io/zarobki/zarobki-w-sprzedazy-2026; 6 839-14 199 zł | przedział, w którym mieści się większość zarobków przedstawicieli handlowych w 2026 roku | WageIndicator Polska | https://wageindicator.org/pl-pl/praca-w-polsce/zawody-i-wynagrodzenia/polska-przedstawiciele-handlowi; 11 000 zł | mediana wynagrodzenia przedstawiciela medycznego, brutto miesięcznie | wynagrodzenia.pl | https://wynagrodzenia.pl/moja-placa/ile-zarabia-przedstawiciel-medyczny"
-tldr: "Handlowcem możesz zostać bez doświadczenia i bez studiów. Firmy przy stanowiskach juniorskich sprawdzają przede wszystkim, czy umiesz prowadzić rozmowę i radzić sobie z odmową. Na start realne jest 5 000 do 8 500 zł brutto (podstawa plus prowizja), a mediana dla przedstawiciela handlowego to 8 310 zł brutto. Najszybsza droga: wybierz branżę, przećwicz kilkadziesiąt rozmów z klientem, zanim pójdziesz na rozmowę o pracę, i bierz tylko oferty ze stałą podstawą."
+zrodla: "7 690,82 zł | mediana wynagrodzeń w całej gospodarce, luty 2026, brutto | GUS, za podatki.biz | https://www.podatki.biz/artykuly/gus-mediana-wynagrodzen-w-lutym-2026-r-to-769082-zl_16_63150.htm; 5 500-8 500 zł | podstawa SDR (stanowisko wejściowe w sprzedaży B2B) w 2026, brutto miesięcznie, plus prowizja 1 500-4 000 zł | Freenance, Zarobki w sprzedaży 2026 | https://freenance.io/zarobki/zarobki-w-sprzedazy-2026; 6 839-14 199 zł | przedział, w którym mieści się większość zarobków przedstawicieli handlowych w 2026 roku | WageIndicator Polska | https://wageindicator.org/pl-pl/praca-w-polsce/zawody-i-wynagrodzenia/polska-przedstawiciele-handlowi; 6 839-11 502 zł | wynagrodzenie przedstawiciela handlowego na start, brutto miesięcznie, 2026 | WageIndicator Polska | https://wageindicator.org/pl-pl/praca-w-polsce/zawody-i-wynagrodzenia/polska-przedstawiciele-handlowi"
+tldr: "Handlowcem możesz zostać bez doświadczenia i bez studiów. Firmy przy stanowiskach juniorskich sprawdzają przede wszystkim, czy umiesz prowadzić rozmowę i radzić sobie z odmową. Przedstawiciel handlowy na start zarabia 6 839-11 502 zł brutto (WageIndicator 2026). Najszybsza droga: wybierz branżę, przećwicz kilkadziesiąt rozmów z klientem, zanim pójdziesz na rozmowę o pracę, i bierz tylko oferty ze stałą podstawą."
 ---
 
 Handlowcem może zostać każdy, kto nauczy się prowadzić rozmowę z klientem. Do pracy w sprzedaży nie potrzeba dyplomu ani doświadczenia. Wiele ogłoszeń dla juniorów wprost pisze, że firma szuka zaangażowania i chęci do nauki, a resztę zapewnia sama. Bariera jest gdzie indziej: w strachu przed odmową, w pierwszym zimnym telefonie i w ofertach, które płacą wyłącznie prowizję.
@@ -13,20 +13,20 @@ Ten przewodnik prowadzi przez całą drogę: od decyzji, czy sprzedaż jest dla 
 
 ## Ile zarabia handlowiec w 2026 roku?
 
-Mediana wynagrodzenia przedstawiciela handlowego w Polsce to **8 310 zł brutto** miesięcznie. Połowa osób na tym stanowisku zarabia od 6 750 do 10 300 zł brutto ([wynagrodzenia.pl](https://wynagrodzenia.pl/moja-placa/ile-zarabia-przedstawiciel-handlowy)). Dla porównania mediana w całej gospodarce w lutym 2026 roku wyniosła 7 690,82 zł brutto ([GUS za podatki.biz](https://www.podatki.biz/artykuly/gus-mediana-wynagrodzen-w-lutym-2026-r-to-769082-zl_16_63150.htm)).
+Przedstawiciel handlowy w Polsce zarabia na start **6 839-11 502 zł brutto** miesięcznie, a większość osób w tym zawodzie mieści się w przedziale 6 839-14 199 zł (dane na 2026 rok, [WageIndicator](https://wageindicator.org/pl-pl/praca-w-polsce/zawody-i-wynagrodzenia/polska-przedstawiciele-handlowi)). Dla porównania mediana w całej gospodarce w lutym 2026 roku wyniosła 7 690,82 zł brutto ([GUS za podatki.biz](https://www.podatki.biz/artykuly/gus-mediana-wynagrodzen-w-lutym-2026-r-to-769082-zl_16_63150.htm)).
 
-Na start zarabia się mniej, a różnica między branżami jest duża:
+Stawki zależą od stanowiska i miasta. Dane Freenance dla sprzedaży B2B:
 
 | Etap | Podstawa (brutto) | Prowizja (brutto / mies.) | Razem (brutto) |
 |---|---|---|---|
-| Junior, 0-2 lata | 4 500-6 500 zł | 500-2 000 zł | 5 000-8 500 zł |
-| SDR (umawianie spotkań B2B) | 5 500-8 500 zł | 1 500-4 000 zł | 7 000-12 500 zł |
-| Senior, Key Account, 5+ lat | 8 000-14 000 zł | 3 000-10 000 zł | 12 000-24 000 zł |
-| Przedstawiciel medyczny (mediana) | brak danych | brak danych | 11 000 zł |
+| SDR, mniejsze miasta | 4 800-6 000 zł | niższa niż w dużych miastach | brak danych |
+| SDR (umawianie spotkań B2B), start | 5 500-8 500 zł | 1 500-4 000 zł | brak danych |
+| Key Account Manager (zwykle 3-5 lat doświadczenia) | 10 000-16 000 zł | 3 000-8 000 zł | brak danych |
+| Przedstawiciel handlowy, start (WageIndicator) | brak danych | brak danych | 6 839-11 502 zł |
 
-Źródła: widełki juniora, SDR i seniora z [Freenance](https://freenance.io/zarobki/zarobki-w-sprzedazy-2026), mediana przedstawiciela medycznego z [wynagrodzenia.pl](https://wynagrodzenia.pl/moja-placa/ile-zarabia-przedstawiciel-medyczny). Według [WageIndicator](https://wageindicator.org/pl-pl/praca-w-polsce/zawody-i-wynagrodzenia/polska-przedstawiciele-handlowi) większość przedstawicieli handlowych w 2026 roku zarabia od 6 839 do 14 199 zł miesięcznie.
+Źródła: widełki SDR i Key Account Managera z [Freenance](https://freenance.io/zarobki/zarobki-w-sprzedazy-2026), przedział dla przedstawiciela handlowego z [WageIndicator](https://wageindicator.org/pl-pl/praca-w-polsce/zawody-i-wynagrodzenia/polska-przedstawiciele-handlowi).
 
-W badaniu Bruno AI (108 wypowiedzi osób, które chcą wejść do sprzedaży, zebranych w październiku 2026 z YouTube, Reddita i forów) najczęściej pojawiały się zarobki 4 000-5 300 zł na produkcji, w sklepie albo na kasie. Kwota, przy której ludzie są gotowi zmienić zawód, to 4 500-8 000 zł. Junior w sprzedaży mieści się w tym przedziale już w pierwszym roku.
+W badaniu Bruno AI (108 wypowiedzi osób, które chcą wejść do sprzedaży, zebranych w październiku 2026 z YouTube, Reddita i forów) najczęściej pojawiały się zarobki 4 000-5 300 zł na produkcji, w sklepie albo na kasie. Kwota, przy której ludzie są gotowi zmienić zawód, to 4 500-8 000 zł. Stawki na start z tabeli powyżej mieszczą się w tym przedziale albo go przekraczają.
 
 ## Czy da się zostać handlowcem bez doświadczenia?
 
@@ -74,7 +74,7 @@ Na start wybierz branżę, w której produkt jest realny, a firma płaci stałą
 
 Rekrutacja na handlowca ma zwykle 2-3 etapy: telefon od rekrutera, rozmowa z kierownikiem sprzedaży i często zadanie praktyczne. Ostatni etap decyduje najczęściej: kierownik prosi, żebyś mu coś sprzedał, albo gra klienta, który ma obiekcję.
 
-Najczęstsze pytania na rozmowie o pracę handlowca:
+Najczęstsze pytania na rozmowie o pracę handlowca (pełna lista z odpowiedziami: [pytania rekrutacyjne na handlowca](/blog/pytania-rekrutacyjne-handlowiec)):
 
 - Dlaczego chcesz pracować w sprzedaży?
 - Sprzedaj mi ten długopis.
@@ -94,6 +94,8 @@ CV handlowca bez doświadczenia opiera się na umiejętnościach i wynikach z in
 3. **Dodaj szkolenia i trening:** kurs sprzedaży, certyfikat, liczba przećwiczonych rozmów.
 4. **Prawo jazdy kategorii B** wpisz zawsze. W wielu ofertach to warunek.
 5. **Nie wymyślaj osiągnięć.** Rekruter sprawdzi je na pierwszej scence.
+
+Gotowy wzór znajdziesz w tekście [CV handlowca bez doświadczenia](/blog/cv-handlowca-bez-doswiadczenia).
 
 ## Jak nie trafić na pracę za samą prowizję?
 
@@ -129,6 +131,62 @@ Pierwsze 90 dni to okres, w którym handlowiec uczy się produktu i buduje rytm.
 
 Kto ćwiczy rozmowy poza godzinami pracy, szybciej przechodzi przez etap odmów. Trening na AI pozwala powtarzać tę samą trudną sytuację do skutku, bez wstydu przed szefem i bez tracenia prawdziwych klientów.
 
+## Wszystkie tematy: od decyzji do pierwszej pracy
+
+Ten przewodnik daje mapę. Każdy krok rozpisaliśmy w osobnym tekście. Wybierz ten, który odpowiada na Twoje pytanie dziś.
+
+### Czy sprzedaż jest dla Ciebie?
+
+- [Czy nadaję się do sprzedaży](/blog/czy-nadaje-sie-do-sprzedazy): 7 cech handlowca i prosty test na start.
+- [Praca w sprzedaży dla introwertyka](/blog/sprzedaz-dla-introwertyka): dlaczego cisi ludzie często dobrze słuchają klienta.
+- [Zalety i wady pracy handlowca](/blog/handlowiec-zalety-i-wady): uczciwy bilans, zanim zmienisz pracę.
+- [Ile rozmów dziennie robi handlowiec](/blog/ile-rozmow-dziennie-handlowiec): jak wygląda zwykły dzień w liczbach.
+- [Stres w pracy handlowca](/blog/stres-w-pracy-handlowca): skąd się bierze i jak go zmniejszyć.
+
+### Ile można zarobić?
+
+- [Ile zarabia handlowiec](/blog/ile-zarabia-handlowiec): stawki w branżach i na start.
+- [Ile zarabia przedstawiciel handlowy](/blog/ile-zarabia-przedstawiciel-handlowy): FMCG, hurt i auto służbowe.
+- [Jak działa prowizja](/blog/jak-dziala-prowizja): progi i przykłady wyliczeń.
+- [Praca za samą prowizję](/blog/praca-za-sama-prowizje): co mówi prawo i na co uważać.
+- [Plan sprzedażowy](/blog/plan-sprzedazowy): co to jest i co się dzieje, gdy go nie robisz.
+- [Ścieżka kariery w sprzedaży](/blog/sciezka-kariery-w-sprzedazy): od juniora do dyrektora.
+
+### Jaką branżę i jakie stanowisko wybrać?
+
+- [Sprzedaż B2B czy B2C](/blog/handlowiec-b2b-czy-b2c): co wybrać na start.
+- [Kim jest SDR](/blog/kim-jest-sdr): stanowisko wejściowe w sprzedaży do firm.
+- [Przedstawiciel handlowy bez doświadczenia](/blog/przedstawiciel-handlowy-bez-doswiadczenia): jak dostać pierwszą pracę.
+- [Handlowiec OZE](/blog/handlowiec-oze): fotowoltaika i pompy ciepła od środka.
+- [Jak zostać agentem nieruchomości](/blog/jak-zostac-agentem-nieruchomosci): krok po kroku.
+- [Jak zostać agentem ubezpieczeniowym](/blog/jak-zostac-agentem-ubezpieczeniowym): KNF, egzamin, zarobki.
+- [Jak zostać doradcą kredytowym](/blog/jak-zostac-doradca-kredytowym): egzamin KNF i wymogi.
+- [Jak zostać przedstawicielem medycznym](/blog/jak-zostac-przedstawicielem-medycznym): wymagania i droga.
+- [Praca w call center](/blog/praca-w-call-center): ile się zarabia i czy warto zacząć od telefonu.
+- [Praca w sprzedaży bez prawa jazdy](/blog/praca-handlowca-bez-prawa-jazdy): gdzie Cię wezmą.
+
+### Zmieniasz zawód?
+
+- [Z produkcji do sprzedaży](/blog/z-produkcji-do-sprzedazy): jak przejść z hali do rozmów z klientem.
+- [Zmiana zawodu po 40](/blog/zmiana-zawodu-po-40-sprzedaz): doświadczenie życiowe jako atut.
+- [Praca w sprzedaży po szkole](/blog/praca-w-sprzedazy-po-szkole): pierwsza praca po szkole i studiach.
+- [Powrót do pracy po macierzyńskim](/blog/powrot-do-pracy-po-macierzynskim-sprzedaz): czy sprzedaż ma sens dla mamy.
+
+### Rekrutacja
+
+- [CV handlowca bez doświadczenia](/blog/cv-handlowca-bez-doswiadczenia): wzór sekcji i przykłady.
+- [List motywacyjny na handlowca](/blog/list-motywacyjny-handlowiec): wzór do skopiowania.
+- [Pytania rekrutacyjne na handlowca](/blog/pytania-rekrutacyjne-handlowiec): 12 pytań i odpowiedzi.
+- [Sprzedaj mi ten długopis](/blog/sprzedaj-mi-ten-dlugopis): jak przejść najczęstsze zadanie na rozmowie.
+- [Jak sprawdzić firmę przed pracą](/blog/jak-sprawdzic-firme-przed-praca-w-sprzedazy): 8 kroków, zanim podpiszesz.
+- [Umowa o pracę czy B2B](/blog/umowa-o-prace-czy-b2b-handlowiec): co wybrać w 2026.
+
+### Pierwsze miesiące w pracy
+
+- [Pierwszy dzień w pracy handlowca](/blog/pierwszy-dzien-w-pracy-handlowca): jak się przygotować.
+- [Okres próbny handlowca](/blog/okres-probny-handlowiec): zasady i jak go przejść.
+- [Samochód służbowy handlowca](/blog/samochod-sluzbowy-handlowiec): podatek i jazda prywatna.
+
 ## Najczęstsze pytania
 
 ### Czy da się zostać handlowcem bez doświadczenia?
@@ -137,7 +195,7 @@ Tak. Stanowiska juniorskie w sprzedaży są otwarte dla osób bez doświadczenia
 
 ### Ile zarabia handlowiec na start?
 
-Junior w sprzedaży zarabia zwykle 5 000-8 500 zł brutto miesięcznie: podstawa 4 500-6 500 zł plus prowizja 500-2 000 zł. Mediana dla przedstawiciela handlowego to 8 310 zł brutto.
+Przedstawiciel handlowy na start zarabia według WageIndicator 6 839-11 502 zł brutto miesięcznie (dane na 2026). SDR, czyli osoba umawiająca spotkania w sprzedaży B2B, ma według Freenance podstawę 5 500-8 500 zł plus prowizję 1 500-4 000 zł.
 
 ### Czy do pracy handlowca potrzebne są studia?
 
