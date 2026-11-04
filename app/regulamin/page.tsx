@@ -16,7 +16,10 @@ import { jezykZHosta, type Jezyk } from "@/lib/bruno/domeny";
 
 // 25.10 (USER_001): OpenAI gpt-5.5 gra klienta w każdej rozmowie (pkt 9), naruszenie do 7 dni, po umowie 14 dni,
 // tryb poufny i odejście handlowca realizowane ręcznie na wniosek firmy mailem (pkt 7 i 12), wzór DPA z umową.
-const AKTUALIZACJA: Record<Jezyk, string> = { pl: "25 października 2026", en: "October 25, 2026" };
+// 4.11 (USER_001): pakiety dla firm w Polsce (pkt 6a): 3 pakiety z salesbruno.pl/oferta, ceny netto, minimum 3 konta,
+// zawarcie przez akceptację regulaminu (pakiety 1-2) albo umowę (pakiet 3), okresy 3 / 12 mies., 70 zł/h poza zakresem,
+// SMS po koszcie. Wersja EN: tylko odesłanie (pakiety są polskie).
+const AKTUALIZACJA: Record<Jezyk, string> = { pl: "4 listopada 2026", en: "November 4, 2026" };
 
 async function jezykStrony(): Promise<Jezyk> {
   const h = await headers();
@@ -129,11 +132,36 @@ const TRESC: Record<Jezyk, Tresc> = {
         ],
         po: [
           <>
-            Pełen dostęp dla firmy (konta dla zespołu, konfiguracja pod produkt klienta, raport dla szefa sprzedaży)
-            jest płatny i uruchamiany na podstawie odrębnego zamówienia lub umowy, która określa zakres, cenę, okres
-            rozliczeniowy i okres wypowiedzenia. W razie rozbieżności pierwszeństwo ma umowa, a ten regulamin stosuje
-            się uzupełniająco.
+            Pełen dostęp dla firmy (konta dla zespołu, kokpit szefa, podpięcie pod CRM, raport miesięczny) kupuje się
+            w jednym z pakietów opisanych w pkt 6a. Firmy spoza Polski: odrębne zamówienie lub umowa, która określa
+            zakres, cenę, okres rozliczeniowy i okres wypowiedzenia. W razie rozbieżności pierwszeństwo ma umowa, a ten
+            regulamin stosuje się uzupełniająco.
           </>,
+        ],
+      },
+      {
+        tytul: "6a. Pakiety dla firm (Polska)",
+        akapity: [
+          <>
+            Firma z siedzibą w Polsce zamawia jeden z trzech pakietów. Aktualny zakres każdego pakietu opisuje strona{" "}
+            <a className="text-cyan-700 underline underline-offset-2" href="https://salesbruno.pl/oferta">
+              salesbruno.pl/oferta
+            </a>
+            ; Usługodawca zapisuje wersję tej strony z dnia zamówienia w potwierdzeniu zamówienia.
+          </>,
+        ],
+        punkty: [
+          "Pakiet Bruno: bez opłaty startowej, 390 zł za konto miesięcznie. Pakiet Bruno + Audyt: 5 000 zł jednorazowo i 350 zł za konto miesięcznie. Pakiet Bruno System: 20 000 zł jednorazowo i 300 zł za konto miesięcznie. Wszystkie ceny netto, do każdej doliczany jest VAT według obowiązującej stawki.",
+          "Konto służy jednej osobie: handlowcowi albo osobie zarządzającej. Każde konto jest płatne tak samo. Minimalna liczba kont w pakiecie to 3.",
+          "Pakiety Bruno i Bruno + Audyt zamawia się formularzem zamówienia (pakiet, liczba kont, dane firmy i NIP, adresy e-mail osób). Wysłanie formularza z zaznaczoną akceptacją tego regulaminu oznacza zawarcie umowy. Pakiet Bruno System wymaga odrębnej umowy pisemnej, która określa zakres systemu i harmonogram; ten regulamin stosuje się do niej uzupełniająco.",
+          "Okres umowy: pakiet Bruno 3 miesiące, po nich umowa przedłuża się na 12 miesięcy; pakiety Bruno + Audyt i Bruno System 12 miesięcy. Okres liczy się od dnia uruchomienia kont. Po każdym okresie umowa przedłuża się na kolejne 12 miesięcy, chyba że firma zrezygnuje mailem na adres kontaktowy najpóźniej 30 dni przed końcem okresu.",
+          "Opłata startowa jest płatna z góry, przed rozpoczęciem wdrożenia. Abonament za wszystkie konta jest płatny miesięcznie z góry na podstawie faktury z 7-dniowym terminem płatności. Dla firm nie ma bezpłatnego okresu próbnego ani zwrotu opłat za rozpoczęty okres.",
+          "Opóźnienie w płatności dłuższe niż 14 dni uprawnia Usługodawcę, po mailowym wezwaniu, do zawieszenia kont do czasu zapłaty. Zawieszenie nie skraca okresu umowy.",
+          "Firma może dodać konta w każdej chwili; opłata za nowe konta liczy się od dnia ich uruchomienia, proporcjonalnie do końca bieżącego miesiąca rozliczeniowego. Zmniejszenie liczby kont, nie poniżej 3, jest możliwe od kolejnego okresu umowy, po zgłoszeniu mailem najpóźniej 30 dni wcześniej.",
+          "Prace poza zakresem pakietu (zmiany w systemie, dodatkowe integracje, dodatkowe szkolenia, dodatkowe analizy) są rozliczane według stawki 70 zł netto za godzinę, po zaakceptowaniu przez firmę wyceny przesłanej mailem.",
+          "W pakiecie Bruno System wiadomości SMS wysyłane z systemu są rozliczane po koszcie operatora (około 0,10 zł netto za wiadomość), miesięcznie, według liczby wysłanych wiadomości.",
+          "Audyt sprzedaży i wdrożenie systemu Usługodawca wykonuje na podstawie danych i dostępów przekazanych przez firmę (CRM, arkusze, skrzynki). Terminy wdrożenia podane na stronie oferty liczą się od dnia przekazania kompletu dostępów.",
+          "Rozwiązanie umowy przed końcem okresu jest możliwe tylko z ważnego powodu po bezskutecznym wezwaniu do usunięcia naruszenia w 14 dni. Opłata startowa nie podlega zwrotowi, a abonament jest należny do końca okresu umowy.",
         ],
       },
       {
@@ -385,9 +413,11 @@ const TRESC: Record<Jezyk, Tresc> = {
         ],
         po: [
           <>
-            Full access for a company (team accounts, setup for the client’s product, a report for the head of sales)
-            is paid and set up under a separate order or contract that defines the scope, price, billing period and
-            notice period. In case of conflict the contract prevails and these Terms apply as a supplement.
+            Full access for a company (team accounts, manager cockpit, CRM connection, monthly report) is paid and set
+            up under a separate order or contract that defines the scope, price, billing period and notice period. In
+            case of conflict the contract prevails and these Terms apply as a supplement. Companies based in Poland
+            order one of the packages described at salesbruno.pl/oferta under section 6a of the Polish version of these
+            Terms.
           </>,
         ],
       },

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import s from "@/components/podglad/bruno-lp/bruno-lp.module.css";
 import o from "./oferta.module.css";
-import { MINIMUM_KONT, PAKIETY, PRZYKLAD_KONT, ZAWARTOSC, koszt, zl } from "@/lib/bruno/oferta-pakiety";
+import { PAKIETY, PRZYKLAD_KONT, ZAWARTOSC, koszt, zl } from "@/lib/bruno/oferta-pakiety";
 
 // 4.11 (USER_001): salesbruno.pl/oferta = 3 pakiety Bruno AI Polska (3 tabele: warunki, zawartość, przykład na rok).
 // Tylko PL (Polska = offline + ta strona jako załącznik do rozmowy). Styl = LP Bruno (bruno-lp.module.css).
@@ -36,9 +36,6 @@ export default function Page() {
           <br />
           <span className={s.g}>Jeden Bruno.</span>
         </h1>
-        <p className={o.sub}>
-          Ceny netto. Abonament za jedno konto handlowca miesięcznie, konta zarządzających płatne tak samo. Minimum {MINIMUM_KONT} konta.
-        </p>
       </header>
 
       {/* ---------- 1. WARUNKI ---------- */}
