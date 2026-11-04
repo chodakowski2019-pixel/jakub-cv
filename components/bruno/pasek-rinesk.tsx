@@ -24,7 +24,7 @@ export default function PasekRinesk({ dostep, inicjal, logo = null, plan = null,
     const pasuje = sciezka === baza || sciezka.startsWith(`${baza}/`);
     // 4.11: ta sama strona w dwóch sekcjach; o aktywnej decyduje ?jako= (widok handlowca) albo jego brak.
     if (!pasuje || !dostep.crm || !dostep.szef) return pasuje;
-    const wSekcjiHandlowca = ["/bruno/kokpit", "/bruno/klienci", "/bruno/lejek", "/bruno/statystyki"].includes(baza);
+    const wSekcjiHandlowca = ["/bruno/kokpit", "/bruno/klienci", "/bruno/lejek", "/bruno/statystyki", "/bruno/kalendarz"].includes(baza);
     return wSekcjiHandlowca ? Boolean(jako) === maJako : true;
   };
   const dom = dostep.crm ? "/bruno/kokpit" : dostep.szef ? "/bruno/szef" : "/bruno/panel";
@@ -37,13 +37,14 @@ export default function PasekRinesk({ dostep, inicjal, logo = null, plan = null,
   const sekcje: { tytul: string; linki: Pozycja[] }[] = dostep.crm
     ? [
         ...(dostep.szef
-          ? [{ tytul: t("Owner's Bruno", "Bruno właściciela"), linki: [L("kokpit"), L("klienci"), L("lejek"), L("zespol") && { ...L("zespol")!, nazwa: t("Team stats", "Statystyki zespołu") }, L("raport")] }]
+          ? [{ tytul: t("Owner's Bruno", "Bruno właściciela"), linki: [L("kokpit"), L("klienci"), L("lejek"), L("zespol") && { ...L("zespol")!, nazwa: t("Team stats", "Statystyki zespołu") }, L("raport"), L("kalendarz")] }]
           : []),
         {
           tytul: t("Rep's Bruno", "Bruno handlowca"),
-          linki: dostep.szef ? [jakoH(L("kokpit")), jakoH(L("klienci")), jakoH(L("lejek")), jakoH(L("statystyki")), L("test"), trening, L("feedback"), L("ogien")] : [L("kokpit"), L("klienci"), L("lejek"), L("statystyki"), L("test"), trening, L("feedback"), L("ogien")],
+          // 4.11 (USER_001): Feedback, Panel, Podsumowanie tygodnia usunięte z menu; Kalendarz osobno w obu sekcjach.
+          linki: dostep.szef ? [jakoH(L("kokpit")), jakoH(L("klienci")), jakoH(L("lejek")), jakoH(L("statystyki")), jakoH(L("kalendarz")), L("test"), trening, L("ogien")] : [L("kokpit"), L("klienci"), L("lejek"), L("statystyki"), L("kalendarz"), L("test"), trening, L("ogien")],
         },
-        { tytul: t("Other", "Inne"), linki: [L("panel") && { ...L("panel")!, href: "/bruno/panel?panel=1" }, L("kalendarz"), L("tydzien"), L("ustawienia")] },
+        { tytul: t("Other", "Inne"), linki: [L("ustawienia")] },
       ]
     : [
         // 27.10 (USER_001): „Wgląd / Zespół” na samej górze (szef zaczyna od zespołu).

@@ -161,32 +161,6 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
               p.naDzis.map((z) => ({ tekst: z.temat, pod: [z.osoba ?? z.deal, z.kto].filter(Boolean).join(" · "), link: z.dealId ? linkKlienta(z.dealId) : null, zdjecie: z.zdjecie, znacznik: z.zalegle ? z.data.slice(5) : z.godzina?.slice(0, 5) || t("today", "dziś"), alarm: z.zalegle })),
             ),
         },
-        {
-          tekst: t("No movement 7+ days", "Bez ruchu 7+ dni"),
-          licznik: String(p.bezRuchu.length),
-          alarm: p.bezRuchu.length > 0,
-          klik: () =>
-            lokalnie(
-              t("Which deals are stuck?", "Które deale stoją?"),
-              p.bezRuchu.length ? t("These deals haven't moved for over a week:", "Te deale nie ruszyły od ponad tygodnia:") : t("Every open deal moved in the last week.", "Każdy otwarty deal ruszył w ostatnim tygodniu."),
-              p.bezRuchu.map((d) => ({ tekst: d.tytul, pod: [d.osoba, d.etap, d.wartosc, d.kto].filter(Boolean).join(" · "), link: linkKlienta(d.id), zdjecie: d.zdjecie, znacznik: `${d.dni} ${t("d", "dni")}`, alarm: true })),
-            ),
-        },
-        ...(p.trening
-          ? [
-              {
-                tekst: szef ? t("Who to train first", "Kogo trenować najpierw") : t("Today's training", "Trening na dziś"),
-                licznik: p.trening.etap ?? undefined,
-                klik: () =>
-                  lokalnie(
-                    szef ? t("Who should I train first?", "Kogo trenować najpierw?") : t("What should I train today?", "Co mam dziś trenować?"),
-                    p.trening!.dlaczego,
-                    [p.trening!.etap, p.trening!.kryterium, p.trening!.obiekcja].filter(Boolean).map((x) => ({ tekst: x as string })),
-                    { tekst: szef ? t(`Open profile: ${p.trening!.deal ?? ""} →`, `Otwórz profil: ${p.trening!.deal ?? ""} →`) : t("Train what matters today →", "Trenuj to, co dziś najważniejsze →"), link: p.trening!.link },
-                  ),
-              },
-            ]
-          : []),
       ]
     : [];
 
@@ -310,22 +284,6 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
             <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 19V5M5 12l7-7 7 7" /></svg>
           </button>
         </form>
-        {pusto && (
-          <div className="bcz-przyklady">
-            {przyklady.map((x) => (
-              <button key={x} type="button" className="bcz-przyklad" onClick={() => { setTekst(x); pole.current?.focus(); }}>{x}</button>
-            ))}
-          </div>
-        )}
-        <p className="bcz-stopka">
-          {t("Bruno writes straight to the CRM. Check important changes.", "Bruno zapisuje prosto do CRM. Ważne zmiany sprawdź.")}
-          {domenaCrm && (
-            <>
-              {" · "}
-              <a href={domenaCrm} target="_blank" rel="noreferrer" className="underline underline-offset-2">{t("Open Pipedrive", "Otwórz Pipedrive")}</a>
-            </>
-          )}
-        </p>
       </div>
     </div>
   );

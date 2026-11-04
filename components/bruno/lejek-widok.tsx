@@ -48,7 +48,7 @@ export default function LejekWidok({
   const t = tDla(jezyk);
   const waluta = deale[0]?.waluta ?? "PLN";
   const kwota = (n: number) => formatKwota(n, waluta, jezyk);
-  const maxOtwarte = Math.max(1, ...zespol.map((s) => s.otwarte + s.przegrane + s.wygrane));
+  const doszloMax = zespol.reduce((a, x) => a + x.otwarte + x.wygrane + x.przegrane, 0);
   const przegraneRazem = zespol.reduce((s, x) => s + x.przegrane, 0);
   const najslabszyZespolu = [...zespol].filter((s) => s.przegrane > 0).sort((a, b) => b.przegrane - a.przegrane || b.wartosc_przegrane - a.wartosc_przegrane)[0] ?? null;
   const moja = analizy.find((a) => a.email.toLowerCase() === ja) ?? null;
@@ -87,33 +87,52 @@ export default function LejekWidok({
             <b className="text-rose-800">{przegraneRazem}</b>
           </span>
         </div>
-        <ol className="blj-etapy">
+        {/* 4.11 (USER_001 „popraw wizualnie”): prawdziwy kształt lejka. Szerokość paska = ile deali DOSZŁO do etapu
+            (otwarte tu + przegrane tu + wszystko dalej), więc lejek się zwęża. Segmenty: otwarte / wygrane / przegrane tutaj. */}
+        <ol className="blj-lejek">
           {zespol.map((s, i) => {
-            const razem = s.otwarte + s.przegrane + s.wygrane;
+            const doszlo = zespol.slice(i).reduce((a, x) => a + x.otwarte + x.wygrane + x.przegrane, 0);
+            const dalej = zespol.slice(i + 1).reduce((a, x) => a + x.otwarte + x.wygrane + x.przegrane, 0) + s.wygrane;
+            const szer = Math.max(14, Math.round((100 * doszlo) / Math.max(1, doszloMax)));
+            const proc = doszlo ? Math.round((100 * dalej) / doszlo) : null;
+            const seg = (n: number) => (doszlo ? `${(100 * n) / doszlo}%` : "0%");
             const naj = najslabszyZespolu?.etap.id === s.etap.id;
+            const ostatni = i === zespol.length - 1;
             return (
-              <li key={s.etap.id} className={`blj-etap ${naj ? "blj-naj" : ""}`} style={{ animationDelay: `${i * 60}ms` }}>
-                <div className="blj-slupek" aria-hidden>
-                  <span className="blj-otwarte" style={{ height: `${Math.round((100 * s.otwarte) / maxOtwarte)}%` }} />
-                  <span className="blj-wygrane" style={{ height: `${Math.round((100 * s.wygrane) / maxOtwarte)}%` }} />
-                  <span className="blj-przegrane" style={{ height: `${Math.round((100 * s.przegrane) / maxOtwarte)}%` }} />
+              <li key={s.etap.id} className={`blj-rzad ${naj ? "blj-naj" : ""}`} style={{ animationDelay: `${i * 70}ms` }}>
+                <div className="blj-rzad-lewo">
+                  <span className="blj-rzad-nr">{i + 1}</span>
+                  <span className="min-w-0">
+                    <span className="blj-rzad-nazwa">{s.etap.nazwa}</span>
+                    <span className="blj-rzad-pod tabular-nums">{s.otwarte} {t("open", "otw.")} · {kwota(s.wartosc)}</span>
+                  </span>
                 </div>
-                <div className="blj-liczba tabular-nums">{s.otwarte}</div>
-                <div className="blj-nazwa">{s.etap.nazwa}</div>
-                <div className="blj-wartosc tabular-nums">{kwota(s.wartosc)}</div>
-                <div className="blj-mini tabular-nums">
-                  {s.przegrane > 0 && <span className="text-rose-700">−{s.przegrane}</span>}
-                  {s.wygrane > 0 && <span className="text-emerald-700">+{s.wygrane}</span>}
-                  {razem === 0 && <span className="text-slate-400">–</span>}
+                <div className="blj-rzad-pasek-wrap">
+                  <div className="blj-rzad-pasek" style={{ width: `${szer}%` }} title={`${doszlo} ${t("deals reached this stage", "deali doszło do tego etapu")}`}>
+                    {s.otwarte > 0 && <span className="blj-seg blj-seg-otwarte" style={{ width: seg(s.otwarte) }}>{s.otwarte}</span>}
+                    {s.wygrane > 0 && <span className="blj-seg blj-seg-wygrane" style={{ width: seg(s.wygrane) }}>{s.wygrane}</span>}
+                    {s.przegrane > 0 && <span className="blj-seg blj-seg-przegrane" style={{ width: seg(s.przegrane) }}>{s.przegrane}</span>}
+                    {dalej > 0 && !ostatni && <span className="blj-seg blj-seg-dalej" style={{ width: seg(dalej - s.wygrane) }} />}
+                  </div>
                 </div>
+                <div className="blj-rzad-prawo tabular-nums">
+                  {s.przegrane > 0 ? <span className="blj-strata">−{s.przegrane} {t("lost", "przegr.")}{s.wartosc_przegrane ? ` · ${kwota(s.wartosc_przegrane)}` : ""}</span> : <span className="text-slate-300">{t("no losses", "bez strat")}</span>}
+                  {naj && <span className="bsz-pigulka blj-naj-pigulka">{t("Weakest stage", "Najsłabszy etap")}</span>}
+                </div>
+                {!ostatni && proc !== null && (
+                  <div className="blj-przejscie" aria-label={t(`${proc}% move on`, `${proc} % przechodzi dalej`)}>
+                    <i /><b className={proc < 50 ? "text-rose-700" : ""}>{proc} %</b><span>{t("move on", "przechodzi dalej")}</span>
+                  </div>
+                )}
               </li>
             );
           })}
         </ol>
         <div className="flex gap-4 text-[11px] text-slate-500 mt-3 flex-wrap">
-          <span><i className="blj-kropka blj-k-otwarte" /> {t("open", "otwarte")}</span>
+          <span><i className="blj-kropka blj-k-otwarte" /> {t("open here", "otwarte tutaj")}</span>
           <span><i className="blj-kropka blj-k-wygrane" /> {t("won", "wygrane")}</span>
           <span><i className="blj-kropka blj-k-przegrane" /> {t("lost here", "przegrane tutaj")}</span>
+          <span><i className="blj-kropka blj-k-dalej" /> {t("moved to later stages", "poszły dalej")}</span>
         </div>
       </section>
 
