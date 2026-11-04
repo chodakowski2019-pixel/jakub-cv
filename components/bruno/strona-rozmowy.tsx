@@ -12,14 +12,15 @@ import { motywRinesk } from "@/lib/bruno/motyw";
 
 
 /** 25.10: wspólne dla /bruno/rozmowa i /bruno/jutro („Rozmowa, którą masz jutro”, osobna zakładka). */
-export default async function StronaRozmowy({ searchParams, jutro }: { searchParams: Promise<{ karta?: string }>; jutro: boolean }) {
+export default async function StronaRozmowy({ searchParams, jutro }: { searchParams: Promise<{ karta?: string; sytuacja?: string }>; jutro: boolean }) {
   const email = await zalogowanyEmail();
   if (!email) redirect("/bruno");
   const konto = await pobierzKonto(email);
   const stan = stanDostepu(konto);
   if (!konto || !stan.aktywny) redirect("/bruno/panel");
 
-  const { karta: kartaId } = await searchParams;
+  // 4.11 (Bruno pod CRM): „Trenuj ten etap” z lejka wchodzi tu z gotową sytuacją (deal + etap z Pipedrive).
+  const { karta: kartaId, sytuacja: sytuacjaStart } = await searchParams;
   let karta: Karta | null = null;
   if (kartaId) {
     const { data } = await supabaseAdmin.from("bruno_karty").select("*").eq("email", email).eq("id", kartaId).maybeSingle();
@@ -67,6 +68,7 @@ export default async function StronaRozmowy({ searchParams, jutro }: { searchPar
       obiekcjeOpis={Object.fromEntries(obiekcjeZWyjasnieniem(konfig.obiekcje).map((o) => [o.nazwa, o.wyjasnienie]))}
       jutro={jutro}
       rinesk={motywRinesk()}
+      sytuacjaStart={typeof sytuacjaStart === "string" ? sytuacjaStart.slice(0, 3000) : null}
     />
   );
 }

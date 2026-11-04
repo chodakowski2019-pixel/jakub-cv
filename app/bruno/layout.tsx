@@ -10,6 +10,7 @@ import { etykiety } from "@/lib/bruno/etykiety";
 import type { DaneKolumny } from "@/components/bruno/kolumna-rinesk";
 import { ankietaWymagana } from "@/lib/bruno/ankieta-db";
 import { kontekstFirmy } from "@/lib/bruno/firmy";
+import { crmWlaczony } from "@/lib/bruno/lejek";
 import UkladZloty from "@/components/bruno/uklad-zloty";
 import CzatDymek from "@/components/bruno/czat-dymek";
 import Kalkulator from "@/components/bruno/kalkulator";
@@ -81,7 +82,9 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   if (ankietaBrak && sciezka && sciezka !== "/bruno/ankieta") redirect("/bruno/ankieta");
 
   // 25.10 (USER_001): firma konta (logo w pasku) i czy to szef (zakładka „Zespół”, przełącznik widoku).
-  const { szef, logo } = await kontekstFirmy(konto);
+  const { szef, logo, firma } = await kontekstFirmy(konto);
+  // 4.11 (USER_001): zakładki „Lejek” i „Kokpit” (Bruno pod CRM) tylko dla firmy demo z tokenem Pipedrive.
+  const crm = crmWlaczony(firma);
 
   // 10.10 (USER_001: „cały ten Bruno się zmienia”): wszystkie ekrany czarno-złote. Panel ma własny pasek,
   // reszta wspólny; o tym decyduje UkladZloty po adresie w przeglądarce.
@@ -130,7 +133,7 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   return (
     <JezykProvider jezyk={jezyk}>
     <div className={`bruno zloty ${motywRinesk() ? "rinesk" : motywAsset() ? "asset" : ""} ${fonty} font-[var(--font-open-sans)]`}>
-      <UkladZloty dostep={{ ...dostep, szef }} inicjal={inicjal} free={free} profilBrak={profilBrak} ankietaBrak={ankietaBrak} logo={logo} rinesk={motywRinesk()} plan={plan} fiszki={fiszki} kolumna={kolumna}>
+      <UkladZloty dostep={{ ...dostep, szef, crm }} inicjal={inicjal} free={free} profilBrak={profilBrak} ankietaBrak={ankietaBrak} logo={logo} rinesk={motywRinesk()} plan={plan} fiszki={fiszki} kolumna={kolumna}>
         {children}
       </UkladZloty>
       {/* 25.10 (USER_001): dymek czatu zostaje; obok niego kalkulator sprzedażowy (szef i konta demo). */}

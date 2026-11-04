@@ -5,6 +5,7 @@ import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { zapiszWejscie, zrodloZParametru } from "@/lib/bruno/wejscia";
 import { dostepKonta, pobierzKonto, stanDostepu, stanFree, zamknijPorzucone } from "@/lib/bruno/db";
 import { handlowcyFirmy, kontekstFirmy } from "@/lib/bruno/firmy";
+import { crmWlaczony } from "@/lib/bruno/lejek";
 import { motywAsset, motywRinesk } from "@/lib/bruno/motyw";
 import PanelRinesk from "@/components/bruno/panel-rinesk";
 import { danePanelu } from "@/components/podglad/panel/dane";
@@ -21,7 +22,7 @@ export const dynamic = "force-dynamic";
 const inter = Inter({ variable: "--font-bpa", subsets: ["latin", "latin-ext"], weight: ["300", "400", "500", "600", "700"] });
 const outfit = Outfit({ variable: "--font-bpa-head", subsets: ["latin", "latin-ext"], weight: ["300", "400", "500", "600"] });
 
-export default async function BrunoPanelPage({ searchParams }: { searchParams: Promise<{ src?: string }> }) {
+export default async function BrunoPanelPage({ searchParams }: { searchParams: Promise<{ src?: string; panel?: string }> }) {
   const { src } = await searchParams;
   const email = await zalogowanyEmail();
   // Niezalogowany z linku w mailu: źródło jedzie na stronę logowania, formularz odda je do logu (E18).
@@ -32,8 +33,11 @@ export default async function BrunoPanelPage({ searchParams }: { searchParams: P
 
   const konto = await pobierzKonto(email);
   if (konto && stanDostepu(konto).aktywny) await zamknijPorzucone(email);
-  const [d, { szef, logo }] = await Promise.all([danePanelu(await jezykZadania()), kontekstFirmy(konto)]);
-  const dostep = dostepKonta(konto);
+  const [d, { szef, logo, firma }] = await Promise.all([danePanelu(await jezykZadania()), kontekstFirmy(konto)]);
+  // 4.11: zakładki Lejek / Kokpit (Bruno pod CRM) tylko dla firmy demo z tokenem Pipedrive.
+  const dostep = { ...dostepKonta(konto), crm: crmWlaczony(firma) };
+  // 4.11 (USER_001, pkt 1): z CRM pierwszy ekran po zalogowaniu = Czat. Stary panel dostępny z menu „Inne” (?panel=1).
+  if (dostep.crm && !src && !(await searchParams).panel) redirect("/bruno/kokpit");
 
   // 27.10 (USER_001: „Rinesk wygrywa”): domyślny panel = styl Rinesk (components/bruno/panel-rinesk.tsx), belka i szerokość z układu.
   if (motywRinesk()) {

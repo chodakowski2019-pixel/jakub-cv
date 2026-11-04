@@ -1006,3 +1006,132 @@ button.bruno-obiekcje-wiersz:hover { background: rgba(212, 175, 90, 0.06); }
 @media (prefers-reduced-motion: reduce) {
   .orb-smuga, .orb-poswiata, .orb-srodek, .orb-mowi .orb-rdzen, .orb-mowi .orb-obwodka { animation: none; }
 }
+
+/* ===== 4.11 (USER_001): BRUNO POD CRM. Lejek (blj-*) i kokpit (bkk-*). ===== */
+.blj-etapy { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; align-items: end; list-style: none; margin: 0; padding: 0; }
+.blj-etap { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px 12px; border-radius: 16px; animation: bsz-wjazd 480ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.blj-naj { background: rgba(212, 175, 90, 0.10); outline: 1px solid rgba(212, 175, 90, 0.35); }
+.blj-slupek { width: 100%; height: 120px; display: flex; align-items: flex-end; justify-content: center; gap: 3px; }
+.blj-slupek > span { display: block; width: 18px; min-height: 3px; border-radius: 6px 6px 2px 2px; transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.blj-otwarte { background: linear-gradient(180deg, #f3dc9c, #d4af5a); }
+.blj-wygrane { background: linear-gradient(180deg, #86efac, #16a34a); }
+.blj-przegrane { background: linear-gradient(180deg, #fda4af, #e11d48); }
+.blj-liczba { font-weight: 700; font-size: 1.35rem; line-height: 1; margin-top: 4px; font-family: var(--font-outfit), var(--font-poppins); }
+.blj-nazwa { font-size: 12px; font-weight: 600; text-align: center; line-height: 1.2; color: #1f2937; }
+.blj-wartosc { font-size: 11px; color: #64748b; }
+.blj-mini { font-size: 11px; font-weight: 600; display: flex; gap: 6px; }
+.blj-kropka { display: inline-block; width: 9px; height: 9px; border-radius: 50%; vertical-align: -1px; margin-right: 2px; }
+.blj-k-otwarte { background: #d4af5a; } .blj-k-wygrane { background: #16a34a; } .blj-k-przegrane { background: #e11d48; }
+.blj-alarm { border-left: 3px solid #d4af5a; }
+.blj-tabela { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 13px; }
+.blj-tabela th { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(20, 20, 22, 0.6); padding: 10px 12px; text-align: center; white-space: nowrap; }
+.bruno.zloty:not(.rinesk) .blj-tabela th { color: rgba(245, 242, 234, 0.45); }
+.blj-tabela th:first-child { text-align: left; padding-left: 20px; }
+.blj-tabela td { padding: 12px; border-top: 1px solid rgba(255, 255, 255, 0.07); vertical-align: middle; }
+.blj-tabela td:first-child { padding-left: 20px; min-width: 180px; }
+.blj-tabela tr:hover td { background: rgba(212, 175, 90, 0.06); }
+.blj-cela-naj { background: rgba(212, 175, 90, 0.14); box-shadow: inset 0 0 0 1px rgba(212, 175, 90, 0.4); border-radius: 10px; }
+.bruno:not(.zloty) .blj-tabela td, .rinesk .blj-tabela td { border-top-color: rgba(15, 23, 42, 0.08); }
+.rinesk .blj-nazwa { color: #141416; }
+
+.bkk { display: flex; flex-direction: column; gap: 14px; min-height: calc(100dvh - 180px); }
+.bkk-naglowek { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.bkk-rozmowa { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 4px 0; }
+.bkk-pusty { margin: auto 0; padding: 20px 0; max-width: 560px; }
+.bkk-przyklad { text-align: left; font-size: 14px; padding: 10px 14px; border-radius: 14px; border: 1px solid rgba(212, 175, 90, 0.35); background: rgba(212, 175, 90, 0.08); color: #1f2937; cursor: pointer; transition: background 0.2s; }
+.bkk-przyklad:hover { background: rgba(212, 175, 90, 0.16); }
+.bkk-dymek { display: flex; gap: 10px; max-width: 760px; animation: bsz-wjazd 320ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.bkk-ja { align-self: flex-end; flex-direction: row-reverse; }
+.bkk-avatar { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 14px; color: #0b0b0b; background: var(--zl-grad, linear-gradient(135deg, #f3dc9c, #d4af5a)); }
+.bkk-tresc { padding: 10px 14px; border-radius: 18px; font-size: 15px; line-height: 1.45; }
+.bkk-ja .bkk-tresc { background: var(--zl-grad, linear-gradient(135deg, #f3dc9c, #d4af5a)); color: #0b0b0b; border-bottom-right-radius: 6px; }
+.bkk-bruno .bkk-tresc { background: rgba(255, 255, 255, 0.75); color: #1f2937; border: 1px solid rgba(212, 175, 90, 0.25); border-bottom-left-radius: 6px; backdrop-filter: blur(10px); }
+.bruno.zloty:not(.rinesk) .bkk-bruno .bkk-tresc { background: rgba(255, 255, 255, 0.06); color: #f5f2ea; }
+.bkk-blad .bkk-tresc { border-color: rgba(225, 29, 72, 0.5); }
+.bkk-akcje { margin: 8px 0 0; padding: 8px 0 0; border-top: 1px dashed rgba(212, 175, 90, 0.4); list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.bkk-ok { display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: #16a34a; color: #fff; font-size: 10px; margin-right: 6px; }
+.bkk-pisze { display: flex; gap: 5px; align-items: center; padding: 14px 16px; }
+.bkk-pisze i { width: 7px; height: 7px; border-radius: 50%; background: #d4af5a; animation: bkk-kropka 1.1s ease-in-out infinite; }
+.bkk-pisze i:nth-child(2) { animation-delay: 0.18s; } .bkk-pisze i:nth-child(3) { animation-delay: 0.36s; }
+@keyframes bkk-kropka { 0%, 100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+.bkk-pole { position: sticky; bottom: 12px; display: flex; gap: 10px; align-items: flex-end; padding: 10px 10px 10px 14px; border-radius: 22px; }
+.bkk-textarea { flex: 1; resize: none; background: transparent; border: 0; outline: 0; font-size: 15px; line-height: 1.4; padding: 8px 0; color: inherit; max-height: 160px; }
+.bkk-przyciski { display: flex; gap: 8px; align-items: center; }
+.bkk-mik { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; border: 1px solid rgba(212, 175, 90, 0.5); color: #a8822f; background: rgba(212, 175, 90, 0.1); cursor: pointer; transition: background 0.2s, transform 0.2s; }
+.bkk-mik:hover { background: rgba(212, 175, 90, 0.2); }
+.bkk-mik-on { background: #e11d48; border-color: #e11d48; color: #fff; animation: bkk-puls 1.2s ease-in-out infinite; }
+@keyframes bkk-puls { 0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.45); } 50% { box-shadow: 0 0 0 10px rgba(225, 29, 72, 0); } }
+@media (max-width: 640px) {
+  .blj-slupek { height: 90px; } .bkk-tresc { font-size: 14px; } .bkk-dymek { max-width: 100%; }
+  /* 4.11: pole czatu nad dolnym paskiem zakładek (nav-tel), nie pod nim */
+  .bkk-pole { bottom: calc(96px + env(safe-area-inset-bottom)); }
+  .bkk-lista li { flex-wrap: wrap; } .bkk-lista li > .flex-1 { white-space: normal; flex-basis: 100%; }
+  /* lista deali na telefonie: tytuł w całej szerokości, etap + kwota pod spodem */
+  .blj .bsz-rozmowa { flex-wrap: wrap; gap: 6px 10px; padding: 12px 16px; }
+  .blj .bsz-rozmowa > span:first-child { flex-basis: 100%; }
+  .blj .bsz-rozmowa > .tabular-nums { width: auto; margin-left: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .blj-etap, .bkk-dymek, .bkk-pisze i, .bkk-mik-on { animation: none; } }
+
+/* ===== 4.11 wieczór: CZAT = pierwszy ekran (powitanie z CRM), KLIENCI, RAPORT SZEFA ===== */
+.bkk-powitanie { max-width: 100%; width: 100%; }
+.bkk-blok { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(20, 20, 22, 0.08); }
+.bkk-blok-tytul { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(20, 20, 22, 0.55); margin-bottom: 8px; }
+.bkk-alarm { font-size: 10px; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 999px; background: #fdecec; color: #9b1c1c; }
+.bkk-lista { display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.bkk-lista li { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.bkk-data { flex: none; min-width: 52px; font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; color: rgba(20, 20, 22, 0.55); padding: 3px 8px; border-radius: 8px; background: rgba(20, 20, 22, 0.05); text-align: center; }
+.bkk-zalegle { background: #fdecec; color: #9b1c1c; }
+.bkk-mini { flex: none; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(20, 20, 22, 0.15); background: #fff; color: rgba(20, 20, 22, 0.75); cursor: pointer; }
+.bkk-mini:hover { border-color: rgba(20, 20, 22, 0.4); }
+.bkk-trening { padding: 14px; border-radius: 14px; background: linear-gradient(135deg, rgba(240, 180, 60, 0.14), rgba(240, 180, 60, 0.04)); border: 1px solid rgba(200, 150, 40, 0.25); border-top: 1px solid rgba(200, 150, 40, 0.25); }
+.bruno.zloty:not(.rinesk) .bkk-blok { border-top-color: rgba(255, 255, 255, 0.1); }
+.bruno.zloty:not(.rinesk) .bkk-blok-tytul { color: rgba(255, 255, 255, 0.6); }
+.bruno.zloty:not(.rinesk) .bkk-data { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.7); }
+.bruno.zloty:not(.rinesk) .bkk-mini { background: transparent; color: rgba(255, 255, 255, 0.8); border-color: rgba(255, 255, 255, 0.25); }
+
+/* Klienci */
+.bkl-szukaj { max-width: 320px; width: 100%; padding: 9px 12px; font-size: 14px; }
+.bkl-filtr { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(20, 20, 22, 0.12); color: rgba(20, 20, 22, 0.7); background: #fff; }
+.bkl-filtr-on { background: #141416; color: #fff; border-color: #141416; }
+.bkl-tabela { width: 100%; min-width: 760px; border-collapse: separate; border-spacing: 0; font-size: 13.5px; }
+.bkl-tabela th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(20, 20, 22, 0.6); padding: 8px 14px; border-bottom: 1px solid rgba(20, 20, 22, 0.08); white-space: nowrap; }
+.bkl-tabela td { padding: 11px 14px; border-bottom: 1px solid rgba(20, 20, 22, 0.06); vertical-align: middle; }
+.bkl-tabela tbody tr { animation: bsz-wjazd 0.35s both; }
+.bkl-tabela tbody tr:hover td { background: rgba(240, 180, 60, 0.06); }
+.bkl-tabela tbody tr:last-child td { border-bottom: 0; }
+.bkl-won { background: #e7f6ee; color: #166534; }
+.bkl-lost { background: #fdecec; color: #9b1c1c; }
+.bkl-etykieta { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(20, 20, 22, 0.5); }
+.bkl-etapy { display: flex; gap: 6px; flex-wrap: wrap; counter-reset: etap; }
+.bkl-etapy li { position: relative; flex: 1 1 110px; padding: 8px 10px 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; color: rgba(20, 20, 22, 0.45); background: rgba(20, 20, 22, 0.05); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bkl-etapy li.bkl-byl { background: rgba(20, 20, 22, 0.12); color: rgba(20, 20, 22, 0.75); }
+.bkl-etapy li.bkl-jest { background: linear-gradient(135deg, #f0b43c, #d98f16); color: #141416; box-shadow: 0 6px 16px -8px rgba(217, 143, 22, 0.7); }
+.bkl-przycisk-2 { display: inline-flex; align-items: center; padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(20, 20, 22, 0.18); background: #fff; color: #141416; font-size: 14px; font-weight: 600; }
+.bkl-przycisk-2:hover { border-color: rgba(20, 20, 22, 0.45); }
+.bkl-notatki { display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+.bkl-notatki li { display: grid; grid-template-columns: 64px 1fr; gap: 10px; align-items: start; padding: 10px 12px; border-radius: 12px; background: rgba(20, 20, 22, 0.035); }
+.bkl-notatki li.bkl-trening { background: rgba(240, 180, 60, 0.12); }
+.bkl-notatki p { margin: 0; color: rgba(20, 20, 22, 0.85); line-height: 1.45; }
+.bkl-kiedy { font-size: 11px; font-weight: 700; color: rgba(20, 20, 22, 0.5); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.bruno.zloty:not(.rinesk) .bkl-tabela th { color: rgba(255, 255, 255, 0.6); border-color: rgba(255, 255, 255, 0.1); }
+.bruno.zloty:not(.rinesk) .bkl-tabela td { border-color: rgba(255, 255, 255, 0.08); }
+.bruno.zloty:not(.rinesk) .bkl-filtr { background: transparent; color: rgba(255, 255, 255, 0.75); border-color: rgba(255, 255, 255, 0.25); }
+.bruno.zloty:not(.rinesk) .bkl-filtr-on { background: #f0b43c; color: #141416; border-color: #f0b43c; }
+.bruno.zloty:not(.rinesk) .bkl-notatki li { background: rgba(255, 255, 255, 0.06); }
+.bruno.zloty:not(.rinesk) .bkl-notatki p { color: rgba(255, 255, 255, 0.85); }
+.bruno.zloty:not(.rinesk) .bkl-przycisk-2 { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.3); }
+
+/* Raport szefa */
+.brp-tabela { width: 100%; min-width: 980px; border-collapse: separate; border-spacing: 0; font-size: 13.5px; }
+.brp-tabela th { text-align: left; font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(20, 20, 22, 0.6); padding: 8px 12px; border-bottom: 1px solid rgba(20, 20, 22, 0.08); white-space: nowrap; }
+.brp-tabela td { padding: 11px 12px; border-bottom: 1px solid rgba(20, 20, 22, 0.06); vertical-align: middle; }
+.brp-tabela tbody tr:last-child td { border-bottom: 0; }
+.brp-raport { padding: 18px 20px; border-radius: 16px; background: rgba(240, 180, 60, 0.08); border: 1px solid rgba(200, 150, 40, 0.22); }
+.brp-lista { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: rgba(20, 20, 22, 0.85); }
+.brp-zalecenia { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: rgba(20, 20, 22, 0.85); }
+.brp-pusty { padding: 16px 18px; border-radius: 16px; border: 1px dashed rgba(20, 20, 22, 0.2); }
+.brp-szkic { padding: 12px 14px; border-radius: 12px; background: rgba(20, 20, 22, 0.03); }
+.bruno.zloty:not(.rinesk) .brp-tabela th { color: rgba(255, 255, 255, 0.6); border-color: rgba(255, 255, 255, 0.1); }
+.bruno.zloty:not(.rinesk) .brp-tabela td { border-color: rgba(255, 255, 255, 0.08); }
+.bruno.zloty:not(.rinesk) .brp-lista, .bruno.zloty:not(.rinesk) .brp-zalecenia { color: rgba(255, 255, 255, 0.85); }

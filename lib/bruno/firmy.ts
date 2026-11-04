@@ -15,6 +15,9 @@ export type Firma = {
   demo_dane: unknown | null;
   /** 25.10: nagłówek panelu szefa po „Zespół” (np. „Jakuba”). Puste = nazwa firmy. */
   naglowek?: string | null;
+  /** 2.11: token API Pipedrive klienta (wynik rozmowy → aktywność w CRM). 4.11: także lejek i kokpit (tylko firma demo). */
+  pipedrive_token?: string | null;
+  pipedrive_typ?: string | null;
   utworzono: string;
 };
 

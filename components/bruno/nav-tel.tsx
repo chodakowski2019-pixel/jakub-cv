@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { type DostepLinkow, Ikona, linkiDla, useWyloguj } from "@/components/podglad/panel/wspolne";
+import { type DostepLinkow, GLOWNE_CRM, Ikona, linkiDla, useWyloguj } from "@/components/podglad/panel/wspolne";
 import { useT } from "@/components/bruno/jezyk-kontekst";
 import { Inicjal, type Logo } from "@/components/bruno/pasek-zloty";
 
@@ -22,7 +22,8 @@ export default function NavTel({ dostep, inicjal, logo = null }: { dostep: Doste
   const { t, jezyk } = useT();
   const [wiecej, setWiecej] = useState(false);
   const linki = linkiDla(dostep, jezyk);
-  const glowneHref = dostep.szef ? GLOWNE_SZEFA : GLOWNE;
+  // 4.11 (pkt 1): z CRM na telefonie 4 zakładki Czat · Klienci · Lejek · Statystyki, reszta w „Więcej”.
+  const glowneHref = dostep.crm ? GLOWNE_CRM.slice(0, 4) : dostep.szef ? GLOWNE_SZEFA : GLOWNE;
   const glowne = glowneHref.map((h) => linki.find((l) => l.href === h)).filter((l): l is (typeof linki)[number] => Boolean(l));
   const reszta = linki.filter((l) => !glowneHref.includes(l.href));
   const aktywny = (href: string) => sciezka === href || sciezka.startsWith(`${href}/`);

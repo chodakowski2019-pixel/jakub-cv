@@ -33,7 +33,7 @@ export default function PasekZloty({ dostep, inicjal, logo = null }: { dostep: D
   const { t, jezyk } = useT();
   const linki = linkiDla(dostep, jezyk);
   const aktywny = (href: string) => sciezka === href || sciezka.startsWith(`${href}/`);
-  const dom = dostep.szef ? "/bruno/szef" : "/bruno/panel";
+  const dom = dostep.crm ? "/bruno/kokpit" : dostep.szef ? "/bruno/szef" : "/bruno/panel";
 
   return (
     <>

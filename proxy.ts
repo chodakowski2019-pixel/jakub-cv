@@ -105,8 +105,9 @@ export function proxy(request: NextRequest) {
   }
   // 4.11 (USER_001): /oferta = 3 pakiety Bruno dla firm PL (app/brunooferta), tylko .pl i localhost.
   // jakubchodakowski.com/oferta (szkolenie dla nauczycieli) bez zmian.
-  if ((jezyk === "pl" || hostBezPortu === "localhost") && pathname === "/oferta") {
-    return dalej(request, pathname, jezyk, "/brunooferta");
+  // 4.11 (pkt 6): /oferta/zamowienie = formularz zamówienia pakietu (app/brunooferta/zamowienie).
+  if ((jezyk === "pl" || hostBezPortu === "localhost") && (pathname === "/oferta" || pathname === "/oferta/zamowienie")) {
+    return dalej(request, pathname, jezyk, `/brunooferta${pathname.slice("/oferta".length)}`);
   }
   // 31.10 (USER_001): /blog = blog Bruno PL pod SEO (app/brunoblog), tylko .pl i localhost.
   if ((jezyk === "pl" || hostBezPortu === "localhost") && (pathname === "/blog" || pathname.startsWith("/blog/"))) {

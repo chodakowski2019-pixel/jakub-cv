@@ -9,6 +9,7 @@ import { policzMetryki } from "@/lib/bruno/metryki";
 import { celLubDomyslny, opisCelu, postacLubDomyslna, trybLubDomyslny } from "@/lib/bruno/postacie";
 import { ocenRozmowe } from "@/lib/bruno/rubryka";
 import { jezykLubDomyslny } from "@/lib/bruno/domeny";
+import { wyslijWynikDoCrm } from "@/lib/bruno/pipedrive";
 import { tDla } from "@/lib/bruno/i18n";
 
 export const dynamic = "force-dynamic";
@@ -99,6 +100,10 @@ export async function POST(req: Request) {
     });
     await supabaseAdmin.from("bruno_rozmowy").update({ feedback, ocena: feedback.ocena }).eq("id", id);
     await zaktualizujKarty(email, feedback);
+    // 2.11: wynik do CRM firmy (Pipedrive), po odpowiedzi, bez wpływu na handlowca.
+    after(async () => {
+      await wyslijWynikDoCrm(konto, { id, start: rozmowa.start, sekundy, obiekcja: rozmowa.obiekcja ?? null, postac: rozmowa.postac ?? null, poziom: rozmowa.poziom ?? null }, feedback);
+    });
     // Minusy z tej rozmowy → fiszki „do poprawy" w Treningu (USER_001 2.10).
     try {
       const nowe = await kartyZFeedbacku({ feedback, produkt: konfig.produkt, jezyk, segment: konfig.segment });

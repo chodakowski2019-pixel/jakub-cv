@@ -15,6 +15,8 @@ export type Pakiet = {
 };
 
 export const MINIMUM_KONT = 3;
+/** 4.11 (pkt 6): wersja oferty zapisywana przy zamówieniu (akceptacja regulaminu dotyczy tej wersji). */
+export const WERSJA_OFERTY = "2026-11-04";
 
 export const PAKIETY: Pakiet[] = [
   {

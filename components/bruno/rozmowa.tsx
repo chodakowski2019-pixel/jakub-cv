@@ -49,6 +49,8 @@ type Props = {
   jutro?: boolean;
   /** 28.10: motyw Rinesk = kula WebGL (kula-orb.tsx) w limonce + nagłówek nad Startem. */
   rinesk?: boolean;
+  /** 4.11 (Bruno pod CRM): sytuacja z lejka (deal + etap z Pipedrive) wpisana z góry w „Rozmowę, którą masz jutro”. */
+  sytuacjaStart?: string | null;
 };
 
 /** 25.10 (USER_001: „cel rozmowy z obrazkami”): emoji przy celu. */
@@ -198,7 +200,7 @@ function KolkoOceny({ etykieta }: { etykieta: string }) {
   );
 }
 
-export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny, free = null, obiekcjeOpis = {}, jutro = false, rinesk = false }: Props) {
+export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny, free = null, obiekcjeOpis = {}, jutro = false, rinesk = false, sytuacjaStart = null }: Props) {
   // 11.10: teksty UI w języku konta (tr, bo `t` jest niżej zmienną trybu). Etykiety z etykiety(jezyk), kolor/ikona z postacie.ts.
   const { t: tr, jezyk, mnoga } = useT();
   const E = etykiety(jezyk);
@@ -208,8 +210,8 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
   const cudzy = (s: string) => (jezyk === "pl" ? `„${s}”` : `“${s}”`);
   const [tryb, setTryb] = useState<TrybId>("cold");
   // „Rozmowa, którą masz jutro" (9.10, moduł płatny): sytuacja z życia wklejona przed rozmową.
-  const [sytuacja, setSytuacja] = useState("");
-  const [sytuacjaOtwarta, setSytuacjaOtwarta] = useState(false);
+  const [sytuacja, setSytuacja] = useState(sytuacjaStart ?? "");
+  const [sytuacjaOtwarta, setSytuacjaOtwarta] = useState(Boolean(sytuacjaStart));
   // Kilka obiekcji naraz (USER_001 2.10). "__losowa__" i pusta lista są wyłączne.
   const [wybraneObiekcje, setWybraneObiekcje] = useState<string[]>(karta?.typ === "obiekcja" ? [karta.tresc] : obiekcje.length ? ["__losowa__"] : []);
   const losowa = wybraneObiekcje.includes("__losowa__");
@@ -796,6 +798,13 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
             // 26.10 (USER_001): bez napisu „Dobrałem dla Ciebie…”, nowa kula (orb-bruno.tsx) na środku ekranu.
             // 28.10 (USER_001: „prawdziwa kula”): w Rinesk kula WebGL w limonce + „Rozmowa z Bruno” i jedno zdanie, co się stanie.
             <div className={`flex flex-col items-center justify-center pt-6 ${rinesk ? "brz-start" : "min-h-[52vh]"}`}>
+              {/* 4.11 (Bruno pod CRM): wejście z lejka („Trenuj ten etap”) pokazuje, jaką sytuację zagra Bruno. */}
+              {sytuacjaStart && (
+                <div className="bruno-szklo rounded-2xl px-4 py-3 mb-5 max-w-xl text-sm text-slate-700">
+                  <span className="bsz-pigulka mr-2">{tr("From your pipeline", "Z Twojego lejka")}</span>
+                  {sytuacjaStart}
+                </div>
+              )}
               <div className={`relative ${rinesk ? "brz-kula" : "size-64 sm:size-80"}`}>
                 {rinesk ? <KulaLimonka tempo="czeka" /> : <OrbBruno tempo="czeka" />}
               </div>

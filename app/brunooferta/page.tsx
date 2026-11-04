@@ -218,6 +218,10 @@ export default function Page() {
             <a className={`${s.btnDark} ${s.btnBig}`} href={SPOTKANIE}>
               Umów rozmowę, 20 minut
             </a>
+            {/* 4.11 (pkt 6): zamówienie online z akceptacją regulaminu (pakiety 1-2). */}
+            <a className={`${s.pill} ${s.btnBig}`} href="/oferta/zamowienie">
+              Zamów pakiet online
+            </a>
           </div>
         </div>
         <div className={s.side}>

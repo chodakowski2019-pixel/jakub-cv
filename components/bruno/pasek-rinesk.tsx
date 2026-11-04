@@ -19,14 +19,23 @@ export default function PasekRinesk({ dostep, inicjal, logo = null, plan = null,
   const linki = linkiDla(dostep, jezyk);
   const L = (ik: string) => linki.find((l) => l.ikona === ik);
   const aktywny = (href: string) => sciezka === href || sciezka.startsWith(`${href}/`);
-  const dom = dostep.szef ? "/bruno/szef" : "/bruno/panel";
-  const sekcje: { tytul: string; linki: ({ href: string; nazwa: string; ikona: Parameters<typeof Ikona>[0]["nazwa"]; licznik?: string } | undefined)[] }[] = [
-    // 27.10 (USER_001): „Wgląd / Zespół” na samej górze (szef zaczyna od zespołu).
-    { tytul: t("Insights", "Wgląd"), linki: [L("zespol")] },
-    { tytul: t("General", "Ogólne"), linki: [L("panel"), L("test"), L("trening") && { ...L("trening")!, licznik: fiszki ? String(fiszki) : undefined }] },
-    { tytul: t("Tools", "Narzędzia"), linki: [L("ogien"), L("feedback"), L("statystyki"), L("kalendarz"), L("tydzien")] },
-    { tytul: t("Other", "Inne"), linki: [L("ustawienia"), { href: "/bruno/dostosuj", nazwa: t("Customize Bruno", "Dostosuj Bruno"), ikona: "dostosuj" }] },
-  ];
+  const dom = dostep.crm ? "/bruno/kokpit" : dostep.szef ? "/bruno/szef" : "/bruno/panel";
+  type Pozycja = { href: string; nazwa: string; ikona: Parameters<typeof Ikona>[0]["nazwa"]; licznik?: string } | undefined;
+  const trening: Pozycja = L("trening") && { ...L("trening")!, licznik: fiszki ? String(fiszki) : undefined };
+  const sekcje: { tytul: string; linki: Pozycja[] }[] = dostep.crm
+    ? [
+        // 4.11 (USER_001, pkt 1): z CRM 4 główne zakładki (Czat · Klienci · Lejek · Statystyki), szef + Raport + Zespół; reszta drugorzędna.
+        { tytul: "Bruno", linki: [L("kokpit"), L("klienci"), L("lejek"), L("statystyki"), L("raport"), L("zespol")] },
+        { tytul: t("Practice", "Trening"), linki: [L("test"), trening, L("feedback"), L("ogien")] },
+        { tytul: t("Other", "Inne"), linki: [L("panel") && { ...L("panel")!, href: "/bruno/panel?panel=1" }, L("kalendarz"), L("tydzien"), L("ustawienia")] },
+      ]
+    : [
+        // 27.10 (USER_001): „Wgląd / Zespół” na samej górze (szef zaczyna od zespołu).
+        { tytul: t("Insights", "Wgląd"), linki: [L("zespol")] },
+        { tytul: t("General", "Ogólne"), linki: [L("panel"), L("test"), trening] },
+        { tytul: t("Tools", "Narzędzia"), linki: [L("ogien"), L("feedback"), L("statystyki"), L("kalendarz"), L("tydzien")] },
+        { tytul: t("Other", "Inne"), linki: [L("ustawienia"), { href: "/bruno/dostosuj", nazwa: t("Customize Bruno", "Dostosuj Bruno"), ikona: "dostosuj" }] },
+      ];
   const zostalo = plan ? Math.max(0, plan.dziennie - plan.dzis) : 0;
 
   return (

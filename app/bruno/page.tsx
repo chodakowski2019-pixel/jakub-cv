@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonto } from "@/lib/bruno/db";
-import { czySzef } from "@/lib/bruno/firmy";
+import { czySzef, pobierzFirme } from "@/lib/bruno/firmy";
+import { crmWlaczony } from "@/lib/bruno/lejek";
 import LogowanieForm from "@/components/podglad/aurora/logowanie-form";
 import { googleSkonfigurowany } from "@/lib/bruno/google";
 import { metadaneBruno, stronaBruno } from "@/components/podglad/bruno-lp/serwer";
@@ -25,6 +26,8 @@ export default async function BrunoLoginPage({ searchParams }: Props) {
     const konto = await pobierzKonto(email);
     // 25.10 (USER_001): konto spotkań najpierw „Przygotuj spotkanie” (imię rozmówcy + strona firmy).
     if (!src && konto?.spotkania) redirect("/bruno/przygotuj");
+    // 4.11 (USER_001, pkt 1): firma z CRM zaczyna od Czatu (Bruno wita, zadania z CRM, deale bez ruchu, trening).
+    if (!src && crmWlaczony(await pobierzFirme(konto?.firma_id))) redirect("/bruno/kokpit");
     if (!src && czySzef(konto)) redirect("/bruno/szef");
     redirect(src ? `/bruno/panel?src=${encodeURIComponent(String(src))}` : "/bruno/panel");
   }
