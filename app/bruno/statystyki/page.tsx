@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { dostepKonta, limitDzienny, pobierzKonto, pobierzRozmowy, stanDostepu, zuzyteSekundy, type Kryterium } from "@/lib/bruno/db";
 import { etykiety } from "@/lib/bruno/etykiety";
+import { czySzef, handlowcyFirmy } from "@/lib/bruno/firmy";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { locale, mnoga } from "@/lib/bruno/i18n";
 import { postepScenariuszy } from "@/lib/bruno/scenariusze";
@@ -13,11 +14,18 @@ export const dynamic = "force-dynamic";
 // ocenione, średnia, ostatnia) + średnia na każde kryterium rubryki + słupki
 // z całego okresu testu.
 
-export default async function BrunoStatystykiPage() {
+export default async function BrunoStatystykiPage({ searchParams }: { searchParams: Promise<{ jako?: string }> }) {
   const email = await zalogowanyEmail();
   if (!email) redirect("/bruno");
   const konto = await pobierzKonto(email);
   if (!konto) redirect("/bruno");
+  // 4.11 (USER_001): szef w sekcji „Bruno handlowca” (?jako=) → statystyki = profil tego handlowca w panelu szefa.
+  const { jako } = await searchParams;
+  if (jako && czySzef(konto) && konto.firma_id) {
+    const handlowcy = await handlowcyFirmy(konto.firma_id);
+    const h = handlowcy.find((x) => x.email.toLowerCase() === String(jako).toLowerCase()) ?? handlowcy[0];
+    if (h) redirect(`/bruno/szef/${encodeURIComponent(h.email)}`);
+  }
   // 10.10: Statystyki poza planem free (do zakupu Bruno Pro).
   if (!dostepKonta(konto).statystyki) redirect("/bruno/odblokuj");
   const { t, jezyk } = await tSerwer();

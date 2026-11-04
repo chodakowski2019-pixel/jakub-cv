@@ -1,21 +1,22 @@
 import { redirect } from "next/navigation";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonto, pobierzRozmowy } from "@/lib/bruno/db";
-import { czySzef, handlowcyFirmy, pobierzFirme } from "@/lib/bruno/firmy";
+import { pobierzFirme } from "@/lib/bruno/firmy";
+import { widokKonta } from "@/lib/bruno/jako";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { analizaZDeali, crmWlaczony, dealeBezRuchu, domenaPipedrive, formatKwota, notatkiDeala, pobierzLejek, zadaniaFirmy } from "@/lib/bruno/lejek";
 import { dobierzTrening } from "@/lib/bruno/dobor-treningu";
+import { zdjecieKlienta } from "@/lib/bruno/twarze";
 import Kokpit, { type Powitanie } from "@/components/bruno/kokpit";
+import PrzelacznikHandlowca from "@/components/bruno/przelacznik-handlowca";
 
 export const dynamic = "force-dynamic";
 
-// 4.11 (USER_001): KOKPIT jak ChatGPT. Handlowiec pisze albo mówi („byłem u Kowalskiego, chce ofertę do piątku”),
-// AI sam dopisuje notatki do deali, przesuwa etapy, zakłada zadania i deale w CRM (Pipedrive).
-// Argument sprzedażowy: „CRM, z którego handlowcy CHCĄ korzystać”. Tylko firma demo z tokenem.
-// 4.11 wieczór (USER_001, pkt 1): zakładka nazywa się CZAT i jest PIERWSZYM EKRANEM po zalogowaniu. Bruno wita,
-// podsumowuje dzisiejsze zadania z CRM, deale bez ruchu > 7 dni i proponuje 1 trening (pkt 5: dobór automatyczny).
+// 4.11 (USER_001): CZAT z Bruno = kula z płynem na środku + UX jak ChatGPT (kokpit.tsx). Handlowiec pisze albo mówi,
+// AI sam zapisuje w CRM (Pipedrive). Pierwszy ekran po zalogowaniu. Powitanie liczone z CRM: zadania na dziś,
+// deale bez ruchu > 7 dni, 1 trening (pkt 5). Szef: „Bruno właściciela” (zespół) albo z ?jako= „Bruno handlowca”.
 
-export default async function BrunoKokpitPage() {
+export default async function BrunoKokpitPage({ searchParams }: { searchParams: Promise<{ jako?: string; deal?: string }> }) {
   const email = await zalogowanyEmail();
   if (!email) redirect("/bruno");
   const konto = await pobierzKonto(email);
@@ -23,37 +24,33 @@ export default async function BrunoKokpitPage() {
   const firma = await pobierzFirme(konto.firma_id);
   if (!crmWlaczony(firma) || !firma?.pipedrive_token) redirect("/bruno/panel");
   const { jezyk } = await tSerwer();
+  const { jako } = await searchParams;
+  const w = await widokKonta(konto, firma, jako);
   const token = firma.pipedrive_token;
-  const szef = czySzef(konto);
-  const ja = email.toLowerCase();
+  const szef = w.szef;
+  const ja = w.konto.email.toLowerCase();
+  const handlowcy = szef ? w.handlowcy : [w.konto];
   const dzis = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
 
   let powitanie: Powitanie | null = null;
   try {
-    const [lejek, zadania, domena, handlowcy, rozmowy] = await Promise.all([
-      pobierzLejek(token),
-      zadaniaFirmy(token, { do: dzis }),
-      domenaPipedrive(token),
-      szef ? handlowcyFirmy(firma.id) : Promise.resolve([konto]),
-      pobierzRozmowy(email, 20),
-    ]);
-    const znane = new Set(handlowcy.map((h) => h.email.toLowerCase()));
+    const [lejek, zadania, domena, rozmowy] = await Promise.all([pobierzLejek(token), zadaniaFirmy(token, { do: dzis }), domenaPipedrive(token), pobierzRozmowy(w.konto.email, 20)]);
+    const znane = new Set(w.handlowcy.map((h) => h.email.toLowerCase()));
     const moje = szef ? lejek.deale : lejek.deale.filter((d) => d.handlowiec === ja);
     const mojeId = new Set(moje.map((d) => d.id));
-    const imie = (e: string | null) => handlowcy.find((h) => h.email.toLowerCase() === e)?.imie ?? null;
-    const kwota = (n: number, w: string) => formatKwota(n, w, jezyk);
+    const imie = (e: string | null) => w.handlowcy.find((h) => h.email.toLowerCase() === e)?.imie ?? null;
+    const kwota = (n: number, wal: string) => formatKwota(n, wal, jezyk);
     const naDzis = zadania
       .filter((z) => z.deal_id && mojeId.has(z.deal_id))
       .sort((a, b) => (a.data + (a.godzina ?? "")).localeCompare(b.data + (b.godzina ?? "")))
       .slice(0, 8)
       .map((z) => {
         const d = moje.find((x) => x.id === z.deal_id);
-        return { id: z.id, temat: z.temat, data: z.data, godzina: z.godzina, zalegle: z.data < dzis, deal: d?.tytul ?? z.organizacja ?? "", dealId: z.deal_id, kto: szef ? imie(d?.handlowiec ?? null) : null };
+        return { id: z.id, temat: z.temat, data: z.data, godzina: z.godzina, zalegle: z.data < dzis, deal: d?.tytul ?? z.organizacja ?? "", dealId: z.deal_id, osoba: d?.osoba ?? z.osoba ?? null, zdjecie: zdjecieKlienta(d?.osoba ?? z.osoba), kto: szef ? imie(d?.handlowiec ?? null) : null };
       });
     const bezRuchu = dealeBezRuchu(moje, 7)
       .slice(0, 6)
-      .map((d) => ({ id: d.id, tytul: d.tytul, etap: lejek.etapy.find((e) => e.id === d.etap_id)?.nazwa ?? "", wartosc: kwota(d.wartosc, d.waluta), dni: Math.floor((Date.now() - new Date(d.aktualizacja!).getTime()) / 86_400_000), kto: szef ? imie(d.handlowiec) : null }));
-    // Trening (pkt 5): handlowiec = jego lejek; szef = najsłabszy handlowiec zespołu (po skuteczności).
+      .map((d) => ({ id: d.id, tytul: d.tytul, etap: lejek.etapy.find((e) => e.id === d.etap_id)?.nazwa ?? "", wartosc: kwota(d.wartosc, d.waluta), dni: Math.floor((Date.now() - new Date(d.aktualizacja!).getTime()) / 86_400_000), osoba: d.osoba, zdjecie: zdjecieKlienta(d.osoba), kto: szef ? imie(d.handlowiec) : null }));
     let trening: Powitanie["trening"] = null;
     if (!szef) {
       const analiza = analizaZDeali(ja, lejek.etapy, moje);
@@ -83,5 +80,10 @@ export default async function BrunoKokpitPage() {
     console.error("[kokpit powitanie]", e);
   }
   const domena = powitanie?.domena ?? (await domenaPipedrive(token));
-  return <Kokpit jezyk={jezyk} imie={konto.imie ?? email} szef={szef} firma={firma.nazwa} domenaCrm={domena} powitanie={powitanie} />;
+  return (
+    <>
+      {w.jakoHandlowiec && <PrzelacznikHandlowca sciezka="/bruno/kokpit" jezyk={jezyk} handlowcy={w.handlowcy} wybrany={w.konto.email} />}
+      <Kokpit jezyk={jezyk} imie={w.konto.imie ?? w.konto.email} szef={szef} firma={firma.nazwa} domenaCrm={domena} powitanie={powitanie} jako={w.jako} />
+    </>
+  );
 }

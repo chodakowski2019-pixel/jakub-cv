@@ -2,7 +2,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonto } from "@/lib/bruno/db";
-import { czySzef, handlowcyFirmy, pobierzFirme } from "@/lib/bruno/firmy";
+import { pobierzFirme } from "@/lib/bruno/firmy";
+import { widokKonta } from "@/lib/bruno/jako";
 import { tDla } from "@/lib/bruno/i18n";
 import {
   crmWlaczony,
@@ -130,8 +131,11 @@ export async function POST(req: Request) {
   if (!historia.length || historia[historia.length - 1].rola !== "user") return NextResponse.json({ blad: t("Empty message.", "Pusta wiadomość.") }, { status: 400 });
 
   const token = firma.pipedrive_token;
-  const szef = czySzef(konto);
-  const ja = email.toLowerCase();
+  // 4.11: szef w „Bruno handlowca” (?jako=) rozmawia jak ten handlowiec: widzi i zmienia tylko jego deale.
+  const w = await widokKonta(konto, firma, new URL(req.url).searchParams.get("jako"));
+  const szef = w.szef;
+  const ja = w.konto.email.toLowerCase();
+  const imieKonta = w.konto.imie ?? w.konto.email;
   const jezyk = konto.jezyk === "pl" ? "pl" : "en";
 
   let lejek: Lejek;
@@ -139,7 +143,7 @@ export async function POST(req: Request) {
   try {
     [lejek, handlowcy] = await Promise.all([
       pobierzLejek(token),
-      szef ? handlowcyFirmy(firma.id).then((h) => h.map((x) => ({ email: x.email.toLowerCase(), imie: x.imie ?? x.email }))) : Promise.resolve([{ email: ja, imie: konto.imie ?? email }]),
+      Promise.resolve((szef ? w.handlowcy : [w.konto]).map((x) => ({ email: x.email.toLowerCase(), imie: x.imie ?? x.email }))),
     ]);
   } catch (e) {
     return NextResponse.json({ blad: `CRM: ${String((e as Error)?.message ?? e)}` }, { status: 502 });
@@ -157,7 +161,7 @@ export async function POST(req: Request) {
 
   const dzis = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
   const system = [
-    `Jesteś Bruno, asystentem CRM firmy „${firma.nazwa}”. Użytkownik: ${konto.imie ?? email} (${szef ? "szef, widzi cały zespół" : "handlowiec, widzi tylko swoje deale"}). Dziś: ${dzis}.`,
+    `Jesteś Bruno, asystentem CRM firmy „${firma.nazwa}”. Użytkownik: ${imieKonta} (${szef ? "szef, widzi cały zespół" : "handlowiec, widzi tylko swoje deale"}). Dziś: ${dzis}.`,
     `Zadanie: użytkownik opowiada, co się wydarzyło (spotkanie, telefon, ustalenia), albo pyta o lejek. Ty SAM wykonujesz zmiany w CRM narzędziami: notatka, etap, zadanie, nowy deal, wygrany/przegrany, wartość. Nie pytaj o potwierdzenie przy oczywistych rzeczach; dopytaj TYLKO, gdy nie wiesz, o który deal chodzi (kilka pasuje) albo brakuje daty zadania.`,
     `Zasady: najpierw znajdź deal (lista_deali z „szukaj”), potem zapisuj. Notatka = fakty z wypowiedzi, krótko, bez wymyślania. „Do piątku” = policz datę od dziś. Po zapisie odpowiedz 1-3 zdaniami: co zapisałeś i jaki jest następny krok. Odpowiadaj ${jezyk === "pl" ? "po polsku" : "in American English"}, prosto, bez żargonu.`,
     `Etapy lejka „${lejek.pipeline.nazwa}” (id: nazwa): ${lejek.etapy.map((e) => `${e.id}: ${e.nazwa}`).join(", ")}.`,
@@ -195,7 +199,7 @@ export async function POST(req: Request) {
         const d = mojDeal(Number(input.deal_id));
         const tresc = String(input.tresc ?? "").trim().slice(0, 4000);
         if (!tresc) throw new Error("Pusta notatka.");
-        await dodajNotatke(token, d.id, `<p>${tresc.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c] ?? c).replace(/\n/g, "<br>")}</p><p><i>${konto.imie ?? email} przez Bruno</i></p>`);
+        await dodajNotatke(token, d.id, `<p>${tresc.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c] ?? c).replace(/\n/g, "<br>")}</p><p><i>${imieKonta} przez Bruno</i></p>`);
         akcje.push({ opis: `${t("Note added", "Notatka dodana")}: ${d.tytul}`, link: linkDeala(d.id) });
         return `Notatka zapisana w dealu #${d.id}.`;
       }

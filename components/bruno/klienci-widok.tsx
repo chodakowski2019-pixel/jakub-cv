@@ -3,6 +3,8 @@ import { Naglowek } from "@/components/bruno/zespol-widok";
 import type { Firma } from "@/lib/bruno/firmy";
 import { locale, tDla, type Jezyk } from "@/lib/bruno/i18n";
 import { formatKwota, type Aktywnosc, type Deal, type Etap } from "@/lib/bruno/lejek";
+import { zJako } from "@/lib/bruno/jako";
+import { zdjecieKlienta } from "@/lib/bruno/twarze";
 
 // 4.11 (USER_001, pkt 2): ZAKŁADKA KLIENCI (lista) + KARTA KLIENTA. Dane na żywo z CRM (Pipedrive).
 // Styl: czarno-złote szkło (bruno-szklo, bsz-*), własne klasy bkl-* w bruno.css.
@@ -12,7 +14,7 @@ type Osoba = { email: string; imie: string; zdjecie: string | null };
 const dataKrotka = (iso: string | null | undefined, jezyk: Jezyk) => (iso ? new Date(iso).toLocaleDateString(locale(jezyk), { day: "numeric", month: "short" }) : null);
 const dniTemu = (iso: string | null | undefined) => (iso ? Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000)) : null);
 
-export default function KlienciLista({ firma, jezyk, szef, etapy, deale, osoby, q, status, blad = null }: { firma: Firma | null; jezyk: Jezyk; szef: boolean; etapy: Etap[]; deale: Deal[]; osoby: Osoba[]; q: string; status: "open" | "won" | "lost" | "all"; blad?: string | null }) {
+export default function KlienciLista({ firma, jezyk, szef, etapy, deale, osoby, q, status, blad = null, jako = null, imie = null }: { firma: Firma | null; jezyk: Jezyk; szef: boolean; etapy: Etap[]; deale: Deal[]; osoby: Osoba[]; q: string; status: "open" | "won" | "lost" | "all"; blad?: string | null; /** 4.11: szef w widoku handlowca: linki trzymają ?jako=. */ jako?: string | null; imie?: string | null }) {
   const t = tDla(jezyk);
   const dzis = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
   const szukaj = q.trim().toLowerCase();
@@ -32,7 +34,7 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, osoby, 
 
   return (
     <div className="flex flex-col gap-6 bsz bkl">
-      <Naglowek firma={firma} tytul={t("Clients", "Klienci")} akcent={firma?.naglowek?.trim() || firma?.nazwa || "CRM"} podtytul={szef ? t("Every client of the team, live from the CRM.", "Wszyscy klienci zespołu, na żywo z CRM.") : t("Your clients, live from the CRM.", "Twoi klienci, na żywo z CRM.")} />
+      <Naglowek firma={firma} tytul={t("Clients", "Klienci")} akcent={firma?.naglowek?.trim() || firma?.nazwa || "CRM"} podtytul={`${imie ? `${imie} · ` : ""}${szef ? t("Every client of the team, live from the CRM.", "Wszyscy klienci zespołu, na żywo z CRM.") : t("Your clients, live from the CRM.", "Twoi klienci, na żywo z CRM.")}`} />
       {blad ? (
         <section className="bruno-szklo rounded-2xl p-6">
           <p className="text-rose-800 font-medium">{t("Couldn't read the CRM.", "Nie udało się odczytać CRM.")}</p>
@@ -43,9 +45,10 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, osoby, 
           <form className="px-5 pt-5 pb-3 flex flex-wrap items-center gap-3" method="get">
             <input type="search" name="q" defaultValue={q} placeholder={t("Search: client, company…", "Szukaj: klient, firma…")} className="bruno-pole bkl-szukaj" aria-label={t("Search", "Szukaj")} />
             <input type="hidden" name="status" value={status} />
+            {jako && <input type="hidden" name="jako" value={jako} />}
             <div className="flex gap-1.5 flex-wrap">
               {filtry.map((f) => (
-                <Link key={f.k} href={`/bruno/klienci?status=${f.k}${q ? `&q=${encodeURIComponent(q)}` : ""}`} className={`bkl-filtr ${status === f.k ? "bkl-filtr-on" : ""}`}>
+                <Link key={f.k} href={zJako(`/bruno/klienci?status=${f.k}${q ? `&q=${encodeURIComponent(q)}` : ""}`, jako)} className={`bkl-filtr ${status === f.k ? "bkl-filtr-on" : ""}`}>
                   {f.n}
                 </Link>
               ))}
@@ -73,8 +76,14 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, osoby, 
                   return (
                     <tr key={d.id} style={{ animationDelay: `${i * 20}ms` }}>
                       <td>
-                        <Link href={`/bruno/klienci/${d.id}`} className="font-semibold text-slate-900 hover:underline underline-offset-2">{d.osoba ?? d.tytul}</Link>
-                        {d.osoba && <span className="block text-[11px] text-slate-400 truncate max-w-[220px]">{d.tytul}</span>}
+                        <Link href={zJako(`/bruno/klienci/${d.id}`, jako)} className="flex items-center gap-2.5 min-w-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          {zdjecieKlienta(d.osoba) ? <img src={zdjecieKlienta(d.osoba)!} alt="" className="bsz-inicjal bsz-zdjecie" style={{ width: 34, height: 34 }} /> : <span className="bsz-inicjal" style={{ width: 34, height: 34, fontSize: 13 }}>{(d.organizacja ?? d.tytul)[0]?.toUpperCase()}</span>}
+                          <span className="min-w-0">
+                            <span className="block font-semibold text-slate-900 truncate max-w-[220px]">{d.osoba ?? d.tytul}</span>
+                            {d.osoba && d.tytul !== d.osoba && d.tytul !== d.organizacja && <span className="block text-[11px] text-slate-400 truncate max-w-[220px]">{d.tytul}</span>}
+                          </span>
+                        </Link>
                       </td>
                       <td className="text-slate-700">{d.organizacja ?? "–"}</td>
                       <td>
@@ -124,7 +133,7 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, osoby, 
   );
 }
 
-export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnosci, handlowiec, linkCrm }: { firma: Firma | null; jezyk: Jezyk; szef: boolean; deal: Deal; etapy: Etap[]; notatki: { id: number; tresc: string; kiedy: string }[]; aktywnosci: (Aktywnosc & { typNazwa: string })[]; handlowiec: Osoba | null; linkCrm: string | null }) {
+export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnosci, handlowiec, linkCrm, jako = null }: { firma: Firma | null; jezyk: Jezyk; szef: boolean; deal: Deal; etapy: Etap[]; notatki: { id: number; tresc: string; kiedy: string }[]; aktywnosci: (Aktywnosc & { typNazwa: string })[]; handlowiec: Osoba | null; linkCrm: string | null; jako?: string | null }) {
   const t = tDla(jezyk);
   const etap = etapy.find((e) => e.id === deal.etap_id);
   const idx = etapy.findIndex((e) => e.id === deal.etap_id);
@@ -150,9 +159,9 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
   return (
     <div className="flex flex-col gap-6 bsz bkl">
       <div>
-        <Link href="/bruno/klienci" className="text-sm text-slate-500 hover:text-slate-900">← {t("Clients", "Klienci")}</Link>
+        <Link href={zJako("/bruno/klienci", jako)} className="text-sm text-slate-500 hover:text-slate-900">← {t("Clients", "Klienci")}</Link>
         <div className="mt-2">
-          <Naglowek firma={firma} tytul={deal.osoba ?? deal.tytul} akcent="" podtytul={[deal.organizacja, deal.osoba ? deal.tytul : null].filter(Boolean).join(" · ") || undefined} />
+          <Naglowek firma={firma} tytul={deal.osoba ?? deal.tytul} akcent="" podtytul={[deal.organizacja, deal.osoba && deal.tytul !== deal.osoba && deal.tytul !== deal.organizacja ? deal.tytul : null].filter(Boolean).join(" · ") || undefined} zdjecie={zdjecieKlienta(deal.osoba)} />
         </div>
       </div>
 
@@ -173,7 +182,7 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
         </ol>
         <div className="flex gap-3 flex-wrap mt-5">
           <Link href={linkTreningu} className="bruno-przycisk inline-flex px-5 py-2.5 text-sm">{t("Practice a call with this client →", "Przećwicz rozmowę z tym klientem →")}</Link>
-          <Link href={`/bruno/kokpit?deal=${encodeURIComponent(deal.tytul)}`} className="bkl-przycisk-2">{t("Update in chat", "Zaktualizuj w czacie")}</Link>
+          <Link href={zJako(`/bruno/kokpit?deal=${encodeURIComponent(deal.tytul)}`, jako)} className="bkl-przycisk-2">{t("Update in chat", "Zaktualizuj w czacie")}</Link>
           {linkCrm && <a href={linkCrm} target="_blank" rel="noreferrer" className="bkl-przycisk-2">{t("Open in Pipedrive", "Otwórz w Pipedrive")}</a>}
         </div>
       </section>

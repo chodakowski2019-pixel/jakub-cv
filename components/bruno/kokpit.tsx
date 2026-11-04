@@ -4,20 +4,24 @@ import { useEffect, useRef, useState } from "react";
 import type { Jezyk } from "@/lib/bruno/i18n";
 import { useT } from "@/components/bruno/jezyk-kontekst";
 import { Ikona } from "@/components/podglad/panel/wspolne";
+import KulaLimonka from "@/components/bruno/kula-limonka";
+import { zJako } from "@/lib/bruno/linki";
 
-// 4.11 (USER_001): KOKPIT handlowca jak ChatGPT: pisze albo mówi, AI zapisuje w CRM (Pipedrive).
-// Mowa: Web Speech API przeglądarki (0 zł; Chrome, Safari, Edge). Brak w przeglądarce = sam tekst.
-// Historia rozmowy w sessionStorage (tylko ta karta), serwer dostaje całą historię za każdym razem.
+// 4.11 (USER_001): CZAT Z BRUNO = „tylko kulka na środku z ciekłym liquidem i UX/UI jak w ChatGPT”.
+// Pusty ekran: kula (shader zorzy z rejestracji, kula-limonka.tsx) na środku, jedno zdanie, pigułki podpowiedzi,
+// pole na dole. Po pierwszej wiadomości kula maleje do góry, rozmowa w środku, pole zostaje na dole.
+// Mowa: Web Speech API (0 zł). Historia w sessionStorage. Dane z CRM (zadania, deale bez ruchu, trening) = pigułki,
+// klik wkłada je do rozmowy jako wiadomość Bruno (bez wywołania API).
 
 export type Akcja = { opis: string; link?: string | null };
-type Wiadomosc = { rola: "user" | "assistant"; tresc: string; akcje?: Akcja[]; blad?: boolean };
+type Pozycja = { tekst: string; pod?: string | null; link?: string | null; zdjecie?: string | null; znacznik?: string | null; alarm?: boolean };
+type Wiadomosc = { rola: "user" | "assistant"; tresc: string; akcje?: Akcja[]; blad?: boolean; lista?: Pozycja[]; przycisk?: { tekst: string; link: string } | null; lokalna?: boolean };
 
-/** 4.11 (pkt 1 + 5): ekran powitalny Czatu, liczony na serwerze z CRM (zadania na dziś, deale bez ruchu, trening dobrany). */
 export type Powitanie = {
   dzis: string;
-  naDzis: { id: number; temat: string; data: string; godzina: string | null; zalegle: boolean; deal: string; dealId: number | null; kto: string | null }[];
+  naDzis: { id: number; temat: string; data: string; godzina: string | null; zalegle: boolean; deal: string; dealId: number | null; osoba: string | null; zdjecie: string | null; kto: string | null }[];
   zaleglych: number;
-  bezRuchu: { id: number; tytul: string; etap: string; wartosc: string; dni: number; kto: string | null }[];
+  bezRuchu: { id: number; tytul: string; etap: string; wartosc: string; dni: number; osoba: string | null; zdjecie: string | null; kto: string | null }[];
   otwarte: number;
   wartoscOtwarte: string;
   trening: { etap: string | null; kryterium: string | null; obiekcja: string | null; dlaczego: string; link: string; deal: string | null } | null;
@@ -38,8 +42,9 @@ type Rozpoznawanie = {
 
 const KLUCZ = "bruno-kokpit-historia";
 
-export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie = null }: { jezyk: Jezyk; imie: string; szef: boolean; firma: string; domenaCrm: string | null; powitanie?: Powitanie | null }) {
+export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie = null, jako = null }: { jezyk: Jezyk; imie: string; szef: boolean; firma: string; domenaCrm: string | null; powitanie?: Powitanie | null; jako?: string | null }) {
   const { t } = useT();
+  const linkKlienta = (id: number) => zJako(`/bruno/klienci/${id}`, jako);
   const [wiadomosci, setWiadomosci] = useState<Wiadomosc[]>([]);
   const [tekst, setTekst] = useState("");
   const [wysylam, setWysylam] = useState(false);
@@ -49,15 +54,15 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
   const koniec = useRef<HTMLDivElement>(null);
   const pole = useRef<HTMLTextAreaElement>(null);
   const bazaTekstu = useRef("");
+  const klucz = `${KLUCZ}:${jako ?? (szef ? "szef" : "ja")}`;
 
   useEffect(() => {
     try {
-      const z = sessionStorage.getItem(KLUCZ);
+      const z = sessionStorage.getItem(klucz);
       if (z) setWiadomosci(JSON.parse(z));
     } catch {}
     const w = window as unknown as { SpeechRecognition?: new () => Rozpoznawanie; webkitSpeechRecognition?: new () => Rozpoznawanie };
     setMowaJest(Boolean(w.SpeechRecognition || w.webkitSpeechRecognition));
-    // 4.11 (pkt 2): z karty klienta „Zaktualizuj w czacie” → pole zaczyna się od nazwy deala.
     try {
       const deal = new URLSearchParams(window.location.search).get("deal");
       if (deal) {
@@ -65,13 +70,13 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
         setTimeout(() => pole.current?.focus(), 50);
       }
     } catch {}
-  }, []);
+  }, [klucz]);
   useEffect(() => {
     try {
-      sessionStorage.setItem(KLUCZ, JSON.stringify(wiadomosci.slice(-40)));
+      sessionStorage.setItem(klucz, JSON.stringify(wiadomosci.slice(-40)));
     } catch {}
-    koniec.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [wiadomosci]);
+    if (wiadomosci.length) koniec.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [wiadomosci, klucz]);
 
   const mow = () => {
     if (slucham) {
@@ -114,10 +119,10 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
     setTekst("");
     setWysylam(true);
     try {
-      const res = await fetch("/api/bruno/kokpit", {
+      const res = await fetch(`/api/bruno/kokpit${jako ? `?jako=${encodeURIComponent(jako)}` : ""}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ wiadomosci: nowe.slice(-20).map((w) => ({ rola: w.rola, tresc: w.tresc })) }),
+        body: JSON.stringify({ wiadomosci: nowe.filter((w) => !w.lokalna).slice(-20).map((w) => ({ rola: w.rola, tresc: w.tresc })) }),
       });
       const j = (await res.json().catch(() => ({}))) as { odpowiedz?: string; akcje?: Akcja[]; blad?: string };
       if (!res.ok) throw new Error(j.blad || `HTTP ${res.status}`);
@@ -134,9 +139,56 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
   const wyczysc = () => {
     setWiadomosci([]);
     try {
-      sessionStorage.removeItem(KLUCZ);
+      sessionStorage.removeItem(klucz);
     } catch {}
   };
+
+  // Pigułki z CRM: klik = pytanie użytkownika + gotowa odpowiedź Bruno (lokalnie, bez API).
+  const lokalnie = (pytanie: string, odpowiedz: string, lista: Pozycja[], przycisk?: { tekst: string; link: string } | null) =>
+    setWiadomosci((w) => [...w, { rola: "user", tresc: pytanie, lokalna: true }, { rola: "assistant", tresc: odpowiedz, lista, przycisk: przycisk ?? null, lokalna: true }]);
+
+  const p = powitanie;
+  const pigulkiCrm: { tekst: string; licznik?: string; alarm?: boolean; klik: () => void }[] = p
+    ? [
+        {
+          tekst: t("Today in the CRM", "Dziś w CRM"),
+          licznik: p.naDzis.length ? `${p.naDzis.length}${p.zaleglych ? ` · ${p.zaleglych} ${t("overdue", "zaległe")}` : ""}` : "0",
+          alarm: p.zaleglych > 0,
+          klik: () =>
+            lokalnie(
+              t("What's on today?", "Co mam dziś?"),
+              p.naDzis.length ? t(`${p.naDzis.length} tasks, ${p.zaleglych} overdue:`, `${p.naDzis.length} zadań, ${p.zaleglych} zaległych:`) : t("No tasks due today.", "Brak zadań na dziś."),
+              p.naDzis.map((z) => ({ tekst: z.temat, pod: [z.osoba ?? z.deal, z.kto].filter(Boolean).join(" · "), link: z.dealId ? linkKlienta(z.dealId) : null, zdjecie: z.zdjecie, znacznik: z.zalegle ? z.data.slice(5) : z.godzina?.slice(0, 5) || t("today", "dziś"), alarm: z.zalegle })),
+            ),
+        },
+        {
+          tekst: t("No movement 7+ days", "Bez ruchu 7+ dni"),
+          licznik: String(p.bezRuchu.length),
+          alarm: p.bezRuchu.length > 0,
+          klik: () =>
+            lokalnie(
+              t("Which deals are stuck?", "Które deale stoją?"),
+              p.bezRuchu.length ? t("These deals haven't moved for over a week:", "Te deale nie ruszyły od ponad tygodnia:") : t("Every open deal moved in the last week.", "Każdy otwarty deal ruszył w ostatnim tygodniu."),
+              p.bezRuchu.map((d) => ({ tekst: d.tytul, pod: [d.osoba, d.etap, d.wartosc, d.kto].filter(Boolean).join(" · "), link: linkKlienta(d.id), zdjecie: d.zdjecie, znacznik: `${d.dni} ${t("d", "dni")}`, alarm: true })),
+            ),
+        },
+        ...(p.trening
+          ? [
+              {
+                tekst: szef ? t("Who to train first", "Kogo trenować najpierw") : t("Today's training", "Trening na dziś"),
+                licznik: p.trening.etap ?? undefined,
+                klik: () =>
+                  lokalnie(
+                    szef ? t("Who should I train first?", "Kogo trenować najpierw?") : t("What should I train today?", "Co mam dziś trenować?"),
+                    p.trening!.dlaczego,
+                    [p.trening!.etap, p.trening!.kryterium, p.trening!.obiekcja].filter(Boolean).map((x) => ({ tekst: x as string })),
+                    { tekst: szef ? t(`Open profile: ${p.trening!.deal ?? ""} →`, `Otwórz profil: ${p.trening!.deal ?? ""} →`) : t("Train what matters today →", "Trenuj to, co dziś najważniejsze →"), link: p.trening!.link },
+                  ),
+              },
+            ]
+          : []),
+      ]
+    : [];
 
   const przyklady = szef
     ? [t("Which deals are stuck for more than 14 days?", "Które deale stoją dłużej niż 14 dni?"), t("Show Kasia's pipeline", "Pokaż lejek Kasi"), t("Who lost the most this month?", "Kto przegrał najwięcej w tym miesiącu?")]
@@ -146,188 +198,135 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
         t("New deal: Pol-Bud, Anna Lis, 12 000, first contact.", "Nowy deal: Pol-Bud, Anna Lis, 12 000, pierwszy kontakt."),
       ];
 
+  const pusto = wiadomosci.length === 0;
+  const tempo = wysylam ? "mowi" : slucham ? "slucha" : "czeka";
+
   return (
-    <div className="bkk">
-      <header className="bkk-naglowek">
-        <div>
-          <h1 className="bruno-h1 text-[1.6rem] sm:text-[2rem] leading-tight">
-            {t("Chat", "Czat")} <span className="bruno-gradient-tekst">{firma}</span>
+    <div className={`bcz ${pusto ? "bcz-start" : "bcz-rozmowa-on"}`}>
+      <div className="bcz-gora">
+        <span className="bcz-firma">{t("Chat", "Czat")} · {firma}{szef ? "" : ` · ${imie}`}</span>
+        {!pusto && (
+          <button type="button" onClick={wyczysc} className="bcz-wyczysc">{t("New chat", "Nowa rozmowa")}</button>
+        )}
+      </div>
+
+      <div className="bcz-kula-wrap" aria-hidden>
+        <div className="bcz-kula"><KulaLimonka tempo={tempo} /></div>
+      </div>
+
+      {pusto ? (
+        <div className="bcz-powitanie">
+          <h1 className="bcz-hej">
+            {t(`Hi ${imie}.`, `Cześć ${imie}.`)}{" "}
+            <span className="bcz-hej-2">{p ? (szef ? t(`${p.otwarte} open deals, ${p.wartoscOtwarte}.`, `${p.otwarte} otwartych deali, ${p.wartoscOtwarte}.`) : t(`${p.otwarte} open deals, ${p.wartoscOtwarte}.`, `${p.otwarte} otwartych deali, ${p.wartoscOtwarte}.`)) : t("Tell me what happened.", "Opowiedz, co się wydarzyło.")}</span>
           </h1>
-          <p className="text-slate-500 text-sm mt-1">{t("Say or type what happened. Bruno updates the CRM for you.", "Powiedz albo napisz, co się wydarzyło. Bruno sam zapisze to w CRM.")}</p>
-        </div>
-        {wiadomosci.length > 0 && (
-          <button type="button" onClick={wyczysc} className="text-xs text-slate-500 hover:text-slate-800 underline underline-offset-2">
-            {t("Clear", "Wyczyść")}
-          </button>
-        )}
-      </header>
-
-      <div className="bkk-rozmowa" role="log" aria-live="polite">
-        {wiadomosci.length === 0 && powitanie && (
-          <div className="bkk-dymek bkk-bruno">
-            <span className="bkk-avatar">B</span>
-            <div className="bkk-tresc bkk-powitanie">
-              <p className="font-semibold text-slate-900">
-                {t(`Hi ${imie}.`, `Cześć ${imie}.`)}{" "}
-                <span className="font-normal text-slate-600">
-                  {szef
-                    ? t(`Team has ${powitanie.otwarte} open deals worth ${powitanie.wartoscOtwarte}.`, `Zespół ma ${powitanie.otwarte} otwartych deali za ${powitanie.wartoscOtwarte}.`)
-                    : t(`You have ${powitanie.otwarte} open deals worth ${powitanie.wartoscOtwarte}.`, `Masz ${powitanie.otwarte} otwartych deali za ${powitanie.wartoscOtwarte}.`)}
-                </span>
-              </p>
-
-              <div className="bkk-blok">
-                <div className="bkk-blok-tytul">
-                  {t("Today in the CRM", "Dziś w CRM")}
-                  {powitanie.zaleglych > 0 && <span className="bkk-alarm">{t(`${powitanie.zaleglych} overdue`, `${powitanie.zaleglych} zaległe`)}</span>}
-                </div>
-                {powitanie.naDzis.length === 0 ? (
-                  <p className="text-sm text-slate-500">{t("No tasks due today.", "Brak zadań na dziś.")}</p>
-                ) : (
-                  <ul className="bkk-lista">
-                    {powitanie.naDzis.map((z) => (
-                      <li key={z.id}>
-                        <span className={`bkk-data ${z.zalegle ? "bkk-zalegle" : ""}`}>{z.zalegle ? z.data.slice(5) : z.godzina?.slice(0, 5) || t("today", "dziś")}</span>
-                        <span className="min-w-0 flex-1 truncate">
-                          <b>{z.temat}</b> · {z.dealId ? <a href={`/bruno/klienci/${z.dealId}`} className="underline underline-offset-2">{z.deal}</a> : z.deal}
-                          {z.kto ? <span className="text-slate-400"> · {z.kto}</span> : null}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-
-              <div className="bkk-blok">
-                <div className="bkk-blok-tytul">{t("No movement for 7+ days", "Bez ruchu ponad 7 dni")}</div>
-                {powitanie.bezRuchu.length === 0 ? (
-                  <p className="text-sm text-slate-500">{t("Every open deal moved in the last week.", "Każdy otwarty deal ruszył w ostatnim tygodniu.")}</p>
-                ) : (
-                  <ul className="bkk-lista">
-                    {powitanie.bezRuchu.map((d) => (
-                      <li key={d.id}>
-                        <span className="bkk-data bkk-zalegle">{d.dni} {t("d", "dni")}</span>
-                        <span className="min-w-0 flex-1 truncate">
-                          <a href={`/bruno/klienci/${d.id}`} className="underline underline-offset-2 font-semibold">{d.tytul}</a> · {d.etap} · {d.wartosc}
-                          {d.kto ? <span className="text-slate-400"> · {d.kto}</span> : null}
-                        </span>
-                        <button type="button" className="bkk-mini" onClick={() => { setTekst(t(`Update on ${d.tytul}: `, `Co z ${d.tytul}: `)); pole.current?.focus(); }}>
-                          {t("Update", "Zaktualizuj")}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {powitanie.bezHandlowca > 0 && <p className="text-[11px] text-slate-400 mt-1">{t(`${powitanie.bezHandlowca} open deals without a rep assigned.`, `${powitanie.bezHandlowca} otwartych deali bez przypisanego handlowca.`)}</p>}
-              </div>
-
-              {powitanie.trening && (
-                <div className="bkk-blok bkk-trening">
-                  <div className="bkk-blok-tytul">{szef ? t("Who to train first", "Kogo trenować najpierw") : t("Today's training", "Trening na dziś")}</div>
-                  <p className="text-sm text-slate-700">
-                    {powitanie.trening.etap && <span className="bsz-pigulka mr-1.5">{powitanie.trening.etap}</span>}
-                    {powitanie.trening.kryterium && <span className="bsz-pigulka mr-1.5">{powitanie.trening.kryterium}</span>}
-                    {powitanie.trening.obiekcja && <span className="bsz-pigulka mr-1.5">{powitanie.trening.obiekcja}</span>}
-                  </p>
-                  <p className="text-sm text-slate-600 mt-1">{powitanie.trening.dlaczego}</p>
-                  <div className="flex gap-3 flex-wrap items-center mt-3">
-                    <a href={powitanie.trening.link} className="bruno-przycisk inline-flex px-5 py-2.5 text-sm">
-                      {szef ? t(`Open ${powitanie.trening.deal ?? "profile"} →`, `Otwórz profil: ${powitanie.trening.deal ?? ""} →`) : t("Train what matters today →", "Trenuj to, co dziś najważniejsze →")}
-                    </a>
-                    {!szef && (
-                      <a href="/bruno/rozmowa" className="text-sm text-slate-500 underline underline-offset-2">{t("Another scenario", "Inny scenariusz")}</a>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <p className="text-xs text-slate-500 mt-3">{t("Tell me what happened and I'll update the CRM. Try:", "Opowiedz, co się wydarzyło, a ja zapiszę to w CRM. Spróbuj:")}</p>
-              <div className="flex flex-col gap-1.5 mt-1.5">
-                {przyklady.map((p) => (
-                  <button key={p} type="button" className="bkk-przyklad" onClick={() => { setTekst(p); pole.current?.focus(); }}>
-                    {p}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-        {wiadomosci.length === 0 && !powitanie && (
-          <div className="bkk-pusty">
-            <p className="text-slate-600 text-sm mb-3">{t(`Hi ${imie}. Try:`, `Cześć ${imie}. Spróbuj:`)}</p>
-            <div className="flex flex-col gap-2">
-              {przyklady.map((p) => (
-                <button key={p} type="button" className="bkk-przyklad" onClick={() => { setTekst(p); pole.current?.focus(); }}>
-                  {p}
+          {pigulkiCrm.length > 0 && (
+            <div className="bcz-pigulki">
+              {pigulkiCrm.map((x) => (
+                <button key={x.tekst} type="button" className={`bcz-pigulka ${x.alarm ? "bcz-pigulka-alarm" : ""}`} onClick={x.klik}>
+                  {x.tekst}
+                  {x.licznik && <em>{x.licznik}</em>}
                 </button>
               ))}
             </div>
-          </div>
-        )}
-        {wiadomosci.map((w, i) => (
-          <div key={i} className={`bkk-dymek ${w.rola === "user" ? "bkk-ja" : "bkk-bruno"} ${w.blad ? "bkk-blad" : ""}`}>
-            {w.rola === "assistant" && <span className="bkk-avatar">B</span>}
-            <div className="bkk-tresc">
-              <p className="whitespace-pre-wrap">{w.tresc}</p>
-              {w.akcje && w.akcje.length > 0 && (
-                <ul className="bkk-akcje">
-                  {w.akcje.map((a, j) => (
-                    <li key={j}>
-                      <span className="bkk-ok" aria-hidden>✓</span>
-                      {a.link ? (
-                        <a href={a.link} target="_blank" rel="noreferrer" className="underline underline-offset-2">{a.opis}</a>
-                      ) : (
-                        a.opis
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
+          )}
+        </div>
+      ) : (
+        <div className="bcz-lista" role="log" aria-live="polite">
+          {wiadomosci.map((w, i) => (
+            <div key={i} className={`bcz-wiad ${w.rola === "user" ? "bcz-ja" : "bcz-bruno"} ${w.blad ? "bcz-blad" : ""}`}>
+              {w.rola === "assistant" && <span className="bcz-avatar" aria-hidden />}
+              <div className="bcz-tresc">
+                <p className="whitespace-pre-wrap">{w.tresc}</p>
+                {w.lista && w.lista.length > 0 && (
+                  <ul className="bcz-pozycje">
+                    {w.lista.map((x, j) => (
+                      <li key={j}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        {x.zdjecie ? <img src={x.zdjecie} alt="" className="bcz-foto" /> : x.znacznik ? null : <span className="bcz-kropka" />}
+                        <span className="min-w-0 flex-1">
+                          {x.link ? <a href={x.link} className="font-semibold underline underline-offset-2">{x.tekst}</a> : <b>{x.tekst}</b>}
+                          {x.pod ? <span className="block text-xs text-slate-500 truncate">{x.pod}</span> : null}
+                        </span>
+                        {x.znacznik && <span className={`bcz-znacznik ${x.alarm ? "bcz-znacznik-alarm" : ""}`}>{x.znacznik}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {w.przycisk && (
+                  <a href={w.przycisk.link} className="bruno-przycisk inline-flex mt-3 px-5 py-2.5 text-sm">{w.przycisk.tekst}</a>
+                )}
+                {w.akcje && w.akcje.length > 0 && (
+                  <ul className="bcz-akcje">
+                    {w.akcje.map((a, j) => (
+                      <li key={j}>
+                        <span className="bcz-ok" aria-hidden>✓</span>
+                        {a.link ? <a href={a.link} target="_blank" rel="noreferrer" className="underline underline-offset-2">{a.opis}</a> : a.opis}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-        {wysylam && (
-          <div className="bkk-dymek bkk-bruno">
-            <span className="bkk-avatar">B</span>
-            <div className="bkk-tresc bkk-pisze"><i /><i /><i /></div>
-          </div>
-        )}
-        <div ref={koniec} />
-      </div>
+          ))}
+          {wysylam && (
+            <div className="bcz-wiad bcz-bruno">
+              <span className="bcz-avatar" aria-hidden />
+              <div className="bcz-tresc bcz-pisze"><i /><i /><i /></div>
+            </div>
+          )}
+          <div ref={koniec} />
+        </div>
+      )}
 
-      <form onSubmit={wyslij} className="bkk-pole bruno-szklo">
-        <textarea
-          ref={pole}
-          className="bkk-textarea"
-          rows={2}
-          placeholder={slucham ? t("Listening…", "Słucham…") : t("Type or press the mic…", "Napisz albo wciśnij mikrofon…")}
-          value={tekst}
-          onChange={(e) => setTekst(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              void wyslij();
-            }
-          }}
-          maxLength={3000}
-          disabled={wysylam}
-        />
-        <div className="bkk-przyciski">
+      <div className="bcz-dol">
+        <form onSubmit={wyslij} className="bcz-pole">
+          <textarea
+            ref={pole}
+            className="bcz-textarea"
+            rows={1}
+            placeholder={slucham ? t("Listening…", "Słucham…") : t("What happened?", "Co się wydarzyło?")}
+            value={tekst}
+            onChange={(e) => {
+              setTekst(e.target.value);
+              e.target.style.height = "auto";
+              e.target.style.height = `${Math.min(160, e.target.scrollHeight)}px`;
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                void wyslij();
+              }
+            }}
+            maxLength={3000}
+            disabled={wysylam}
+          />
           {mowaJest && (
-            <button type="button" onClick={mow} className={`bkk-mik ${slucham ? "bkk-mik-on" : ""}`} aria-pressed={slucham} aria-label={slucham ? t("Stop", "Zatrzymaj") : t("Speak", "Mów")} title={slucham ? t("Stop", "Zatrzymaj") : t("Speak", "Mów")}>
-              <Ikona nazwa="mikrofon" rozmiar={20} />
+            <button type="button" onClick={mow} className={`bcz-mik ${slucham ? "bcz-mik-on" : ""}`} aria-pressed={slucham} aria-label={slucham ? t("Stop", "Zatrzymaj") : t("Speak", "Mów")} title={slucham ? t("Stop", "Zatrzymaj") : t("Speak", "Mów")}>
+              <Ikona nazwa="mikrofon" rozmiar={18} />
             </button>
           )}
-          <button type="submit" disabled={wysylam || tekst.trim().length < 2} className="bruno-przycisk px-5 py-2.5 text-sm">
-            {wysylam ? t("Saving…", "Zapisuję…") : t("Send", "Wyślij")}
+          <button type="submit" disabled={wysylam || tekst.trim().length < 2} className="bcz-wyslij" aria-label={t("Send", "Wyślij")} title={t("Send", "Wyślij")}>
+            <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 19V5M5 12l7-7 7 7" /></svg>
           </button>
-        </div>
-      </form>
-      {domenaCrm && (
-        <p className="text-[11px] text-slate-400 mt-2 text-right">
-          <a href={domenaCrm} target="_blank" rel="noreferrer" className="underline underline-offset-2">{t("Open Pipedrive", "Otwórz Pipedrive")}</a>
+        </form>
+        {pusto && (
+          <div className="bcz-przyklady">
+            {przyklady.map((x) => (
+              <button key={x} type="button" className="bcz-przyklad" onClick={() => { setTekst(x); pole.current?.focus(); }}>{x}</button>
+            ))}
+          </div>
+        )}
+        <p className="bcz-stopka">
+          {t("Bruno writes straight to the CRM. Check important changes.", "Bruno zapisuje prosto do CRM. Ważne zmiany sprawdź.")}
+          {domenaCrm && (
+            <>
+              {" · "}
+              <a href={domenaCrm} target="_blank" rel="noreferrer" className="underline underline-offset-2">{t("Open Pipedrive", "Otwórz Pipedrive")}</a>
+            </>
+          )}
         </p>
-      )}
+      </div>
     </div>
   );
 }

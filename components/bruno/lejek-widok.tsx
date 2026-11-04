@@ -3,6 +3,8 @@ import { Naglowek } from "@/components/bruno/zespol-widok";
 import type { Firma } from "@/lib/bruno/firmy";
 import { tDla, type Jezyk } from "@/lib/bruno/i18n";
 import { formatKwota, type AnalizaHandlowca, type Deal, type Etap, type EtapStat } from "@/lib/bruno/lejek";
+import { zJako } from "@/lib/bruno/jako";
+import { zdjecieKlienta } from "@/lib/bruno/twarze";
 
 // 4.11 (USER_001): WIZUALIZACJA LEJKA z CRM. Góra: etapy jako słupki (otwarte deale + wartość, przegrane na czerwono).
 // Szef: tabela handlowiec × etap (liczba przegranych), najsłabszy etap podświetlony, „Bruno trenuje: <etap>”.
@@ -24,6 +26,8 @@ export default function LejekWidok({
   bezHandlowca,
   ja,
   blad = null,
+  jako = null,
+  imie = null,
 }: {
   firma: Firma | null;
   jezyk: Jezyk;
@@ -37,6 +41,9 @@ export default function LejekWidok({
   bezHandlowca: number;
   ja: string;
   blad?: string | null;
+  /** 4.11: szef w widoku handlowca (?jako=), imię do nagłówka. */
+  jako?: string | null;
+  imie?: string | null;
 }) {
   const t = tDla(jezyk);
   const waluta = deale[0]?.waluta ?? "PLN";
@@ -69,7 +76,7 @@ export default function LejekWidok({
 
   return (
     <div className="flex flex-col gap-6 bsz blj">
-      <Naglowek firma={firma} tytul={t("Pipeline", "Lejek")} akcent={firma?.naglowek?.trim() || firma?.nazwa || "CRM"} podtytul={`${pipeline?.nazwa ? `${pipeline.nazwa} · ` : ""}${t("Live from Pipedrive. Red = deals lost at this stage.", "Na żywo z Pipedrive. Czerwone = deale przegrane na tym etapie.")}`} />
+      <Naglowek firma={firma} tytul={t("Pipeline", "Lejek")} akcent={firma?.naglowek?.trim() || firma?.nazwa || "CRM"} podtytul={`${imie ? `${imie} · ` : ""}${pipeline?.nazwa ? `${pipeline.nazwa} · ` : ""}${t("Live from Pipedrive. Red = deals lost at this stage.", "Na żywo z Pipedrive. Czerwone = deale przegrane na tym etapie.")}`} />
 
       {/* Etapy jako słupki */}
       <section className="bruno-szklo rounded-2xl p-5 sm:p-6">
@@ -201,7 +208,7 @@ export default function LejekWidok({
       <section className="bruno-szklo rounded-2xl overflow-hidden">
         <div className="px-5 pt-5 pb-2 flex items-baseline justify-between gap-3 flex-wrap">
           <h2 className="bruno-h2 text-lg">{szef ? t("Open deals", "Otwarte deale") : t("Your open deals", "Twoje otwarte deale")}</h2>
-          <Link href="/bruno/kokpit" className="text-sm text-amber-800 underline underline-offset-2">{t("Update in chat →", "Zaktualizuj w czacie →")}</Link>
+          <Link href={zJako("/bruno/kokpit", jako)} className="text-sm text-amber-800 underline underline-offset-2">{t("Update in chat →", "Zaktualizuj w czacie →")}</Link>
         </div>
         <ul className="bsz-lista">
           {deale
@@ -215,7 +222,7 @@ export default function LejekWidok({
                 <li key={d.id} style={{ animationDelay: `${i * 30}ms` }}>
                   <div className="bsz-rozmowa">
                     <span className="min-w-0 flex-1">
-                      <Link href={`/bruno/klienci/${d.id}`} className="block font-semibold text-slate-900 truncate hover:underline underline-offset-2">{d.tytul}</Link>
+                      <Link href={zJako(`/bruno/klienci/${d.id}`, jako)} className="flex items-center gap-2 font-semibold text-slate-900 truncate hover:underline underline-offset-2">{/* eslint-disable-next-line @next/next/no-img-element */}{zdjecieKlienta(d.osoba) && <img src={zdjecieKlienta(d.osoba)!} alt="" className="bsz-inicjal bsz-zdjecie" style={{ width: 26, height: 26 }} />}{d.tytul}</Link>
                       <span className="block text-[11px] text-slate-400 truncate">
                         {[d.osoba, d.organizacja].filter(Boolean).join(" · ")}
                         {szef && o ? ` · ${o.imie}` : ""}

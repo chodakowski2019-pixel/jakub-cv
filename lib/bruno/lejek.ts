@@ -91,21 +91,24 @@ type DealPd = Record<string, unknown> & {
   pipeline_id: number;
 };
 
+/** 4.11 (USER_001): panel nie pokazuje prefiksów „[Bruno demo] ” / „[Przykład] ” (zostają w Pipedrive, reset seeda po nich usuwa). */
+export const bezPrefiksu = (s: string | null | undefined): string => String(s ?? "").replace(/\[(Bruno demo|Przykład|Sample)\]\s*/gi, "").trim();
+
 function mapujDeal(d: DealPd, pole: string | null): Deal {
   return {
     id: d.id,
-    tytul: d.title,
+    tytul: bezPrefiksu(d.title) || d.title,
     etap_id: d.stage_id,
     status: d.status,
     wartosc: Number(d.value ?? 0),
     waluta: d.currency ?? "PLN",
     handlowiec: pole ? (String(d[pole] ?? "").trim().toLowerCase() || null) : null,
-    osoba: d.person_name ?? null,
-    organizacja: d.org_name ?? null,
+    osoba: d.person_name ? bezPrefiksu(d.person_name) : null,
+    organizacja: d.org_name ? bezPrefiksu(d.org_name) : null,
     aktualizacja: d.update_time ?? null,
     powod_przegranej: d.lost_reason ?? null,
     nastepna_aktywnosc: d.next_activity_date ?? null,
-    nastepna_aktywnosc_temat: d.next_activity_subject ?? null,
+    nastepna_aktywnosc_temat: d.next_activity_subject ? bezPrefiksu(d.next_activity_subject) : null,
     ostatni_kontakt: d.last_activity_date ?? null,
     dodano: d.add_time ?? null,
   };
@@ -273,7 +276,7 @@ export async function nowyDeal(
 
 export async function notatkiDeala(token: string, dealId: number, limit = 10): Promise<{ id: number; tresc: string; kiedy: string }[]> {
   const { data } = await pd<{ id: number; content: string; add_time: string }[] | null>(token, `/notes?deal_id=${dealId}&limit=${limit}&sort=add_time%20DESC`);
-  return (data ?? []).map((n) => ({ id: n.id, tresc: String(n.content ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(), kiedy: n.add_time }));
+  return (data ?? []).map((n) => ({ id: n.id, tresc: bezPrefiksu(String(n.content ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")), kiedy: n.add_time }));
 }
 
 export type Aktywnosc = { id: number; temat: string; data: string; godzina: string | null; zrobione: boolean; typ: string; notatka: string | null; deal_id: number | null; osoba: string | null; organizacja: string | null };
@@ -281,15 +284,15 @@ export type Aktywnosc = { id: number; temat: string; data: string; godzina: stri
 type AktywnoscPd = { id: number; subject: string; due_date: string; due_time?: string | null; done: boolean; type: string; note?: string | null; deal_id?: number | null; person_name?: string | null; org_name?: string | null };
 const mapujAktywnosc = (a: AktywnoscPd): Aktywnosc => ({
   id: a.id,
-  temat: a.subject,
+  temat: bezPrefiksu(a.subject),
   data: a.due_date,
   godzina: a.due_time || null,
   zrobione: Boolean(a.done),
   typ: a.type,
-  notatka: a.note ? String(a.note).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() : null,
+  notatka: a.note ? bezPrefiksu(String(a.note).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")) : null,
   deal_id: a.deal_id ?? null,
-  osoba: a.person_name ?? null,
-  organizacja: a.org_name ?? null,
+  osoba: a.person_name ? bezPrefiksu(a.person_name) : null,
+  organizacja: a.org_name ? bezPrefiksu(a.org_name) : null,
 });
 
 export async function zadaniaDeala(token: string, dealId: number, limit = 20): Promise<Aktywnosc[]> {
