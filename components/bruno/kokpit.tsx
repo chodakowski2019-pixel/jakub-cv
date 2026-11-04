@@ -40,7 +40,10 @@ type Rozpoznawanie = {
   onerror: ((e: { error: string }) => void) | null;
 };
 
-const KLUCZ = "bruno-kokpit-historia";
+// 4.11: v2 = stara historia (długie tematy zadań) nie wraca z sessionStorage.
+const KLUCZ = "bruno-kokpit-historia-v2";
+/** Temat zadania jako nagłówek (część przed dwukropkiem, max 60 znaków), także dla starych wiadomości. */
+const naglowek = (s: string) => { const k = s.split(/[:—–]/)[0].trim(); const n = k.length >= 6 ? k : s; return n.length > 60 ? `${n.slice(0, 57).trimEnd()}…` : n; };
 
 export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie = null, jako = null }: { jezyk: Jezyk; imie: string; szef: boolean; firma: string; domenaCrm: string | null; powitanie?: Powitanie | null; jako?: string | null }) {
   const { t } = useT();
@@ -219,7 +222,7 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         {x.zdjecie ? <img src={x.zdjecie} alt="" className="bcz-foto" /> : x.znacznik ? null : <span className="bcz-kropka" />}
                         <span className="min-w-0 flex-1">
-                          {x.link ? <a href={x.link} className="font-semibold underline underline-offset-2">{x.tekst}</a> : <b>{x.tekst}</b>}
+                          {x.link ? <a href={x.link} className="font-semibold underline underline-offset-2" title={x.tekst}>{naglowek(x.tekst)}</a> : <b>{naglowek(x.tekst)}</b>}
                           {x.pod ? <span className="block text-xs text-slate-500 truncate">{x.pod}</span> : null}
                         </span>
                         {x.znacznik && <span className={`bcz-znacznik ${x.alarm ? "bcz-znacznik-alarm" : ""}`}>{x.znacznik}</span>}
