@@ -131,10 +131,21 @@ export async function generujRaport(dane: DaneRaportu, jezyk: "pl" | "en", autor
       : `Return JSON: {"podsumowanie": "2-3 sentences about the team", "poprawa": [{"kto": "name", "co": "what improved, with a number"}], "traci": [{"kto": "name", "gdzie": "stage", "ile": "lost count and value"}], "zalecenia": ["3 concrete recommendations for the manager, each starting with a verb"]}. Max 4 items in poprawa and traci, exactly 3 zalecenia.`,
   ].join("\n\n");
   const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const odp = await klient.messages.create({ model: MODEL, max_tokens: 1500, system, messages: [{ role: "user", content: user }] });
-  const tekst = odp.content.map((c) => (c.type === "text" ? c.text : "")).join("").trim();
-  const json = tekst.slice(tekst.indexOf("{"), tekst.lastIndexOf("}") + 1);
-  const r = JSON.parse(json) as Omit<Raport, "miesiac">;
+  // 4.11: pierwszy test na produkcji uciął JSON przy 1500 tokenach → 4000 + jedna ponowna próba przy złym JSON.
+  let r: Omit<Raport, "miesiac"> | null = null;
+  let ostatniBlad = "";
+  for (let proba = 0; proba < 2 && !r; proba++) {
+    const odp = await klient.messages.create({ model: MODEL, max_tokens: 4000, system, messages: [{ role: "user", content: proba ? `${user}\n\nPoprzednia odpowiedź nie była poprawnym JSON (${ostatniBlad}). Odpowiedz krócej, samym JSON.` : user }] });
+    const tekst = odp.content.map((c) => (c.type === "text" ? c.text : "")).join("").trim();
+    const json = tekst.slice(tekst.indexOf("{"), tekst.lastIndexOf("}") + 1);
+    try {
+      r = JSON.parse(json) as Omit<Raport, "miesiac">;
+    } catch (e) {
+      ostatniBlad = String((e as Error)?.message ?? e).slice(0, 120);
+      console.error("[bruno raport] zły JSON", ostatniBlad, odp.stop_reason);
+    }
+  }
+  if (!r) throw new Error(`Raport: model nie zwrócił poprawnego JSON (${ostatniBlad}).`);
   const tresc: Raport = { miesiac, podsumowanie: String(r.podsumowanie ?? ""), poprawa: (r.poprawa ?? []).slice(0, 4), traci: (r.traci ?? []).slice(0, 4), zalecenia: (r.zalecenia ?? []).slice(0, 3) };
   const { data, error } = await supabaseAdmin.from("bruno_raporty").insert({ firma_id: dane.firma.id, miesiac, tresc, model: MODEL, autor_email: autor }).select("*").single();
   if (error) throw new Error(`bruno_raporty: ${error.message}`);
