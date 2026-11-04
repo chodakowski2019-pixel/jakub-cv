@@ -1,0 +1,346 @@
+/* 4.11: salesbruno.pl/oferta. Kolory i czcionki z bruno-lp.module.css (.root), tu tylko układ i tabele. */
+
+.root {
+  padding-top: 120px;
+}
+
+.hero {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 20px 24px 36px;
+  text-align: center;
+}
+.znaczek {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.h1 {
+  margin-top: 18px;
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: clamp(40px, 6.4vw, 76px);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+.sub {
+  max-width: 560px;
+  margin: 22px auto 0;
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.sekcja {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 56px 24px 8px;
+}
+.h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: clamp(24px, 3vw, 34px);
+  letter-spacing: -0.03em;
+  margin-bottom: 18px;
+}
+.nr {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--orange);
+}
+.pod {
+  margin: -8px 0 16px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.podpowiedz {
+  display: none;
+  margin: -6px 0 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---------- tabele ---------- */
+.tabelaWrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 22px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 24px 50px -36px rgba(0, 0, 0, 0.25);
+}
+.tabela {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+}
+.tabela th,
+.tabela td {
+  padding: 14px 18px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+.tabela thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #fff;
+  vertical-align: bottom;
+  font-weight: 500;
+}
+.tabela tbody tr:last-child th,
+.tabela tbody tr:last-child td {
+  border-bottom: 0;
+}
+.tabela tbody th[scope="row"] {
+  font-weight: 500;
+  color: var(--ink-2);
+  width: 24%;
+  min-width: 170px;
+}
+.tabela tbody td {
+  color: var(--ink);
+}
+
+.pakietNr {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+.pakietNazwa {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--head);
+  font-size: 26px;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  line-height: 1.05;
+}
+.pakietNazwaMala {
+  display: block;
+  margin-top: 2px;
+  font-weight: 500;
+}
+.rekZnaczek {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--orange);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+/* kolumna rekomendowana: ciepłe tło na całej wysokości, pomarańczowa krawędź u góry nagłówka */
+.rek {
+  background: #fff8f1;
+}
+.tabela thead th.rek {
+  background: #fff3e6;
+  box-shadow: inset 0 3px 0 var(--orange);
+}
+.tabela tbody td.rek {
+  border-bottom-color: rgba(240, 138, 43, 0.18);
+}
+/* nazwy wierszy: jasna kolumna po lewej */
+.tabela tbody th[scope="row"] {
+  background: #fbfbfa;
+}
+.tabela thead th:first-child {
+  background: #fbfbfa;
+}
+
+.liczba {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.duza {
+  font-family: var(--head);
+  font-size: 30px;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  font-weight: 500;
+}
+.duza.rek {
+  color: var(--orange);
+}
+.duza small,
+.liczba small {
+  font-family: var(--body);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0;
+  margin-left: 4px;
+}
+.tabelaWarunki thead th:first-child {
+  width: 24%;
+}
+
+/* zawartość: kolumny pakietów wąskie, wyśrodkowane */
+.kol {
+  text-align: center !important;
+  width: 120px;
+  white-space: nowrap;
+}
+.tak {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--orange);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nie {
+  color: var(--grey);
+  font-size: 18px;
+  line-height: 22px;
+}
+.grupa th {
+  padding-top: 24px !important;
+  padding-bottom: 10px !important;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  background: #f3f3f1 !important;
+  border-bottom: 1px solid var(--line);
+}
+.grupa th::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--orange);
+  margin-right: 10px;
+  vertical-align: 1px;
+}
+
+.suma th,
+.suma td {
+  font-weight: 600;
+  background: #f3f3f1 !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+.suma td.rek {
+  background: #ffe9d3 !important;
+  color: var(--orange);
+}
+.tabelaPrzyklad .liczba {
+  font-family: var(--head);
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+.tabelaPrzyklad .suma .liczba {
+  font-size: 24px;
+}
+
+.cta {
+  margin-top: 40px;
+}
+
+@media (max-width: 760px) {
+  .root {
+    padding-top: 96px;
+  }
+  .sekcja {
+    padding: 32px 16px 8px;
+  }
+  .tabelaWrap {
+    border-radius: 16px;
+  }
+  .tabela {
+    font-size: 13.5px;
+    min-width: 640px;
+  }
+  .tabela th,
+  .tabela td {
+    padding: 11px 12px;
+  }
+  /* telefon: pierwsza kolumna przyklejona, reszta przewija się w bok */
+  .tabela tbody th[scope="row"],
+  .tabela thead th:first-child,
+  .tabelaZawartosc tbody td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #fff;
+    box-shadow: 1px 0 0 var(--line);
+  }
+  .tabela thead th:first-child {
+    z-index: 3;
+  }
+  .tabela tbody th[scope="row"] {
+    min-width: 128px;
+    width: 128px;
+  }
+  /* tabela zawartości mieści się na 390 px bez przewijania: 3 wąskie kolumny ✓ po prawej */
+  .tabelaZawartosc {
+    min-width: 0;
+  }
+  .tabelaZawartosc tbody td:first-child {
+    position: static;
+    box-shadow: none;
+    white-space: normal;
+    font-size: 13px;
+  }
+  .tabelaZawartosc .kol {
+    width: 48px;
+    min-width: 48px;
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  .tabelaZawartosc thead .kol {
+    font-size: 10px;
+    white-space: normal;
+  }
+  .tabelaZawartosc thead .kol .pakietNr {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
+  .tabelaZawartosc thead th:first-child {
+    position: static;
+  }
+  .grupa th {
+    position: static;
+  }
+  .podpowiedz {
+    display: block;
+  }
+  .duza {
+    font-size: 22px;
+  }
+  .pakietNazwa {
+    font-size: 19px;
+  }
+  .tabelaPrzyklad .liczba {
+    font-size: 16px;
+  }
+  .tabelaPrzyklad .suma .liczba {
+    font-size: 18px;
+  }
+  .kol {
+    width: 86px;
+  }
+}
