@@ -42,7 +42,8 @@ export default function PasekRinesk({ dostep, inicjal, logo = null, plan = null,
         {
           tytul: t("Rep's Bruno", "Bruno handlowca"),
           // 4.11 (USER_001): Feedback, Panel, Podsumowanie tygodnia usunięte z menu; Kalendarz osobno w obu sekcjach.
-          linki: dostep.szef ? [jakoH(L("kokpit")), jakoH(L("klienci")), jakoH(L("lejek")), jakoH(L("statystyki")), jakoH(L("kalendarz")), L("test"), trening, L("ogien")] : [L("kokpit"), L("klienci"), L("lejek"), L("statystyki"), L("kalendarz"), L("test"), trening, L("ogien")],
+          linki: dostep.szef ? [jakoH(L("kokpit")), jakoH(L("klienci")), jakoH(L("lejek")), jakoH(L("statystyki")), jakoH(L("kalendarz"))] : [L("kokpit"), L("klienci"), L("lejek"), L("statystyki"), L("kalendarz")],
+          // 4.11 (USER_001 „ukryj je, usuń na razie”): Test, Trening, Strefa mentalna poza menu (strony zostają, czat linkuje trening).
         },
         { tytul: t("Other", "Inne"), linki: [L("ustawienia")] },
       ]

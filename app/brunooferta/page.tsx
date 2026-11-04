@@ -8,7 +8,7 @@ import { PAKIETY, PRZYKLAD_KONT, ZAWARTOSC, koszt, zl } from "@/lib/bruno/oferta
 // Na razie bez indeksowania (propozycja, czeka na decyzję USER_001 o cenach). Każdy przycisk → /spotkanie.
 export const metadata: Metadata = {
   title: "Oferta Bruno AI dla firm | 3 pakiety",
-  description: "Bruno podpięty pod Twój CRM, audyt sprzedaży albo własny system. Ceny netto, 3 pakiety.",
+  description: "Bruno podpięty pod Twój CRM, audyt sprzedaży albo własny system. Ceny brutto, 3 pakiety.",
   robots: { index: false, follow: false },
 };
 
@@ -72,7 +72,7 @@ export default function Page() {
                 {PAKIETY.map((p) => (
                   <td key={p.nr} className={`${o.liczba} ${o.duza} ${p.rekomendowany ? o.rek : ""}`}>
                     {zl(p.abonament)}
-                    <small>netto</small>
+                    <small>brutto</small>
                   </td>
                 ))}
               </tr>
@@ -154,7 +154,7 @@ export default function Page() {
         <h2 id="przyklad" className={o.h2}>
           <span className={o.nr}>03</span> Przykład: 5 handlowców + szef
         </h2>
-        <p className={o.pod}>{PRZYKLAD_KONT} kont, ceny netto.</p>
+        <p className={o.pod}>{PRZYKLAD_KONT} kont, ceny brutto.</p>
         <div className={o.tabelaWrap}>
           <table className={`${o.tabela} ${o.tabelaPrzyklad}`}>
             <thead>

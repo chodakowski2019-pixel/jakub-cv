@@ -57,7 +57,7 @@ export default function ZamowienieForm() {
           <span className={o.znaczek}>Zamówienie nr {gotowe.id}</span>
           <h2 className={o.h2} style={{ marginTop: 12 }}>Dziękuję. Mam Twoje zamówienie.</h2>
           <ol className={o.kroki}>
-            <li>Na <b>{f.email}</b> wysyłam potwierdzenie i fakturę: {zl(k.pierwszy)} netto (start {zl(k.start)} + pierwszy miesiąc {zl(k.miesiac)}).</li>
+            <li>Na <b>{f.email}</b> wysyłam potwierdzenie i fakturę: {zl(k.pierwszy)} brutto (start {zl(k.start)} + pierwszy miesiąc {zl(k.miesiac)}).</li>
             <li>Po opłaceniu zakładam {Math.max(MINIMUM_KONT, f.konta)} kont i wysyłam kody logowania osobom z listy.</li>
             <li>{f.pakiet === 2 ? "Umawiamy spotkanie startowe (audyt lejka, 50 min) w ciągu 5 dni roboczych." : "Instrukcja + 30 min online w 1 dzień roboczy."}</li>
           </ol>
@@ -126,10 +126,10 @@ export default function ZamowienieForm() {
           <dl className={o.podsLista}>
             <dt>Opłata startowa</dt><dd>{zl(k.start)}</dd>
             <dt>{Math.max(MINIMUM_KONT, f.konta || 0)} kont × {zl(p.abonament)}</dt><dd>{zl(k.miesiac)} / mies.</dd>
-            <dt className={o.podsSuma}>Razem na start (netto)</dt><dd className={o.podsSuma}>{zl(k.pierwszy)}</dd>
+            <dt className={o.podsSuma}>Razem na start (brutto)</dt><dd className={o.podsSuma}>{zl(k.pierwszy)}</dd>
             <dt>Każdy kolejny miesiąc</dt><dd>{zl(k.kolejne)}</dd>
           </dl>
-          <p className={o.podsInfo}>Faktura przyjdzie na e-mail w 1 dzień roboczy. Płatność przelewem albo kartą (Stripe). VAT 23 % doliczany na fakturze.</p>
+          <p className={o.podsInfo}>Faktura przyjdzie na e-mail w 1 dzień roboczy. Płatność przelewem albo kartą (Stripe). Ceny brutto, z VAT.</p>
           {blad && <p className={o.blad} role="alert">{blad}</p>}
           <button type="submit" className={`${s.btnDark} ${s.btnBig} ${o.btnPelny}`} disabled={wysylam}>
             {wysylam ? "Wysyłam…" : "Zamawiam i akceptuję regulamin"}

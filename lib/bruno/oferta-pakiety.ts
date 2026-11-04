@@ -1,13 +1,13 @@
 // 4.11.2026 (USER_001): oferta Bruno AI Polska = 3 pakiety. Jedno źródło dla strony salesbruno.pl/oferta
 // (app/brunooferta) i przyszłego regulaminu / zamówienia. Treść = SalesAI/OFERTA-PAKIETY-PL-2026-11-04.md.
-// Ceny netto. Abonament za 1 konto / miesiąc, konta zarządzających płatne jak handlowca. Minimum 3 konta.
+// 4.11 (USER_001): ceny BRUTTO (z VAT). Abonament za 1 konto / miesiąc, konta zarządzających płatne jak handlowca. Minimum 3 konta.
 // Pakiety 1 i 2 = regulamin do akceptacji (jak lovemyself), pakiet 3 = umowa indywidualna.
 
 export type Pakiet = {
   nr: 1 | 2 | 3;
   nazwa: string;
-  start: number; // zł netto, jednorazowo
-  abonament: number; // zł netto / konto / mies.
+  start: number; // zł brutto, jednorazowo
+  abonament: number; // zł brutto / konto / mies.
   wdrozenie: string;
   dlaKogo: string;
   zawarcie: string; // regulamin / umowa
