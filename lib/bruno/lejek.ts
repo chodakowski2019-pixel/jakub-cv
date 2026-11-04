@@ -322,6 +322,50 @@ export async function typyAktywnosci(token: string): Promise<Map<string, string>
   return new Map((data ?? []).map((t) => [t.key_string, t.name]));
 }
 
+/** 5.11 (USER_001, pkt 4: „leady mają mieć historię co tam Bruno dodał, notatki itd.”): jedna oś czasu deala
+ *  z Pipedrive `/deals/{id}/flow`: notatki, zadania (zrobione i nie), zmiany etapu / statusu / wartości, pliki.
+ *  `bruno` = wpis zrobiony przez Bruno (notatka ze stopką „przez Bruno”, aktywność „Trening Bruno”). */
+export type Zdarzenie = { id: string; kiedy: string; typ: "notatka" | "zadanie" | "etap" | "status" | "wartosc" | "plik" | "mail" | "inne"; tekst: string; pod: string | null; bruno: boolean; zrobione: boolean | null; data: string | null; /** klucz typu aktywności Pipedrive (call, email, „Trening Bruno”…) */ typKlucz: string | null };
+
+type FlowPd = { object: string; timestamp: string; data: Record<string, unknown> };
+const czysty = (s: unknown) => bezPrefiksu(String(s ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " "));
+
+export async function historiaDeala(token: string, dealId: number, etapy: Etap[], limit = 80): Promise<Zdarzenie[]> {
+  const { data } = await pd<FlowPd[] | null>(token, `/deals/${dealId}/flow?limit=${limit}`);
+  const out: Zdarzenie[] = [];
+  for (const f of data ?? []) {
+    const d = f.data ?? {};
+    const dod = d.additional_data as Record<string, unknown> | unknown[] | undefined;
+    const form = (k: string) => (dod && !Array.isArray(dod) && typeof dod[k] === "string" ? String(dod[k]) : null);
+    if (f.object === "note") {
+      const tresc = czysty(d.content);
+      const bruno = /przez Bruno|via Bruno/i.test(tresc);
+      out.push({ id: `n${d.id}`, kiedy: String(d.add_time ?? f.timestamp), typ: "notatka", tekst: tresc.replace(/\s*\S[^.]*?(przez|via) Bruno\.?$/i, "").trim(), pod: null, bruno, zrobione: null, data: null, typKlucz: null });
+    } else if (f.object === "activity") {
+      const typ = String(d.type ?? "");
+      const trening = /trening|training/i.test(typ) || /trening bruno/i.test(String(d.subject ?? ""));
+      out.push({ id: `a${d.id}`, kiedy: String(d.marked_as_done_time || d.add_time || f.timestamp), typ: "zadanie", tekst: bezPrefiksu(String(d.subject ?? "")), pod: d.note ? czysty(d.note).slice(0, 300) : null, bruno: trening, zrobione: Boolean(d.done), data: typeof d.due_date === "string" ? d.due_date : null, typKlucz: typ || null });
+    } else if (f.object === "dealChange") {
+      const pole = String(d.field_key ?? "");
+      const kiedy = String(d.log_time ?? f.timestamp);
+      if (pole === "stage_id") {
+        const n = (v: unknown) => etapy.find((e) => String(e.id) === String(v))?.nazwa ?? String(v ?? "");
+        out.push({ id: `c${kiedy}${pole}`, kiedy, typ: "etap", tekst: `${form("old_value_formatted") ?? n(d.old_value)} → ${form("new_value_formatted") ?? n(d.new_value)}`, pod: null, bruno: false, zrobione: null, data: null, typKlucz: null });
+      } else if (pole === "status") {
+        out.push({ id: `c${kiedy}${pole}`, kiedy, typ: "status", tekst: String(d.new_value ?? ""), pod: d.lost_reason ? String(d.lost_reason) : null, bruno: false, zrobione: null, data: null, typKlucz: null });
+      } else if (pole === "value") {
+        out.push({ id: `c${kiedy}${pole}`, kiedy, typ: "wartosc", tekst: `${d.old_value ?? 0} → ${d.new_value ?? 0}`, pod: null, bruno: false, zrobione: null, data: null, typKlucz: null });
+      }
+    } else if (f.object === "file") {
+      out.push({ id: `f${d.id}`, kiedy: String(d.add_time ?? f.timestamp), typ: "plik", tekst: String(d.file_name ?? d.name ?? "plik"), pod: null, bruno: false, zrobione: null, data: null, typKlucz: null });
+    } else if (f.object === "mailMessage") {
+      const m = d as { subject?: string; from?: { email_address?: string }[] };
+      out.push({ id: `m${d.id}`, kiedy: String(d.add_time ?? f.timestamp), typ: "mail", tekst: String(m.subject ?? "e-mail"), pod: m.from?.[0]?.email_address ?? null, bruno: false, zrobione: null, data: null, typKlucz: null });
+    }
+  }
+  return out.sort((a, b) => b.kiedy.localeCompare(a.kiedy));
+}
+
 /** Deale otwarte bez ruchu dłużej niż `dni` (po dacie ostatniej zmiany w Pipedrive). */
 export function dealeBezRuchu(deale: Deal[], dni = 7): Deal[] {
   const prog = Date.now() - dni * 86_400_000;

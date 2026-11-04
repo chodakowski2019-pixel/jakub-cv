@@ -1247,3 +1247,55 @@ button.bruno-obiekcje-wiersz:hover { background: rgba(212, 175, 90, 0.06); }
   .blj-rzad-prawo { flex-direction: row; align-items: center; justify-content: space-between; }
   .blj-przejscie { grid-column: 1; justify-content: flex-start; margin: 0; }
 }
+
+/* ===== 5.11: tekst Bruno (bmd-*), załączniki (bcz-zal*), przycisk treningu, oś czasu klienta (bkl-os) ===== */
+.bmd p { margin: 0 0 8px; }
+.bmd p:last-child { margin-bottom: 0; }
+.bmd ul, .bmd ol { margin: 4px 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.bmd ul { list-style: disc; }
+.bmd ol { list-style: decimal; }
+.bmd li::marker { color: #9eab00; }
+.bmd b { font-weight: 700; color: #141416; }
+.bmd code { font-size: 0.92em; padding: 1px 6px; border-radius: 6px; background: rgba(20, 20, 22, 0.06); }
+.bmd .bmd-h { font-weight: 700; margin-top: 6px; }
+.bruno.zloty:not(.rinesk) .bmd b { color: #fff; }
+.bcz-gora-p { display: flex; align-items: center; gap: 8px; }
+.bcz-trenuj { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #141416; background: #e3ef3a; border-radius: 999px; padding: 6px 13px; box-shadow: 0 6px 14px -8px rgba(110, 125, 0, 0.7); transition: transform 0.12s, filter 0.15s; }
+.bcz-trenuj:hover { filter: brightness(1.05); }
+.bcz-trenuj:active { transform: scale(0.97); }
+.bcz-pigulka-trening { background: #e3ef3a; border-color: #d5e22a; font-weight: 700; }
+.bcz-pigulka-trening:hover { border-color: #9eab00; }
+.bcz-klip { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; border: 0; background: transparent; color: rgba(20, 20, 22, 0.55); cursor: pointer; flex: none; margin: 0 -6px 2px -10px; }
+.bcz-klip:hover { color: #141416; background: rgba(20, 20, 22, 0.06); }
+.bcz-klip:disabled { opacity: 0.35; cursor: default; }
+.bcz-zal { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.bcz-zal-pole { margin: 0 0 8px 14px; }
+.bcz-zal-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: #141416; background: #fff; border: 1px solid rgba(20, 20, 22, 0.14); border-radius: 999px; padding: 5px 10px 5px 6px; max-width: 280px; }
+.bcz-zal-chip > span, .bcz-zal-chip { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bcz-zal-chip i { font-style: normal; font-size: 10px; font-weight: 800; letter-spacing: 0.04em; padding: 3px 6px; border-radius: 6px; background: #141416; color: #e3ef3a; flex: none; }
+.bcz-zal-chip button { border: 0; background: none; color: rgba(20, 20, 22, 0.5); font-size: 16px; line-height: 1; cursor: pointer; padding: 0 2px; }
+.bcz-zal-chip button:hover { color: #9b1c1c; }
+.bcz-zal-czeka { color: rgba(20, 20, 22, 0.6); }
+.bcz-zal-kropka { width: 8px; height: 8px; border-radius: 50%; background: #9eab00; padding: 0 !important; animation: bkk-kropka 1.1s ease-in-out infinite; }
+.bcz-ja .bcz-zal-chip { background: #fff; }
+.bruno.zloty:not(.rinesk) .bcz-zal-chip { background: rgba(255, 255, 255, 0.08); color: #fff; border-color: rgba(255, 255, 255, 0.2); }
+.bruno.zloty:not(.rinesk) .bcz-klip { color: rgba(255, 255, 255, 0.6); }
+.bkl-fakty { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.bkl-os { display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.bkl-os li { display: grid; grid-template-columns: 58px 86px 1fr; gap: 10px; align-items: start; padding: 9px 12px; border-radius: 12px; background: rgba(20, 20, 22, 0.035); }
+.bkl-os li.bkl-od-bruno { background: rgba(227, 239, 58, 0.22); }
+.bkl-os li.bkl-zmiana { background: transparent; border: 1px dashed rgba(20, 20, 22, 0.14); }
+.bkl-os p { margin: 0; color: rgba(20, 20, 22, 0.85); line-height: 1.45; min-width: 0; overflow-wrap: anywhere; }
+.bkl-typ { font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(20, 20, 22, 0.55); padding-top: 3px; white-space: nowrap; }
+.bkl-typ-etap, .bkl-typ-status { color: #b7791f; }
+.bkl-bruno { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: 0.04em; padding: 2px 7px; border-radius: 6px; background: #141416; color: #e3ef3a; margin-right: 8px; vertical-align: 1px; }
+@media (max-width: 640px) {
+  .bkl-os li { grid-template-columns: 52px 1fr; }
+  .bkl-typ { grid-column: 2; padding-top: 0; }
+  .bkl-os p { grid-column: 2; }
+}
+.bruno.zloty:not(.rinesk) .bkl-os li { background: rgba(255, 255, 255, 0.06); }
+.bruno.zloty:not(.rinesk) .bkl-os li.bkl-od-bruno { background: rgba(227, 239, 58, 0.12); }
+.bruno.zloty:not(.rinesk) .bkl-os li.bkl-zmiana { background: transparent; border-color: rgba(255, 255, 255, 0.18); }
+.bruno.zloty:not(.rinesk) .bkl-os p { color: rgba(255, 255, 255, 0.85); }
+.bruno.zloty:not(.rinesk) .bkl-typ { color: rgba(255, 255, 255, 0.55); }

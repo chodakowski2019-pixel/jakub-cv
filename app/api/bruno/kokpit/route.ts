@@ -110,7 +110,17 @@ const NARZEDZIA: Anthropic.Tool[] = [
     description: "Zmienia wartość deala (kwota).",
     input_schema: { type: "object", properties: { deal_id: { type: "integer" }, wartosc: { type: "number" } }, required: ["deal_id", "wartosc"], additionalProperties: false },
   },
+  {
+    name: "trenuj_rozmowe",
+    description: "Użytkownik chce poćwiczyć / potrenować rozmowę (np. „trenuj rozmowy”, „przećwiczmy”, „zagraj klienta”). Otwiera trening głosowy 1:1 z Bruno. Jeśli chodzi o konkretny deal, podaj deal_id, wtedy Bruno zagra tego klienta na jego etapie. Bez deal_id = trening ogólny.",
+    input_schema: { type: "object", properties: { deal_id: { type: "integer" }, temat: { type: "string", description: "Na czym skupić trening (obiekcja, etap), opcjonalnie." } }, additionalProperties: false },
+  },
 ];
+
+/** 5.11 (pkt 3): załącznik (PDF / nagranie) = tekst doklejony do wiadomości użytkownika. */
+type Zalacznik = { nazwa: string; typ: "pdf" | "audio"; tekst: string };
+const zZalacznikami = (tresc: string, z: Zalacznik[] | undefined) =>
+  !z?.length ? tresc : `${tresc}\n\n${z.map((x) => `[Załącznik: ${x.nazwa} (${x.typ === "audio" ? "nagranie, transkrypcja" : "PDF"})]\n${x.tekst.slice(0, 8000)}\n[Koniec załącznika]`).join("\n\n")}`;
 
 function dealDoTekstu(d: Deal, lejek: Lejek, imiona: Map<string, string>) {
   const etap = lejek.etapy.find((e) => e.id === d.etap_id)?.nazwa ?? d.etap_id;
@@ -126,8 +136,11 @@ export async function POST(req: Request) {
   if (!konto || !crmWlaczony(firma) || !firma?.pipedrive_token) return NextResponse.json({ blad: t("CRM not connected.", "CRM nie jest podpięty.") }, { status: 403 });
   if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ blad: "Brak ANTHROPIC_API_KEY." }, { status: 500 });
 
-  const b = (await req.json().catch(() => ({}))) as { wiadomosci?: { rola: string; tresc: string }[] };
-  const historia = (b.wiadomosci ?? []).filter((w) => (w.rola === "user" || w.rola === "assistant") && typeof w.tresc === "string" && w.tresc.trim()).slice(-20);
+  const b = (await req.json().catch(() => ({}))) as { wiadomosci?: { rola: string; tresc: string; zalaczniki?: Zalacznik[] }[] };
+  const historia = (b.wiadomosci ?? [])
+    .filter((w) => (w.rola === "user" || w.rola === "assistant") && (typeof w.tresc === "string" && w.tresc.trim() || w.zalaczniki?.length))
+    .map((w) => ({ rola: w.rola, tresc: w.rola === "user" ? zZalacznikami(String(w.tresc ?? "").trim() || "(tylko załącznik)", w.zalaczniki) : String(w.tresc ?? "") }))
+    .slice(-20);
   if (!historia.length || historia[historia.length - 1].rola !== "user") return NextResponse.json({ blad: t("Empty message.", "Pusta wiadomość.") }, { status: 400 });
 
   const token = firma.pipedrive_token;
@@ -164,6 +177,9 @@ export async function POST(req: Request) {
     `Jesteś Bruno, asystentem CRM firmy „${firma.nazwa}”. Użytkownik: ${imieKonta} (${szef ? "szef, widzi cały zespół" : "handlowiec, widzi tylko swoje deale"}). Dziś: ${dzis}.`,
     `Zadanie: użytkownik opowiada, co się wydarzyło (spotkanie, telefon, ustalenia), albo pyta o lejek. Ty SAM wykonujesz zmiany w CRM narzędziami: notatka, etap, zadanie, nowy deal, wygrany/przegrany, wartość. Nie pytaj o potwierdzenie przy oczywistych rzeczach; dopytaj TYLKO, gdy nie wiesz, o który deal chodzi (kilka pasuje) albo brakuje daty zadania.`,
     `Zasady: najpierw znajdź deal (lista_deali z „szukaj”), potem zapisuj. Notatka = fakty z wypowiedzi, krótko, bez wymyślania. „Do piątku” = policz datę od dziś. Po zapisie odpowiedz 1-3 zdaniami: co zapisałeś i jaki jest następny krok. Odpowiadaj ${jezyk === "pl" ? "po polsku" : "in American English"}, prosto, bez żargonu.`,
+    `Format odpowiedzi: krótko. Maks 3 zdania albo lista do 5 punktów („- ”). Nazwy klientów, kwoty i daty pogrub (**tak**). Bez nagłówków, bez tabel, bez emoji, bez powtarzania pytania.`,
+    `Załączniki: użytkownik może dołączyć PDF (oferta, umowa) albo nagranie rozmowy (transkrypcja w treści między [Załącznik] i [Koniec załącznika]). Wtedy: znajdź deal (z treści albo z wiadomości), zapisz notatkę ze streszczeniem (ustalenia, kwoty, obiekcje, następny krok, max 8 linii) i jeśli z treści wynika zadanie albo etap, zrób to też. Odpowiedz 3 najważniejszymi faktami. Jeśli nie wiesz, do którego deala, zapytaj jednym zdaniem.`,
+    `Trening: gdy użytkownik chce ćwiczyć / trenować rozmowę, wywołaj trenuj_rozmowe (z deal_id, jeśli mówi o kliencie). Odpowiedz jednym zdaniem.`,
     `Etapy lejka „${lejek.pipeline.nazwa}” (id: nazwa): ${lejek.etapy.map((e) => `${e.id}: ${e.nazwa}`).join(", ")}.`,
     `Handlowcy: ${handlowcy.map((h) => `${h.imie} <${h.email}>`).join(", ")}.`,
     `Deale użytkownika (otwarte, ${Math.min(widoczne().filter((d) => d.status === "open").length, 80)} z ${widoczne().filter((d) => d.status === "open").length}):\n${widoczne()
@@ -176,9 +192,30 @@ export async function POST(req: Request) {
   const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const messages: Anthropic.MessageParam[] = historia.map((w) => ({ role: w.rola as "user" | "assistant", content: w.tresc.slice(0, 3000) }));
   const akcje: Akcja[] = [];
+  let przekieruj: string | null = null;
 
   const wykonaj = async (nazwa: string, input: Record<string, unknown>): Promise<string> => {
     switch (nazwa) {
+      case "trenuj_rozmowe": {
+        const id = Number(input.deal_id);
+        const d = Number.isFinite(id) && id > 0 ? widoczne().find((x) => x.id === id) ?? null : null;
+        const temat = typeof input.temat === "string" ? input.temat.trim().slice(0, 300) : "";
+        if (d) {
+          const etap = lejek.etapy.find((e) => e.id === d.etap_id)?.nazwa ?? "?";
+          const n = await notatkiDeala(token, d.id, 4).catch(() => []);
+          const sytuacja = [
+            jezyk === "pl" ? `Zagraj klienta: ${d.osoba ?? "osoba decyzyjna"}${d.organizacja ? ` z firmy ${d.organizacja}` : ""}. Deal „${d.tytul}”, wartość ${d.wartosc} ${d.waluta}, etap lejka: ${etap}.` : `Play the customer: ${d.osoba ?? "decision maker"}${d.organizacja ? ` from ${d.organizacja}` : ""}. Deal “${d.tytul}”, value ${d.wartosc} ${d.waluta}, stage: ${etap}.`,
+            n.length ? (jezyk === "pl" ? `Co wiemy z notatek: ${n.map((x) => x.tresc).join(" | ").slice(0, 900)}.` : `From notes: ${n.map((x) => x.tresc).join(" | ").slice(0, 900)}.`) : "",
+            temat ? (jezyk === "pl" ? `Skup się na: ${temat}.` : `Focus on: ${temat}.`) : "",
+          ].filter(Boolean).join(" ");
+          przekieruj = `/bruno/rozmowa?sytuacja=${encodeURIComponent(sytuacja.slice(0, 2900))}`;
+          akcje.push({ opis: `${t("Training", "Trening")}: ${d.tytul}`, link: null });
+          return `Otwieram trening: Bruno zagra ${d.osoba ?? d.tytul}.`;
+        }
+        przekieruj = temat ? `/bruno/rozmowa?sytuacja=${encodeURIComponent(temat)}` : "/bruno/rozmowa";
+        akcje.push({ opis: t("Training opened", "Trening otwarty"), link: null });
+        return "Otwieram trening rozmów.";
+      }
       case "lista_deali": {
         const szukaj = String(input.szukaj ?? "").trim().toLowerCase();
         const status = String(input.status ?? "open");
@@ -311,7 +348,7 @@ export async function POST(req: Request) {
       messages.push({ role: "user", content: wyniki });
       if (krok === MAX_KROKOW - 1) odpowiedz = tekst || t("Done.", "Zrobione.");
     }
-    return NextResponse.json({ odpowiedz: odpowiedz || (akcje.length ? t("Done.", "Zrobione.") : ""), akcje });
+    return NextResponse.json({ odpowiedz: odpowiedz || (akcje.length ? t("Done.", "Zrobione.") : ""), akcje, przekieruj });
   } catch (e) {
     console.error("[bruno kokpit]", e);
     return NextResponse.json({ blad: String((e as Error)?.message ?? e).slice(0, 300), akcje }, { status: 500 });

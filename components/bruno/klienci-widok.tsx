@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Naglowek } from "@/components/bruno/zespol-widok";
 import type { Firma } from "@/lib/bruno/firmy";
 import { locale, tDla, type Jezyk } from "@/lib/bruno/i18n";
-import { formatKwota, naglowekZadania, type Aktywnosc, type Deal, type Etap } from "@/lib/bruno/lejek";
+import { formatKwota, naglowekZadania, type Aktywnosc, type Deal, type Etap, type Zdarzenie } from "@/lib/bruno/lejek";
 import { zJako } from "@/lib/bruno/jako";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
 
@@ -133,17 +133,16 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, osoby, 
   );
 }
 
-export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnosci, handlowiec, linkCrm, jako = null }: { firma: Firma | null; jezyk: Jezyk; szef: boolean; deal: Deal; etapy: Etap[]; notatki: { id: number; tresc: string; kiedy: string }[]; aktywnosci: (Aktywnosc & { typNazwa: string })[]; handlowiec: Osoba | null; linkCrm: string | null; jako?: string | null }) {
+export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnosci, historia = [], handlowiec, linkCrm, jako = null }: { firma: Firma | null; jezyk: Jezyk; szef: boolean; deal: Deal; etapy: Etap[]; notatki: { id: number; tresc: string; kiedy: string }[]; aktywnosci: (Aktywnosc & { typNazwa: string })[]; /** 5.11 (pkt 4): jedna oś czasu z Pipedrive, wpisy Bruno oznaczone. */ historia?: Zdarzenie[]; handlowiec: Osoba | null; linkCrm: string | null; jako?: string | null }) {
   const t = tDla(jezyk);
   const etap = etapy.find((e) => e.id === deal.etap_id);
   const idx = etapy.findIndex((e) => e.id === deal.etap_id);
   const kwota = formatKwota(deal.wartosc, deal.waluta, jezyk);
   const dzis = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
   const doZrobienia = aktywnosci.filter((a) => !a.zrobione).sort((a, b) => a.data.localeCompare(b.data));
-  const historia = aktywnosci.filter((a) => a.zrobione);
-  const treningi = historia.filter((a) => /trening bruno/i.test(a.typNazwa));
+  const odBruno = historia.filter((h) => h.bruno).length;
 
-  // Przycisk „Przećwicz rozmowę z tym klientem”: Bruno gra tę osobę, na tym etapie, z notatkami jako kontekstem.
+  // Przycisk „Trenuj rozmowę z tym klientem”: Bruno gra tę osobę, na tym etapie, z notatkami jako kontekstem.
   const sytuacja = [
     jezyk === "pl"
       ? `Zagraj klienta: ${deal.osoba ?? "osoba decyzyjna"}${deal.organizacja ? ` z firmy ${deal.organizacja}` : ""}. Deal „${deal.tytul}”, wartość ${kwota}, etap lejka: ${etap?.nazwa ?? "?"}.`
@@ -156,8 +155,13 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
     .join(" ");
   const linkTreningu = `/bruno/rozmowa?sytuacja=${encodeURIComponent(sytuacja.slice(0, 2900))}`;
 
+  // 5.11 (pkt 5: „mniej tekstów, bardziej przejrzyste”): etykiety typów krótkie, jedna linia na wpis.
+  const nazwaTypu = (h: Zdarzenie) =>
+    h.typ === "notatka" ? t("Note", "Notatka") : h.typ === "zadanie" ? (h.zrobione ? t("Done", "Zrobione") : t("Task", "Zadanie")) : h.typ === "etap" ? t("Stage", "Etap") : h.typ === "status" ? (h.tekst === "won" ? t("Won", "Wygrany") : h.tekst === "lost" ? t("Lost", "Przegrany") : t("Status", "Status")) : h.typ === "wartosc" ? t("Value", "Wartość") : h.typ === "plik" ? t("File", "Plik") : h.typ === "mail" ? "E-mail" : "";
+  const tekstWpisu = (h: Zdarzenie) => (h.typ === "status" ? h.pod ?? "" : h.typ === "wartosc" ? h.tekst.replace(/(\d+)/g, (m) => formatKwota(Number(m), deal.waluta, jezyk)) : h.tekst);
+
   return (
-    <div className="flex flex-col gap-6 bsz bkl">
+    <div className="flex flex-col gap-5 bsz bkl">
       <div>
         <Link href={zJako("/bruno/klienci", jako)} className="text-sm text-slate-500 hover:text-slate-900">← {t("Clients", "Klienci")}</Link>
         <div className="mt-2">
@@ -166,11 +170,10 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
       </div>
 
       <section className="bruno-szklo rounded-2xl p-5 sm:p-6">
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <div className="bkl-fakty">
           <div><div className="bkl-etykieta">{t("Value", "Wartość")}</div><div className="bruno-h2 text-xl bruno-gradient-tekst tabular-nums">{kwota}</div></div>
-          <div><div className="bkl-etykieta">{t("Status", "Status")}</div><div className="font-semibold text-slate-800">{deal.status === "won" ? t("Won", "Wygrany") : deal.status === "lost" ? t("Lost", "Przegrany") : t("Open", "Otwarty")}{deal.powod_przegranej ? <span className="text-slate-500 font-normal"> · {deal.powod_przegranej}</span> : null}</div></div>
+          <div><div className="bkl-etykieta">{t("Status", "Status")}</div><div className="font-semibold text-slate-800">{deal.status === "won" ? t("Won", "Wygrany") : deal.status === "lost" ? t("Lost", "Przegrany") : etap?.nazwa ?? t("Open", "Otwarty")}</div></div>
           <div><div className="bkl-etykieta">{t("Last contact", "Ostatni kontakt")}</div><div className="font-semibold text-slate-800">{dataKrotka(deal.ostatni_kontakt ?? deal.aktualizacja, jezyk) ?? "–"}</div></div>
-          <div><div className="bkl-etykieta">{t("Added", "Dodany")}</div><div className="font-semibold text-slate-800">{dataKrotka(deal.dodano, jezyk) ?? "–"}</div></div>
           {szef && handlowiec && <div><div className="bkl-etykieta">{t("Rep", "Handlowiec")}</div><Link href={`/bruno/szef/${encodeURIComponent(handlowiec.email)}`} className="font-semibold text-slate-800 underline underline-offset-2">{handlowiec.imie}</Link></div>}
         </div>
         <ol className="bkl-etapy mt-5" aria-label={t("Pipeline stage", "Etap lejka")}>
@@ -181,59 +184,49 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
           ))}
         </ol>
         <div className="flex gap-3 flex-wrap mt-5">
-          <Link href={linkTreningu} className="bruno-przycisk inline-flex px-5 py-2.5 text-sm">{t("Practice a call with this client →", "Przećwicz rozmowę z tym klientem →")}</Link>
-          <Link href={zJako(`/bruno/kokpit?deal=${encodeURIComponent(deal.tytul)}`, jako)} className="bkl-przycisk-2">{t("Update in chat", "Zaktualizuj w czacie")}</Link>
-          {linkCrm && <a href={linkCrm} target="_blank" rel="noreferrer" className="bkl-przycisk-2">{t("Open in Pipedrive", "Otwórz w Pipedrive")}</a>}
+          <Link href={linkTreningu} className="bruno-przycisk inline-flex px-5 py-2.5 text-sm">{t("Train this call →", "Trenuj rozmowę →")}</Link>
+          <Link href={zJako(`/bruno/kokpit?deal=${encodeURIComponent(deal.tytul)}`, jako)} className="bkl-przycisk-2">{t("Tell Bruno", "Powiedz Bruno")}</Link>
+          {linkCrm && <a href={linkCrm} target="_blank" rel="noreferrer" className="bkl-przycisk-2">Pipedrive</a>}
         </div>
       </section>
 
-      <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-start">
-        <section className="bruno-szklo rounded-2xl p-5 sm:p-6">
-          <h2 className="bruno-h2 text-lg mb-3">{t("Notes", "Notatki")} <span className="text-slate-400 text-sm font-normal">{notatki.length}</span></h2>
-          {notatki.length === 0 ? (
-            <p className="text-sm text-slate-500">{t("No notes yet. Tell Bruno in chat what happened.", "Brak notatek. Powiedz Bruno w czacie, co się wydarzyło.")}</p>
-          ) : (
-            <ul className="bkl-notatki">
-              {notatki.map((n) => (
-                <li key={n.id}>
-                  <span className="bkl-kiedy">{dataKrotka(n.kiedy, jezyk)}</span>
-                  <p>{n.tresc}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+      <section className="bruno-szklo rounded-2xl p-5 sm:p-6">
+        <h2 className="bruno-h2 text-lg mb-3">{t("To do", "Do zrobienia")} <span className="text-slate-400 text-sm font-normal">{doZrobienia.length}</span></h2>
+        {doZrobienia.length === 0 ? (
+          <p className="text-sm text-amber-700">{t("No next step. Tell Bruno.", "Brak następnego kroku. Powiedz Bruno.")}</p>
+        ) : (
+          <ul className="bkl-os">
+            {doZrobienia.map((a) => (
+              <li key={a.id}>
+                <span className={`bkl-kiedy ${a.data < dzis ? "text-rose-800" : ""}`}>{dataKrotka(a.data, jezyk)}{a.godzina ? ` ${a.godzina.slice(0, 5)}` : ""}</span>
+                <span className="bkl-typ">{a.typNazwa}</span>
+                <p>{naglowekZadania(a.temat)}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
-        <section className="bruno-szklo rounded-2xl p-5 sm:p-6">
-          <h2 className="bruno-h2 text-lg mb-3">{t("Tasks", "Zadania")} <span className="text-slate-400 text-sm font-normal">{doZrobienia.length}</span></h2>
-          {doZrobienia.length === 0 ? (
-            <p className="text-sm text-amber-700">{t("No next step planned. Add one in chat.", "Brak następnego kroku. Dodaj w czacie.")}</p>
-          ) : (
-            <ul className="bkl-notatki">
-              {doZrobienia.map((a) => (
-                <li key={a.id}>
-                  <span className={`bkl-kiedy ${a.data < dzis ? "text-rose-800" : ""}`}>{dataKrotka(a.data, jezyk)}{a.godzina ? ` ${a.godzina.slice(0, 5)}` : ""}</span>
-                  <p><b>{a.temat}</b> <span className="text-slate-400 text-xs">· {a.typNazwa}</span>{a.notatka ? <span className="block text-slate-500 text-xs mt-0.5">{a.notatka}</span> : null}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <h2 className="bruno-h2 text-lg mt-6 mb-3">{t("History", "Historia")} <span className="text-slate-400 text-sm font-normal">{historia.length}{treningi.length ? ` · ${treningi.length} ${t("Bruno trainings", "treningów Bruno")}` : ""}</span></h2>
-          {historia.length === 0 ? (
-            <p className="text-sm text-slate-500">{t("Nothing done yet.", "Jeszcze nic zrobionego.")}</p>
-          ) : (
-            <ul className="bkl-notatki">
-              {historia.map((a) => (
-                <li key={a.id} className={/trening bruno/i.test(a.typNazwa) ? "bkl-trening" : ""}>
-                  <span className="bkl-kiedy">{dataKrotka(a.data, jezyk)}</span>
-                  <p><span className="bsz-pigulka mr-1.5">{a.typNazwa}</span>{a.temat}{a.notatka ? <span className="block text-slate-500 text-xs mt-0.5 line-clamp-3">{a.notatka}</span> : null}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </div>
+      <section className="bruno-szklo rounded-2xl p-5 sm:p-6">
+        <h2 className="bruno-h2 text-lg mb-3">{t("History", "Historia")} <span className="text-slate-400 text-sm font-normal">{historia.length}{odBruno ? ` · ${odBruno} ${t("from Bruno", "od Bruno")}` : ""}</span></h2>
+        {historia.length === 0 ? (
+          <p className="text-sm text-slate-500">{t("Nothing yet.", "Jeszcze nic.")}</p>
+        ) : (
+          <ul className="bkl-os">
+            {historia.map((h) => (
+              <li key={h.id} className={`${h.bruno ? "bkl-od-bruno" : ""} ${h.typ === "etap" || h.typ === "status" ? "bkl-zmiana" : ""}`}>
+                <span className="bkl-kiedy">{dataKrotka(h.kiedy, jezyk)}</span>
+                <span className={`bkl-typ bkl-typ-${h.typ}`}>{nazwaTypu(h)}</span>
+                <p>
+                  {h.bruno && <span className="bkl-bruno" title={t("Added by Bruno", "Dodał Bruno")}>Bruno</span>}
+                  {h.typ === "zadanie" ? naglowekZadania(tekstWpisu(h)) : tekstWpisu(h)}
+                  {h.pod && h.typ !== "status" ? <span className="block text-slate-500 text-xs mt-0.5 line-clamp-2">{h.pod}</span> : null}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }

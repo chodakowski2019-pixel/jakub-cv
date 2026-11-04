@@ -4,7 +4,7 @@ import { pobierzKonto } from "@/lib/bruno/db";
 import { pobierzFirme } from "@/lib/bruno/firmy";
 import { widokKonta } from "@/lib/bruno/jako";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
-import { crmWlaczony, domenaPipedrive, notatkiDeala, pobierzLejek, typyAktywnosci, zadaniaDeala } from "@/lib/bruno/lejek";
+import { crmWlaczony, domenaPipedrive, historiaDeala, notatkiDeala, pobierzLejek, typyAktywnosci, zadaniaDeala } from "@/lib/bruno/lejek";
 import { KlientKarta } from "@/components/bruno/klienci-widok";
 
 export const dynamic = "force-dynamic";
@@ -30,7 +30,8 @@ export default async function BrunoKlientPage({ params, searchParams }: { params
   const lejek = await pobierzLejek(token);
   const deal = lejek.deale.find((d) => d.id === dealId);
   if (!deal || (!w.szef && deal.handlowiec !== w.konto.email.toLowerCase())) notFound();
-  const [notatki, aktywnosci, typy, domena] = await Promise.all([notatkiDeala(token, dealId, 30), zadaniaDeala(token, dealId, 50), typyAktywnosci(token), domenaPipedrive(token)]);
+  // 5.11 (pkt 4): historia = jedna oś czasu z Pipedrive (notatki, zadania, zmiany etapu), wpisy Bruno oznaczone.
+  const [notatki, aktywnosci, typy, domena, historia] = await Promise.all([notatkiDeala(token, dealId, 30), zadaniaDeala(token, dealId, 50), typyAktywnosci(token), domenaPipedrive(token), historiaDeala(token, dealId, lejek.etapy).catch(() => [])]);
   const osoby = w.handlowcy.map((h) => ({ email: h.email.toLowerCase(), imie: h.imie ?? h.email, zdjecie: h.zdjecie_url ?? null }));
   return (
     <KlientKarta
@@ -41,6 +42,7 @@ export default async function BrunoKlientPage({ params, searchParams }: { params
       etapy={lejek.etapy}
       notatki={notatki}
       aktywnosci={aktywnosci.map((a) => ({ ...a, typNazwa: typy.get(a.typ) ?? a.typ }))}
+      historia={historia.map((h) => (h.typKlucz ? { ...h, pod: [typy.get(h.typKlucz) ?? h.typKlucz, h.pod].filter(Boolean).join(" · ") } : h))}
       handlowiec={osoby.find((o) => o.email === deal.handlowiec) ?? null}
       linkCrm={domena ? `${domena}/deal/${deal.id}` : null}
       jako={w.jako}
