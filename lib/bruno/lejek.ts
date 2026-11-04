@@ -92,6 +92,13 @@ type DealPd = Record<string, unknown> & {
 };
 
 /** 4.11 (USER_001): panel nie pokazuje prefiksów „[Bruno demo] ” / „[Przykład] ” (zostają w Pipedrive, reset seeda po nich usuwa). */
+/** 4.11 (USER_001 „skróć te teksty, żeby to nagłówki były”): temat zadania do listy = część przed dwukropkiem, max 60 znaków. */
+export const naglowekZadania = (temat: string | null | undefined): string => {
+  const t = bezPrefiksu(temat);
+  const krotki = t.split(/[:—–]/)[0].trim();
+  const n = krotki.length >= 6 ? krotki : t;
+  return n.length > 60 ? `${n.slice(0, 57).trimEnd()}…` : n;
+};
 export const bezPrefiksu = (s: string | null | undefined): string => String(s ?? "").replace(/\[(Bruno demo|Przykład|Sample)\]\s*/gi, "").trim();
 
 function mapujDeal(d: DealPd, pole: string | null): Deal {

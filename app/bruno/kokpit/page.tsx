@@ -4,7 +4,7 @@ import { pobierzKonto, pobierzRozmowy } from "@/lib/bruno/db";
 import { pobierzFirme } from "@/lib/bruno/firmy";
 import { widokKonta } from "@/lib/bruno/jako";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
-import { analizaZDeali, crmWlaczony, dealeBezRuchu, domenaPipedrive, formatKwota, notatkiDeala, pobierzLejek, zadaniaFirmy } from "@/lib/bruno/lejek";
+import { analizaZDeali, crmWlaczony, dealeBezRuchu, domenaPipedrive, formatKwota, naglowekZadania, notatkiDeala, pobierzLejek, zadaniaFirmy } from "@/lib/bruno/lejek";
 import { dobierzTrening } from "@/lib/bruno/dobor-treningu";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
 import Kokpit, { type Powitanie } from "@/components/bruno/kokpit";
@@ -46,7 +46,7 @@ export default async function BrunoKokpitPage({ searchParams }: { searchParams: 
       .slice(0, 8)
       .map((z) => {
         const d = moje.find((x) => x.id === z.deal_id);
-        return { id: z.id, temat: z.temat, data: z.data, godzina: z.godzina, zalegle: z.data < dzis, deal: d?.tytul ?? z.organizacja ?? "", dealId: z.deal_id, osoba: d?.osoba ?? z.osoba ?? null, zdjecie: zdjecieKlienta(d?.osoba ?? z.osoba), kto: szef ? imie(d?.handlowiec ?? null) : null };
+        return { id: z.id, temat: naglowekZadania(z.temat), data: z.data, godzina: z.godzina, zalegle: z.data < dzis, deal: d?.tytul ?? z.organizacja ?? "", dealId: z.deal_id, osoba: d?.osoba ?? z.osoba ?? null, zdjecie: zdjecieKlienta(d?.osoba ?? z.osoba), kto: szef ? imie(d?.handlowiec ?? null) : null };
       });
     const bezRuchu = dealeBezRuchu(moje, 7)
       .slice(0, 6)

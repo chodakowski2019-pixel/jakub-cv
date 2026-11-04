@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Naglowek } from "@/components/bruno/zespol-widok";
 import type { Firma } from "@/lib/bruno/firmy";
 import { locale, tDla, type Jezyk } from "@/lib/bruno/i18n";
-import { formatKwota, type Aktywnosc, type Deal, type Etap } from "@/lib/bruno/lejek";
+import { formatKwota, naglowekZadania, type Aktywnosc, type Deal, type Etap } from "@/lib/bruno/lejek";
 import { zJako } from "@/lib/bruno/jako";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
 
@@ -97,7 +97,7 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, osoby, 
                         {d.nastepna_aktywnosc ? (
                           <span className={zalegle ? "text-rose-800 font-semibold" : "text-slate-700"}>
                             {dataKrotka(d.nastepna_aktywnosc, jezyk)}
-                            {d.nastepna_aktywnosc_temat ? <span className="block text-[11px] text-slate-400 truncate max-w-[200px]">{d.nastepna_aktywnosc_temat}</span> : null}
+                            {d.nastepna_aktywnosc_temat ? <span className="block text-[11px] text-slate-400 truncate max-w-[200px]" title={d.nastepna_aktywnosc_temat}>{naglowekZadania(d.nastepna_aktywnosc_temat)}</span> : null}
                           </span>
                         ) : (
                           d.status === "open" ? <span className="text-amber-700 text-xs">{t("none, add one", "brak, dodaj")}</span> : <span className="text-slate-300">–</span>
