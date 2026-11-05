@@ -81,31 +81,29 @@ export async function POST(req: Request) {
     ["Po odbiorze CRM", `${zl(k.drugaRata)} (${zl(k.crm / 2)} CRM + ${zl(k.bruno)} Bruno)`],
     ["Konta", osoby.join(", ")],
   ];
-  const tresc = (doEwy: boolean) =>
+  const tresc = () =>
     kopertaBruno({
       jezyk: "pl",
-      naglowek: doEwy ? "Umowa podpisana. Dziękuję, Ewa." : `EWATEX PODPISAŁA: ${oba ? "Bruno + CRM" : "Bruno"} (${zl(k.start)})`,
+      naglowek: `EWATEX PODPISAŁA: ${oba ? "Bruno + CRM" : "Bruno"} (${zl(k.start)})`,
       tresc: [
-        akapit(doEwy ? "To potwierdzenie akceptacji umowy w formie dokumentowej. Pełna treść umowy jest pod przyciskiem (PDF), zawsze w tej wersji." : `Akceptacja ze strony ${STRONA}. IP ${ip ?? "?"}. Zamówienie nr ${id ?? "brak zapisu w bazie"}.`),
+        akapit(`Akceptacja ze strony ${STRONA}. IP ${ip ?? "?"}. Zamówienie nr ${id ?? "brak zapisu w bazie"}.`),
         tabelaParami(wiersze),
-        doEwy ? przycisk({ tekst: `Zapłać ${zl(k.start)} (pierwsza płatność)`, link: LINK_PLATNOSC_1 }) : "",
         przycisk({ tekst: "Umowa (PDF)", link: PDF }),
         kroki(
-          doEwy
-            ? [`Pierwsza płatność: zaliczka CRM ${zl(k.start)}, przycisk wyżej (przelew, karta, BLIK). Fakturę dostaniesz mailem.`, "Konta Bruno działają w 2 dni od płatności. Dzień 7: spotkanie z handlowczynią. Dzień 14: CRM gotowy.", "CRM: umówimy mailem rozmowę 30 min (etapy, pola, dane)."]
-            : [`Ewa ma link Stripe na ${zl(k.start)} w mailu. Sprawdź wpłatę w Stripe, wystaw fakturę.`, "Konta Bruno + panel Ewy w 2 dni od zaliczki.", "Lejek B2B PL: Ewatex → podpisane.", "Umówić: dzień 7 spotkanie z handlowczynią, dzień 14 z Ewą (odbiór)."],
+          [
+            `WYŚLIJ SAM do Ewy: potwierdzenie z umową (PDF ${PDF}) + link Stripe ${LINK_PLATNOSC_1} na ${zl(k.start)}. Z automatu nic nie poszło.`,
+            "Po wpłacie: faktura, konta Bruno + panel Ewy.",
+            "Lejek B2B PL: Ewatex → podpisane.",
+            "Umówić: dzień 7 spotkanie z handlowczynią, dzień 14 z Ewą (odbiór).",
+          ],
           { tytul: "Co dalej" },
         ),
       ].join("\n"),
     });
 
+  // 5.11 (USER_001): do Ewy NIC nie idzie z automatu. Potwierdzenie z umową i fakturę wysyła USER_001 sam. Mail tylko do Jakuba.
   try {
-    await wyslij({ do: email, temat: "Ewatex × Bruno AI: potwierdzenie podpisanej umowy", html: tresc(true), od: "Jakub Chodakowski <hello@jakubchodakowski.com>", replyTo: "jakub@salesbruno.com", rodzaj: "inny" });
-  } catch (err) {
-    console.error("[bruno ewatex] mail do klienta", err);
-  }
-  try {
-    await wyslij({ do: SKRZYNKA_JAKUBA, temat: `EWATEX PODPISAŁA: ${oba ? "Bruno + CRM" : "Bruno"}, ${zl(k.start)}`, html: tresc(false), replyTo: email, rodzaj: "inny" });
+    await wyslij({ do: SKRZYNKA_JAKUBA, temat: `EWATEX PODPISAŁA: ${oba ? "Bruno + CRM" : "Bruno"}, ${zl(k.start)}`, html: tresc(), replyTo: email, rodzaj: "inny" });
   } catch (err) {
     console.error("[bruno ewatex] mail do Jakuba", err);
     return NextResponse.json({ blad: "Zapisane, ale mail nie wyszedł. Napisz SMS, że podpisałaś." }, { status: 500 });
