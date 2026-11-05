@@ -4,7 +4,7 @@ import { BRUNO, CRM, HANDLOWCZYNIE, KLIENT, KONTAKT_ZGLOSZENIA, USLUGODAWCA, WER
 
 // 5.11 (USER_001): jedna umowa zamiast dwóch (Bruno AI + CRM), z poprawkami z oferty (14 500 zł, oś czasu, współpraca
 // 3 mies. z możliwością przedłużenia, rozmowy dobrane do etapu nauki). Strona = źródło PDF:
-// node scripts/bruno-ewatex-umowa-pdf.mjs → public/pdf/umowa-ewatex.pdf (link na /oferta/ewatex i w mailu po podpisie).
+// node scripts/bruno-umowa-pdf.mjs ewatex → public/pdf/umowa-ewatex.pdf (link na /oferta/ewatex i w mailu po podpisie).
 export const metadata: Metadata = {
   title: "Umowa współpracy Ewatex × Bruno AI",
   robots: { index: false, follow: false },

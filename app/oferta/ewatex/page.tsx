@@ -8,7 +8,7 @@ import { BRUNO, CRM, HANDLOWCZYNIE, KLIENT, USLUGODAWCA, zl } from "./dane";
 // 4.11 (USER_001): salesbruno.pl/oferta/ewatex = oferta dla Ewy Adamskiej (Ewatex) + podpis na stronie (forma
 // dokumentowa: imię i nazwisko, zgoda, data, IP, mail do obu stron). Link idzie SMS-em, więc strona jest pod telefon:
 // jedna kolumna, duże kwoty. Bez indeksowania. 5.11: jedna umowa (Bruno + CRM) w PDF: źródło `umowa/page.tsx`,
-// plik `public/pdf/umowa-ewatex.pdf` ze skryptu `scripts/bruno-ewatex-umowa-pdf.mjs`. Kwoty w `dane.ts`.
+// plik `public/pdf/umowa-ewatex.pdf` ze skryptu `scripts/bruno-umowa-pdf.mjs ewatex`. Kwoty w `dane.ts`.
 // Proxy: /oferta/ewatex nie jest przepisywane na /brunooferta.
 export const metadata: Metadata = {
   title: "Oferta dla Ewatex | Bruno AI",

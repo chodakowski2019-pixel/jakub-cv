@@ -108,7 +108,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  margin-top: 32px;
+  margin-top: 18px;
   break-inside: avoid;
 }
 .podpisy div {
