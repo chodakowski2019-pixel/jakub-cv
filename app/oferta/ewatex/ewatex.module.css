@@ -1,0 +1,437 @@
+/* 4.11: salesbruno.pl/oferta/ewatex. Telefon pierwszy: jedna kolumna, duże liczby, umowy jako tekst. */
+
+.root {
+  padding-top: 104px;
+}
+
+.hero {
+  padding-bottom: 20px;
+}
+.hero h1 {
+  font-size: clamp(34px, 6vw, 64px);
+}
+.heroP {
+  max-width: 560px;
+  margin: 18px auto 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.sekcja {
+  max-width: 760px;
+  padding: 40px 16px 4px;
+}
+
+/* ---------- 2 opcje ---------- */
+.opcje {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 720px) {
+  .opcje {
+    grid-template-columns: 1fr;
+  }
+}
+.plus {
+  align-self: center;
+  justify-self: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--orange);
+  color: #fff;
+  font-family: var(--head);
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1;
+}
+/* 5.11: spotkania w cenie + decyzja po 3 mies. jako oś czasu; telefon = pionowo, od 720 px = poziomo */
+.os {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1.4px solid var(--line);
+  border-radius: 20px;
+  display: grid;
+  gap: 18px;
+  font-size: 14.5px;
+  line-height: 1.4;
+}
+.os li {
+  position: relative;
+  padding-left: 26px;
+}
+.os li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+.os li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 20px;
+  bottom: -18px;
+  width: 2px;
+  background: var(--line);
+}
+.os b {
+  font-weight: 600;
+}
+.osKiedy {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+.os .osKoniec::before {
+  background: var(--ink);
+}
+@media (min-width: 720px) {
+  .os {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    padding: 22px 20px;
+  }
+  .os li {
+    padding-left: 0;
+    padding-top: 26px;
+  }
+  .os li::before {
+    top: 0;
+  }
+  .os li:not(:last-child)::after {
+    left: 16px;
+    right: -14px;
+    top: 5px;
+    bottom: auto;
+    width: auto;
+    height: 2px;
+  }
+}
+.funkcje {
+  margin-top: 16px;
+  border: 0;
+}
+.funkcje th,
+.funkcje td {
+  padding: 10px 0;
+}
+.funkcje th {
+  padding-right: 14px;
+}
+.opcja {
+  padding: 22px 20px 20px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1.4px solid var(--line);
+}
+.opcjaRek {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(240, 138, 43, 0.14);
+}
+.opcjaNr {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--orange);
+}
+.opcjaTytul {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: -0.025em;
+  margin-top: 8px;
+}
+.opcjaCena {
+  margin-top: 14px;
+  font-family: var(--head);
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.opcjaCena small {
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--muted);
+  margin-left: 6px;
+}
+.opcjaPod {
+  margin-top: 6px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.lista {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.lista li {
+  padding-left: 22px;
+  position: relative;
+}
+.lista li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+/* ---------- tabele (klucz / wartość) ---------- */
+.tab {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+  line-height: 1.45;
+  background: #fff;
+  border: 1.4px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.tab th,
+.tab td {
+  text-align: left;
+  vertical-align: top;
+  padding: 12px 14px;
+  border-top: 1px solid var(--line);
+}
+.tab tr:first-child th,
+.tab tr:first-child td {
+  border-top: 0;
+}
+.tab th {
+  width: 38%;
+  font-weight: 500;
+  color: var(--muted);
+}
+.tab td {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.tab td b {
+  font-weight: 600;
+}
+.razem td,
+.razem th {
+  background: #fff7ef;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- umowy ---------- */
+.umowa {
+  margin-top: 14px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1.4px solid var(--line);
+}
+.umowa summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--head);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.umowa summary::-webkit-details-marker {
+  display: none;
+}
+.umowa summary::after {
+  content: "Rozwiń";
+  flex: none;
+  font-family: var(--body);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--orange);
+}
+.umowa[open] summary::after {
+  content: "Zwiń";
+}
+.tresc {
+  padding: 0 20px 22px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.tresc h3 {
+  margin: 22px 0 8px;
+  font-family: var(--head);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.tresc p {
+  margin: 8px 0;
+}
+.tresc ol {
+  margin: 8px 0;
+  padding-left: 22px;
+}
+.tresc li + li {
+  margin-top: 6px;
+}
+.tresc b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.tresc .tab {
+  margin: 10px 0;
+  font-size: 13.5px;
+}
+.strony {
+  display: grid;
+  gap: 10px;
+  margin: 10px 0 0;
+}
+.strona {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #faf9f7;
+  border: 1px solid var(--line);
+}
+.strona b {
+  display: block;
+}
+
+/* ---------- formularz podpisu ---------- */
+.formJedna {
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.wybor {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+@media (min-width: 560px) {
+  .wybor {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.pods {
+  position: static;
+}
+.pasek {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(246, 246, 245, 0.92);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+}
+.pasek a {
+  width: 100%;
+  max-width: 420px;
+  justify-content: center;
+}
+@media (min-width: 900px) {
+  .pasek {
+    display: none;
+  }
+}
+.odstepDol {
+  height: 84px;
+}
+@media (min-width: 900px) {
+  .odstepDol {
+    height: 0;
+  }
+}
+.male {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+@media print {
+  .pasek,
+  .odstepDol,
+  .root nav,
+  .root footer {
+    display: none !important;
+  }
+  .umowa {
+    border: 0;
+  }
+  .umowa summary::after {
+    content: "";
+  }
+  .tresc {
+    display: block !important;
+  }
+}
+
+/* 5.11: jedna umowa w PDF zamiast dwóch rozwijanych */
+.umowaPdf {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1.4px solid var(--line);
+  color: var(--ink);
+  text-decoration: none;
+}
+.umowaPdf b {
+  display: block;
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 17px;
+}
+.umowaPdf small {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.umowaPdfBtn {
+  flex: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--orange);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+}
