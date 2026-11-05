@@ -162,8 +162,9 @@ export default function Page() {
       <h2>§ 9. Własność i dostęp do Systemu</h2>
       <ol>
         <li>
-          Z chwilą zapłaty 2. płatności Klient nabywa majątkowe prawa autorskie do Systemu w zakresie korzystania, zmieniania i przekazywania innym wykonawcom, na wszystkich polach eksploatacji potrzebnych do używania Systemu w firmie, bez ograniczeń czasu i terytorium.
+          Z chwilą zapłaty 2. płatności Usługodawca udziela Klientowi licencji niewyłącznej, bezterminowej, bez ograniczeń terytorialnych, w cenie umowy, na korzystanie z Systemu w firmie, jego zmienianie i zlecanie zmian innym wykonawcom, na wszystkich polach eksploatacji potrzebnych do używania Systemu w firmie. Licencja nie wygasa z końcem utrzymania ani umowy.
         </li>
+        <li>Na życzenie Klienta, po 2. płatności, strony podpiszą pisemną umowę przeniesienia majątkowych praw autorskich do Systemu (bez dodatkowej opłaty), bo przeniesienie praw wymaga formy pisemnej.</li>
         <li>Konta hostingu, bazy danych i repozytorium kodu są założone na Klienta albo przekazane mu na żądanie w 5 dni roboczych, z instrukcją uruchomienia.</li>
         <li>Usługodawca zachowuje prawo do używania własnych, ogólnych elementów (biblioteki, szablony, narzędzia) w innych projektach. Danych Klienta nigdy.</li>
         <li>Bruno AI pozostaje własnością Usługodawcy; Klient ma prawo korzystania w czasie trwania umowy.</li>
@@ -255,7 +256,7 @@ export default function Page() {
           ))}
           <tr>
             <th>trzecia handlowczyni</th>
-            <td>e-mail podany przy akceptacji albo dosłany mailem · handlowiec</td>
+            <td>e-mail dosłany mailem · handlowiec</td>
           </tr>
         </tbody>
       </table>

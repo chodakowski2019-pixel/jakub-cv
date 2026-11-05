@@ -6,14 +6,13 @@ import o from "@/app/brunooferta/oferta.module.css";
 import e from "./ewatex.module.css";
 import { KLIENT, LINK_PLATNOSC_1, policz, zl, type Nagrania, type Platnosc, type Wariant } from "./dane";
 
-// 4.11: podpis umowy Ewatex na stronie. 5.11 (USER_001): 1 umowa w PDF, 1 zgoda (umowa + polityka + powierzenie) zamiast 3. Pola: e-mail 3. handlowczyni, imię i nazwisko jako podpis.
+// 4.11: podpis umowy Ewatex na stronie. 5.11 (USER_001): 1 umowa w PDF, 1 zgoda (umowa + polityka + powierzenie) zamiast 3. Pola: imię i nazwisko jako podpis, e-mail, telefon. E-mail 3. handlowczyni dosyła mailem.
 // POST /api/bruno/ewatex → zapis + mail do obu stron. Wariant zawsze "oba" (USER_001 4.11: Ewa chce CRM, opcja „sam Bruno” wycięta).
 
 type Stan = {
   wariant: Wariant;
   platnosc: Platnosc;
   nagrania: Nagrania;
-  trzecia: string;
   podpis: string;
   email: string;
   telefon: string;
@@ -27,7 +26,6 @@ export default function UmowaForm() {
     wariant: "oba",
     platnosc: "zgory",
     nagrania: "standard",
-    trzecia: "",
     podpis: KLIENT.reprezentant,
     email: KLIENT.email,
     telefon: KLIENT.telefon,
@@ -45,7 +43,6 @@ export default function UmowaForm() {
     setBlad("");
     if (f.podpis.trim().split(/\s+/).length < 2) return setBlad("Wpisz imię i nazwisko jako podpis.");
     if (!MAIL_OK.test(f.email.trim())) return setBlad("E-mail niepoprawny.");
-    if (f.trzecia.trim() && !MAIL_OK.test(f.trzecia.trim())) return setBlad("E-mail trzeciej handlowczyni niepoprawny.");
     if (!f.umowa) return setBlad("Zaznacz akceptację umowy.");
     setWysylam(true);
     try {
@@ -64,22 +61,14 @@ export default function UmowaForm() {
   if (gotowe) {
     return (
       <section className={`${o.sekcja} ${e.sekcja}`} id="podpis">
-        <div className={o.gotowe}>
-          <span className={o.znaczek}>Podpisane{gotowe.id ? ` · nr ${gotowe.id}` : ""}</span>
-          <h2 className={o.h2} style={{ marginTop: 12 }}>
-            Dziękuję, Ewa. Mam Twój podpis.
-          </h2>
-          <ol className={o.kroki}>
-            <li>Potwierdzenie z umową (PDF) idzie na {f.email.trim()} i do mnie.</li>
-            <li>Pierwsza płatność: zaliczka CRM {zl(k.start)}, link poniżej (przelew, karta, BLIK). Faktura przyjdzie mailem.</li>
-            <li>Konta Bruno działają w 2 dni od płatności. Dzień 7: spotkanie z handlowczynią. Dzień 14: CRM gotowy.</li>
-          </ol>
-          <p style={{ marginTop: 18 }}>
-            <a className={`${s.btnDark} ${s.btnBig}`} href={LINK_PLATNOSC_1} target="_blank" rel="noreferrer">
+        <div className={`${o.gotowe} ${e.gotowe}`}>
+          <h2 className={o.h2}>Dziękuję, Ewa. Mam Twój podpis.</h2>
+          <p className={o.pod}>Potwierdzenie z umową (PDF) zostanie wysłane na {f.email.trim()}</p>
+          <p className={e.zaplacWiersz}>
+            <a className={`${s.btnDark} ${s.btnBig} ${e.zaplac}`} href={LINK_PLATNOSC_1} target="_blank" rel="noreferrer">
               Zapłać {zl(k.start)}
             </a>
           </p>
-          <p className={e.male}>Jakub Chodakowski · {KLIENT.telefon ? "SMS albo telefon jak zawsze." : ""}</p>
         </div>
       </section>
     );
@@ -106,10 +95,6 @@ export default function UmowaForm() {
             <label className={o.pole}>
               <span>Telefon</span>
               <input type="tel" value={f.telefon} onChange={(ev) => set("telefon", ev.target.value)} autoComplete="tel" />
-            </label>
-            <label className={o.pole}>
-              <span>E-mail trzeciej handlowczyni (opcjonalnie)</span>
-              <input type="email" value={f.trzecia} onChange={(ev) => set("trzecia", ev.target.value)} placeholder="można dosłać później" />
             </label>
           </div>
           <p className={e.male}>

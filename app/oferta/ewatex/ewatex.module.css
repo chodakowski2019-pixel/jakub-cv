@@ -85,8 +85,12 @@
   width: 2px;
   background: var(--line);
 }
+.os li {
+  color: var(--ink-2);
+}
 .os b {
   font-weight: 600;
+  color: var(--ink);
 }
 .osKiedy {
   display: block;
@@ -123,25 +127,39 @@
   }
 }
 .funkcje {
-  margin-top: 16px;
+  margin-top: 18px;
   border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 14px;
 }
 .funkcje th,
 .funkcje td {
-  padding: 10px 0;
+  padding: 11px 0;
+  border-top: 1px solid #eeebe6;
+}
+.funkcje tr:nth-child(even) th,
+.funkcje tr:nth-child(even) td {
+  background: transparent;
 }
 .funkcje th {
+  width: 34%;
   padding-right: 14px;
+  font-size: 13.5px;
+}
+.funkcje td {
+  color: var(--ink-2);
 }
 .opcja {
-  padding: 22px 20px 20px;
+  padding: 24px 22px 10px;
   border-radius: 20px;
   background: #fff;
   border: 1.4px solid var(--line);
+  box-shadow: 0 1px 2px rgba(20, 20, 20, 0.04);
 }
 .opcjaRek {
   border-color: var(--orange);
-  box-shadow: 0 0 0 3px rgba(240, 138, 43, 0.14);
+  box-shadow: 0 0 0 3px rgba(240, 138, 43, 0.14), 0 8px 24px rgba(240, 138, 43, 0.08);
 }
 .opcjaNr {
   font-size: 11px;
@@ -152,7 +170,7 @@
 }
 .opcjaTytul {
   font-family: var(--head);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 24px;
   letter-spacing: -0.025em;
   margin-top: 8px;
@@ -160,8 +178,8 @@
 .opcjaCena {
   margin-top: 14px;
   font-family: var(--head);
-  font-size: 34px;
-  font-weight: 500;
+  font-size: 38px;
+  font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -175,9 +193,10 @@
   margin-left: 6px;
 }
 .opcjaPod {
-  margin-top: 6px;
-  font-size: 13.5px;
-  color: var(--muted);
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-2);
 }
 .lista {
   margin: 16px 0 0;
@@ -205,44 +224,74 @@
 }
 
 /* ---------- tabele (klucz / wartość) ---------- */
+/* 5.11 (USER_001): etykieta wiersza ciemna i pogrubiona, wartość zwykła, co drugi wiersz jaśniejsze tło, kwoty duże. */
 .tab {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 14.5px;
-  line-height: 1.45;
+  line-height: 1.5;
   background: #fff;
   border: 1.4px solid var(--line);
   border-radius: 16px;
   overflow: hidden;
+  box-shadow: 0 1px 2px rgba(20, 20, 20, 0.04);
 }
 .tab th,
 .tab td {
   text-align: left;
   vertical-align: top;
-  padding: 12px 14px;
+  padding: 14px 16px;
   border-top: 1px solid var(--line);
 }
 .tab tr:first-child th,
 .tab tr:first-child td {
   border-top: 0;
 }
+.tab tr:nth-child(even) th,
+.tab tr:nth-child(even) td {
+  background: #faf9f7;
+}
 .tab th {
-  width: 38%;
-  font-weight: 500;
-  color: var(--muted);
+  width: 36%;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.005em;
 }
 .tab td {
-  color: var(--ink);
+  color: var(--ink-2);
   font-variant-numeric: tabular-nums;
 }
 .tab td b {
+  display: inline-block;
+  font-family: var(--head);
+  font-size: 19px;
   font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 2px;
 }
-.razem td,
-.razem th {
+.tab .razem th,
+.tab .razem td {
   background: #fff7ef;
   color: var(--ink);
-  font-weight: 600;
+}
+.tab .razem th {
+  border-left: 3px solid var(--orange);
+  padding-left: 13px;
+}
+.tab .razem td b {
+  font-size: 24px;
+  color: var(--orange);
+}
+@media (max-width: 480px) {
+  .tab th,
+  .tab td {
+    padding: 12px 12px;
+  }
+  .tab th {
+    width: 38%;
+  }
 }
 
 /* ---------- umowy ---------- */
@@ -344,6 +393,29 @@
 .pods {
   position: static;
 }
+.formJedna label > span:first-child {
+  font-weight: 600;
+  color: var(--ink);
+}
+.pods dt {
+  color: var(--ink-2);
+}
+.pods dd {
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.gotowe {
+  text-align: center;
+  padding: 36px 20px 32px;
+}
+.gotowe h2 {
+  justify-content: center;
+}
+.gotowe p {
+  margin: 10px auto 0;
+  max-width: 480px;
+}
 .pasek {
   position: fixed;
   left: 0;
@@ -414,11 +486,15 @@
   color: var(--ink);
   text-decoration: none;
 }
+.umowaPdf:hover {
+  border-color: var(--orange);
+}
 .umowaPdf b {
   display: block;
   font-family: var(--head);
-  font-weight: 500;
-  font-size: 17px;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.015em;
 }
 .umowaPdf small {
   display: block;
@@ -434,4 +510,16 @@
   color: #fff;
   font-size: 13.5px;
   font-weight: 600;
+}
+
+/* 5.11: ekran po podpisie: przycisk płatności na środku, pogrubiony */
+.zaplacWiersz {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+}
+.zaplac {
+  font-weight: 700;
+  min-width: 240px;
+  justify-content: center;
 }
