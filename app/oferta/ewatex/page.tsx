@@ -41,7 +41,7 @@ export default function Page() {
         <div className={e.opcje}>
           <article className={`${e.opcja} ${e.opcjaRek}`}>
             <span className={e.opcjaNr}>CRM</span>
-            <h3 className={e.opcjaTytul}>Twój własny CRM</h3>
+            <h3 className={e.opcjaTytul}>Własny CRM</h3>
             <div className={e.opcjaCena}>
               {zl(CRM.budowaZBruno)}
               <small>płatność jednorazowa</small>
@@ -55,7 +55,7 @@ export default function Page() {
                 </tr>
                 <tr>
                   <th>Etapy sprzedaży</th>
-                  <td>widzisz, na którym etapie ilu klientów</td>
+                  <td>widok, na którym etapie ilu klientów</td>
                 </tr>
                 <tr>
                   <th>Notatka po rozmowie</th>
@@ -63,10 +63,10 @@ export default function Page() {
                 </tr>
                 <tr>
                   <th>Przypomnienia</th>
-                  <td>koniec umowy klienta: 12, 6 i 3 mies. przed, mail do Ciebie i handlowczyni</td>
+                  <td>koniec umowy klienta: 12, 6 i 3 mies. przed, mail do zarządzającej i handlowczyni</td>
                 </tr>
                 <tr>
-                  <th>Twój panel</th>
+                  <th>Panel zarządzającej</th>
                   <td>umowy do przedłużenia w kwartale, rozmowy w tygodniu, oferty wysłane i podpisane</td>
                 </tr>
                 <tr>
@@ -79,7 +79,7 @@ export default function Page() {
                 </tr>
                 <tr>
                   <th>Konta</th>
-                  <td>4: Ty + 3 handlowczynie</td>
+                  <td>4: zarządzająca + 3 handlowczynie</td>
                 </tr>
                 <tr>
                   <th>Telefon</th>
@@ -109,7 +109,7 @@ export default function Page() {
               <tbody>
                 <tr>
                   <th>Rozmowy z klientem AI</th>
-                  <td>dobrane do etapu nauki każdej handlowczyni, do 5 dziennie; klient AI mówi jak Wasi klienci</td>
+                  <td>dobrane do etapu nauki każdej handlowczyni, do 5 dziennie; klient AI mówi jak klienci Ewatex</td>
                 </tr>
                 <tr>
                   <th>Ocena</th>
@@ -121,15 +121,15 @@ export default function Page() {
                 </tr>
                 <tr>
                   <th>Czat z Bruno</th>
-                  <td>pytasz jak ChatGPT, zna Waszą branżę</td>
+                  <td>pytania jak do ChatGPT, zna branżę energetyczną</td>
                 </tr>
                 <tr>
-                  <th>Twój panel</th>
+                  <th>Panel zarządzającej</th>
                   <td>kto ćwiczy i kto robi postęp</td>
                 </tr>
                 <tr>
                   <th>Ustawiony pod Ewatex</th>
-                  <td>Wasz produkt, Wasi klienci, Wasze obiekcje</td>
+                  <td>produkt, klienci i obiekcje Ewatex</td>
                 </tr>
               </tbody>
             </table>
@@ -143,7 +143,7 @@ export default function Page() {
           </li>
           <li>
             <span className={e.osKiedy}>Dzień 14</span>
-            <b>Spotkanie 30 min</b> z Tobą ws. CRM
+            <b>Spotkanie 30 min</b> z zarządzającą ws. CRM
           </li>
           <li>
             <span className={e.osKiedy}>Do 3 miesięcy</span>
@@ -156,7 +156,7 @@ export default function Page() {
         </ol>
       </section>
 
-      {/* ---------- 02 ILE PŁACISZ ---------- */}
+      {/* ---------- 02 KOSZTA ---------- */}
       <section className={`${o.sekcja} ${e.sekcja}`} aria-labelledby="kwoty">
         <h2 id="kwoty" className={o.h2}>
           <span className={o.nr}>02</span> Koszta
@@ -204,7 +204,7 @@ export default function Page() {
         <h2 id="harmonogram" className={o.h2}>
           <span className={o.nr}>03</span> Oś czasu
         </h2>
-        <p className={o.pod}>Liczymy od dnia, w którym płacisz pierwszą połowę.</p>
+        <p className={o.pod}>Liczymy od dnia pierwszej płatności.</p>
         <table className={e.tab}>
           <tbody>
             <tr>
@@ -217,7 +217,7 @@ export default function Page() {
             </tr>
             <tr>
               <th>Dzień 14</th>
-              <td>Spotkanie 30 min z Tobą ws. CRM: gotowy, klienci w środku. Druga płatność {zl(CRM.budowaZBruno / 2 + BRUNO.trzyMiesiace)}.</td>
+              <td>Spotkanie 30 min z zarządzającą ws. CRM: gotowy, klienci w środku. Druga płatność {zl(CRM.budowaZBruno / 2 + BRUNO.trzyMiesiace)}.</td>
             </tr>
             <tr>
               <th>Do 3 miesięcy</th>

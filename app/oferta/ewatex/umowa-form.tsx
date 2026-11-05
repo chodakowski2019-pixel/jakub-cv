@@ -62,7 +62,7 @@ export default function UmowaForm() {
     return (
       <section className={`${o.sekcja} ${e.sekcja}`} id="podpis">
         <div className={`${o.gotowe} ${e.gotowe}`}>
-          <h2 className={o.h2}>Dziękuję, Ewa. Mam Twój podpis.</h2>
+          <h2 className={o.h2}>Dziękuję. Umowa podpisana.</h2>
           <p className={o.pod}>Potwierdzenie z umową (PDF) zostanie wysłane na {f.email.trim()}</p>
           <p className={e.zaplacWiersz}>
             <a className={`${s.btnDark} ${s.btnBig} ${e.zaplac}`} href={LINK_PLATNOSC_1} target="_blank" rel="noreferrer">
@@ -131,7 +131,7 @@ export default function UmowaForm() {
             <dt>CRM, utrzymanie od miesiąca po odbiorze</dt>
             <dd>{zl(k.utrzymanie)} / mies.</dd>
           </dl>
-          <p className={o.podsInfo}>Po podpisie dostaniesz link do pierwszej płatności (przelew, karta, BLIK), faktura mailem. Nagrania rozmów zostają (umowa, § 10). Kwoty końcowe, zwolnienie z VAT.</p>
+          <p className={o.podsInfo}>Po podpisie: link do pierwszej płatności (przelew, karta, BLIK), faktura mailem. Nagrania rozmów zostają (umowa, § 10). Kwoty końcowe, zwolnienie z VAT.</p>
           {blad && (
             <p className={o.blad} role="alert">
               {blad}
