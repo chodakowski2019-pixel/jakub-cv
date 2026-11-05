@@ -33,7 +33,7 @@ export default function Page() {
       <h2>§ 1. Przedmiot umowy</h2>
       <ol>
         <li>
-          Wykonawca przygotuje dla Zamawiającego <b>analizę sprzedaży</b> (dalej: Analiza) w 5 częściach o zakresie z załącznika nr 1: grupa docelowa, lejek i miary, rozmowy, sprawdzian mentalny {ANALIZA.sprawdzianOsob} osób, plan 30 dni.
+          Wykonawca przygotuje dla Zamawiającego <b>analizę sprzedaży</b> (dalej: Analiza) w 5 częściach o zakresie z załącznika nr 1: grupa docelowa, lejek i miary, rozmowy, sprawdzian mentalny {ANALIZA.sprawdzianOsob} osób, szkolenie i plan 30 dni.
         </li>
         <li>Analiza jest dziełem jednorazowym. Umowa nie obejmuje abonamentu Bruno AI ani żadnych opłat cyklicznych.</li>
         <li>Analiza dotyczy sprzedaży usług programistycznych Zamawiającego (software house) i jest przygotowana na podstawie wsadu z § 2.</li>
@@ -44,29 +44,33 @@ export default function Page() {
         <tbody>
           <tr>
             <th>Dzień 0</th>
-            <td>Zapłata wynagrodzenia (§ 3). Wykonawca wysyła link do formularza o firmie i klientach oraz dostęp do sprawdzianu mentalnego dla {ANALIZA.sprawdzianOsob} osób.</td>
+            <td>Zapłata wynagrodzenia (§ 3). Wykonawca wysyła link do formularza o firmie, klientach i sprzedaży.</td>
           </tr>
           <tr>
-            <th>Do 7 dni</th>
+            <th>Do {ANALIZA.dniNaFormularz} dni</th>
+            <td>Zamawiający wypełnia formularz (do {ANALIZA.formularzMin} min). Formularz jest jedynym wsadem Zamawiającego przed spotkaniami.</td>
+          </tr>
+          <tr>
+            <th>{ANALIZA.dniPracy} dni od formularza</th>
+            <td>Wykonawca przygotowuje Analizę w 5 częściach (załącznik nr 1). W tym czasie Zamawiający nie ma żadnych zadań; Wykonawca może dopytać mailem.</td>
+          </tr>
+          <tr>
+            <th>Po {ANALIZA.dniPracy} dniach</th>
             <td>
-              Zamawiający wypełnia formularz (ok. {ANALIZA.formularzMin} min) i sprawdzian mentalny. Spotkanie online {ANALIZA.spotkanieMin} min z {KLIENT.reprezentant} w terminie uzgodnionym mailem.
+              {ANALIZA.spotkania} spotkania online × {ANALIZA.spotkanieMin} min z {KLIENT.reprezentant} i 1 wskazaną osobą, w terminach uzgodnionych mailem, oba w ciągu 14 dni od gotowości Analizy: dokończenie Analizy z Zamawiającym, przekazanie wszystkich części (pliki mailem najpóźniej na 2. spotkaniu), szkolenie z używania Analizy w rozmowach, sprawdzian mentalny {ANALIZA.sprawdzianOsob} osób z omówieniem wyniku.
             </td>
           </tr>
           <tr>
-            <th>Do {ANALIZA.dniNaAnalize} dni od kompletu wsadu</th>
-            <td>Wykonawca przekazuje Analizę mailem (pliki Markdown). Komplet wsadu = formularz + spotkanie + sprawdzian.</td>
-          </tr>
-          <tr>
-            <th>Po przekazaniu</th>
+            <th>Po 2. spotkaniu</th>
             <td>
-              Omówienie online {ANALIZA.omowienieMin} min. Zamawiający zgłasza uwagi do {ANALIZA.dniNaUwagi} dni; Wykonawca wprowadza poprawki w zakresie załącznika nr 1 w {ANALIZA.dniRoboczychNaPoprawki} dni roboczych. Brak uwag w tym czasie = odbiór.
+              Zamawiający zgłasza uwagi do {ANALIZA.dniNaUwagi} dni; Wykonawca wprowadza poprawki w zakresie załącznika nr 1 w {ANALIZA.dniRoboczychNaPoprawki} dni roboczych. Brak uwag w tym czasie = odbiór.
             </td>
           </tr>
         </tbody>
       </table>
       <ol>
-        <li>Opóźnienie po stronie Zamawiającego (formularz, sprawdzian, termin spotkania, uwagi) przesuwa terminy Wykonawcy o tyle samo dni.</li>
-        <li>Start prac w terminie wskazanym przez Zamawiającego, nie później niż 60 dni od zawarcia umowy; po tym terminie wsad z § 2 i terminy liczą się od dnia, w którym Zamawiający wyśle formularz.</li>
+        <li>Opóźnienie po stronie Zamawiającego (formularz, terminy spotkań, udział drugiej osoby, uwagi) przesuwa terminy Wykonawcy o tyle samo dni.</li>
+        <li>Zamawiający wysyła formularz w swoim terminie, nie później niż 60 dni od zawarcia umowy; terminy Wykonawcy liczą się od dnia wysłania formularza.</li>
       </ol>
 
       <h2>§ 3. Wynagrodzenie</h2>
@@ -90,16 +94,16 @@ export default function Page() {
       </table>
       <ol>
         <li>Wykonawca korzysta ze zwolnienia z VAT. Kwota jest końcowa.</li>
-        <li>Prace poza zakresem załącznika nr 1 (np. kolejne osoby w sprawdzianie, dodatkowe warsztaty, wdrożenie w narzędziach Zamawiającego): tylko po wycenie i akceptacji mailem.</li>
+        <li>Prace poza zakresem załącznika nr 1 (np. kolejne osoby w sprawdzianie i szkoleniu, kolejne spotkania, wdrożenie w narzędziach Zamawiającego): tylko po wycenie i akceptacji mailem.</li>
       </ol>
 
       <h2>§ 4. Obowiązki stron</h2>
       <ol>
         <li>
-          Wykonawca: przygotowuje Analizę zgodnie z załącznikiem nr 1, prowadzi spotkanie i omówienie, wprowadza poprawki z § 2, odpowiada na zgłoszenia na {KONTAKT_ZGLOSZENIA} do 5 dni roboczych.
+          Wykonawca: przygotowuje Analizę zgodnie z załącznikiem nr 1, prowadzi {ANALIZA.spotkania} spotkania z § 2 (w tym szkolenie i sprawdzian mentalny), wprowadza poprawki z § 2, odpowiada na zgłoszenia na {KONTAKT_ZGLOSZENIA} do 5 dni roboczych.
         </li>
         <li>
-          Zamawiający: wypełnia formularz zgodnie z prawdą, bierze udział w spotkaniu i omówieniu, zapewnia udział drugiej osoby w sprawdzianie mentalnym, wyznacza jedną osobę do uwag ({KLIENT.reprezentant}).
+          Zamawiający: wypełnia formularz zgodnie z prawdą, bierze udział w obu spotkaniach z § 2, zapewnia udział drugiej osoby w spotkaniach i sprawdzianie mentalnym, wyznacza jedną osobę do uwag ({KLIENT.reprezentant}).
         </li>
       </ol>
 
@@ -114,9 +118,9 @@ export default function Page() {
 
       <h2>§ 6. Poufność i dane osobowe</h2>
       <ol>
-        <li>Wszystko, co Zamawiający przekaże w formularzu, na spotkaniu i w sprawdzianie (klienci, ceny, procesy, wyniki osób), jest poufne. Wykonawca nie pokazuje tego nikomu i nie używa do trenowania modeli AI.</li>
+        <li>Wszystko, co Zamawiający przekaże w formularzu, na spotkaniach i w sprawdzianie (klienci, ceny, procesy, wyniki osób), jest poufne. Wykonawca nie pokazuje tego nikomu i nie używa do trenowania modeli AI.</li>
         <li>Dla danych osób biorących udział w sprawdzianie mentalnym Zamawiający jest administratorem, Wykonawca podmiotem przetwarzającym. Powierzenie: umowa powierzenia (RODO art. 28) wysyłana mailem razem z potwierdzeniem, z listą podwykonawców przetwarzania.</li>
-        <li>Gdzie leżą dane, kto je przetwarza i jak długo: salesbruno.pl/bezpieczenstwo. Spotkanie i omówienie mogą być nagrywane do celów Analizy po zgodzie uczestników na początku rozmowy.</li>
+        <li>Gdzie leżą dane, kto je przetwarza i jak długo: salesbruno.pl/bezpieczenstwo. Spotkania mogą być nagrywane do celów Analizy po zgodzie uczestników na początku rozmowy.</li>
         <li>Wykonawca kasuje swoje kopie wsadu i nagrań w 30 dni od odbioru Analizy; zostaje sama Analiza u Zamawiającego.</li>
       </ol>
 
@@ -148,7 +152,7 @@ export default function Page() {
           <tr>
             <th>Część 2. Lejek i miary</th>
             <td>
-              (a) etapy procesu sprzedaży od pierwszej rozmowy do podpisu, opisane jako kamienie milowe z perspektywy klienta, z kryterium przejścia każdego etapu, z miejscem na płatne discovery; (b) 4 miary: liczba szans w lejku, skuteczność, czas sprzedaży, średnia wielkość szansy, z definicją każdej; (c) lista pól do prowadzenia lejka w narzędziu Zamawiającego (Notion, arkusz) oraz rytm tygodniowego przeglądu; (d) przegląd ostatnich szans Zamawiającego (z formularza i spotkania): na którym etapie odpadają i dlaczego, 3 zmiany do wprowadzenia najpierw.
+              (a) etapy procesu sprzedaży od pierwszej rozmowy do podpisu, opisane jako kamienie milowe z perspektywy klienta, z kryterium przejścia każdego etapu, z miejscem na płatne discovery; (b) 4 miary: liczba szans w lejku, skuteczność, czas sprzedaży, średnia wielkość szansy, z definicją każdej; (c) lista pól do prowadzenia lejka w narzędziu Zamawiającego (Notion, arkusz) oraz rytm tygodniowego przeglądu; (d) przegląd ostatnich szans Zamawiającego (z formularza, dokończony na spotkaniach): na którym etapie odpadają i dlaczego, 3 zmiany do wprowadzenia najpierw.
             </td>
           </tr>
           <tr>
@@ -160,22 +164,24 @@ export default function Page() {
           <tr>
             <th>Część 4. Sprawdzian mentalny</th>
             <td>
-              {ANALIZA.sprawdzianOsob} osoby ({KLIENT.reprezentant} + 1 wskazana): ankieta online, wynik każdej osoby w 3 obszarach (sprzedaż, pieniądze, głowa), opis tego, co blokuje, plan pracy 1:1 na 30 dni. Powtórka ankiety po 30 dniach z porównaniem wyników, w cenie.
+              {ANALIZA.sprawdzianOsob} osoby ({KLIENT.reprezentant} + 1 wskazana), na spotkaniach z § 2: ankieta online, wynik każdej osoby w 3 obszarach (sprzedaż, pieniądze, głowa), opis tego, co blokuje, plan pracy 1:1 na 30 dni, omówienie wyniku na spotkaniu.
             </td>
           </tr>
           <tr>
-            <th>Część 5. Plan 30 dni</th>
-            <td>co wdrażać tydzień po tygodniu, 3 liczby do sprawdzania co tydzień, lista kontrolna do odhaczania.</td>
+            <th>Część 5. Szkolenie i plan 30 dni</th>
+            <td>
+              (a) szkolenie na spotkaniach z § 2: jak używać części 1-3 w rozmowach z klientami (kwalifikacja, pytania, obiekcje, oferta, kroki po ofercie), ćwiczenie na przykładach z formularza; (b) plan 30 dni po spotkaniach: co wdrażać tydzień po tygodniu, 3 liczby do sprawdzania co tydzień, lista kontrolna do odhaczania.
+            </td>
           </tr>
           <tr>
             <th>Spotkania w cenie</th>
             <td>
-              1 × {ANALIZA.spotkanieMin} min (wsad: klienci, rozmowy, lejek, ostatnie szanse) + 1 × {ANALIZA.omowienieMin} min (omówienie Analizy), online.
+              {ANALIZA.spotkania} × {ANALIZA.spotkanieMin} min online po {ANALIZA.dniPracy} dniach pracy: dokończenie Analizy, przekazanie, szkolenie, sprawdzian mentalny. Bez spotkania na początku: wsad = formularz.
             </td>
           </tr>
         </tbody>
       </table>
-      <p>Poza zakresem: konta i abonament Bruno AI, budowa CRM, analiza nagrań rozmów z klientami Zamawiającego, wdrożenie w narzędziach Zamawiającego, kolejne osoby w sprawdzianie (na zamówienie, § 3 pkt 2).</p>
+      <p>Poza zakresem: konta i abonament Bruno AI, budowa CRM, analiza nagrań rozmów z klientami Zamawiającego, wdrożenie w narzędziach Zamawiającego, kolejne osoby w sprawdzianie i szkoleniu, kolejne spotkania (na zamówienie, § 3 pkt 2).</p>
 
       <div className={u.podpisy}>
         <div>

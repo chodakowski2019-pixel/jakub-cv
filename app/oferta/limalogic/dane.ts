@@ -29,12 +29,15 @@ export const KONTAKT_ZGLOSZENIA = "jakub@salesbruno.com";
 
 export const ANALIZA = {
   cena: 5000, // jednorazowo, całość z góry; Usługodawca zwolniony z VAT, więc brutto = netto
-  dniNaAnalize: 14, // od kompletu wsadu (formularz + spotkanie + sprawdzian)
-  spotkanieMin: 60,
-  omowienieMin: 30,
+  // 5.11 (USER_001) model: płatność → 1 formularz (do 30 min) → my pracujemy 30 dni → 2 spotkania × 50 min:
+  // dokończenie analizy, przekazanie, szkolenie, sprawdzian mentalny 2 osób. Bez spotkania na początku.
   formularzMin: 30,
-  sprawdzianOsob: 2, // Łukasz + 1 osoba
-  dniNaUwagi: 7,
+  dniNaFormularz: 7, // od płatności
+  dniPracy: 30, // od formularza do gotowej analizy i 1. spotkania
+  spotkania: 2,
+  spotkanieMin: 50,
+  sprawdzianOsob: 2, // Łukasz + 1 osoba, na spotkaniach
+  dniNaUwagi: 14, // po 2. spotkaniu
   dniRoboczychNaPoprawki: 5,
 };
 

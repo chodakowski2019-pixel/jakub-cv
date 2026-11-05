@@ -84,19 +84,19 @@ export default function Page() {
               </tr>
               <tr>
                 <th>4. Sprawdzian mentalny</th>
-                <td>Ty + 1 osoba: wynik w 3 obszarach (sprzedaż, pieniądze, głowa), co blokuje, plan 1:1; powtórka po 30 dniach</td>
+                <td>Ty + 1 osoba, na spotkaniu: wynik w 3 obszarach (sprzedaż, pieniądze, głowa), co blokuje, plan 1:1</td>
               </tr>
               <tr>
-                <th>5. Plan 30 dni</th>
-                <td>co robić tydzień po tygodniu, 3 liczby do sprawdzania, lista kontrolna</td>
+                <th>5. Szkolenie i plan 30 dni</th>
+                <td>na spotkaniach: jak używać analizy w rozmowach; potem co robić tydzień po tygodniu, 3 liczby do sprawdzania, lista kontrolna</td>
               </tr>
               <tr>
                 <th>Twój czas</th>
-                <td>formularz ok. {ANALIZA.formularzMin} min + spotkanie online {ANALIZA.spotkanieMin} min</td>
+                <td>1 formularz, do {ANALIZA.formularzMin} min + {ANALIZA.spotkania} spotkania online × {ANALIZA.spotkanieMin} min</td>
               </tr>
               <tr>
                 <th>Gotowe</th>
-                <td>do {ANALIZA.dniNaAnalize} dni od formularza i spotkania</td>
+                <td>{ANALIZA.dniPracy} dni od formularza</td>
               </tr>
             </tbody>
           </table>
@@ -126,24 +126,30 @@ export default function Page() {
         <h2 id="harmonogram" className={o.h2}>
           <span className={o.nr}>03</span> Oś czasu
         </h2>
-        <p className={o.pod}>Liczymy od dnia płatności. Start w grudniu, w Twoim terminie.</p>
+        <p className={o.pod}>Liczymy od dnia płatności.</p>
         <table className={e.tab}>
           <tbody>
             <tr>
-              <th>Dzień 0</th>
-              <td>Płatność. Dostajesz link do formularza i do sprawdzianu mentalnego.</td>
+              <th>Dziś</th>
+              <td>Płatność. Dostajesz link do formularza.</td>
             </tr>
             <tr>
-              <th>Do 7 dni</th>
-              <td>Wypełniasz formularz ({ANALIZA.formularzMin} min). Spotkanie online {ANALIZA.spotkanieMin} min: Twoi klienci, Twoje rozmowy, Twój lejek.</td>
+              <th>Do {ANALIZA.dniNaFormularz} dni</th>
+              <td>Wypełniasz 1 formularz, do {ANALIZA.formularzMin} min. To cały Twój wsad.</td>
             </tr>
             <tr>
-              <th>Do {ANALIZA.dniNaAnalize} dni od spotkania i sprawdzianu</th>
-              <td>Analiza w Markdown w Twojej skrzynce.</td>
+              <th>{ANALIZA.dniPracy} dni</th>
+              <td>Pracujemy nad analizą. Ty nic nie robisz.</td>
             </tr>
             <tr>
-              <th>Po analizie</th>
-              <td>Omówienie online {ANALIZA.omowienieMin} min. Uwagi do {ANALIZA.dniNaUwagi} dni, poprawki w {ANALIZA.dniRoboczychNaPoprawki} dni roboczych.</td>
+              <th>Po {ANALIZA.dniPracy} dniach</th>
+              <td>
+                {ANALIZA.spotkania} spotkania online × {ANALIZA.spotkanieMin} min: dokańczamy analizę z Tobą, przekazujemy wszystko, szkolenie, sprawdzian mentalny Ty + 1 osoba.
+              </td>
+            </tr>
+            <tr>
+              <th>Po spotkaniach</th>
+              <td>Uwagi do {ANALIZA.dniNaUwagi} dni, poprawki w {ANALIZA.dniRoboczychNaPoprawki} dni roboczych.</td>
             </tr>
           </tbody>
         </table>

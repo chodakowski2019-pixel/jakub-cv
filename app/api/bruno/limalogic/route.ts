@@ -76,8 +76,8 @@ export async function POST(req: Request) {
       kroki(
         [
           `WYŚLIJ SAM do Łukasza: potwierdzenie z umową (PDF ${PDF}) + faktura ${zl(ANALIZA.cena)} + link do płatności${LINK_PLATNOSC ? ` ${LINK_PLATNOSC}` : " (Stripe, do utworzenia)"}. Z automatu nic nie poszło.`,
-          "Po wpłacie: link do formularza + 2 konta do sprawdzianu mentalnego (Łukasz + 1 osoba).",
-          "Umówić spotkanie online 60 min w jego terminie (grudzień).",
+          "Po wpłacie: link do formularza (do 30 min). Potem 30 dni pracy nad analizą.",
+          "Po 30 dniach: 2 spotkania online × 50 min (dokończenie, przekazanie, szkolenie, sprawdzian mentalny 2 osób).",
           "Lejek B2B PL: Limalogic → podpisane.",
         ],
         { tytul: "Co dalej" },
