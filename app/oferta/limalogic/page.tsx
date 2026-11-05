@@ -39,7 +39,7 @@ export default function Page() {
         </h2>
         <article className={`${e.opcja} ${e.opcjaRek}`}>
           <span className={e.opcjaNr}>Analiza</span>
-          <h3 className={e.opcjaTytul}>Twoje discovery, tylko dla sprzedaży</h3>
+          <h3 className={e.opcjaTytul}>Discovery dla sprzedaży</h3>
           <div className={e.opcjaCena}>
             {zl(ANALIZA.cena)}
             <small>jednorazowo</small>
@@ -48,7 +48,7 @@ export default function Page() {
             <tbody>
               <tr>
                 <th>1. Grupa docelowa</th>
-                <td>jakie firmy kupują u Ciebie (branża, wielkość, budżet, moment), kto w firmie decyduje i kto blokuje, co boli każdą z tych osób, co dostają od Ciebie</td>
+                <td>jakie firmy kupują usługi Limalogic (branża, wielkość, budżet, moment), kto w firmie decyduje i kto blokuje, co boli każdą z tych osób, jaką wartość dostaje każda z nich</td>
               </tr>
               <tr>
                 <th>Proces zakupu klienta</th>
@@ -56,7 +56,7 @@ export default function Page() {
               </tr>
               <tr>
                 <th>Kwalifikacja</th>
-                <td>5 pytań, które w 10 min mówią, czy lead jest dla Ciebie; lista „nie dla nas”</td>
+                <td>5 pytań, które w 10 min mówią, czy lead pasuje; lista „nie dla nas”</td>
               </tr>
               <tr>
                 <th>2. Lejek</th>
@@ -64,11 +64,11 @@ export default function Page() {
               </tr>
               <tr>
                 <th>Miary</th>
-                <td>4 liczby do śledzenia: ile szans w lejku, skuteczność, czas sprzedaży, średnia wielkość; pola do Twojego Notiona lub arkusza; co przeglądać co poniedziałek</td>
+                <td>4 liczby do śledzenia: ile szans w lejku, skuteczność, czas sprzedaży, średnia wielkość; pola do Notiona lub arkusza; co przeglądać co poniedziałek</td>
               </tr>
               <tr>
                 <th>Gdzie giną deale</th>
-                <td>przegląd Twoich ostatnich szans: na którym etapie odpadają i dlaczego; 3 rzeczy do zmiany najpierw</td>
+                <td>przegląd ostatnich szans sprzedażowych: na którym etapie odpadają i dlaczego; 3 rzeczy do zmiany najpierw</td>
               </tr>
               <tr>
                 <th>3. Rozmowy</th>
@@ -76,7 +76,7 @@ export default function Page() {
               </tr>
               <tr>
                 <th>Obiekcje</th>
-                <td>Twoje 10 najczęstszych w 3 kategoriach (za wcześnie / do koncepcji / do firmy) z gotowymi odpowiedziami</td>
+                <td>10 najczęstszych obiekcji w 3 kategoriach (za wcześnie / do koncepcji / do firmy) z gotowymi odpowiedziami</td>
               </tr>
               <tr>
                 <th>Oferta i follow-up</th>
@@ -84,14 +84,14 @@ export default function Page() {
               </tr>
               <tr>
                 <th>4. Sprawdzian mentalny</th>
-                <td>Ty + 1 osoba, na spotkaniu: wynik w 3 obszarach (sprzedaż, pieniądze, głowa), co blokuje, plan 1:1</td>
+                <td>2 osoby, na spotkaniu: wynik w 3 obszarach (sprzedaż, pieniądze, głowa), co blokuje, plan 1:1</td>
               </tr>
               <tr>
                 <th>5. Szkolenie i plan 30 dni</th>
                 <td>na spotkaniach: jak używać analizy w rozmowach; potem co robić tydzień po tygodniu, 3 liczby do sprawdzania, lista kontrolna</td>
               </tr>
               <tr>
-                <th>Twój czas</th>
+                <th>Zaangażowanie czasowe</th>
                 <td>1 formularz, do {ANALIZA.formularzMin} min + {ANALIZA.spotkania} spotkania online × {ANALIZA.spotkanieMin} min</td>
               </tr>
               <tr>
@@ -131,25 +131,21 @@ export default function Page() {
           <tbody>
             <tr>
               <th>Dziś</th>
-              <td>Płatność. Dostajesz link do formularza.</td>
+              <td>Płatność.</td>
             </tr>
             <tr>
               <th>Do {ANALIZA.dniNaFormularz} dni</th>
-              <td>Wypełniasz 1 formularz, do {ANALIZA.formularzMin} min. To cały Twój wsad.</td>
+              <td>Formularz do wypełnienia, zajmie jakieś {ANALIZA.formularzMin} min.</td>
             </tr>
             <tr>
               <th>{ANALIZA.dniPracy} dni</th>
-              <td>Pracujemy nad analizą. Ty nic nie robisz.</td>
+              <td>Pracujemy nad analizą.</td>
             </tr>
             <tr>
               <th>Po {ANALIZA.dniPracy} dniach</th>
               <td>
-                {ANALIZA.spotkania} spotkania online × {ANALIZA.spotkanieMin} min: dokańczamy analizę z Tobą, przekazujemy wszystko, szkolenie, sprawdzian mentalny Ty + 1 osoba.
+                {ANALIZA.spotkania} spotkania online × {ANALIZA.spotkanieMin} min: dokończenie analizy, przekazanie całości, szkolenie, sprawdzian mentalny 2 osób.
               </td>
-            </tr>
-            <tr>
-              <th>Po spotkaniach</th>
-              <td>Uwagi do {ANALIZA.dniNaUwagi} dni, poprawki w {ANALIZA.dniRoboczychNaPoprawki} dni roboczych.</td>
             </tr>
           </tbody>
         </table>

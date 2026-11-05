@@ -45,8 +45,8 @@ export default function UmowaForm() {
     return (
       <section className={`${o.sekcja} ${e.sekcja}`} id="podpis">
         <div className={`${o.gotowe} ${e.gotowe}`}>
-          <h2 className={o.h2}>Dziękuję, Łukasz. Mam Twój podpis.</h2>
-          <p className={o.pod}>Potwierdzenie z umową (PDF) i fakturę wyślę na {f.email.trim()}</p>
+          <h2 className={o.h2}>Dziękuję. Umowa podpisana.</h2>
+          <p className={o.pod}>Potwierdzenie z umową (PDF) i faktura zostaną wysłane na {f.email.trim()}</p>
           {LINK_PLATNOSC && (
             <p className={e.zaplacWiersz}>
               <a className={`${s.btnDark} ${s.btnBig} ${e.zaplac}`} href={LINK_PLATNOSC} target="_blank" rel="noreferrer">
