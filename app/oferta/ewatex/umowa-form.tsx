@@ -155,7 +155,6 @@ export default function UmowaForm() {
           <button type="submit" className={`${s.btnDark} ${s.btnBig} ${o.btnPelny}`} disabled={wysylam}>
             {wysylam ? "Zapisuję…" : "Podpisuję i akceptuję"}
           </button>
-          <small className={o.podsMale}>Podpis = imię i nazwisko + ta zgoda, z datą i adresem IP. Potwierdzenie z umową (PDF) przyjdzie mailem do obu stron.</small>
         </aside>
       </form>
     </section>
