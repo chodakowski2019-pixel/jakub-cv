@@ -138,9 +138,10 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
       </UkladZloty>
       {/* 25.10 (USER_001): dymek czatu zostaje; obok niego kalkulator sprzedażowy (szef i konta demo). */}
       {/* 27.10 (USER_001): kółka (kalkulator + dymek czatu) ZOSTAJĄ; z prawej kolumny wylatują „Zapytaj Bruno” i „Trenuj z”. */}
+      {/* 6.11 (USER_001): kalkulator „%” USUNIĘTY ze wszystkich kont demo; zostaje tylko dla szefa prawdziwej firmy. */}
       {!profilBrak && !ankietaBrak && (
         <>
-          {(szef || demo) && <Kalkulator handlowcy={konto?.handlowcy} />}
+          {szef && !demo && <Kalkulator handlowcy={konto?.handlowcy} />}
           <CzatDymek />
         </>
       )}
