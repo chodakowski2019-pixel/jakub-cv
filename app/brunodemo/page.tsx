@@ -12,5 +12,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
 export default async function Page({ searchParams }: Props) {
   const { jezyk, naDomenie } = await stronaBruno(searchParams);
-  return <DemoStrona jezykStart={jezyk} naDomenieStart={naDomenie} />;
+  // 3.11 (USER_001): ?src=fb-a / li / fb-grupa → kolumna zrodlo w bruno_demo, żeby liczyć zapisy per kanał.
+  const q = await searchParams;
+  const src = String(Array.isArray(q.src) ? q.src[0] : q.src ?? "").replace(/[^a-z0-9-]/gi, "").slice(0, 40);
+  return <DemoStrona jezykStart={jezyk} naDomenieStart={naDomenie} zrodlo={src ? `demo:${src}` : "demo"} />;
 }

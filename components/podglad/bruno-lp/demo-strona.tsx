@@ -8,7 +8,7 @@ import type { Jezyk } from "@/lib/bruno/domeny";
 // 21.10 (USER_001): podstrona /demo = TYLKO kalendarz spotkania online z USER_001 (ten sam formularz,
 // co dawniej w LP po kliknięciu). Każdy przycisk na stronie firm prowadzi tu. Powód: 3 osoby z eventu
 // 20.10 nie założyły konta samodzielnie; sprzedaż = spotkanie 20 min z Bruno pokazanym na żywo z ekranu USER_001.
-export default function DemoStrona({ jezykStart, naDomenieStart = false }: { jezykStart?: Jezyk; naDomenieStart?: boolean }) {
+export default function DemoStrona({ jezykStart, naDomenieStart = false, zrodlo = "demo" }: { jezykStart?: Jezyk; naDomenieStart?: boolean; zrodlo?: string }) {
   const jezyk = useJezyk(jezykStart);
   const naDomenie = useNaDomenie(naDomenieStart);
   const doStrony = () => {
@@ -23,7 +23,7 @@ export default function DemoStrona({ jezykStart, naDomenieStart = false }: { jez
           </a>
         </div>
       </nav>
-      <Rezerwacja jezyk={jezyk} zrodlo="demo" onWstecz={doStrony} />
+      <Rezerwacja jezyk={jezyk} zrodlo={zrodlo} onWstecz={doStrony} />
     </div>
   );
 }

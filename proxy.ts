@@ -99,6 +99,15 @@ export function proxy(request: NextRequest) {
   if ((jezyk || hostBezPortu === "localhost") && (pathname === "/praca" || pathname.startsWith("/praca/"))) {
     return dalej(request, pathname, jezyk, `/brunopraca${pathname.slice("/praca".length)}`);
   }
+  // 5.11 (USER_001): /start = LP B2C „Naucz się sprzedaży w 30 dni” (app/brunostart), 2 pakiety 200 / 1 000 zł,
+  // /start/formularz = formularz po płatności Stripe. Tylko .pl i localhost. Docelowo strona główna salesbruno.pl.
+  // 5.11 (USER_001): /formularzbruno = formularz po płatności Stripe (adres powrotu w Payment Linkach), na .com, .pl i localhost.
+  if ((jezyk || hostBezPortu === "localhost") && pathname === "/formularzbruno") {
+    return dalej(request, pathname, jezyk, "/brunostart/formularz");
+  }
+  if ((jezyk === "pl" || hostBezPortu === "localhost") && (pathname === "/start" || pathname.startsWith("/start/"))) {
+    return dalej(request, pathname, jezyk, `/brunostart${pathname.slice("/start".length)}`);
+  }
   // 30.10 (USER_001): /kursy = kursy sprzedaży B2C z gwarancją pracy (app/brunokursy), tylko .pl i localhost.
   if ((jezyk === "pl" || hostBezPortu === "localhost") && (pathname === "/kursy" || pathname.startsWith("/kursy/"))) {
     return dalej(request, pathname, jezyk, `/brunokursy${pathname.slice("/kursy".length)}`);
