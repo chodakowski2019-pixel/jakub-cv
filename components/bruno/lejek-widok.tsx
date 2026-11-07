@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { Blad, Chip, Kafel, Miernik, NaglowekP, Pusto, Twarz } from "@/components/bruno/panel-ui";
 import LejekWykres, { type EtapWykresu } from "@/components/bruno/lejek-wykres";
+import { MapaUtknietych, Prognoza, PrzeplywDeali, type DealMapy, type EtapPrognozy } from "@/components/bruno/lejek-wizualizacje";
+
+// 7.11 (USER_001 „GO”): PROGNOZA DO CELU. Szansa na etap (od 1. do 6.) i domyślny cel miesiąca; firma może nadpisać
+// w `demo_dane.cel_miesiaca` i `demo_dane.szanse` (tablica %). Zmiana = 1 linia.
+const SZANSE_ETAPOW = [10, 25, 40, 60, 80, 100];
+const CEL_MIESIACA_DOMYSLNY = 650_000;
 import type { Firma } from "@/lib/bruno/firmy";
 import { tDla, type Jezyk } from "@/lib/bruno/i18n";
 import { formatKwota, type AnalizaHandlowca, type Deal, type Etap, type EtapStat } from "@/lib/bruno/lejek";
@@ -100,6 +106,28 @@ export default function LejekWidok({
   const otwarteDeale = deale.filter((d) => d.status === "open").sort((a, b) => b.wartosc - a.wartosc);
   const maxDeal = Math.max(1, ...otwarteDeale.map((d) => d.wartosc));
 
+  // 7.11: prognoza do celu + mapa utkniętych
+  const dd = (firma?.demo_dane ?? null) as { cel_miesiaca?: number; szanse?: number[] } | null;
+  const cel = typeof dd?.cel_miesiaca === "number" ? dd.cel_miesiaca : CEL_MIESIACA_DOMYSLNY;
+  const szanse = Array.isArray(dd?.szanse) && dd.szanse.length === etapy.length ? dd.szanse : SZANSE_ETAPOW;
+  const szansa = (idx: number) => szanse[Math.min(idx, szanse.length - 1)] ?? 0;
+  const mcKlucz = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" }).slice(0, 7);
+  const nazwaMiesiaca = new Date().toLocaleDateString(jezyk === "pl" ? "pl-PL" : "en-US", { month: "long", year: "numeric", timeZone: "Europe/Warsaw" });
+  const wygraneMc = deale.filter((d) => d.status === "won" && (d.aktualizacja ?? "").startsWith(mcKlucz)).reduce((s, d) => s + d.wartosc, 0);
+  const prognoza: EtapPrognozy[] = etapy.map((e, i) => {
+    const w = otwarteDeale.filter((d) => d.etap_id === e.id);
+    const wartosc = w.reduce((s, d) => s + d.wartosc, 0);
+    const wazone = Math.round((wartosc * szansa(i)) / 100);
+    return { nazwa: e.nazwa, otwarte: w.length, wartosc, wartoscTekst: kwota(wartosc), szansa: szansa(i), wazone, wazoneTekst: kwota(wazone) };
+  });
+  const wazoneRazem = prognoza.reduce((s, e) => s + e.wazone, 0);
+  const dzisMs = Date.now();
+  const utkniete: DealMapy[] = otwarteDeale.map((d) => {
+    const ost = d.ostatni_kontakt ?? d.aktualizacja;
+    const o = d.handlowiec ? osoba(d.handlowiec) : null;
+    return { id: d.id, tytul: d.tytul, osoba: d.osoba, organizacja: d.organizacja, etapIdx: Math.max(0, etapy.findIndex((e) => e.id === d.etap_id)), wartosc: d.wartosc, wartoscTekst: kwota(d.wartosc), dni: ost ? Math.max(0, Math.floor((dzisMs - new Date(ost).getTime()) / 86_400_000)) : 0, handlowiec: szef ? o?.imie ?? null : null, href: zJako(`/bruno/klienci/${d.id}`, jako) };
+  });
+
   return (
     <div className="p-strona">
       <NaglowekP
@@ -123,22 +151,54 @@ export default function LejekWidok({
         <Kafel wartosc={skutecznosc} po=" %" etykieta={t("Win rate", "Skuteczność")} zle={skutecznosc !== null && skutecznosc < 40} dol={<Miernik proc={skutecznosc} k={skutecznosc !== null && skutecznosc < 40 ? "zle" : "ok"} tekst=" " />} opoznienie={120} />
       </div>
 
-      {/* Lejek SVG */}
+      {/* 7.11: PROGNOZA DO CELU */}
+      <section className="p-karta p-karta-p">
+        <div className="p-karta-hd">
+          <div>
+            <h2>{t("Forecast to goal", "Prognoza do celu")}</h2>
+            <p>{t("Won this month + open deals × chance of their stage. Goal and chances: 1 line in code or company settings.", "Wygrane w tym miesiącu + otwarte deale × szansa ich etapu. Cel i szanse: 1 linia w kodzie albo ustawienia firmy.")}</p>
+          </div>
+        </div>
+        <Prognoza etapy={prognoza} wygraneMc={wygraneMc} cel={cel} miesiac={nazwaMiesiaca} teksty={{ wygrane: kwota(wygraneMc), wazone: kwota(wazoneRazem), spodziewane: kwota(wygraneMc + wazoneRazem), cel: kwota(cel), brak: kwota(Math.max(0, cel - wygraneMc - wazoneRazem)), nad: kwota(Math.max(0, wygraneMc + wazoneRazem - cel)) }} jezyk={jezyk} />
+      </section>
+
+      {/* 7.11: PRZEPŁYW DEALI (Sankey); na telefonie lista z lejek-wykres */}
       <section className="p-karta">
         <div className="p-karta-hd">
           <div>
-            <h2>{tytul}</h2>
-            <p>{t("Bar width = how many deals reached the stage. Red = lost at this stage.", "Szerokość paska = ile deali doszło do etapu. Czerwone = przegrane na tym etapie.")}</p>
+            <h2>{szef ? t("Deal flow", "Przepływ deali") : t("Your deal flow", "Twój przepływ deali")}</h2>
+            <p>{t("Column height = deals that reached the stage. Ribbons: moved on, open now, lost (red), won (green). Hover for numbers.", "Wysokość kolumny = ile deali doszło do etapu. Wstęgi: poszły dalej, otwarte teraz, przegrane (czerwone), wygrane (zielone). Najedź po liczby.")}</p>
           </div>
           <div className="p-legenda" aria-hidden>
-            <span><i style={{ background: "#141416" }} /> {t("open here", "otwarte tutaj")}</span>
+            <span><i style={{ background: "#141416", opacity: 0.35 }} /> {t("moved on", "poszły dalej")}</span>
+            <span><i style={{ background: "#a9abb5" }} /> {t("open now", "otwarte teraz")}</span>
+            <span><i style={{ background: "#e5484d" }} /> {t("lost", "przegrane")}</span>
             <span><i style={{ background: "#17a05e" }} /> {t("won", "wygrane")}</span>
-            <span><i style={{ background: "#e5484d" }} /> {t("lost here", "przegrane tutaj")}</span>
-            <span><i style={{ background: "repeating-linear-gradient(45deg,#f1f1f4 0 3px,#d9dae0 3px 4px)" }} /> {t("moved on", "poszły dalej")}</span>
           </div>
         </div>
         <div className="p-karta-p" style={{ paddingTop: 10 }}>
-          {zespol.length ? <LejekWykres etapy={wykres} jezyk={jezyk} max={doszloMax} /> : <Pusto tytul={t("No stages", "Brak etapów")} opis={t("The pipeline in Pipedrive is empty.", "Lejek w Pipedrive jest pusty.")} />}
+          {zespol.length ? (
+            <>
+              <PrzeplywDeali etapy={wykres} jezyk={jezyk} />
+              <div className="pl-tylko-tel"><LejekWykres etapy={wykres} jezyk={jezyk} max={doszloMax} /></div>
+            </>
+          ) : (
+            <Pusto tytul={t("No stages", "Brak etapów")} opis={t("The pipeline in Pipedrive is empty.", "Lejek w Pipedrive jest pusty.")} />
+          )}
+        </div>
+      </section>
+
+      {/* 7.11: MAPA UTKNIĘTYCH DEALI */}
+      <section className="p-karta">
+        <div className="p-karta-hd">
+          <div>
+            <h2>{t("Where deals are stuck", "Gdzie utknęły deale")}</h2>
+            <p>{t("Every open deal as a circle: the further right, the longer without contact. Red = rescue today. Click = client card.", "Każdy otwarty deal jako kółko: im dalej w prawo, tym dłużej bez kontaktu. Czerwone = ratować dziś. Klik = karta klienta.")}</p>
+          </div>
+          <span className="p-karta-hd-meta"><b className={utkniete.filter((d) => d.dni > 7).length ? "p-zle-t" : ""}>{utkniete.filter((d) => d.dni > 7).length}</b> {t("deals over 7 days", "deali ponad 7 dni")}</span>
+        </div>
+        <div className="p-karta-p" style={{ paddingTop: 10 }}>
+          {utkniete.length ? <MapaUtknietych deale={utkniete} etapy={etapy.map((e) => e.nazwa)} jezyk={jezyk} /> : <Pusto tytul={t("No open deals", "Brak otwartych deali")} />}
         </div>
       </section>
 

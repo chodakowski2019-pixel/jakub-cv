@@ -258,7 +258,7 @@
 .pl-mobil-pasek { display: flex; gap: 2px; height: 26px; border-radius: 13px; overflow: hidden; min-width: 60px; }
 .pl-mobil-pasek i { display: grid; place-items: center; height: 100%; color: #fff; font-size: 11.5px; font-weight: 600; font-style: normal; min-width: 6px; animation: p-rosx 700ms var(--p-sprezyna) both; }
 .pl-mobil-dol { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--p-ink-2); font-variant-numeric: tabular-nums; }
-@media (max-width: 760px) { .pl-wykres svg { display: none; } .pl-mobil { display: flex; } }
+/* (lista zamiast SVG tylko w .pl-tylko-tel, patrz niżej) */
 
 /* alarm handlowca */
 .pl-alarm { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; }
@@ -429,3 +429,29 @@ a.pc-kratka:hover { transform: translateY(-1px); box-shadow: var(--p-cien-2); bo
 .pcz-btn[aria-expanded="true"] { background: #fff; color: var(--p-ink); border: 1px solid var(--p-ramka-2); box-shadow: var(--p-cien); }
 .pcz-btn svg { display: block; }
 @media (prefers-reduced-motion: reduce) { .pcz-okno, .pl-deal { animation: none !important; } }
+
+/* ---------- LEJEK 7.11: przepływ (Sankey), mapa utkniętych, prognoza ---------- */
+.pl-tylko-pulpit { display: block; }
+.pl-tylko-tel { display: none; }
+@media (max-width: 760px) { .pl-tylko-pulpit { display: none; } .pl-tylko-tel { display: block; } .pl-tylko-tel svg { display: none; } .pl-tylko-tel .pl-mobil { display: flex; } }
+.pl-wst { transition: opacity 160ms; cursor: default; }
+.pl-kolko { transition: fill-opacity 120ms, r 120ms; cursor: pointer; }
+.pl-kolko:hover { stroke: var(--p-ink); }
+.pl-mapa { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 760px) { .pl-mapa svg { min-width: 720px; } }
+.pl-prog { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.pl-prog > * { min-width: 0; max-width: 100%; }
+.pl-prog-gora { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+.pl-prog-liczba { font-size: 34px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.05; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.pl-prog-pod { font-size: 13px; color: var(--p-ink-2); margin-top: 6px; }
+.pl-prog-pod b { color: var(--p-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.pl-prog-cel { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.pl-prog-pasek { position: relative; display: flex; height: 22px; border-radius: 999px; background: var(--p-s1); overflow: visible; gap: 2px; margin: 6px 0 10px; }
+.pl-prog-pasek i { display: block; height: 100%; animation: p-rosx 700ms var(--p-sprezyna) both; transform-origin: left; }
+.pl-prog-pasek i:first-child { border-radius: 999px 0 0 999px; }
+.pl-prog-pasek i:nth-last-child(2) { border-radius: 0 999px 999px 0; }
+.pl-prog-cel-kreska { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--p-ink); transform: translateX(-1px); }
+.pl-prog-cel-kreska span { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 600; color: var(--p-ink); white-space: nowrap; }
+.pl-prog-tabela td, .pl-prog-tabela th { padding-top: 8px; padding-bottom: 8px; }
+.pl-prog-tabela tr:last-child td { border-top: 1px solid var(--p-ramka-2); }
+@media (max-width: 640px) { .pl-prog-cel { text-align: left; align-items: flex-start; } .pl-prog-liczba { font-size: 28px; } }

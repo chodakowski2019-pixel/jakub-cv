@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { Blad, Chip, Delta, Kafel, Miernik, NaglowekP, Pierscien, Pusto, Twarz } from "@/components/bruno/panel-ui";
 import RaportPrzycisk from "@/components/bruno/raport-przycisk";
+
+// 7.11 (USER_001: „ukryj to na razie, albo daj, że raport zostanie stworzony”): treść raportu od Bruno i przycisk
+// „Wygeneruj teraz” ukryte, zamiast nich zdanie z datą 1. dnia następnego miesiąca. false = pokaż z powrotem.
+const RAPORT_UKRYTY = true;
 import type { Firma } from "@/lib/bruno/firmy";
 import { locale, tDla, type Jezyk } from "@/lib/bruno/i18n";
 import { formatKwota } from "@/lib/bruno/lejek";
@@ -34,7 +38,7 @@ export default function RaportWidok({ firma, jezyk, wiersze, waluta, od, do: doD
         tytul={t("Monthly report", "Raport miesięczny")}
         akcent={firma?.naglowek?.trim() || firma?.nazwa || ""}
         podtytul={od ? t(`Last 30 days: ${od} to ${doDnia}. CRM + Bruno trainings + mental check.`, `Ostatnie 30 dni: ${od} do ${doDnia}. CRM + treningi Bruno + sprawdzian mentalny.`) : undefined}
-        prawo={<RaportPrzycisk />}
+        prawo={RAPORT_UKRYTY ? undefined : <RaportPrzycisk />}
       />
 
       {blad && <Blad tytul={t("Couldn't read the CRM.", "Nie udało się odczytać CRM.")} tekst={blad} />}
@@ -128,10 +132,18 @@ export default function RaportWidok({ firma, jezyk, wiersze, waluta, od, do: doD
             <h2>{t("Monthly report from Bruno", "Raport miesięczny od Bruno")}</h2>
             <p>{t("What improved, who, where deals are lost, 3 recommendations. Sent by e-mail on the 1st of each month.", "Co się poprawiło, kto, gdzie uciekają deale, 3 zalecenia. Mail 1. dnia każdego miesiąca.")}</p>
           </div>
-          {ostatni && <span className="p-karta-hd-meta"><Chip k="ciemny">{ostatni.tresc.miesiac}</Chip> <span>{data(ostatni.utworzono)}</span></span>}
+          {!RAPORT_UKRYTY && ostatni && <span className="p-karta-hd-meta"><Chip k="ciemny">{ostatni.tresc.miesiac}</Chip> <span>{data(ostatni.utworzono)}</span></span>}
         </div>
 
-        {ostatni ? (
+        {RAPORT_UKRYTY ? (
+          <div className="pr-raport">
+            <p className="pr-raport-lead">
+              {t("The report will be created on ", "Raport zostanie stworzony ")}
+              <b>{new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString(locale(jezyk), { day: "numeric", month: "long", year: "numeric" })}</b>
+              {t(" and sent by e-mail.", " i przyjdzie mailem.")}
+            </p>
+          </div>
+        ) : ostatni ? (
           <article className="pr-raport">
             <p className="pr-raport-lead">{ostatni.tresc.podsumowanie}</p>
             <div className="pr-raport-siatka">
@@ -159,7 +171,7 @@ export default function RaportWidok({ firma, jezyk, wiersze, waluta, od, do: doD
             </div>
           </div>
         )}
-        {raporty.length > 1 && (
+        {!RAPORT_UKRYTY && raporty.length > 1 && (
           <details className="pr-wczesniejsze">
             <summary>{t(`Earlier reports (${raporty.length - 1})`, `Wcześniejsze raporty (${raporty.length - 1})`)}</summary>
             <ul>{raporty.slice(1).map((r) => <li key={r.id}><b>{r.tresc.miesiac}</b> · {data(r.utworzono)}: {r.tresc.podsumowanie.slice(0, 140)}…</li>)}</ul>

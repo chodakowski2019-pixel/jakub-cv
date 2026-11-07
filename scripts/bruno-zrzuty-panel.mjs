@@ -78,10 +78,11 @@ for (const sciezka of sciezki.split(",")) {
     await evalJs("(async () => { const h = document.documentElement.scrollHeight; for (let y = 0; y < h; y += 500) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 40)); } window.scrollTo(0, 0); await new Promise(r => setTimeout(r, 900)); return 1; })()");
     const wys = await evalJs("document.documentElement.scrollHeight");
     const szer = await evalJs("document.documentElement.scrollWidth");
+    const okno = await evalJs("window.innerWidth");
     const r = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true, clip: { x: 0, y: 0, width: W, height: Math.min(wys, 9000), scale: 1 } });
     const plik = join(outDir, `${bez(sciezka)}-${nazwa}.png`);
     writeFileSync(plik, Buffer.from(r.data, "base64"));
-    console.log(plik, `${szer}×${wys}`, szer > W ? "POZIOMY SCROLL!" : "ok");
+    console.log(plik, `${szer}×${wys}`, `okno ${okno}`, szer > W || okno !== W ? "POZIOMY SCROLL / ZŁE OKNO!" : "ok");
   }
 }
 if (bledy.length) console.log("BŁĘDY KONSOLI:", [...new Set(bledy)].slice(0, 10).join("\n"));
