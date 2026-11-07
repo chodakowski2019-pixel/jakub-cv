@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Naglowek } from "@/components/bruno/zespol-widok";
+import { Blad, Chip, Delta, Kafel, Miernik, NaglowekP, Pierscien, Pusto, Twarz } from "@/components/bruno/panel-ui";
 import RaportPrzycisk from "@/components/bruno/raport-przycisk";
 import type { Firma } from "@/lib/bruno/firmy";
 import { locale, tDla, type Jezyk } from "@/lib/bruno/i18n";
@@ -7,6 +7,8 @@ import { formatKwota } from "@/lib/bruno/lejek";
 import type { RaportWiersz, WierszZespolu } from "@/lib/bruno/raport";
 
 // 4.11 (USER_001, pkt 3): widok /bruno/raport (szef): tabela zespołu (CRM + treningi + mental) i raporty miesięczne.
+// 6.11: nowy system zakładek (panel-2.css): 6 kafelków, tabela z miernikami (skuteczność, aktywność), pierścień oceny
+// z deltą, pigułki etapu / kryterium, raport od Bruno w 3 blokach (poprawa / traci / zalecenia).
 
 export default function RaportWidok({ firma, jezyk, wiersze, waluta, od, do: doDnia, raporty, blad = null }: { firma: Firma | null; jezyk: Jezyk; wiersze: WierszZespolu[]; waluta: string; od: string; do: string; raporty: RaportWiersz[]; blad?: string | null }) {
   const t = tDla(jezyk);
@@ -21,94 +23,97 @@ export default function RaportWidok({ firma, jezyk, wiersze, waluta, od, do: doD
     treningi: wiersze.reduce((s, w) => s + w.rozmow30, 0),
     zalegle: wiersze.reduce((s, w) => s + w.zalegle, 0),
   };
+  const skutecznosc = razem.wygrane + razem.przegrane ? Math.round((100 * razem.wygrane) / (razem.wygrane + razem.przegrane)) : null;
+  const maxAkt = Math.max(1, ...wiersze.map((w) => w.aktywnosci30));
+  const maxTren = Math.max(1, ...wiersze.map((w) => w.rozmow30));
+  const srZespolu = wiersze.filter((w) => w.srednia !== null).length ? wiersze.filter((w) => w.srednia !== null).reduce((s, w) => s + (w.srednia as number), 0) / wiersze.filter((w) => w.srednia !== null).length : null;
 
   return (
-    <div className="flex flex-col gap-6 bsz brp">
-      <Naglowek firma={firma} tytul={t("Monthly report", "Raport miesięczny")} akcent={firma?.naglowek?.trim() || firma?.nazwa || ""} podtytul={od ? t(`Last 30 days: ${od} to ${doDnia}. CRM + Bruno trainings + mental check.`, `Ostatnie 30 dni: ${od} do ${doDnia}. CRM + treningi Bruno + sprawdzian mentalny.`) : undefined} />
+    <div className="p-strona">
+      <NaglowekP
+        tytul={t("Monthly report", "Raport miesięczny")}
+        akcent={firma?.naglowek?.trim() || firma?.nazwa || ""}
+        podtytul={od ? t(`Last 30 days: ${od} to ${doDnia}. CRM + Bruno trainings + mental check.`, `Ostatnie 30 dni: ${od} do ${doDnia}. CRM + treningi Bruno + sprawdzian mentalny.`) : undefined}
+        prawo={<RaportPrzycisk />}
+      />
 
-      {blad && (
-        <section className="bruno-szklo rounded-2xl p-6">
-          <p className="text-rose-800 font-medium">{t("Couldn't read the CRM.", "Nie udało się odczytać CRM.")}</p>
-          <p className="text-slate-500 text-sm mt-1 break-words">{blad}</p>
-        </section>
-      )}
+      {blad && <Blad tytul={t("Couldn't read the CRM.", "Nie udało się odczytać CRM.")} tekst={blad} />}
 
       {!blad && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {[
-            [razem.otwarte, t("open deals", "otwartych deali")],
-            [kwota(razem.wartosc), t("in the pipeline", "w lejku")],
-            [razem.wygrane, t("won", "wygranych")],
-            [razem.przegrane, t("lost", "przegranych")],
-            [razem.treningi, t("trainings, 30 d", "treningów, 30 dni")],
-            [razem.zalegle, t("overdue tasks", "zaległych zadań")],
-          ].map(([l, o], i) => (
-            <div key={i} className="bruno-szklo rounded-2xl p-4 bsz-kafelek">
-              <div className={`bruno-h2 text-[1.5rem] leading-none tabular-nums ${i === 3 || i === 5 ? "text-rose-800" : "bruno-gradient-tekst"}`}>{l}</div>
-              <div className="text-[12px] font-semibold text-slate-700 mt-2 leading-tight">{o}</div>
-            </div>
-          ))}
+        <div className="p-kafle">
+          <Kafel wartosc={razem.otwarte} etykieta={t("Open deals", "Otwarte deale")} dol={<span>{wiersze.length} {t("reps", "handlowców")}</span>} />
+          <Kafel wartosc={kwota(razem.wartosc)} etykieta={t("In the pipeline", "W lejku")} dol={<span>{t("open deals value", "wartość otwartych")}</span>} />
+          <Kafel wartosc={razem.wygrane} etykieta={t("Won", "Wygrane")} kropka="#17a05e" dol={<Miernik proc={skutecznosc} k={skutecznosc !== null && skutecznosc < 40 ? "zle" : "ok"} tekst={skutecznosc === null ? "–" : `${skutecznosc} %`} />} />
+          <Kafel wartosc={razem.przegrane} etykieta={t("Lost", "Przegrane")} kropka="#e5484d" zle={razem.przegrane > razem.wygrane} dol={<span>{t("30 days + older", "30 dni i starsze")}</span>} />
+          <Kafel wartosc={razem.treningi} etykieta={t("Trainings, 30 d", "Treningi, 30 dni")} dol={<span>{srZespolu === null ? t("no scores", "brak ocen") : `${t("team avg", "śr. zespołu")} ${srZespolu.toLocaleString(locale(jezyk), { maximumFractionDigits: 1 })}`}</span>} />
+          <Kafel wartosc={razem.zalegle} etykieta={t("Overdue tasks", "Zaległe zadania")} zle={razem.zalegle > 0} kropka={razem.zalegle > 0 ? "#e5484d" : undefined} dol={<span>{t("in the CRM today", "w CRM na dziś")}</span>} />
         </div>
       )}
 
       {!blad && (
-        <section className="bruno-szklo rounded-2xl overflow-hidden">
-          <div className="px-5 pt-5 pb-2 flex items-baseline justify-between gap-3 flex-wrap">
-            <h2 className="bruno-h2 text-lg">{t("Every rep", "Każdy handlowiec")}</h2>
-            <span className="text-[11px] text-slate-500">{t("CRM activity · trainings · scores · weakest stage · mental check", "aktywność w CRM · treningi · oceny · najsłabszy etap · sprawdzian mentalny")}</span>
+        <section className="p-karta">
+          <div className="p-karta-hd">
+            <div>
+              <h2>{t("Every rep", "Każdy handlowiec")}</h2>
+              <p>{t("CRM activity · trainings · scores · weakest stage · mental check. Sorted by win rate, lowest first.", "Aktywność w CRM · treningi · oceny · najsłabszy etap · sprawdzian mentalny. Od najniższej skuteczności.")}</p>
+            </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="brp-tabela">
+          <div className="p-tabela-wrap" style={{ marginTop: 12 }}>
+            <table className="p-tabela p-tabela-gesta">
               <thead>
                 <tr>
                   <th>{t("Rep", "Handlowiec")}</th>
-                  <th className="text-center">{t("Open", "Otwarte")}</th>
-                  <th className="text-center">{t("Win rate", "Skuteczność")}</th>
+                  <th className="p-num">{t("Open", "Otwarte")}</th>
+                  <th>{t("Win rate", "Skuteczność")}</th>
                   <th>{t("Loses at", "Traci na")}</th>
-                  <th className="text-center">{t("CRM activity 30 d", "Aktywność CRM 30 dni")}</th>
-                  <th className="text-center">{t("Overdue", "Zaległe")}</th>
-                  <th className="text-center">{t("Trainings 30 d", "Treningi 30 dni")}</th>
-                  <th className="text-center">{t("Avg score", "Śr. ocena")}</th>
+                  <th>{t("CRM activity 30 d", "Aktywność CRM 30 dni")}</th>
+                  <th className="p-num">{t("Overdue", "Zaległe")}</th>
+                  <th>{t("Trainings 30 d", "Treningi 30 dni")}</th>
+                  <th>{t("Avg score", "Śr. ocena")}</th>
                   <th>{t("Weakest skill", "Najsłabsze")}</th>
-                  <th className="text-center">{t("Mental", "Mental")}</th>
+                  <th className="p-num">{t("Mental", "Mental")}</th>
                 </tr>
               </thead>
               <tbody>
                 {wiersze
                   .slice()
                   .sort((a, b) => (a.skutecznosc ?? 101) - (b.skutecznosc ?? 101))
-                  .map((w) => (
-                    <tr key={w.email}>
+                  .map((w, i) => (
+                    <tr key={w.email} style={{ animationDelay: `${i * 40}ms` }}>
                       <td>
-                        <Link href={`/bruno/szef/${encodeURIComponent(w.email)}`} className="flex items-center gap-2.5 min-w-0">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          {w.zdjecie ? <img src={w.zdjecie} alt="" className="bsz-inicjal bsz-zdjecie" style={{ width: 30, height: 30 }} /> : <span className="bsz-inicjal" style={{ width: 30, height: 30, fontSize: 13 }}>{w.imie[0]?.toUpperCase()}</span>}
+                        <Link href={`/bruno/szef/${encodeURIComponent(w.email)}`} className="p-osoba">
+                          <Twarz src={w.zdjecie} imie={w.imie} rozmiar={36} />
                           <span className="min-w-0">
-                            <span className="block font-semibold text-slate-900 truncate">{w.imie}</span>
-                            <span className="block text-[11px] text-slate-400 tabular-nums">{kwota(w.wartosc_otwarte)}</span>
+                            <b>{w.imie}</b>
+                            <small>{kwota(w.wartosc_otwarte)}</small>
                           </span>
                         </Link>
                       </td>
-                      <td className="text-center tabular-nums">{w.otwarte}</td>
-                      <td className="text-center tabular-nums">{w.skutecznosc === null ? <span className="text-slate-300">–</span> : <b className={w.skutecznosc < 40 ? "text-rose-800" : "text-slate-800"}>{w.skutecznosc} %</b>}</td>
-                      <td>{w.najslabszy_etap ? <span className="bsz-pigulka">{w.najslabszy_etap}</span> : <span className="text-slate-300">–</span>}</td>
-                      <td className="text-center tabular-nums">{w.aktywnosci30 === 0 ? <span className="text-rose-800 font-semibold">0</span> : w.aktywnosci30}</td>
-                      <td className="text-center tabular-nums">{w.zalegle > 0 ? <span className="text-rose-800 font-semibold">{w.zalegle}</span> : <span className="text-slate-300">0</span>}</td>
-                      <td className="text-center tabular-nums">
-                        {w.rozmow30}
-                        {w.dni_bez_treningu !== null && w.dni_bez_treningu >= 3 && <span className="block text-[10px] text-rose-700">{t(`${w.dni_bez_treningu} d without`, `${w.dni_bez_treningu} dni bez`)}</span>}
+                      <td className="p-num">{w.otwarte}</td>
+                      <td><Miernik proc={w.skutecznosc} k={w.skutecznosc !== null && w.skutecznosc < 40 ? "zle" : ""} /></td>
+                      <td>{w.najslabszy_etap ? <Chip k="uwaga">{w.najslabszy_etap}</Chip> : <span className="p-cichy">–</span>}</td>
+                      <td><Miernik proc={Math.round((100 * w.aktywnosci30) / maxAkt)} k={w.aktywnosci30 === 0 ? "zle" : ""} tekst={String(w.aktywnosci30)} /></td>
+                      <td className="p-num">{w.zalegle > 0 ? <span className="p-zle-t">{w.zalegle}</span> : <span className="p-cichy">0</span>}</td>
+                      <td>
+                        <span className="p-miernik">
+                          <span className="p-miernik-tor"><i data-k={w.dni_bez_treningu !== null && w.dni_bez_treningu >= 3 ? "zle" : "lim"} style={{ width: `${(100 * w.rozmow30) / maxTren}%` }} /></span>
+                          <b>{w.rozmow30}</b>
+                        </span>
+                        {w.dni_bez_treningu !== null && w.dni_bez_treningu >= 3 && <small className="p-zle-t" style={{ display: "block", fontSize: 11, marginTop: 2 }}>{t(`${w.dni_bez_treningu} d without`, `${w.dni_bez_treningu} dni bez`)}</small>}
                       </td>
-                      <td className="text-center tabular-nums">
-                        {w.srednia === null ? <span className="text-slate-300">–</span> : <b className={w.srednia < 5 ? "text-rose-800" : "text-slate-800"}>{w.srednia.toLocaleString(locale(jezyk))}</b>}
-                        {w.trend !== null && <span className={`block text-[10px] ${w.trend > 0 ? "text-emerald-700" : w.trend < 0 ? "text-rose-700" : "text-slate-400"}`}>{w.trend > 0 ? "▲" : w.trend < 0 ? "▼" : "="} {Math.abs(w.trend).toLocaleString(locale(jezyk))}</span>}
+                      <td>
+                        <span className="pr-ocena">
+                          <Pierscien v={w.srednia} prog={5} />
+                          <Delta v={w.trend} locale={locale(jezyk)} />
+                        </span>
                       </td>
-                      <td>{w.najslabsze_kryterium ? <span className="bsz-pigulka">{w.najslabsze_kryterium}</span> : <span className="text-slate-300">–</span>}</td>
-                      <td className="text-center tabular-nums">{w.mental === null ? <span className="text-slate-300" title={t("No check yet", "Brak sprawdzianu")}>–</span> : <b className={w.mental < 50 ? "text-rose-800" : "text-slate-800"}>{w.mental}</b>}</td>
+                      <td>{w.najslabsze_kryterium ? <Chip>{w.najslabsze_kryterium}</Chip> : <span className="p-cichy">–</span>}</td>
+                      <td className="p-num">{w.mental === null ? <span className="p-cichy" title={t("No check yet", "Brak sprawdzianu")}>–</span> : <Pierscien v={w.mental} max={100} prog={50} tekst={String(w.mental)} />}</td>
                     </tr>
                   ))}
                 {wiersze.length === 0 && (
                   <tr>
-                    <td colSpan={10} className="p-6 text-slate-600 text-sm">{t("No reps in this company yet.", "W tej firmie nie ma jeszcze handlowców.")}</td>
+                    <td colSpan={10}><Pusto tytul={t("No reps yet", "Brak handlowców")} opis={t("No reps in this company yet.", "W tej firmie nie ma jeszcze handlowców.")} /></td>
                   </tr>
                 )}
               </tbody>
@@ -117,49 +122,47 @@ export default function RaportWidok({ firma, jezyk, wiersze, waluta, od, do: doD
         </section>
       )}
 
-      <section className="bruno-szklo rounded-2xl p-5 sm:p-6">
-        <div className="flex items-start justify-between gap-3 flex-wrap">
+      <section className="p-karta p-karta-p">
+        <div className="p-karta-hd">
           <div>
-            <h2 className="bruno-h2 text-lg">{t("Monthly report from Bruno", "Raport miesięczny od Bruno")}</h2>
-            <p className="text-sm text-slate-500 mt-1">{t("What improved, who, where deals are lost, 3 recommendations. Sent by e-mail on the 1st of each month.", "Co się poprawiło, kto, gdzie uciekają deale, 3 zalecenia. Mail 1. dnia każdego miesiąca.")}</p>
+            <h2>{t("Monthly report from Bruno", "Raport miesięczny od Bruno")}</h2>
+            <p>{t("What improved, who, where deals are lost, 3 recommendations. Sent by e-mail on the 1st of each month.", "Co się poprawiło, kto, gdzie uciekają deale, 3 zalecenia. Mail 1. dnia każdego miesiąca.")}</p>
           </div>
-          <RaportPrzycisk />
+          {ostatni && <span className="p-karta-hd-meta"><Chip k="ciemny">{ostatni.tresc.miesiac}</Chip> <span>{data(ostatni.utworzono)}</span></span>}
         </div>
 
         {ostatni ? (
-          <article className="brp-raport mt-5">
-            <div className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{ostatni.tresc.miesiac} · {data(ostatni.utworzono)}</div>
-            <p className="text-slate-800 mt-2 leading-relaxed">{ostatni.tresc.podsumowanie}</p>
-            <div className="grid md:grid-cols-2 gap-4 mt-4">
-              <div>
-                <h3 className="font-semibold text-emerald-800 text-sm mb-1.5">{t("Improved", "Poprawa")}</h3>
-                <ul className="brp-lista">{ostatni.tresc.poprawa.map((p, i) => <li key={i}><b>{p.kto}</b>: {p.co}</li>)}{ostatni.tresc.poprawa.length === 0 && <li className="text-slate-400">–</li>}</ul>
+          <article className="pr-raport">
+            <p className="pr-raport-lead">{ostatni.tresc.podsumowanie}</p>
+            <div className="pr-raport-siatka">
+              <div className="pr-raport-blok">
+                <h3><i style={{ background: "var(--p-ok)" }} /> {t("Improved", "Poprawa")}</h3>
+                <ul>{ostatni.tresc.poprawa.map((p, i) => <li key={i}><b>{p.kto}</b>: {p.co}</li>)}{ostatni.tresc.poprawa.length === 0 && <li className="p-cichy">–</li>}</ul>
               </div>
-              <div>
-                <h3 className="font-semibold text-rose-800 text-sm mb-1.5">{t("Loses deals", "Traci deale")}</h3>
-                <ul className="brp-lista">{ostatni.tresc.traci.map((p, i) => <li key={i}><b>{p.kto}</b>: {p.gdzie}, {p.ile}</li>)}{ostatni.tresc.traci.length === 0 && <li className="text-slate-400">–</li>}</ul>
+              <div className="pr-raport-blok">
+                <h3><i style={{ background: "var(--p-zle)" }} /> {t("Loses deals", "Traci deale")}</h3>
+                <ul>{ostatni.tresc.traci.map((p, i) => <li key={i}><b>{p.kto}</b>: {p.gdzie}, {p.ile}</li>)}{ostatni.tresc.traci.length === 0 && <li className="p-cichy">–</li>}</ul>
+              </div>
+              <div className="pr-raport-blok" style={{ background: "var(--p-lim-j)", borderColor: "#e6ec9e" }}>
+                <h3><i style={{ background: "var(--p-lim-c)" }} /> {t("3 recommendations", "3 zalecenia")}</h3>
+                <ol>{ostatni.tresc.zalecenia.map((z, i) => <li key={i}>{z}</li>)}</ol>
               </div>
             </div>
-            <h3 className="font-semibold text-slate-900 text-sm mt-4 mb-1.5">{t("3 recommendations", "3 zalecenia")}</h3>
-            <ol className="brp-zalecenia">{ostatni.tresc.zalecenia.map((z, i) => <li key={i}>{z}</li>)}</ol>
           </article>
         ) : (
-          <div className="brp-pusty mt-5">
-            <p className="text-sm text-slate-600">{t("No report yet. Click “Generate now”: Bruno reads the CRM and trainings and writes the first one.", "Jeszcze nie ma raportu. Kliknij „Wygeneruj teraz”: Bruno odczyta CRM i treningi i napisze pierwszy.")}</p>
-            <div className="brp-szkic mt-3" aria-hidden>
-              <div className="text-[11px] uppercase tracking-wide text-slate-400 font-semibold">{t("What it looks like", "Jak będzie wyglądał")}</div>
-              <div className="grid md:grid-cols-2 gap-4 mt-2 text-sm text-slate-400">
-                <div><b className="text-slate-500">{t("Improved", "Poprawa")}</b><br />Marta: {t("win rate 60 % → 75 %", "skuteczność 60 % → 75 %")}</div>
-                <div><b className="text-slate-500">{t("Loses deals", "Traci deale")}</b><br />Kasia: {t("Proposal sent, 4 lost", "Złożono ofertę, 4 przegrane")}</div>
-              </div>
-              <div className="mt-2 text-sm text-slate-400"><b className="text-slate-500">{t("3 recommendations", "3 zalecenia")}</b><br />1. … 2. … 3. …</div>
+          <div className="pr-raport">
+            <p className="pr-raport-lead">{t("No report yet. Click “Generate now”: Bruno reads the CRM and trainings and writes the first one.", "Jeszcze nie ma raportu. Kliknij „Wygeneruj teraz”: Bruno odczyta CRM i treningi i napisze pierwszy.")}</p>
+            <div className="pr-raport-siatka pr-szkic" aria-hidden>
+              <div className="pr-raport-blok"><h3><i style={{ background: "var(--p-ok)" }} /> {t("Improved", "Poprawa")}</h3><ul><li><b>Marta</b>: {t("win rate 60 % → 75 %", "skuteczność 60 % → 75 %")}</li></ul></div>
+              <div className="pr-raport-blok"><h3><i style={{ background: "var(--p-zle)" }} /> {t("Loses deals", "Traci deale")}</h3><ul><li><b>Kasia</b>: {t("Proposal sent, 4 lost", "Złożono ofertę, 4 przegrane")}</li></ul></div>
+              <div className="pr-raport-blok"><h3><i style={{ background: "var(--p-lim-c)" }} /> {t("3 recommendations", "3 zalecenia")}</h3><ol><li>…</li><li>…</li><li>…</li></ol></div>
             </div>
           </div>
         )}
         {raporty.length > 1 && (
-          <details className="mt-4">
-            <summary className="text-sm text-slate-500 cursor-pointer">{t(`Earlier reports (${raporty.length - 1})`, `Wcześniejsze raporty (${raporty.length - 1})`)}</summary>
-            <ul className="mt-2 text-sm text-slate-600 flex flex-col gap-1">{raporty.slice(1).map((r) => <li key={r.id}>{r.tresc.miesiac} · {data(r.utworzono)}: {r.tresc.podsumowanie.slice(0, 140)}…</li>)}</ul>
+          <details className="pr-wczesniejsze">
+            <summary>{t(`Earlier reports (${raporty.length - 1})`, `Wcześniejsze raporty (${raporty.length - 1})`)}</summary>
+            <ul>{raporty.slice(1).map((r) => <li key={r.id}><b>{r.tresc.miesiac}</b> · {data(r.utworzono)}: {r.tresc.podsumowanie.slice(0, 140)}…</li>)}</ul>
           </details>
         )}
       </section>

@@ -6,9 +6,10 @@ import { useT } from "@/components/bruno/jezyk-kontekst";
 
 // 11.10 (USER_001, E32): zakładka „Kalendarz”. Miesiąc z rozmowami (liczba, średnia ocena) i fiszkami
 // w każdym dniu, dzisiaj, i do kiedy trwa dostęp (koniec testu albo opłaconego Bruno Pro).
-// 28.10 (USER_001: „czytelniej”): nowy układ w stylu Rinesk (CSS .bk-* w motyw-rinesk.css): nagłówek z lewej,
-// miesiąc i strzałki z prawej, 3 kafelki z liczbami, kratki z pastylkami „2 rozmowy · 8,0” i „11 fiszek”
-// zamiast emoji, dziś = czarne kółko z numerem, dni z dostępem = delikatna limonka, koniec dostępu = ramka.
+// 6.11 (USER_001: „każda zakładka nowoczesna”): nowy system zakładek (panel-2.css, p-* / pc-*):
+// nagłówek + nawigacja miesiąca z prawej, 4 kafelki, kratki jak mapa aktywności (sekwencja jednego odcienia:
+// im więcej rozmów w dniu, tym ciemniej; liczba zawsze w pastylce, kolor nie jest jedynym nośnikiem),
+// dziś = czarne kółko, dni z dostępem = limonka, koniec dostępu = czarna ramka. Klik w dzień z rozmową = feedback.
 
 export type DzienKalendarza = { rozmowy: number; srednia: number | null; fiszki: number; rozmowaId: string | null };
 
@@ -70,38 +71,46 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
   const sredniaMiesiaca = ocenyMiesiaca.length ? Math.round((ocenyMiesiaca.reduce((a, b) => a + b, 0) / ocenyMiesiaca.length) * 10) / 10 : null;
   const liczba = (v: number) => v.toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const toMiesiacDzis = miesiac.getFullYear() === dzis.getFullYear() && miesiac.getMonth() === dzis.getMonth();
+  const najlepszyDzien = wMiesiacu.filter(([, v]) => v.srednia !== null).sort((a, b) => (b[1].srednia as number) - (a[1].srednia as number))[0] ?? null;
+  const dzienKrotki = (k: string) => new Intl.DateTimeFormat(locale, { day: "numeric", month: "short" }).format(new Date(`${k}T12:00:00`));
 
   return (
-    <div className="flex flex-col gap-5 bk">
-      <div className="bk-naglowek">
-        <div>
-          <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]"><span className="bruno-gradient-tekst">{t("Calendar", "Kalendarz")}</span></h1>
-          {koniec && opisKonca && (
-            <p className="bk-dostep">
-              {opisKonca} <b>{dataKonca}</b>
-              {dniZostalo !== null && <span> · {dniZostalo === 1 ? t("1 day left", "został 1 dzień") : t(`${dniZostalo} days left`, `${dniZostalo} ${dniZostalo >= 2 && dniZostalo <= 4 ? "dni zostały" : "dni zostało"}`)}</span>}
-            </p>
-          )}
+    <div className="p-strona">
+      <header className="p-naglowek">
+        <div className="p-naglowek-lewo">
+          <div className="min-w-0">
+            <h1>{t("Calendar", "Kalendarz")}</h1>
+            {koniec && opisKonca ? (
+              <p>
+                {opisKonca} <b style={{ color: "var(--p-ink)", fontWeight: 500 }}>{dataKonca}</b>
+                {dniZostalo !== null && <span> · {dniZostalo === 1 ? t("1 day left", "został 1 dzień") : t(`${dniZostalo} days left`, `${dniZostalo} ${dniZostalo >= 2 && dniZostalo <= 4 ? "dni zostały" : "dni zostało"}`)}</span>}
+              </p>
+            ) : (
+              <p>{t("Calls and flashcards day by day.", "Rozmowy i fiszki dzień po dniu.")}</p>
+            )}
+          </div>
         </div>
-        <div className="bk-nav">
-          <button type="button" onClick={() => setMiesiac(new Date(miesiac.getFullYear(), miesiac.getMonth() - 1, 1))} aria-label={t("Previous month", "Poprzedni miesiąc")}>‹</button>
-          <b className="capitalize">{tytul}</b>
-          <button type="button" onClick={() => setMiesiac(new Date(miesiac.getFullYear(), miesiac.getMonth() + 1, 1))} aria-label={t("Next month", "Następny miesiąc")}>›</button>
-          {!toMiesiacDzis && <button type="button" className="bk-dzis" onClick={() => setMiesiac(new Date(dzis.getFullYear(), dzis.getMonth(), 1))}>{t("Today", "Dziś")}</button>}
+        <div className="p-naglowek-prawo">
+          <div className="pc-nav">
+            <button type="button" onClick={() => setMiesiac(new Date(miesiac.getFullYear(), miesiac.getMonth() - 1, 1))} aria-label={t("Previous month", "Poprzedni miesiąc")}>‹</button>
+            <b>{tytul}</b>
+            <button type="button" onClick={() => setMiesiac(new Date(miesiac.getFullYear(), miesiac.getMonth() + 1, 1))} aria-label={t("Next month", "Następny miesiąc")}>›</button>
+            {!toMiesiacDzis && <button type="button" className="pc-dzis-btn" onClick={() => setMiesiac(new Date(dzis.getFullYear(), dzis.getMonth(), 1))}>{t("Today", "Dziś")}</button>}
+          </div>
         </div>
+      </header>
+
+      <div className="p-kafle">
+        <div className="p-kafel"><div className="p-kafel-et"><span>{t("Calls", "Rozmowy")}</span></div><div className="p-kafel-wart">{rozmowWMiesiacu}</div><div className="p-kafel-dol">{t("this month", "w tym miesiącu")}</div></div>
+        <div className="p-kafel"><div className="p-kafel-et"><span>{t("Average score", "Średnia ocena")}</span></div><div className="p-kafel-wart">{sredniaMiesiaca === null ? "–" : liczba(sredniaMiesiaca)}<small>/ 10</small></div><div className="p-kafel-dol">{najlepszyDzien ? `${t("best day", "najlepszy dzień")}: ${dzienKrotki(najlepszyDzien[0])} · ${liczba(najlepszyDzien[1].srednia as number)}` : t("no scored calls", "brak ocenionych rozmów")}</div></div>
+        <div className="p-kafel"><div className="p-kafel-et"><span>{t("Flashcards", "Fiszki")}</span></div><div className="p-kafel-wart">{fiszekWMiesiacu}</div><div className="p-kafel-dol">{t("answered", "odpowiedzianych")}</div></div>
+        <div className="p-kafel"><div className="p-kafel-et"><span>{t("Active days", "Dni z treningiem")}</span></div><div className="p-kafel-wart">{dniAktywnych}</div><div className="p-kafel-dol"><span>{t("calls or flashcards", "rozmowy albo fiszki")}</span><span className="p-miernik-tor" style={{ width: 60, height: 4 }}><i data-k="lim" style={{ width: `${Math.min(100, (100 * dniAktywnych) / new Date(miesiac.getFullYear(), miesiac.getMonth() + 1, 0).getDate())}%` }} /></span></div></div>
       </div>
 
-      <div className="bk-kafelki">
-        <div className="bk-kafelek"><b>{rozmowWMiesiacu}</b><span>{mnoga(rozmowWMiesiacu, ["call", "calls"], ["rozmowa", "rozmowy", "rozmów"])}</span><small>{t("this month", "w tym miesiącu")}</small></div>
-        <div className="bk-kafelek"><b>{sredniaMiesiaca === null ? "–" : liczba(sredniaMiesiaca)}</b><span>{t("average score", "średnia ocena")}</span><small>{t("out of 10", "na 10")}</small></div>
-        <div className="bk-kafelek"><b>{fiszekWMiesiacu}</b><span>{mnoga(fiszekWMiesiacu, ["flashcard", "flashcards"], ["fiszka", "fiszki", "fiszek"])}</span><small>{t("answered", "odpowiedzianych")}</small></div>
-        <div className="bk-kafelek"><b>{dniAktywnych}</b><span>{t("active days", "dni z treningiem")}</span><small>{t("calls or flashcards", "rozmowy albo fiszki")}</small></div>
-      </div>
-
-      <section className="bk-siatka-karta">
-        <div className="bk-siatka" role="grid">
-          {nazwyDni.map((d) => <div key={d} className="bk-dzien-nazwa">{d}</div>)}
-          {komorki.map((d) => {
+      <section className="p-karta p-karta-p">
+        <div className="pc-siatka" role="grid">
+          {nazwyDni.map((d) => <div key={d} className="pc-dzien-nazwa" role="columnheader">{d}</div>)}
+          {komorki.map((d, i) => {
             const k = klucz(d);
             const dane = dni[k];
             const inny = d.getMonth() !== miesiac.getMonth();
@@ -110,32 +119,35 @@ export default function Kalendarz({ rozmowy, fiszki, koniecDostepu, opisKonca }:
             // Dni z dostępem: od dziś do dnia końca włącznie. Po końcu: przygaszone.
             const zDostepem = !!kluczKonca && k >= kluczDzis && k <= kluczKonca;
             const poKoncu = !!kluczKonca && k > kluczKonca;
-            const maDane = !!dane && dane.rozmowy + dane.fiszki > 0;
-            const klasa = ["bk-kratka", inny ? "bk-inny" : "", toDzis ? "bk-dzis-kratka" : "", toKoniec ? "bk-koniec" : "", zDostepem ? "bk-z-dostepem" : "", poKoncu ? "bk-po" : "", maDane ? "bk-ma" : ""].filter(Boolean).join(" ");
+            const intensywnosc = dane?.rozmowy ? Math.min(4, dane.rozmowy) : 0;
+            const klasa = ["pc-kratka", inny ? "inny" : "", toDzis ? "dzis" : "", toKoniec ? "koniec" : "", zDostepem && !intensywnosc ? "z-dostepem" : "", poKoncu && !intensywnosc ? "po" : ""].filter(Boolean).join(" ");
             const tresc = (
               <>
-                <span className="bk-numer">{d.getDate()}</span>
+                <span className="pc-numer">{d.getDate()}</span>
                 {dane?.rozmowy ? (
-                  <span className="bk-pig bk-pig-rozmowy" title={t("calls · average score", "rozmowy · średnia ocena")}>
-                    {dane.rozmowy} {mnoga(dane.rozmowy, ["call", "calls"], ["rozmowa", "rozmowy", "rozmów"])}{dane.srednia !== null ? ` · ${liczba(dane.srednia)}` : ""}
+                  <span className="pc-pig" title={t("calls · average score", "rozmowy · średnia ocena")}>
+                    <b>{dane.rozmowy}</b> {mnoga(dane.rozmowy, ["call", "calls"], ["rozmowa", "rozmowy", "rozmów"])}{dane.srednia !== null ? ` · ${liczba(dane.srednia)}` : ""}
                   </span>
                 ) : null}
-                {dane?.fiszki ? <span className="bk-pig bk-pig-fiszki">{dane.fiszki} {mnoga(dane.fiszki, ["flashcard", "flashcards"], ["fiszka", "fiszki", "fiszek"])}</span> : null}
-                {toKoniec ? <span className="bk-pig bk-pig-koniec">{t("access ends", "koniec dostępu")}</span> : null}
+                {dane?.fiszki ? <span className="pc-pig pc-pig-fiszki"><b>{dane.fiszki}</b> {mnoga(dane.fiszki, ["flashcard", "flashcards"], ["fiszka", "fiszki", "fiszek"])}</span> : null}
+                {toKoniec ? <span className="pc-pig pc-pig-koniec">{t("access ends", "koniec dostępu")}</span> : null}
               </>
             );
+            const styl = { animationDelay: `${Math.min(i, 30) * 12}ms` };
             return dane?.rozmowaId ? (
-              <Link key={k} href={`/bruno/feedback/${dane.rozmowaId}`} className={klasa} role="gridcell" title={t("Open feedback", "Otwórz feedback")}>{tresc}</Link>
+              <Link key={k} href={`/bruno/feedback/${dane.rozmowaId}`} className={`${klasa} p-zjaw`} data-i={intensywnosc || undefined} role="gridcell" title={t("Open feedback", "Otwórz feedback")} style={styl}>{tresc}</Link>
             ) : (
-              <div key={k} className={klasa} role="gridcell">{tresc}</div>
+              <div key={k} className={`${klasa} p-zjaw`} data-i={intensywnosc || undefined} role="gridcell" style={styl}>{tresc}</div>
             );
           })}
         </div>
-        <div className="bk-legenda">
-          <span><i className="bk-pig bk-pig-rozmowy" /> {t("calls · average score", "rozmowy · średnia ocena")}</span>
-          <span><i className="bk-pig bk-pig-fiszki" /> {t("flashcards", "fiszki")}</span>
-          {koniec && <span><i className="bk-leg-dostep" /> {t("days with access", "dni z dostępem")}</span>}
-          <span className="bk-leg-info">{t("Click a day with a call to open its feedback.", "Kliknij dzień z rozmową, żeby otworzyć feedback.")}</span>
+        <div className="p-legenda" style={{ marginTop: 14 }}>
+          <span className="pc-skala" aria-hidden>
+            {t("fewer calls", "mniej rozmów")} <i style={{ background: "#fff" }} /><i style={{ background: "var(--p-s1)" }} /><i style={{ background: "var(--p-s2)" }} /><i style={{ background: "var(--p-s3)" }} /><i style={{ background: "var(--p-s4)" }} /> {t("more", "więcej")}
+          </span>
+          {koniec && <span><i style={{ background: "var(--p-lim-j)", border: "1px solid #eef2b4" }} /> {t("days with access", "dni z dostępem")}</span>}
+          <span><i style={{ background: "var(--p-ink)", borderRadius: "50%" }} /> {t("today", "dziś")}</span>
+          <span style={{ color: "var(--p-ink-3)" }}>{t("Click a day with a call to open its feedback.", "Kliknij dzień z rozmową, żeby otworzyć feedback.")}</span>
         </div>
       </section>
     </div>

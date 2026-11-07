@@ -7,6 +7,8 @@ import { useT } from "@/components/bruno/jezyk-kontekst";
 // serwer wysyła ją mailem do USER_001 z reply-to = tester, więc USER_001
 // odpisuje zwykłym „Odpowiedz" w Gmailu i odpowiedź trafia prosto do testera.
 // Żadnej skrzynki w panelu: to kanał jednokierunkowy do maila.
+// 6.11 (USER_001: „popraw czat”): nowy wygląd w systemie zakładek (panel-2.css, pcz-*): biała karta, awatar „B”
+// z zieloną kropką, pierwsza wiadomość od Bruno jak w komunikatorze, pole, przycisk limonkowy, stan „wysłane” z ✓.
 
 export default function CzatDymek() {
   const { t } = useT();
@@ -32,34 +34,48 @@ export default function CzatDymek() {
   };
 
   return (
-    <div className="bruno-czat fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-20 flex flex-col items-end gap-3">
+    <div className="pcz bruno-czat">
       {otwarty && (
-        <div className="bruno-szklo rounded-3xl overflow-hidden w-[calc(100vw-2.5rem)] max-w-sm shadow-[0_24px_60px_rgba(212,175,90,0.22)]">
-          <div className="px-5 py-4 bg-gradient-to-r from-cyan-700 to-teal-700 text-white flex items-center gap-3">
-            <span className="size-9 rounded-full bg-white/15 grid place-items-center bruno-h2 text-sm">B</span>
-            <div className="min-w-0 flex-1">
-              <div className="bruno-h2 text-[15px] leading-tight">{t("Message us", "Napisz do nas")}</div>
+        <div className="pcz-okno" role="dialog" aria-label={t("Message us", "Napisz do nas")}>
+          <div className="pcz-hd">
+            <span className="pcz-awatar" aria-hidden>B</span>
+            <div className="min-w-0">
+              <b>{t("Message us", "Napisz do nas")}</b>
+              <small>{t("We reply by e-mail, usually the same day.", "Odpowiadamy mailem, zwykle tego samego dnia.")}</small>
             </div>
-            <button type="button" onClick={() => setOtwarty(false)} aria-label={t("Close", "Zamknij")} className="text-white/80 hover:text-white text-2xl leading-none px-1">×</button>
+            <button type="button" className="pcz-x" onClick={() => setOtwarty(false)} aria-label={t("Close", "Zamknij")}>
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden><path d="M4 4l8 8M12 4l-8 8" /></svg>
+            </button>
           </div>
-          <form onSubmit={wyslij} className="p-4 sm:p-5 flex flex-col gap-3">
+          <form onSubmit={wyslij} className="pcz-tresc">
+            <div className="pcz-bot">
+              <span className="pcz-awatar" aria-hidden>B</span>
+              <div className="pcz-dymek-bot">{t("Hi! Question, problem or an idea for Bruno? Write it here.", "Cześć! Pytanie, problem albo pomysł na Bruno? Napisz tutaj.")}</div>
+            </div>
             {stan === "ok" ? (
-              <p className="text-sm text-teal-800 py-2">{t("Message sent. We'll reply by email.", "Wiadomość wysłana. Odpowiedź przyjdzie mailem.")}</p>
+              <div className="pcz-ok">
+                <i aria-hidden><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8.5l3 3 7-7" /></svg></i>
+                {t("Sent. We'll reply by e-mail.", "Wysłane. Odpowiedź przyjdzie mailem.")}
+              </div>
             ) : (
               <>
                 <textarea
-                  className="bruno-pole text-[14px]"
+                  className="pcz-pole"
                   rows={4}
-                  placeholder={t("Question, problem, idea...", "Pytanie, problem, pomysł...")}
+                  placeholder={t("Write a message…", "Napisz wiadomość…")}
                   value={tekst}
                   onChange={(e) => setTekst(e.target.value)}
                   maxLength={3000}
                   autoFocus
                 />
-                {stan === "blad" && <p className="text-xs text-red-700">{t("Couldn't send. Email us at hello@jakubchodakowski.com", "Nie udało się wysłać. Napisz na hello@jakubchodakowski.com")}</p>}
-                <button type="submit" disabled={stan === "wysylanie" || tekst.trim().length < 2} className="bruno-przycisk w-full py-2.5 text-sm">
-                  {stan === "wysylanie" ? t("Sending...", "Wysyłam...") : t("Send", "Wyślij")}
-                </button>
+                {stan === "blad" && <p className="pcz-blad">{t("Couldn't send. Email us at hello@jakubchodakowski.com", "Nie udało się wysłać. Napisz na hello@jakubchodakowski.com")}</p>}
+                <div className="pcz-stopka">
+                  <small>{tekst.length > 0 ? `${tekst.length} / 3000` : t("Enter = new line", "Enter = nowa linia")}</small>
+                  <button type="submit" disabled={stan === "wysylanie" || tekst.trim().length < 2} className="p-btn p-btn-s" style={{ opacity: stan === "wysylanie" || tekst.trim().length < 2 ? 0.5 : 1 }}>
+                    {stan === "wysylanie" ? t("Sending…", "Wysyłam…") : t("Send", "Wyślij")}
+                    <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+                  </button>
+                </div>
               </>
             )}
           </form>
@@ -70,16 +86,14 @@ export default function CzatDymek() {
         onClick={() => { setOtwarty((o) => !o); if (stan === "ok") setStan("idle"); }}
         aria-label={otwarty ? t("Close chat", "Zamknij czat") : t("Message us", "Napisz do nas")}
         aria-expanded={otwarty}
-        className={`bruno-dymek ${otwarty ? "bruno-dymek-otwarty" : ""}`}
+        className="pcz-btn"
       >
         {otwarty ? (
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>
         ) : (
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden>
-            <path d="M12 3C7 3 3 6.4 3 10.6c0 2.3 1.2 4.3 3.1 5.7L5.4 20l4-1.9c.8.2 1.7.3 2.6.3 5 0 9-3.4 9-7.6S17 3 12 3z" />
-            <circle cx="8.5" cy="10.8" r="1.1" fill="#d4af5a" />
-            <circle cx="12" cy="10.8" r="1.1" fill="#d4af5a" />
-            <circle cx="15.5" cy="10.8" r="1.1" fill="#d4af5a" />
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M12 4c-4.4 0-8 3-8 6.7 0 2 1 3.8 2.7 5L6 20l3.6-1.7c.8.2 1.6.3 2.4.3 4.4 0 8-3 8-6.7S16.4 4 12 4z" />
+            <path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01" strokeWidth="2.6" />
           </svg>
         )}
       </button>

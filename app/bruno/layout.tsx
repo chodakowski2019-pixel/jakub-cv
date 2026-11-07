@@ -22,6 +22,8 @@ import { motywAsset, motywRinesk } from "@/lib/bruno/motyw";
 import "./bruno.css";
 import "./motyw-asset.css";
 import "./motyw-rinesk.css";
+// 6.11 (USER_001): wspólny system zakładek (Klienci, Lejek, Statystyki, Raport, Kalendarz), klasy p-*.
+import "./panel-2.css";
 
 // Panel testowy Bruno AI (USER_001 30.09): logowanie stałym kodem, dostęp
 // 7 dni od pierwszego logowania, 3 rozmowy po 3 minuty dziennie (1.10), feedback

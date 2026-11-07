@@ -1,15 +1,15 @@
 import Link from "next/link";
-import { Naglowek } from "@/components/bruno/zespol-widok";
+import { Blad, Chip, Kafel, Miernik, NaglowekP, Pusto, Twarz } from "@/components/bruno/panel-ui";
+import LejekWykres, { type EtapWykresu } from "@/components/bruno/lejek-wykres";
 import type { Firma } from "@/lib/bruno/firmy";
 import { tDla, type Jezyk } from "@/lib/bruno/i18n";
 import { formatKwota, type AnalizaHandlowca, type Deal, type Etap, type EtapStat } from "@/lib/bruno/lejek";
 import { zJako } from "@/lib/bruno/jako";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
 
-// 4.11 (USER_001): WIZUALIZACJA LEJKA z CRM. Góra: etapy jako słupki (otwarte deale + wartość, przegrane na czerwono).
-// Szef: tabela handlowiec × etap (liczba przegranych), najsłabszy etap podświetlony, „Bruno trenuje: <etap>”.
-// Handlowiec: swoje deale per etap + „Tracisz najwięcej na: X → Trenuj ten etap” (link do rozmowy z sytuacją).
-// Styl: czarno-złote szkło (bruno-szklo, bsz-*), własne klasy blj-* w bruno.css.
+// 4.11 (USER_001): WIZUALIZACJA LEJKA z CRM. 6.11: nowy system zakładek (panel-2.css, klasy p-* / pl-*):
+// kafelki (otwarte, w lejku, wygrane, przegrane, skuteczność), lejek SVG (lejek-wykres.tsx), alarm handlowca,
+// mapa handlowiec × etap (sekwencja czerwieni = ile przegranych, ramka = najsłabszy etap), lista deali.
 
 type Osoba = { email: string; imie: string; zdjecie: string | null };
 
@@ -49,10 +49,16 @@ export default function LejekWidok({
   const waluta = deale[0]?.waluta ?? "PLN";
   const kwota = (n: number) => formatKwota(n, waluta, jezyk);
   const doszloMax = zespol.reduce((a, x) => a + x.otwarte + x.wygrane + x.przegrane, 0);
-  const przegraneRazem = zespol.reduce((s, x) => s + x.przegrane, 0);
-  const najslabszyZespolu = [...zespol].filter((s) => s.przegrane > 0).sort((a, b) => b.przegrane - a.przegrane || b.wartosc_przegrane - a.wartosc_przegrane)[0] ?? null;
+  const otwarte = zespol.reduce((s, x) => s + x.otwarte, 0);
+  const wygrane = zespol.reduce((s, x) => s + x.wygrane, 0);
+  const przegrane = zespol.reduce((s, x) => s + x.przegrane, 0);
+  const wLejku = zespol.reduce((s, x) => s + x.wartosc, 0);
+  const skutecznosc = wygrane + przegrane ? Math.round((100 * wygrane) / (wygrane + przegrane)) : null;
+  const najslabszy = [...zespol].filter((s) => s.przegrane > 0).sort((a, b) => b.przegrane - a.przegrane || b.wartosc_przegrane - a.wartosc_przegrane)[0] ?? null;
   const moja = analizy.find((a) => a.email.toLowerCase() === ja) ?? null;
   const osoba = (email: string) => osoby.find((o) => o.email.toLowerCase() === email.toLowerCase());
+  const tytul = szef ? t("Team funnel", "Lejek zespołu") : t("Your funnel", "Twój lejek");
+  const akcent = imie ?? firma?.naglowek?.trim() ?? firma?.nazwa ?? "";
 
   const sytuacjaTreningu = (etap: Etap, d?: Deal | null) => {
     const kto = d ? `${d.tytul}${d.osoba ? `, ${d.osoba}` : ""}${d.organizacja ? ` (${d.organizacja})` : ""}, ${kwota(d.wartosc)}` : "";
@@ -64,114 +70,117 @@ export default function LejekWidok({
 
   if (blad) {
     return (
-      <div className="flex flex-col gap-6 bsz">
-        <Naglowek firma={firma} tytul={t("Pipeline", "Lejek")} akcent={firma?.nazwa ?? "CRM"} />
-        <section className="bruno-szklo rounded-2xl p-6">
-          <p className="text-rose-800 font-medium">{t("Couldn't read the CRM.", "Nie udało się odczytać CRM.")}</p>
-          <p className="text-slate-500 text-sm mt-1 break-words">{blad}</p>
-        </section>
+      <div className="p-strona">
+        <NaglowekP tytul={t("Pipeline", "Lejek")} akcent={akcent} />
+        <Blad tytul={t("Couldn't read the CRM.", "Nie udało się odczytać CRM.")} tekst={blad} />
       </div>
     );
   }
 
-  return (
-    <div className="flex flex-col gap-6 bsz blj">
-      <Naglowek firma={firma} tytul={t("Pipeline", "Lejek")} akcent={firma?.naglowek?.trim() || firma?.nazwa || "CRM"} podtytul={`${imie ? `${imie} · ` : ""}${pipeline?.nazwa ? `${pipeline.nazwa} · ` : ""}${t("Live from Pipedrive. Red = deals lost at this stage.", "Na żywo z Pipedrive. Czerwone = deale przegrane na tym etapie.")}`} />
+  const wykres: EtapWykresu[] = zespol.map((s, i) => {
+    const doszlo = zespol.slice(i).reduce((a, x) => a + x.otwarte + x.wygrane + x.przegrane, 0);
+    const dalej = zespol.slice(i + 1).reduce((a, x) => a + x.otwarte + x.wygrane + x.przegrane, 0) + s.wygrane;
+    return {
+      id: s.etap.id,
+      nr: i + 1,
+      nazwa: s.etap.nazwa,
+      otwarte: s.otwarte,
+      wygrane: s.wygrane,
+      przegrane: s.przegrane,
+      doszlo,
+      dalej,
+      proc: i < zespol.length - 1 && doszlo ? Math.round((100 * dalej) / doszlo) : null,
+      wartoscTekst: kwota(s.wartosc),
+      strataTekst: s.wartosc_przegrane ? kwota(s.wartosc_przegrane) : null,
+      naj: najslabszy?.etap.id === s.etap.id,
+    };
+  });
+  const maxPrzegranych = Math.max(1, ...analizy.flatMap((a) => a.etapy.map((s) => s.przegrane)));
+  const stopien = (n: number) => (n === 0 ? 0 : Math.max(1, Math.min(5, Math.ceil((5 * n) / maxPrzegranych))));
+  const otwarteDeale = deale.filter((d) => d.status === "open").sort((a, b) => b.wartosc - a.wartosc);
+  const maxDeal = Math.max(1, ...otwarteDeale.map((d) => d.wartosc));
 
-      {/* Etapy jako słupki */}
-      <section className="bruno-szklo rounded-2xl p-5 sm:p-6">
-        <div className="flex items-baseline justify-between gap-3 flex-wrap mb-4">
-          <h2 className="bruno-h2 text-lg">{szef ? t("Team funnel", "Lejek zespołu") : t("Your funnel", "Twój lejek")}</h2>
-          <span className="text-sm text-slate-500">
-            {t("Open", "Otwarte")}: <b className="text-slate-800">{zespol.reduce((s, x) => s + x.otwarte, 0)}</b> · {t("Won", "Wygrane")}: <b className="text-slate-800">{zespol.reduce((s, x) => s + x.wygrane, 0)}</b> · {t("Lost", "Przegrane")}:{" "}
-            <b className="text-rose-800">{przegraneRazem}</b>
-          </span>
+  return (
+    <div className="p-strona">
+      <NaglowekP
+        tytul={t("Pipeline", "Lejek")}
+        akcent={akcent}
+        podtytul={`${pipeline?.nazwa ? `${pipeline.nazwa} · ` : ""}${t("Live from Pipedrive.", "Na żywo z Pipedrive.")}`}
+        prawo={
+          <>
+            <Chip k="ciemny">{otwarte} {t("open", "otwartych")}</Chip>
+            <Chip k="ok">{wygrane} {t("won", "wygranych")}</Chip>
+            <Chip k="zle">{przegrane} {t("lost", "przegranych")}</Chip>
+          </>
+        }
+      />
+
+      <div className="p-kafle">
+        <Kafel wartosc={otwarte} etykieta={t("Open deals", "Otwarte deale")} dol={<span>{zespol.length} {t("stages", "etapów")}</span>} />
+        <Kafel wartosc={kwota(wLejku)} etykieta={t("In the pipeline", "W lejku")} dol={<span>{t("open deals value", "wartość otwartych")}</span>} />
+        <Kafel wartosc={wygrane} etykieta={t("Won", "Wygrane")} kropka="#17a05e" dol={<span>{t("all time", "łącznie")}</span>} />
+        <Kafel wartosc={przegrane} etykieta={t("Lost", "Przegrane")} kropka="#e5484d" zle={przegrane > wygrane} dol={<span>{najslabszy ? `${t("most at", "najwięcej na")}: ${najslabszy.etap.nazwa}` : t("none", "brak")}</span>} />
+        <Kafel wartosc={skutecznosc} po=" %" etykieta={t("Win rate", "Skuteczność")} zle={skutecznosc !== null && skutecznosc < 40} dol={<Miernik proc={skutecznosc} k={skutecznosc !== null && skutecznosc < 40 ? "zle" : "ok"} tekst=" " />} opoznienie={120} />
+      </div>
+
+      {/* Lejek SVG */}
+      <section className="p-karta">
+        <div className="p-karta-hd">
+          <div>
+            <h2>{tytul}</h2>
+            <p>{t("Bar width = how many deals reached the stage. Red = lost at this stage.", "Szerokość paska = ile deali doszło do etapu. Czerwone = przegrane na tym etapie.")}</p>
+          </div>
+          <div className="p-legenda" aria-hidden>
+            <span><i style={{ background: "#141416" }} /> {t("open here", "otwarte tutaj")}</span>
+            <span><i style={{ background: "#17a05e" }} /> {t("won", "wygrane")}</span>
+            <span><i style={{ background: "#e5484d" }} /> {t("lost here", "przegrane tutaj")}</span>
+            <span><i style={{ background: "repeating-linear-gradient(45deg,#f1f1f4 0 3px,#d9dae0 3px 4px)" }} /> {t("moved on", "poszły dalej")}</span>
+          </div>
         </div>
-        {/* 4.11 (USER_001 „popraw wizualnie”): prawdziwy kształt lejka. Szerokość paska = ile deali DOSZŁO do etapu
-            (otwarte tu + przegrane tu + wszystko dalej), więc lejek się zwęża. Segmenty: otwarte / wygrane / przegrane tutaj. */}
-        <ol className="blj-lejek">
-          {zespol.map((s, i) => {
-            const doszlo = zespol.slice(i).reduce((a, x) => a + x.otwarte + x.wygrane + x.przegrane, 0);
-            const dalej = zespol.slice(i + 1).reduce((a, x) => a + x.otwarte + x.wygrane + x.przegrane, 0) + s.wygrane;
-            const szer = Math.max(14, Math.round((100 * doszlo) / Math.max(1, doszloMax)));
-            const proc = doszlo ? Math.round((100 * dalej) / doszlo) : null;
-            const seg = (n: number) => (doszlo ? `${(100 * n) / doszlo}%` : "0%");
-            const naj = najslabszyZespolu?.etap.id === s.etap.id;
-            const ostatni = i === zespol.length - 1;
-            return (
-              <li key={s.etap.id} className={`blj-rzad ${naj ? "blj-naj" : ""}`} style={{ animationDelay: `${i * 70}ms` }}>
-                <div className="blj-rzad-lewo">
-                  <span className="blj-rzad-nr">{i + 1}</span>
-                  <span className="min-w-0">
-                    <span className="blj-rzad-nazwa">{s.etap.nazwa}</span>
-                    <span className="blj-rzad-pod tabular-nums">{s.otwarte} {t("open", "otw.")} · {kwota(s.wartosc)}</span>
-                  </span>
-                </div>
-                <div className="blj-rzad-pasek-wrap">
-                  <div className="blj-rzad-pasek" style={{ width: `${szer}%` }} title={`${doszlo} ${t("deals reached this stage", "deali doszło do tego etapu")}`}>
-                    {s.otwarte > 0 && <span className="blj-seg blj-seg-otwarte" style={{ width: seg(s.otwarte) }}>{s.otwarte}</span>}
-                    {s.wygrane > 0 && <span className="blj-seg blj-seg-wygrane" style={{ width: seg(s.wygrane) }}>{s.wygrane}</span>}
-                    {s.przegrane > 0 && <span className="blj-seg blj-seg-przegrane" style={{ width: seg(s.przegrane) }}>{s.przegrane}</span>}
-                    {dalej > 0 && !ostatni && <span className="blj-seg blj-seg-dalej" style={{ width: seg(dalej - s.wygrane) }} />}
-                  </div>
-                </div>
-                <div className="blj-rzad-prawo tabular-nums">
-                  {s.przegrane > 0 ? <span className="blj-strata">−{s.przegrane} {t("lost", "przegr.")}{s.wartosc_przegrane ? ` · ${kwota(s.wartosc_przegrane)}` : ""}</span> : <span className="text-slate-300">{t("no losses", "bez strat")}</span>}
-                  {naj && <span className="bsz-pigulka blj-naj-pigulka">{t("Weakest stage", "Najsłabszy etap")}</span>}
-                </div>
-                {!ostatni && proc !== null && (
-                  <div className="blj-przejscie" aria-label={t(`${proc}% move on`, `${proc} % przechodzi dalej`)}>
-                    <i /><b className={proc < 50 ? "text-rose-700" : ""}>{proc} %</b><span>{t("move on", "przechodzi dalej")}</span>
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ol>
-        <div className="flex gap-4 text-[11px] text-slate-500 mt-3 flex-wrap">
-          <span><i className="blj-kropka blj-k-otwarte" /> {t("open here", "otwarte tutaj")}</span>
-          <span><i className="blj-kropka blj-k-wygrane" /> {t("won", "wygrane")}</span>
-          <span><i className="blj-kropka blj-k-przegrane" /> {t("lost here", "przegrane tutaj")}</span>
-          <span><i className="blj-kropka blj-k-dalej" /> {t("moved to later stages", "poszły dalej")}</span>
+        <div className="p-karta-p" style={{ paddingTop: 10 }}>
+          {zespol.length ? <LejekWykres etapy={wykres} jezyk={jezyk} max={doszloMax} /> : <Pusto tytul={t("No stages", "Brak etapów")} opis={t("The pipeline in Pipedrive is empty.", "Lejek w Pipedrive jest pusty.")} />}
         </div>
       </section>
 
       {/* Handlowiec: gdzie tracę + trening */}
       {!szef && moja && (
-        <section className="bruno-szklo rounded-2xl p-5 sm:p-6 blj-alarm">
+        <section className="p-karta p-karta-ciemna p-karta-p pl-alarm">
           {moja.najslabszy ? (
             <>
-              <div className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{t("Where you lose deals", "Gdzie tracisz deale")}</div>
-              <h2 className="bruno-h1 text-[1.6rem] sm:text-[2rem] leading-tight mt-1">
-                <span className="bruno-gradient-tekst">{moja.najslabszy.nazwa}</span>
-              </h2>
-              <p className="text-slate-600 text-sm mt-2">
-                {t(`${moja.przegrane} lost deals total, most at this stage. Win rate ${moja.skutecznosc ?? 0}%.`, `${moja.przegrane} przegranych deali, najwięcej na tym etapie. Skuteczność ${moja.skutecznosc ?? 0} %.`)}
-              </p>
-              <Link href={linkTreningu(moja.najslabszy, deale.find((d) => d.status === "open" && d.etap_id === moja.najslabszy!.id) ?? null)} className="bruno-przycisk inline-flex mt-4 px-6 py-3 text-base">
-                {t("Train this stage with Bruno →", "Trenuj ten etap z Bruno →")}
+              <div>
+                <div className="pl-alarm-et" style={{ color: "rgba(255,255,255,0.55)" }}>{t("Where you lose deals", "Gdzie tracisz deale")}</div>
+                <h2>{moja.najslabszy.nazwa}</h2>
+                <p style={{ color: "rgba(255,255,255,0.7)" }}>{t(`${moja.przegrane} lost deals total, most at this stage. Win rate ${moja.skutecznosc ?? 0}%.`, `${moja.przegrane} przegranych deali, najwięcej na tym etapie. Skuteczność ${moja.skutecznosc ?? 0} %.`)}</p>
+              </div>
+              <Link href={linkTreningu(moja.najslabszy, otwarteDeale.find((d) => d.etap_id === moja.najslabszy!.id) ?? null)} className="p-btn">
+                {t("Train this stage with Bruno", "Trenuj ten etap z Bruno")} →
               </Link>
             </>
           ) : (
-            <p className="text-slate-600">{t("No lost deals yet. Bruno will pick a stage as soon as you lose one.", "Brak przegranych deali. Bruno wybierze etap, gdy jakiś przegrasz.")}</p>
+            <p style={{ color: "rgba(255,255,255,0.7)" }}>{t("No lost deals yet. Bruno will pick a stage as soon as you lose one.", "Brak przegranych deali. Bruno wybierze etap, gdy jakiś przegrasz.")}</p>
           )}
         </section>
       )}
 
       {/* Szef: handlowiec × etap */}
       {szef && (
-        <section className="bruno-szklo rounded-2xl overflow-hidden">
-          <div className="px-5 pt-5 pb-2 flex items-baseline justify-between gap-3 flex-wrap">
-            <h2 className="bruno-h2 text-lg">{t("Who loses where", "Kto gdzie traci")}</h2>
-            <span className="text-[11px] text-slate-500">{t("Number of lost deals per stage. Gold = this rep's weakest stage.", "Liczba przegranych deali na etapie. Złote = najsłabszy etap handlowca.")}</span>
+        <section className="p-karta">
+          <div className="p-karta-hd">
+            <div>
+              <h2>{t("Who loses where", "Kto gdzie traci")}</h2>
+              <p>{t("Lost deals per stage. Darker = more. Ring = this rep's weakest stage.", "Przegrane deale na etapie. Ciemniej = więcej. Obwódka = najsłabszy etap handlowca.")}</p>
+            </div>
+            <span className="pl-skala" aria-hidden>
+              0 <i style={{ background: "var(--p-r1)" }} /><i style={{ background: "var(--p-r2)" }} /><i style={{ background: "var(--p-r3)" }} /><i style={{ background: "var(--p-r4)" }} /><i style={{ background: "var(--p-r5)" }} /> {maxPrzegranych}
+            </span>
           </div>
-          <div className="overflow-x-auto">
-            <table className="blj-tabela">
+          <div className="p-tabela-wrap" style={{ marginTop: 12 }}>
+            <table className="p-tabela">
               <thead>
                 <tr>
                   <th>{t("Rep", "Handlowiec")}</th>
-                  {etapy.map((e) => (
-                    <th key={e.id}>{e.nazwa}</th>
+                  {etapy.map((e, i) => (
+                    <th key={e.id} className="p-srodek" title={e.nazwa}>{i + 1}. {e.nazwa.length > 14 ? `${e.nazwa.slice(0, 13)}…` : e.nazwa}</th>
                   ))}
                   <th>{t("Win rate", "Skuteczność")}</th>
                   <th>{t("Bruno trains", "Bruno trenuje")}</th>
@@ -181,80 +190,79 @@ export default function LejekWidok({
                 {analizy
                   .slice()
                   .sort((a, b) => b.przegrane - a.przegrane)
-                  .map((a) => {
+                  .map((a, i) => {
                     const o = osoba(a.email);
                     return (
-                      <tr key={a.email}>
+                      <tr key={a.email} style={{ animationDelay: `${i * 40}ms` }}>
                         <td>
-                          <Link href={`/bruno/szef/${encodeURIComponent(a.email)}`} className="flex items-center gap-2.5 min-w-0">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            {o?.zdjecie ? <img src={o.zdjecie} alt="" className="bsz-inicjal bsz-zdjecie" style={{ width: 30, height: 30 }} /> : <span className="bsz-inicjal" style={{ width: 30, height: 30, fontSize: 13 }}>{(o?.imie ?? a.email)[0]?.toUpperCase()}</span>}
+                          <Link href={`/bruno/szef/${encodeURIComponent(a.email)}`} className="p-osoba">
+                            <Twarz src={o?.zdjecie} imie={o?.imie ?? a.email} rozmiar={32} />
                             <span className="min-w-0">
-                              <span className="block font-semibold text-slate-900 truncate">{o?.imie ?? a.email}</span>
-                              <span className="block text-[11px] text-slate-400 tabular-nums">{a.otwarte} {t("open", "otwartych")} · {kwota(a.wartosc_otwarte)}</span>
+                              <b>{o?.imie ?? a.email}</b>
+                              <small>{a.otwarte} {t("open", "otw.")} · {kwota(a.wartosc_otwarte)}</small>
                             </span>
                           </Link>
                         </td>
-                        {a.etapy.map((s) => {
-                          const naj = a.najslabszy?.id === s.etap.id;
-                          return (
-                            <td key={s.etap.id} className={`tabular-nums text-center ${naj ? "blj-cela-naj" : ""}`}>
-                              <span className={s.przegrane ? "text-rose-800 font-semibold" : "text-slate-300"}>{s.przegrane || "·"}</span>
-                              {s.otwarte > 0 && <span className="block text-[10px] text-slate-400">{s.otwarte} {t("open", "otw.")}</span>}
-                            </td>
-                          );
-                        })}
-                        <td className="tabular-nums text-center">{a.skutecznosc === null ? <span className="text-slate-300">–</span> : <span className={a.skutecznosc < 40 ? "text-rose-800 font-semibold" : "text-slate-800 font-semibold"}>{a.skutecznosc} %</span>}</td>
-                        <td>
-                          {a.najslabszy ? (
-                            <span className="bsz-pigulka">{a.najslabszy.nazwa}</span>
-                          ) : (
-                            <span className="text-slate-300">–</span>
-                          )}
-                        </td>
+                        {a.etapy.map((s) => (
+                          <td key={s.etap.id} className="p-srodek">
+                            <span className={`pl-mapa-kratka ${a.najslabszy?.id === s.etap.id ? "pl-mapa-naj" : ""}`} data-s={stopien(s.przegrane)} title={`${o?.imie ?? a.email} · ${s.etap.nazwa}: ${s.przegrane} ${t("lost", "przegr.")}, ${s.otwarte} ${t("open", "otw.")}`}>
+                              {s.przegrane || "·"}
+                              {s.otwarte > 0 && <small>{s.otwarte} {t("open", "otw.")}</small>}
+                            </span>
+                          </td>
+                        ))}
+                        <td><Miernik proc={a.skutecznosc} k={a.skutecznosc !== null && a.skutecznosc < 40 ? "zle" : ""} /></td>
+                        <td>{a.najslabszy ? <Link href={linkTreningu(a.najslabszy)}><Chip k="lim">{a.najslabszy.nazwa}</Chip></Link> : <span className="p-cichy">–</span>}</td>
                       </tr>
                     );
                   })}
               </tbody>
             </table>
           </div>
-          {bezHandlowca > 0 && <p className="px-5 py-3 text-[11px] text-slate-400">{t(`${bezHandlowca} deals without a rep assigned (field „Handlowiec Bruno” empty).`, `${bezHandlowca} deali bez przypisanego handlowca (puste pole „Handlowiec Bruno”).`)}</p>}
-          {analizy.length === 0 && <p className="p-6 text-slate-600 text-sm">{t("No reps in this company yet.", "W tej firmie nie ma jeszcze handlowców.")}</p>}
+          {bezHandlowca > 0 && <p className="p-pusto" style={{ padding: "10px 22px 14px", textAlign: "left", fontSize: 12 }}>{t(`${bezHandlowca} deals without a rep assigned (field „Handlowiec Bruno” empty).`, `${bezHandlowca} deali bez przypisanego handlowca (puste pole „Handlowiec Bruno”).`)}</p>}
+          {analizy.length === 0 && <Pusto tytul={t("No reps yet", "Brak handlowców")} opis={t("No reps in this company yet.", "W tej firmie nie ma jeszcze handlowców.")} />}
         </section>
       )}
 
       {/* Lista deali */}
-      <section className="bruno-szklo rounded-2xl overflow-hidden">
-        <div className="px-5 pt-5 pb-2 flex items-baseline justify-between gap-3 flex-wrap">
-          <h2 className="bruno-h2 text-lg">{szef ? t("Open deals", "Otwarte deale") : t("Your open deals", "Twoje otwarte deale")}</h2>
-          <Link href={zJako("/bruno/kokpit", jako)} className="text-sm text-amber-800 underline underline-offset-2">{t("Update in chat →", "Zaktualizuj w czacie →")}</Link>
+      <section className="p-karta">
+        <div className="p-karta-hd" style={{ paddingBottom: 10 }}>
+          <div>
+            <h2>{szef ? t("Open deals", "Otwarte deale") : t("Your open deals", "Twoje otwarte deale")}</h2>
+            <p>{otwarteDeale.length} · {kwota(otwarteDeale.reduce((s, d) => s + d.wartosc, 0))}</p>
+          </div>
+          <Link href={zJako("/bruno/kokpit", jako)} className="p-btn p-btn-2 p-btn-s">{t("Update in chat", "Zaktualizuj w czacie")} →</Link>
         </div>
-        <ul className="bsz-lista">
-          {deale
-            .filter((d) => d.status === "open")
-            .sort((a, b) => b.wartosc - a.wartosc)
-            .slice(0, 60)
-            .map((d, i) => {
-              const etap = etapy.find((e) => e.id === d.etap_id);
-              const o = d.handlowiec ? osoba(d.handlowiec) : null;
-              return (
-                <li key={d.id} style={{ animationDelay: `${i * 30}ms` }}>
-                  <div className="bsz-rozmowa">
-                    <span className="min-w-0 flex-1">
-                      <Link href={zJako(`/bruno/klienci/${d.id}`, jako)} className="flex items-center gap-2 font-semibold text-slate-900 truncate hover:underline underline-offset-2">{/* eslint-disable-next-line @next/next/no-img-element */}{zdjecieKlienta(d.osoba) && <img src={zdjecieKlienta(d.osoba)!} alt="" className="bsz-inicjal bsz-zdjecie" style={{ width: 26, height: 26 }} />}{d.tytul}</Link>
-                      <span className="block text-[11px] text-slate-400 truncate">
-                        {[d.osoba, d.organizacja].filter(Boolean).join(" · ")}
-                        {szef && o ? ` · ${o.imie}` : ""}
-                        {d.nastepna_aktywnosc ? ` · ${t("next", "następne")}: ${d.nastepna_aktywnosc}` : ""}
-                      </span>
-                    </span>
-                    <span className="bsz-pigulka">{etap?.nazwa ?? d.etap_id}</span>
-                    <span className="tabular-nums font-semibold text-slate-800 w-28 text-right">{kwota(d.wartosc)}</span>
-                  </div>
-                </li>
-              );
-            })}
-          {deale.filter((d) => d.status === "open").length === 0 && <li className="p-6 text-slate-600 text-sm">{t("No open deals.", "Brak otwartych deali.")}</li>}
+        <ul className="pl-deale">
+          {otwarteDeale.slice(0, 60).map((d, i) => {
+            const etap = etapy.find((e) => e.id === d.etap_id);
+            const idx = etapy.findIndex((e) => e.id === d.etap_id);
+            const o = d.handlowiec ? osoba(d.handlowiec) : null;
+            return (
+              <li key={d.id} className="pl-deal" style={{ animationDelay: `${i * 25}ms` }}>
+                <span className="p-osoba">
+                  <Twarz src={zdjecieKlienta(d.osoba)} imie={d.osoba ?? d.tytul} rozmiar={32} />
+                  <span className="min-w-0">
+                    <Link href={zJako(`/bruno/klienci/${d.id}`, jako)}><b>{d.tytul}</b></Link>
+                    <small>
+                      {[d.osoba, d.organizacja].filter(Boolean).join(" · ")}
+                      {szef && o ? ` · ${o.imie}` : ""}
+                      {d.nastepna_aktywnosc ? ` · ${t("next", "następne")}: ${d.nastepna_aktywnosc}` : ""}
+                    </small>
+                  </span>
+                </span>
+                <Chip>{etap?.nazwa ?? d.etap_id}</Chip>
+                <span className="pk-etapy-kropki" aria-hidden>
+                  {etapy.map((e, k) => <i key={e.id} className={k < idx ? "on" : k === idx ? "teraz" : ""} />)}
+                </span>
+                <span className="pl-deal-kwota">
+                  {kwota(d.wartosc)}
+                  <span className="p-miernik-tor" style={{ display: "block", width: 72, height: 4, marginTop: 5, marginLeft: "auto" }}><i style={{ width: `${(100 * d.wartosc) / maxDeal}%` }} /></span>
+                </span>
+              </li>
+            );
+          })}
+          {otwarteDeale.length === 0 && <li><Pusto tytul={t("No open deals", "Brak otwartych deali")} /></li>}
         </ul>
       </section>
     </div>
