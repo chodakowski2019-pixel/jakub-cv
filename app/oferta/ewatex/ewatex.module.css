@@ -623,3 +623,15 @@
 .zakladki thead th.naglowekKol:last-child {
   width: auto;
 }
+/* 7.11 (USER_001): etykiety osi spotkań jako pomarańczowe plakietki. */
+.os .osKiedy {
+  display: table;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(240, 138, 43, 0.12);
+  border: 1px solid rgba(240, 138, 43, 0.35);
+  color: var(--orange);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  white-space: nowrap;
+}

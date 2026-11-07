@@ -90,12 +90,12 @@ export default function Page() {
                 </tr>
                 <tr>
                   <th>Gotowy</th>
-                  <td>14 dni od płatności</td>
+                  <td>21 dni od płatności</td>
                 </tr>
               </tbody>
             </table>
             <p className={e.gwiazdka}>
-              <b>*</b>Dokładna zawartość każdej zakładki zostanie ustalona po spotkaniu z handlowczynią (dzień 7) i po wypełnieniu ankiety przez zarządzającą. W cenie są 2 spotkania × 30 min na poprawki w CRM w ciągu 3 miesięcy.
+              <b>*</b>Dokładna zawartość każdej zakładki zostanie ustalona po spotkaniu z handlowczynią (dzień 1-14) i po wypełnieniu ankiety przez zarządzającą. W cenie są 2 spotkania × 30 min na poprawki w CRM w ciągu 3 miesięcy.
             </p>
             {/* 7.11 (USER_001): cena CRM pod tabelą z zawartością, bez plakietki „CRM”. */}
             <div className={e.opcjaCena}>
@@ -150,12 +150,12 @@ export default function Page() {
 
         <ol className={e.os} aria-label="Spotkania w cenie i decyzja">
           <li>
-            <span className={e.osKiedy}>Dzień 7</span>
-            <b>Spotkanie 30 min</b> z handlowczynią ws. CRM
+            <span className={e.osKiedy}>Dzień 1-14</span>
+            <b>Spotkanie 50 min</b> z handlowczynią ws. CRM
           </li>
           <li>
-            <span className={e.osKiedy}>Dzień 14</span>
-            <b>Spotkanie 30 min</b> z zarządzającą ws. CRM
+            <span className={e.osKiedy}>Dzień 1-14</span>
+            <b>Spotkanie 50 min</b> z zarządzającą ws. CRM
           </li>
           <li>
             <span className={e.osKiedy}>Do 3 miesięcy</span>
@@ -224,12 +224,12 @@ export default function Page() {
               <td>Pierwsza płatność</td>
             </tr>
             <tr>
-              <th>Dzień 7</th>
-              <td>Spotkanie 30 min z handlowczynią ws. CRM: pierwsza wersja, dostosowujemy.</td>
+              <th>Dzień 1-14</th>
+              <td>Spotkanie 50 min z handlowczynią ws. CRM: pierwsza wersja, dostosowujemy.</td>
             </tr>
             <tr>
-              <th>Dzień 14</th>
-              <td>Spotkanie 30 min z zarządzającą ws. CRM: gotowy, klienci w środku. Druga płatność {zl(CRM.budowaZBruno / 2 + BRUNO.trzyMiesiace)}.</td>
+              <th>Dzień 1-14</th>
+              <td>Spotkanie 50 min z zarządzającą ws. CRM: gotowy, klienci w środku. Druga płatność {zl(CRM.budowaZBruno / 2 + BRUNO.trzyMiesiace)}.</td>
             </tr>
             <tr>
               <th>Do 3 miesięcy</th>
