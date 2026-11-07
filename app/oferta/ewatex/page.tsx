@@ -28,6 +28,16 @@ const ZAKLADKI_CRM: [string, string[]][] = [
   ["Ustawienia", ["4 konta: zarządzająca + 3 handlowczynie", "spółki i nadawcy maili", "etapy lejka", "pola karty klienta"]],
 ];
 
+// 7.11 (USER_001): funkcje Bruno, każda rzecz osobnym punktem (treść jak 5.11, rozbita na punkty).
+const FUNKCJE_BRUNO: [string, string[]][] = [
+  ["Rozmowy z klientem AI", ["dobrane do etapu nauki każdej handlowczyni", "do 5 dziennie", "klient AI mówi jak klienci Ewatex"]],
+  ["Ocena", ["po każdej rozmowie 1-10", "1 rada, co poprawić"]],
+  ["Fiszki", ["techniki do powtórek"]],
+  ["Czat z Bruno", ["pytania jak do ChatGPT", "zna branżę energetyczną"]],
+  ["Panel zarządzającej", ["kto ćwiczy", "kto robi postęp"]],
+  ["Ustawiony pod Ewatex", ["produkt Ewatex", "klienci Ewatex", "obiekcje klientów Ewatex"]],
+];
+
 export default function Page() {
   return (
     <div className={`${s.root} ${o.root} ${e.root} bruno-lp-jasne`}>
@@ -110,41 +120,37 @@ export default function Page() {
           </div>
 
           <article className={e.opcja}>
-            <span className={e.opcjaNr}>Bruno</span>
-            <h3 className={e.opcjaTytul}>Trening rozmów dla 3 handlowczyń</h3>
+            {/* 7.11 (USER_001 „to też popraw”): karta Bruno w tym samym układzie co CRM: tytuł pomarańczowy, bez plakietki,
+                tabela Funkcje / Zawartość z punktami jedno pod drugim, szare linie, cena pod tabelą. */}
+            <h3 className={`${e.opcjaTytul} ${e.tytulPomar}`}>Trening rozmów dla 3 handlowczyń</h3>
+            <table className={`${e.tab} ${e.funkcje} ${e.zakladki}`}>
+              <colgroup><col style={{ width: "34%" }} /><col /></colgroup>
+              <thead>
+                <tr>
+                  <th className={e.naglowekKol}>Funkcje</th>
+                  <th className={e.naglowekKol}>Zawartość</th>
+                </tr>
+              </thead>
+              <tbody>
+                {FUNKCJE_BRUNO.map(([nazwa, punkty]) => (
+                  <tr key={nazwa}>
+                    <th>{nazwa}</th>
+                    <td>
+                      <ul className={e.punkty}>
+                        {punkty.map((pkt) => (
+                          <li key={pkt}>{pkt}</li>
+                        ))}
+                      </ul>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className={`${e.gwiazdka} ${e.bezGwiazdki}`}>Współpraca na {BRUNO.okresMiesiecy} miesiące z możliwością przedłużenia.</p>
             <div className={e.opcjaCena}>
               {zl(BRUNO.cenaKonto)}
               <small>od konta / mies.</small>
             </div>
-            <p className={e.opcjaPod}>Współpraca na {BRUNO.okresMiesiecy} miesiące z możliwością przedłużenia.</p>
-            <table className={`${e.tab} ${e.funkcje}`}>
-              <tbody>
-                <tr>
-                  <th>Rozmowy z klientem AI</th>
-                  <td>dobrane do etapu nauki każdej handlowczyni, do 5 dziennie; klient AI mówi jak klienci Ewatex</td>
-                </tr>
-                <tr>
-                  <th>Ocena</th>
-                  <td>po każdej rozmowie 1-10 + 1 rada</td>
-                </tr>
-                <tr>
-                  <th>Fiszki</th>
-                  <td>techniki do powtórek</td>
-                </tr>
-                <tr>
-                  <th>Czat z Bruno</th>
-                  <td>pytania jak do ChatGPT, zna branżę energetyczną</td>
-                </tr>
-                <tr>
-                  <th>Panel zarządzającej</th>
-                  <td>kto ćwiczy i kto robi postęp</td>
-                </tr>
-                <tr>
-                  <th>Ustawiony pod Ewatex</th>
-                  <td>produkt, klienci i obiekcje Ewatex</td>
-                </tr>
-              </tbody>
-            </table>
           </article>
         </div>
 

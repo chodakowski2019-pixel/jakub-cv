@@ -635,3 +635,9 @@
   margin-bottom: 8px;
   white-space: nowrap;
 }
+/* 7.11: zdanie pod tabelą Bruno bez czerwonej gwiazdki, z tą samą szarą linią nad ceną. */
+.bezGwiazdki {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
