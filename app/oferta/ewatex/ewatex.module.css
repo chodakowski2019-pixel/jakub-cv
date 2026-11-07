@@ -641,3 +641,13 @@
   font-weight: 500;
   color: var(--ink-2);
 }
+/* 7.11: zdjęcie czatu Bruno w karcie oferty. */
+.zdjecie {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 16px;
+  border-radius: 14px;
+  border: 1px solid #e2ded8;
+  box-shadow: 0 8px 24px rgba(20, 20, 20, 0.06);
+}

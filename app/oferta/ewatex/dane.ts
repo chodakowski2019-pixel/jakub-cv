@@ -2,7 +2,7 @@
 // Kwoty i warunki = SalesAI/sprzedaz/EWATEX-PAKIET-2026-11-04.md + UMOWA-BRUNO-EWATEX + UMOWA-CRM-EWATEX (3.11).
 // Dane spółki z KRS 0000134195 (odpis aktualny, api-krs.ms.gov.pl, 4.11): siedziba Łazy, nie Raszyn.
 
-export const WERSJA = "ewatex-2026-11-05"; // 5.11: 1 umowa (Bruno + CRM) w PDF, CRM 14 500 zł
+export const WERSJA = "ewatex-2026-11-07"; // 5.11: 1 umowa (Bruno + CRM) w PDF, CRM 14 500 zł; 7.11: zakładki CRM, spotkania 50 min w dniach 1-14, CRM gotowy dzień 21
 
 export const KLIENT = {
   nazwa: "„EWATEX” Spółka z ograniczoną odpowiedzialnością",
@@ -29,7 +29,7 @@ export const BRUNO = {
   cenaKonto: 350,
   miesiac: 1050,
   trzyMiesiace: 3150,
-  zGory: 3150, // 3 mies. jedną fakturą, bez dodatkowego rabatu
+  zGory: 3150, // 3 mies. razem (nieużywane od 7.11: Bruno płatne co miesiąc)
   okresMiesiecy: 3,
 };
 
@@ -66,9 +66,25 @@ export type Wariant = "bruno" | "oba";
 export type Platnosc = "miesiecznie" | "zgory";
 export type Nagrania = "standard" | "poufny";
 
+// 7.11 (USER_001): Bruno płatne CO MIESIĄC (1 050 zł), nie 3 mies. z góry. Druga rata = 50 % CRM + 1. miesiąc Bruno.
 // 4.11 (USER_001): Ewa bierze oba. Dziś = zaliczka 50 % za CRM. Druga rata po odbiorze CRM = 50 % CRM + Bruno z góry za 3 mies.
 // Nagrania = standard (zostają), bez wyboru. Parametry zostają w sygnaturze (API, typy), ale wynik jest jeden.
 export function policz(_w: Wariant = "oba", _p: Platnosc = "zgory") {
   const crm = CRM.budowaZBruno;
-  return { start: crm / 2, drugaRata: crm / 2 + BRUNO.zGory, crm, bruno: BRUNO.zGory, utrzymanie: CRM.utrzymanie, kolejne: 0 };
+  return { start: crm / 2, drugaRata: crm / 2 + BRUNO.miesiac, crm, bruno: BRUNO.miesiac, utrzymanie: CRM.utrzymanie, kolejne: BRUNO.miesiac };
 }
+
+// 7.11 (USER_001): CRM gotowy 21 dni od pierwszej płatności (było 14). Oferta i umowa biorą tę liczbę.
+export const CRM_GOTOWY_DNI = 21;
+
+// 7.11 (USER_001): zakładki CRM Ewatex (ustalone w rozmowie 7.11), każda rzecz osobnym punktem.
+export const ZAKLADKI_CRM: [string, string[]][] = [
+  ["Dziś", ["lista na dziś: telefony i spotkania z datą", "klienci bez kontaktu od 30 dni", "umowy do przedłużenia w tym miesiącu", "ile rozmów w tym tygodniu"]],
+  ["Klienci", ["lista z szukajką i filtrami: spółka, etap, handlowczyni, koniec umowy", "karta klienta: firma, NIP, osoba, telefon, e-mail", "obecny sprzedawca energii", "data końca umowy", "cena, taryfa", "faktura (plik)", "która spółka ofertuje", "kto prowadzi", "historia wszystkich rozmów"]],
+  ["Lejek", ["etapy: nowy → telefon → faktura zebrana → oferta wysłana → decyzja → podpisana / stracona", "na każdym etapie ilu klientów i za ile", "przeciąganie klienta między etapami"]],
+  ["Rozmowy", ["po każdym telefonie 30 sekund: co ustalone (2 zdania)", "następny krok z datą", "czy jest faktura", "wpis trafia do historii klienta i na listę „Dziś”"]],
+  ["Przedłużenia", ["wszystkie umowy klientów z datą końca", "automat: 12, 6 i 3 miesiące przed końcem mail do zarządzającej i handlowczyni", "widok na kwartał"]],
+  ["Oferty", ["wybór spółki: Ewatex, Reenergia, Respect", "właściwy nadawca maila i dane spółki na dokumencie", "lista ofert: wysłana, podpisana, odrzucona"]],
+  ["Panel zarządzającej", ["umowy do przedłużenia w kwartale", "rozmowy w tygodniu per handlowczyni", "oferty wysłane", "oferty podpisane", "faktury zebrane", "porównanie handlowczyń"]],
+  ["Ustawienia", ["4 konta: zarządzająca + 3 handlowczynie", "spółki i nadawcy maili", "etapy lejka", "pola karty klienta"]],
+];

@@ -126,10 +126,10 @@ export default function UmowaForm() {
           <dl className={o.podsLista}>
             <dt className={o.podsSuma}>Dziś: zaliczka CRM 50 %</dt>
             <dd className={o.podsSuma}>{zl(k.start)}</dd>
-            <dt>Po odbiorze CRM: 2. rata {zl(k.crm / 2)} + Bruno {zl(k.bruno)}</dt>
+            <dt>Po odbiorze CRM: 2. rata {zl(k.crm / 2)} + Bruno 1. miesiąc {zl(k.bruno)}</dt>
             <dd>{zl(k.drugaRata)}</dd>
-            <dt>CRM, utrzymanie od miesiąca po odbiorze</dt>
-            <dd>{zl(k.utrzymanie)} / mies.</dd>
+            <dt>2. i 3. miesiąc: Bruno {zl(k.kolejne)} + CRM {zl(k.utrzymanie)}</dt>
+            <dd>{zl(k.kolejne + k.utrzymanie)} / mies.</dd>
           </dl>
           <p className={o.podsInfo}>Po podpisie: link do pierwszej płatności (przelew, karta, BLIK), faktura mailem. Nagrania rozmów zostają (umowa, § 10). Kwoty końcowe, zwolnienie z VAT.</p>
           {blad && (

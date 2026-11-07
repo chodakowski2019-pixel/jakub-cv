@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import u from "./umowa.module.css";
-import { BRUNO, CRM, HANDLOWCZYNIE, KLIENT, KONTAKT_ZGLOSZENIA, USLUGODAWCA, WERSJA, zl } from "../dane";
+import { BRUNO, CRM, CRM_GOTOWY_DNI, HANDLOWCZYNIE, KLIENT, KONTAKT_ZGLOSZENIA, USLUGODAWCA, WERSJA, ZAKLADKI_CRM, zl } from "../dane";
 
 // 5.11 (USER_001): jedna umowa zamiast dwóch (Bruno AI + CRM), z poprawkami z oferty (14 500 zł, oś czasu, współpraca
 // 3 mies. z możliwością przedłużenia, rozmowy dobrane do etapu nauki). Strona = źródło PDF:
@@ -46,7 +46,7 @@ export default function Page() {
         <li>
           Liczba kont handlowców: <b>{BRUNO.konta}</b>. Konto zarządzające ({KLIENT.reprezentant}) bez opłaty. Lista kont: załącznik nr 2.
         </li>
-        <li>W cenie: rozmowy z klientem AI dobrane do etapu nauki każdej handlowczyni (do 5 dziennie na konto), ocena 1-10 z radą po każdej rozmowie, fiszki z technikami, czat z Bruno, panel zarządzającej (kto ćwiczy i kto robi postęp), wsparcie mailem.</li>
+        <li>W cenie: Bruno prowadzi System CRM (handlowiec pisze albo nagrywa głosówkę, Bruno zamienia ją na tekst i zapisuje w Systemie notatkę, następny krok z datą i etap klienta; odpowiada na pytania o klientów z danych Systemu), rozmowy z klientem AI dobrane do etapu nauki każdej handlowczyni (do 5 dziennie na konto), ocena 1-10 z radą po każdej rozmowie, fiszki z technikami, czat z Bruno, panel zarządzającej (kto ćwiczy i kto robi postęp), wsparcie mailem.</li>
         <li>Usługodawca ustawia Bruno AI pod Klienta przed uruchomieniem kont: produkt (optymalizacja kosztów energii), klienci, obiekcje.</li>
         <li>Limity i szczegóły usługi opisuje regulamin Bruno AI (salesbruno.pl/regulamin) w wersji z dnia zawarcia umowy.</li>
       </ol>
@@ -65,12 +65,16 @@ export default function Page() {
             <td>Pierwsza płatność: zaliczka {zl(zaliczka)}. Klient przekazuje dane (Excel, kalendarz, lista klientów) najpóźniej do 7 dni roboczych od niej.</td>
           </tr>
           <tr>
-            <th>Dzień 7</th>
-            <td>Spotkanie online 30 min z handlowczynią ws. CRM: pierwsza wersja Systemu, dostosowanie.</td>
+            <th>Dzień 1-14</th>
+            <td>Spotkanie online 50 min z handlowczynią ws. CRM: pierwsza wersja Systemu, dostosowanie.</td>
           </tr>
           <tr>
-            <th>Dzień 14</th>
-            <td>Spotkanie online 30 min z {KLIENT.reprezentant} ws. CRM: System gotowy, dane przeniesione, konta, odbiór.</td>
+            <th>Dzień 1-14</th>
+            <td>Spotkanie online 50 min z zarządzającą ({KLIENT.reprezentant}) ws. CRM: przegląd pierwszej wersji, ustalenie poprawek.</td>
+          </tr>
+          <tr>
+            <th>Dzień {CRM_GOTOWY_DNI}</th>
+            <td>System gotowy, dane przeniesione, konta, odbiór.</td>
           </tr>
           <tr>
             <th>Do 3 miesięcy od odbioru</th>
@@ -84,7 +88,7 @@ export default function Page() {
       </table>
       <ol>
         <li>
-          Odbiór Systemu: Klient w 5 dni roboczych od dnia 14 zgłasza uwagi z zakresu załącznika nr 1 albo potwierdza odbiór mailem. Brak uwag w tym czasie = odbiór. Uwagi spoza zakresu = zmiany na zamówienie (§ 7 pkt 3).
+          Odbiór Systemu: Klient w 5 dni roboczych od dnia {CRM_GOTOWY_DNI} zgłasza uwagi z zakresu załącznika nr 1 albo potwierdza odbiór mailem. Brak uwag w tym czasie = odbiór. Uwagi spoza zakresu = zmiany na zamówienie (§ 7 pkt 3).
         </li>
         <li>Opóźnienie po stronie Klienta (dane, uwagi, dostępność) przesuwa terminy o tyle samo dni.</li>
       </ol>
@@ -110,7 +114,7 @@ export default function Page() {
           <tr>
             <th>Bruno AI</th>
             <td>
-              {zl(BRUNO.cenaKonto)} za konto / miesiąc × {BRUNO.konta} = {zl(BRUNO.miesiac)} / miesiąc; za {BRUNO.okresMiesiecy} miesiące <b>{zl(BRUNO.trzyMiesiace)}</b>
+              {zl(BRUNO.cenaKonto)} za konto / miesiąc × {BRUNO.konta} = <b>{zl(BRUNO.miesiac)} / miesiąc</b>, płatne co miesiąc z góry; okres minimalny {BRUNO.okresMiesiecy} miesiące
             </td>
           </tr>
           <tr>
@@ -126,12 +130,12 @@ export default function Page() {
           <tr>
             <th>2. płatność, po odbiorze</th>
             <td>
-              <b>{zl(zaliczka + BRUNO.trzyMiesiace)}</b>: 50 % za System {zl(zaliczka)} + Bruno AI za {BRUNO.okresMiesiecy} miesiące {zl(BRUNO.trzyMiesiace)}, jedna faktura, termin 7 dni
+              <b>{zl(zaliczka + BRUNO.miesiac)}</b>: 50 % za System {zl(zaliczka)} + Bruno AI za 1. miesiąc {zl(BRUNO.miesiac)}, jedna faktura, termin 7 dni
             </td>
           </tr>
           <tr>
-            <th>Po przedłużeniu Bruno AI</th>
-            <td>{zl(BRUNO.miesiac)} / miesiąc z góry, do 7. dnia okresu</td>
+            <th>2. i 3. miesiąc oraz po przedłużeniu</th>
+            <td>{zl(BRUNO.miesiac)} Bruno AI + {zl(CRM.utrzymanie)} utrzymanie Systemu = <b>{zl(BRUNO.miesiac + CRM.utrzymanie)} / miesiąc</b> z góry, do 7. dnia okresu</td>
           </tr>
         </tbody>
       </table>
@@ -195,51 +199,39 @@ export default function Page() {
       </ol>
 
       <h2>Załącznik nr 1. Zakres Systemu CRM (pierwsza wersja)</h2>
+      {/* 7.11: zakres = te same zakładki co na stronie oferty (ZAKLADKI_CRM w dane.ts). */}
       <table className={u.tab}>
+        <thead>
+          <tr>
+            <th>Zakładka</th>
+            <td><b>Zawartość</b></td>
+          </tr>
+        </thead>
         <tbody>
-          <tr>
-            <th>Karta klienta</th>
-            <td>firma, spółka Klienta, z której ofertujemy, osoba kontaktowa, telefon, e-mail, obecny sprzedawca energii, data końca umowy, cena, faktura (plik), kto prowadzi, historia rozmów</td>
-          </tr>
-          <tr>
-            <th>Etapy sprzedaży</th>
-            <td>ustalone z Klientem na spotkaniu w dniu 7; widok, na którym etapie ilu klientów</td>
-          </tr>
-          <tr>
-            <th>Notatka po rozmowie</th>
-            <td>data, treść, następny krok z datą, czy jest faktura</td>
-          </tr>
-          <tr>
-            <th>Przypomnienia</th>
-            <td>koniec umowy klienta: 12, 6 i 3 miesiące przed, e-mail do zarządzającej i do handlowca prowadzącego</td>
-          </tr>
-          <tr>
-            <th>Panel zarządzającej</th>
-            <td>umowy do przedłużenia w kwartale, rozmowy w tygodniu per handlowiec, oferty wysłane i podpisane, faktury zebrane</td>
-          </tr>
-          <tr>
-            <th>Oferta ze spółki</th>
-            <td>wybór spółki przy ofercie, właściwy nadawca e-mail, dane spółki na dokumencie</td>
-          </tr>
+          {ZAKLADKI_CRM.map(([nazwa, punkty]) => (
+            <tr key={nazwa}>
+              <th>{nazwa}</th>
+              <td>
+                <ul style={{ margin: 0, paddingLeft: 16 }}>
+                  {punkty.map((pkt) => (
+                    <li key={pkt}>{pkt}</li>
+                  ))}
+                </ul>
+              </td>
+            </tr>
+          ))}
           <tr>
             <th>Przeniesienie danych</th>
             <td>klienci z Excela, kalendarza i maili przekazanych zgodnie z § 4</td>
           </tr>
           <tr>
-            <th>Konta</th>
-            <td>4 ({KLIENT.reprezentant} + 3 handlowczynie), role: zarządzająca / handlowiec</td>
-          </tr>
-          <tr>
-            <th>Telefon</th>
-            <td>działa w przeglądarce na telefonie</td>
-          </tr>
-          <tr>
-            <th>Spółki</th>
-            <td>Ewatex, Reenergia, Respect (lista do potwierdzenia w dniu 7)</td>
+            <th>Urządzenia</th>
+            <td>przeglądarka na komputerze i telefonie</td>
           </tr>
         </tbody>
       </table>
-      <p>Poza zakresem pierwszej wersji (na zamówienie, § 7 pkt 3): integracja Systemu z Bruno AI, fakturowanie, podpis elektroniczny, aplikacja mobilna w sklepie.</p>
+      <p>Dokładna zawartość każdej zakładki zostanie ustalona na spotkaniu z handlowczynią (dzień 1-14) i po wypełnieniu ankiety przez zarządzającą ({KLIENT.reprezentant}). Lista spółek Klienta do potwierdzenia na tym spotkaniu. W cenie 2 spotkania × 30 min na poprawki w ciągu 3 miesięcy od odbioru (§ 4).</p>
+      <p>Poza zakresem pierwszej wersji (na zamówienie, § 7 pkt 3): fakturowanie, podpis elektroniczny, aplikacja mobilna w sklepie.</p>
 
       <h2>Załącznik nr 2. Lista kont Bruno AI</h2>
       <table className={u.tab}>

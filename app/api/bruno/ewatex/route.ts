@@ -74,11 +74,11 @@ export async function POST(req: Request) {
     ["Klient", `${KLIENT.nazwa}, NIP ${KLIENT.nip}, KRS ${KLIENT.krs}`],
     ["Podpisała", `${podpis}, ${KLIENT.funkcja}`],
     ["Data i godzina", data],
-    ["Bruno", `${BRUNO.konta} konta × ${zl(BRUNO.cenaKonto)}, ${BRUNO.okresMiesiecy} mies., razem ${zl(BRUNO.trzyMiesiace)}, płatne z drugą ratą CRM, potem decyzja`],
+    ["Bruno", `${BRUNO.konta} konta × ${zl(BRUNO.cenaKonto)}, ${zl(BRUNO.miesiac)}/mies. co miesiąc (1. miesiąc z drugą ratą CRM), min. ${BRUNO.okresMiesiecy} mies., potem decyzja`],
     ["Nagrania", "zostają (standard)"],
     ["CRM", `${zl(CRM.budowaZBruno)} (50 % teraz, 50 % po odbiorze) + utrzymanie ${zl(CRM.utrzymanie)}/mies.`],
     ["Dziś na fakturze", `${zl(k.start)} (zaliczka CRM)`],
-    ["Po odbiorze CRM", `${zl(k.drugaRata)} (${zl(k.crm / 2)} CRM + ${zl(k.bruno)} Bruno)`],
+    ["Po odbiorze CRM", `${zl(k.drugaRata)} (${zl(k.crm / 2)} CRM + ${zl(k.bruno)} Bruno 1. mies.); potem ${zl(k.kolejne + k.utrzymanie)}/mies.`],
     ["Konta", osoby.join(", ")],
   ];
   const tresc = () =>

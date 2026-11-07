@@ -3,7 +3,7 @@ import s from "@/components/podglad/bruno-lp/bruno-lp.module.css";
 import o from "@/app/brunooferta/oferta.module.css";
 import e from "./ewatex.module.css";
 import UmowaForm from "./umowa-form";
-import { BRUNO, CRM, HANDLOWCZYNIE, KLIENT, USLUGODAWCA, zl } from "./dane";
+import { BRUNO, CRM, CRM_GOTOWY_DNI, HANDLOWCZYNIE, KLIENT, USLUGODAWCA, ZAKLADKI_CRM, zl } from "./dane";
 
 // 4.11 (USER_001): salesbruno.pl/oferta/ewatex = oferta dla Ewy Adamskiej (Ewatex) + podpis na stronie (forma
 // dokumentowa: imię i nazwisko, zgoda, data, IP, mail do obu stron). Link idzie SMS-em, więc strona jest pod telefon:
@@ -16,20 +16,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// 7.11 (USER_001): zakładki CRM Ewatex (ustalone w rozmowie 7.11), każda rzecz osobnym punktem.
-const ZAKLADKI_CRM: [string, string[]][] = [
-  ["Dziś", ["lista na dziś: telefony i spotkania z datą", "klienci bez kontaktu od 30 dni", "umowy do przedłużenia w tym miesiącu", "ile rozmów w tym tygodniu"]],
-  ["Klienci", ["lista z szukajką i filtrami: spółka, etap, handlowczyni, koniec umowy", "karta klienta: firma, NIP, osoba, telefon, e-mail", "obecny sprzedawca energii", "data końca umowy", "cena, taryfa", "faktura (plik)", "która spółka ofertuje", "kto prowadzi", "historia wszystkich rozmów"]],
-  ["Lejek", ["etapy: nowy → telefon → faktura zebrana → oferta wysłana → decyzja → podpisana / stracona", "na każdym etapie ilu klientów i za ile", "przeciąganie klienta między etapami"]],
-  ["Rozmowy", ["po każdym telefonie 30 sekund: co ustalone (2 zdania)", "następny krok z datą", "czy jest faktura", "wpis trafia do historii klienta i na listę „Dziś”"]],
-  ["Przedłużenia", ["wszystkie umowy klientów z datą końca", "automat: 12, 6 i 3 miesiące przed końcem mail do zarządzającej i handlowczyni", "widok na kwartał"]],
-  ["Oferty", ["wybór spółki: Ewatex, Reenergia, Respect", "właściwy nadawca maila i dane spółki na dokumencie", "lista ofert: wysłana, podpisana, odrzucona"]],
-  ["Panel zarządzającej", ["umowy do przedłużenia w kwartale", "rozmowy w tygodniu per handlowczyni", "oferty wysłane", "oferty podpisane", "faktury zebrane", "porównanie handlowczyń"]],
-  ["Ustawienia", ["4 konta: zarządzająca + 3 handlowczynie", "spółki i nadawcy maili", "etapy lejka", "pola karty klienta"]],
-];
 
 // 7.11 (USER_001): funkcje Bruno, każda rzecz osobnym punktem (treść jak 5.11, rozbita na punkty).
 const FUNKCJE_BRUNO: [string, string[]][] = [
+  ["Bruno prowadzi CRM", ["handlowczyni pisze albo mówi do Bruno, co się wydarzyło", "głosówki: nagranie z telefonu (mp3, m4a, wav), Bruno zamienia na tekst", "Bruno sam zapisuje notatkę po rozmowie, następny krok z datą i etap klienta", "rano: lista na dziś i zaległe zadania"]],
+  ["Pytania o klientów", ["„kto ma koniec umowy w marcu?”", "„co ustaliłam z firmą X?”", "odpowiedź z danych CRM"]],
   ["Rozmowy z klientem AI", ["dobrane do etapu nauki każdej handlowczyni", "do 5 dziennie", "klient AI mówi jak klienci Ewatex"]],
   ["Ocena", ["po każdej rozmowie 1-10", "1 rada, co poprawić"]],
   ["Fiszki", ["techniki do powtórek"]],
@@ -100,7 +91,7 @@ export default function Page() {
                 </tr>
                 <tr>
                   <th>Gotowy</th>
-                  <td>21 dni od płatności</td>
+                  <td>{CRM_GOTOWY_DNI} dni od płatności</td>
                 </tr>
               </tbody>
             </table>
@@ -122,7 +113,11 @@ export default function Page() {
           <article className={e.opcja}>
             {/* 7.11 (USER_001 „to też popraw”): karta Bruno w tym samym układzie co CRM: tytuł pomarańczowy, bez plakietki,
                 tabela Funkcje / Zawartość z punktami jedno pod drugim, szare linie, cena pod tabelą. */}
-            <h3 className={`${e.opcjaTytul} ${e.tytulPomar}`}>Trening rozmów dla 3 handlowczyń</h3>
+            <h3 className={`${e.opcjaTytul} ${e.tytulPomar}`}>Bruno AI: trener i asystent w CRM</h3>
+            {/* 7.11 (USER_001): zdjęcie czatu Bruno + Bruno prowadzi CRM (w cenie pakietu Bruno, 350 zł / konto). */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/oferta/ewatex-bruno-czat.jpg" alt="Czat z Bruno w CRM: „Co się wydarzyło?”, głosówka, lista na dziś" className={e.zdjecie} loading="lazy" />
+            <p className={e.opcjaPod}>Bruno nie tylko trenuje handlowczynie. Prowadzi cały CRM: handlowczyni mówi albo nagrywa głosówkę, a Bruno sam wpisuje notatkę, zadanie i etap klienta.</p>
             <table className={`${e.tab} ${e.funkcje} ${e.zakladki}`}>
               <colgroup><col style={{ width: "34%" }} /><col /></colgroup>
               <thead>
@@ -191,26 +186,26 @@ export default function Page() {
               </td>
             </tr>
             <tr className={e.razem}>
-              <th>Dzień 14, CRM gotowy</th>
+              <th>Dzień {CRM_GOTOWY_DNI}, CRM gotowy</th>
               <td>
-                <b>{zl(CRM.budowaZBruno / 2 + BRUNO.trzyMiesiace)}</b>
+                <b>{zl(CRM.budowaZBruno / 2 + BRUNO.miesiac)}</b>
                 <br />
-                druga połowa za CRM {zl(CRM.budowaZBruno / 2)} + Bruno za 3 mies. {zl(BRUNO.trzyMiesiace)}
+                druga połowa za CRM {zl(CRM.budowaZBruno / 2)} + Bruno za 1. miesiąc {zl(BRUNO.miesiac)}
               </td>
             </tr>
             <tr>
-              <th>Od 2. miesiąca</th>
+              <th>2. i 3. miesiąc</th>
               <td>
-                <b>{zl(CRM.utrzymanie)}/mies.</b>
+                <b>{zl(BRUNO.miesiac + CRM.utrzymanie)}/mies.</b>
                 <br />
-                serwer CRM
+                Bruno 3 konta × {zl(BRUNO.cenaKonto)} + serwer CRM {zl(CRM.utrzymanie)}
               </td>
             </tr>
             <tr>
               <th>Po 3 miesiącach, jeśli Bruno zostaje</th>
               <td>
-                <b>{zl(BRUNO.miesiac)}/mies.</b>
-                <br />3 konta × {zl(BRUNO.cenaKonto)}
+                <b>{zl(BRUNO.miesiac + CRM.utrzymanie)}/mies.</b>
+                <br />bez zmian; bez Bruno zostaje tylko serwer CRM {zl(CRM.utrzymanie)}/mies.
               </td>
             </tr>
           </tbody>
@@ -235,7 +230,11 @@ export default function Page() {
             </tr>
             <tr>
               <th>Dzień 1-14</th>
-              <td>Spotkanie 50 min z zarządzającą ws. CRM: gotowy, klienci w środku. Druga płatność {zl(CRM.budowaZBruno / 2 + BRUNO.trzyMiesiace)}.</td>
+              <td>Spotkanie 50 min z zarządzającą ws. CRM: przegląd pierwszej wersji, ustalenie poprawek.</td>
+            </tr>
+            <tr>
+              <th>Dzień {CRM_GOTOWY_DNI}</th>
+              <td>CRM gotowy, klienci w środku. Druga płatność {zl(CRM.budowaZBruno / 2 + BRUNO.miesiac)}.</td>
             </tr>
             <tr>
               <th>Do 3 miesięcy</th>
