@@ -651,3 +651,47 @@
   border: 1px solid #e2ded8;
   box-shadow: 0 8px 24px rgba(20, 20, 20, 0.06);
 }
+/* 7.11 (USER_001): Koszta i Oś czasu w układzie tabel CRM / Bruno: nagłówki, szara linia pionowa, 34 %. */
+.kosztOs tbody th {
+  padding-right: 14px;
+}
+.kosztOs thead tr th {
+  border-bottom: 1px solid #e2ded8;
+}
+/* 7.11 (USER_001): numery sekcji (01, 02, 03…) w pomarańczowych kółkach. Tylko Ewatex (o.nr jest wspólne z innymi ofertami). */
+.sekcja h2 > span:first-child {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--orange);
+  border: 1.5px solid var(--orange);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  margin-right: 12px;
+  vertical-align: middle;
+  position: relative;
+  top: -3px;
+}
+/* 7.11: tabela „Do zapłaty” przy podpisie. */
+.podsTab {
+  margin: 14px 0 18px;
+}
+.podsTab tbody th small {
+  display: block;
+  font-weight: 400;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.podsTab tbody td {
+  text-align: right;
+  white-space: nowrap;
+}
+.podsTab thead th.naglowekKol:last-child {
+  text-align: right;
+}

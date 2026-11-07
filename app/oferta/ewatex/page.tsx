@@ -175,7 +175,14 @@ export default function Page() {
           <span className={o.nr}>02</span> Koszta
         </h2>
         <p className={o.pod}>Bez VAT. To są kwoty końcowe.</p>
-        <table className={e.tab}>
+        <table className={`${e.tab} ${e.zakladki} ${e.kosztOs}`}>
+          <colgroup><col style={{ width: "34%" }} /><col /></colgroup>
+          <thead>
+            <tr>
+              <th className={e.naglowekKol}>Kiedy</th>
+              <th className={e.naglowekKol}>Kwota</th>
+            </tr>
+          </thead>
           <tbody>
             <tr className={e.razem}>
               <th>Dziś</th>
@@ -218,7 +225,14 @@ export default function Page() {
           <span className={o.nr}>03</span> Oś czasu
         </h2>
         <p className={o.pod}>Liczymy od dnia pierwszej płatności.</p>
-        <table className={e.tab}>
+        <table className={`${e.tab} ${e.zakladki} ${e.kosztOs}`}>
+          <colgroup><col style={{ width: "34%" }} /><col /></colgroup>
+          <thead>
+            <tr>
+              <th className={e.naglowekKol}>Kiedy</th>
+              <th className={e.naglowekKol}>Co się dzieje</th>
+            </tr>
+          </thead>
           <tbody>
             <tr>
               <th>Dzień 0</th>
@@ -257,7 +271,6 @@ export default function Page() {
         <a className={e.umowaPdf} href="/pdf/umowa-ewatex.pdf" target="_blank" rel="noreferrer" id="umowa">
           <span>
             <b>Umowa współpracy: Bruno AI + CRM</b>
-            <small>PDF · 1 umowa, wszystkie warunki z tej strony</small>
           </span>
           <span className={e.umowaPdfBtn}>Otwórz PDF</span>
         </a>

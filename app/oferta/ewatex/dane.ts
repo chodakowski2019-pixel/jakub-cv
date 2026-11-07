@@ -20,7 +20,7 @@ export const USLUGODAWCA = {
   opis: "prowadzący działalność gospodarczą",
   adres: "ul. Koniecpolskiego 12, 78-100 Kołobrzeg",
   nip: "6711845485",
-  email: "hello@jakubchodakowski.com",
+  email: "jakub@salesbruno.com", // 7.11 (USER_001): było hello@jakubchodakowski.com
 };
 
 export const BRUNO = {

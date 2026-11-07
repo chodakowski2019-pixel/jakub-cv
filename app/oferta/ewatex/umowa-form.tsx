@@ -82,7 +82,6 @@ export default function UmowaForm() {
             <span className={o.nr}>05</span> Podpis
           </h2>
 
-          <p className={o.pod}>Dane do podpisu</p>
           <div className={o.dwa}>
             <label className={o.pole}>
               <span>Imię i nazwisko (podpis)</span>
@@ -101,9 +100,7 @@ export default function UmowaForm() {
             Spółka: {KLIENT.nazwa}, {KLIENT.adres}, NIP {KLIENT.nip}, KRS {KLIENT.krs}. Reprezentuje: {KLIENT.reprezentant}, {KLIENT.funkcja}.
           </p>
 
-          <p className={o.pod} style={{ marginTop: 28 }}>
-            Zgoda
-          </p>
+          <div style={{ marginTop: 24 }} />
           <label className={o.check}>
             <input type="checkbox" checked={f.umowa} onChange={(ev) => set("umowa", ev.target.checked)} required />
             <span>
@@ -121,17 +118,31 @@ export default function UmowaForm() {
         </div>
 
         <aside className={`${o.podsumowanie} ${e.pods}`}>
-          <div className={o.znaczek}>Do zapłaty</div>
-          <div className={o.podsTytul}>Bruno + CRM</div>
-          <dl className={o.podsLista}>
-            <dt className={o.podsSuma}>Dziś: zaliczka CRM 50 %</dt>
-            <dd className={o.podsSuma}>{zl(k.start)}</dd>
-            <dt>Po odbiorze CRM: 2. rata {zl(k.crm / 2)} + Bruno 1. miesiąc {zl(k.bruno)}</dt>
-            <dd>{zl(k.drugaRata)}</dd>
-            <dt>2. i 3. miesiąc: Bruno {zl(k.kolejne)} + CRM {zl(k.utrzymanie)}</dt>
-            <dd>{zl(k.kolejne + k.utrzymanie)} / mies.</dd>
-          </dl>
-          <p className={o.podsInfo}>Po podpisie: link do pierwszej płatności (przelew, karta, BLIK), faktura mailem. Nagrania rozmów zostają (umowa, § 10). Kwoty końcowe, zwolnienie z VAT.</p>
+          <div className={o.podsTytul}>Płatność</div>
+          {/* 7.11 (USER_001): podsumowanie jako tabela jak na stronie oferty (Kiedy | Kwota), bez zdania pod spodem. */}
+          <table className={`${e.tab} ${e.zakladki} ${e.kosztOs} ${e.podsTab}`}>
+            <colgroup><col style={{ width: "58%" }} /><col /></colgroup>
+            <thead>
+              <tr>
+                <th className={e.naglowekKol}>Kiedy</th>
+                <th className={e.naglowekKol}>Kwota</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className={e.razem}>
+                <th>Dziś<small>zaliczka CRM 50 %</small></th>
+                <td><b>{zl(k.start)}</b></td>
+              </tr>
+              <tr className={e.razem}>
+                <th>Dzień 21, CRM gotowy<small>2. rata CRM {zl(k.crm / 2)} + Bruno 1. miesiąc {zl(k.bruno)}</small></th>
+                <td><b>{zl(k.drugaRata)}</b></td>
+              </tr>
+              <tr>
+                <th>2. i 3. miesiąc<small>Bruno {zl(k.kolejne)} + serwer CRM {zl(k.utrzymanie)}</small></th>
+                <td><b>{zl(k.kolejne + k.utrzymanie)}</b> / mies.</td>
+              </tr>
+            </tbody>
+          </table>
           {blad && (
             <p className={o.blad} role="alert">
               {blad}
