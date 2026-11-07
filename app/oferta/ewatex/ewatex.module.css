@@ -523,3 +523,103 @@
   min-width: 240px;
   justify-content: center;
 }
+
+/* 7.11 (USER_001): zakładki CRM wypunktowane jedno pod drugim, tytuł CRM na pomarańczowo, gwiazdka na czerwono. */
+.tytulPomar {
+  color: var(--orange);
+}
+.zakladki th {
+  vertical-align: top;
+  padding-top: 13px;
+}
+.zakladki td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.punkty {
+  margin: 0;
+  padding: 0 0 0 18px;
+  list-style: disc;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--ink-2);
+}
+.punkty li::marker {
+  color: var(--orange);
+}
+.warunki {
+  margin-top: 14px;
+}
+.warunki th {
+  width: 34%;
+}
+.gwiazdka {
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.gwiazdka b {
+  color: #d92d20;
+  font-weight: 700;
+  margin-right: 4px;
+}
+.zakladki thead th.naglowekKol {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--orange);
+  padding: 12px 16px 8px;
+  border-top: 0;
+  border-bottom: 1px solid #e2ded8;
+  text-align: left;
+  vertical-align: bottom;
+}
+.zakladki thead tr th {
+  background: transparent;
+}
+/* 7.11 (USER_001): pionowa linia między zakładkami a zawartością. */
+.zakladki th:first-child,
+.zakladki thead th.naglowekKol:first-child {
+  border-right: 1px solid #e2ded8;
+  padding-right: 14px;
+}
+.zakladki tbody th {
+  border-right: 1px solid #e2ded8;
+}
+.zakladki tbody td {
+  padding-left: 16px;
+}
+.zakladki thead th.naglowekKol:last-child {
+  padding-left: 16px;
+}
+/* 7.11 (USER_001 „tutaj tak samo”): tabela warunków z tą samą szarą pionową linią. */
+.warunki tbody th {
+  border-right: 1px solid #e2ded8;
+  padding-right: 14px;
+}
+.warunki tbody td {
+  padding-left: 16px;
+}
+/* 7.11 (USER_001 „to też”): szara linia między gwiazdką a ceną. */
+.gwiazdka {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e2ded8;
+}
+/* 7.11: pionowe linie obu tabel w jednej osi (34 %). */
+.zakladki,
+.warunki {
+  table-layout: fixed;
+  width: 100%;
+}
+.zakladki thead th.naglowekKol:first-child,
+.zakladki tbody th,
+.warunki tbody th {
+  width: 34%;
+}
+/* 7.11: nagłówek „Zawartość” to też <th>, a .tab th ma 36 %: bez tego 1. kolumna puchła do ~45 %. */
+.zakladki thead th.naglowekKol:last-child {
+  width: auto;
+}

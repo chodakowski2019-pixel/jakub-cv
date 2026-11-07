@@ -16,6 +16,18 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// 7.11 (USER_001): zakładki CRM Ewatex (ustalone w rozmowie 7.11), każda rzecz osobnym punktem.
+const ZAKLADKI_CRM: [string, string[]][] = [
+  ["Dziś", ["lista na dziś: telefony i spotkania z datą", "klienci bez kontaktu od 30 dni", "umowy do przedłużenia w tym miesiącu", "ile rozmów w tym tygodniu"]],
+  ["Klienci", ["lista z szukajką i filtrami: spółka, etap, handlowczyni, koniec umowy", "karta klienta: firma, NIP, osoba, telefon, e-mail", "obecny sprzedawca energii", "data końca umowy", "cena, taryfa", "faktura (plik)", "która spółka ofertuje", "kto prowadzi", "historia wszystkich rozmów"]],
+  ["Lejek", ["etapy: nowy → telefon → faktura zebrana → oferta wysłana → decyzja → podpisana / stracona", "na każdym etapie ilu klientów i za ile", "przeciąganie klienta między etapami"]],
+  ["Rozmowy", ["po każdym telefonie 30 sekund: co ustalone (2 zdania)", "następny krok z datą", "czy jest faktura", "wpis trafia do historii klienta i na listę „Dziś”"]],
+  ["Przedłużenia", ["wszystkie umowy klientów z datą końca", "automat: 12, 6 i 3 miesiące przed końcem mail do zarządzającej i handlowczyni", "widok na kwartał"]],
+  ["Oferty", ["wybór spółki: Ewatex, Reenergia, Respect", "właściwy nadawca maila i dane spółki na dokumencie", "lista ofert: wysłana, podpisana, odrzucona"]],
+  ["Panel zarządzającej", ["umowy do przedłużenia w kwartale", "rozmowy w tygodniu per handlowczyni", "oferty wysłane", "oferty podpisane", "faktury zebrane", "porównanie handlowczyń"]],
+  ["Ustawienia", ["4 konta: zarządzająca + 3 handlowczynie", "spółki i nadawcy maili", "etapy lejka", "pola karty klienta"]],
+];
+
 export default function Page() {
   return (
     <div className={`${s.root} ${o.root} ${e.root} bruno-lp-jasne`}>
@@ -36,54 +48,45 @@ export default function Page() {
       {/* ---------- 01 CO OTRZYMASZ ---------- */}
       <section className={`${o.sekcja} ${e.sekcja}`} aria-labelledby="opcje">
         <h2 id="opcje" className={o.h2}>
-          <span className={o.nr}>01</span> Co otrzymasz
+          <span className={o.nr}>01</span> Oferta
         </h2>
         <div className={e.opcje}>
           <article className={`${e.opcja} ${e.opcjaRek}`}>
-            <span className={e.opcjaNr}>CRM</span>
-            <h3 className={e.opcjaTytul}>Własny CRM</h3>
-            <div className={e.opcjaCena}>
-              {zl(CRM.budowaZBruno)}
-              <small>płatność jednorazowa</small>
-            </div>
-            <p className={e.opcjaPod}>+ {zl(CRM.utrzymanie)} miesięcznie</p>
-            <table className={`${e.tab} ${e.funkcje}`}>
+            <h3 className={`${e.opcjaTytul} ${e.tytulPomar}`}>Własny CRM</h3>
+            {/* 7.11 (USER_001): zakładki CRM, każda rzecz od kropki, jedno pod drugim; gwiazdka = zakres po spotkaniu i ankiecie. */}
+            <table className={`${e.tab} ${e.funkcje} ${e.zakladki}`}>
+              <colgroup><col style={{ width: "34%" }} /><col /></colgroup>
+              <thead>
+                <tr>
+                  <th className={e.naglowekKol}>Zakładki</th>
+                  <th className={e.naglowekKol}>Zawartość</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ZAKLADKI_CRM.map(([nazwa, punkty]) => (
+                  <tr key={nazwa}>
+                    <th>{nazwa}</th>
+                    <td>
+                      <ul className={e.punkty}>
+                        {punkty.map((pkt) => (
+                          <li key={pkt}>{pkt}</li>
+                        ))}
+                      </ul>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <table className={`${e.tab} ${e.funkcje} ${e.warunki}`}>
+              <colgroup><col style={{ width: "34%" }} /><col /></colgroup>
               <tbody>
                 <tr>
-                  <th>Karta klienta</th>
-                  <td>firma, osoba, telefon, umowa, cena, faktura, kto prowadzi, historia rozmów</td>
+                  <th>Dane na start</th>
+                  <td>przeniesienie klientów z Excela, kalendarza i maili</td>
                 </tr>
                 <tr>
-                  <th>Etapy sprzedaży</th>
-                  <td>widok, na którym etapie ilu klientów</td>
-                </tr>
-                <tr>
-                  <th>Notatka po rozmowie</th>
-                  <td>co ustalone + następny krok z datą</td>
-                </tr>
-                <tr>
-                  <th>Przypomnienia</th>
-                  <td>koniec umowy klienta: 12, 6 i 3 mies. przed, mail do zarządzającej i handlowczyni</td>
-                </tr>
-                <tr>
-                  <th>Panel zarządzającej</th>
-                  <td>umowy do przedłużenia w kwartale, rozmowy w tygodniu, oferty wysłane i podpisane</td>
-                </tr>
-                <tr>
-                  <th>Oferta ze spółki</th>
-                  <td>Ewatex, Reenergia, Respect: zawsze właściwa spółka i właściwy nadawca maila</td>
-                </tr>
-                <tr>
-                  <th>Przeniesienie danych</th>
-                  <td>klienci z Excela, kalendarza i maili</td>
-                </tr>
-                <tr>
-                  <th>Konta</th>
-                  <td>4: zarządzająca + 3 handlowczynie</td>
-                </tr>
-                <tr>
-                  <th>Telefon</th>
-                  <td>działa w przeglądarce na telefonie</td>
+                  <th>Urządzenia</th>
+                  <td>przeglądarka na komputerze i telefonie</td>
                 </tr>
                 <tr>
                   <th>Gotowy</th>
@@ -91,6 +94,15 @@ export default function Page() {
                 </tr>
               </tbody>
             </table>
+            <p className={e.gwiazdka}>
+              <b>*</b>Dokładna zawartość każdej zakładki zostanie ustalona po spotkaniu z handlowczynią (dzień 7) i po wypełnieniu ankiety przez zarządzającą. W cenie są 2 spotkania × 30 min na poprawki w CRM w ciągu 3 miesięcy.
+            </p>
+            {/* 7.11 (USER_001): cena CRM pod tabelą z zawartością, bez plakietki „CRM”. */}
+            <div className={e.opcjaCena}>
+              {zl(CRM.budowaZBruno)}
+              <small>płatność jednorazowa</small>
+            </div>
+            <p className={e.opcjaPod}>+ {zl(CRM.utrzymanie)} miesięcznie</p>
           </article>
 
           <div className={e.plus} aria-hidden="true">
