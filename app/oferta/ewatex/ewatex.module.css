@@ -695,3 +695,6 @@
 .podsTab thead th.naglowekKol:last-child {
   text-align: right;
 }
+.umowaPdf + .umowaPdf {
+  margin-top: 10px;
+}

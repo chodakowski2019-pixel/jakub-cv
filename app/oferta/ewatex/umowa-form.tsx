@@ -112,7 +112,11 @@ export default function UmowaForm() {
               <a href="/polityka-prywatnosci" target="_blank" rel="noreferrer">
                 politykę prywatności
               </a>{" "}
-              i powierzenie danych (art. 28 RODO). <b>Wymagane.</b>
+              i{" "}
+              <a href="/pdf/powierzenie-ewatex.pdf" target="_blank" rel="noreferrer">
+                umowę powierzenia danych (art. 28 RODO)
+              </a>
+              . <b>Wymagane.</b>
             </span>
           </label>
         </div>

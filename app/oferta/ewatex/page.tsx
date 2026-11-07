@@ -90,13 +90,17 @@ export default function Page() {
                   <td>przeglądarka na komputerze i telefonie</td>
                 </tr>
                 <tr>
+                  <th>Zmiany po starcie</th>
+                  <td>{zl(CRM.godzina)} za godzinę pracy, wycena przed pracą</td>
+                </tr>
+                <tr>
                   <th>Gotowy</th>
                   <td>{CRM_GOTOWY_DNI} dni od płatności</td>
                 </tr>
               </tbody>
             </table>
             <p className={e.gwiazdka}>
-              <b>*</b>Dokładna zawartość każdej zakładki zostanie ustalona po spotkaniu z handlowczynią (dzień 1-14) i po wypełnieniu ankiety przez zarządzającą. W cenie są 2 spotkania × 30 min na poprawki w CRM w ciągu 3 miesięcy.
+              <b>*</b>Dokładna zawartość każdej zakładki zostanie ustalona po spotkaniu z handlowczynią (dzień 1-14) i po wypełnieniu ankiety przez zarządzającą. Poprawki (zgodność z tą listą) w cenie. W cenie też 2 spotkania × 30 min ws. zmian w CRM w ciągu 3 miesięcy, kolejne {zl(CRM.godzina)} za godzinę.
             </p>
             {/* 7.11 (USER_001): cena CRM pod tabelą z zawartością, bez plakietki „CRM”. */}
             <div className={e.opcjaCena}>
@@ -160,7 +164,7 @@ export default function Page() {
           </li>
           <li>
             <span className={e.osKiedy}>Do 3 miesięcy</span>
-            Możliwość <b>2 spotkań × 30 min</b> na poprawki w CRM
+            <b>2 spotkania × 30 min</b> ws. zmian w CRM w cenie, kolejne {zl(CRM.godzina)}/h
           </li>
           <li className={e.osKoniec}>
             <span className={e.osKiedy}>Po 3 miesiącach</span>
@@ -252,7 +256,7 @@ export default function Page() {
             </tr>
             <tr>
               <th>Do 3 miesięcy</th>
-              <td>Możliwość 2 spotkań × 30 min na poprawki w CRM.</td>
+              <td>2 spotkania × 30 min ws. zmian w CRM w cenie. Kolejne spotkania i zmiany: {zl(CRM.godzina)} za godzinę.</td>
             </tr>
             <tr>
               <th>Po 3 miesiącach</th>
@@ -271,6 +275,12 @@ export default function Page() {
         <a className={e.umowaPdf} href="/pdf/umowa-ewatex.pdf" target="_blank" rel="noreferrer" id="umowa">
           <span>
             <b>Umowa współpracy: Bruno AI + CRM</b>
+          </span>
+          <span className={e.umowaPdfBtn}>Otwórz PDF</span>
+        </a>
+<a className={e.umowaPdf} href="/pdf/powierzenie-ewatex.pdf" target="_blank" rel="noreferrer">
+          <span>
+            <b>Umowa powierzenia danych (RODO art. 28)</b>
           </span>
           <span className={e.umowaPdfBtn}>Otwórz PDF</span>
         </a>

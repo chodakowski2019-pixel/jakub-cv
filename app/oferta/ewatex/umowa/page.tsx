@@ -46,7 +46,7 @@ export default function Page() {
         <li>
           Liczba kont handlowców: <b>{BRUNO.konta}</b>. Konto zarządzające ({KLIENT.reprezentant}) bez opłaty. Lista kont: załącznik nr 2.
         </li>
-        <li>W cenie: Bruno prowadzi System CRM (handlowiec pisze albo nagrywa głosówkę, Bruno zamienia ją na tekst i zapisuje w Systemie notatkę, następny krok z datą i etap klienta; odpowiada na pytania o klientów z danych Systemu), rozmowy z klientem AI dobrane do etapu nauki każdej handlowczyni (do 5 dziennie na konto), ocena 1-10 z radą po każdej rozmowie, fiszki z technikami, czat z Bruno, panel zarządzającej (kto ćwiczy i kto robi postęp), wsparcie mailem.</li>
+        <li>W cenie: Bruno prowadzi System CRM (handlowiec pisze albo nagrywa głosówkę, Bruno zamienia ją na tekst i zapisuje w Systemie notatkę, następny krok z datą i etap klienta; odpowiada na pytania o klientów z danych Systemu; działa od odbioru Systemu, § 4), rozmowy z klientem AI dobrane do etapu nauki każdej handlowczyni (do 5 dziennie na konto), ocena 1-10 z radą po każdej rozmowie, fiszki z technikami, czat z Bruno, panel zarządzającej (kto ćwiczy i kto robi postęp), wsparcie mailem.</li>
         <li>Usługodawca ustawia Bruno AI pod Klienta przed uruchomieniem kont: produkt (optymalizacja kosztów energii), klienci, obiekcje.</li>
         <li>Limity i szczegóły usługi opisuje regulamin Bruno AI (salesbruno.pl/regulamin) w wersji z dnia zawarcia umowy.</li>
       </ol>
@@ -78,7 +78,7 @@ export default function Page() {
           </tr>
           <tr>
             <th>Do 3 miesięcy od odbioru</th>
-            <td>Możliwość 2 spotkań × 30 min na poprawki w CRM, w zakresie załącznika nr 1.</td>
+            <td>2 spotkania × 30 min ws. zmian w Systemie, w cenie (§ 7 pkt 3).</td>
           </tr>
           <tr>
             <th>Po 3 miesiącach</th>
@@ -96,7 +96,7 @@ export default function Page() {
       <h2>§ 5. Czas trwania</h2>
       <ol>
         <li>
-          Bruno AI: współpraca na <b>{BRUNO.okresMiesiecy} miesiące</b> od uruchomienia kont (okres minimalny), z możliwością przedłużenia. Umowa w tej części nie przedłuża się sama: Klient decyduje mailem. Usługodawca przypomina o końcu okresu e-mailem 14 dni wcześniej.
+          Bruno AI: konta ruszają w dniu odbioru Systemu (dzień {CRM_GOTOWY_DNI}, § 4). Współpraca na <b>{BRUNO.okresMiesiecy} miesiące</b> od uruchomienia kont (okres minimalny), z możliwością przedłużenia. Umowa w tej części nie przedłuża się sama: Klient decyduje mailem. Usługodawca przypomina o końcu okresu e-mailem 14 dni wcześniej.
         </li>
         <li>W okresie minimalnym Klient nie może wypowiedzieć umowy bez ważnej przyczyny (rażące naruszenie umowy przez Usługodawcę, nienaprawione w 14 dni od wezwania).</li>
         <li>Utrzymanie Systemu: 12 miesięcy od odbioru, potem na czas nieokreślony z 30-dniowym wypowiedzeniem na koniec miesiąca. Koniec Bruno AI nie kończy utrzymania Systemu. System zostaje u Klienta.</li>
@@ -142,15 +142,15 @@ export default function Page() {
       <ol>
         <li>Usługodawca korzysta ze zwolnienia z VAT. Kwoty są końcowe.</li>
         <li>Dodanie handlowca: od następnego miesiąca, {zl(BRUNO.cenaKonto)} za konto. Zmniejszenie liczby kont: dopiero po okresie minimalnym.</li>
-        <li>Opłaty za rozpoczęty miesiąc nie podlegają zwrotowi.</li>
+        <li>Opłaty za rozpoczęty miesiąc nie podlegają zwrotowi. Rezygnacja Klienta z budowy Systemu przed odbiorem: zaliczka nie podlega zwrotowi, 2. płatność za System nie jest należna.</li>
         <li>Opóźnienie płatności powyżej 14 dni: Usługodawca może zawiesić konta Bruno AI i utrzymanie Systemu do zapłaty; dane Klienta zostają dostępne do pobrania.</li>
       </ol>
 
       <h2>§ 7. Utrzymanie i zmiany Systemu</h2>
       <ol>
-        <li>Utrzymanie obejmuje: serwer i bazę danych, kopie zapasowe codziennie, poprawki błędów, drobne zmiany do 2 godzin w miesiącu (niewykorzystane nie przechodzą).</li>
+        <li>Utrzymanie obejmuje: serwer i bazę danych, kopie zapasowe codziennie, poprawki błędów.</li>
         <li>Klient może zrezygnować z utrzymania i przejąć System sam (§ 9).</li>
-        <li>Zmiany na zamówienie poza zakresem: {zl(CRM.godzina)} za godzinę, zawsze z wyceną i akceptacją mailem przed pracą.</li>
+        <li>Poprawka = doprowadzenie Systemu do zgodności z załącznikiem nr 1; wykonywana w cenie. Zmiana = wszystko poza tym. W cenie są 2 spotkania × 30 min ws. zmian (§ 4) i wdrożenie zmian ustalonych na tych spotkaniach do 2 godzin pracy łącznie. Po wykorzystaniu 2 spotkań każde kolejne spotkanie i każda dalsza praca nad zmianami: {zl(CRM.godzina)} za godzinę, zawsze z wyceną i akceptacją mailem przed pracą.</li>
       </ol>
 
       <h2>§ 8. Obowiązki stron</h2>
@@ -177,7 +177,7 @@ export default function Page() {
       <h2>§ 10. Dane osobowe i poufność</h2>
       <ol>
         <li>Dla danych handlowców oraz klientów Klienta w Systemie Klient jest administratorem, Usługodawca podmiotem przetwarzającym.</li>
-        <li>Powierzenie danych: umowa powierzenia (RODO art. 28), wysyłana mailem razem z potwierdzeniem zawarcia umowy, z listą podwykonawców przetwarzania.</li>
+        <li>Powierzenie danych: umowa powierzenia (RODO art. 28) z listą podwykonawców, akceptowana razem z tą umową (salesbruno.pl/pdf/powierzenie-ewatex.pdf).</li>
         <li>Gdzie leżą dane Bruno AI, kto je przetwarza i jak długo: salesbruno.pl/bezpieczenstwo. Dane Systemu: serwery w UE.</li>
         <li>Nagrania rozmów treningowych (audio i tekst) zostają, handlowiec i zarządzająca mogą je odsłuchać i przeczytać; są kasowane 14 dni po końcu Bruno AI. Klient może mailem przejść na tryb poufny (bez zapisu audio, tekst kasowany po ocenie).</li>
         <li>Oferta, ceny, rabaty i argumenty, które Klient wpisze do Bruno AI, służą tylko do treningów handlowców Klienta. Usługodawca nie pokazuje ich nikomu i nie używa do trenowania modeli AI.</li>
@@ -195,7 +195,7 @@ export default function Page() {
         <li>Zmiany umowy wymagają formy pisemnej albo dokumentowej (e-mail) pod rygorem nieważności.</li>
         <li>W sprawach nieuregulowanych: regulamin Bruno AI, Kodeks cywilny i ustawa o prawie autorskim.</li>
         <li>Spory: sąd właściwy dla siedziby Usługodawcy.</li>
-        <li>Umowa zawarta w formie dokumentowej: akceptacja na stronie salesbruno.pl/oferta/ewatex (imię i nazwisko, data, adres IP) + potwierdzenie e-mailem do obu stron.</li>
+        <li>Umowa zawarta w formie dokumentowej: akceptacja na stronie salesbruno.pl/oferta/ewatex (imię i nazwisko, data, adres IP). Usługodawca wysyła Klientowi potwierdzenie e-mailem (umowa w PDF, umowa powierzenia, link do 1. płatności) w ciągu 24 godzin od akceptacji.</li>
       </ol>
 
       <h2>Załącznik nr 1. Zakres Systemu CRM (pierwsza wersja)</h2>
@@ -230,7 +230,7 @@ export default function Page() {
           </tr>
         </tbody>
       </table>
-      <p>Dokładna zawartość każdej zakładki zostanie ustalona na spotkaniu z handlowczynią (dzień 1-14) i po wypełnieniu ankiety przez zarządzającą ({KLIENT.reprezentant}). Lista spółek Klienta do potwierdzenia na tym spotkaniu. W cenie 2 spotkania × 30 min na poprawki w ciągu 3 miesięcy od odbioru (§ 4).</p>
+      <p>Dokładna zawartość każdej zakładki zostanie ustalona na spotkaniu z handlowczynią (dzień 1-14) i po wypełnieniu ankiety przez zarządzającą ({KLIENT.reprezentant}). Lista spółek Klienta do potwierdzenia na tym spotkaniu. Poprawki (zgodność z tym załącznikiem) w cenie. W cenie też 2 spotkania × 30 min ws. zmian w ciągu 3 miesięcy od odbioru (§ 4, § 7).</p>
       <p>Poza zakresem pierwszej wersji (na zamówienie, § 7 pkt 3): fakturowanie, podpis elektroniczny, aplikacja mobilna w sklepie.</p>
 
       <h2>Załącznik nr 2. Lista kont Bruno AI</h2>
