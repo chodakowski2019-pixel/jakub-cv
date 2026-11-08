@@ -16,7 +16,7 @@ export async function POST() {
   const konto = await pobierzKonto(email);
   if (!konto || !czySzef(konto)) return NextResponse.json({ blad: "403" }, { status: 403 });
   const firma = await pobierzFirme(konto.firma_id);
-  if (!crmWlaczony(firma) || !firma?.pipedrive_token) return NextResponse.json({ blad: "CRM nie jest podpięty." }, { status: 403 });
+  if (!crmWlaczony(firma) || !firma) return NextResponse.json({ blad: "CRM nie jest podpięty." }, { status: 403 });
   const jezyk = konto.jezyk === "pl" ? "pl" : "en";
   try {
     const dane = await zbierzDaneZespolu(firma, jezyk);

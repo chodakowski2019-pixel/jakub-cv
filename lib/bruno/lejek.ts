@@ -26,9 +26,16 @@ async function pd<T>(token: string, sciezka: string, init?: RequestInit): Promis
   return { data: j.data, wiecej: Boolean(p?.more_items_in_collection), nastepny: p?.next_start ?? 0 };
 }
 
-/** Czy lejek z CRM jest włączony dla firmy. 4.11: tylko firma DEMO z tokenem. */
+/** Czy firma ma NOWY WYGLĄD (czat z kulą, Klienci, Lejek, Statystyki zespołu, Raport). 4.11: tylko firma demo z tokenem.
+ * 8.11 (USER_001: „demo ma się wszędzie zmienić, nawet bez podpięcia Pipedrive, ma być jakiś domyślny”): KAŻDA firma.
+ * Bez tokenu = domyślny pusty lejek (LEJEK_DOMYSLNY), czat bez zapisu do CRM. Czy CRM jest podpięty: crmPodpiety. */
 export function crmWlaczony(firma: Pick<Firma, "demo" | "pipedrive_token"> | null | undefined): boolean {
-  return Boolean(firma?.demo && firma?.pipedrive_token);
+  return Boolean(firma);
+}
+
+/** 8.11: czy firma ma podpięty Pipedrive (dane i zapis w CRM). */
+export function crmPodpiety(firma: Pick<Firma, "pipedrive_token"> | null | undefined): firma is Pick<Firma, "pipedrive_token"> & { pipedrive_token: string } {
+  return Boolean(firma?.pipedrive_token);
 }
 
 export type Etap = { id: number; nazwa: string; kolejnosc: number; pipeline_id: number };
@@ -51,6 +58,19 @@ export type Deal = {
   dodano: string | null;
 };
 export type Lejek = { pipeline: { id: number; nazwa: string }; etapy: Etap[]; deale: Deal[]; pole_handlowca: string | null };
+
+/** 8.11: domyślny lejek firmy bez CRM: 6 etapów (szanse 10/25/40/60/80/100 % w lejek-widok.tsx), 0 deali. */
+export const LEJEK_DOMYSLNY: Lejek = {
+  pipeline: { id: 0, nazwa: "Sprzedaż" },
+  etapy: ["Nowy kontakt", "Pierwsza rozmowa", "Spotkanie", "Oferta", "Negocjacje", "Decyzja"].map((nazwa, i) => ({ id: -(i + 1), nazwa, kolejnosc: i + 1, pipeline_id: 0 })),
+  deale: [],
+  pole_handlowca: null,
+};
+
+/** 8.11: lejek firmy: z Pipedrive, gdy podpięty, inaczej domyślny pusty. */
+export async function lejekFirmy(firma: Pick<Firma, "pipedrive_token"> | null | undefined): Promise<Lejek> {
+  return firma?.pipedrive_token ? pobierzLejek(firma.pipedrive_token) : LEJEK_DOMYSLNY;
+}
 
 const kluczePol = new Map<string, string | null>();
 

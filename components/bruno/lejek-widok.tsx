@@ -133,7 +133,7 @@ export default function LejekWidok({
       <NaglowekP
         tytul={t("Pipeline", "Lejek")}
         akcent={akcent}
-        podtytul={`${pipeline?.nazwa ? `${pipeline.nazwa} · ` : ""}${t("Live from Pipedrive.", "Na żywo z Pipedrive.")}`}
+        podtytul={`${pipeline?.nazwa ? `${pipeline.nazwa} · ` : ""}${pipeline && pipeline.id === 0 ? t("Default pipeline. Deals appear once a CRM is connected.", "Domyślny lejek. Deale pojawią się po podpięciu CRM.") : t("Live from Pipedrive.", "Na żywo z Pipedrive.")}`}
         prawo={
           <>
             <Chip k="ciemny">{otwarte} {t("open", "otwartych")}</Chip>
@@ -177,13 +177,14 @@ export default function LejekWidok({
           </div>
         </div>
         <div className="p-karta-p" style={{ paddingTop: 10 }}>
-          {zespol.length ? (
+          {/* 8.11: bez deali (domyślny lejek) pusty Sankey zajmował pół ekranu → komunikat. */}
+          {zespol.length && deale.length ? (
             <>
               <PrzeplywDeali etapy={wykres} jezyk={jezyk} />
               <div className="pl-tylko-tel"><LejekWykres etapy={wykres} jezyk={jezyk} max={doszloMax} /></div>
             </>
           ) : (
-            <Pusto tytul={t("No stages", "Brak etapów")} opis={t("The pipeline in Pipedrive is empty.", "Lejek w Pipedrive jest pusty.")} />
+            <Pusto tytul={zespol.length ? t("No deals yet", "Brak deali") : t("No stages", "Brak etapów")} opis={zespol.length ? t("The flow appears after the first deals.", "Przepływ pojawi się po pierwszych dealach.") : t("The pipeline in Pipedrive is empty.", "Lejek w Pipedrive jest pusty.")} />
           )}
         </div>
       </section>

@@ -12,7 +12,7 @@ import {
   domenaPipedrive,
   nowyDeal,
   notatkiDeala,
-  pobierzLejek,
+  lejekFirmy,
   przesunEtap,
   zadaniaDeala,
   zamknijDeal,
@@ -133,7 +133,7 @@ export async function POST(req: Request) {
   const konto = await pobierzKonto(email);
   const t = tDla(konto?.jezyk);
   const firma = await pobierzFirme(konto?.firma_id);
-  if (!konto || !crmWlaczony(firma) || !firma?.pipedrive_token) return NextResponse.json({ blad: t("CRM not connected.", "CRM nie jest podpięty.") }, { status: 403 });
+  if (!konto || !crmWlaczony(firma) || !firma) return NextResponse.json({ blad: t("CRM not connected.", "CRM nie jest podpięty.") }, { status: 403 });
   if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ blad: "Brak ANTHROPIC_API_KEY." }, { status: 500 });
 
   const b = (await req.json().catch(() => ({}))) as { wiadomosci?: { rola: string; tresc: string; zalaczniki?: Zalacznik[] }[] };
@@ -143,7 +143,8 @@ export async function POST(req: Request) {
     .slice(-20);
   if (!historia.length || historia[historia.length - 1].rola !== "user") return NextResponse.json({ blad: t("Empty message.", "Pusta wiadomość.") }, { status: 400 });
 
-  const token = firma.pipedrive_token;
+  // 8.11: firma bez Pipedrive = domyślny pusty lejek; narzędzia zapisu odpowiadają „CRM niepodpięty”.
+  const token = firma.pipedrive_token ?? "";
   // 4.11: szef w „Bruno handlowca” (?jako=) rozmawia jak ten handlowiec: widzi i zmienia tylko jego deale.
   const w = await widokKonta(konto, firma, new URL(req.url).searchParams.get("jako"));
   const szef = w.szef;
@@ -155,14 +156,14 @@ export async function POST(req: Request) {
   let handlowcy: { email: string; imie: string }[];
   try {
     [lejek, handlowcy] = await Promise.all([
-      pobierzLejek(token),
+      lejekFirmy(firma),
       Promise.resolve((szef ? w.handlowcy : [w.konto]).map((x) => ({ email: x.email.toLowerCase(), imie: x.imie ?? x.email }))),
     ]);
   } catch (e) {
     return NextResponse.json({ blad: `CRM: ${String((e as Error)?.message ?? e)}` }, { status: 502 });
   }
   const imiona = new Map(handlowcy.map((h) => [h.email, h.imie]));
-  const domena = await domenaPipedrive(token);
+  const domena = token ? await domenaPipedrive(token) : null;
   const linkDeala = (id: number) => (domena ? `${domena}/deal/${id}` : null);
 
   const widoczne = () => (szef ? lejek.deale : lejek.deale.filter((d) => d.handlowiec === ja));
@@ -180,6 +181,7 @@ export async function POST(req: Request) {
     `Format odpowiedzi: krótko. Maks 3 zdania albo lista do 5 punktów („- ”). Nazwy klientów, kwoty i daty pogrub (**tak**). Bez nagłówków, bez tabel, bez emoji, bez powtarzania pytania.`,
     `Załączniki: użytkownik może dołączyć PDF (oferta, umowa) albo nagranie rozmowy (transkrypcja w treści między [Załącznik] i [Koniec załącznika]). Wtedy: znajdź deal (z treści albo z wiadomości), zapisz notatkę ze streszczeniem (ustalenia, kwoty, obiekcje, następny krok, max 8 linii) i jeśli z treści wynika zadanie albo etap, zrób to też. Odpowiedz 3 najważniejszymi faktami. Jeśli nie wiesz, do którego deala, zapytaj jednym zdaniem.`,
     `Trening: gdy użytkownik chce ćwiczyć / trenować rozmowę, wywołaj trenuj_rozmowe (z deal_id, jeśli mówi o kliencie). Odpowiedz jednym zdaniem.`,
+    !token ? `CRM NIE JEST PODPIĘTY: nie masz klientów ani deali. Pomagaj jako trener i doradca sprzedaży (plan rozmowy, odpowiedź na obiekcję, mail, analiza nagrania), proponuj trening. Nie udawaj zapisu w CRM.` : "",
     `Etapy lejka „${lejek.pipeline.nazwa}” (id: nazwa): ${lejek.etapy.map((e) => `${e.id}: ${e.nazwa}`).join(", ")}.`,
     `Handlowcy: ${handlowcy.map((h) => `${h.imie} <${h.email}>`).join(", ")}.`,
     `Deale użytkownika (otwarte, ${Math.min(widoczne().filter((d) => d.status === "open").length, 80)} z ${widoczne().filter((d) => d.status === "open").length}):\n${widoczne()
@@ -187,7 +189,7 @@ export async function POST(req: Request) {
       .slice(0, 80)
       .map((d) => dealDoTekstu(d, lejek, imiona))
       .join("\n")}`,
-  ].join("\n\n");
+  ].filter(Boolean).join("\n\n");
 
   const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   // 8.11: ostatnia wiadomość (z transkrypcją załącznika) do 60 000 znaków; wcześniej cięło do 3 000 i nagranie znikało.
@@ -196,6 +198,7 @@ export async function POST(req: Request) {
   let przekieruj: string | null = null;
 
   const wykonaj = async (nazwa: string, input: Record<string, unknown>): Promise<string> => {
+    if (!token && nazwa !== "trenuj_rozmowe" && nazwa !== "lista_deali") return "CRM nie jest jeszcze podpięty, nic nie zapisano. Powiedz to użytkownikowi jednym zdaniem i pomóż bez zapisu (rada, plan rozmowy, trening).";
     switch (nazwa) {
       case "trenuj_rozmowe": {
         const id = Number(input.deal_id);

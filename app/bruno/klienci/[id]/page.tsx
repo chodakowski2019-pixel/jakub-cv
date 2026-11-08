@@ -18,7 +18,7 @@ export default async function BrunoKlientPage({ params, searchParams }: { params
   const konto = await pobierzKonto(email);
   if (!konto) redirect("/bruno");
   const firma = await pobierzFirme(konto.firma_id);
-  if (!crmWlaczony(firma) || !firma?.pipedrive_token) redirect("/bruno/panel");
+  if (!crmWlaczony(firma) || !firma?.pipedrive_token) redirect("/bruno/klienci");
   const { jezyk } = await tSerwer();
   const { id } = await params;
   const { jako } = await searchParams;

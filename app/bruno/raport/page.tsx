@@ -18,7 +18,7 @@ export default async function BrunoRaportPage() {
   const konto = await pobierzKonto(email);
   if (!konto || !czySzef(konto)) redirect("/bruno/panel");
   const firma = await pobierzFirme(konto.firma_id);
-  if (!crmWlaczony(firma) || !firma?.pipedrive_token) redirect("/bruno/szef");
+  if (!crmWlaczony(firma) || !firma) redirect("/bruno/szef");
   const { jezyk } = await tSerwer();
   let blad: string | null = null;
   try {

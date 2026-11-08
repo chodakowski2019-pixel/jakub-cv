@@ -4,7 +4,7 @@ import { pobierzKonto, pobierzRozmowy } from "@/lib/bruno/db";
 import { pobierzFirme } from "@/lib/bruno/firmy";
 import { widokKonta } from "@/lib/bruno/jako";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
-import { analizaZDeali, crmWlaczony, dealeBezRuchu, domenaPipedrive, formatKwota, naglowekZadania, notatkiDeala, pobierzLejek, zadaniaFirmy } from "@/lib/bruno/lejek";
+import { analizaZDeali, crmWlaczony, dealeBezRuchu, domenaPipedrive, formatKwota, lejekFirmy, naglowekZadania, notatkiDeala, zadaniaFirmy } from "@/lib/bruno/lejek";
 import { dobierzTrening } from "@/lib/bruno/dobor-treningu";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
 import Kokpit, { type Powitanie } from "@/components/bruno/kokpit";
@@ -22,11 +22,12 @@ export default async function BrunoKokpitPage({ searchParams }: { searchParams: 
   const konto = await pobierzKonto(email);
   if (!konto) redirect("/bruno");
   const firma = await pobierzFirme(konto.firma_id);
-  if (!crmWlaczony(firma) || !firma?.pipedrive_token) redirect("/bruno/panel");
+  if (!crmWlaczony(firma) || !firma) redirect("/bruno/panel");
   const { jezyk } = await tSerwer();
   const { jako } = await searchParams;
   const w = await widokKonta(konto, firma, jako);
-  const token = firma.pipedrive_token;
+  // 8.11: firma bez Pipedrive = domyślny pusty lejek, zero zadań, bez linku do CRM.
+  const token = firma.pipedrive_token ?? null;
   const szef = w.szef;
   const ja = w.konto.email.toLowerCase();
   const handlowcy = szef ? w.handlowcy : [w.konto];
@@ -34,7 +35,7 @@ export default async function BrunoKokpitPage({ searchParams }: { searchParams: 
 
   let powitanie: Powitanie | null = null;
   try {
-    const [lejek, zadania, domena, rozmowy] = await Promise.all([pobierzLejek(token), zadaniaFirmy(token, { do: dzis }), domenaPipedrive(token), pobierzRozmowy(w.konto.email, 20)]);
+    const [lejek, zadania, domena, rozmowy] = await Promise.all([lejekFirmy(firma), token ? zadaniaFirmy(token, { do: dzis }) : Promise.resolve([]), token ? domenaPipedrive(token) : Promise.resolve(null), pobierzRozmowy(w.konto.email, 20)]);
     const znane = new Set(w.handlowcy.map((h) => h.email.toLowerCase()));
     const moje = szef ? lejek.deale : lejek.deale.filter((d) => d.handlowiec === ja);
     const mojeId = new Set(moje.map((d) => d.id));
@@ -55,7 +56,7 @@ export default async function BrunoKokpitPage({ searchParams }: { searchParams: 
     if (!szef) {
       const analiza = analizaZDeali(ja, lejek.etapy, moje);
       const dealNaj = analiza.najslabszy ? moje.filter((d) => d.status === "open" && d.etap_id === analiza.najslabszy!.id).sort((a, b) => b.wartosc - a.wartosc)[0] : null;
-      const notatki = dealNaj ? (await notatkiDeala(token, dealNaj.id, 5).catch(() => [])).map((n) => n.tresc) : [];
+      const notatki = dealNaj && token ? (await notatkiDeala(token, dealNaj.id, 5).catch(() => [])).map((n) => n.tresc) : [];
       const p = dobierzTrening({ jezyk, analiza, deale: moje, rozmowy, notatki });
       trening = { etap: p.etap?.nazwa ?? null, kryterium: p.kryteriumNazwa, obiekcja: p.obiekcja, dlaczego: p.dlaczego, link: p.link, deal: p.deal?.tytul ?? null };
     } else {
@@ -79,7 +80,7 @@ export default async function BrunoKokpitPage({ searchParams }: { searchParams: 
   } catch (e) {
     console.error("[kokpit powitanie]", e);
   }
-  const domena = powitanie?.domena ?? (await domenaPipedrive(token));
+  const domena = powitanie?.domena ?? (token ? await domenaPipedrive(token) : null);
   return (
     <>
       {w.jakoHandlowiec && <PrzelacznikHandlowca sciezka="/bruno/kokpit" jezyk={jezyk} handlowcy={w.handlowcy} wybrany={w.konto.email} />}

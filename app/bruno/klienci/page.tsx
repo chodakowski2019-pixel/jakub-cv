@@ -4,7 +4,7 @@ import { pobierzKonto } from "@/lib/bruno/db";
 import { pobierzFirme } from "@/lib/bruno/firmy";
 import { widokKonta } from "@/lib/bruno/jako";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
-import { crmWlaczony, pobierzLejek } from "@/lib/bruno/lejek";
+import { crmWlaczony, lejekFirmy } from "@/lib/bruno/lejek";
 import KlienciLista from "@/components/bruno/klienci-widok";
 import PrzelacznikHandlowca from "@/components/bruno/przelacznik-handlowca";
 
@@ -19,7 +19,7 @@ export default async function BrunoKlienciPage({ searchParams }: { searchParams:
   const konto = await pobierzKonto(email);
   if (!konto) redirect("/bruno");
   const firma = await pobierzFirme(konto.firma_id);
-  if (!crmWlaczony(firma) || !firma?.pipedrive_token) redirect("/bruno/panel");
+  if (!crmWlaczony(firma) || !firma) redirect("/bruno/panel");
   const { jezyk } = await tSerwer();
   const { q, status, jako } = await searchParams;
   const w = await widokKonta(konto, firma, jako);
@@ -27,7 +27,7 @@ export default async function BrunoKlienciPage({ searchParams }: { searchParams:
 
   let blad: string | null = null;
   try {
-    const lejek = await pobierzLejek(firma.pipedrive_token);
+    const lejek = await lejekFirmy(firma);
     const osoby = w.handlowcy.map((h) => ({ email: h.email.toLowerCase(), imie: h.imie ?? h.email, zdjecie: h.zdjecie_url ?? null }));
     const widoczne = szef ? lejek.deale : lejek.deale.filter((d) => d.handlowiec === w.konto.email.toLowerCase());
     return (
