@@ -48,7 +48,8 @@ void main(){
 // 28.10: `kolory` = 7 barw od dołu (ciemno) do szczytu (jasno); domyślnie pomarańczowa zorza z rejestracji.
 export const ZORZA_POMARANCZ = ["#050301", "#140a03", "#2e1606", "#6b3010", "#e07a24", "#fac78c", "#fff5e6"];
 const hex = (h: string): [number, number, number] => [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255];
-export default function AuroraCanvas({ fallbackClass, predkosc = 1, zakres = [0, 1], kolory = ZORZA_POMARANCZ }: { fallbackClass: string; predkosc?: number; zakres?: [number, number]; kolory?: string[] }) {
+// 8.11: `fs` = inny fragment shader z tymi samymi uniformami (R, T, Z, C0-C6); kula Bruno ma płynny (kula-limonka.tsx).
+export default function AuroraCanvas({ fallbackClass, predkosc = 1, zakres = [0, 1], kolory = ZORZA_POMARANCZ, fs: fsZrodlo = FS }: { fallbackClass: string; predkosc?: number; zakres?: [number, number]; kolory?: string[]; fs?: string }) {
   const paleta = kolory.join(",");
   const ref = useRef<HTMLCanvasElement>(null);
   const predkoscRef = useRef(predkosc);
@@ -73,7 +74,7 @@ export default function AuroraCanvas({ fallbackClass, predkosc = 1, zakres = [0,
       return o;
     };
     const vs = sh(gl.VERTEX_SHADER, VS);
-    const fs = sh(gl.FRAGMENT_SHADER, FS);
+    const fs = sh(gl.FRAGMENT_SHADER, fsZrodlo);
     const pr = gl.createProgram()!;
     gl.attachShader(pr, vs);
     gl.attachShader(pr, fs);
@@ -132,7 +133,7 @@ export default function AuroraCanvas({ fallbackClass, predkosc = 1, zakres = [0,
       gl.deleteShader(fs);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  }, [fallbackClass, zakres[0], zakres[1], paleta]);
+  }, [fallbackClass, zakres[0], zakres[1], paleta, fsZrodlo]);
 
   return <canvas ref={ref} aria-hidden />;
 }

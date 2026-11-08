@@ -18,7 +18,7 @@ export const maxDuration = 120;
 // Małe pliki (< 4 MB) można wysłać od razu jako multipart POST (pole `plik`). Wynik: { nazwa, typ, tekst }.
 
 const MAX_BAJTOW = 25 * 1024 * 1024; // limit Whispera
-const MAX_TEKST = 8000;
+const MAX_TEKST = 20000; // 8.11: 10 min nagrania = ok. 10 000 znaków
 const AUDIO = /^audio\/|\.(mp3|m4a|wav|webm|ogg|mp4|mpeg|mpga)$/i;
 const PDF = /^application\/pdf$|\.pdf$/i;
 

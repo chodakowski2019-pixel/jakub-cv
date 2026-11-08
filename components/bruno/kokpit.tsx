@@ -8,6 +8,7 @@ import { Ikona } from "@/components/podglad/panel/wspolne";
 import KulaLimonka from "@/components/bruno/kula-limonka";
 import TekstMd from "@/components/bruno/tekst-md";
 import { zJako } from "@/lib/bruno/linki";
+import { LIMIT_WHISPER, naKawalkiAudio, trzebaPrzerobic } from "@/lib/bruno/audio-kawalki";
 
 // 4.11 (USER_001): CZAT Z BRUNO = „tylko kulka na środku z ciekłym liquidem i UX/UI jak w ChatGPT”.
 // 5.11 (USER_001): (1) przycisk „Trenuj rozmowy” + komenda w czacie → trening 1:1 (/bruno/rozmowa);
@@ -124,19 +125,37 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
   };
 
   // 5.11 (pkt 3): plik → podpisany adres → kubełek → serwer robi z niego tekst (PDF: Claude, audio: Whisper).
+  const odczytaj = async (f: File) => {
+    const q = new URLSearchParams({ nazwa: f.name, typ: f.type });
+    const a = await fetch(`/api/bruno/kokpit/plik?${q}`);
+    const ja = (await a.json().catch(() => ({}))) as { url?: string; sciezka?: string; blad?: string };
+    if (!a.ok || !ja.url || !ja.sciezka) throw new Error(ja.blad || `HTTP ${a.status}`);
+    const up = await fetch(ja.url, { method: "PUT", body: f, headers: { "content-type": f.type || "application/octet-stream", "x-upsert": "true" } });
+    if (!up.ok) throw new Error(`upload ${up.status}`);
+    const r = await fetch("/api/bruno/kokpit/plik", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sciezka: ja.sciezka, nazwa: f.name, typ: f.type }) });
+    const j = (await r.json().catch(() => ({}))) as { nazwa?: string; typ?: "pdf" | "audio"; tekst?: string; blad?: string };
+    if (!r.ok || !j.tekst) throw new Error(j.blad || `HTTP ${r.status}`);
+    return { typ: j.typ ?? "pdf", tekst: j.tekst };
+  };
+
   const dodajPlik = async (f: File) => {
     setWgrywam(f.name);
     try {
-      const q = new URLSearchParams({ nazwa: f.name, typ: f.type });
-      const a = await fetch(`/api/bruno/kokpit/plik?${q}`);
-      const ja = (await a.json().catch(() => ({}))) as { url?: string; sciezka?: string; blad?: string };
-      if (!a.ok || !ja.url || !ja.sciezka) throw new Error(ja.blad || `HTTP ${a.status}`);
-      const up = await fetch(ja.url, { method: "PUT", body: f, headers: { "content-type": f.type || "application/octet-stream", "x-upsert": "true" } });
-      if (!up.ok) throw new Error(`upload ${up.status}`);
-      const r = await fetch("/api/bruno/kokpit/plik", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sciezka: ja.sciezka, nazwa: f.name, typ: f.type }) });
-      const j = (await r.json().catch(() => ({}))) as { nazwa?: string; typ?: "pdf" | "audio"; tekst?: string; blad?: string };
-      if (!r.ok || !j.tekst) throw new Error(j.blad || `HTTP ${r.status}`);
-      setZalaczniki((z) => [...z, { nazwa: j.nazwa ?? f.name, typ: j.typ ?? "pdf", tekst: j.tekst! }]);
+      // 8.11: film albo audio > 24 MB → dźwięk wyciągnięty w przeglądarce, kawałki po 10 min, każdy osobno do Whispera.
+      if (trzebaPrzerobic(f)) {
+        setWgrywam(`${f.name} (${t("extracting audio", "wyciągam dźwięk")})`);
+        const kawalki = await naKawalkiAudio(f);
+        const teksty: string[] = [];
+        for (let i = 0; i < kawalki.length; i++) {
+          setWgrywam(kawalki.length > 1 ? `${f.name} (${i + 1}/${kawalki.length})` : f.name);
+          teksty.push((await odczytaj(kawalki[i])).tekst);
+        }
+        setZalaczniki((z) => [...z, { nazwa: f.name, typ: "audio", tekst: teksty.join("\n") }]);
+      } else {
+        if (f.size > LIMIT_WHISPER) throw new Error(t("File over 24 MB.", "Plik ponad 24 MB."));
+        const j = await odczytaj(f);
+        setZalaczniki((z) => [...z, { nazwa: f.name, typ: j.typ, tekst: j.tekst }]);
+      }
     } catch (err) {
       setWiadomosci((w) => [...w, { rola: "assistant", tresc: `${t("Couldn't read the file", "Nie udało się odczytać pliku")} ${f.name}: ${String((err as Error)?.message ?? err)}`, blad: true, lokalna: true }]);
     } finally {
@@ -226,7 +245,8 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
   return (
     <div className={`bcz ${pusto ? "bcz-start" : "bcz-rozmowa-on"}`}>
       <div className="bcz-gora">
-        <span className="bcz-firma">{t("Chat", "Czat")}{szef ? "" : ` · ${imie}`}</span>
+        <span className="bcz-firma" />
+
         <span className="bcz-gora-p">
           <a href={TRENING} className="bcz-trenuj">
             <Ikona nazwa="mikrofon" rozmiar={13} grubosc={2.2} />
@@ -245,8 +265,8 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
       {pusto ? (
         <div className="bcz-powitanie">
           <h1 className="bcz-hej">
-            {t(`Hi ${imie}.`, `Cześć ${imie}.`)}{" "}
-            <span className="bcz-hej-2">{p ? t(`${p.otwarte} open deals, ${p.wartoscOtwarte}.`, `${p.otwarte} otwartych deali, ${p.wartoscOtwarte}.`) : t("What happened?", "Co się wydarzyło?")}</span>
+            {t(`Hi ${imie}!`, `Cześć ${imie}!`)}{" "}
+            <span className="bcz-hej-2">{t("How can I help you today?", "W czym mogę Ci dzisiaj pomóc?")}</span>
           </h1>
           <div className="bcz-pigulki">
             {pigulkiCrm.map((x) => (
@@ -324,7 +344,7 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
           </div>
         )}
         <form onSubmit={wyslij} className="bcz-pole">
-          <input ref={plik} type="file" accept=".pdf,application/pdf,audio/*,.mp3,.m4a,.wav" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) void dodajPlik(f); }} />
+          <input ref={plik} type="file" accept=".pdf,application/pdf,audio/*,video/*,.mp3,.m4a,.wav,.mp4,.mov" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) void dodajPlik(f); }} />
           <button type="button" onClick={() => plik.current?.click()} className="bcz-klip" disabled={Boolean(wgrywam)} aria-label={t("Attach PDF or audio", "Dodaj PDF albo nagranie")} title={t("PDF or audio", "PDF albo nagranie")}>
             <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M21 11.5l-8.5 8.5a5.5 5.5 0 0 1-7.8-7.8l9-9a3.5 3.5 0 0 1 5 5l-9 9a1.5 1.5 0 0 1-2.1-2.1L16 7" /></svg>
           </button>
@@ -332,7 +352,7 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
             ref={pole}
             className="bcz-textarea"
             rows={1}
-            placeholder={slucham ? t("Listening…", "Słucham…") : t("What happened?", "Co się wydarzyło?")}
+            placeholder={slucham ? t("Listening…", "Słucham…") : t("Type here...", "Napisz tutaj...")}
             value={tekst}
             onChange={(e) => {
               setTekst(e.target.value);

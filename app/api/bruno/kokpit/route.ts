@@ -120,7 +120,7 @@ const NARZEDZIA: Anthropic.Tool[] = [
 /** 5.11 (pkt 3): załącznik (PDF / nagranie) = tekst doklejony do wiadomości użytkownika. */
 type Zalacznik = { nazwa: string; typ: "pdf" | "audio"; tekst: string };
 const zZalacznikami = (tresc: string, z: Zalacznik[] | undefined) =>
-  !z?.length ? tresc : `${tresc}\n\n${z.map((x) => `[Załącznik: ${x.nazwa} (${x.typ === "audio" ? "nagranie, transkrypcja" : "PDF"})]\n${x.tekst.slice(0, 8000)}\n[Koniec załącznika]`).join("\n\n")}`;
+  !z?.length ? tresc : `${tresc}\n\n${z.map((x) => `[Załącznik: ${x.nazwa} (${x.typ === "audio" ? "nagranie, transkrypcja" : "PDF"})]\n${x.tekst.slice(0, 50000)}\n[Koniec załącznika]`).join("\n\n")}`;
 
 function dealDoTekstu(d: Deal, lejek: Lejek, imiona: Map<string, string>) {
   const etap = lejek.etapy.find((e) => e.id === d.etap_id)?.nazwa ?? d.etap_id;
@@ -190,7 +190,8 @@ export async function POST(req: Request) {
   ].join("\n\n");
 
   const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const messages: Anthropic.MessageParam[] = historia.map((w) => ({ role: w.rola as "user" | "assistant", content: w.tresc.slice(0, 3000) }));
+  // 8.11: ostatnia wiadomość (z transkrypcją załącznika) do 60 000 znaków; wcześniej cięło do 3 000 i nagranie znikało.
+  const messages: Anthropic.MessageParam[] = historia.map((w, i) => ({ role: w.rola as "user" | "assistant", content: w.tresc.slice(0, i === historia.length - 1 ? 60000 : 3000) }));
   const akcje: Akcja[] = [];
   let przekieruj: string | null = null;
 
