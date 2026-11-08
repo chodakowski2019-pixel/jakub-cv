@@ -497,3 +497,17 @@ a.kl2-imie:hover { text-decoration: underline; text-underline-offset: 3px; }
 .kl2-podglad { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; padding-top: 6px; color: var(--p-ink); }
 .kl2-input { flex: 1; height: 40px; border-radius: 12px; border: 1px solid var(--p-ramka); padding: 0 12px; font: inherit; font-size: 14px; min-width: 0; }
 .kl2-naglowek-akcje { display: flex; gap: 8px; flex-wrap: wrap; }
+.kl2-tel { display: flex; gap: 6px; }
+.kl2-tel select { flex: none; width: 104px; padding: 0 8px !important; }
+.kl2-tel input { flex: 1; }
+.kl2-tabela { table-layout: fixed; width: 100%; }
+.kl2-tabela th { font-weight: 700; color: var(--p-ink); text-align: left; }
+.kl2-tabela td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kl2-tabela th, .kl2-tabela td { padding-left: 12px; padding-right: 12px; }
+.kl2-wiersz { cursor: pointer; }
+.kl2-wiersz:hover td { background: #f6f7f9; }
+.kl2-wiersz:focus-visible { outline: 2px solid var(--p-ink); outline-offset: -2px; }
+.kl2-td-edytuj { text-align: right; }
+.kl2-olowek { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--p-ramka); background: #fff; color: var(--p-ink); display: inline-grid; place-items: center; cursor: pointer; transition: background 150ms; }
+.kl2-olowek:hover { background: var(--p-lim); border-color: transparent; }
+.kl2-tabela td.kl2-td-edytuj { overflow: visible; }

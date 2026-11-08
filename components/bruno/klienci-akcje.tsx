@@ -8,6 +8,33 @@ import type { Jezyk } from "@/lib/bruno/i18n";
 // e-mail, etap, wartość, płeć) → /api/bruno/klienci. (2) Kółko klienta: zdjęcie albo sylwetka (mężczyzna / kobieta);
 // klik = wgraj zdjęcie (przeglądarka zmniejsza do 320 px JPG) → /api/bruno/klienci/zdjecie.
 
+/** 8.11: kraje do prefiksu telefonu (Polska domyślnie, potem rynki Bruno: UK, Irlandia, USA). */
+const PREFIKSY = [
+  { kod: "PL", flaga: "🇵🇱", prefiks: "+48" },
+  { kod: "GB", flaga: "🇬🇧", prefiks: "+44" },
+  { kod: "IE", flaga: "🇮🇪", prefiks: "+353" },
+  { kod: "US", flaga: "🇺🇸", prefiks: "+1" },
+  { kod: "DE", flaga: "🇩🇪", prefiks: "+49" },
+  { kod: "CZ", flaga: "🇨🇿", prefiks: "+420" },
+  { kod: "SK", flaga: "🇸🇰", prefiks: "+421" },
+  { kod: "UA", flaga: "🇺🇦", prefiks: "+380" },
+  { kod: "LT", flaga: "🇱🇹", prefiks: "+370" },
+  { kod: "SE", flaga: "🇸🇪", prefiks: "+46" },
+  { kod: "NO", flaga: "🇳🇴", prefiks: "+47" },
+  { kod: "NL", flaga: "🇳🇱", prefiks: "+31" },
+  { kod: "FR", flaga: "🇫🇷", prefiks: "+33" },
+  { kod: "ES", flaga: "🇪🇸", prefiks: "+34" },
+  { kod: "IT", flaga: "🇮🇹", prefiks: "+39" },
+];
+/** Numer z prefiksem: wpisany już z „+” albo „00” zostaje, inaczej prefiks z flagi + numer bez zera na początku. */
+function zPrefiksem(prefiks: string | undefined, numer: string | undefined): string {
+  const n = String(numer ?? "").trim();
+  if (!n) return "";
+  if (n.startsWith("+")) return n;
+  if (n.startsWith("00")) return `+${n.slice(2)}`;
+  return `${prefiks || "+48"} ${n.replace(/^0+/, "")}`;
+}
+
 const tt = (j: Jezyk) => (en: string, pl: string) => (j === "pl" ? pl : en);
 
 export function Sylwetka({ plec, rozmiar = 40 }: { plec: "m" | "k"; rozmiar?: number }) {
@@ -80,19 +107,34 @@ export function AwatarKlienta({ dealId, zdjecie, plec, imie, jezyk, rozmiar = 40
   );
 }
 
-export function DodajKlienta({ etapy, jezyk }: { etapy: { id: number; nazwa: string }[]; jezyk: Jezyk }) {
+export type DaneKlienta = { id: number; imie_nazwisko: string; firma: string | null; telefon: string | null; email: string | null; etap_id: number; wartosc: number; plec: "m" | "k" | null };
+
+/** Rozbija zapisany numer na prefiks z listy i resztę (do edycji). */
+function rozbijTelefon(tel: string | null): { prefiks: string; numer: string } {
+  const n = String(tel ?? "").trim();
+  const p = [...PREFIKSY].sort((a, b) => b.prefiks.length - a.prefiks.length).find((x) => n.startsWith(x.prefiks));
+  return p ? { prefiks: p.prefiks, numer: n.slice(p.prefiks.length).trim() } : { prefiks: "+48", numer: n };
+}
+
+/** 8.11: jeden formularz klienta. Bez `klient` = „+ Dodaj klienta” (POST), z `klient` = „Edytuj” (PATCH). */
+export function DodajKlienta({ etapy, jezyk, klient = null, maly = false }: { etapy: { id: number; nazwa: string }[]; jezyk: Jezyk; klient?: DaneKlienta | null; /** 8.11: sam ołówek (wiersz tabeli). */ maly?: boolean }) {
   const t = tt(jezyk);
   const router = useRouter();
+  const edycja = Boolean(klient);
+  const tel = rozbijTelefon(klient?.telefon ?? null);
   const [otwarte, setOtwarte] = useState(false);
   const [wysylam, setWysylam] = useState(false);
   const [blad, setBlad] = useState<string | null>(null);
+  const tytul = edycja ? t("Edit client", "Edytuj klienta") : t("Add client", "Dodaj klienta");
   const wyslij = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setBlad(null);
     setWysylam(true);
-    const d = Object.fromEntries(new FormData(e.currentTarget).entries());
+    const d = Object.fromEntries(new FormData(e.currentTarget).entries()) as Record<string, string>;
+    d.telefon = zPrefiksem(d.prefiks, d.telefon);
+    delete d.prefiks;
     try {
-      const r = await fetch("/api/bruno/klienci", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(d) });
+      const r = await fetch(edycja ? `/api/bruno/klienci/${klient!.id}` : "/api/bruno/klienci", { method: edycja ? "PATCH" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(d) });
       const j = (await r.json().catch(() => ({}))) as { blad?: string };
       if (!r.ok) throw new Error(j.blad || `HTTP ${r.status}`);
       setOtwarte(false);
@@ -105,36 +147,51 @@ export function DodajKlienta({ etapy, jezyk }: { etapy: { id: number; nazwa: str
   };
   return (
     <>
-      <button type="button" className="p-btn kl2-dodaj" onClick={() => setOtwarte(true)}>
-        <span aria-hidden>+</span> {t("Add client", "Dodaj klienta")}
-      </button>
+      {edycja ? (
+        <button type="button" className={maly ? "kl2-olowek" : "p-btn p-btn-2"} onClick={() => setOtwarte(true)} aria-label={tytul} title={tytul}>
+          <svg viewBox="0 0 24 24" width={15} height={15} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" /></svg>
+          {!maly && t("Edit", "Edytuj")}
+        </button>
+      ) : (
+        <button type="button" className="p-btn kl2-dodaj" onClick={() => setOtwarte(true)}>
+          <span aria-hidden>+</span> {tytul}
+        </button>
+      )}
       {otwarte && (
-        <div className="kl2-tlo" role="dialog" aria-modal="true" aria-label={t("Add client", "Dodaj klienta")} onClick={(e) => { if (e.target === e.currentTarget) setOtwarte(false); }}>
+        <div className="kl2-tlo" role="dialog" aria-modal="true" aria-label={tytul} onClick={(e) => { e.stopPropagation(); if (e.target === e.currentTarget) setOtwarte(false); }} onKeyDown={(e) => e.stopPropagation()}>
           <form className="kl2-okno" onSubmit={wyslij}>
             <div className="kl2-okno-hd">
-              <h2>{t("Add client", "Dodaj klienta")}</h2>
+              <h2>{tytul}</h2>
               <button type="button" onClick={() => setOtwarte(false)} aria-label={t("Close", "Zamknij")}>×</button>
             </div>
-            <label className="kl2-pole kl2-cale"><span>{t("Full name", "Imię i nazwisko")} *</span><input name="imie_nazwisko" required maxLength={160} autoFocus /></label>
-            <label className="kl2-pole kl2-cale"><span>{t("Company", "Firma")}</span><input name="firma" maxLength={160} /></label>
-            <label className="kl2-pole"><span>{t("Phone", "Numer telefonu")}</span><input name="telefon" type="tel" maxLength={40} /></label>
-            <label className="kl2-pole"><span>E-mail</span><input name="email" type="email" maxLength={160} /></label>
+            <label className="kl2-pole kl2-cale"><span>{t("Full name", "Imię i nazwisko")} *</span><input name="imie_nazwisko" required maxLength={160} autoFocus defaultValue={klient?.imie_nazwisko ?? ""} /></label>
+            <label className="kl2-pole kl2-cale"><span>{t("Company", "Firma")}</span><input name="firma" maxLength={160} defaultValue={klient?.firma ?? ""} /></label>
+            <label className="kl2-pole"><span>{t("Phone", "Numer telefonu")}</span>
+              {/* 8.11 (USER_001): flaga kraju = prefiks; numer bez prefiksu, zapis „+48 600 100 200”. */}
+              <span className="kl2-tel">
+                <select name="prefiks" defaultValue={tel.prefiks} aria-label={t("Country code", "Prefiks kraju")}>
+                  {PREFIKSY.map((p) => <option key={p.kod} value={p.prefiks}>{p.flaga} {p.prefiks}</option>)}
+                </select>
+                <input name="telefon" type="tel" inputMode="tel" maxLength={30} placeholder="600 100 200" defaultValue={tel.numer} />
+              </span>
+            </label>
+            <label className="kl2-pole"><span>E-mail</span><input name="email" type="email" maxLength={160} defaultValue={klient?.email ?? ""} /></label>
             <label className="kl2-pole"><span>{t("Stage", "Etap")}</span>
-              <select name="etap_id" defaultValue={etapy[0]?.id}>
+              <select name="etap_id" defaultValue={klient?.etap_id ?? etapy[0]?.id}>
                 {etapy.map((e) => <option key={e.id} value={e.id}>{e.nazwa}</option>)}
               </select>
             </label>
-            <label className="kl2-pole"><span>{t("Expected value (PLN)", "Przewidywana wartość (zł)")}</span><input name="wartosc" inputMode="numeric" placeholder="0" maxLength={12} /></label>
+            <label className="kl2-pole"><span>{t("Expected value (PLN)", "Przewidywana wartość (zł)")}</span><input name="wartosc" inputMode="numeric" placeholder="0" maxLength={12} defaultValue={klient?.wartosc ? String(Math.round(klient.wartosc)) : ""} /></label>
             <fieldset className="kl2-pole kl2-cale kl2-plec">
-              <span>{t("Photo outline", "Sylwetka")}</span>
-              <label><input type="radio" name="plec" value="" defaultChecked /> {t("from first name", "z imienia")}</label>
-              <label><input type="radio" name="plec" value="m" /> {t("man", "mężczyzna")}</label>
-              <label><input type="radio" name="plec" value="k" /> {t("woman", "kobieta")}</label>
+              <span>{t("Gender", "Płeć")}</span>
+              <label><input type="radio" name="plec" value="" defaultChecked={!klient?.plec} /> {t("from first name", "z imienia")}</label>
+              <label><input type="radio" name="plec" value="m" defaultChecked={klient?.plec === "m"} /> {t("man", "mężczyzna")}</label>
+              <label><input type="radio" name="plec" value="k" defaultChecked={klient?.plec === "k"} /> {t("woman", "kobieta")}</label>
             </fieldset>
             {blad && <p className="kl2-blad">{blad}</p>}
             <div className="kl2-okno-dol">
               <button type="button" className="p-btn p-btn-2" onClick={() => setOtwarte(false)}>{t("Cancel", "Anuluj")}</button>
-              <button type="submit" className="p-btn" disabled={wysylam}>{wysylam ? t("Saving…", "Zapisuję…") : t("Add client", "Dodaj klienta")}</button>
+              <button type="submit" className="p-btn" disabled={wysylam}>{wysylam ? t("Saving…", "Zapisuję…") : edycja ? t("Save", "Zapisz") : tytul}</button>
             </div>
           </form>
         </div>
@@ -283,5 +340,22 @@ export function ImportKlientow({ jezyk, szef }: { jezyk: Jezyk; szef: boolean })
         </div>
       )}
     </>
+  );
+}
+
+/** 8.11 (USER_001: „żeby wejść w lead, klikam w całość, nie tylko w imię”): wiersz tabeli Klienci = link do karty.
+ * Kliknięcia w zdjęcie, telefon i e-mail działają po swojemu (nie otwierają karty). Klawiatura: Enter. */
+export function WierszKlienta({ href, opoznienie, children }: { href: string | null; opoznienie: number; children: React.ReactNode }) {
+  const router = useRouter();
+  const idz = (e: React.MouseEvent | React.KeyboardEvent) => {
+    if (!href) return;
+    if ((e.target as HTMLElement).closest("a, button, input, label")) return;
+    if ("metaKey" in e && (e.metaKey || e.ctrlKey)) window.open(href, "_blank");
+    else router.push(href);
+  };
+  return (
+    <tr className={href ? "kl2-wiersz" : undefined} style={{ animationDelay: `${opoznienie}ms` }} onClick={idz} onKeyDown={(e) => { if (e.key === "Enter") idz(e); }} tabIndex={href ? 0 : undefined} role={href ? "link" : undefined}>
+      {children}
+    </tr>
   );
 }

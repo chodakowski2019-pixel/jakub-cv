@@ -7,6 +7,8 @@ import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { analizaZDeali, crmWlaczony, dealeBezRuchu, formatKwota, lejekFirmy, naglowekZadania } from "@/lib/bruno/lejek";
 import { notatkiKlienta, zadaniaFirmyCrm } from "@/lib/bruno/crm";
 import { linkTreningu, planNaDzis } from "@/lib/bruno/plan-treningu";
+import { profileFirmy } from "@/lib/bruno/klienci";
+import { twarzKlienta } from "@/lib/bruno/plec";
 import { dobierzTrening } from "@/lib/bruno/dobor-treningu";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
 import Kokpit, { type Powitanie } from "@/components/bruno/kokpit";
@@ -34,6 +36,9 @@ export default async function BrunoKokpitPage({ searchParams }: { searchParams: 
   const handlowcy = szef ? w.handlowcy : [w.konto];
   const dzis = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
 
+  // 8.11: twarz klienta = zdjęcie z profilu → demo → sylwetka (prawdziwa firma nie dostaje cudzych twarzy).
+  const profile = await profileFirmy(firma.id).catch(() => new Map());
+  const twarz = (id: number | null, osoba: string | null | undefined) => twarzKlienta(osoba, { zdjecie: id ? profile.get(id)?.zdjecie : null, plec: id ? profile.get(id)?.plec : null, demo: Boolean(firma.demo_dane), demoZdjecie: zdjecieKlienta });
   let powitanie: Powitanie | null = null;
   try {
     const [lejek, zadania, domena, rozmowy] = await Promise.all([lejekFirmy(firma), zadaniaFirmyCrm(firma.id, { do: dzis }), Promise.resolve(null), pobierzRozmowy(w.konto.email, 20)]);
@@ -48,11 +53,11 @@ export default async function BrunoKokpitPage({ searchParams }: { searchParams: 
       .slice(0, 8)
       .map((z) => {
         const d = moje.find((x) => x.id === z.deal_id);
-        return { id: z.id, temat: naglowekZadania(z.temat), data: z.data, godzina: z.godzina, zalegle: z.data < dzis, deal: d?.tytul ?? z.organizacja ?? "", dealId: z.deal_id, osoba: d?.osoba ?? z.osoba ?? null, zdjecie: zdjecieKlienta(d?.osoba ?? z.osoba), kto: szef ? imie(d?.handlowiec ?? null) : null };
+        return { id: z.id, temat: naglowekZadania(z.temat), data: z.data, godzina: z.godzina, zalegle: z.data < dzis, deal: d?.tytul ?? z.organizacja ?? "", dealId: z.deal_id, osoba: d?.osoba ?? z.osoba ?? null, zdjecie: twarz(d?.id ?? null, d?.osoba ?? z.osoba), kto: szef ? imie(d?.handlowiec ?? null) : null };
       });
     const bezRuchu = dealeBezRuchu(moje, 7)
       .slice(0, 6)
-      .map((d) => ({ id: d.id, tytul: d.tytul, etap: lejek.etapy.find((e) => e.id === d.etap_id)?.nazwa ?? "", wartosc: kwota(d.wartosc, d.waluta), dni: Math.floor((Date.now() - new Date(d.aktualizacja!).getTime()) / 86_400_000), osoba: d.osoba, zdjecie: zdjecieKlienta(d.osoba), kto: szef ? imie(d.handlowiec) : null }));
+      .map((d) => ({ id: d.id, tytul: d.tytul, etap: lejek.etapy.find((e) => e.id === d.etap_id)?.nazwa ?? "", wartosc: kwota(d.wartosc, d.waluta), dni: Math.floor((Date.now() - new Date(d.aktualizacja!).getTime()) / 86_400_000), osoba: d.osoba, zdjecie: twarz(d.id, d.osoba), kto: szef ? imie(d.handlowiec) : null }));
     let trening: Powitanie["trening"] = null;
     if (!szef) {
       const analiza = analizaZDeali(ja, lejek.etapy, moje);

@@ -5,8 +5,8 @@ import { locale, tDla, type Jezyk } from "@/lib/bruno/i18n";
 import { formatKwota, naglowekZadania, type Aktywnosc, type Deal, type Etap, type Zdarzenie } from "@/lib/bruno/lejek";
 import { zJako } from "@/lib/bruno/jako";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
-import { AwatarKlienta, DodajKlienta, ImportKlientow } from "@/components/bruno/klienci-akcje";
-import { plecZImienia } from "@/lib/bruno/plec";
+import { AwatarKlienta, DodajKlienta, ImportKlientow, WierszKlienta } from "@/components/bruno/klienci-akcje";
+import { plecZImienia, twarzKlienta } from "@/lib/bruno/plec";
 
 // 4.11 (USER_001, pkt 2): ZAKŁADKA KLIENCI (lista) + KARTA KLIENTA. Dane na żywo z CRM (Pipedrive).
 // 6.11: nowy system zakładek (panel-2.css, p-* / pk-*): kafelki nad listą (klienci, wartość, zaległe, bez kroku),
@@ -123,6 +123,16 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad
             </form>
             <div className="p-tabela-wrap">
               <table className="p-tabela kl2-tabela">
+                {/* 8.11 (USER_001): nagłówki pogrubione, każdy nad swoją kolumną (stałe szerokości); cały wiersz klikalny. */}
+                <colgroup>
+                  <col style={{ width: 72 }} />
+                  <col style={{ width: "20%" }} />
+                  <col style={{ width: "14%" }} />
+                  <col style={{ width: "14%" }} />
+                  <col style={{ width: "20%" }} />
+                  <col />
+                  <col style={{ width: 56 }} />
+                </colgroup>
                 <thead>
                   <tr>
                     <th aria-label={t("Photo", "Zdjęcie")} />
@@ -131,6 +141,7 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad
                     <th>{t("Phone", "Numer telefonu")}</th>
                     <th>E-mail</th>
                     <th>{t("Stage", "Etap")}</th>
+                    <th aria-label={t("Edit", "Edytuj")} />
                   </tr>
                 </thead>
                 <tbody>
@@ -139,7 +150,7 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad
                     const nazwa = d.osoba ?? d.tytul;
                     const pr = profile[d.id];
                     return (
-                      <tr key={d.id} style={{ animationDelay: `${Math.min(i, 20) * 20}ms` }}>
+                      <WierszKlienta key={d.id} href={kartaKlienta ? zJako(`/bruno/klienci/${d.id}`, jako) : null} opoznienie={Math.min(i, 20) * 20}>
                         <td className="kl2-td-foto"><AwatarKlienta dealId={d.id} zdjecie={pr?.zdjecie ?? null} plec={pr?.plec ?? plecZImienia(d.osoba)} imie={nazwa} jezyk={jezyk} /></td>
                         <td>{kartaKlienta ? <Link href={zJako(`/bruno/klienci/${d.id}`, jako)} className="kl2-imie">{nazwa}</Link> : <span className="kl2-imie">{nazwa}</span>}</td>
                         <td>{d.organizacja ?? <span className="p-cichy">–</span>}</td>
@@ -151,12 +162,13 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad
                             <EtapKropki etapy={etapy} idx={idx} status={d.status} />
                           </span>
                         </td>
-                      </tr>
+                        <td className="kl2-td-edytuj"><DodajKlienta maly etapy={etapy.map((e) => ({ id: e.id, nazwa: e.nazwa }))} jezyk={jezyk} klient={{ id: d.id, imie_nazwisko: d.osoba ?? d.tytul, firma: d.organizacja, telefon: d.telefon ?? null, email: d.email ?? null, etap_id: d.etap_id, wartosc: d.wartosc, plec: pr?.plec ?? null }} /></td>
+                      </WierszKlienta>
                     );
                   })}
                   {lista.length === 0 && (
                     <tr>
-                      <td colSpan={6}><Pusto tytul={t("No clients yet", "Brak klientów")} opis={szukaj ? t("Try another search.", "Spróbuj innej frazy.") : t("Add the first one with “+ Add client”.", "Dodaj pierwszego przyciskiem „+ Dodaj klienta”.")} /></td>
+                      <td colSpan={7}><Pusto tytul={t("No clients yet", "Brak klientów")} opis={szukaj ? t("Try another search.", "Spróbuj innej frazy.") : t("Add the first one with “+ Add client”.", "Dodaj pierwszego przyciskiem „+ Dodaj klienta”.")} /></td>
                     </tr>
                   )}
                 </tbody>
@@ -169,7 +181,7 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad
   );
 }
 
-export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnosci, historia = [], handlowiec, linkCrm, jako = null }: { firma: Firma | null; jezyk: Jezyk; szef: boolean; deal: Deal; etapy: Etap[]; notatki: { id: number; tresc: string; kiedy: string }[]; aktywnosci: (Aktywnosc & { typNazwa: string })[]; /** 5.11 (pkt 4): jedna oś czasu z Pipedrive, wpisy Bruno oznaczone. */ historia?: Zdarzenie[]; handlowiec: Osoba | null; linkCrm: string | null; jako?: string | null }) {
+export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnosci, historia = [], handlowiec, linkCrm, jako = null, plec = null, zdjecie = null }: { /** 8.11: zapisana płeć (formularz edycji) i zdjęcie z profilu. */ plec?: "m" | "k" | null; zdjecie?: string | null; firma: Firma | null; jezyk: Jezyk; szef: boolean; deal: Deal; etapy: Etap[]; notatki: { id: number; tresc: string; kiedy: string }[]; aktywnosci: (Aktywnosc & { typNazwa: string })[]; /** 5.11 (pkt 4): jedna oś czasu z Pipedrive, wpisy Bruno oznaczone. */ historia?: Zdarzenie[]; handlowiec: Osoba | null; linkCrm: string | null; jako?: string | null }) {
   const t = tDla(jezyk);
   void firma;
   const etap = etapy.find((e) => e.id === deal.etap_id);
@@ -206,7 +218,7 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
         wstecz={{ href: zJako("/bruno/klienci", jako), tekst: t("Clients", "Klienci") }}
         tytul={deal.osoba ?? deal.tytul}
         podtytul={[deal.organizacja, deal.osoba && deal.tytul !== deal.osoba && deal.tytul !== deal.organizacja ? deal.tytul : null].filter(Boolean).join(" · ") || undefined}
-        obraz={zdjecieKlienta(deal.osoba)}
+        obraz={twarzKlienta(deal.osoba, { zdjecie, plec, demo: Boolean(firma?.demo_dane), demoZdjecie: zdjecieKlienta })}
         imie={deal.osoba ?? deal.tytul}
         prawo={statusChip}
       />
@@ -230,6 +242,8 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
         <div className="pk-akcje">
           <Link href={linkTreningu} className="p-btn">{t("Train this call", "Trenuj rozmowę")} →</Link>
           <Link href={zJako(`/bruno/kokpit?deal=${encodeURIComponent(deal.tytul)}`, jako)} className="p-btn p-btn-2">{t("Tell Bruno", "Powiedz Bruno")}</Link>
+          {/* 8.11 (USER_001): edycja leada. */}
+          <DodajKlienta etapy={etapy.map((e) => ({ id: e.id, nazwa: e.nazwa }))} jezyk={jezyk} klient={{ id: deal.id, imie_nazwisko: deal.osoba ?? deal.tytul, firma: deal.organizacja, telefon: deal.telefon ?? null, email: deal.email ?? null, etap_id: deal.etap_id, wartosc: deal.wartosc, plec }} />
           {linkCrm && <a href={linkCrm} target="_blank" rel="noreferrer" className="p-btn p-btn-2">Pipedrive ↗</a>}
         </div>
       </section>

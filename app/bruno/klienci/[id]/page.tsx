@@ -6,6 +6,7 @@ import { widokKonta } from "@/lib/bruno/jako";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { crmWlaczony, lejekFirmy } from "@/lib/bruno/lejek";
 import { historiaKlienta, notatkiKlienta, zadaniaKlienta } from "@/lib/bruno/crm";
+import { profileFirmy } from "@/lib/bruno/klienci";
 
 // 8.11: nazwy typów zadań w CRM Bruno.
 const TYPY: Record<string, [string, string]> = { call: ["Call", "Telefon"], meeting: ["Meeting", "Spotkanie"], email: ["E-mail", "E-mail"], task: ["Task", "Zadanie"], trening: ["Bruno training", "Trening Bruno"] };
@@ -34,7 +35,7 @@ export default async function BrunoKlientPage({ params, searchParams }: { params
   const deal = lejek.deale.find((d) => d.id === dealId);
   if (!deal || (!w.szef && deal.handlowiec !== w.konto.email.toLowerCase())) notFound();
   // 8.11: historia = jedna oś czasu z CRM Bruno (notatki, zadania, zmiany etapu / statusu / wartości), wpisy Bruno oznaczone.
-  const [notatki, aktywnosci, historia] = await Promise.all([notatkiKlienta(firma.id, dealId, 30), zadaniaKlienta(firma.id, dealId, 50), historiaKlienta(firma.id, dealId)]);
+  const [notatki, aktywnosci, historia, profile] = await Promise.all([notatkiKlienta(firma.id, dealId, 30), zadaniaKlienta(firma.id, dealId, 50), historiaKlienta(firma.id, dealId), profileFirmy(firma.id).catch(() => new Map())]);
   const typ = (k: string | null) => (k ? (TYPY[k]?.[jezyk === "pl" ? 1 : 0] ?? k) : null);
   const osoby = w.handlowcy.map((h) => ({ email: h.email.toLowerCase(), imie: h.imie ?? h.email, zdjecie: h.zdjecie_url ?? null }));
   return (
@@ -49,6 +50,8 @@ export default async function BrunoKlientPage({ params, searchParams }: { params
       historia={historia.map((h) => (h.typKlucz ? { ...h, pod: [typ(h.typKlucz), h.pod].filter(Boolean).join(" · ") } : h))}
       handlowiec={osoby.find((o) => o.email === deal.handlowiec) ?? null}
       linkCrm={null}
+      plec={profile.get(dealId)?.plec ?? null}
+      zdjecie={profile.get(dealId)?.zdjecie ?? null}
       jako={w.jako}
     />
   );

@@ -214,3 +214,16 @@ export async function nowyKlientCrm(firmaId: string, handlowiec: string, k: { im
 export async function zapiszTreningCrm(firmaId: string, klientId: number | null, w: { temat: string; notatka: string; autor: string; kiedy: string }) {
   return zapiszZdarzenie(firmaId, klientId, { typ: "zadanie", typ_zadania: "trening", tekst: w.temat.slice(0, 300), pod: w.notatka.slice(0, 4000), zrobione: true, zrobione_at: w.kiedy, data: w.kiedy.slice(0, 10), autor: w.autor, bruno: true });
 }
+
+/** 8.11 (USER_001: „button do edycji leada”): zmiana danych klienta. Etap i wartość zapisują się też w historii. */
+export async function edytujKlientaCrm(firmaId: string, klientId: number, z: { imie_nazwisko?: string; firma?: string | null; telefon?: string | null; email?: string | null; etap_id?: number | null; wartosc?: number | null }, autor: string) {
+  const { data: byl } = await sb().from("bruno_klienci").select("etap_id, wartosc").eq("id", klientId).eq("firma_id", firmaId).maybeSingle();
+  if (!byl) throw new Error("Nie ma takiego klienta.");
+  const zmiana: Record<string, unknown> = { aktualizacja: teraz() };
+  for (const k of ["imie_nazwisko", "firma", "telefon", "email"] as const) if (z[k] !== undefined) zmiana[k] = z[k];
+  const { error } = await sb().from("bruno_klienci").update(zmiana).eq("id", klientId).eq("firma_id", firmaId);
+  if (error) throw new Error(error.message);
+  if (z.etap_id && Number(z.etap_id) !== Number(byl.etap_id)) await przesunEtapCrm(firmaId, klientId, Number(z.etap_id), autor);
+  if (typeof z.wartosc === "number" && z.wartosc !== Number(byl.wartosc)) await zmienWartoscCrm(firmaId, klientId, z.wartosc, autor);
+  return { id: klientId };
+}

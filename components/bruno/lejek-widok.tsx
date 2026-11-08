@@ -12,6 +12,7 @@ import { tDla, type Jezyk } from "@/lib/bruno/i18n";
 import { formatKwota, type AnalizaHandlowca, type Deal, type Etap, type EtapStat } from "@/lib/bruno/lejek";
 import { zJako } from "@/lib/bruno/jako";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
+import { twarzKlienta } from "@/lib/bruno/plec";
 
 // 4.11 (USER_001): WIZUALIZACJA LEJKA z CRM. 6.11: nowy system zakładek (panel-2.css, klasy p-* / pl-*):
 // kafelki (otwarte, w lejku, wygrane, przegrane, skuteczność), lejek SVG (lejek-wykres.tsx), alarm handlowca,
@@ -293,7 +294,7 @@ export default function LejekWidok({
             return (
               <li key={d.id} className="pl-deal" style={{ animationDelay: `${i * 25}ms` }}>
                 <span className="p-osoba">
-                  <Twarz src={zdjecieKlienta(d.osoba)} imie={d.osoba ?? d.tytul} rozmiar={32} />
+                  <Twarz src={twarzKlienta(d.osoba, { demo: Boolean(firma?.demo_dane), demoZdjecie: zdjecieKlienta })} imie={d.osoba ?? d.tytul} rozmiar={32} />
                   <span className="min-w-0">
                     <Link href={zJako(`/bruno/klienci/${d.id}`, jako)}><b>{d.tytul}</b></Link>
                     <small>
