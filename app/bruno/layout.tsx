@@ -80,7 +80,10 @@ export default async function BrunoLayout({ children }: { children: React.ReactN
   // (szef firmy testuje) i bez konta free po blokadzie (ono idzie do „Odblokuj”, inaczej pętla).
   // 25.10: konto demo (firma z skryptu bruno-demo-firma) bez ankiety: szef loguje się na spotkaniu i od razu widzi zespół.
   const demo = Boolean(konto?.demo);
-  const ankietaBrak = Boolean(konto && !profilBrak && !free?.zablokowane && (await ankietaWymagana(email, free?.pula === 1 || demo)));
+  // 8.11 (USER_001: „nie robimy już tej ankiety na tym etapie, logowanie od razu do panelu”): ankieta WYŁĄCZONA.
+  // Włączenie z powrotem = ANKIETA_WLACZONA = true (kod ankiety i /bruno/ankieta zostają).
+  const ANKIETA_WLACZONA = false;
+  const ankietaBrak = ANKIETA_WLACZONA && Boolean(konto && !profilBrak && !free?.zablokowane && (await ankietaWymagana(email, free?.pula === 1 || demo)));
   if (ankietaBrak && sciezka && sciezka !== "/bruno/ankieta") redirect("/bruno/ankieta");
 
   // 25.10 (USER_001): firma konta (logo w pasku) i czy to szef (zakładka „Zespół”, przełącznik widoku).

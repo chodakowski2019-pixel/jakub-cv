@@ -69,7 +69,9 @@ export default function UkladZloty({
   if (sciezka === "/bruno/start" || sciezka === "/bruno/ankieta" || sciezka === "/bruno/przygotuj") {
     return <main className="px-4 sm:px-6 pb-10 pt-10 max-w-3xl w-full mx-auto">{children}</main>;
   }
-  if (doProfilu || doAnkiety) return null;
+  // 8.11 (USER_001: „nie powinno być takiego tła”): w chwili przekierowania pusty ekran pokazywał niebieską poświatę
+  // jakubchodakowski.com. Zamiast null = jasne tło (bruno-lp-jasne chowa poświatę, globals.css).
+  if (doProfilu || doAnkiety) return <div className="bruno-lp-jasne" style={{ minHeight: "100vh", background: "#fff" }} />;
 
   // 14.10: na telefonie wszędzie ta sama nawigacja jak w aplikacji (górna belka + dolny pasek), CSS chowa ją na komputerze.
   const tel = <NavTel dostep={dostep} inicjal={inicjal} free={free} logo={logo} />;
