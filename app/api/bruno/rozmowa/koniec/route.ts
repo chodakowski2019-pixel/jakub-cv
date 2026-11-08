@@ -100,9 +100,9 @@ export async function POST(req: Request) {
     });
     await supabaseAdmin.from("bruno_rozmowy").update({ feedback, ocena: feedback.ocena }).eq("id", id);
     await zaktualizujKarty(email, feedback);
-    // 2.11: wynik do CRM firmy (Pipedrive), po odpowiedzi, bez wpływu na handlowca.
+    // 2.11: wynik do CRM firmy, po odpowiedzi, bez wpływu na handlowca. 8.11: CRM Bruno, przy kliencie (klient_id).
     after(async () => {
-      await wyslijWynikDoCrm(konto, { id, start: rozmowa.start, sekundy, obiekcja: rozmowa.obiekcja ?? null, postac: rozmowa.postac ?? null, poziom: rozmowa.poziom ?? null }, feedback);
+      await wyslijWynikDoCrm(konto, { id, start: rozmowa.start, sekundy, obiekcja: rozmowa.obiekcja ?? null, postac: rozmowa.postac ?? null, poziom: rozmowa.poziom ?? null, klient_id: rozmowa.klient_id ?? null }, feedback);
     });
     // Minusy z tej rozmowy → fiszki „do poprawy" w Treningu (USER_001 2.10).
     try {

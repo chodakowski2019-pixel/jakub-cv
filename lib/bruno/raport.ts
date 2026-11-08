@@ -4,7 +4,8 @@ import type { Konto } from "./db";
 import { ankietyKonta } from "./ankieta-db";
 import { etykiety } from "./etykiety";
 import { handlowcyFirmy, rozmowyZespolu, type Firma } from "./firmy";
-import { analizaZDeali, lejekFirmy, zadaniaFirmy, type Lejek } from "./lejek";
+import { analizaZDeali, lejekFirmy, type Lejek } from "./lejek";
+import { zadaniaFirmyCrm } from "./crm";
 import { statystykiHandlowca, type StatHandlowca } from "./zespol";
 
 // 4.11 (USER_001, pkt 3): KOKPIT SZEFA = statystyki każdego handlowca (CRM + treningi + sprawdzian mentalny)
@@ -39,16 +40,15 @@ export type WierszZespolu = {
 export type DaneRaportu = { firma: Firma; lejek: Lejek; wiersze: WierszZespolu[]; waluta: string; od: string; do: string };
 
 export async function zbierzDaneZespolu(firma: Firma, jezyk: "pl" | "en"): Promise<DaneRaportu> {
-  // 8.11: firma bez Pipedrive = domyślny pusty lejek, zero zadań (treningi i oceny liczą się dalej).
-  const token = firma.pipedrive_token ?? null;
+  // 8.11: wszystko z CRM Bruno.
   const dzis = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
   const od = new Date(Date.now() - 30 * 86_400_000).toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
   const handlowcy = await handlowcyFirmy(firma.id);
   const emails = handlowcy.map((h) => h.email);
   const [lejek, zrobione, zalegle, rozmowy, ankiety] = await Promise.all([
     lejekFirmy(firma),
-    token ? zadaniaFirmy(token, { od, do: dzis, zrobione: true }) : Promise.resolve([]),
-    token ? zadaniaFirmy(token, { do: dzis, zrobione: false }) : Promise.resolve([]),
+    zadaniaFirmyCrm(firma.id, { od, do: dzis, zrobione: true }),
+    zadaniaFirmyCrm(firma.id, { do: dzis, zrobione: false }),
     rozmowyZespolu(emails, 30),
     Promise.all(handlowcy.map((h) => ankietyKonta(h.email, 1).catch(() => []))),
   ]);

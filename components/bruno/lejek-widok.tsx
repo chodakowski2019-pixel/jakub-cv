@@ -130,18 +130,9 @@ export default function LejekWidok({
 
   return (
     <div className="p-strona">
-      <NaglowekP
-        tytul={t("Pipeline", "Lejek")}
-        akcent={akcent}
-        podtytul={`${pipeline?.nazwa ? `${pipeline.nazwa} · ` : ""}${pipeline && pipeline.id === 0 ? t("Default pipeline. Deals appear once a CRM is connected.", "Domyślny lejek. Deale pojawią się po podpięciu CRM.") : t("Live from Pipedrive.", "Na żywo z Pipedrive.")}`}
-        prawo={
-          <>
-            <Chip k="ciemny">{otwarte} {t("open", "otwartych")}</Chip>
-            <Chip k="ok">{wygrane} {t("won", "wygranych")}</Chip>
-            <Chip k="zle">{przegrane} {t("lost", "przegranych")}</Chip>
-          </>
-        }
-      />
+      {/* 8.11 (USER_001): sam tytuł „Lejek”: bez nazwy firmy, bez podtytułu, bez pigułek otwarte / wygrane / przegrane.
+          Imię zostaje tylko, gdy szef ogląda lejek jednego handlowca (?jako=). */}
+      <NaglowekP tytul={t("Pipeline", "Lejek")} akcent={imie ?? undefined} />
 
       <div className="p-kafle">
         <Kafel wartosc={otwarte} etykieta={t("Open deals", "Otwarte deale")} dol={<span>{zespol.length} {t("stages", "etapów")}</span>} />

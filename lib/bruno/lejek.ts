@@ -56,6 +56,9 @@ export type Deal = {
   nastepna_aktywnosc_temat: string | null;
   ostatni_kontakt: string | null;
   dodano: string | null;
+  /** 8.11 (zakładka Klienci): telefon i e-mail osoby (Pipedrive: person_id; własny CRM: kolumny). */
+  telefon?: string | null;
+  email?: string | null;
 };
 export type Lejek = { pipeline: { id: number; nazwa: string }; etapy: Etap[]; deale: Deal[]; pole_handlowca: string | null };
 
@@ -68,8 +71,11 @@ export const LEJEK_DOMYSLNY: Lejek = {
 };
 
 /** 8.11: lejek firmy: z Pipedrive, gdy podpięty, inaczej domyślny pusty. */
-export async function lejekFirmy(firma: Pick<Firma, "pipedrive_token"> | null | undefined): Promise<Lejek> {
-  return firma?.pipedrive_token ? pobierzLejek(firma.pipedrive_token) : LEJEK_DOMYSLNY;
+export async function lejekFirmy(firma: Pick<Firma, "id" | "pipedrive_token"> | null | undefined): Promise<Lejek> {
+  // 8.11 (USER_001): ZAWSZE CRM Bruno. Pipedrive i inne systemy tylko importują dane (lib/bruno/integracje/*).
+  if (!firma?.id) return LEJEK_DOMYSLNY;
+  const { lejekCrm } = await import("./crm");
+  return lejekCrm(firma.id);
 }
 
 const kluczePol = new Map<string, string | null>();
@@ -109,6 +115,7 @@ type DealPd = Record<string, unknown> & {
   last_activity_date?: string | null;
   add_time?: string | null;
   pipeline_id: number;
+  person_id?: { value?: number; email?: { value?: string; primary?: boolean }[]; phone?: { value?: string; primary?: boolean }[] } | number | null;
 };
 
 /** 4.11 (USER_001): panel nie pokazuje prefiksów „[Bruno demo] ” / „[Przykład] ” (zostają w Pipedrive, reset seeda po nich usuwa). */
@@ -120,6 +127,13 @@ export const naglowekZadania = (temat: string | null | undefined): string => {
   return n.length > 60 ? `${n.slice(0, 57).trimEnd()}…` : n;
 };
 export const bezPrefiksu = (s: string | null | undefined): string => String(s ?? "").replace(/\[(Bruno demo|Przykład|Sample)\]\s*/gi, "").trim();
+
+/** 8.11: główny telefon / e-mail osoby z obiektu person_id deala Pipedrive. */
+function kontakt(p: DealPd["person_id"], pole: "phone" | "email"): string | null {
+  if (!p || typeof p !== "object") return null;
+  const l = (p[pole] ?? []).filter((x) => x?.value);
+  return (l.find((x) => x.primary) ?? l[0])?.value?.trim() || null;
+}
 
 function mapujDeal(d: DealPd, pole: string | null): Deal {
   return {
@@ -138,6 +152,8 @@ function mapujDeal(d: DealPd, pole: string | null): Deal {
     nastepna_aktywnosc_temat: d.next_activity_subject ? bezPrefiksu(d.next_activity_subject) : null,
     ostatni_kontakt: d.last_activity_date ?? null,
     dodano: d.add_time ?? null,
+    telefon: kontakt(d.person_id, "phone"),
+    email: kontakt(d.person_id, "email"),
   };
 }
 
@@ -280,7 +296,7 @@ export async function dodajZadanie(
 
 export async function nowyDeal(
   token: string,
-  w: { tytul: string; wartosc?: number | null; waluta?: string | null; etapId?: number | null; osoba?: string | null; organizacja?: string | null; handlowiec: string; poleHandlowca: string | null },
+  w: { tytul: string; wartosc?: number | null; waluta?: string | null; etapId?: number | null; osoba?: string | null; organizacja?: string | null; handlowiec: string; poleHandlowca: string | null; telefon?: string | null; email?: string | null },
 ): Promise<{ id: number }> {
   let person_id: number | undefined;
   let org_id: number | undefined;
@@ -289,7 +305,7 @@ export async function nowyDeal(
     org_id = data.id;
   }
   if (w.osoba) {
-    const { data } = await pd<{ id: number }>(token, "/persons", { method: "POST", body: JSON.stringify({ name: w.osoba.slice(0, 200), ...(org_id ? { org_id } : {}) }) });
+    const { data } = await pd<{ id: number }>(token, "/persons", { method: "POST", body: JSON.stringify({ name: w.osoba.slice(0, 200), ...(org_id ? { org_id } : {}), ...(w.telefon ? { phone: [{ value: w.telefon, primary: true }] } : {}), ...(w.email ? { email: [{ value: w.email, primary: true }] } : {}) }) });
     person_id = data.id;
   }
   const body: Record<string, unknown> = { title: w.tytul.slice(0, 250), value: w.wartosc ?? 0, currency: w.waluta ?? "PLN" };

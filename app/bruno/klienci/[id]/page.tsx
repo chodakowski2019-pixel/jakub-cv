@@ -4,7 +4,11 @@ import { pobierzKonto } from "@/lib/bruno/db";
 import { pobierzFirme } from "@/lib/bruno/firmy";
 import { widokKonta } from "@/lib/bruno/jako";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
-import { crmWlaczony, domenaPipedrive, historiaDeala, notatkiDeala, pobierzLejek, typyAktywnosci, zadaniaDeala } from "@/lib/bruno/lejek";
+import { crmWlaczony, lejekFirmy } from "@/lib/bruno/lejek";
+import { historiaKlienta, notatkiKlienta, zadaniaKlienta } from "@/lib/bruno/crm";
+
+// 8.11: nazwy typów zadań w CRM Bruno.
+const TYPY: Record<string, [string, string]> = { call: ["Call", "Telefon"], meeting: ["Meeting", "Spotkanie"], email: ["E-mail", "E-mail"], task: ["Task", "Zadanie"], trening: ["Bruno training", "Trening Bruno"] };
 import { KlientKarta } from "@/components/bruno/klienci-widok";
 
 export const dynamic = "force-dynamic";
@@ -18,20 +22,20 @@ export default async function BrunoKlientPage({ params, searchParams }: { params
   const konto = await pobierzKonto(email);
   if (!konto) redirect("/bruno");
   const firma = await pobierzFirme(konto.firma_id);
-  if (!crmWlaczony(firma) || !firma?.pipedrive_token) redirect("/bruno/klienci");
+  if (!crmWlaczony(firma) || !firma) redirect("/bruno/klienci");
   const { jezyk } = await tSerwer();
   const { id } = await params;
   const { jako } = await searchParams;
   const dealId = Number(id);
   if (!Number.isFinite(dealId)) notFound();
-  const token = firma.pipedrive_token;
   const w = await widokKonta(konto, firma, jako);
 
-  const lejek = await pobierzLejek(token);
+  const lejek = await lejekFirmy(firma);
   const deal = lejek.deale.find((d) => d.id === dealId);
   if (!deal || (!w.szef && deal.handlowiec !== w.konto.email.toLowerCase())) notFound();
-  // 5.11 (pkt 4): historia = jedna oś czasu z Pipedrive (notatki, zadania, zmiany etapu), wpisy Bruno oznaczone.
-  const [notatki, aktywnosci, typy, domena, historia] = await Promise.all([notatkiDeala(token, dealId, 30), zadaniaDeala(token, dealId, 50), typyAktywnosci(token), domenaPipedrive(token), historiaDeala(token, dealId, lejek.etapy).catch(() => [])]);
+  // 8.11: historia = jedna oś czasu z CRM Bruno (notatki, zadania, zmiany etapu / statusu / wartości), wpisy Bruno oznaczone.
+  const [notatki, aktywnosci, historia] = await Promise.all([notatkiKlienta(firma.id, dealId, 30), zadaniaKlienta(firma.id, dealId, 50), historiaKlienta(firma.id, dealId)]);
+  const typ = (k: string | null) => (k ? (TYPY[k]?.[jezyk === "pl" ? 1 : 0] ?? k) : null);
   const osoby = w.handlowcy.map((h) => ({ email: h.email.toLowerCase(), imie: h.imie ?? h.email, zdjecie: h.zdjecie_url ?? null }));
   return (
     <KlientKarta
@@ -41,10 +45,10 @@ export default async function BrunoKlientPage({ params, searchParams }: { params
       deal={deal}
       etapy={lejek.etapy}
       notatki={notatki}
-      aktywnosci={aktywnosci.map((a) => ({ ...a, typNazwa: typy.get(a.typ) ?? a.typ }))}
-      historia={historia.map((h) => (h.typKlucz ? { ...h, pod: [typy.get(h.typKlucz) ?? h.typKlucz, h.pod].filter(Boolean).join(" · ") } : h))}
+      aktywnosci={aktywnosci.map((a) => ({ ...a, typNazwa: typ(a.typ) ?? a.typ }))}
+      historia={historia.map((h) => (h.typKlucz ? { ...h, pod: [typ(h.typKlucz), h.pod].filter(Boolean).join(" · ") } : h))}
       handlowiec={osoby.find((o) => o.email === deal.handlowiec) ?? null}
-      linkCrm={domena ? `${domena}/deal/${deal.id}` : null}
+      linkCrm={null}
       jako={w.jako}
     />
   );

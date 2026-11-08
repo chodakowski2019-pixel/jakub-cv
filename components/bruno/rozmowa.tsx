@@ -51,6 +51,10 @@ type Props = {
   rinesk?: boolean;
   /** 4.11 (Bruno pod CRM): sytuacja z lejka (deal + etap z Pipedrive) wpisana z góry w „Rozmowę, którą masz jutro”. */
   sytuacjaStart?: string | null;
+  /** 8.11 (algorytm treningu): pozycja planu dnia; serwer bierze z planu klienta z CRM, tryb, obiekcję i sytuację. */
+  trening?: { klucz: string; tytul: string; dlaczego: string } | null;
+  /** 8.11: klient z CRM, którego gra Bruno (karta klienta, lejek, czat) → rozmowa i wynik przypięte do klienta. */
+  klientId?: number | null;
 };
 
 /** 25.10 (USER_001: „cel rozmowy z obrazkami”): emoji przy celu. */
@@ -200,7 +204,7 @@ function KolkoOceny({ etykieta }: { etykieta: string }) {
   );
 }
 
-export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny, free = null, obiekcjeOpis = {}, jutro = false, rinesk = false, sytuacjaStart = null }: Props) {
+export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obiekcje, rozmowyDzis, rozmowDziennie, minutZostalo, sekundRozmowy, sekundDogrywki, pelny, free = null, obiekcjeOpis = {}, jutro = false, rinesk = false, sytuacjaStart = null, trening = null, klientId = null }: Props) {
   // 11.10: teksty UI w języku konta (tr, bo `t` jest niżej zmienną trybu). Etykiety z etykiety(jezyk), kolor/ikona z postacie.ts.
   const { t: tr, jezyk, mnoga } = useT();
   const E = etykiety(jezyk);
@@ -637,6 +641,10 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
         } : {
           auto: true,
           glos,
+          // 8.11: plan dnia albo sytuacja z CRM (karta klienta, lejek, czat) idą na serwer (wcześniej ginęły).
+          trening: trening?.klucz ?? null,
+          sytuacja: !trening && sytuacjaStart ? sytuacjaStart : null,
+          klient: klientId,
           obiekcje: karta?.typ === "obiekcja" ? [karta.tresc] : [],
           karta_id: karta?.typ === "kryterium" ? karta.id : null,
         }),
@@ -799,7 +807,14 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
             // 28.10 (USER_001: „prawdziwa kula”): w Rinesk kula WebGL w limonce + „Rozmowa z Bruno” i jedno zdanie, co się stanie.
             <div className={`flex flex-col items-center justify-center pt-6 ${rinesk ? "brz-start" : "min-h-[52vh]"}`}>
               {/* 4.11 (Bruno pod CRM): wejście z lejka („Trenuj ten etap”) pokazuje, jaką sytuację zagra Bruno. */}
-              {sytuacjaStart && (
+              {trening && (
+                <div className="bruno-szklo rounded-2xl px-4 py-3 mb-5 max-w-xl text-sm text-slate-700">
+                  <span className="bsz-pigulka mr-2">{tr("Today's plan", "Plan na dziś")}</span>
+                  <b>{trening.tytul}</b>
+                  <span className="block mt-1 text-slate-500">{trening.dlaczego}</span>
+                </div>
+              )}
+              {!trening && sytuacjaStart && (
                 <div className="bruno-szklo rounded-2xl px-4 py-3 mb-5 max-w-xl text-sm text-slate-700">
                   <span className="bsz-pigulka mr-2">{tr("From your pipeline", "Z Twojego lejka")}</span>
                   {sytuacjaStart}

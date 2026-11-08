@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ROZMOWA_SEKUND, kartyDoPowtorki, limitDzienny, planFree, rozmowyDzis, stanDostepu, stanFree, trenowalDzis, type Konto } from "@/lib/bruno/db";
-import { htmlNieZalogowany, htmlPrzypomnienie, htmlPrzypomnienieFree, wyslij } from "@/lib/bruno/mail";
+import { htmlNieZalogowany, htmlPlanDnia, htmlPrzypomnienie, htmlPrzypomnienieFree, wyslij } from "@/lib/bruno/mail";
+import { czySzef, pobierzFirme } from "@/lib/bruno/firmy";
+import { planNaDzis } from "@/lib/bruno/plan-treningu";
 import { dociagnijNagraniaEl } from "@/lib/bruno/nagrania";
 import { mnoga, tDla } from "@/lib/bruno/i18n";
 import { wylaczPro } from "@/lib/bruno/stripe";
@@ -162,6 +164,25 @@ export async function GET(req: Request) {
         niezalogowani.push(konto.email);
       } catch (e) {
         console.error("[bruno przypomnienia] niezalogowany", konto.email, e);
+      }
+      continue;
+    }
+    // 8.11 (USER_001, algorytm treningu): konto z firmą = rano plan dnia od Bruno (5 treningów z CRM) zamiast ogólnego przypomnienia.
+    if (konto.firma_id) {
+      try {
+        const firma = await pobierzFirme(konto.firma_id);
+        const plan = await planNaDzis(konto, firma, czySzef(konto));
+        const zostalo = plan.pozycje.filter((p) => !p.zrobione);
+        if (!zostalo.length) continue;
+        await wyslij({
+          do: konto.email,
+          rodzaj: "przypomnienie",
+          temat: t(`Bruno: your ${zostalo.length} sessions for today`, `Bruno: ${zostalo.length} ${mnoga("pl", zostalo.length, ["", ""], ["trening", "treningi", "treningów"])} na dziś`),
+          html: htmlPlanDnia({ imie: konto.imie, jezyk: konto.jezyk, pozycje: zostalo }),
+        });
+        wyslane.push(konto.email);
+      } catch (e) {
+        console.error("[bruno przypomnienia] plan", konto.email, e);
       }
       continue;
     }

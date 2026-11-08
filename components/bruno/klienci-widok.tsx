@@ -5,6 +5,8 @@ import { locale, tDla, type Jezyk } from "@/lib/bruno/i18n";
 import { formatKwota, naglowekZadania, type Aktywnosc, type Deal, type Etap, type Zdarzenie } from "@/lib/bruno/lejek";
 import { zJako } from "@/lib/bruno/jako";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
+import { AwatarKlienta, DodajKlienta, ImportKlientow } from "@/components/bruno/klienci-akcje";
+import { plecZImienia } from "@/lib/bruno/plec";
 
 // 4.11 (USER_001, pkt 2): ZAKŁADKA KLIENCI (lista) + KARTA KLIENTA. Dane na żywo z CRM (Pipedrive).
 // 6.11: nowy system zakładek (panel-2.css, p-* / pk-*): kafelki nad listą (klienci, wartość, zaległe, bez kroku),
@@ -24,135 +26,137 @@ function EtapKropki({ etapy, idx, status }: { etapy: Etap[]; idx: number; status
   );
 }
 
-export default function KlienciLista({ firma, jezyk, szef, etapy, deale, osoby, q, status, blad = null, jako = null, imie = null }: { firma: Firma | null; jezyk: Jezyk; szef: boolean; etapy: Etap[]; deale: Deal[]; osoby: Osoba[]; q: string; status: "open" | "won" | "lost" | "all"; blad?: string | null; /** 4.11: szef w widoku handlowca: linki trzymają ?jako=. */ jako?: string | null; imie?: string | null }) {
+/** 8.11: szanse etapów do prognozy przychodu (jak w Lejku: 10/25/40/60/80/100 %). */
+const SZANSE = [10, 25, 40, 60, 80, 100];
+
+/** 8.11 (USER_001: „ładna wizualizacja, wykres kreskowy: liczba klientów i przewidywany łączny przychód”). Serwerowy SVG. */
+function WykresLinia({ punkty, etykiety, kolor, format }: { punkty: number[]; etykiety: string[]; kolor: string; format: (n: number) => string }) {
+  const W = 520;
+  const H = 120;
+  const max = Math.max(1, ...punkty);
+  const x = (i: number) => (punkty.length < 2 ? W / 2 : (i / (punkty.length - 1)) * (W - 8) + 4);
+  const y = (v: number) => H - 14 - (v / max) * (H - 30);
+  const linia = punkty.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const pole = `${linia} L${x(punkty.length - 1).toFixed(1)},${H - 14} L${x(0).toFixed(1)},${H - 14} Z`;
+  const id = `kl2g${kolor.replace(/\W/g, "")}`;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none" role="img" aria-label={punkty.map((v, i) => `${etykiety[i]}: ${format(v)}`).join(", ")} className="kl2-wykres">
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={kolor} stopOpacity="0.28" />
+          <stop offset="100%" stopColor={kolor} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <line x1="0" x2={W} y1={H - 14} y2={H - 14} stroke="#e6e7eb" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+      <path d={pole} fill={`url(#${id})`} />
+      <path d={linia} fill="none" stroke={kolor} strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      {punkty.map((v, i) => (
+        <circle key={i} cx={x(i)} cy={y(v)} r={i === punkty.length - 1 ? 4 : 0} fill="#fff" stroke={kolor} strokeWidth="2.4" vectorEffect="non-scaling-stroke">
+          <title>{`${etykiety[i]}: ${format(v)}`}</title>
+        </circle>
+      ))}
+    </svg>
+  );
+}
+
+export type ProfilKlienta = { plec: "m" | "k" | null; zdjecie: string | null };
+
+export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad = null, jako = null, imie = null, profile = {}, kartaKlienta = true }: { firma: Firma | null; jezyk: Jezyk; szef: boolean; etapy: Etap[]; deale: Deal[]; osoby?: Osoba[]; q: string; status?: string; blad?: string | null; /** 4.11: szef w widoku handlowca: linki trzymają ?jako=. */ jako?: string | null; imie?: string | null; /** 8.11: płeć i zdjęcie per deal. */ profile?: Record<number, ProfilKlienta>; /** 8.11: karta klienta tylko z Pipedrive. */ kartaKlienta?: boolean }) {
   const t = tDla(jezyk);
-  const dzis = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
   const szukaj = q.trim().toLowerCase();
+  // 8.11 (USER_001): bez przełącznika Otwarte / Wygrane / Przegrane / Wszystkie: jedna lista, najnowsi u góry.
   const lista = deale
-    .filter((d) => (status === "all" ? true : d.status === status))
-    .filter((d) => !szukaj || [d.tytul, d.osoba, d.organizacja].some((x) => (x ?? "").toLowerCase().includes(szukaj)))
-    .sort((a, b) => (a.nastepna_aktywnosc ?? "9999").localeCompare(b.nastepna_aktywnosc ?? "9999") || b.wartosc - a.wartosc);
-  const osoba = (e: string | null) => (e ? osoby.find((o) => o.email === e) : null);
+    .filter((d) => !szukaj || [d.tytul, d.osoba, d.organizacja, d.telefon, d.email].some((x) => (x ?? "").toLowerCase().includes(szukaj)))
+    .sort((a, b) => (b.dodano ?? "").localeCompare(a.dodano ?? ""));
   const etapNazwa = (id: number) => etapy.find((e) => e.id === id)?.nazwa ?? String(id);
   const waluta = deale[0]?.waluta ?? "PLN";
   const kwota = (n: number) => formatKwota(n, waluta, jezyk);
-  const liczby = (k: typeof status) => deale.filter((d) => (k === "all" ? true : d.status === k)).length;
-  const filtry: { k: typeof status; n: string }[] = [
-    { k: "open", n: t("Open", "Otwarte") },
-    { k: "won", n: t("Won", "Wygrane") },
-    { k: "lost", n: t("Lost", "Przegrane") },
-    { k: "all", n: t("All", "Wszystkie") },
-  ];
-  const wartosc = lista.reduce((s, d) => s + d.wartosc, 0);
-  const maxWartosc = Math.max(1, ...lista.map((d) => d.wartosc));
-  const zalegle = lista.filter((d) => d.status === "open" && d.nastepna_aktywnosc && d.nastepna_aktywnosc < dzis).length;
-  const bezKroku = lista.filter((d) => d.status === "open" && !d.nastepna_aktywnosc).length;
   const akcent = imie ?? firma?.naglowek?.trim() ?? firma?.nazwa ?? "";
+
+  // Wykresy: 12 tygodni wstecz, stan na koniec każdego tygodnia (klienci dodani do tej daty).
+  const szansa = (d: Deal) => {
+    if (d.status === "won") return 1;
+    if (d.status === "lost") return 0;
+    const i = etapy.findIndex((e) => e.id === d.etap_id);
+    return (SZANSE[Math.min(Math.max(i, 0), SZANSE.length - 1)] ?? 10) / 100;
+  };
+  const TYG = 12;
+  const teraz = Date.now();
+  const konce = Array.from({ length: TYG }, (_, i) => teraz - (TYG - 1 - i) * 7 * 86_400_000);
+  const aktywni = deale.filter((d) => d.status !== "lost");
+  const doDaty = (ts: number) => aktywni.filter((d) => !d.dodano || new Date(d.dodano).getTime() <= ts);
+  const serieKlienci = konce.map((ts) => doDaty(ts).length);
+  const seriePrzychod = konce.map((ts) => Math.round(doDaty(ts).reduce((s, d) => s + d.wartosc * szansa(d), 0)));
+  const etyk = konce.map((ts) => new Date(ts).toLocaleDateString(locale(jezyk), { day: "numeric", month: "short" }));
+  const delta = (s: number[]) => s[s.length - 1] - s[Math.max(0, s.length - 5)];
+  const dK = delta(serieKlienci);
+  const dP = delta(seriePrzychod);
 
   return (
     <div className="p-strona">
-      <NaglowekP tytul={t("Clients", "Klienci")} akcent={akcent} podtytul={szef ? t("Every client of the team, live from the CRM.", "Wszyscy klienci zespołu, na żywo z CRM.") : t("Your clients, live from the CRM.", "Twoi klienci, na żywo z CRM.")} />
+      <NaglowekP tytul={t("Clients", "Klienci")} akcent={akcent} prawo={<span className="kl2-naglowek-akcje"><ImportKlientow jezyk={jezyk} szef={szef} /><DodajKlienta etapy={etapy.map((e) => ({ id: e.id, nazwa: e.nazwa }))} jezyk={jezyk} /></span>} />
       {blad ? (
         <Blad tytul={t("Couldn't read the CRM.", "Nie udało się odczytać CRM.")} tekst={blad} />
       ) : (
         <>
-          <div className="p-kafle">
-            <Kafel wartosc={lista.length} etykieta={filtry.find((f) => f.k === status)?.n ?? ""} dol={<span>{t("in this view", "w tym widoku")}</span>} />
-            <Kafel wartosc={kwota(wartosc)} etykieta={t("Value", "Wartość")} dol={<span>{t("sum of deals shown", "suma pokazanych deali")}</span>} />
-            <Kafel wartosc={zalegle} etykieta={t("Overdue tasks", "Zaległe zadania")} zle={zalegle > 0} kropka={zalegle > 0 ? "#e5484d" : undefined} dol={<span>{t("next step in the past", "następny krok w przeszłości")}</span>} />
-            <Kafel wartosc={bezKroku} etykieta={t("No next step", "Bez następnego kroku")} zle={bezKroku > 0} kropka={bezKroku > 0 ? "#e2a300" : undefined} dol={<span>{t("open deals without a task", "otwarte bez zadania")}</span>} />
+          <div className="kl2-wykresy">
+            <section className="p-karta kl2-wk">
+              <div className="kl2-wk-et">{t("Clients", "Liczba klientów")}</div>
+              <div className="kl2-wk-w">{serieKlienci[TYG - 1]}<small className={dK > 0 ? "p-ok-t" : "p-cichy"}>{dK > 0 ? `+${dK}` : dK} {t("in 4 weeks", "w 4 tyg.")}</small></div>
+              <WykresLinia punkty={serieKlienci} etykiety={etyk} kolor="#141416" format={(n) => String(n)} />
+              <div className="kl2-wk-os"><span>{etyk[0]}</span><span>{t("today", "dziś")}</span></div>
+            </section>
+            <section className="p-karta kl2-wk">
+              <div className="kl2-wk-et">{t("Expected total revenue", "Przewidywany łączny przychód")}</div>
+              <div className="kl2-wk-w">{kwota(seriePrzychod[TYG - 1])}<small className={dP > 0 ? "p-ok-t" : "p-cichy"}>{dP > 0 ? `+${kwota(dP)}` : kwota(dP)} {t("in 4 weeks", "w 4 tyg.")}</small></div>
+              <WykresLinia punkty={seriePrzychod} etykiety={etyk} kolor="#17a05e" format={kwota} />
+              <div className="kl2-wk-os"><span>{etyk[0]}</span><span>{t("won + open × stage odds", "wygrane + otwarte × szansa etapu")}</span></div>
+            </section>
           </div>
           <section className="p-karta">
             <form className="pk-pasek" method="get">
               <label className="p-szukaj">
                 <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden><circle cx="9" cy="9" r="6" /><path d="M14 14l4 4" /></svg>
-                <input type="search" name="q" defaultValue={q} placeholder={t("Search: client, company…", "Szukaj: klient, firma…")} aria-label={t("Search", "Szukaj")} />
+                <input type="search" name="q" defaultValue={q} placeholder={t("Search: name, company, phone, e-mail…", "Szukaj: imię, firma, telefon, e-mail…")} aria-label={t("Search", "Szukaj")} />
               </label>
-              <input type="hidden" name="status" value={status} />
               {jako && <input type="hidden" name="jako" value={jako} />}
-              <div className="p-segment">
-                {filtry.map((f) => (
-                  <Link key={f.k} href={zJako(`/bruno/klienci?status=${f.k}${q ? `&q=${encodeURIComponent(q)}` : ""}`, jako)} className={status === f.k ? "p-on" : ""}>
-                    {f.n} <em>{liczby(f.k)}</em>
-                  </Link>
-                ))}
-              </div>
             </form>
             <div className="p-tabela-wrap">
-              <table className="p-tabela">
+              <table className="p-tabela kl2-tabela">
                 <thead>
                   <tr>
-                    <th>{t("Client", "Klient")}</th>
+                    <th aria-label={t("Photo", "Zdjęcie")} />
+                    <th>{t("Full name", "Imię i nazwisko")}</th>
+                    <th>{t("Company", "Firma")}</th>
+                    <th>{t("Phone", "Numer telefonu")}</th>
+                    <th>E-mail</th>
                     <th>{t("Stage", "Etap")}</th>
-                    <th className="p-num">{t("Value", "Wartość")}</th>
-                    <th>{t("Last contact", "Ostatni kontakt")}</th>
-                    <th>{t("Next task", "Następne zadanie")}</th>
-                    {szef && <th>{t("Rep", "Handlowiec")}</th>}
                   </tr>
                 </thead>
                 <tbody>
-                  {lista.slice(0, 200).map((d, i) => {
-                    const o = osoba(d.handlowiec);
-                    const dni = dniTemu(d.ostatni_kontakt ?? d.aktualizacja);
-                    const zalegle = Boolean(d.nastepna_aktywnosc && d.nastepna_aktywnosc < dzis);
+                  {lista.slice(0, 300).map((d, i) => {
                     const idx = etapy.findIndex((e) => e.id === d.etap_id);
-                    const swiezosc = dni === null ? "" : dni <= 3 ? "ok" : dni <= 7 ? "uwaga" : "zle";
+                    const nazwa = d.osoba ?? d.tytul;
+                    const pr = profile[d.id];
                     return (
                       <tr key={d.id} style={{ animationDelay: `${Math.min(i, 20) * 20}ms` }}>
-                        <td>
-                          <Link href={zJako(`/bruno/klienci/${d.id}`, jako)} className="p-osoba">
-                            <Twarz src={zdjecieKlienta(d.osoba)} imie={d.organizacja ?? d.tytul} rozmiar={36} />
-                            <span className="min-w-0">
-                              <b style={{ maxWidth: 240 }}>{d.osoba ?? d.tytul}</b>
-                              <small style={{ maxWidth: 240 }}>{[d.organizacja, d.osoba && d.tytul !== d.osoba && d.tytul !== d.organizacja ? d.tytul : null].filter(Boolean).join(" · ") || "–"}</small>
-                            </span>
-                          </Link>
-                        </td>
+                        <td className="kl2-td-foto"><AwatarKlienta dealId={d.id} zdjecie={pr?.zdjecie ?? null} plec={pr?.plec ?? plecZImienia(d.osoba)} imie={nazwa} jezyk={jezyk} /></td>
+                        <td>{kartaKlienta ? <Link href={zJako(`/bruno/klienci/${d.id}`, jako)} className="kl2-imie">{nazwa}</Link> : <span className="kl2-imie">{nazwa}</span>}</td>
+                        <td>{d.organizacja ?? <span className="p-cichy">–</span>}</td>
+                        <td>{d.telefon ? <a href={`tel:${d.telefon.replace(/\s/g, "")}`} className="kl2-kontakt">{d.telefon}</a> : <span className="p-cichy">–</span>}</td>
+                        <td>{d.email ? <a href={`mailto:${d.email}`} className="kl2-kontakt">{d.email}</a> : <span className="p-cichy">–</span>}</td>
                         <td>
                           <span className="pk-etap-cela">
                             <span>{d.status === "won" ? <span className="p-ok-t">{t("Won", "Wygrany")}</span> : d.status === "lost" ? <span className="p-zle-t">{t("Lost", "Przegrany")}</span> : etapNazwa(d.etap_id)}</span>
                             <EtapKropki etapy={etapy} idx={idx} status={d.status} />
                           </span>
                         </td>
-                        <td className="p-num">
-                          <span className="pk-wartosc">
-                            <b>{kwota(d.wartosc)}</b>
-                            <span className="p-miernik-tor"><i data-k={d.status === "won" ? "ok" : d.status === "lost" ? "zle" : undefined} style={{ width: `${(100 * d.wartosc) / maxWartosc}%` }} /></span>
-                          </span>
-                        </td>
-                        <td className="pk-dni">
-                          {dni === null ? <span className="p-cichy">–</span> : <Chip k={d.status === "open" ? (swiezosc as "ok" | "uwaga" | "zle") : ""}>{dni === 0 ? t("today", "dziś") : dni === 1 ? t("yesterday", "wczoraj") : t(`${dni} d ago`, `${dni} dni temu`)}</Chip>}
-                        </td>
-                        <td>
-                          {d.nastepna_aktywnosc ? (
-                            <span className="pk-zadanie">
-                              <span className={zalegle ? "p-zle-t" : ""}>{zalegle ? "⚠ " : ""}{dataKrotka(d.nastepna_aktywnosc, jezyk)}</span>
-                              {d.nastepna_aktywnosc_temat ? <small title={d.nastepna_aktywnosc_temat}>{naglowekZadania(d.nastepna_aktywnosc_temat)}</small> : null}
-                            </span>
-                          ) : d.status === "open" ? (
-                            <Chip k="uwaga">{t("none, add one", "brak, dodaj")}</Chip>
-                          ) : (
-                            <span className="p-cichy">–</span>
-                          )}
-                        </td>
-                        {szef && (
-                          <td>
-                            {o ? (
-                              <Link href={`/bruno/szef/${encodeURIComponent(o.email)}`} className="p-osoba">
-                                <Twarz src={o.zdjecie} imie={o.imie} rozmiar={26} />
-                                <span className="min-w-0"><b style={{ fontWeight: 400 }}>{o.imie}</b></span>
-                              </Link>
-                            ) : (
-                              <span className="p-cichy">–</span>
-                            )}
-                          </td>
-                        )}
                       </tr>
                     );
                   })}
                   {lista.length === 0 && (
                     <tr>
-                      <td colSpan={szef ? 6 : 5}><Pusto tytul={t("No clients here", "Brak klientów")} opis={szukaj ? t("Try another search.", "Spróbuj innej frazy.") : undefined} /></td>
+                      <td colSpan={6}><Pusto tytul={t("No clients yet", "Brak klientów")} opis={szukaj ? t("Try another search.", "Spróbuj innej frazy.") : t("Add the first one with “+ Add client”.", "Dodaj pierwszego przyciskiem „+ Dodaj klienta”.")} /></td>
                     </tr>
                   )}
                 </tbody>
@@ -187,7 +191,7 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
   ]
     .filter(Boolean)
     .join(" ");
-  const linkTreningu = `/bruno/rozmowa?sytuacja=${encodeURIComponent(sytuacja.slice(0, 2900))}`;
+  const linkTreningu = `/bruno/rozmowa?sytuacja=${encodeURIComponent(sytuacja.slice(0, 2900))}&klient=${deal.id}`;
 
   // 5.11 (pkt 5: „mniej tekstów, bardziej przejrzyste”): etykiety typów krótkie, jedna linia na wpis.
   const nazwaTypu = (h: Zdarzenie) =>

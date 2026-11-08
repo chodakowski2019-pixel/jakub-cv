@@ -265,6 +265,21 @@ export function htmlPrzypomnienie(args: { imie: string | null; jezyk?: string | 
   });
 }
 
+/** 8.11 (USER_001, algorytm treningu pkt 6): RANO mail z planem dnia (5 treningów ułożonych przez Bruno). Konta z firmą. */
+export function htmlPlanDnia(args: { imie: string | null; jezyk?: string | null; pozycje: { nr: number; tytul: string; dlaczego: string }[] }) {
+  const pl = czyPL(args.jezyk);
+  const link = linkZeZrodlem(`${bazaUrl(args.jezyk)}/bruno/kokpit`, "przypomnienie");
+  return kopertaBruno({
+    ...(pl ? { jezyk: "pl" as const } : {}),
+    naglowek: pl ? `${args.imie ? `${args.imie}, t` : "T"}woje ${args.pozycje.length} treningów na dziś` : `${args.imie ? `${args.imie}, y` : "Y"}our ${args.pozycje.length} sessions today`,
+    tresc: [
+      tabelaParami(args.pozycje.map((p) => [String(p.nr), p.tytul])), // tabela escapuje HTML: sam tytuł
+      akapit(pl ? "Bruno ułożył je z Twojego CRM: najpierw prawdziwe spotkania, potem to, gdzie tracisz klientów." : "Bruno built them from your CRM: real meetings first, then where you lose clients."),
+      przycisk({ tekst: pl ? "Zacznij pierwszy trening" : "Start the first session", link }),
+    ].join("\n"),
+  });
+}
+
 /**
  * 10.10 (USER_001): konto free dostaje RAZ DZIENNIE przypomnienie, dopóki nie zrobi do końca 3 bezpłatnych rozmów.
  * Treść zależy od tego, ile zostało; link ze źródłem jak w zwykłym przypomnieniu.

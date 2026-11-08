@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { dobierzRozmowe } from "@/lib/bruno/dobor";
+import { pozycjaPlanu } from "@/lib/bruno/plan-treningu";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import {
@@ -102,10 +103,20 @@ export async function POST(req: Request) {
   const konfig = await pobierzKonfig(email);
   // 25.10 (USER_001): autorski dobór rozmowy. Kreator nie wysyła ustawień, serwer dobiera je z historii (lib/bruno/dobor.ts).
   // „Rozmowa, którą masz jutro” (sytuacja) i powtórka karty dalej działają: sytuacja jest nadrzędna, karta obiekcji wygrywa.
+  // 8.11 (USER_001: algorytm treningu): pozycja z planu dnia (`trening` = „RRRR-MM-DD:nr”) = klient z CRM, tryb, obiekcja,
+  // nacisk i sytuacja z planu (lib/bruno/plan-treningu.ts). Typ klienta i poziom dalej z doboru.
+  const planPoz = typeof b.trening === "string" ? await pozycjaPlanu(email, b.trening) : null;
   if (b.auto === true) {
     const dobor = await dobierzRozmowe(email, konfig);
     // Powtórka konkretnej obiekcji (fiszka z Treningu) ma pierwszeństwo przed doborem.
     Object.assign(b, { ...dobor, obiekcje: Array.isArray(b.obiekcje) && b.obiekcje.length ? b.obiekcje : dobor.obiekcje });
+    if (planPoz) {
+      b.tryb = planPoz.tryb;
+      b.cel = planPoz.tryb === "cold" ? "spotkanie" : "decyzja";
+      b.obiekcje = planPoz.obiekcja ? [planPoz.obiekcja] : b.obiekcje;
+      b.sytuacja = planPoz.sytuacja;
+      b.klient = planPoz.klient_id;
+    }
   }
   // 16.10 (USER_001): głos klienta wybierany w kreatorze (krok 2) ma pierwszeństwo; zapis do konfiguracji robi kreator.
   if (b.glos === "m" || b.glos === "k") konfig.glos = b.glos;
@@ -145,13 +156,15 @@ export async function POST(req: Request) {
   const sekundyTejRozmowy = Math.min(ROZMOWA_SEKUND, zostalo);
   // „Rozmowa, którą masz jutro" (9.10, moduł płatny): sytuacja z życia, TYLKO dla kont z pełnym dostępem.
   // Trial ją ignoruje po stronie serwera, nawet gdy ktoś wyśle pole ręcznie.
-  const sytuacja = pelnyDostep(konto) && typeof b.sytuacja === "string" ? b.sytuacja.trim().slice(0, 3000) || null : null;
+  // 8.11: sytuacja z CRM (plan dnia, karta klienta, lejek, czat) działa też dla każdego konta z firmą.
+  const sytuacja = (pelnyDostep(konto) || Boolean(konto.firma_id)) && typeof b.sytuacja === "string" ? b.sytuacja.trim().slice(0, 3000) || null : null;
+  const klientId = konto.firma_id && Number.isFinite(Number(b.klient)) && Number(b.klient) > 0 ? Number(b.klient) : null;
   // Scenariusz = powtarzalny egzamin (tryb + typ klienta + cel + obiekcje). Powstaje
   // sam z wyborów w kreatorze, żeby dwie rozmowy z tym samym wsadem dały się porównać.
   const scenariuszId = await zapewnijScenariusz(email, { tryb, postac, cel, celWlasny, obiekcje: wybrane, poziom });
   const { data: rozmowa, error } = await supabaseAdmin
     .from("bruno_rozmowy")
-    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa", tryb, cel, cel_wlasny: celWlasny, obiekcja, poziom, dostawca, scenariusz_id: scenariuszId, sytuacja })
+    .insert({ email, postac, karta_id: karta?.id ?? null, status: "trwa", tryb, cel, cel_wlasny: celWlasny, obiekcja, poziom, dostawca, scenariusz_id: scenariuszId, sytuacja, klient_id: klientId, plan_pozycja: planPoz ? String(b.trening) : null })
     .select("id")
     .single();
   if (error || !rozmowa) {

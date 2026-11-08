@@ -30,6 +30,8 @@ export type Powitanie = {
   trening: { etap: string | null; kryterium: string | null; obiekcja: string | null; dlaczego: string; link: string; deal: string | null } | null;
   domena: string | null;
   bezHandlowca: number;
+  /** 8.11 (algorytm treningu): plan dnia Bruno, 5 treningów. */
+  plan?: { zrobione: number; pozycje: { nr: number; tytul: string; dlaczego: string; zrobione: boolean; ocena: number | null; link: string }[] } | null;
 };
 
 type Rozpoznawanie = {
@@ -47,7 +49,7 @@ type Rozpoznawanie = {
 const KLUCZ = "bruno-kokpit-historia-v2";
 const TRENING = "/bruno/rozmowa";
 /** Temat zadania jako nagłówek (część przed dwukropkiem, max 60 znaków), także dla starych wiadomości. */
-const naglowek = (s: string) => { const k = s.split(/[:—–]/)[0].trim(); const n = k.length >= 6 ? k : s; return n.length > 60 ? `${n.slice(0, 57).trimEnd()}…` : n; };
+const naglowek = (s: string) => { const k = s.split(/:\s|\s[—–]\s/)[0].trim(); /* 8.11: nie tnie godzin „10:00” */ const n = k.length >= 6 ? k : s; return n.length > 60 ? `${n.slice(0, 57).trimEnd()}…` : n; };
 /** 5.11 (pkt 1): krótka komenda „trenuj rozmowy” / „trening” / „train” = od razu trening, bez API. */
 const komendaTreningu = (s: string) => /^(trenuj|trening|trenujmy|ćwicz|cwicz|przećwicz|train|practice)\b/i.test(s) && s.length < 40;
 
@@ -170,7 +172,8 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
     if ((tresc.length < 2 && !zalaczniki.length) || wysylam || wgrywam) return;
     if (slucham) rozp.current?.stop();
     if (komendaTreningu(tresc) && !zalaczniki.length) {
-      router.push(TRENING);
+      // 8.11: „trenuj” = następny trening z planu Bruno (albo zwykła rozmowa, gdy plan zrobiony).
+      router.push(powitanie?.plan?.pozycje.find((x) => !x.zrobione)?.link ?? TRENING);
       return;
     }
     const zal = zalaczniki;
@@ -216,7 +219,7 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
   const pigulkiCrm: { tekst: string; licznik?: string; alarm?: boolean; klik: () => void }[] = p
     ? [
         {
-          tekst: t("Today", "Dziś"),
+          tekst: t("Tasks for today", "Zadania na dziś"),
           licznik: p.naDzis.length ? `${p.naDzis.length}${p.zaleglych ? ` · ${p.zaleglych} ${t("overdue", "zaległe")}` : ""}` : "0",
           alarm: p.zaleglych > 0,
           klik: () =>
@@ -226,6 +229,27 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
               p.naDzis.map((z) => ({ tekst: z.temat, pod: [z.osoba ?? z.deal, z.kto].filter(Boolean).join(" · "), link: z.dealId ? linkKlienta(z.dealId) : null, zdjecie: z.zdjecie, znacznik: z.zalegle ? z.data.slice(5) : z.godzina?.slice(0, 5) || t("today", "dziś"), alarm: z.zalegle })),
             ),
         },
+        ...(p.plan
+          ? [
+              {
+                tekst: t("Training today", "Trening na dziś"),
+                licznik: `${p.plan.zrobione}/${p.plan.pozycje.length}`,
+                alarm: false,
+                klik: () =>
+                  lokalnie(
+                    t("What's my training today?", "Jaki mam dziś trening?"),
+                    p.plan!.zrobione >= p.plan!.pozycje.length
+                      ? t("All done for today. Great work.", "Na dziś wszystko zrobione. Dobra robota.")
+                      : t(`I picked ${p.plan!.pozycje.length} sessions for you. Next one first:`, `Ułożyłem Ci ${p.plan!.pozycje.length} treningów. Zacznij od pierwszego niezrobionego:`),
+                    p.plan!.pozycje.map((x) => ({ tekst: x.tytul, pod: x.zrobione ? `${t("Done", "Zrobione")}${x.ocena !== null ? ` · ${x.ocena}/10` : ""}` : x.dlaczego, link: x.zrobione ? null : x.link, znacznik: x.zrobione ? "✓" : String(x.nr), alarm: false })),
+                    (() => {
+                      const n = p.plan!.pozycje.find((x) => !x.zrobione);
+                      return n ? { tekst: t("Start next training →", "Zacznij trening →"), link: n.link } : null;
+                    })(),
+                  ),
+              },
+            ]
+          : []),
       ]
     : [];
 
@@ -248,10 +272,7 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
         <span className="bcz-firma" />
 
         <span className="bcz-gora-p">
-          <a href={TRENING} className="bcz-trenuj">
-            <Ikona nazwa="mikrofon" rozmiar={13} grubosc={2.2} />
-            {t("Train calls", "Trenuj rozmowy")}
-          </a>
+          {/* 8.11 (USER_001): przycisk „Trenuj rozmowy” usunięty; o treningu decyduje Bruno (algorytm doboru). */}
           {!pusto && (
             <button type="button" onClick={wyczysc} className="bcz-wyczysc">{t("New chat", "Nowa rozmowa")}</button>
           )}
@@ -275,10 +296,6 @@ export default function Kokpit({ jezyk, imie, szef, firma, domenaCrm, powitanie 
                 {x.licznik && <em>{x.licznik}</em>}
               </button>
             ))}
-            <a href={TRENING} className="bcz-pigulka bcz-pigulka-trening">
-              <Ikona nazwa="mikrofon" rozmiar={14} grubosc={2.2} />
-              {t("Train calls", "Trenuj rozmowy")}
-            </a>
           </div>
         </div>
       ) : (

@@ -9,10 +9,11 @@ import { postacLubDomyslna } from "@/lib/bruno/postacie";
 import { obiekcjeZWyjasnieniem } from "@/lib/bruno/obiekcje";
 import Rozmowa from "@/components/bruno/rozmowa";
 import { motywRinesk } from "@/lib/bruno/motyw";
+import { pozycjaPlanu } from "@/lib/bruno/plan-treningu";
 
 
 /** 25.10: wspólne dla /bruno/rozmowa i /bruno/jutro („Rozmowa, którą masz jutro”, osobna zakładka). */
-export default async function StronaRozmowy({ searchParams, jutro }: { searchParams: Promise<{ karta?: string; sytuacja?: string }>; jutro: boolean }) {
+export default async function StronaRozmowy({ searchParams, jutro }: { searchParams: Promise<{ karta?: string; sytuacja?: string; trening?: string; klient?: string }>; jutro: boolean }) {
   const email = await zalogowanyEmail();
   if (!email) redirect("/bruno");
   const konto = await pobierzKonto(email);
@@ -20,7 +21,9 @@ export default async function StronaRozmowy({ searchParams, jutro }: { searchPar
   if (!konto || !stan.aktywny) redirect("/bruno/panel");
 
   // 4.11 (Bruno pod CRM): „Trenuj ten etap” z lejka wchodzi tu z gotową sytuacją (deal + etap z Pipedrive).
-  const { karta: kartaId, sytuacja: sytuacjaStart } = await searchParams;
+  const { karta: kartaId, sytuacja: sytuacjaStart, trening, klient } = await searchParams;
+  // 8.11 (algorytm treningu): pozycja planu dnia → opis „Bruno zagra…” nad kulą; sytuację składa serwer z planu.
+  const planPoz = typeof trening === "string" ? await pozycjaPlanu(email, trening) : null;
   let karta: Karta | null = null;
   if (kartaId) {
     const { data } = await supabaseAdmin.from("bruno_karty").select("*").eq("email", email).eq("id", kartaId).maybeSingle();
@@ -69,6 +72,8 @@ export default async function StronaRozmowy({ searchParams, jutro }: { searchPar
       jutro={jutro}
       rinesk={motywRinesk()}
       sytuacjaStart={typeof sytuacjaStart === "string" ? sytuacjaStart.slice(0, 3000) : null}
+      trening={planPoz ? { klucz: String(trening), tytul: planPoz.tytul, dlaczego: planPoz.dlaczego } : null}
+      klientId={typeof klient === "string" && Number(klient) > 0 ? Number(klient) : null}
     />
   );
 }

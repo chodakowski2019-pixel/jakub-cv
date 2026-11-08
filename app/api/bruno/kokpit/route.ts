@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonto } from "@/lib/bruno/db";
 import { pobierzFirme } from "@/lib/bruno/firmy";
@@ -7,19 +8,11 @@ import { widokKonta } from "@/lib/bruno/jako";
 import { tDla } from "@/lib/bruno/i18n";
 import {
   crmWlaczony,
-  dodajNotatke,
-  dodajZadanie,
-  domenaPipedrive,
-  nowyDeal,
-  notatkiDeala,
   lejekFirmy,
-  przesunEtap,
-  zadaniaDeala,
-  zamknijDeal,
-  zmienWartosc,
   type Deal,
   type Lejek,
 } from "@/lib/bruno/lejek";
+import { dodajNotatkeCrm, dodajZadanieCrm, notatkiKlienta, nowyKlientCrm, przesunEtapCrm, zadaniaKlienta, zamknijCrm, zmienWartoscCrm } from "@/lib/bruno/crm";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -115,6 +108,26 @@ const NARZEDZIA: Anthropic.Tool[] = [
     description: "Użytkownik chce poćwiczyć / potrenować rozmowę (np. „trenuj rozmowy”, „przećwiczmy”, „zagraj klienta”). Otwiera trening głosowy 1:1 z Bruno. Jeśli chodzi o konkretny deal, podaj deal_id, wtedy Bruno zagra tego klienta na jego etapie. Bez deal_id = trening ogólny.",
     input_schema: { type: "object", properties: { deal_id: { type: "integer" }, temat: { type: "string", description: "Na czym skupić trening (obiekcja, etap), opcjonalnie." } }, additionalProperties: false },
   },
+  {
+    name: "ocen_nagranie",
+    description:
+      "8.11: Ocena PRAWDZIWEJ rozmowy handlowca z klientem (załącznik = transkrypcja nagrania rozmowy sprzedażowej, nie notatka głosowa). Oceń tą samą rubryką co trening Bruno, każde kryterium 1-10: otwarcie (powód rozmowy, kontekst w 20 s), pytania (pytania otwarte, potrzeby, liczby klienta), obiekcje (dopytanie, przeramowanie, nie zbywa), zamkniecie (prośba o decyzję albo konkretny krok z datą), pewnosc (ton, bez osłabiaczy, prowadzi rozmowę). Wypisz obiekcje klienta jego słowami (krótko). Wynik zasila plan treningu handlowca.",
+    input_schema: {
+      type: "object",
+      properties: {
+        deal_id: { type: "integer", description: "Klient z CRM, jeśli wiadomo." },
+        otwarcie: { type: "integer", minimum: 1, maximum: 10 },
+        pytania: { type: "integer", minimum: 1, maximum: 10 },
+        obiekcje: { type: "integer", minimum: 1, maximum: 10 },
+        zamkniecie: { type: "integer", minimum: 1, maximum: 10 },
+        pewnosc: { type: "integer", minimum: 1, maximum: 10 },
+        obiekcje_klienta: { type: "array", items: { type: "string" }, maxItems: 6 },
+        streszczenie: { type: "string", description: "2-3 zdania: co poszło dobrze, co poprawić." },
+      },
+      required: ["otwarcie", "pytania", "obiekcje", "zamkniecie", "pewnosc", "obiekcje_klienta", "streszczenie"],
+      additionalProperties: false,
+    },
+  },
 ];
 
 /** 5.11 (pkt 3): załącznik (PDF / nagranie) = tekst doklejony do wiadomości użytkownika. */
@@ -143,8 +156,8 @@ export async function POST(req: Request) {
     .slice(-20);
   if (!historia.length || historia[historia.length - 1].rola !== "user") return NextResponse.json({ blad: t("Empty message.", "Pusta wiadomość.") }, { status: 400 });
 
-  // 8.11: firma bez Pipedrive = domyślny pusty lejek; narzędzia zapisu odpowiadają „CRM niepodpięty”.
-  const token = firma.pipedrive_token ?? "";
+  // 8.11 (USER_001): czat czyta i zapisuje TYLKO w CRM Bruno (lib/bruno/crm.ts); Pipedrive = import.
+  const F = firma.id;
   // 4.11: szef w „Bruno handlowca” (?jako=) rozmawia jak ten handlowiec: widzi i zmienia tylko jego deale.
   const w = await widokKonta(konto, firma, new URL(req.url).searchParams.get("jako"));
   const szef = w.szef;
@@ -163,8 +176,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ blad: `CRM: ${String((e as Error)?.message ?? e)}` }, { status: 502 });
   }
   const imiona = new Map(handlowcy.map((h) => [h.email, h.imie]));
-  const domena = token ? await domenaPipedrive(token) : null;
-  const linkDeala = (id: number) => (domena ? `${domena}/deal/${id}` : null);
+  const linkDeala = (id: number) => `/bruno/klienci/${id}`;
 
   const widoczne = () => (szef ? lejek.deale : lejek.deale.filter((d) => d.handlowiec === ja));
   const mojDeal = (id: number): Deal => {
@@ -181,7 +193,8 @@ export async function POST(req: Request) {
     `Format odpowiedzi: krótko. Maks 3 zdania albo lista do 5 punktów („- ”). Nazwy klientów, kwoty i daty pogrub (**tak**). Bez nagłówków, bez tabel, bez emoji, bez powtarzania pytania.`,
     `Załączniki: użytkownik może dołączyć PDF (oferta, umowa) albo nagranie rozmowy (transkrypcja w treści między [Załącznik] i [Koniec załącznika]). Wtedy: znajdź deal (z treści albo z wiadomości), zapisz notatkę ze streszczeniem (ustalenia, kwoty, obiekcje, następny krok, max 8 linii) i jeśli z treści wynika zadanie albo etap, zrób to też. Odpowiedz 3 najważniejszymi faktami. Jeśli nie wiesz, do którego deala, zapytaj jednym zdaniem.`,
     `Trening: gdy użytkownik chce ćwiczyć / trenować rozmowę, wywołaj trenuj_rozmowe (z deal_id, jeśli mówi o kliencie). Odpowiedz jednym zdaniem.`,
-    !token ? `CRM NIE JEST PODPIĘTY: nie masz klientów ani deali. Pomagaj jako trener i doradca sprzedaży (plan rozmowy, odpowiedź na obiekcję, mail, analiza nagrania), proponuj trening. Nie udawaj zapisu w CRM.` : "",
+    `Nagranie PRAWDZIWEJ rozmowy z klientem (transkrypcja w załączniku, dwie strony rozmowy): oprócz notatki w CRM wywołaj ocen_nagranie (rubryka 5 kryteriów + obiekcje klienta). Odpowiedz: ocena, 1 rzecz dobra, 1 do poprawy. Notatka głosowa handlowca (jedna osoba opowiada) to NIE rozmowa: wtedy bez oceny.`,
+    !lejek.deale.length ? `CRM jest pusty: nie ma jeszcze klientów. Gdy użytkownik opowiada o nowym kliencie, załóż go narzędziem nowy_deal (osoba, firma, wartość). Poza tym pomagaj jako trener i doradca sprzedaży.` : "",
     `Etapy lejka „${lejek.pipeline.nazwa}” (id: nazwa): ${lejek.etapy.map((e) => `${e.id}: ${e.nazwa}`).join(", ")}.`,
     `Handlowcy: ${handlowcy.map((h) => `${h.imie} <${h.email}>`).join(", ")}.`,
     `Deale użytkownika (otwarte, ${Math.min(widoczne().filter((d) => d.status === "open").length, 80)} z ${widoczne().filter((d) => d.status === "open").length}):\n${widoczne()
@@ -198,7 +211,6 @@ export async function POST(req: Request) {
   let przekieruj: string | null = null;
 
   const wykonaj = async (nazwa: string, input: Record<string, unknown>): Promise<string> => {
-    if (!token && nazwa !== "trenuj_rozmowe" && nazwa !== "lista_deali") return "CRM nie jest jeszcze podpięty, nic nie zapisano. Powiedz to użytkownikowi jednym zdaniem i pomóż bez zapisu (rada, plan rozmowy, trening).";
     switch (nazwa) {
       case "trenuj_rozmowe": {
         const id = Number(input.deal_id);
@@ -206,13 +218,13 @@ export async function POST(req: Request) {
         const temat = typeof input.temat === "string" ? input.temat.trim().slice(0, 300) : "";
         if (d) {
           const etap = lejek.etapy.find((e) => e.id === d.etap_id)?.nazwa ?? "?";
-          const n = await notatkiDeala(token, d.id, 4).catch(() => []);
+          const n = await notatkiKlienta(F, d.id, 4).catch(() => []);
           const sytuacja = [
             jezyk === "pl" ? `Zagraj klienta: ${d.osoba ?? "osoba decyzyjna"}${d.organizacja ? ` z firmy ${d.organizacja}` : ""}. Deal „${d.tytul}”, wartość ${d.wartosc} ${d.waluta}, etap lejka: ${etap}.` : `Play the customer: ${d.osoba ?? "decision maker"}${d.organizacja ? ` from ${d.organizacja}` : ""}. Deal “${d.tytul}”, value ${d.wartosc} ${d.waluta}, stage: ${etap}.`,
             n.length ? (jezyk === "pl" ? `Co wiemy z notatek: ${n.map((x) => x.tresc).join(" | ").slice(0, 900)}.` : `From notes: ${n.map((x) => x.tresc).join(" | ").slice(0, 900)}.`) : "",
             temat ? (jezyk === "pl" ? `Skup się na: ${temat}.` : `Focus on: ${temat}.`) : "",
           ].filter(Boolean).join(" ");
-          przekieruj = `/bruno/rozmowa?sytuacja=${encodeURIComponent(sytuacja.slice(0, 2900))}`;
+          przekieruj = `/bruno/rozmowa?sytuacja=${encodeURIComponent(sytuacja.slice(0, 2900))}&klient=${d.id}`;
           akcje.push({ opis: `${t("Training", "Trening")}: ${d.tytul}`, link: null });
           return `Otwieram trening: Bruno zagra ${d.osoba ?? d.tytul}.`;
         }
@@ -233,14 +245,14 @@ export async function POST(req: Request) {
       }
       case "szczegoly_deala": {
         const d = mojDeal(Number(input.deal_id));
-        const [n, z] = await Promise.all([notatkiDeala(token, d.id), zadaniaDeala(token, d.id)]);
+        const [n, z] = await Promise.all([notatkiKlienta(F, d.id), zadaniaKlienta(F, d.id)]);
         return `${dealDoTekstu(d, lejek, imiona)}\nNotatki:\n${n.map((x) => `- ${x.kiedy.slice(0, 10)}: ${x.tresc}`).join("\n") || "-"}\nZadania:\n${z.map((x) => `- ${x.data} ${x.zrobione ? "✓" : "○"} ${x.temat} (${x.typ})`).join("\n") || "-"}`;
       }
       case "dodaj_notatke": {
         const d = mojDeal(Number(input.deal_id));
         const tresc = String(input.tresc ?? "").trim().slice(0, 4000);
         if (!tresc) throw new Error("Pusta notatka.");
-        await dodajNotatke(token, d.id, `<p>${tresc.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c] ?? c).replace(/\n/g, "<br>")}</p><p><i>${imieKonta} przez Bruno</i></p>`);
+        await dodajNotatkeCrm(F, d.id, tresc, ja);
         akcje.push({ opis: `${t("Note added", "Notatka dodana")}: ${d.tytul}`, link: linkDeala(d.id) });
         return `Notatka zapisana w dealu #${d.id}.`;
       }
@@ -248,7 +260,7 @@ export async function POST(req: Request) {
         const d = mojDeal(Number(input.deal_id));
         const etap = lejek.etapy.find((e) => e.id === Number(input.etap_id));
         if (!etap) throw new Error("Nie ma takiego etapu.");
-        await przesunEtap(token, d.id, etap.id);
+        await przesunEtapCrm(F, d.id, etap.id, ja);
         d.etap_id = etap.id;
         akcje.push({ opis: `${d.tytul} → ${etap.nazwa}`, link: linkDeala(d.id) });
         return `Deal #${d.id} jest teraz na etapie „${etap.nazwa}”.`;
@@ -259,7 +271,7 @@ export async function POST(req: Request) {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) throw new Error("Data musi być w formacie YYYY-MM-DD.");
         const godzina = typeof input.godzina === "string" && /^\d{2}:\d{2}$/.test(input.godzina) ? input.godzina : null;
         const temat = String(input.temat ?? "").trim().slice(0, 250);
-        await dodajZadanie(token, { dealId: d.id, temat, data, godzina, typ: typeof input.typ === "string" ? input.typ : "task" });
+        await dodajZadanieCrm(F, d.id, { temat, data, godzina, typ: typeof input.typ === "string" ? input.typ : "task" }, ja);
         akcje.push({ opis: `${t("Task", "Zadanie")} ${data}${godzina ? ` ${godzina}` : ""}: ${temat} (${d.tytul})`, link: linkDeala(d.id) });
         return `Zadanie „${temat}” na ${data} dodane do deala #${d.id}.`;
       }
@@ -267,16 +279,9 @@ export async function POST(req: Request) {
         const tytul = String(input.tytul ?? "").trim().slice(0, 250);
         if (!tytul) throw new Error("Brak tytułu deala.");
         const etapId = typeof input.etap_id === "number" && lejek.etapy.some((e) => e.id === input.etap_id) ? input.etap_id : lejek.etapy[0]?.id ?? null;
-        const r = await nowyDeal(token, {
-          tytul,
-          wartosc: typeof input.wartosc === "number" ? input.wartosc : 0,
-          waluta: lejek.deale[0]?.waluta ?? "PLN",
-          etapId,
-          osoba: typeof input.osoba === "string" ? input.osoba : null,
-          organizacja: typeof input.organizacja === "string" ? input.organizacja : null,
-          handlowiec: ja,
-          poleHandlowca: lejek.pole_handlowca,
-        });
+        const osoba = typeof input.osoba === "string" && input.osoba.trim() ? input.osoba.trim() : null;
+        const org = typeof input.organizacja === "string" && input.organizacja.trim() ? input.organizacja.trim() : null;
+        const r = await nowyKlientCrm(F, ja, { imie_nazwisko: osoba ?? tytul, firma: org ?? (osoba ? tytul : null), telefon: null, email: null, etap_id: etapId, wartosc: typeof input.wartosc === "number" ? input.wartosc : 0 });
         lejek.deale.push({
           id: r.id,
           tytul,
@@ -300,7 +305,7 @@ export async function POST(req: Request) {
       case "zamknij_deal": {
         const d = mojDeal(Number(input.deal_id));
         const status = input.status === "won" ? "won" : "lost";
-        await zamknijDeal(token, d.id, status, typeof input.powod === "string" ? input.powod : null);
+        await zamknijCrm(F, d.id, status, typeof input.powod === "string" ? input.powod : null, ja);
         d.status = status;
         akcje.push({ opis: `${d.tytul}: ${status === "won" ? t("won", "wygrany") : t("lost", "przegrany")}`, link: linkDeala(d.id) });
         return `Deal #${d.id} oznaczony jako ${status}.`;
@@ -309,10 +314,26 @@ export async function POST(req: Request) {
         const d = mojDeal(Number(input.deal_id));
         const w = Number(input.wartosc);
         if (!Number.isFinite(w) || w < 0) throw new Error("Zła kwota.");
-        await zmienWartosc(token, d.id, w);
+        await zmienWartoscCrm(F, d.id, w, ja);
         d.wartosc = w;
         akcje.push({ opis: `${d.tytul}: ${w} ${d.waluta}`, link: linkDeala(d.id) });
         return `Wartość deala #${d.id} = ${w} ${d.waluta}.`;
+      }
+      case "ocen_nagranie": {
+        const k = (n: unknown) => Math.min(10, Math.max(1, Math.round(Number(n) || 1)));
+        const kryteria = { otwarcie: k(input.otwarcie), pytania: k(input.pytania), obiekcje: k(input.obiekcje), zamkniecie: k(input.zamkniecie), pewnosc: k(input.pewnosc) };
+        const ocena = Math.round((kryteria.otwarcie * 0.15 + kryteria.pytania * 0.25 + kryteria.obiekcje * 0.25 + kryteria.zamkniecie * 0.2 + kryteria.pewnosc * 0.15) * 10) / 10;
+        const id = Number(input.deal_id);
+        const d = Number.isFinite(id) && id > 0 ? widoczne().find((x) => x.id === id) ?? null : null;
+        const obiekcjeKl = Array.isArray(input.obiekcje_klienta) ? input.obiekcje_klienta.filter((x): x is string => typeof x === "string" && x.trim().length > 0).map((x) => x.trim().slice(0, 200)).slice(0, 6) : [];
+        const streszczenie = String(input.streszczenie ?? "").slice(0, 1500);
+        const { error } = await supabaseAdmin.from("bruno_oceny_nagran").insert({ email: ja, firma_id: F, klient_id: d?.id ?? null, ocena, kryteria, obiekcje: obiekcjeKl, streszczenie });
+        if (error) throw new Error(error.message);
+        if (d) await dodajNotatkeCrm(F, d.id, `Ocena prawdziwej rozmowy: ${ocena}/10 (otwarcie ${kryteria.otwarcie}, pytania ${kryteria.pytania}, obiekcje ${kryteria.obiekcje}, zamknięcie ${kryteria.zamkniecie}, pewność ${kryteria.pewnosc}). ${streszczenie}${obiekcjeKl.length ? ` Obiekcje: ${obiekcjeKl.join("; ")}.` : ""}`, ja);
+        // Plan na dziś układa się od nowa z nową oceną (następny odczyt czatu).
+        await supabaseAdmin.from("bruno_plan_treningu").delete().eq("email", ja).eq("dzien", new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" }));
+        akcje.push({ opis: `${t("Real call scored", "Prawdziwa rozmowa oceniona")}: ${ocena}/10${d ? ` (${d.tytul})` : ""}`, link: d ? linkDeala(d.id) : null });
+        return `Ocena zapisana: ${ocena}/10. Plan treningu na dziś zostanie ułożony od nowa z tą oceną.`;
       }
       default:
         throw new Error(`Nieznane narzędzie ${nazwa}.`);

@@ -5,6 +5,7 @@ import { pobierzFirme } from "@/lib/bruno/firmy";
 import { widokKonta } from "@/lib/bruno/jako";
 import { tSerwer } from "@/lib/bruno/jezyk-serwer";
 import { crmWlaczony, lejekFirmy } from "@/lib/bruno/lejek";
+import { profileFirmy } from "@/lib/bruno/klienci";
 import KlienciLista from "@/components/bruno/klienci-widok";
 import PrzelacznikHandlowca from "@/components/bruno/przelacznik-handlowca";
 
@@ -27,13 +28,14 @@ export default async function BrunoKlienciPage({ searchParams }: { searchParams:
 
   let blad: string | null = null;
   try {
-    const lejek = await lejekFirmy(firma);
+    const [lejek, prof] = await Promise.all([lejekFirmy(firma), profileFirmy(firma.id).catch(() => new Map())]);
+    const profile = Object.fromEntries(prof);
     const osoby = w.handlowcy.map((h) => ({ email: h.email.toLowerCase(), imie: h.imie ?? h.email, zdjecie: h.zdjecie_url ?? null }));
     const widoczne = szef ? lejek.deale : lejek.deale.filter((d) => d.handlowiec === w.konto.email.toLowerCase());
     return (
       <>
         {w.jakoHandlowiec && <PrzelacznikHandlowca sciezka="/bruno/klienci" jezyk={jezyk} handlowcy={w.handlowcy} wybrany={w.konto.email} />}
-        <KlienciLista firma={firma} jezyk={jezyk} szef={szef} etapy={lejek.etapy} deale={widoczne} osoby={osoby} q={typeof q === "string" ? q.slice(0, 80) : ""} status={status === "won" || status === "lost" || status === "all" ? status : "open"} jako={w.jako} imie={w.jakoHandlowiec ? (w.konto.imie ?? w.konto.email) : null} />
+        <KlienciLista firma={firma} jezyk={jezyk} szef={szef} etapy={lejek.etapy} deale={widoczne} osoby={osoby} q={typeof q === "string" ? q.slice(0, 80) : ""} status={status === "won" || status === "lost" || status === "all" ? status : "open"} jako={w.jako} imie={w.jakoHandlowiec ? (w.konto.imie ?? w.konto.email) : null} profile={profile} kartaKlienta />
       </>
     );
   } catch (e) {

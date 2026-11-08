@@ -455,3 +455,45 @@ a.pc-kratka:hover { transform: translateY(-1px); box-shadow: var(--p-cien-2); bo
 .pl-prog-tabela td, .pl-prog-tabela th { padding-top: 8px; padding-bottom: 8px; }
 .pl-prog-tabela tr:last-child td { border-top: 1px solid var(--p-ramka-2); }
 @media (max-width: 640px) { .pl-prog-cel { text-align: left; align-items: flex-start; } .pl-prog-liczba { font-size: 28px; } }
+
+/* 8.11 (USER_001): zakładka Klienci v2: 2 wykresy kreskowe, „+ Dodaj klienta”, sylwetka / zdjęcie w kółku, okno formularza. */
+.kl2-dodaj span { font-size: 18px; line-height: 1; margin-top: -1px; }
+.kl2-wykresy { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.kl2-wk { padding: 18px 20px 14px; }
+.kl2-wk-et { font-size: 13px; color: var(--p-ink-3, #6b6e78); }
+.kl2-wk-w { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; margin: 4px 0 8px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+.kl2-wk-w small { font-size: 12.5px; font-weight: 500; letter-spacing: 0; }
+.kl2-wykres { display: block; overflow: visible; }
+.kl2-wk-os { display: flex; justify-content: space-between; font-size: 11.5px; color: #9a9ca6; margin-top: 2px; }
+.kl2-tabela td { vertical-align: middle; }
+.kl2-td-foto { width: 56px; }
+.kl2-imie { font-weight: 600; color: var(--p-ink); text-decoration: none; }
+a.kl2-imie:hover { text-decoration: underline; text-underline-offset: 3px; }
+.kl2-kontakt { color: var(--p-ink); text-decoration: none; white-space: nowrap; }
+.kl2-kontakt:hover { text-decoration: underline; text-underline-offset: 3px; }
+.kl2-awatar { position: relative; display: block; border-radius: 50%; padding: 0; border: 0; background: none; cursor: pointer; flex: none; }
+.kl2-awatar img, .kl2-awatar svg { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+.kl2-awatar-plus { position: absolute; right: -2px; bottom: -2px; width: 16px; height: 16px; border-radius: 50%; background: var(--p-ink); color: var(--p-lim); font-size: 12px; line-height: 16px; text-align: center; font-weight: 700; opacity: 0; transform: scale(0.7); transition: opacity 150ms, transform 200ms var(--p-sprezyna); }
+.kl2-awatar:hover .kl2-awatar-plus, .kl2-awatar:focus-visible .kl2-awatar-plus, .kl2-awatar:disabled .kl2-awatar-plus { opacity: 1; transform: scale(1); }
+@media (hover: none) { .kl2-awatar-plus { opacity: 1; transform: scale(1); } }
+.kl2-tlo { position: fixed; inset: 0; z-index: 80; background: rgba(20, 20, 22, 0.32); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 16px; animation: kl2-wjazd 160ms ease-out; }
+.kl2-okno { width: min(560px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #fff; border-radius: 22px; padding: 22px 22px 18px; box-shadow: 0 30px 80px -30px rgba(20, 20, 22, 0.45); display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; font-family: var(--p-font); color: var(--p-ink); }
+.kl2-okno-hd { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+.kl2-okno-hd h2 { font-size: 20px; font-weight: 600; margin: 0; }
+.kl2-okno-hd button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: #f2f3f5; font-size: 20px; cursor: pointer; color: var(--p-ink); }
+.kl2-pole { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5b5e68; min-width: 0; border: 0; padding: 0; margin: 0; }
+.kl2-pole input:not([type="radio"]), .kl2-pole select { height: 42px; border-radius: 12px; border: 1px solid var(--p-ramka); padding: 0 12px; font: inherit; font-size: 15px; color: var(--p-ink); background: #fff; min-width: 0; }
+.kl2-pole input:focus, .kl2-pole select:focus { outline: 2px solid var(--p-ink); outline-offset: -1px; }
+.kl2-cale { grid-column: 1 / -1; }
+.kl2-plec { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.kl2-plec > span { width: 100%; }
+.kl2-plec label { display: inline-flex; align-items: center; gap: 6px; color: var(--p-ink); font-size: 14px; cursor: pointer; }
+.kl2-blad { grid-column: 1 / -1; color: var(--p-zle); font-size: 13.5px; margin: 0; }
+.kl2-okno-dol { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+@media (max-width: 560px) { .kl2-okno { grid-template-columns: 1fr; } }
+@keyframes kl2-wjazd { from { opacity: 0; } to { opacity: 1; } }
+.kl2-sekcja { display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--p-ramka); border-radius: 14px; font-size: 13.5px; color: #5b5e68; }
+.kl2-sekcja b { color: var(--p-ink); font-size: 15px; font-weight: 600; }
+.kl2-podglad { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; padding-top: 6px; color: var(--p-ink); }
+.kl2-input { flex: 1; height: 40px; border-radius: 12px; border: 1px solid var(--p-ramka); padding: 0 12px; font: inherit; font-size: 14px; min-width: 0; }
+.kl2-naglowek-akcje { display: flex; gap: 8px; flex-wrap: wrap; }

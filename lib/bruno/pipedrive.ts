@@ -97,36 +97,41 @@ export async function wyslijWynik(w: WynikDoCrm): Promise<{ activity_id: number;
   return { activity_id: d.id, typ, user_id };
 }
 
+/** 8.11: treść notatki treningu w CRM Bruno (zwykły tekst). */
+export function notatkaTekst(f: Feedback, jezyk: "pl" | "en" = "pl"): string {
+  const pl = jezyk === "pl";
+  const plusy = f.plusy ?? f.kryteria.filter((k) => k.ocena >= 7).map((k) => k.komentarz);
+  const minusy = f.minusy ?? f.kryteria.filter((k) => k.ocena < 5).map((k) => k.komentarz);
+  return [
+    `${pl ? "Ocena" : "Score"}: ${f.ocena}/10`,
+    plusy.length ? `${pl ? "Plusy" : "Wins"}: ${plusy.slice(0, 4).join("; ")}` : "",
+    minusy.length ? `${pl ? "Minusy" : "Misses"}: ${minusy.slice(0, 4).join("; ")}` : "",
+    f.poprawka ? `${pl ? "Jedna poprawka" : "One fix"}: ${f.poprawka}` : "",
+    `${pl ? "Kryteria" : "Criteria"}: ${f.kryteria.map((k) => `${k.nazwa} ${k.ocena}`).join(", ")}`,
+  ].filter(Boolean).join("\n");
+}
+
 /**
- * Hak po ocenie rozmowy (`/api/bruno/rozmowa/koniec`): jeśli firma konta ma token, wyślij.
- * Nigdy nie rzuca: błąd trafia do metryk rozmowy (`crm_blad`), żeby nie psuć odpowiedzi dla handlowca.
+ * Hak po ocenie rozmowy (`/api/bruno/rozmowa/koniec`). 8.11 (USER_001: CRM Bruno = główna baza): wynik idzie jako
+ * zrobione zadanie „trening” do CRM Bruno (przy kliencie, jeśli trening był z klienta). Do Pipedrive już NIE
+ * (Pipedrive = tylko import). Nigdy nie rzuca: błąd trafia do metryk rozmowy (`crm_blad`).
  */
-export async function wyslijWynikDoCrm(konto: Konto | null, rozmowa: WynikDoCrm["rozmowa"], feedback: Feedback): Promise<void> {
+export async function wyslijWynikDoCrm(konto: Konto | null, rozmowa: WynikDoCrm["rozmowa"] & { klient_id?: number | null }, feedback: Feedback): Promise<void> {
   if (!konto?.firma_id) return;
-  const { data: firma } = await supabaseAdmin.from("bruno_firmy").select("id, pipedrive_token, pipedrive_typ, jezyk").eq("id", konto.firma_id).maybeSingle();
-  if (!firma?.pipedrive_token) return;
+  const { data: firma } = await supabaseAdmin.from("bruno_firmy").select("id, jezyk").eq("id", konto.firma_id).maybeSingle();
+  if (!firma) return;
+  const metryki = async (zmiana: Record<string, unknown>) => {
+    const { data: r } = await supabaseAdmin.from("bruno_rozmowy").select("metryki").eq("id", rozmowa.id).maybeSingle();
+    await supabaseAdmin.from("bruno_rozmowy").update({ metryki: { ...((r?.metryki as Record<string, unknown>) ?? {}), ...zmiana } }).eq("id", rozmowa.id);
+  };
   try {
-    const w = await wyslijWynik({
-      token: firma.pipedrive_token,
-      typ: firma.pipedrive_typ,
-      email: konto.email,
-      imie: konto.imie ?? null,
-      jezyk: firma.jezyk === "en" ? "en" : "pl",
-      rozmowa,
-      feedback,
-    });
-    if (!firma.pipedrive_typ) await supabaseAdmin.from("bruno_firmy").update({ pipedrive_typ: w.typ }).eq("id", firma.id);
-    const { data: r } = await supabaseAdmin.from("bruno_rozmowy").select("metryki").eq("id", rozmowa.id).maybeSingle();
-    await supabaseAdmin
-      .from("bruno_rozmowy")
-      .update({ metryki: { ...((r?.metryki as Record<string, unknown>) ?? {}), crm: { pipedrive_activity_id: w.activity_id, user_id: w.user_id, kiedy: new Date().toISOString() } } })
-      .eq("id", rozmowa.id);
+    const { zapiszTreningCrm } = await import("./crm");
+    const kto = konto.imie ? `${konto.imie}: ` : "";
+    const temat = `${kto}Bruno ${feedback.ocena}/10` + (rozmowa.obiekcja ? ` · ${rozmowa.obiekcja}` : "") + (rozmowa.poziom ? ` · ${rozmowa.poziom}` : "");
+    const z = await zapiszTreningCrm(firma.id, rozmowa.klient_id ?? null, { temat, notatka: notatkaTekst(feedback, firma.jezyk === "en" ? "en" : "pl"), autor: konto.email, kiedy: rozmowa.start });
+    await metryki({ crm: { bruno_zdarzenie_id: z.id, klient_id: rozmowa.klient_id ?? null, kiedy: new Date().toISOString() } });
   } catch (e) {
-    console.error("[bruno pipedrive]", e);
-    const { data: r } = await supabaseAdmin.from("bruno_rozmowy").select("metryki").eq("id", rozmowa.id).maybeSingle();
-    await supabaseAdmin
-      .from("bruno_rozmowy")
-      .update({ metryki: { ...((r?.metryki as Record<string, unknown>) ?? {}), crm_blad: String((e as Error)?.message ?? e).slice(0, 300) } })
-      .eq("id", rozmowa.id);
+    console.error("[bruno crm trening]", e);
+    await metryki({ crm_blad: String((e as Error)?.message ?? e).slice(0, 300) });
   }
 }
