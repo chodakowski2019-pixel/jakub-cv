@@ -345,7 +345,47 @@ export function ImportKlientow({ jezyk, szef }: { jezyk: Jezyk; szef: boolean })
 
 /** 8.11 (USER_001: „żeby wejść w lead, klikam w całość, nie tylko w imię”): wiersz tabeli Klienci = link do karty.
  * Kliknięcia w zdjęcie, telefon i e-mail działają po swojemu (nie otwierają karty). Klawiatura: Enter. */
-export function WierszKlienta({ href, opoznienie, children }: { href: string | null; opoznienie: number; children: React.ReactNode }) {
+/** 9.11 (USER_001): w wierszu listy strzałka w kółku = od razu następny etap, x = usuń leada (przekreślony, szary, na dole listy). */
+export function SzybkieAkcje({ id, nastepny, usuniety, jezyk }: { id: number; /** nazwa następnego etapu albo null na ostatnim */ nastepny: string | null; usuniety: boolean; jezyk: Jezyk }) {
+  const t = (en: string, pl: string) => (jezyk === "pl" ? pl : en);
+  const router = useRouter();
+  const [trwa, setTrwa] = useState(false);
+  const wyslij = async (akcja: "dalej" | "usun" | "przywroc") => {
+    if (trwa) return;
+    setTrwa(true);
+    try {
+      const r = await fetch(`/api/bruno/klienci/${id}`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ akcja }) });
+      if (!r.ok) alert((await r.json().catch(() => ({}))).blad ?? t("Something went wrong.", "Coś poszło nie tak."));
+      router.refresh();
+    } finally {
+      setTrwa(false);
+    }
+  };
+  if (usuniety) {
+    const opis = t("Restore lead", "Przywróć leada");
+    return (
+      <button type="button" className="kl2-olowek" disabled={trwa} onClick={() => wyslij("przywroc")} aria-label={opis} title={opis}>
+        <svg viewBox="0 0 20 20" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M4 8h8a4 4 0 010 8H8" /><path d="M7 5L4 8l3 3" /></svg>
+      </button>
+    );
+  }
+  const dalej = nastepny ? `${t("Move to", "Przenieś do")}: ${nastepny}` : "";
+  const usun = t("Remove lead", "Usuń leada");
+  return (
+    <>
+      {nastepny && (
+        <button type="button" className="kl2-olowek kl2-dalej" disabled={trwa} onClick={() => wyslij("dalej")} aria-label={dalej} title={dalej}>
+          <svg viewBox="0 0 20 20" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M4 10h12" /><path d="M11 5l5 5-5 5" /></svg>
+        </button>
+      )}
+      <button type="button" className="kl2-olowek kl2-usun" disabled={trwa} onClick={() => wyslij("usun")} aria-label={usun} title={usun}>
+        <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><path d="M5 5l10 10M15 5L5 15" /></svg>
+      </button>
+    </>
+  );
+}
+
+export function WierszKlienta({ href, opoznienie, usuniety = false, children }: { href: string | null; opoznienie: number; usuniety?: boolean; children: React.ReactNode }) {
   const router = useRouter();
   const idz = (e: React.MouseEvent | React.KeyboardEvent) => {
     if (!href) return;
@@ -354,7 +394,7 @@ export function WierszKlienta({ href, opoznienie, children }: { href: string | n
     else router.push(href);
   };
   return (
-    <tr className={href ? "kl2-wiersz" : undefined} style={{ animationDelay: `${opoznienie}ms` }} onClick={idz} onKeyDown={(e) => { if (e.key === "Enter") idz(e); }} tabIndex={href ? 0 : undefined} role={href ? "link" : undefined}>
+    <tr className={[href ? "kl2-wiersz" : "", usuniety ? "kl2-usuniety" : ""].join(" ").trim() || undefined} style={{ animationDelay: `${opoznienie}ms` }} onClick={idz} onKeyDown={(e) => { if (e.key === "Enter") idz(e); }} tabIndex={href ? 0 : undefined} role={href ? "link" : undefined}>
       {children}
     </tr>
   );

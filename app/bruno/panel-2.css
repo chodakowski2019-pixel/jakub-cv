@@ -511,3 +511,10 @@ a.kl2-imie:hover { text-decoration: underline; text-underline-offset: 3px; }
 .kl2-olowek { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--p-ramka); background: #fff; color: var(--p-ink); display: inline-grid; place-items: center; cursor: pointer; transition: background 150ms; }
 .kl2-olowek:hover { background: var(--p-lim); border-color: transparent; }
 .kl2-tabela td.kl2-td-edytuj { overflow: visible; }
+/* 9.11: szybkie akcje w wierszu (następny etap, usuń) + usunięty lead */
+.kl2-akcje { display: inline-flex; gap: 6px; justify-content: flex-end; }
+.kl2-olowek:disabled { opacity: .45; cursor: default; }
+.kl2-usun:hover { background: var(--p-zle); color: #fff; }
+.kl2-usuniety td:not(.kl2-td-edytuj) { opacity: .45; text-decoration: line-through; }
+.kl2-usuniety td.kl2-td-foto { filter: grayscale(1); }
+.kl2-usuniety .kl2-imie, .kl2-usuniety .kl2-kontakt { text-decoration: line-through; }

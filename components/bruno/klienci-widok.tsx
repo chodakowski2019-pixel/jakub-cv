@@ -5,7 +5,7 @@ import { locale, tDla, type Jezyk } from "@/lib/bruno/i18n";
 import { formatKwota, naglowekZadania, type Aktywnosc, type Deal, type Etap, type Zdarzenie } from "@/lib/bruno/lejek";
 import { zJako } from "@/lib/bruno/jako";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
-import { AwatarKlienta, DodajKlienta, ImportKlientow, WierszKlienta } from "@/components/bruno/klienci-akcje";
+import { AwatarKlienta, DodajKlienta, ImportKlientow, SzybkieAkcje, WierszKlienta } from "@/components/bruno/klienci-akcje";
 import { plecZImienia, twarzKlienta } from "@/lib/bruno/plec";
 
 // 4.11 (USER_001, pkt 2): ZAKŁADKA KLIENCI (lista) + KARTA KLIENTA. Dane na żywo z CRM (Pipedrive).
@@ -67,7 +67,8 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad
   // 8.11 (USER_001): bez przełącznika Otwarte / Wygrane / Przegrane / Wszystkie: jedna lista, najnowsi u góry.
   const lista = deale
     .filter((d) => !szukaj || [d.tytul, d.osoba, d.organizacja, d.telefon, d.email].some((x) => (x ?? "").toLowerCase().includes(szukaj)))
-    .sort((a, b) => (b.dodano ?? "").localeCompare(a.dodano ?? ""));
+    // 9.11 (USER_001): usunięte (przegrane) leady spadają na dół listy.
+    .sort((a, b) => Number(a.status === "lost") - Number(b.status === "lost") || (b.dodano ?? "").localeCompare(a.dodano ?? ""));
   const etapNazwa = (id: number) => etapy.find((e) => e.id === id)?.nazwa ?? String(id);
   const waluta = deale[0]?.waluta ?? "PLN";
   const kwota = (n: number) => formatKwota(n, waluta, jezyk);
@@ -131,7 +132,7 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad
                   <col style={{ width: "14%" }} />
                   <col style={{ width: "20%" }} />
                   <col />
-                  <col style={{ width: 56 }} />
+                  <col style={{ width: 138 }} />
                 </colgroup>
                 <thead>
                   <tr>
@@ -141,7 +142,7 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad
                     <th>{t("Phone", "Numer telefonu")}</th>
                     <th>E-mail</th>
                     <th>{t("Stage", "Etap")}</th>
-                    <th aria-label={t("Edit", "Edytuj")} />
+                    <th aria-label={t("Actions", "Akcje")} />
                   </tr>
                 </thead>
                 <tbody>
@@ -150,7 +151,7 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad
                     const nazwa = d.osoba ?? d.tytul;
                     const pr = profile[d.id];
                     return (
-                      <WierszKlienta key={d.id} href={kartaKlienta ? zJako(`/bruno/klienci/${d.id}`, jako) : null} opoznienie={Math.min(i, 20) * 20}>
+                      <WierszKlienta key={d.id} href={kartaKlienta ? zJako(`/bruno/klienci/${d.id}`, jako) : null} opoznienie={Math.min(i, 20) * 20} usuniety={d.status === "lost"}>
                         <td className="kl2-td-foto"><AwatarKlienta dealId={d.id} zdjecie={pr?.zdjecie ?? null} plec={pr?.plec ?? plecZImienia(d.osoba)} imie={nazwa} jezyk={jezyk} /></td>
                         <td>{kartaKlienta ? <Link href={zJako(`/bruno/klienci/${d.id}`, jako)} className="kl2-imie">{nazwa}</Link> : <span className="kl2-imie">{nazwa}</span>}</td>
                         <td>{d.organizacja ?? <span className="p-cichy">–</span>}</td>
@@ -162,7 +163,7 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad
                             <EtapKropki etapy={etapy} idx={idx} status={d.status} />
                           </span>
                         </td>
-                        <td className="kl2-td-edytuj"><DodajKlienta maly etapy={etapy.map((e) => ({ id: e.id, nazwa: e.nazwa }))} jezyk={jezyk} klient={{ id: d.id, imie_nazwisko: d.osoba ?? d.tytul, firma: d.organizacja, telefon: d.telefon ?? null, email: d.email ?? null, etap_id: d.etap_id, wartosc: d.wartosc, plec: pr?.plec ?? null }} /></td>
+                        <td className="kl2-td-edytuj"><span className="kl2-akcje">{d.status !== "won" && <SzybkieAkcje id={d.id} nastepny={etapy[idx + 1]?.nazwa ?? null} usuniety={d.status === "lost"} jezyk={jezyk} />}<DodajKlienta maly etapy={etapy.map((e) => ({ id: e.id, nazwa: e.nazwa }))} jezyk={jezyk} klient={{ id: d.id, imie_nazwisko: d.osoba ?? d.tytul, firma: d.organizacja, telefon: d.telefon ?? null, email: d.email ?? null, etap_id: d.etap_id, wartosc: d.wartosc, plec: pr?.plec ?? null }} /></span></td>
                       </WierszKlienta>
                     );
                   })}

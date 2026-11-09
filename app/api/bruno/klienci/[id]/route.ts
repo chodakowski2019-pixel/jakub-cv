@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonto } from "@/lib/bruno/db";
 import { czySzef, pobierzFirme } from "@/lib/bruno/firmy";
-import { edytujKlientaCrm } from "@/lib/bruno/crm";
+import { edytujKlientaCrm, etapyFirmy, przesunEtapCrm, przywrocCrm, zamknijCrm } from "@/lib/bruno/crm";
 import { zapiszProfil } from "@/lib/bruno/klienci";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -19,10 +19,27 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const firma = await pobierzFirme(konto?.firma_id);
   if (!konto || !firma) return NextResponse.json({ blad: "403" }, { status: 403 });
   const id = Number((await params).id);
-  const { data: k } = await supabaseAdmin.from("bruno_klienci").select("handlowiec").eq("id", id).eq("firma_id", firma.id).maybeSingle();
+  const { data: k } = await supabaseAdmin.from("bruno_klienci").select("handlowiec, etap_id").eq("id", id).eq("firma_id", firma.id).maybeSingle();
   if (!k) return NextResponse.json({ blad: "404" }, { status: 404 });
   if (!czySzef(konto) && String(k.handlowiec ?? "").toLowerCase() !== email.toLowerCase()) return NextResponse.json({ blad: "To nie jest Twój klient." }, { status: 403 });
   const b = (await req.json().catch(() => ({}))) as Record<string, unknown>;
+  // 9.11 (USER_001): szybkie akcje z wiersza listy: strzałka = następny etap, x = usuń (przegrany, na dół listy), cofnięcie.
+  if (b.akcja === "dalej" || b.akcja === "usun" || b.akcja === "przywroc") {
+    try {
+      const autor = email.toLowerCase();
+      if (b.akcja === "usun") await zamknijCrm(firma.id, id, "lost", "Usunięty z listy", autor);
+      else if (b.akcja === "przywroc") await przywrocCrm(firma.id, id, autor);
+      else {
+        const etapy = await etapyFirmy(firma.id);
+        const nast = etapy[etapy.findIndex((e) => e.id === Number(k.etap_id)) + 1];
+        if (!nast) return NextResponse.json({ blad: "To już ostatni etap." }, { status: 400 });
+        await przesunEtapCrm(firma.id, id, nast.id, autor);
+      }
+      return NextResponse.json({ ok: true });
+    } catch (e) {
+      return NextResponse.json({ blad: String((e as Error)?.message ?? e).slice(0, 300) }, { status: 500 });
+    }
+  }
   const imie = tekst(b.imie_nazwisko, 160);
   if (imie === null) return NextResponse.json({ blad: "Podaj imię i nazwisko." }, { status: 400 });
   const mail = tekst(b.email, 160);

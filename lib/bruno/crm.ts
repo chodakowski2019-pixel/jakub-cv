@@ -187,6 +187,14 @@ export async function zamknijCrm(firmaId: string, klientId: number, status: "won
   return { id: klientId, status };
 }
 
+/** 9.11 (USER_001: „x przy leadzie”): usunięty lead wraca na listę jako otwarty. */
+export async function przywrocCrm(firmaId: string, klientId: number, autor: string) {
+  const { error } = await sb().from("bruno_klienci").update({ status: "open", powod_przegranej: null, aktualizacja: teraz() }).eq("id", klientId).eq("firma_id", firmaId);
+  if (error) throw new Error(error.message);
+  await zapiszZdarzenie(firmaId, klientId, { typ: "status", tekst: "open", autor, bruno: false });
+  return { id: klientId, status: "open" };
+}
+
 export async function zmienWartoscCrm(firmaId: string, klientId: number, wartosc: number, autor: string) {
   const { error } = await sb().from("bruno_klienci").update({ wartosc, aktualizacja: teraz() }).eq("id", klientId).eq("firma_id", firmaId);
   if (error) throw new Error(error.message);
