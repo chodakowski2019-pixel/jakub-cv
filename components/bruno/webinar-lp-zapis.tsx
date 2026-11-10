@@ -32,14 +32,15 @@ const T = {
   h1Szary: WEBINAR.podtytul,
   wstep: "W 60 minut, na żywo, dowiesz się:",
   punkty: [
-    "dlaczego handlowcy nie sprzedają: nie umieją, nie chcą czy brakuje im systemu",
+    // 10.11 (USER_001): „\n” = nowa linia na komputerze.
+    "dlaczego handlowcy nie sprzedają: nie umieją,\nnie chcą czy brakuje im systemu",
     "na którym etapie rozmowy uciekają Ci klienci",
-    "jak AI ćwiczy z handlowcem rozmowę, zanim pójdzie do klienta",
-    "jak widzieć pracę każdego handlowca w liczbach, bez pilnowania go",
+    "jak handlowiec może trenować sprzedaż z AI,\nzamiast z prawdziwym klientem",
+    "jak widzieć pracę każdego handlowca w liczbach,\nbez pilnowania go",
   ],
   przycisk: "Chcę zarezerwować miejsce »",
   plan: WEBINAR.plan.map(([g, h]) => [g, h]) as [string, string][],
-  prowadzacy: "Sam byłem handlowcem, którego szef szkolił jednym spotkaniem: prezentacja i „radź sobie sam”. Dziś zbudowałem AI, które gra klienta i ocenia rozmowę, a szef widzi wynik w panelu.",
+  prowadzacy: "Sam byłem handlowcem, którego szef szkolił jednym spotkaniem: prezentacja i „radź sobie sam”. Dziś zbudowałem AI, które jest asystentem handlowca, gra klienta, uczy go sprzedaży i zarządza jego CRM za niego.",
   // Badanie dotyczy pracowników obsługi klienta: średnio +14 %, początkujący +34 %.
   liczba: ["+34 %", "Tyle więcej spraw na godzinę załatwiali początkujący pracownicy obsługi klienta, którym pomagało AI.", "Brynjolfsson, Li, Raymond, Quarterly Journal of Economics, 2025, 5 179 osób"] as [string, string, string],
   faq: [
@@ -196,7 +197,15 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
           <p className={s.wstepZapis}>{T.wstep}</p>
           <ul className={s.punktyZapis}>
             {T.punkty.map((p) => (
-              <li key={p}>{p}</li>
+              <li key={p}>
+                {p.split("\n").map((w, i) => (
+                  <span key={i}>
+                    {i > 0 && " "}
+                    {i > 0 && <br className={s.brKomp} />}
+                    {w}
+                  </span>
+                ))}
+              </li>
             ))}
           </ul>
           <div className={s.ctaHero}>

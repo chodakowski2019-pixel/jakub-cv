@@ -42,9 +42,9 @@ export const WEBINAR = {
   plan: [
     // Każdy punkt kończy się efektem „dzięki temu…” (Popiel M8 L01).
     ["19:00", "3 powody, dla których handlowcy nie sprzedają", "Nie umie, nie chce albo system nie działa. Dzięki temu rozpoznasz, który problem masz u siebie, zanim zatrudnisz kogoś nowego."],
-    ["19:15", "Na którym etapie uciekają klienci", "Lejek sprzedaży etap po etapie i handlowiec po handlowcu. Dzięki temu wiesz, co naprawić najpierw."],
+    ["19:15", "Na jakich etapach uciekają klienci", "Lejek sprzedaży etap po etapie i handlowiec po handlowcu. Dzięki temu wiesz, co naprawić najpierw."],
     ["19:30", "Na żywo: handlowiec kontra klient AI", "AI gra trudnego klienta. Po rozmowie ocena i 3 rzeczy do poprawy. Dzięki temu zobaczysz, jak handlowiec ćwiczy rozmowę przed spotkaniem z prawdziwym klientem."],
-    ["19:45", "Co szef widzi bez pytania „jak idzie?”", "Kto ćwiczył, kto nie domyka, kto robi postęp. Dzięki temu rozmowa z handlowcem zaczyna się od liczb."],
+    ["19:45", "Bruno AI: poprawia wyniki sprzedażowe handlowców", "Kto ćwiczył, kto nie domyka, kto robi postęp. Dzięki temu rozmowa z handlowcem zaczyna się od liczb."],
     ["20:00", "Pytania i co dalej", "Pytasz o swój zespół. Odpowiadam na żywo."],
   ] as [string, string, string][],
 };

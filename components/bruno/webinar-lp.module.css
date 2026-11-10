@@ -2408,3 +2408,10 @@
     line-height: 1.2 !important;
   }
 }
+
+/* 10.11 (USER_001): łamanie linii w punktach tylko na komputerze, na telefonie tekst płynie sam. */
+@media (max-width: 640px) {
+  .brKomp {
+    display: none;
+  }
+}
