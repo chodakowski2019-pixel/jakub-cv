@@ -10,7 +10,8 @@ const opis = "60 minut na żywo dla właścicieli firm i szefów sprzedaży. Dla
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://salesbruno.com"),
-  title: `${tytul} | Jakub Chodakowski`,
+  // 10.11 (USER_001): na karcie przeglądarki samo „Webinar”. Pełny tytuł zostaje w podglądzie linku (openGraph).
+  title: "Webinar",
   description: opis,
   alternates: { canonical: "/webinar" },
   openGraph: {
