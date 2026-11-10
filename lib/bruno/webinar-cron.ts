@@ -36,7 +36,7 @@ export async function webinarCron(teraz = new Date()): Promise<{ dzien: string; 
 
   for (const z of zapisy) {
     const wypisz = z.token ? `${baza}/api/bruno/webinar/wypisz?t=${z.token}` : undefined;
-    const test = z.token && !zTestem.has(z.email) ? `${baza}/webinar/dzieki-bardzo?t=${z.token}#test` : undefined;
+    const test = WEBINAR.test && z.token && !zTestem.has(z.email) ? `${baza}/webinar/dzieki-bardzo?t=${z.token}#test` : undefined;
     try {
       if (dzien === WEBINAR.dataPLDzienPrzed && !z.mail_jutro) {
         const m = mailWebinarJutro({ imie: z.imie, baza, wypisz, test });

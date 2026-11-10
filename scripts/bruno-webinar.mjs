@@ -12,7 +12,7 @@ import { Resend } from "resend";
 // Moduły TS projektu (webinar.ts, mail-webinar.ts) przez wbudowany strip-types Node 22+.
 const [cmd, ...args] = process.argv.slice(2);
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
-const WEBINAR_KLUCZ = "2026-11-04";
+const WEBINAR_KLUCZ = "2026-11-17-firmy";
 
 async function moduly() {
   // Node 22.6+ czyta TS po fladze --experimental-strip-types; Node 23+ domyślnie. Importy względne w lib używają aliasu "@/",

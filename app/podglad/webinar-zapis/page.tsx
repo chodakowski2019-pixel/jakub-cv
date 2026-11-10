@@ -4,7 +4,7 @@ import { WEBINAR } from "@/lib/bruno/webinar";
 
 // 29.10 (USER_001): PODGLĄD krótkiej strony zapisu na webinar (wzór stron webinarowych, nie sprzedażowych).
 // Noindex. Jeśli wygra, zastępuje components/bruno/webinar-lp.tsx na /webinar.
-const tytul = `${WEBINAR.tytul}. Bezpłatny webinar, ${WEBINAR.dzien} ${WEBINAR.data}, ${WEBINAR.godzina}`;
+const tytul = `${WEBINAR.tytul} Bezpłatny webinar, ${WEBINAR.dzien} ${WEBINAR.data}, ${WEBINAR.godzina}`;
 
 export const metadata: Metadata = {
   title: `${tytul} | Jakub Chodakowski`,

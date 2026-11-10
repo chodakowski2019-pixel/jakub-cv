@@ -24,37 +24,29 @@ const ICS = "/api/bruno/webinar/ics";
 /** Nadawca maila z linkiem Zoom (do strony „Dzięki” i okienka). */
 export const NADAWCA_ADRES = "jakub@salesbruno.com";
 
-// 31.10 (USER_001): webinar B2B odwołany, strona = webinar dla grupy A (chcą ZOSTAĆ handlowcami). Teksty z badania
-// SalesAI/sprzedaz/badanie-b2c/A-cytaty.md: „czy mnie wezmą bez doświadczenia” (33), prowizja na minusie (21),
-// „wciskanie kitu” (19), strach przed telefonem (11), zarobki 4 500-8 000 zł (17).
+// 10.11 (USER_001): webinar dla firm wraca, wt 17.11. Odbiorca = każdy, kto ma handlowców (liczba obojętna).
+// Teksty pod właściciela: kontrola i liczby (Ewatex 28.10, Mauricio 29.10). Wersja dla przyszłych handlowców (31.10) w historii git.
 const T = {
-  badge: "Dla osób, które chcą zacząć pracę w sprzedaży",
-  h1: "Jak zostać handlowcem\nw 3 miesiące?",
-  h1Szary: "Bez wciskania kitu.", // 31.10 (USER_001)
+  badge: "Dla właścicieli firm i szefów sprzedaży",
+  h1: "Masz handlowców i nie wiesz,\ndlaczego nie sprzedają?",
+  h1Szary: WEBINAR.podtytul,
   wstep: "W 60 minut, na żywo, dowiesz się:",
   punkty: [
-    "czy nadajesz się do sprzedaży i w jakiej branży odnajdziesz się najlepiej",
-    "ile zarabia początkujący handlowiec i jak wybrać firmę z dobrą pensją i prowizją",
-    "jak przestać bać się telefonu do obcej osoby",
-    "jak w 3 miesiące przejść od zera do pierwszej pracy w sprzedaży",
+    "dlaczego handlowcy nie sprzedają: nie umieją, nie chcą czy brakuje im systemu",
+    "na którym etapie rozmowy uciekają Ci klienci",
+    "jak AI ćwiczy z handlowcem rozmowę, zanim pójdzie do klienta",
+    "jak widzieć pracę każdego handlowca w liczbach, bez pilnowania go",
   ],
   przycisk: "Chcę zarezerwować miejsce »",
-  plan: [
-    ["19:00", "Czy nadajesz się do sprzedaży? 3 style handlowca"],
-    ["19:15", "Ile naprawdę zarabia początkujący handlowiec"],
-    ["19:30", "Plan na 3 miesiące: od zera do pierwszej pracy"],
-    ["19:45", "Na żywo: pierwsza rozmowa z klientem AI"],
-    ["20:00", "Pytania"],
-  ] as [string, string][],
-  // 31.10 (USER_001): bio = krótko doświadczenie, bez Bruno. Fakty z CV (components/about-me.tsx).
-  prowadzacy: "Gdy miałem 16 lat, zaczynałem od sprzedaży waty cukrowej na końcu molo w Kołobrzegu. Później była fotowoltaika, startupy i sprzedaż do urzędów miast. Przeszedłem przez wszystkie rodzaje sprzedaży i wiem jedno: sprzedaży może nauczyć się każdy.",
-  // 31.10 (USER_001): liczba o zarobkach handlowców, związana z tematem webinaru.
-  // 31.10 (USER_001): konkretna liczba ofert zamiast %. 19 % z 762 827 ogłoszeń Pracuj.pl w 2025 = ok. 145 000.
-  liczba: ["145 000", "Tyle ofert pracy w sprzedaży opublikowano w 2025 roku na samym Pracuj.pl. Sprzedaż to najczęściej rekrutowana specjalizacja w Polsce. Praca czeka.", "Pracuj.pl, rynek pracy w sprzedaży 2025: 19 % z 762 827 ogłoszeń"] as [string, string, string],
+  plan: WEBINAR.plan.map(([g, h]) => [g, h]) as [string, string][],
+  prowadzacy: "Sam byłem handlowcem, którego szef szkolił jednym spotkaniem: prezentacja i „radź sobie sam”. Dziś zbudowałem AI, które gra klienta i ocenia rozmowę, a szef widzi wynik w panelu.",
+  // Badanie dotyczy pracowników obsługi klienta: średnio +14 %, początkujący +34 %.
+  liczba: ["+34 %", "Tyle więcej spraw na godzinę załatwiali początkujący pracownicy obsługi klienta, którym pomagało AI.", "Brynjolfsson, Li, Raymond, Quarterly Journal of Economics, 2025, 5 179 osób"] as [string, string, string],
   faq: [
-    ["Nie mam żadnego doświadczenia. Czy to dla mnie?", "Tak. Webinar jest właśnie dla osób, które zaczynają od zera: po szkole, z produkcji, ze sklepu, z call center."],
+    ["Mam tylko 2 handlowców. Czy to dla mnie?", "Tak. Wystarczy jeden handlowiec. Liczba osób w zespole jest bez znaczenia."],
     ["Gdzie się odbywa?", "Online, na Zoomie. Link otrzymasz na e-mail zaraz po potwierdzeniu zapisu, a potem przypomnienie dzień przed i godzinę przed. Wystarczy telefon albo komputer, kamera jest zbędna."],
     ["Czy będzie nagranie?", "Webinar jest tylko na żywo, bez nagrania, dlatego zapisz go w kalendarzu."],
+    ["Moi handlowcy omijają nawet CRM. To też ominą.", "CRM omijają, bo to dla nich dodatkowa robota bez korzyści dla nich samych. Tu handlowiec od razu dostaje ocenę, co poprawić, żeby sprzedawać więcej. A Ty widzisz, kto ćwiczył. Na webinarze pokażę, jak to uruchomić."],
   ] as [string, string][],
   // Pop-up (Aniserowicz 02.04: nagłówek, zdjęcie, „sprawdź maila”, pola, wielki przycisk, klauzula).
   okno: {
@@ -62,7 +54,7 @@ const T = {
     pod: `${WEBINAR.dzien}, ${WEBINAR.dataDluga}, ${WEBINAR.godzina}, Zoom`,
     przypomnienie: "Po zapisie kliknij „Potwierdzam zapis” w e-mailu. Wtedy otrzymasz link do spotkania.",
     przycisk: "Zapisuję się »",
-    klauzula: "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o szkoleniach sprzedaży z AI. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości.",
+    klauzula: "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o treningu handlowców z AI. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości.",
   },
 };
 
@@ -141,7 +133,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
       body: JSON.stringify({
         imie: f.get("imie"),
         email: f.get("email"),
-        grupa: "kursy",
+        grupa: "firmy",
         // Zgoda = kliknięcie przycisku pod klauzulą (Aniserowicz: klauzula zamiast checkboxa).
         zgoda: true,
         www: f.get("www"),
@@ -399,7 +391,7 @@ export function WebinarDziekiBardzo({ motyw = "pomarancz", token }: { motyw?: Mo
           {WEBINAR.zoom}
         </a>
         {/* 31.10 (USER_001): test predyspozycji zaraz po potwierdzeniu, przed webinarem. O 19:00 omawiam wyniki. */}
-        {token && (
+        {token && WEBINAR.test && (
           <section className={s.dziekiTest} id="test">
             {/* 31.10 (USER_001): w 2 liniach, bez „10 pytań, 2 minuty”. */}
             <h2 className={s.h2Duzy}>

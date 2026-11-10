@@ -19,7 +19,7 @@ export const ADRES_WEBINARU = "jakub@salesbruno.com";
 export const NADAWCA_WEBINARU = `Jakub Chodakowski <${ADRES_WEBINARU}>`;
 /** Klauzula z pop-upu, powtórzona w mailu potwierdzającym (Aniserowicz 02-07: „bo nie wiemy, kto wpisał adres”). */
 export const KLAUZULA_WEBINARU =
-  "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o szkoleniach sprzedaży z AI. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości. Jeśli to nie Ty podałeś ten adres, po prostu zignoruj tę wiadomość: bez kliknięcia nic więcej nie wyślę.";
+  "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o treningu handlowców z AI. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości. Jeśli to nie Ty podałeś ten adres, po prostu zignoruj tę wiadomość: bez kliknięcia nic więcej nie wyślę.";
 
 const F = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 const esc = (s: string) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -92,12 +92,14 @@ export function mailWebinarPotwierdz(a: { imie: string | null; link: string }): 
         przyciskPotwierdz("Potwierdzam zapis", a.link),
         p("<b>Co dalej:</b>"),
         lista([
-          "Po kliknięciu od razu zobaczysz link do spotkania na Zoomie i krótki test (4 pytania), który omówię na webinarze.",
+          WEBINAR.test
+            ? "Po kliknięciu od razu zobaczysz link do spotkania na Zoomie i krótki test (4 pytania), który omówię na webinarze."
+            : "Po kliknięciu od razu dostaniesz mail z linkiem do spotkania na Zoomie i planem 60 minut.",
           `Dzień przed (${WEBINAR.dataPLDzienPrzed.slice(8)}.11) i godzinę przed startem przypomnę mailem.`,
           "Nagrania nie będzie, więc wpisz termin do kalendarza (linki będą w następnym mailu).",
         ]),
         p(`Jeśli ta wiadomość trafiła do „Ofert” albo spamu, przenieś ją do głównej skrzynki i dodaj adres <b>${ADRES_WEBINARU}</b> do kontaktów. Wtedy link i przypomnienia też tam trafią.`),
-        p("Widzimy się w środę."),
+        p(`Widzimy się ${WEBINAR.dzienWe}.`),
       ].join("\n"),
     }),
   };
@@ -122,7 +124,10 @@ export function mailWebinarPotwierdzenie(a: Odbiorca): MailWebinaru {
         kalendarz(a.baza),
         p("<b>Plan 60 minut:</b>"),
         lista(WEBINAR.plan.map(([g, h]) => `<b>${esc(g)}</b> ${esc(h)}`)),
-        a.test
+        // 10.11: webinar dla firm (bez testu) = jedna liczba do policzenia przed spotkaniem.
+        !WEBINAR.test
+          ? p("Zanim się spotkamy, zrób jedną rzecz: policz, <b>ilu Twoich handlowców zrobiło w zeszłym miesiącu wynik, którego oczekujesz</b>. Jeśli robi go jeden z trzech, to nie jest problem rynku, tylko umiejętności reszty. Od tego zaczniemy o 19:00.")
+          : a.test
           ? p(`Zanim się spotkamy, zrób jedną rzecz: <b>test „Jakim jesteś handlowcem?”</b>, 4 pytania. Na początku webinaru omawiam wyniki. <a href="${esc(a.test)}" style="color:#111111;font-weight:700">Robię test »</a>`)
           : p("Twój wynik testu już mam. Na początku webinaru powiem, co z niego wynika."),
       ].join("\n"),
@@ -135,7 +140,9 @@ export function mailWebinarJutro(a: Odbiorca): MailWebinaru {
   return {
     temat: `Jutro ${WEBINAR.godzina}: ${WEBINAR.tytul.toLowerCase()}`,
     html: koperta({
-      ps: a.test
+      ps: !WEBINAR.test
+        ? "Odpisz na tego maila jednym zdaniem: <b>co sprzedajecie i jaką obiekcję słyszycie najczęściej</b>. Czytam każdą odpowiedź."
+        : a.test
         ? `Nie masz jeszcze wyniku testu (4 pytania), a od niego zaczynam: <a href="${esc(a.test)}" style="color:#111111;font-weight:700">robię test »</a>`
         : "Odpisz na tego maila jednym zdaniem: <b>co Cię najbardziej powstrzymuje przed pracą w sprzedaży</b>. Czytam każdą odpowiedź i odpowiem na webinarze.",
       zajawka: "Link do Zooma w środku. 60 minut, bez nagrania.",
@@ -145,7 +152,7 @@ export function mailWebinarJutro(a: Odbiorca): MailWebinaru {
         p(`jutro o <b>${esc(WEBINAR.godzina)}</b> widzimy się na Zoomie. Nagrania nie będzie, więc zarezerwuj godzinę w kalendarzu.`),
         linia("Link do spotkania na Zoomie", WEBINAR.zoom),
         kalendarz(a.baza),
-        p("Na żywo pokażę pierwszą rozmowę z klientem AI, który mówi „nie mam czasu” i „muszę się zastanowić”. Zobaczysz, że tego da się nauczyć."),
+        p(WEBINAR.test ? "Na żywo pokażę pierwszą rozmowę z klientem AI, który mówi „nie mam czasu” i „muszę się zastanowić”. Zobaczysz, że tego da się nauczyć." : "Na żywo pokażę rozmowę handlowca z klientem AI. Klient AI może być z Twojej branży."),
       ].join("\n"),
     }),
   };
@@ -167,7 +174,7 @@ export function mailWebinarDzis(a: Odbiorca): MailWebinaru {
         lista([
           "Komputer albo telefon z Zoomem (działa też w przeglądarce).",
           "Słuchawki.",
-          a.test ? `Wynik testu „Jakim jesteś handlowcem?”: <a href="${esc(a.test)}" style="color:#111111">zrób go teraz, 4 pytania</a>.` : "Twój wynik testu, który już zrobiłeś.",
+          !WEBINAR.test ? "Liczba: ilu handlowców zrobiło w zeszłym miesiącu wynik, którego oczekujesz." : a.test ? `Wynik testu „Jakim jesteś handlowcem?”: <a href="${esc(a.test)}" style="color:#111111">zrób go teraz, 4 pytania</a>.` : "Twój wynik testu, który już zrobiłeś.",
         ]),
       ].join("\n"),
     }),
@@ -204,27 +211,23 @@ export type GrupaPoWebinarze = "byli" | "wyszli" | "nieprzyszli";
 
 /**
  * M5: dzień po webinarze, 3 grupy (wzór Huzarski, PLAN 16.10): byli do końca / wyszli przed końcem / zapisali się i nie przyszli.
- * 31.10 (USER_001): webinar dla grupy A, więc jedno wezwanie = szkolenie 3 mies. z gwarancją pracy (WEBINAR.oferta).
- * Nagrania NIE wysyłamy. Bez sztucznych terminów (UOKiK): cena i warunki jak na stronie szkolenia.
+ * 10.11 (USER_001): webinar dla firm, jedno wezwanie = spotkanie online 20 min z demo (WEBINAR.demo). Nagrania NIE wysyłamy.
+ * Wersja dla przyszłych handlowców (31.10, szkolenie 3 mies.) w historii git.
  */
 export function mailWebinarPo(a: { imie: string | null; grupa: GrupaPoWebinarze; wypisz?: string }): MailWebinaru {
-  const oferta = linia("Zobacz szkolenie i swoją ścieżkę", WEBINAR.oferta);
-  const warunki = lista([
-    "3 miesiące treningu rozmów z klientem AI, ścieżka pod Twoją branżę.",
-    "Egzamin i certyfikat, gdy zdasz na 80 %.",
-    "Łączymy Cię z firmą. Brak oferty pracy w 30 dni od certyfikatu = zwrot całej kwoty.",
-  ]);
+  const demo = linia("Umawiam spotkanie (20 minut)", WEBINAR.demo);
   if (a.grupa === "byli")
     return {
-      temat: "Dziękuję za wczoraj. Twój następny krok",
+      temat: "Dziękuję za wczoraj. Następny krok dla Twojego zespołu",
       html: koperta({
-        ps: "Masz pytanie o swoją sytuację? Odpisz na tego maila, odpowiadam sam.",
+        ps: "Masz pytanie o swój zespół? Odpisz na tego maila, odpowiadam sam.",
         wypisz: a.wypisz,
         tresc: [
           p(hej(a.imie)),
-          p("dziękuję, że byłeś do końca. Tak jak mówiłem: jeśli chcesz wejść do sprzedaży w 3 miesiące, a nie uczyć się na prawdziwych klientach, masz to w szkoleniu:"),
-          warunki,
-          oferta,
+          p("dziękuję, że byłeś do końca. Tak jak mówiłem na koniec: możesz umówić <b>bezpłatne spotkanie online</b>, 20 minut."),
+          p("<b>Jak wygląda spotkanie:</b>"),
+          lista(["Mówisz mi, co sprzedajecie i na czym handlowcy tracą klienta.", "Klient AI gra Waszego klienta z Waszą obiekcją, na żywo.", "Ustalamy, czy to ma u Was sens. Jeśli nie, mówię to wprost."]),
+          demo,
         ].join("\n"),
       }),
     };
@@ -236,22 +239,22 @@ export function mailWebinarPo(a: { imie: string | null; grupa: GrupaPoWebinarze;
         wypisz: a.wypisz,
         tresc: [
           p(hej(a.imie)),
-          p("widziałem, że wyszedłeś przed końcem. Nagrania nie ma, więc w skrócie: na koniec pokazałem plan na 3 miesiące, od zera do pierwszej pracy w sprzedaży:"),
-          warunki,
-          oferta,
+          p("widziałem, że wyszedłeś przed końcem. Nagrania nie ma, więc w 3 punktach, co było potem:"),
+          lista(["Na żywo: handlowiec rozmawiał z klientem AI, po rozmowie ocena i 3 rzeczy do poprawy.", "Co szef widzi w liczbach: kto ćwiczył, kto nie domyka, kto robi postęp.", "Następny krok: bezpłatne spotkanie online, 20 minut."]),
+          demo,
         ].join("\n"),
       }),
     };
   return {
-    temat: "Nie było Cię wczoraj. Nagrania nie ma, ale jest plan",
+    temat: "Nie było Cię wczoraj. Nagrania nie ma, ale jest coś lepszego",
     html: koperta({
-      ps: "Masz pytanie o swoją sytuację? Odpisz na tego maila.",
+      ps: "Masz pytanie o swój zespół? Odpisz na tego maila.",
       wypisz: a.wypisz,
       tresc: [
         p(hej(a.imie)),
-        p("zapisałeś się na wczorajszy webinar, ale Cię nie było. Nagrania nie ma. Najważniejsze w skrócie: jak w 3 miesiące wejść do sprzedaży bez doświadczenia."),
-        warunki,
-        oferta,
+        p("zapisałeś się na wczorajszy webinar, ale Cię nie było. Nagrania nie ma. Jest za to <b>20 minut na Twój zespół</b>, nie ogólny wykład:"),
+        lista(["Sprawdzimy, na którym etapie Twoi handlowcy tracą klientów.", "Klient AI zagra Waszego klienta na żywo.", "Powiem wprost, czy to ma u Was sens."]),
+        demo,
       ].join("\n"),
     }),
   };
