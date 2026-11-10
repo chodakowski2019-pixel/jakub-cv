@@ -1,6 +1,7 @@
 // Webinar śr 4.11 19:00: lista zapisanych i maile po webinarze (3 grupy). 27.10 (USER_001).
 // Uruchom z katalogu jakub-cv:
 //   node --env-file=.env.local scripts/bruno-webinar.mjs lista
+//   node --env-file=.env.local scripts/bruno-webinar.mjs lejek --bez=chodak.job72@gmail.com   (lejek 7 etapów per źródło)
 //   node --env-file=.env.local scripts/bruno-webinar.mjs obecnosc byli a@x.pl b@y.pl      (grupy: byli | wyszli | nieprzyszli)
 //   node --env-file=.env.local scripts/bruno-webinar.mjs obecnosc nieprzyszli --reszta     (wszyscy bez grupy → nieprzyszli)
 //   node --env-file=.env.local scripts/bruno-webinar.mjs po --test=chodakowski2019@gmail.com   (3 maile na próbę do Jakuba)
@@ -92,9 +93,67 @@ async function po() {
   if (!wyslij) console.log(`${data.length} do wysłania. Dodaj --wyslij, żeby wysłać.`);
 }
 
-const akcje = { lista, obecnosc, po };
+// 10.11 (USER_001: „stworzyć lejek i śledzić każdy etap”): 7 etapów od wejścia na stronę do spotkania, z % przejścia
+// z etapu na etap i podziałem na źródła. `--bez=mail1,mail2` pomija zapisy testowe.
+// Wejście i klik: `bruno_webinar_zdarzenia` (od 10.11). Zapis, potwierdzenie, obecność: `bruno_webinar_zapisy`.
+// Spotkanie: `bruno_demo` ze źródłem `demo:webinar` albo mailem z listy zapisanych, umówione po zapisie.
+const kanal = (z) => {
+  const t = String(z ?? "").toLowerCase();
+  if (!t) return "bezpośrednio";
+  if (/facebook|fb/.test(t)) return "Facebook";
+  if (/linkedin|lnkd|^li/.test(t)) return "LinkedIn";
+  if (/instagram|^ig/.test(t)) return "Instagram";
+  if (/mail|tel|sms/.test(t)) return t;
+  if (/google/.test(t)) return "Google";
+  try {
+    return new URL(t).hostname.replace(/^www\./, "");
+  } catch {
+    return t;
+  }
+};
+
+async function lejek() {
+  const bez = (args.find((a) => a.startsWith("--bez="))?.slice(6) ?? "").toLowerCase().split(",").filter(Boolean);
+  const [zd, za, de] = await Promise.all([
+    sb.from("bruno_webinar_zdarzenia").select("zdarzenie, zrodlo").eq("webinar", WEBINAR_KLUCZ),
+    sb.from("bruno_webinar_zapisy").select("*").eq("webinar", WEBINAR_KLUCZ),
+    sb.from("bruno_demo").select("email, zrodlo, status, utworzono"),
+  ]);
+  for (const r of [zd, za, de]) if (r.error) throw r.error;
+  const zapisy = za.data.filter((z) => !bez.includes(z.email));
+  const maile = new Map(zapisy.map((z) => [z.email, z]));
+  const spotkania = de.data.filter((d) => {
+    const z = maile.get(String(d.email ?? "").toLowerCase());
+    return d.zrodlo === "demo:webinar" || (z && d.utworzono >= z.zapisano);
+  });
+  const etapy = [
+    ["1. Wejście na stronę", zd.data.filter((x) => x.zdarzenie === "wejscie").map((x) => x.zrodlo)],
+    ["2. Klik „Chcę zarezerwować miejsce”", zd.data.filter((x) => x.zdarzenie === "klik").map((x) => x.zrodlo)],
+    ["3. Zapis (formularz)", zapisy.map((z) => z.zrodlo)],
+    ["4. Potwierdzenie mailem", zapisy.filter((z) => z.potwierdzono).map((z) => z.zrodlo)],
+    ["5. Był na webinarze", zapisy.filter((z) => z.obecnosc === "byli" || z.obecnosc === "wyszli").map((z) => z.zrodlo)],
+    ["6. Został do końca", zapisy.filter((z) => z.obecnosc === "byli").map((z) => z.zrodlo)],
+    ["7. Umówił spotkanie 20 min", spotkania.map((d) => maile.get(String(d.email ?? "").toLowerCase())?.zrodlo ?? d.zrodlo)],
+  ];
+  const kanaly = [...new Set(etapy.flatMap(([, zr]) => zr.map(kanal)))].sort();
+  let poprzedni = null;
+  const wiersze = etapy.map(([etap, zr]) => {
+    const w = { etap, liczba: zr.length, "% z poprzedniego": poprzedni ? `${Math.round((zr.length / poprzedni) * 100)} %` : "-" };
+    for (const k of kanaly) w[k] = zr.filter((z) => kanal(z) === k).length;
+    poprzedni = zr.length;
+    return w;
+  });
+  console.table(wiersze);
+  console.log(`Webinar ${WEBINAR_KLUCZ}. Wejścia i kliki liczone od 10.11 wieczór (po wdrożeniu); etapy 5-6 po wpisaniu obecności z Zooma (obecnosc byli|wyszli|nieprzyszli).${bez.length ? ` Pominięte: ${bez.join(", ")}.` : ""}`);
+  const wypisani = zapisy.filter((z) => z.wypisano).length;
+  const niepotw = zapisy.filter((z) => !z.potwierdzono).map((z) => z.email);
+  if (wypisani) console.log(`Wypisani: ${wypisani}.`);
+  if (niepotw.length) console.log(`Bez potwierdzenia (${niepotw.length}): ${niepotw.join(", ")}`);
+}
+
+const akcje = { lista, obecnosc, po, lejek };
 if (!akcje[cmd]) {
-  console.log("Użycie: lista | obecnosc <grupa> <maile…|--reszta> | po [--test=mail] [--wyslij]");
+  console.log("Użycie: lista | lejek [--bez=mail,mail] | obecnosc <grupa> <maile…|--reszta> | po [--test=mail] [--wyslij]");
   process.exit(1);
 }
 akcje[cmd]().catch((e) => {

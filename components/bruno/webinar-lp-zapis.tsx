@@ -59,6 +59,29 @@ const T = {
   },
 };
 
+/** Źródło wejścia: `?src=` / `utm_source` z adresu, inaczej strona odsyłająca. To samo trafia do zapisu. */
+function zrodloWejscia(): string {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("src") ?? params.get("utm_source") ?? document.referrer ?? "";
+}
+
+/** 10.11 (USER_001: „śledzić każdy etap lejka”): wejście na stronę i klik w przycisk, raz na sesję przeglądarki. */
+function zdarzenie(nazwa: "wejscie" | "klik") {
+  try {
+    let sesja = sessionStorage.getItem("webinar-sesja");
+    if (!sesja) {
+      sesja = crypto.randomUUID().replace(/-/g, "");
+      sessionStorage.setItem("webinar-sesja", sesja);
+    }
+    const klucz = `webinar-${nazwa}`;
+    if (sessionStorage.getItem(klucz)) return;
+    sessionStorage.setItem(klucz, "1");
+    void fetch("/api/bruno/webinar/zdarzenie", { method: "POST", headers: { "Content-Type": "application/json" }, keepalive: true, body: JSON.stringify({ zdarzenie: nazwa, sesja, zrodlo: zrodloWejscia() }) }).catch(() => null);
+  } catch {
+    // Brak sessionStorage (tryb prywatny) nie psuje strony.
+  }
+}
+
 /** Stopka strony (Aniserowicz 07-04: dane administratora + regulamin + polityka na każdej stronie zapisu). */
 function Stopka() {
   return (
@@ -109,9 +132,12 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
   const [stan, setStan] = useState<"formularz" | "wysylam">("formularz");
   const [blad, setBlad] = useState("");
 
+  useEffect(() => zdarzenie("wejscie"), []);
+
   // Okienko: Escape zamyka, strona pod spodem się nie przewija.
   useEffect(() => {
     if (!otwarte) return;
+    zdarzenie("klik");
     const esc = (e: KeyboardEvent) => e.key === "Escape" && setOtwarte(false);
     document.addEventListener("keydown", esc);
     const poprzedni = document.body.style.overflow;
@@ -127,7 +153,6 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
     const f = new FormData(e.currentTarget);
     setBlad("");
     setStan("wysylam");
-    const params = new URLSearchParams(window.location.search);
     const odp = await fetch("/api/bruno/webinar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -138,7 +163,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
         // Zgoda = kliknięcie przycisku pod klauzulą (Aniserowicz: klauzula zamiast checkboxa).
         zgoda: true,
         www: f.get("www"),
-        zrodlo: params.get("src") ?? params.get("utm_source") ?? document.referrer ?? "",
+        zrodlo: zrodloWejscia(),
       }),
     }).catch(() => null);
     const d = await odp?.json().catch(() => null);
