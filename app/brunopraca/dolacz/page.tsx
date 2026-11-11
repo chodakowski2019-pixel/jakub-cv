@@ -251,13 +251,9 @@ export default async function Page() {
               <p className={d.podH2}>Najpierw konto. Zaraz potem formularz profilu. Bezpłatnie.</p>
             </div>
             <div className={d.karta}>
-              {!konto ? (
+              {/* 11.11: bez konta albo zalogowany jako pracodawca = formularz rejestracji kandydata (konta są osobne dla każdego typu). */}
+              {konto?.typ !== "kandydat" ? (
                 <KontoForm typ="kandydat" jedenTyp bezDanych dalej={PROFIL} naglowek="Zarejestruj się" opis="" przycisk="Zarejestruj się" />
-              ) : konto.typ !== "kandydat" ? (
-                <>
-                  <h3 className={d.kartaH}>To konto pracodawcy</h3>
-                  <p className={d.kartaP}>Profil handlowca zakłada się na koncie kandydata. Wyloguj się w panelu i załóż konto kandydata.</p>
-                </>
               ) : profil ? (
                 <>
                   <h3 className={d.kartaH}>Twój profil jest u nas</h3>
