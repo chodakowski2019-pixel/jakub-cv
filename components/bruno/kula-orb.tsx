@@ -65,7 +65,7 @@ function rgb(hex: string): [number, number, number] {
 }
 
 export default function KulaOrb({
-  kolor = "#f08a2b",
+  kolor = "#d9e000",
   tempo = "czeka",
   className,
   jasny,

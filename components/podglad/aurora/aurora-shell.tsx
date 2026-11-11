@@ -1,6 +1,6 @@
 "use client";
 
-import AuroraCanvas from "./aurora-canvas";
+import AuroraCanvas, { ZORZA_LIMONKA, ZORZA_POMARANCZ } from "./aurora-canvas";
 import s from "./aurora.module.css";
 import { inter } from "./font";
 
@@ -14,34 +14,42 @@ const CHECK = (
 
 export type Krok = { etykieta: string; onClick?: () => void };
 
+// 11.11 (USER_001: logowanie „limonkowo-białe zamiast pomarańczowego”): zorza w barwach kuli Bruno z panelu,
+// od czerni na dole przez limonkę do bieli u góry. Akcenty (ptaszki kroków, poświata przycisków) w aurora.module.css (.limonka).
+
+
 export default function AuroraShell({
   tytul,
   podtytul,
   kroki,
   aktywny,
   etykietaPanelu,
+  limonka = true,
   children,
 }: {
-  tytul: string;
+  /** 11.11: pusty = bez nagłówka w lewym panelu (logowanie: samo logo i kroki). */
+  tytul?: string;
   podtytul?: string;
   kroki: Krok[];
   /** Indeks od 0. Kroki przed nim są zrobione. */
   aktywny: number;
   etykietaPanelu: string;
+  /** 11.11: limonkowo-biała zorza i akcenty zamiast pomarańczowych. Od 11.11 domyślnie (USER_001: limonka wszędzie). */
+  limonka?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <div className={`bruno-tlo ${s.root} ${inter.variable}`}>
+    <div className={`bruno-tlo ${s.root} ${limonka ? s.limonka : ""} ${inter.variable}`}>
       <main className={s.wrap}>
         <section className={s.art} aria-label={etykietaPanelu}>
-          <AuroraCanvas fallbackClass={s.artFallback} />
+          <AuroraCanvas fallbackClass={s.artFallback} kolory={limonka ? ZORZA_LIMONKA : ZORZA_POMARANCZ} />
           <div className={s.grain} />
           <div className={s.artInner}>
             <div className={s.logo}>
               <i />
-              Bruno AI
+              Sales Bruno
             </div>
-            <h1>{tytul}</h1>
+            {tytul && <h1>{tytul}</h1>}
             {podtytul && <p className={s.sub}>{podtytul}</p>}
             <ol className={s.steps}>
               {kroki.map((k, i) => {

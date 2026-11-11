@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { KontoPraca } from "@/lib/bruno/praca/konta";
 import type { OfertaFirmyWiersz } from "@/lib/bruno/praca/oferty-firm";
 import type { Zgloszenie } from "@/app/brunopraca/panel/page";
+import type { PelnyHandlowiec } from "@/lib/bruno/praca/handlowcy";
+import PanelHandlowcy from "./panel-handlowcy";
 import { formatDaty } from "./panel-wspolne";
 import { Cennik, Kontakt, MojeKonto, ProfilFirmy } from "./panel-firmy-ustawienia";
 import s from "./praca.module.css";
@@ -26,11 +29,13 @@ const STATUS: Record<string, [string, string]> = {
 const STATUS_Z: Record<string, string> = { nowe: "Nowe", obejrzane: "Obejrzane", zaproszone: "Zaproszony na rozmowę", odrzucone: "Odrzucony" };
 
 // 17.10 v2 (wzór RocketJobs): menu z boku (na telefonie pasek na górze), „Dokończ konfigurację konta”, zakładki ogłoszeń.
-type Zakladka = "ogloszenia" | "dodaj" | "kandydaci" | "firma" | "cennik" | "kontakt" | "konto";
+type Zakladka = "ogloszenia" | "dodaj" | "kandydaci" | "handlowcy" | "firma" | "cennik" | "kontakt" | "konto";
 const MENU: [Zakladka, string, string][] = [
   ["ogloszenia", "Moje ogłoszenia", "M4 8h16v12H4ZM9 8V5h6v3"],
   ["dodaj", "Dodaj ogłoszenie", "M12 5v14M5 12h14"],
   ["kandydaci", "Kandydaci", "M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM2.5 20c.8-3.4 3.3-5.5 6.5-5.5s5.7 2.1 6.5 5.5M16 4.5a3.3 3.3 0 0 1 0 6.3M18.5 14.8c1.6.8 2.7 2.6 3 5.2"],
+  // 11.11: baza handlowców, kontakty odblokowane na /praca/handlowcy.
+  ["handlowcy", "Handlowcy", "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM20 20l-4-4M11 8.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM7.8 15.2c.6-1.4 1.8-2.2 3.2-2.2s2.6.8 3.2 2.2"],
   ["firma", "Profil firmy", "M4 5h16v14H4ZM8 10h3M8 14h8M15 9.5h1"],
   ["cennik", "Cennik", "M12 3v18M16.5 7.5c0-1.7-2-3-4.5-3S7.5 5.8 7.5 7.5 9.5 10 12 10.5s4.5 1.3 4.5 3.2-2 3.3-4.5 3.3-4.5-1.3-4.5-3"],
   ["kontakt", "Kontakt", "M4 13a8 8 0 0 1 16 0v4a2 2 0 0 1-2 2h-1v-6h3M4 13v4a2 2 0 0 0 2 2h1v-6H4"],
@@ -38,13 +43,16 @@ const MENU: [Zakladka, string, string][] = [
 
 export type LinkiPlatnosci = { promo: string; regularny: string };
 
-export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka, linki }: { konto: KontoPraca; oferty: OfertaFirmyWiersz[]; zgloszenia: Zgloszenie[]; cena: number; zakladka?: string; linki: LinkiPlatnosci }) {
+export default function PanelFirmy({ konto, oferty, zgloszenia, handlowcy, cena, zakladka, linki, bezMenu }: { /** 11.11: panel w układzie giełdy (uklad-gieldy.tsx): bez własnego menu, zakładka z adresu ?z=. */ bezMenu?: boolean; konto: KontoPraca; oferty: OfertaFirmyWiersz[]; zgloszenia: Zgloszenie[]; handlowcy: PelnyHandlowiec[]; cena: number; zakladka?: string; linki: LinkiPlatnosci }) {
   // 18.10 (USER_001): najpierw płatność (Stripe Payment Link), potem dodanie ogłoszenia. kredyty = opłacone ogłoszenia do wystawienia.
   const kredyty = konto.kredyty ?? 0;
   const promoDostepna = !konto.promo_uzyta;
   // 17.10 (USER_001): pierwsze (najstarsze) ogłoszenie firmy w promocji {cena} zł, kolejne 200 zł / mies.
-  const startowa = (["dodaj", "kandydaci", "firma", "cennik", "kontakt", "konto"] as Zakladka[]).find((x) => x === zakladka) ?? "ogloszenia";
-  const [z, setZ] = useState<Zakladka>(startowa);
+  const startowa = (["dodaj", "kandydaci", "handlowcy", "firma", "cennik", "kontakt", "konto"] as Zakladka[]).find((x) => x === zakladka) ?? "ogloszenia";
+  const [zStan, setZStan] = useState<Zakladka>(startowa);
+  const zAdres = useSearchParams()?.get("z");
+  const z: Zakladka = bezMenu ? (MENU.map(([k]) => k) as Zakladka[]).concat("konto").find((x) => x === zAdres) ?? "ogloszenia" : zStan;
+  const setZ = (k: Zakladka) => (bezMenu ? window.history.pushState(null, "", `/praca/panel?z=${k}`) : setZStan(k));
   const [edytowana, setEdytowana] = useState<OfertaFirmyWiersz | null>(null);
   const [filtr, setFiltr] = useState("");
   const [stanListy, setStanListy] = useState<"aktywna" | "oczekuje" | "wstrzymana">(oferty.some((o) => o.status === "oczekuje") ? "oczekuje" : "aktywna");
@@ -92,8 +100,8 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka, 
   const ileStan = (st: string) => oferty.filter((o) => o.status === st).length;
 
   return (
-    <div className={s.panelUklad}>
-      <aside className={s.panelBok}>
+    <div className={bezMenu ? undefined : s.panelUklad}>
+      <aside className={s.panelBok} style={bezMenu ? { display: "none" } : undefined}>
         <div className={s.panelFirmaKarta}>
           {konto.logo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -280,6 +288,7 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, cena, zakladka, 
           </>
         )}
 
+        {z === "handlowcy" && <PanelHandlowcy handlowcy={handlowcy} naKoncie={konto.kontakty ?? 0} />}
         {z === "firma" && <ProfilFirmy konto={konto} />}
         {z === "konto" && <MojeKonto konto={konto} />}
         {z === "cennik" && <Cennik cena={cena} pierwszaWykorzystana={!promoDostepna} linkPromo={linki.promo} linkRegularny={linki.regularny} />}

@@ -1,0 +1,640 @@
+/* 11.11 (USER_001): giełda handlowców, strona firm (/praca/handlowcy) i zakładka „Handlowcy” w panelu firmy.
+   Ten sam wygląd co LP bazy handlowców (dolacz.module.css): zmienne --ink, --line, --mono itd. daje otoczka .v,
+   w panelu firmy otoczka .root z praca.module.css (tam brak --mono i --czarny, stąd wartości zapasowe). */
+
+/* --- góra: nagłówek i formularz --- */
+.gora {
+  padding: 132px 0 72px;
+}
+.goraSiatka {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 56px;
+  align-items: start;
+}
+.h1 {
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: clamp(32px, 3.6vw, 50px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-top: 16px !important;
+  text-wrap: balance;
+}
+.lead {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-top: 20px !important;
+  max-width: 440px;
+}
+.kroki {
+  display: grid;
+  gap: 12px;
+  margin-top: 30px !important;
+}
+.kroki li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15.5px;
+}
+.kroki i {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid #c4c7cd;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-style: normal;
+}
+.form {
+  background: #fff;
+  border-radius: 28px;
+  padding: 30px;
+  box-shadow: 0 1px 2px rgba(8, 8, 10, 0.04), 0 22px 54px rgba(8, 8, 10, 0.08);
+}
+.pole {
+  margin: 0 0 24px;
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.pole legend,
+.pole > span {
+  display: block;
+  padding: 0;
+  margin-bottom: 10px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--grey);
+}
+.chipy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 15px;
+  border-radius: 999px;
+  border: 1px solid #d6d8dc;
+  background: #fff;
+  font-size: 14.5px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 100ms ease-out, background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.chip input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.chip:active {
+  transform: scale(0.97);
+}
+.chip:has(input:checked) {
+  background: var(--czarny);
+  border-color: var(--czarny);
+  color: #fff;
+}
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--orange-t);
+  outline-offset: 2px;
+}
+.dwa {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0 24px;
+}
+.formDol {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+.formDol a {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* --- wynik --- */
+.wynik {
+  padding: 0 0 180px;
+  scroll-margin-top: 90px;
+}
+.wynikH {
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: clamp(34px, 5vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  margin-top: 12px !important;
+  text-wrap: balance;
+}
+.wynikH b {
+  font-weight: 400;
+  color: var(--orange-t);
+}
+.wynikP {
+  font-size: 17px;
+  color: var(--muted);
+  margin-top: 16px !important;
+  max-width: 620px;
+}
+.siatka {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 40px !important;
+}
+.karta {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(8, 8, 10, 0.04), 0 22px 54px rgba(8, 8, 10, 0.08);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  transition: outline-color 150ms ease;
+}
+.kartaWl {
+  outline-color: var(--czarny);
+}
+.kartaGora {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 18px 16px;
+  background: var(--soft);
+}
+.kartaGora::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  border-style: solid;
+  border-width: 22px 0 0 22px;
+  border-color: transparent transparent transparent #fff;
+}
+.inicjal {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fff;
+  font-family: var(--head);
+  font-size: 21px;
+  letter-spacing: -0.02em;
+}
+.imie {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.rola {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 3px !important;
+  overflow-wrap: anywhere;
+}
+.ok {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px !important;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #2f7a4b;
+}
+.ok svg {
+  width: 15px;
+  height: 15px;
+}
+.czeka {
+  color: var(--grey);
+  font-weight: 400;
+}
+.kartaTresc {
+  flex: 1;
+  padding: 4px 18px 18px;
+}
+.etykieta {
+  display: block;
+  margin: 16px 0 7px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--grey);
+}
+.tagi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tagi li {
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid #c4c7cd;
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.fakty {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0 12px;
+}
+.fakty p {
+  font-family: var(--head);
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.zamek {
+  display: grid;
+  gap: 7px;
+  margin-top: 18px !important;
+  padding-top: 14px;
+  border-top: 1px dashed #c4c7cd;
+}
+.zamek li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.zamek span:last-child {
+  font-family: var(--mono);
+  letter-spacing: 0.12em;
+  color: #c4c7cd;
+}
+.wybierz {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.wybierz:active {
+  background: var(--soft);
+}
+.wybierz:disabled {
+  color: #c4c7cd;
+  cursor: default;
+}
+.wybierzWl {
+  background: var(--czarny);
+  color: #fff !important;
+}
+.wybierzWl:active {
+  background: var(--czarny);
+}
+.wybierz:focus-visible {
+  outline: 2px solid var(--orange-t);
+  outline-offset: -2px;
+}
+.pusto {
+  margin-top: 36px !important;
+  background: #fff;
+  border-radius: 28px;
+  padding: 36px 30px;
+  max-width: 620px;
+}
+.pusto h3 {
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: 26px;
+  letter-spacing: -0.025em;
+}
+.pusto p {
+  margin-top: 8px !important;
+  color: var(--muted);
+}
+.pusto a {
+  margin-top: 22px;
+}
+
+/* --- dolny pasek zakupu --- */
+.kup {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  z-index: 25;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+  pointer-events: none;
+}
+.kupKarta {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: 100%;
+  padding: 12px 12px 12px 22px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(8, 8, 10, 0.1);
+  box-shadow: 0 14px 44px rgba(8, 8, 10, 0.16);
+}
+.kupIle {
+  white-space: nowrap;
+  font-size: 15px;
+}
+.kupIle small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+.pakiety {
+  display: flex;
+  gap: 6px;
+}
+.pakiet {
+  min-height: 44px;
+  padding: 4px 14px;
+  border-radius: 14px;
+  border: 1px solid #d6d8dc;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.25;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 100ms ease-out, border-color 120ms ease, background 120ms ease;
+}
+.pakiet b {
+  display: block;
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+.pakiet:active {
+  transform: scale(0.97);
+}
+.pakiet:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.pakietWl {
+  border-color: var(--czarny);
+  box-shadow: inset 0 0 0 1px var(--czarny);
+}
+.kupBlad {
+  font-size: 13px;
+  color: #c0392b;
+}
+.kupTest {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--orange-t);
+}
+
+/* --- strona po płatności --- */
+.po {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 132px 20px 96px;
+}
+.poZnak {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 8px;
+  border-radius: 999px;
+  background: #e8f5ee;
+  color: #1c7a4f;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.poZnak svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.poH {
+  font-family: var(--head);
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin-top: 18px !important;
+}
+.poP {
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 12px 0 28px !important;
+}
+
+/* --- panel firmy: zakładka „Handlowcy” (otoczka .root) --- */
+.pGlowa {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.pLista {
+  display: grid;
+  gap: 12px;
+}
+.pWiersz {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) minmax(0, 250px);
+  gap: 20px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 20px;
+}
+.pFoto {
+  width: 76px;
+  height: 76px;
+  border-radius: 16px;
+  object-fit: cover;
+  background: var(--soft);
+  display: grid;
+  place-items: center;
+  font-family: var(--head);
+  font-size: 26px;
+}
+.pWiersz h3 {
+  font-family: var(--head);
+  font-weight: 500;
+  font-size: 19px;
+  letter-spacing: -0.015em;
+}
+.pRola {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 3px !important;
+}
+.pTagi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px !important;
+}
+.pTagi li {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--soft);
+  font-size: 12.5px;
+}
+.pSukces {
+  margin-top: 12px !important;
+  font-size: 14.5px;
+  line-height: 1.55;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.pFakty {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 12px !important;
+  font-size: 13px;
+  color: var(--muted);
+}
+.pFakty b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.pKontakt {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding-left: 20px;
+  border-left: 1px solid var(--line);
+  font-size: 14.5px;
+  overflow-wrap: anywhere;
+}
+.pKontakt small {
+  display: block;
+  font-size: 11.5px;
+  color: var(--grey);
+}
+.pKontakt a {
+  font-weight: 500;
+  text-decoration: none;
+}
+.pKontakt a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 960px) {
+  .goraSiatka {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+  }
+  .gora {
+    padding: 108px 0 56px;
+  }
+  .siatka {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .kupKarta {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 14px;
+    gap: 10px;
+  }
+  .pWiersz {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+  .pFoto {
+    width: 56px;
+    height: 56px;
+    font-size: 20px;
+  }
+  .pKontakt {
+    grid-column: 1 / -1;
+    padding: 14px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}
+@media (max-width: 640px) {
+  .form {
+    padding: 22px 18px;
+    border-radius: 22px;
+  }
+  .dwa,
+  .siatka {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .kupIle small {
+    display: none;
+  }
+  .pakiet {
+    padding: 4px 10px;
+  }
+  .wynik {
+    padding-bottom: 230px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chip,
+  .pakiet,
+  .karta {
+    transition: none;
+  }
+  .chip:active,
+  .pakiet:active {
+    transform: none;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .kupKarta {
+    background: #fff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}

@@ -14,9 +14,7 @@ import GooglePrzycisk from "./google-przycisk";
 const T = {
   en: {
     nieUdalo: "Wrong email or password.",
-    tytul: "Training panel",
-    podtytul: "Sell more.",
-    panel: "Steps to log in to Bruno AI",
+    panel: "Steps to log in to Sales Bruno",
     kroki: ["Enter your email", "Enter your password", "Open your panel"],
     h2: "Log in",
     lead: "Enter your email and password.",
@@ -38,9 +36,7 @@ const T = {
   },
   pl: {
     nieUdalo: "Zły e-mail albo hasło.",
-    tytul: "Panel treningowy",
-    podtytul: "Sprzedawaj więcej.",
-    panel: "Kroki logowania do Bruno AI",
+    panel: "Kroki logowania do Sales Bruno",
     kroki: ["Podaj e-mail", "Wpisz hasło", "Wejdź do panelu"],
     h2: "Zaloguj się",
     lead: "Podaj e-mail i hasło.",
@@ -108,6 +104,12 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
     });
     if (res.ok) {
       setStan("ok");
+      // 11.11: konto giełdy handlowców (portal /praca) loguje się tym samym formularzem i idzie do swojego panelu.
+      const dalej = (await res.json().catch(() => null))?.dalej;
+      if (typeof dalej === "string" && dalej.startsWith("/praca")) {
+        window.location.href = dalej;
+        return;
+      }
       // 25.10 (USER_001): szef zaczyna od widoku zespołu; /bruno rozdziela (szef → /bruno/szef, reszta → panel).
       router.push("/bruno");
       router.refresh();
@@ -124,8 +126,6 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
 
   return (
     <AuroraShell
-      tytul={x.tytul}
-      podtytul={x.podtytul}
       etykietaPanelu={x.panel}
       aktywny={aktywny}
       kroki={[

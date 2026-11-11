@@ -5,7 +5,8 @@
   --grey: #a4a4a4;
   --muted: #6b6b6b;
   --line: #ebeae7;
-  --orange: #f08a2b;
+  --orange: #d9e000;
+  --orange-t: #6f7a00;
   --head: var(--font-blp-head), "Outfit", system-ui, sans-serif;
   --body: var(--font-blp-body), "Inter", system-ui, sans-serif;
   min-height: 100vh;
@@ -255,7 +256,7 @@
   height: 56px;
   border-radius: 50%;
   background: var(--orange);
-  color: #fff;
+  color: #141416;
   font-size: 26px;
   display: grid;
   place-items: center;
@@ -305,7 +306,7 @@
   font-size: 22px;
 }
 .nr {
-  color: var(--orange);
+  color: var(--orange-t);
   font-family: var(--head);
   font-weight: 500;
   font-size: 15px;
@@ -359,7 +360,7 @@
   font-size: 84px;
   font-weight: 300;
   letter-spacing: -0.05em;
-  color: var(--orange);
+  color: var(--orange-t);
   line-height: 1;
 }
 .liczba p {
@@ -449,7 +450,7 @@
   font-variant-numeric: tabular-nums;
 }
 .zegarPole:last-child b {
-  color: var(--orange);
+  color: var(--orange-t);
 }
 .zegarPole span {
   font-size: 12px;
@@ -506,7 +507,7 @@
 }
 .faq summary::after {
   content: "+";
-  color: var(--orange);
+  color: var(--orange-t);
   font-size: 22px;
   line-height: 1;
 }
@@ -669,7 +670,7 @@
   border-bottom: 0;
 }
 .koszt li:last-child b {
-  color: var(--orange);
+  color: var(--orange-t);
 }
 .historia {
   display: grid;
@@ -1087,7 +1088,7 @@
   font-family: var(--body);
   font-size: 13px;
   font-weight: 600;
-  color: var(--orange);
+  color: var(--orange-t);
   background: #fff6ec;
   border-radius: 999px;
   padding: 5px 0;
@@ -1382,7 +1383,7 @@
   color: var(--ink);
 }
 .mNoc .pole input:focus {
-  border-color: var(--orange);
+  border-color: var(--orange-t);
   background: #0f1115;
 }
 .mNoc .pole input::placeholder {
@@ -1393,17 +1394,17 @@
 }
 .mNoc .formData,
 .mNoc .planGodz {
-  background: rgba(240, 138, 43, 0.14);
-  color: #ffb46b;
+  background: rgba(217, 224, 0, 0.14);
+  color: #e9f542;
 }
 .mNoc .przycisk,
 .mNoc .pasekTel {
   background: var(--orange);
   color: #111 !important;
-  box-shadow: 0 10px 28px rgba(240, 138, 43, 0.35);
+  box-shadow: 0 10px 28px rgba(217, 224, 0, 0.35);
 }
 .mNoc .zgoda input {
-  accent-color: var(--orange);
+  accent-color: var(--orange-t);
 }
 .mNoc .g {
   color: #7d838e;
@@ -1685,7 +1686,7 @@
   margin-top: 6px !important;
 }
 .pom {
-  color: var(--orange);
+  color: var(--orange-t);
 }
 .dziekiLead {
   font-size: 19px;
@@ -1721,7 +1722,7 @@
   height: 30px;
   border-radius: 50%;
   background: var(--orange);
-  color: #fff;
+  color: #141416;
   font-weight: 600;
   display: grid;
   place-items: center;
@@ -2334,7 +2335,7 @@
   font-family: var(--head);
   font-size: 24px;
   font-weight: 600;
-  color: var(--orange) !important;
+  color: var(--orange-t) !important;
   text-decoration: underline;
   text-underline-offset: 6px;
   text-decoration-thickness: 2px;

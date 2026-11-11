@@ -80,7 +80,7 @@ export function pensja(min: number | null, max: number | null): string | null {
 }
 
 /** Znak firmy zamiast logo (logo dostaniemy od firmy po aktywacji): 2 litery na kolorze liczonym z nazwy. */
-const KOLORY = ["#f08a2b", "#3b6ef5", "#1f9d6b", "#9b51e0", "#e0457b", "#0f8fa8", "#c27c0e", "#5b6472"];
+const KOLORY = ["#7d8a00", "#3b6ef5", "#1f9d6b", "#9b51e0", "#e0457b", "#0f8fa8", "#c27c0e", "#5b6472"];
 export function Inicjaly({ firma, duze, logo }: { firma: string; duze?: boolean; logo?: string | null }) {
   if (logo)
     return (

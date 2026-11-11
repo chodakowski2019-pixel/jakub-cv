@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { KontoPraca } from "@/lib/bruno/praca/konta";
 import type { OfertaLista } from "@/lib/bruno/praca/oferty";
 import type { Zgloszenie } from "@/app/brunopraca/panel/page";
@@ -62,7 +63,10 @@ export default function PanelKandydata({
   alerty,
   teraz,
   zakladka,
+  bezMenu,
 }: {
+  /** 11.11: panel w układzie giełdy (uklad-gieldy.tsx): bez własnego menu, zakładka z adresu ?z=. */
+  bezMenu?: boolean;
   konto: KontoPraca;
   zgloszenia: (Zgloszenie & { oferta: OfertaLista | null })[];
   zapisane: OfertaLista[];
@@ -73,7 +77,10 @@ export default function PanelKandydata({
 }) {
   const wszystkie = MENU.flat().map(([k]) => k);
   const start = (zakladka === "zgloszenia" ? "aplikacje" : zakladka === "zapisane" ? "ulubione" : wszystkie.find((k) => k === zakladka)) ?? "pulpit";
-  const [z, setZ] = useState<Z>(start as Z);
+  const [zStan, setZStan] = useState<Z>(start as Z);
+  const zAdres = useSearchParams()?.get("z");
+  const z: Z = bezMenu ? wszystkie.find((k) => k === zAdres) ?? "pulpit" : zStan;
+  const setZ = (k: Z) => (bezMenu ? window.history.pushState(null, "", `/praca/panel?z=${k}`) : setZStan(k));
   const idz = (k: Z) => {
     setZ(k);
     window.scrollTo({ top: 0 });
@@ -91,8 +98,8 @@ export default function PanelKandydata({
   const licz = (st: string) => zgloszenia.filter((x) => x.status === st).length;
 
   return (
-    <div className={s.panelUklad}>
-      <aside className={s.panelBok}>
+    <div className={bezMenu ? undefined : s.panelUklad}>
+      <aside className={s.panelBok} style={bezMenu ? { display: "none" } : undefined}>
         <div className={s.kandKarta}>
           <span className={s.kandAvatar}>{imie[0]?.toUpperCase()}</span>
           <b>{konto.imie || "Twój profil"}</b>

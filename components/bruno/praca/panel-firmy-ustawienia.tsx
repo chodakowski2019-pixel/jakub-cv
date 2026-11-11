@@ -82,7 +82,7 @@ export function ProfilFirmy({ konto }: { konto: KontoPraca }) {
 
       <Karta
         sekcja="firma"
-        kolor="#fff1e4"
+        kolor="#f7fbd0"
         ikona="M4 8h16v12H4ZM9 8V5h6v3"
         tytul="Informacje o firmie"
         opis="Dane widoczne w Twoich ogłoszeniach."

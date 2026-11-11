@@ -84,7 +84,7 @@ function Glosowka({ onBlob }: { onBlob: (b: Blob | null) => void }) {
     <div className="mt-4 rounded-[14px] border border-dashed border-[#d9d7d2] p-4 flex flex-wrap items-center gap-3">
       {stan === "brak" && (
         <button type="button" onClick={start} className="inline-flex items-center gap-2 bg-white border border-[#0b0b0b] rounded-full px-4 py-2 text-[14px] font-medium hover:bg-[#0b0b0b] hover:text-white transition-colors">
-          <span className="w-[8px] h-[8px] rounded-full bg-[#f08a2b]" /> Nagraj głosówkę
+          <span className="w-[8px] h-[8px] rounded-full bg-[#d9e000]" /> Nagraj głosówkę
         </button>
       )}
       {stan === "nagrywa" && (
@@ -167,7 +167,7 @@ export default function FormularzFirmy({ firma, rola, pytania }: Props) {
     <div className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#f6f6f5] text-[#0b0b0b] font-[var(--font-blp-body)] antialiased [overflow-wrap:anywhere]">
       <nav className="max-w-[760px] mx-auto px-5 py-[22px] flex items-center justify-between">
         <span className="font-[var(--font-blp-head)] font-semibold text-[17px] tracking-[-0.02em] inline-flex items-center gap-1">
-          Jakub Chodakowski <span className="w-[7px] h-[7px] rounded-full bg-[#f08a2b]" />
+          Jakub Chodakowski <span className="w-[7px] h-[7px] rounded-full bg-[#d9e000]" />
         </span>
         <span className="text-[13px] text-[#6b6b6b]">Bruno AI · {firma.nazwa}</span>
       </nav>
@@ -198,7 +198,7 @@ export default function FormularzFirmy({ firma, rola, pytania }: Props) {
 
             {pytania.map((p, i) => (
               <div key={p.id} className={karta}>
-                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-[#f08a2b] font-[var(--font-blp-head)] text-[14px] font-medium text-[#f08a2b] mb-3">{i + 1}</span>
+                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-[#6f7a00] font-[var(--font-blp-head)] text-[14px] font-medium text-[#6f7a00] mb-3">{i + 1}</span>
                 <label className="block font-[var(--font-blp-head)] text-[20px] font-medium tracking-[-0.01em] leading-snug">{p.tekst}</label>
                 {p.pod && <p className="text-[14px] text-[#6b6b6b] mt-1.5">{p.pod}</p>}
                 <div className="mt-4">

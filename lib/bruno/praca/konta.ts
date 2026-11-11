@@ -49,9 +49,11 @@ export type KontoPraca = {
   // 18.10: ile ogłoszeń (po 30 dni) firma ma opłaconych do wystawienia; promocja 50 zł raz na konto.
   kredyty: number;
   promo_uzyta: boolean;
+  // 11.11: giełda handlowców. Ile kontaktów do handlowców firma ma opłaconych do odblokowania.
+  kontakty: number;
 };
 const POLA =
-  "id,email,typ,imie,telefon,firma,nip,linkedin,cv_sciezka,cv_nazwa,created_at,logo_url,nazwa_wyswietlana,o_firmie,www,fv_nazwa,fv_kraj,fv_adres,fv_miasto,fv_kod,klauzula_rodo,klauzula_przyszle,klauzula_przyszle_domyslnie,miasto,tytul,o_mnie,pref_stanowisko,pref_miasto,pref_branza,pref_tryb,pref_pensja,zgoda_oferty,zgoda_marketing,kredyty,promo_uzyta";
+  "id,email,typ,imie,telefon,firma,nip,linkedin,cv_sciezka,cv_nazwa,created_at,logo_url,nazwa_wyswietlana,o_firmie,www,fv_nazwa,fv_kraj,fv_adres,fv_miasto,fv_kod,klauzula_rodo,klauzula_przyszle,klauzula_przyszle_domyslnie,miasto,tytul,o_mnie,pref_stanowisko,pref_miasto,pref_branza,pref_tryb,pref_pensja,zgoda_oferty,zgoda_marketing,kredyty,promo_uzyta,kontakty";
 
 export { nazwaFirmy, wzorKlauzuli, WZOR_PRZYSZLE } from "./klauzule";
 

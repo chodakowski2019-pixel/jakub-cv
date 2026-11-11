@@ -6,7 +6,8 @@
   --muted: #6b6b6b;
   --line: #ebeae7;
   --soft: #f3f3f1;
-  --orange: #f08a2b;
+  --orange: #d9e000;
+  --orange-t: #6f7a00;
   --head: var(--font-blp-head), "Outfit", system-ui, sans-serif;
   --body: var(--font-blp-body), "Inter", system-ui, sans-serif;
   min-height: 100vh;
@@ -259,8 +260,8 @@
   color: var(--ink);
 }
 .pigNowa {
-  background: #fff1e4;
-  color: #b85a0b;
+  background: #f7fbd0;
+  color: #6f7a00;
 }
 .pigCiemna {
   background: var(--ink);
@@ -322,7 +323,7 @@
   right: -90px;
   top: -110px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(240, 138, 43, 0.55), rgba(240, 138, 43, 0) 70%);
+  background: radial-gradient(circle, rgba(217, 224, 0, 0.55), rgba(217, 224, 0, 0) 70%);
   pointer-events: none;
 }
 .brunoEtykieta {
@@ -330,7 +331,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--orange);
+  color: var(--orange-t);
 }
 .brunoH {
   font-family: var(--head);
@@ -401,7 +402,7 @@
 }
 .punkty li::before {
   content: "✓";
-  color: var(--orange);
+  color: var(--orange-t);
   font-weight: 600;
   margin-right: 8px;
 }
@@ -835,7 +836,7 @@
   padding: 0 6px;
   border-radius: 999px;
   background: var(--orange);
-  color: #fff;
+  color: #141416;
   font-size: 12px;
   display: inline-flex;
   align-items: center;
@@ -959,7 +960,7 @@
 .ofertaFirma a {
   margin-left: 10px;
   font-size: 15px;
-  color: var(--orange);
+  color: var(--orange-t);
 }
 .waznosc {
   display: flex;
@@ -1001,13 +1002,13 @@
   gap: 8px;
   padding: 10px 16px;
   border-radius: 999px;
-  background: #fff5ec;
+  background: #fbfde8;
   color: var(--ink);
   font-size: 15px;
   font-weight: 500;
 }
 .pigDuza svg {
-  color: var(--orange);
+  color: var(--orange-t);
 }
 .brunoPasek {
   display: grid;
@@ -1018,7 +1019,7 @@
   text-decoration: none;
   background: #fff;
   border: 1px solid var(--line);
-  border-left: 4px solid var(--orange);
+  border-left: 4px solid var(--orange-t);
   border-radius: 20px;
   padding: 20px 24px;
 }
@@ -1041,8 +1042,8 @@
   grid-area: b;
   padding: 10px 20px;
   border-radius: 999px;
-  border: 1.5px solid var(--orange);
-  color: #b85a0b;
+  border: 1.5px solid var(--orange-t);
+  color: #6f7a00;
   font-weight: 500;
   font-size: 15px;
 }
@@ -1097,8 +1098,8 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 1.5px solid var(--orange);
-  color: var(--orange);
+  border: 1.5px solid var(--orange-t);
+  color: var(--orange-t);
   font-size: 12px;
   display: flex;
   align-items: center;
@@ -1180,8 +1181,8 @@
   background: var(--soft);
 }
 .gwiazdaOn {
-  fill: var(--orange) !important;
-  stroke: var(--orange) !important;
+  fill: var(--orange-t) !important;
+  stroke: var(--orange-t) !important;
 }
 .podobne {
   background: #fff;
@@ -1448,7 +1449,7 @@
   width: 26px;
   height: 26px;
   fill: none;
-  stroke: var(--orange);
+  stroke: var(--orange-t);
   stroke-width: 1.7;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -1591,7 +1592,7 @@
   transform: translateX(18px);
 }
 .przelacznikRzad input:focus-visible + .suwak {
-  outline: 2px solid var(--orange);
+  outline: 2px solid var(--orange-t);
   outline-offset: 2px;
 }
 .kwotaPole {
@@ -1747,8 +1748,8 @@
   letter-spacing: 0;
 }
 .znaczekNowa {
-  background: #fff1e4;
-  color: #b85a0b;
+  background: #f7fbd0;
+  color: #6f7a00;
 }
 .znaczekWygasa {
   border: 1px solid var(--line);
@@ -1758,7 +1759,7 @@
   margin-top: 6px !important;
   font-family: var(--head);
   font-size: 22px;
-  color: var(--orange);
+  color: var(--orange-t);
   letter-spacing: -0.01em;
 }
 .kwota small {
@@ -1793,8 +1794,8 @@
   background: var(--soft);
 }
 .serceOn svg {
-  fill: var(--orange);
-  stroke: var(--orange);
+  fill: var(--orange-t);
+  stroke: var(--orange-t);
 }
 .akcjeMale .serce {
   width: auto;
@@ -1819,8 +1820,8 @@
   background: var(--soft);
 }
 .tagCieply {
-  background: #fff5ec;
-  box-shadow: 0 4px 14px rgba(240, 138, 43, 0.15);
+  background: #fbfde8;
+  box-shadow: 0 4px 14px rgba(217, 224, 0, 0.15);
   font-size: 15px;
   padding: 9px 16px;
 }
@@ -1848,7 +1849,7 @@
 }
 .kartaWyrozniona {
   border: 2px solid transparent;
-  background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, var(--orange), #e0457b 60%, #9b51e0) border-box;
+  background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #e9f542, #d9e000) border-box;
 }
 .kartaWyrozniona .logoBox {
   width: 52px;
@@ -1906,8 +1907,8 @@
   font-weight: 600;
   padding: 5px 12px;
   border-radius: 999px;
-  background: linear-gradient(135deg, #ffd27a, var(--orange));
-  color: #fff;
+  background: linear-gradient(135deg, #e9f542, #d9e000);
+  color: #141416;
   margin-bottom: 12px;
 }
 .dodana {
@@ -2388,7 +2389,7 @@ button.btn {
   }
 }
 .pomarancz {
-  color: var(--orange);
+  color: var(--orange-t);
   white-space: nowrap;
 }
 /* 17.10 (USER_001): kropka w logo równo między „SalesBruno.pl” a „Praca”. */
@@ -2574,8 +2575,8 @@ button.btn {
   background: #cfcdc8;
 }
 .znaczekNowa {
-  background: #fff1e4;
-  color: #c2620d;
+  background: #f7fbd0;
+  color: #6f7a00;
   border-radius: 6px;
   font-size: 12px;
   padding: 3px 8px;
@@ -2642,8 +2643,8 @@ button.btn {
   color: var(--muted);
 }
 .branzaZnaczek {
-  background: #fff1e4;
-  color: #c2620d;
+  background: #f7fbd0;
+  color: #6f7a00;
   font-weight: 600;
   border-radius: 6px;
   padding: 4px 9px;
@@ -2880,7 +2881,7 @@ button.btn {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: #fff1e4;
+  background: #f7fbd0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2890,7 +2891,7 @@ button.btn {
   width: 18px;
   height: 18px;
   fill: none;
-  stroke: #c2620d;
+  stroke: #6f7a00;
   stroke-width: 1.8;
   stroke-linejoin: round;
 }
@@ -2949,7 +2950,7 @@ button.btn {
   margin-left: 4px;
   font-size: 11.5px;
   font-weight: 600;
-  color: #c2620d;
+  color: #6f7a00;
 }
 .wyslijBtn {
   width: 100%;
@@ -3055,7 +3056,7 @@ button.btn {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #fff1e4;
+  background: #f7fbd0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3064,7 +3065,7 @@ button.btn {
   width: 18px;
   height: 18px;
   fill: none;
-  stroke: #c2620d;
+  stroke: #6f7a00;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -3290,7 +3291,7 @@ button.btn {
   padding: 0 6px;
   border-radius: 999px;
   background: var(--orange);
-  color: #fff;
+  color: #141416;
   font-size: 12px;
   display: inline-flex;
   align-items: center;
@@ -3392,8 +3393,8 @@ button.btn {
   border-radius: 6px;
 }
 .statusCzeka {
-  background: #fff1e4;
-  color: #c2620d;
+  background: #f7fbd0;
+  color: #6f7a00;
 }
 .statusAktywna {
   background: #e8f5ee;
@@ -3405,7 +3406,7 @@ button.btn {
 }
 .panelInfo {
   font-size: 13px !important;
-  color: #c2620d !important;
+  color: #6f7a00 !important;
 }
 .panelKontakt {
   display: flex;
@@ -3487,8 +3488,8 @@ button.btn {
   margin-top: 28px;
 }
 .podgladFirmy {
-  background: #fff1e4;
-  color: #c2620d;
+  background: #f7fbd0;
+  color: #6f7a00;
   border-radius: 12px;
   padding: 10px 14px;
   max-width: 1080px;
@@ -3534,8 +3535,8 @@ button.btn {
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 6px;
-  background: #fff1e4;
-  color: #c2620d;
+  background: #f7fbd0;
+  color: #6f7a00;
 }
 .cenaStara {
   font-size: 22px;
@@ -3689,7 +3690,7 @@ button.btn {
   margin: 0 !important;
 }
 .btnPomarancz {
-  background: linear-gradient(135deg, #f08a2b, #e0457b);
+  background: linear-gradient(135deg, #e9f542, #d9e000);
   margin-top: 0;
 }
 .panelPasek {
@@ -4055,7 +4056,7 @@ button.panelWierszLiczba:hover {
 }
 .cennikPromo {
   border: 2px solid transparent;
-  background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, var(--orange), #e0457b 60%, #9b51e0) border-box;
+  background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #e9f542, #d9e000) border-box;
 }
 .cennikEtykieta {
   font-size: 13px;
@@ -4109,7 +4110,7 @@ button.panelWierszLiczba:hover {
   border-radius: 24px;
   padding: 40px 32px;
   color: #fff;
-  background: radial-gradient(circle at 85% 30%, rgba(240, 138, 43, 0.45), transparent 45%), linear-gradient(135deg, #1a1a1a, #3a3a3a);
+  background: radial-gradient(circle at 85% 30%, rgba(217, 224, 0, 0.45), transparent 45%), linear-gradient(135deg, #1a1a1a, #3a3a3a);
 }
 .kontaktBaner h1 {
   font-family: var(--head);
@@ -4311,8 +4312,8 @@ img.kontoAvatar {
   width: 84px;
   height: 84px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--orange), #e0457b);
-  color: #fff;
+  background: linear-gradient(135deg, #e9f542, #d9e000);
+  color: #141416;
   font-family: var(--head);
   font-size: 36px;
   display: flex;
@@ -4356,8 +4357,8 @@ img.kontoAvatar {
 .brunoGradient {
   border-radius: 22px;
   padding: 26px 28px;
-  color: #fff;
-  background: radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.25), transparent 40%), linear-gradient(120deg, #f08a2b, #e0457b 55%, #9b51e0);
+  color: #141416;
+  background: radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.25), transparent 40%), linear-gradient(135deg, #e9f542, #d9e000);
 }
 .brunoGradient h2 {
   font-family: var(--head);
@@ -4595,8 +4596,8 @@ img.kontoAvatar {
   padding: 0 14px;
   border-radius: 999px;
   border: 0;
-  background: linear-gradient(135deg, #f08a2b, #e0457b);
-  color: #fff;
+  background: linear-gradient(135deg, #e9f542, #d9e000);
+  color: #141416;
   font: inherit;
   font-size: 13.5px;
   font-weight: 600;
@@ -4637,9 +4638,9 @@ img.kontoAvatar {
   padding: 0 28px;
 }
 .panelAkcje .zaplacMaly {
-  background: linear-gradient(135deg, #f08a2b, #e0457b);
+  background: linear-gradient(135deg, #e9f542, #d9e000);
   border: 0;
-  color: #fff;
+  color: #141416;
   font-weight: 600;
 }
 
@@ -4741,8 +4742,8 @@ img.kontoAvatar {
   white-space: nowrap;
 }
 .cennikBadgePromo {
-  background: linear-gradient(135deg, #f08a2b, #e0457b);
-  color: #fff;
+  background: linear-gradient(135deg, #e9f542, #d9e000);
+  color: #141416;
 }
 .cennikWierszCena b {
   font-family: var(--head);

@@ -126,6 +126,12 @@ export async function POST(req: NextRequest) {
 // „panel” = ogłoszenie z panelu pracodawcy → status „aktywna” od razu. „przejecie” = oferta z Adzuna przejęta z linku w mailu → mail do USER_001.
 async function platnoscPraca(s: Stripe.Checkout.Session) {
   const m = s.metadata ?? {};
+  // 11.11: kontakty do handlowców (Checkout z /api/bruno/praca/kontakty). Zapis zakupu raz na sesję, także ze strony powrotu.
+  if (m.rodzaj === "kontakty") {
+    const { zakupZeStripe } = await import("@/lib/bruno/praca/kontakty");
+    await zakupZeStripe(s);
+    return;
+  }
   // 18.10: jednorazowo; BLIK / Przelewy24 potwierdzają później (async_payment_succeeded). Ponowione zdarzenie = bez drugiego przedłużenia.
   if (s.mode === "payment" && s.payment_status !== "paid") return;
   const { data: juz } = await supabaseAdmin.from("bruno_platnosci").select("id").eq("stripe_session_id", s.id).eq("status", "paid").limit(1);

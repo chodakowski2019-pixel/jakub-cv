@@ -10,7 +10,8 @@
   --grey: #8a909b;
   --line: #e2e3e6;
   --soft: #ececee;
-  --orange: #f08a2b;
+  --orange: #d9e000;
+  --orange-t: #6f7a00;
   --zielony: #3f9d5d;
   --head: var(--font-baza), "Geist", ui-sans-serif, system-ui, sans-serif;
   --body: var(--font-baza), "Geist", ui-sans-serif, system-ui, sans-serif;
@@ -95,6 +96,14 @@
   text-decoration: none;
   white-space: nowrap;
 }
+.kulka {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 26%, #fdfee2 0%, #e3ef3a 34%, #9eab00 80%, #5e6a00 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4), 0 6px 14px -8px rgba(110, 125, 0, 0.7);
+}
 .logo img {
   display: block;
   border-radius: 50%;
@@ -142,7 +151,7 @@
 .cta:focus-visible,
 .opcja:focus-visible,
 .logo:focus-visible {
-  outline: 2px solid var(--orange);
+  outline: 2px solid var(--orange-t);
   outline-offset: 2px;
 }
 

@@ -45,11 +45,13 @@ void main(){
 
 // 28.10: `predkosc` = mnożnik czasu (kula Bruno: czeka 1, słucha 1,8, mówi 3,2). Zmiana w locie, bez restartu shadera.
 // `zakres` = jaki wycinek zorzy (0 = czerń na dole, 1 = jasny szczyt) wypełnia płótno; kula Bruno bierze [0.22, 1.04], żeby pomarańcz był w środku.
-// 28.10: `kolory` = 7 barw od dołu (ciemno) do szczytu (jasno); domyślnie pomarańczowa zorza z rejestracji.
+// 28.10: `kolory` = 7 barw od dołu (ciemno) do szczytu (jasno); do 11.11 domyślna była pomarańczowa zorza z rejestracji.
 export const ZORZA_POMARANCZ = ["#050301", "#140a03", "#2e1606", "#6b3010", "#e07a24", "#fac78c", "#fff5e6"];
+// 11.11 (USER_001: „wszędzie naszym przebijającym kolorem będzie limonkowy”): zorza w barwach kuli Bruno, od 11.11 domyślna.
+export const ZORZA_LIMONKA = ["#020300", "#0a0e02", "#1b2305", "#4d5e08", "#c3d200", "#eef49a", "#fdfee9"];
 const hex = (h: string): [number, number, number] => [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255];
 // 8.11: `fs` = inny fragment shader z tymi samymi uniformami (R, T, Z, C0-C6); kula Bruno ma płynny (kula-limonka.tsx).
-export default function AuroraCanvas({ fallbackClass, predkosc = 1, zakres = [0, 1], kolory = ZORZA_POMARANCZ, fs: fsZrodlo = FS }: { fallbackClass: string; predkosc?: number; zakres?: [number, number]; kolory?: string[]; fs?: string }) {
+export default function AuroraCanvas({ fallbackClass, predkosc = 1, zakres = [0, 1], kolory = ZORZA_LIMONKA, fs: fsZrodlo = FS }: { fallbackClass: string; predkosc?: number; zakres?: [number, number]; kolory?: string[]; fs?: string }) {
   const paleta = kolory.join(",");
   const ref = useRef<HTMLCanvasElement>(null);
   const predkoscRef = useRef(predkosc);

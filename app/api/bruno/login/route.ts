@@ -18,6 +18,7 @@ import { jezykLubDomyslny } from "@/lib/bruno/domeny";
 import { tDla } from "@/lib/bruno/i18n";
 import { jezykZadania } from "@/lib/bruno/jezyk-serwer";
 import { jezykDomeny } from "@/lib/bruno/db";
+import { CIASTECZKO_PRACA, OPCJE_CIASTECZKA, tokenSesji, zaloguj as zalogujPraca } from "@/lib/bruno/praca/konta";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,20 @@ export const dynamic = "force-dynamic";
 // Komunikat o błędzie jest jeden dla złego adresu i złego kodu: formularz nie
 // może być sprawdzarką, kto ma dostęp do testu.
 // 11.10: przed znalezieniem konta język z domeny (salesbruno.pl) albo ?pl; potem język konta.
+// 11.11 (USER_001: „logowanie też może być przez salesbruno.pl/login”): ten sam formularz loguje do giełdy handlowców.
+// Gdy e-mail i hasło nie pasują do konta Bruno AI, próbujemy konta portalu /praca (firma, potem handlowiec).
+// Sukces = ciasteczko praca_sesja i `dalej` z adresem panelu giełdy; formularz przechodzi tam zamiast do /bruno.
+async function logowanieGieldy(email: string, haslo: string): Promise<NextResponse | null> {
+  for (const typ of ["pracodawca", "kandydat"] as const) {
+    const w = await zalogujPraca(typ, email, haslo);
+    if (!w.ok) continue;
+    const odp = NextResponse.json({ ok: true, dalej: "/praca/panel" });
+    odp.cookies.set(CIASTECZKO_PRACA, tokenSesji(typ, email), OPCJE_CIASTECZKA);
+    return odp;
+  }
+  return null;
+}
+
 export async function POST(req: Request) {
   let t = tDla(await jezykZadania());
   try {
@@ -39,7 +54,7 @@ export async function POST(req: Request) {
     const ZLE = t("Wrong email or password.", "Zły e-mail albo hasło.");
 
     const konto = await pobierzKonto(email);
-    if (!konto || !konto.kod_hash) return NextResponse.json({ ok: false, blad: ZLE }, { status: 401 });
+    if (!konto || !konto.kod_hash) return (await logowanieGieldy(email, kod)) ?? NextResponse.json({ ok: false, blad: ZLE }, { status: 401 });
 
     if (konto.blokada_do && new Date(konto.blokada_do).getTime() > Date.now()) {
       const minut = Math.ceil((new Date(konto.blokada_do).getTime() - Date.now()) / 60_000);
@@ -55,7 +70,7 @@ export async function POST(req: Request) {
           blokada_do: nieudane >= LIMIT_PROB ? new Date(Date.now() + BLOKADA_MS).toISOString() : null,
         })
         .eq("email", email);
-      return NextResponse.json({ ok: false, blad: ZLE }, { status: 401 });
+      return (await logowanieGieldy(email, kod)) ?? NextResponse.json({ ok: false, blad: ZLE }, { status: 401 });
     }
 
     const jezyk = jezykLubDomyslny(konto.jezyk);

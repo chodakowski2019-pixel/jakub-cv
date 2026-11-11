@@ -7,8 +7,8 @@
   --ramka: rgba(255, 255, 255, 0.09);
   --tekst: #eaeaea;
   --szary: #9aa3ae;
-  --marka: #ff8a3d;
-  --marka-miekka: rgba(255, 138, 61, 0.1);
+  --marka: #d9e000;
+  --marka-miekka: rgba(217, 224, 0, 0.1);
   --blekit: #8fd0ff;
   --blekit-miekki: rgba(59, 169, 242, 0.09);
   min-height: 100vh;
@@ -90,7 +90,7 @@
 .hero {
   border-bottom: 1px solid var(--ramka);
   background:
-    radial-gradient(60% 50% at 50% 0%, rgba(255, 138, 61, 0.12) 0%, transparent 70%),
+    radial-gradient(60% 50% at 50% 0%, rgba(217, 224, 0, 0.12) 0%, transparent 70%),
     radial-gradient(40% 40% at 85% 15%, rgba(59, 169, 242, 0.1) 0%, transparent 70%),
     var(--tlo);
 }
@@ -154,7 +154,7 @@
   transition: background 0.2s;
 }
 .przycisk:hover {
-  background: #ff9d5c;
+  background: #e9f542;
 }
 .notka {
   font-size: 0.875rem;
@@ -190,7 +190,7 @@
   transition: border-color 0.2s, color 0.2s;
 }
 .pigulka:hover {
-  border-color: rgba(255, 138, 61, 0.5);
+  border-color: rgba(217, 224, 0, 0.5);
   color: var(--marka);
 }
 
@@ -218,7 +218,7 @@
   z-index: 1;
 }
 .og1 {
-  background: linear-gradient(135deg, #ff8a3d 0%, #b8461a 55%, #2a1408 100%);
+  background: linear-gradient(135deg, #d9e000 0%, #5c6d00 55%, #141a00 100%);
 }
 .og2 {
   background: linear-gradient(135deg, #3ba9f2 0%, #1d5f96 55%, #0b1d2e 100%);
@@ -646,7 +646,7 @@
   margin-top: 48px;
   padding: 32px;
   border-radius: 2rem;
-  border: 1px solid rgba(255, 138, 61, 0.25);
+  border: 1px solid rgba(217, 224, 0, 0.25);
   background: var(--marka-miekka);
 }
 .wezwanieTytul {

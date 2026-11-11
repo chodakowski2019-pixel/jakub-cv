@@ -672,3 +672,44 @@
     transform: rotate(360deg);
   }
 }
+
+/* 11.11 (USER_001): logowanie w barwach kuli Bruno z panelu: limonka i biel zamiast pomarańczu.
+   Tylko podmiana kolorów; układ zostaje. Zorza dostaje paletę w aurora-shell.tsx (ZORZA_LIMONKA). */
+.limonka {
+  --green: #d4e000;
+  --mint: #eef49a;
+}
+.limonka .art {
+  background: #0a0e02;
+}
+.limonka .artFallback {
+  background: linear-gradient(180deg, #fdfee9 0%, #c3d200 30%, #4d5e08 55%, #0a0e02 80%, #000 100%);
+}
+.limonka .sub {
+  color: #b4b8a6;
+}
+.limonka .done .n,
+.limonka .orb {
+  color: #141a00;
+}
+.limonka .zgoda input:checked::after {
+  border-color: #141a00;
+}
+.limonka .btnW:hover,
+.limonka .google:hover {
+  box-shadow: 0 0 0 4px rgba(212, 224, 0, 0.18), 0 10px 40px -10px rgba(212, 224, 0, 0.45);
+}
+.limonka .orb {
+  background: radial-gradient(circle at 35% 30%, #fdfee9 0%, #d4e000 28%, #5c6d00 62%, #0a0e02 100%);
+  box-shadow: 0 0 80px -10px rgba(212, 224, 0, 0.6);
+}
+.limonka .hintBad {
+  color: #e3ed64;
+}
+.limonka .kolko {
+  border-top-color: #9eab00;
+}
+.limonka .logo i {
+  background: radial-gradient(circle at 32% 26%, #fdfee2 0%, #e3ef3a 34%, #9eab00 80%, #5e6a00 100%);
+  box-shadow: 0 0 22px rgba(212, 224, 0, 0.55);
+}

@@ -36,7 +36,7 @@ const lista = (punkty: string[]) =>
 const ps = (html: string) => p(`<b>PS</b> ${html}`);
 /** Duży, kolorowy przycisk: tylko w mailu potwierdzającym (02-07: „duży, wyraźny, nie da się przegapić”). */
 const przyciskPotwierdz = (tekst: string, link: string) =>
-  `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 26px 0"><tr><td style="background:#f08a2b;border-radius:10px"><a href="${esc(link)}" style="display:inline-block;padding:18px 34px;font-family:${F};font-size:18px;font-weight:700;line-height:1;color:#111111;text-decoration:none">${esc(tekst)} »</a></td></tr></table>`;
+  `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 26px 0"><tr><td style="background:#d9e000;border-radius:10px"><a href="${esc(link)}" style="display:inline-block;padding:18px 34px;font-family:${F};font-size:18px;font-weight:700;line-height:1;color:#111111;text-decoration:none">${esc(tekst)} »</a></td></tr></table>`;
 
 /**
  * Koperta „jak mail od kolegi”: białe tło, tekst od lewej, bez nagłówka i karty. Na dole podpis, dane nadawcy

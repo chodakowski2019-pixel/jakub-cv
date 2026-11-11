@@ -169,7 +169,7 @@ export function mailPotwierdzenieDemo(a: {
             .map(
               (c, i) => `<tr><td style="padding:0 0 10px">
             <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-              <td style="width:26px;vertical-align:top;font:600 13px/1.6 ${font};color:#f08a2b">0${i + 1}</td>
+              <td style="width:26px;vertical-align:top;font:600 13px/1.6 ${font};color:#6f7a00">0${i + 1}</td>
               <td style="font:400 15px/1.6 ${font};color:#333333">${ESC(c)}</td>
             </tr></table>
           </td></tr>`,
