@@ -15,12 +15,13 @@ const PROFIL = "/praca/dolacz/profil";
 const tytul = "Tutaj to praca szuka Ciebie";
 const opis = "Załóż profil handlowca. Firmy, które szukają ludzi do sprzedaży, same odzywają się do Ciebie. Bezpłatnie.";
 
+// Obrazek podglądu leży w katalogu głównym, bo robots.txt zamyka /bruno/ i /praca/ (Facebook zgłaszał „Corrupted Image”).
 export const metadata: Metadata = {
   metadataBase: new URL("https://salesbruno.pl"),
   title: `${tytul} | SalesBruno.pl Praca`,
   description: opis,
   alternates: { canonical: "/praca" },
-  openGraph: { title: tytul, description: opis, url: "/praca", siteName: "Bruno AI", locale: "pl_PL", type: "website", images: [{ url: "/bruno/praca/og-baza-2.png", width: 1200, height: 630, alt: "Bruno Sales: baza sprawdzonych handlowców" }] },
+  openGraph: { title: tytul, description: opis, url: "/praca", siteName: "Bruno AI", locale: "pl_PL", type: "website", images: [{ url: "/og-praca-baza.png", width: 1200, height: 630, alt: "Bruno Sales: baza sprawdzonych handlowców" }] },
   robots: { index: false, follow: false },
 };
 
