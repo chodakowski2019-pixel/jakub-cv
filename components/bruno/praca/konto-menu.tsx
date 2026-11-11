@@ -68,7 +68,7 @@ export default function KontoMenu({ imie, email, typ, logo }: { imie: string; em
             className={s.kontoWyloguj}
             onClick={async () => {
               await fetch("/api/bruno/praca/konto/wyloguj", { method: "POST" });
-              location.href = "/praca";
+              location.href = "/praca/oferty";
             }}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">

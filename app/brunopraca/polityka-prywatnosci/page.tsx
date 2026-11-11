@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Dokument, { type SekcjaDok } from "@/components/bruno/praca/dokument";
 
 // 18.10 (USER_001): polityka prywatności portalu ofert pracy salesbruno.com/praca.
+// 11.11: dopisana baza handlowców (Profil handlowca: odpowiedzi z formularza, zdjęcie, CV, udostępnianie Pracodawcom).
 // Wersja robocza bez radcy prawnego. Przy zmianie technicznej (nowe dane, nowy dostawca) aktualizować.
 export const metadata: Metadata = { title: "Polityka prywatności | SalesBruno.pl Praca", robots: { index: false, follow: true }, alternates: { canonical: "/praca/polityka-prywatnosci" } };
 
@@ -16,6 +17,7 @@ const SEKCJE: SekcjaDok[] = [
     tytul: "2. Jakie dane zbieramy",
     punkty: [
       <><b>Kandydaci</b>: e-mail, hasło (zapisane w postaci skrótu), imię i nazwisko, telefon, miasto, profil zawodowy, preferencje pracy, link do LinkedIn, plik CV, treść Zgłoszeń, zapisane oferty i alerty.</>,
+      <><b>Profil handlowca</b>: odpowiedzi z formularza (doświadczenie, stanowisko, branże, sposób sprzedaży, mocne strony, realizacja planu, wartość sprzedaży, największy wynik, miasto, tryb pracy, rodzaj umowy, oczekiwane wynagrodzenie, termin rozpoczęcia), imię i nazwisko, telefon, link do LinkedIn, zdjęcie i plik CV, jeśli je dodasz.</>,
       <><b>Pracodawcy</b>: e-mail, hasło (skrót), imię, telefon, nazwa firmy, NIP, adres do faktury, logo, opis firmy, klauzule, treść Ogłoszeń.</>,
       <><b>Płatności</b>: obsługuje Stripe. Nie widzimy numeru karty, dostajemy potwierdzenie płatności, kwotę i dane do faktury.</>,
       <><b>Dane techniczne</b>: logi serwera (adres IP, przeglądarka) do bezpieczeństwa.</>,
@@ -26,6 +28,8 @@ const SEKCJE: SekcjaDok[] = [
     punkty: [
       "prowadzenie konta i Portalu: umowa (art. 6 ust. 1 lit. b RODO),",
       "przekazanie Zgłoszenia Pracodawcy: zgoda Kandydata (art. 6 ust. 1 lit. a RODO),",
+      "weryfikacja Profilu handlowca: umowa (art. 6 ust. 1 lit. b RODO),",
+      "pokazanie Profilu handlowca Pracodawcom zarejestrowanym w Portalu: zgoda Kandydata (art. 6 ust. 1 lit. a RODO), do wycofania w każdej chwili,",
       "powiadomienia e-mail o ofertach i porady: zgoda (art. 6 ust. 1 lit. a RODO), do wycofania w panelu,",
       "faktury i księgowość: obowiązek prawny (art. 6 ust. 1 lit. c RODO),",
       "bezpieczeństwo i obrona przed roszczeniami: prawnie uzasadniony interes (art. 6 ust. 1 lit. f RODO).",
@@ -35,6 +39,7 @@ const SEKCJE: SekcjaDok[] = [
     tytul: "4. Komu przekazujemy dane",
     punkty: [
       "Pracodawcy, do którego Kandydat wysłał Zgłoszenie. Pracodawca staje się wtedy osobnym administratorem tych danych.",
+      "Pracodawcom zarejestrowanym w Portalu: Profil handlowca po weryfikacji, jeśli Kandydat się na to zgodził. Pracodawca, który pobierze dane z Profilu, staje się ich osobnym administratorem.",
       "dostawcom usług, z których korzystamy: Supabase (baza danych i pliki), Vercel (serwery strony), Stripe (płatności), Resend (wysyłka e-maili), Google (logowanie, jeśli użytkownik je wybierze).",
     ],
     po: ["Część dostawców działa poza Europejskim Obszarem Gospodarczym. Przekazanie odbywa się na podstawie standardowych klauzul umownych Komisji Europejskiej albo decyzji o odpowiednim stopniu ochrony."],
@@ -44,6 +49,7 @@ const SEKCJE: SekcjaDok[] = [
     punkty: [
       "dane konta: do usunięcia konta,",
       "Zgłoszenia i CV: do 12 miesięcy od wysłania albo do usunięcia konta,",
+      "Profil handlowca ze zdjęciem i CV: do usunięcia Profilu, usunięcia konta albo wycofania zgody,",
       "dane do faktur: 5 lat od końca roku podatkowego,",
       "logi techniczne: do 30 dni.",
     ],
@@ -69,5 +75,5 @@ const SEKCJE: SekcjaDok[] = [
 ];
 
 export default function Page() {
-  return <Dokument tytul="Polityka prywatności" data="18 października 2026" wstep="Tu opisujemy, jakie dane zbieramy w portalu SalesBruno.pl Praca, po co i jakie masz prawa." sekcje={SEKCJE} />;
+  return <Dokument tytul="Polityka prywatności" data="11 listopada 2026" wstep="Tu opisujemy, jakie dane zbieramy w portalu SalesBruno.pl Praca, po co i jakie masz prawa." sekcje={SEKCJE} />;
 }

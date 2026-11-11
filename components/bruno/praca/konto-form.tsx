@@ -8,7 +8,27 @@ import s from "./praca.module.css";
 type Typ = "kandydat" | "pracodawca";
 type Tryb = "logowanie" | "rejestracja";
 
-export default function KontoForm({ typ: typStart = "kandydat", tryb: trybStart = "rejestracja", dalej, jedenTyp }: { typ?: Typ; tryb?: Tryb; dalej?: string; jedenTyp?: boolean }) {
+// 11.11: naglowek, opis i przycisk = własne teksty formularza rejestracji (LP /praca/dolacz). opis="" chowa opis.
+// bezDanych = rejestracja kandydata samym e-mailem i hasłem (imię i telefon zbiera formularz profilu).
+export default function KontoForm({
+  typ: typStart = "kandydat",
+  tryb: trybStart = "rejestracja",
+  dalej,
+  jedenTyp,
+  naglowek,
+  opis,
+  przycisk,
+  bezDanych,
+}: {
+  typ?: Typ;
+  tryb?: Tryb;
+  dalej?: string;
+  jedenTyp?: boolean;
+  naglowek?: string;
+  opis?: string;
+  przycisk?: string;
+  bezDanych?: boolean;
+}) {
   const [typ, setTyp] = useState<Typ>(typStart);
   const [tryb, setTryb] = useState<Tryb>(trybStart);
   const [stan, setStan] = useState<"" | "wysylam">("");
@@ -47,9 +67,11 @@ export default function KontoForm({ typ: typStart = "kandydat", tryb: trybStart 
           ))}
         </div>
       )}
-      <h2 className={s.kontoH}>{rej ? (typ === "pracodawca" ? "Załóż konto firmy" : "Załóż konto") : typ === "pracodawca" ? "Zaloguj się jako pracodawca" : "Zaloguj się"}</h2>
-      <p className={s.kontoP}>
-        {rej
+      <h2 className={s.kontoH}>{rej ? (naglowek ?? (typ === "pracodawca" ? "Załóż konto firmy" : "Załóż konto")) : typ === "pracodawca" ? "Zaloguj się jako pracodawca" : "Zaloguj się"}</h2>
+      <p className={s.kontoP} hidden={rej && opis === ""}>
+        {rej && opis
+          ? opis
+          : rej
           ? typ === "pracodawca"
             ? "Dodawaj ogłoszenia i przeglądaj kandydatów w jednym miejscu."
             : "Zapisuj oferty, aplikuj jednym kliknięciem i śledź swoje zgłoszenia."
@@ -57,7 +79,7 @@ export default function KontoForm({ typ: typStart = "kandydat", tryb: trybStart 
       </p>
 
       <input name="www" tabIndex={-1} autoComplete="off" className={s.pulapka} aria-hidden="true" />
-      {rej && (
+      {rej && !(bezDanych && typ === "kandydat") && (
         <div className={s.polaSiatka}>
           <label className={s.pole}>
             <span>Imię <i className={s.gw}>*</i></span>
@@ -108,7 +130,7 @@ export default function KontoForm({ typ: typStart = "kandydat", tryb: trybStart 
       )}
       {blad && <p className={s.blad}>{blad}</p>}
       <button type="submit" className={`${s.btn} ${s.btnDuzy} ${s.wyslijBtn}`} disabled={stan === "wysylam"}>
-        {stan === "wysylam" ? "Chwileczkę…" : rej ? "Załóż konto" : "Zaloguj się"}
+        {stan === "wysylam" ? "Chwileczkę…" : rej ? (przycisk ?? "Załóż konto") : "Zaloguj się"}
       </button>
       <p className={s.kontoZmiana}>
         {rej ? "Masz już konto?" : "Nie masz konta?"}{" "}

@@ -5,7 +5,7 @@ import { Nav } from "@/components/bruno/praca/nav";
 import s from "@/components/bruno/praca/praca.module.css";
 import { CENA_MIESIAC, doListy, ofertyPubliczne, podgladWszystkich } from "@/lib/bruno/praca/oferty";
 
-// 17.10 (USER_001): salesbruno.com/praca = oferty pracy dla handlowców w Polsce.
+// 17.10 (USER_001): oferty pracy dla handlowców w Polsce. Od 11.11 pod /praca/oferty (na /praca jest LP bazy handlowców).
 // Publicznie tylko AKTYWNE (50 zł/mc). Lokalnie ?podglad=wszystkie pokazuje też nieaktywne.
 export const dynamic = "force-dynamic";
 
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://salesbruno.com"),
   title: `${tytul} | Bruno AI`,
   description: opis,
-  alternates: { canonical: "/praca" },
-  openGraph: { title: tytul, description: opis, url: "/praca", siteName: "Bruno AI", locale: "pl_PL", type: "website", images: [{ url: "/bruno/og-bruno-2.png", width: 1200, height: 630, alt: "Bruno AI" }] },
+  alternates: { canonical: "/praca/oferty" },
+  openGraph: { title: tytul, description: opis, url: "/praca/oferty", siteName: "Bruno AI", locale: "pl_PL", type: "website", images: [{ url: "/bruno/og-bruno-2.png", width: 1200, height: 630, alt: "Bruno AI" }] },
   // Do startu (pierwsze aktywne ogłoszenia) poza indeksem.
   robots: { index: false, follow: true },
 };

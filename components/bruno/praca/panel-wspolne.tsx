@@ -26,7 +26,7 @@ export function Wyloguj() {
       className={s.wyczysc}
       onClick={async () => {
         await fetch("/api/bruno/praca/konto/wyloguj", { method: "POST" });
-        location.href = "/praca";
+        location.href = "/praca/oferty";
       }}
     >
       Wyloguj się

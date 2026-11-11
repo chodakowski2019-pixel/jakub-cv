@@ -22,7 +22,8 @@ export async function POST(req: Request) {
   if (!typ) return NextResponse.json({ ok: false, blad: "Wybierz: kandydat albo pracodawca." }, { status: 400 });
   if (!email) return NextResponse.json({ ok: false, blad: "Wpisz poprawny e-mail." }, { status: 400 });
   if (!haslo) return NextResponse.json({ ok: false, blad: "Hasło: co najmniej 8 znaków." }, { status: 400 });
-  if (imie.length < 2) return NextResponse.json({ ok: false, blad: "Wpisz imię." }, { status: 400 });
+  // 11.11: kandydat z LP /praca/dolacz zakłada konto bez imienia (podaje je w formularzu profilu).
+  if (typ === "pracodawca" && imie.length < 2) return NextResponse.json({ ok: false, blad: "Wpisz imię." }, { status: 400 });
   if (typ === "pracodawca" && firma.length < 2) return NextResponse.json({ ok: false, blad: "Wpisz nazwę firmy." }, { status: 400 });
   if (!b.zgoda) return NextResponse.json({ ok: false, blad: "Zaakceptuj regulamin i politykę prywatności." }, { status: 400 });
 

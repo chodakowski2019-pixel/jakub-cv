@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Dokument, { type SekcjaDok } from "@/components/bruno/praca/dokument";
 
 // 18.10 (USER_001: „czy mamy regulaminy?”): regulamin portalu ofert pracy salesbruno.com/praca.
+// 11.11: dopisana baza handlowców (Profil handlowca, weryfikacja do 7 dni, pkt 7a).
 // Wersja robocza przygotowana bez radcy prawnego. Przed skalowaniem sprzedaży do sprawdzenia przez prawnika.
 export const metadata: Metadata = { title: "Regulamin | SalesBruno.pl Praca", robots: { index: false, follow: true }, alternates: { canonical: "/praca/regulamin" } };
 
@@ -21,6 +22,7 @@ const SEKCJE: SekcjaDok[] = [
       <><b>Pracodawca</b>: przedsiębiorca, który zakłada konto pracodawcy i publikuje ogłoszenia o pracę.</>,
       <><b>Ogłoszenie</b>: oferta pracy opublikowana w Portalu.</>,
       <><b>Zgłoszenie</b>: dane i dokumenty, które Kandydat wysyła przez przycisk „Aplikuj”.</>,
+      <><b>Profil handlowca</b>: dane o doświadczeniu, specjalizacji, wynikach i oczekiwaniach Kandydata, ze zdjęciem i CV, jeśli je doda, wysłane przez formularz na salesbruno.pl/praca.</>,
     ],
   },
   {
@@ -28,6 +30,7 @@ const SEKCJE: SekcjaDok[] = [
     punkty: [
       "przeglądanie ofert pracy w sprzedaży bez zakładania konta,",
       "konto Kandydata: zgłoszenia, zapisane oferty, alerty, profil i CV,",
+      "baza handlowców: Profil handlowca, który po weryfikacji widzą Pracodawcy zarejestrowani w Portalu,",
       "konto Pracodawcy: publikowanie Ogłoszeń, odbieranie Zgłoszeń i zmiana ich statusów,",
       "powiadomienia e-mail, jeśli użytkownik je włączy.",
     ],
@@ -70,6 +73,17 @@ const SEKCJE: SekcjaDok[] = [
     ],
   },
   {
+    tytul: "7a. Profil handlowca w bazie",
+    punkty: [
+      "Profil handlowca jest bezpłatny. Kandydat wypełnia go po założeniu konta.",
+      "Usługodawca sprawdza informacje z Profilu w ciągu 7 dni od jego wysłania. Wynik wysyła na e-mail Kandydata. Usługodawca może odmówić dodania Profilu do bazy, gdy dane są niepełne albo nieprawdziwe.",
+      "Profil po weryfikacji widzą wyłącznie Pracodawcy zarejestrowani w Portalu, na podstawie zgody Kandydata wyrażonej w formularzu. Pracodawca może skontaktować się z Kandydatem w sprawie pracy.",
+      "Kandydat podaje prawdziwe dane, a zdjęcie przedstawia jego samego.",
+      <>Kandydat może w każdej chwili poprawić albo usunąć Profil i wycofać zgodę, pisząc na {MAIL}.</>,
+      "Profil nie gwarantuje kontaktu Pracodawcy ani zatrudnienia.",
+    ],
+  },
+  {
     tytul: "8. Usuwanie treści i blokada konta",
     akapity: [
       "Usługodawca może usunąć Ogłoszenie albo zablokować konto, które łamie Regulamin lub prawo. Jeśli usunięte zostało opłacone Ogłoszenie bez naruszenia Regulaminu po stronie Pracodawcy, Usługodawca zwraca płatność.",
@@ -100,5 +114,5 @@ const SEKCJE: SekcjaDok[] = [
 ];
 
 export default function Page() {
-  return <Dokument tytul="Regulamin" data="18 października 2026" wstep="Ten regulamin opisuje zasady korzystania z portalu ofert pracy dla handlowców SalesBruno.pl Praca przez kandydatów i pracodawców." sekcje={SEKCJE} />;
+  return <Dokument tytul="Regulamin" data="11 listopada 2026" wstep="Ten regulamin opisuje zasady korzystania z portalu ofert pracy dla handlowców SalesBruno.pl Praca przez kandydatów i pracodawców." sekcje={SEKCJE} />;
 }

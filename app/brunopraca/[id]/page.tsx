@@ -120,9 +120,9 @@ export default async function Page({ params, searchParams }: Props) {
       <div className={s.uklad}>
         <div className={s.kolumna}>
           <nav className={s.okruszki} aria-label="Ścieżka">
-            <a href={zPodgladem("/praca")}>Oferty pracy</a>
-            {miasto && <a href={zPodgladem("/praca")}>Praca {miasto}</a>}
-            <a href={zPodgladem("/praca")}>{o.branza}</a>
+            <a href={zPodgladem("/praca/oferty")}>Oferty pracy</a>
+            {miasto && <a href={zPodgladem("/praca/oferty")}>Praca {miasto}</a>}
+            <a href={zPodgladem("/praca/oferty")}>{o.branza}</a>
             <span>{o.stanowisko}</span>
           </nav>
 

@@ -114,7 +114,7 @@ export default function PanelKandydata({
               type="button"
               onClick={async () => {
                 await fetch("/api/bruno/praca/konto/wyloguj", { method: "POST" });
-                location.href = "/praca";
+                location.href = "/praca/oferty";
               }}
             >
               <Ikona d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9" />
@@ -167,7 +167,7 @@ export default function PanelKandydata({
                 <h2 className={s.pulpitSekcja}>
                   <Ikona d="M12 3c1 3 4 4.5 4 8.5a4 4 0 0 1-8 0c0-2 1-3 1-3s.5 2 2 2c0-3-1-5 1-7.5Z" /> Oferty dla Ciebie
                 </h2>
-                <a href="/praca" className={s.wyczysc}>
+                <a href="/praca/oferty" className={s.wyczysc}>
                   Zobacz wszystkie
                 </a>
               </div>
@@ -200,7 +200,7 @@ export default function PanelKandydata({
               </div>
             ) : (
               <PustoIkona d={IK.ulubione} tytul="Nie masz jeszcze ulubionych ofert" opis="Zapisuj oferty sercem, a łatwo do nich wrócisz i porównasz je ze sobą.">
-                <a className={`${s.btn} ${s.btnPomarancz}`} href="/praca">
+                <a className={`${s.btn} ${s.btnPomarancz}`} href="/praca/oferty">
                   Wyszukaj oferty pracy
                 </a>
               </PustoIkona>
@@ -268,7 +268,7 @@ function Aplikacje({ zgloszenia, teraz }: { zgloszenia: (Zgloszenie & { oferta: 
       </div>
       {widoczne.length === 0 ? (
         <PustoIkona d={IK.aplikacje} tytul="Brak zgłoszeń" opis="Znajdź ofertę i kliknij „Aplikuj”. Zgłoszenie pojawi się tutaj ze statusem od pracodawcy.">
-          <a className={s.btn} href="/praca">
+          <a className={s.btn} href="/praca/oferty">
             Zobacz oferty
           </a>
         </PustoIkona>
@@ -328,7 +328,7 @@ function Alerty({ alerty }: { alerty: Alert[] }) {
     <Sekcja tytul="Zapisane alerty" opis="Wyszukiwania, o których dostajesz powiadomienia mailem">
       {lista.length === 0 ? (
         <PustoIkona d={IK.alerty} tytul="Brak zapisanych alertów" opis="Na liście ofert ustaw filtry i kliknij „Powiadom mnie”.">
-          <a className={s.btn} href="/praca">
+          <a className={s.btn} href="/praca/oferty">
             Przejdź do ofert
           </a>
         </PustoIkona>

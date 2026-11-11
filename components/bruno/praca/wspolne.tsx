@@ -58,7 +58,7 @@ export function Stopka() {
     <footer className={s.stopka}>
       <span>© 2026 SalesBruno.pl</span>
       <a href="/">salesbruno.com</a>
-      <a href="/praca">Oferty pracy</a>
+      <a href="/praca/oferty">Oferty pracy</a>
       <a href="/praca/regulamin">Regulamin</a>
       <a href="/praca/polityka-prywatnosci">Polityka prywatności</a>
       <a href={KONTAKT_FIRMY}>jakub@salesbruno.com</a>

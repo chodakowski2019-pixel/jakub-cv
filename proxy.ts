@@ -96,6 +96,17 @@ export function proxy(request: NextRequest) {
   }
   // 17.10 (USER_001): /praca na domenach Bruno = portal ofert pracy dla handlowców (app/brunopraca).
   // Lokalnie (localhost) też, żeby dopracować bez domeny. jakubchodakowski.com/praca zostaje „Wkrótce”.
+  // 11.11 (USER_001): /praca = LP bazy handlowców (app/brunopraca/dolacz), lista ofert przeniesiona na /praca/oferty.
+  // Oferty /praca/<id> i reszta portalu bez zmian. Stary adres LP /praca/dolacz → /praca.
+  if (jezyk || hostBezPortu === "localhost") {
+    if (pathname === "/praca") return dalej(request, pathname, jezyk, "/brunopraca/dolacz");
+    if (pathname === "/praca/oferty") return dalej(request, pathname, jezyk, "/brunopraca");
+    if (pathname === "/praca/dolacz") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/praca";
+      return NextResponse.redirect(url, 308);
+    }
+  }
   if ((jezyk || hostBezPortu === "localhost") && (pathname === "/praca" || pathname.startsWith("/praca/"))) {
     return dalej(request, pathname, jezyk, `/brunopraca${pathname.slice("/praca".length)}`);
   }
@@ -108,9 +119,17 @@ export function proxy(request: NextRequest) {
   if ((jezyk === "pl" || hostBezPortu === "localhost") && (pathname === "/start" || pathname.startsWith("/start/"))) {
     return dalej(request, pathname, jezyk, `/brunostart${pathname.slice("/start".length)}`);
   }
+  // 9.11 (USER_001): /pro = LP B2C dla handlowców, którzy już sprzedają (app/brunopro), abonament Bruno Pro. Tylko .pl i localhost.
+  if ((jezyk === "pl" || hostBezPortu === "localhost") && pathname === "/pro") {
+    return dalej(request, pathname, jezyk, "/brunopro");
+  }
   // 30.10 (USER_001): /kursy = kursy sprzedaży B2C z gwarancją pracy (app/brunokursy), tylko .pl i localhost.
   if ((jezyk === "pl" || hostBezPortu === "localhost") && (pathname === "/kursy" || pathname.startsWith("/kursy/"))) {
     return dalej(request, pathname, jezyk, `/brunokursy${pathname.slice("/kursy".length)}`);
+  }
+  // 11.11 (USER_001): /polecenia = ankieta → 3 polecane szkolenia sprzedażowe z bazy (app/brunopolecenia). Na razie tylko localhost.
+  if (hostBezPortu === "localhost" && pathname === "/polecenia") {
+    return dalej(request, pathname, jezyk, "/brunopolecenia");
   }
   // 4.11 (USER_001): /oferta = 3 pakiety Bruno dla firm PL (app/brunooferta), tylko .pl i localhost.
   // jakubchodakowski.com/oferta (szkolenie dla nauczycieli) bez zmian.
