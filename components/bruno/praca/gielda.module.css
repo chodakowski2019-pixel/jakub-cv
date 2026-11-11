@@ -553,3 +553,49 @@ textarea.wpis {
     white-space: nowrap;
   }
 }
+
+/* --- administrator giełdy: tabele i odhaczenie weryfikacji --- */
+.adminTabela td small {
+  display: block;
+  font-size: 12px;
+  color: var(--p-ink-3);
+}
+.adminTabela a {
+  text-decoration: none;
+  color: inherit;
+}
+.adminTabela a:hover b {
+  text-decoration: underline;
+}
+.mocny {
+  font-weight: 600;
+}
+.weryfikacja {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 22px;
+}
+.ptaszek {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+}
+.ptaszek input {
+  width: 24px;
+  height: 24px;
+  accent-color: var(--p-ok);
+  cursor: pointer;
+}
+.ptaszek b {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+}
+.ptaszek small {
+  font-size: 13px;
+  color: var(--p-ink-2);
+}

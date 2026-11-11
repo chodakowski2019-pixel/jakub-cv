@@ -48,6 +48,8 @@ export type KartaHandlowca = {
   imie: string;
   stanowisko: string;
   miasto: string;
+  /** „Tak” / „Nie” / "" (starsze profile bez odpowiedzi): czy bierze pod uwagę zmianę miasta zamieszkania. */
+  przeprowadzka: string;
   lata: string;
   sytuacja: string;
   rynek: string;
@@ -98,6 +100,7 @@ function doKarty(w: Wiersz): KartaHandlowca {
     stanowisko: t(o.stanowisko),
     // Starsze profile mają miasto tak, jak je wpisano („warszawa”), stąd poprawka także przy odczycie.
     miasto: miastoZWielkiej(t(o.miasto)),
+    przeprowadzka: t(o.przeprowadzka),
     lata: t(o.lata),
     sytuacja: t(o.status),
     rynek: t(o.rynek),
@@ -135,8 +138,8 @@ function pasuje(k: KartaHandlowca, f: Filtry): boolean {
     if (LATA.indexOf(k.lata) < od) return false;
   }
   if (f.tryb.length && !f.tryb.some((x) => k.tryb.includes(x))) return false;
-  // Miasto: to samo miasto albo handlowiec pracuje zdalnie.
-  if (f.miasto && !norm(k.miasto).includes(norm(f.miasto)) && !k.tryb.includes("Zdalnie")) return false;
+  // Miasto: to samo miasto, praca zdalna albo handlowiec bierze pod uwagę przeprowadzkę.
+  if (f.miasto && !norm(k.miasto).includes(norm(f.miasto)) && !k.tryb.includes("Zdalnie") && k.przeprowadzka !== "Tak") return false;
   return true;
 }
 

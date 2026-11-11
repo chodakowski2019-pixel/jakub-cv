@@ -70,6 +70,7 @@ const EMOJI: Record<string, string> = {
   "Średnia wartość sprzedaży": "💰",
   "Największy wynik": "🏆",
   Miasto: "📍",
+  "Zmiana miasta": "🧳",
   "Tryb pracy": "🏠",
   Umowa: "📝",
   "Podstawa miesięcznie": "💵",
@@ -113,7 +114,23 @@ const Chipy = ({ lista, lim }: { lista: string[]; lim?: boolean }) =>
 
 /** Zakładka „Mój profil” (USER_001 11.11): profil tak, jak pokazuje się pracodawcy. Po lewej karta jak na LP /praca
  * (zdjęcie, „Sprawdzony profil”, mocne strony, plan), po prawej wersja rozwinięta. Edycja jest w osobnej zakładce. */
-export function MojProfilWidok({ profil, email, cvNazwa, firm }: { profil: MojProfil | null; email: string; cvNazwa: string | null; firm: number }) {
+export function MojProfilWidok({
+  profil,
+  email,
+  cvNazwa,
+  cvLink,
+  firm,
+  admin,
+}: {
+  profil: MojProfil | null;
+  email: string;
+  cvNazwa: string | null;
+  /** Link do pobrania CV (tylko widok administratora). */
+  cvLink?: string | null;
+  firm: number;
+  /** 11.11: ten sam widok u administratora giełdy: zamiast „Edytuj profil” powrót do listy, nad profilem jego własna treść (odhaczenie weryfikacji). */
+  admin?: { gora: React.ReactNode };
+}) {
   if (!profil) {
     return (
       <div className="p-strona">
@@ -133,14 +150,16 @@ export function MojProfilWidok({ profil, email, cvNazwa, firm }: { profil: MojPr
     <div className="p-strona">
       <div className="p-naglowek">
         <div>
-          <h1>Mój profil</h1>
-          <p className={g.podtytul}>Tak widzi Cię firma, która odblokowała Twój kontakt.</p>
+          {admin && <Link className="p-wstecz" href="/praca/panel">← Handlowcy</Link>}
+          <h1>{admin ? k.imie : "Mój profil"}</h1>
+          <p className={g.podtytul}>{admin ? "Tak widzi go firma, która odblokowała kontakt." : "Tak widzi Cię firma, która odblokowała Twój kontakt."}</p>
         </div>
         <div className="p-naglowek-prawo">
           <span className="p-chip">Firmy z kontaktem: {firm}</span>
-          <Link className="p-btn p-btn-2" href="/praca/panel?z=edycja">Edytuj profil</Link>
+          {!admin && <Link className="p-btn p-btn-2" href="/praca/panel?z=edycja">Edytuj profil</Link>}
         </div>
       </div>
+      {admin?.gora}
 
       <div className={g.profil}>
         {/* Karta jak na LP: to firma widzi w wynikach wyszukiwania (bez nazwiska i zdjęcia, dopóki nie odblokuje kontaktu). */}
@@ -210,6 +229,7 @@ export function MojProfilWidok({ profil, email, cvNazwa, firm }: { profil: MojPr
             <Tabela
               wiersze={[
                 ["Miasto", k.miasto],
+                ["Zmiana miasta", k.przeprowadzka && (k.przeprowadzka === "Tak" ? "Tak, bierze pod uwagę" : "Nie")],
                 ["Tryb pracy", k.tryb.join(", ")],
                 ["Umowa", k.umowa.join(", ")],
                 ["Podstawa miesięcznie", k.pensja ? `${k.pensja.toLocaleString("pl-PL")} zł netto` : ""],
@@ -223,7 +243,7 @@ export function MojProfilWidok({ profil, email, cvNazwa, firm }: { profil: MojPr
               wiersze={[
                 ["Telefon", profil.telefon],
                 ["E-mail", email],
-                ["CV", cvNazwa ?? ""],
+                ["CV", cvNazwa && cvLink ? <a key="cv" href={cvLink} target="_blank" rel="noreferrer">{cvNazwa}</a> : cvNazwa ?? ""],
                 ...profil.linki.map(([nazwa, adres]): [string, React.ReactNode] => [nazwa, <a key={nazwa} href={adres} target="_blank" rel="noreferrer">{adres.replace(/^https?:\/\/(www\.)?/, "")}</a>]),
               ]}
             />

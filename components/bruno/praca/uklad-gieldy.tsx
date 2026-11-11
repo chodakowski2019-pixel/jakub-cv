@@ -29,7 +29,17 @@ const IK = {
   wyjscie: "M10 4H5v16h5M14 8l4 4-4 4M18 12H9",
 };
 
-const MENU: Record<"kandydat" | "pracodawca", Sekcja[]> = {
+const MENU: Record<"kandydat" | "pracodawca" | "admin", Sekcja[]> = {
+  // 11.11 (USER_001): administrator giełdy: wszystkie profile handlowców (z odhaczeniem weryfikacji) i firmy.
+  admin: [
+    {
+      tytul: "Giełda",
+      linki: [
+        { nazwa: "Handlowcy", ikona: IK.ludzie },
+        { z: "firmy", nazwa: "Firmy", ikona: IK.firmy },
+      ],
+    },
+  ],
   // 11.11 (USER_001): handlowiec ma 3 zakładki: „Mój profil” (strona główna panelu, widok jak u pracodawcy),
   // „Edycja profilu” (wszystkie pola, zdjęcie, CV, linki) i „Firmy” (kto dostał kontakt). „Wyloguj” na samym dole.
   // Start z kulą, „Oferty pracy”, „Trening z Bruno” i „Ustawienia” zdjęte z menu (stare zakładki działają pod ?z=…).
@@ -77,13 +87,13 @@ const Ikona = ({ d }: { d: string }) => (
   </svg>
 );
 
-export default function UkladGieldy({ typ, nazwa, zdjecie = null, liczniki = {}, children }: { typ: "kandydat" | "pracodawca"; /** Napis u góry paska: imię handlowca albo nazwa firmy. */ nazwa: string; /** 11.11 (USER_001): zdjęcie handlowca albo logo firmy w kółku zamiast gwiazdki; brak = inicjał. */ zdjecie?: string | null; liczniki?: Liczniki; children: React.ReactNode }) {
+export default function UkladGieldy({ typ, nazwa, zdjecie = null, liczniki = {}, children }: { typ: "kandydat" | "pracodawca" | "admin"; /** Napis u góry paska: imię handlowca albo nazwa firmy. */ nazwa: string; /** 11.11 (USER_001): zdjęcie handlowca albo logo firmy w kółku zamiast gwiazdki; brak = inicjał. */ zdjecie?: string | null; liczniki?: Liczniki; children: React.ReactNode }) {
   const z = useSearchParams()?.get("z") ?? "";
   const sekcje = MENU[typ];
   const adres = (p: Pozycja) => p.href ?? (p.z ? `/praca/panel?z=${p.z}` : "/praca/panel");
   // „konto” (moje konto firmy) otwiera się z zakładki „Profil firmy”, więc świeci ten sam link.
   // U handlowca stroną główną jest profil, więc stary adres ?z=baza świeci tę samą pozycję.
-  const aktywny = (p: Pozycja) => !p.href && (p.z ?? "") === (z === "konto" ? "firma" : typ === "kandydat" && z === "baza" ? "" : z);
+  const aktywny = (p: Pozycja) => !p.href && (p.z ?? "") === (z === "konto" ? "firma" : typ === "kandydat" && z === "baza" ? "" : typ === "admin" && z === "handlowiec" ? "" : z);
   const wyloguj = async () => {
     await fetch("/api/bruno/praca/konto/wyloguj", { method: "POST" });
     location.href = "/praca";

@@ -84,6 +84,7 @@ export default function PanelHandlowcy({ handlowcy, naKoncie }: { handlowcy: Pel
                     <span>Tryb: <b>{x.tryb.join(", ")}</b></span>
                     <span>Umowa: <b>{x.umowa.join(", ")}</b></span>
                     {x.pensja && <span>Oczekiwana podstawa: <b>{x.pensja.toLocaleString("pl-PL")} zł netto</b></span>}
+                    {x.przeprowadzka && <span>Zmiana miasta: <b>{x.przeprowadzka}</b></span>}
                     <span>Start: <b>{x.start}</b></span>
                     <span>Sytuacja: <b>{x.sytuacja}</b></span>
                   </p>

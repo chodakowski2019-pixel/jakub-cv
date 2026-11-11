@@ -7,6 +7,9 @@ import { FirmyWidok, MojProfilWidok, StartGieldy } from "@/components/bruno/prac
 import ProfilEdycja from "@/components/bruno/praca/profil-edycja";
 import g from "@/components/bruno/praca/gielda.module.css";
 import { kontaktow } from "@/lib/bruno/praca/kontakty-cennik";
+import { czyAdminGieldy, firmyIWyszukiwania, kontoHandlowca, listaHandlowcow } from "@/lib/bruno/praca/admin";
+import { AdminFirmy, AdminHandlowcy } from "@/components/bruno/praca/admin-widoki";
+import AdminWeryfikacja from "@/components/bruno/praca/admin-weryfikacja";
 import s from "@/components/bruno/praca/praca.module.css";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
@@ -42,6 +45,27 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const z = (await searchParams).z;
   const zakladka = typeof z === "string" ? z : undefined;
   const POLA_Z = "id,oferta_id,imie,email,telefon,linkedin,wiadomosc,cv_nazwa,status,created_at";
+
+  // 11.11 (USER_001): konto właściciela giełdy widzi wszystkie profile handlowców i firmy (lib/bruno/praca/admin.ts).
+  if (czyAdminGieldy(konto)) {
+    const sp = await searchParams;
+    const id = typeof sp.id === "string" && /^[0-9a-f-]{36}$/i.test(sp.id) ? sp.id : null;
+    let tresc: React.ReactNode;
+    if (zakladka === "firmy") {
+      tresc = <AdminFirmy {...(await firmyIWyszukiwania())} />;
+    } else if (zakladka === "handlowiec" && id) {
+      const [profil, dane, firmy] = await Promise.all([mojProfil(id), kontoHandlowca(id), firmyZKontaktem(id)]);
+      if (!profil || !dane) redirect("/praca/panel");
+      tresc = <MojProfilWidok profil={profil} email={dane.email} cvNazwa={dane.cvNazwa} cvLink={dane.cvLink} firm={firmy.length} admin={{ gora: <AdminWeryfikacja key={id} id={id} status={profil.status} /> }} />;
+    } else {
+      tresc = <AdminHandlowcy lista={await listaHandlowcow()} />;
+    }
+    return (
+      <UkladGieldy typ="admin" nazwa="Sales Bruno">
+        {tresc}
+      </UkladGieldy>
+    );
+  }
 
   if (konto.typ === "pracodawca") {
     const oferty = await ofertyKonta(konto.id);

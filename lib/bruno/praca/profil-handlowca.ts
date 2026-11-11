@@ -60,6 +60,8 @@ export const KROKI: { tytul: string; pytania: Pytanie[] }[] = [
     tytul: "Oczekiwania",
     pytania: [
       { klucz: "miasto", typ: "tekst", pytanie: "Miasto", podpowiedz: "np. Warszawa", min: 2, maks: 80 },
+      // 11.11 wieczór (USER_001): tak / nie. „Tak” = firma z innego miasta też znajdzie ten profil w wyszukiwarce.
+      { klucz: "przeprowadzka", typ: "jedna", pytanie: "Czy bierzesz pod uwagę zmianę miasta zamieszkania?", opcje: o(["Tak", "Nie"]) },
       { klucz: "tryb", typ: "wiele", pytanie: "Jak chcesz pracować?", opcje: o(["Stacjonarnie", "Hybrydowo", "Zdalnie", "W terenie"]) },
       { klucz: "umowa", typ: "wiele", pytanie: "Jaka umowa?", opcje: o(["Umowa o pracę", "B2B", "Sama prowizja"]) },
       { klucz: "pensja", typ: "liczba", pytanie: "Oczekiwana podstawa miesięcznie (zł netto)", podpowiedz: "np. 8000", min: 1, maks: 7 },
