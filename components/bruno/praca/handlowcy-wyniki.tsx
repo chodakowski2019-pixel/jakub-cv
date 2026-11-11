@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { KartaHandlowca } from "@/lib/bruno/praca/handlowcy";
-import { MAKS_WYBRANYCH, PAKIETY, WAZNOSC_MIES, handlowcow, kontaktow, pakietDla } from "@/lib/bruno/praca/kontakty-cennik";
+import { MAKS_WYBRANYCH, PAKIETY, WAZNOSC_MIES, handlowcow, kontaktow, pakietDla, znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
 import d from "./dolacz.module.css";
 import h from "./handlowcy.module.css";
 
@@ -85,15 +85,21 @@ export default function HandlowcyWyniki({
                 </div>
               </div>
               <div className={h.kartaTresc}>
+                {/* 12.11 (USER_001): zamiast „Plan w ostatnim roku” = % dopasowania do wyszukiwania. */}
                 <div className={h.fakty}>
                   <div>
                     <span className={h.etykieta}>W sprzedaży</span>
                     <p>{k.lata}</p>
                   </div>
-                  <div>
-                    <span className={h.etykieta}>Plan w ostatnim roku</span>
-                    <p>{k.plan}</p>
-                  </div>
+                  {k.dopasowanie != null && (
+                    <div>
+                      <span className={h.etykieta}>Dopasowanie</span>
+                      <p className={h.dopasowanie}>{k.dopasowanie} %</p>
+                      <div className={h.pasekDop} aria-hidden="true">
+                        <i style={{ width: `${k.dopasowanie}%` }} />
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <span className={h.etykieta}>Branże</span>
                 <ul className={h.tagi}>
@@ -110,7 +116,11 @@ export default function HandlowcyWyniki({
                 <div className={h.fakty}>
                   <div>
                     <span className={h.etykieta}>Sprzedaje</span>
-                    <p>{k.rynek}</p>
+                    <ul className={h.tagi}>
+                      {znaczkiRynku(k.rynek).map((x) => (
+                        <li key={x} className={h.tagMocny}>{x}</li>
+                      ))}
+                    </ul>
                   </div>
                   <div>
                     <span className={h.etykieta}>Może zacząć</span>

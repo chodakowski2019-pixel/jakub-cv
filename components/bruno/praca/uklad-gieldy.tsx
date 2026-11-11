@@ -57,8 +57,7 @@ const MENU: Record<"kandydat" | "pracodawca" | "admin", Sekcja[]> = {
     {
       tytul: "Firma",
       linki: [
-        { nazwa: "Start", ikona: IK.start },
-        { href: "/praca/handlowcy", nazwa: "Szukaj handlowców", ikona: IK.szukaj },
+        { nazwa: "Szukaj handlowców", ikona: IK.szukaj },
         { z: "handlowcy", nazwa: "Moi handlowcy", ikona: IK.ludzie },
       ],
     },

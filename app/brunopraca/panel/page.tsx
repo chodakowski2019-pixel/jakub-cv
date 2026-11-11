@@ -10,6 +10,8 @@ import { kontaktow } from "@/lib/bruno/praca/kontakty-cennik";
 import { czyAdminGieldy, firmyIWyszukiwania, kontoHandlowca, listaHandlowcow } from "@/lib/bruno/praca/admin";
 import { AdminFirmy, AdminHandlowcy } from "@/components/bruno/praca/admin-widoki";
 import AdminWeryfikacja from "@/components/bruno/praca/admin-weryfikacja";
+import SzukajHandlowca from "@/components/bruno/praca/szukaj-handlowca";
+import WynikSzukania from "@/components/bruno/praca/wynik-szukania";
 import s from "@/components/bruno/praca/praca.module.css";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
@@ -77,7 +79,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     const firma = konto.nazwa_wyswietlana || konto.firma || "Twoja firma";
     return (
       <UkladGieldy typ="pracodawca" nazwa={firma} zdjecie={konto.logo_url} liczniki={{ handlowcy: handlowcy.length, kandydaci: nowych, ogloszenia: aktywne }}>
+        {/* 12.11 (USER_001): start firmy = wyszukiwarka z kulą Bruno („Opisz, jakiego handlowca szukasz”). */}
         {!zakladka ? (
+          <SzukajHandlowca imie={konto.imie?.split(" ")[0] || firma} />
+        ) : zakladka === "szukaj" ? (
+          <WynikSzukania opis={typeof (await searchParams).q === "string" ? String((await searchParams).q) : ""} kontoId={konto.id} naKoncie={konto.kontakty ?? 0} />
+        ) : zakladka === "pulpit" ? (
           <StartGieldy
             imie={konto.imie?.split(" ")[0] || firma}
             pytanie="Kogo dziś szukasz?"
@@ -153,3 +160,4 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     </UkladGieldy>
   );
 }
+

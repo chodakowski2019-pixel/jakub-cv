@@ -599,3 +599,89 @@ textarea.wpis {
   font-size: 13px;
   color: var(--p-ink-2);
 }
+
+/* --- 12.11: wyszukiwarka handlowców w panelu firmy (start z kulą + wynik) --- */
+.szukajSrodek {
+  max-width: 720px;
+  margin: 26px auto 0;
+  text-align: left;
+}
+.poleSzukania {
+  min-height: 64px;
+  align-items: center;
+}
+.wynikSzukania {
+  padding-bottom: 150px;
+}
+.dymekFirmy {
+  align-self: flex-end;
+  max-width: 78%;
+  padding: 10px 16px;
+  border-radius: 20px 20px 6px 20px;
+  background: #fff;
+  border: 1px solid var(--p-ramka);
+  font-size: 15px;
+  line-height: 1.45;
+}
+.liczbaWyniku {
+  font-weight: 500;
+  background: linear-gradient(transparent 62%, var(--p-lim) 62%);
+}
+.szukajDol {
+  max-width: 820px;
+  width: 100%;
+  margin: 8px auto 0;
+}
+/* Karty i pasek zakupu z wyszukiwarki /praca/handlowcy (handlowcy.module.css + dolacz.module.css) korzystają ze zmiennych
+   strony /praca; tu dostają odpowiedniki z panelu Bruno, akcent limonkowy. */
+.zmienneLp {
+  --ink: var(--p-ink);
+  --czarny: var(--p-ink);
+  --muted: var(--p-ink-2);
+  --grey: var(--p-ink-3);
+  --line: var(--p-ramka);
+  --soft: var(--p-s1);
+  --orange: var(--p-lim-c);
+  --orange-t: #6f7a00;
+  --head: var(--p-font);
+  --body: var(--p-font);
+  --mono: var(--p-font);
+}
+.zmienneLp ul {
+  margin-top: 0 !important;
+}
+
+/* --- 12.11: publiczna strona /wyszukiwarka: bez paska bocznego, tło jak panel --- */
+.publiczna {
+  min-height: 100vh;
+  background: #f2f3f5;
+}
+.publicznaGora {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 18px 24px;
+}
+.publicznaLogo {
+  font-family: var(--p-font);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--p-ink);
+  text-decoration: none;
+}
+.publicznaTresc {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 4px 24px 40px;
+}
+@media (max-width: 640px) {
+  .publicznaGora,
+  .publicznaTresc {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

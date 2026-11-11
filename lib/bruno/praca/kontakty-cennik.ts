@@ -31,6 +31,13 @@ export function kontaktow(n: number): string {
   return `${n} ${j >= 2 && j <= 4 && (d < 12 || d > 14) ? "kontakty" : "kontaktów"}`;
 }
 
+/** 12.11 (USER_001): odpowiedź na „Komu sprzedajesz?” jako znaczki: Firmom = B2B, Klientom indywidualnym = B2C, Jednym i drugim = oba. */
+export function znaczkiRynku(rynek: string): string[] {
+  if (rynek === "Firmom") return ["B2B"];
+  if (rynek === "Klientom indywidualnym") return ["B2C"];
+  return rynek ? ["B2B", "B2C"] : [];
+}
+
 /** „1 handlowiec”, „3 handlowców”. */
 export function handlowcow(n: number): string {
   return n === 1 ? "1 handlowiec" : `${n} handlowców`;

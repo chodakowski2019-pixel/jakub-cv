@@ -179,7 +179,7 @@ export default function ProfilEdycja({ start, zdjecie, cvNazwa, maProfil }: { st
           <label className={g.zgoda}>
             <input type="checkbox" checked={zgoda} onChange={(e) => setZgoda(e.target.checked)} />
             <span>
-              Zgadzam się, żeby mój profil po weryfikacji widzieli pracodawcy zarejestrowani w SalesBruno.pl. Zasady opisuje{" "}
+              Zgadzam się, żeby po weryfikacji mój profil skrócony (bez nazwiska, zdjęcia i danych kontaktowych) był widoczny w wyszukiwarce handlowców SalesBruno.pl, a pełny profil z danymi kontaktowymi dostała firma, która odblokuje mój kontakt. Zasady opisuje{" "}
               <a href="/praca/polityka-prywatnosci" target="_blank">polityka prywatności</a>.
             </span>
           </label>

@@ -9,13 +9,13 @@ import { miastoZWielkiej, telefonGrupami, type Odpowiedzi, type StatusProfilu } 
 // 11.11 wieczór (USER_001): pierwsze odhaczenie „Zweryfikowany” wysyła handlowcowi mail „Twój profil został zweryfikowany”
 // (raz na profil, pilnuje kolumna mail_weryfikacji_at). Odznaczenie i odrzucenie niczego nie wysyłają.
 
-/** Kto jest administratorem giełdy: e-mail konta portalu /praca (dowolny typ konta).
- * UWAGA: rejestracja nie sprawdza, czy e-mail należy do rejestrującego. Ten adres ma JUŻ oba konta (handlowiec i firma),
- * więc nikt inny nie założy na niego trzeciego. Nie usuwać tych kont i nie dopisywać tu adresu bez obu kont. */
+/** Kto jest administratorem giełdy: KONTO FIRMY (typ „pracodawca”) z tym e-mailem. Tylko konto firmy, bo rejestracja
+ * nie sprawdza, czy e-mail należy do rejestrującego: konto firmy na ten adres już istnieje, więc nikt nie założy drugiego.
+ * 12.11: konto handlowca na ten adres usunięte (USER_001: „usuń moje 3 testowe konta”), stąd warunek na typ konta. */
 const ADMINI = ["chodak.job72@gmail.com"];
 
-export function czyAdminGieldy(konto: Pick<KontoPraca, "email"> | null | undefined): boolean {
-  return !!konto && ADMINI.includes(konto.email.trim().toLowerCase());
+export function czyAdminGieldy(konto: Pick<KontoPraca, "email" | "typ"> | null | undefined): boolean {
+  return !!konto && konto.typ === "pracodawca" && ADMINI.includes(konto.email.trim().toLowerCase());
 }
 
 const t = (v: unknown) => (typeof v === "string" ? v : "");
@@ -129,6 +129,8 @@ export type FirmaAdmin = {
 export type Wyszukiwanie = { kiedy: string; firma: string | null; opis: string; wynik: number };
 
 function opisFiltrow(f: Record<string, unknown>): string {
+  // 12.11: wyszukiwanie z panelu firmy zapisuje też opis słowami firmy.
+  if (t(f.opis)) return `„${t(f.opis)}”`;
   const l = (v: unknown) => (Array.isArray(v) ? v.map(String) : []);
   const czesci = [l(f.branze).join(", "), t(f.miasto) && miastoZWielkiej(t(f.miasto)), t(f.lata) && `od ${t(f.lata)} lat`, t(f.rynek), l(f.tryb).join(", ")].filter(Boolean);
   return czesci.length ? czesci.join(" · ") : "bez filtrów";

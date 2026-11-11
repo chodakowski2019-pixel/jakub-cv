@@ -53,7 +53,7 @@ const KARTY = [
 
 const PYTANIA: [string, string][] = [
   ["Ile to kosztuje?", "Nic. Profil handlowca jest bezpłatny."],
-  ["Kto zobaczy mój profil?", "Tylko pracodawcy zarejestrowani w SalesBruno.pl. Dopiero po weryfikacji profilu i po Twojej zgodzie."],
+  ["Kto zobaczy mój profil?", "W wyszukiwarce widać profil skrócony: bez nazwiska, zdjęcia i danych kontaktowych. Pełny profil dostaje tylko firma, która odblokuje Twój kontakt. Dopiero po weryfikacji profilu i po Twojej zgodzie."],
   ["Co sprawdzacie?", "Informacje z formularza: doświadczenie, specjalizację i wyniki. Jeśli czegoś zabraknie, napiszemy na Twój e-mail."],
   ["Ile trwa weryfikacja?", `Do ${DNI_WERYFIKACJI} dni od wysłania formularza.`],
 ];

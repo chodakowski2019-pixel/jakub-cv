@@ -64,6 +64,8 @@ export type KartaHandlowca = {
   start: string;
   sprawdzony: boolean;
   maCV: boolean;
+  /** 12.11: % dopasowania do wyszukiwania; null = wyszukiwanie bez kryteriów albo widok poza wyszukiwarką. */
+  dopasowanie?: number | null;
 };
 
 export type PelnyHandlowiec = KartaHandlowca & {
@@ -130,24 +132,39 @@ async function wiersze(ids?: string[]): Promise<Wiersz[]> {
   return (data ?? []) as unknown as Wiersz[];
 }
 
-function pasuje(k: KartaHandlowca, f: Filtry): boolean {
-  if (f.branze.length && !f.branze.some((b) => k.branze.includes(b))) return false;
-  if (f.rynek && k.rynek !== f.rynek && k.rynek !== "Jednym i drugim") return false;
+// 12.11 (USER_001: „procent, na ile handlowiec jest dopasowany do tego, czego ktoś szuka”): zamiast twardego odsiewu
+// każdy profil dostaje punkty za kryteria z wyszukiwania. Liczą się tylko kryteria, które firma podała (waga), wynik w %.
+// Częściowe punkty: miasto inne, ale praca zdalna albo gotowość do przeprowadzki = 70 %; staż o jeden próg niższy = 50 %.
+const WAGI = { branze: 35, miasto: 25, lata: 20, rynek: 10, tryb: 10 };
+/** Poniżej tego progu profil nie trafia do wyników (lepiej mniej, ale trafnie). */
+export const PROG_DOPASOWANIA = 50;
+
+function dopasowanie(k: KartaHandlowca, f: Filtry): number | null {
+  const czesci: [number, number][] = [];
+  if (f.branze.length) czesci.push([WAGI.branze, f.branze.some((b) => k.branze.includes(b)) ? 1 : 0]);
+  if (f.miasto) {
+    const to = norm(k.miasto).includes(norm(f.miasto));
+    czesci.push([WAGI.miasto, to ? 1 : k.tryb.includes("Zdalnie") || k.przeprowadzka === "Tak" ? 0.7 : 0]);
+  }
   if (f.lata) {
     const od = DOSWIADCZENIE.find((d) => d.v === f.lata)?.od ?? 0;
-    if (LATA.indexOf(k.lata) < od) return false;
+    const ma = LATA.indexOf(k.lata);
+    czesci.push([WAGI.lata, ma >= od ? 1 : ma === od - 1 ? 0.5 : 0]);
   }
-  if (f.tryb.length && !f.tryb.some((x) => k.tryb.includes(x))) return false;
-  // Miasto: to samo miasto, praca zdalna albo handlowiec bierze pod uwagę przeprowadzkę.
-  if (f.miasto && !norm(k.miasto).includes(norm(f.miasto)) && !k.tryb.includes("Zdalnie") && k.przeprowadzka !== "Tak") return false;
-  return true;
+  if (f.rynek) czesci.push([WAGI.rynek, k.rynek === f.rynek || k.rynek === "Jednym i drugim" ? 1 : 0]);
+  if (f.tryb.length) czesci.push([WAGI.tryb, f.tryb.some((x) => k.tryb.includes(x)) ? 1 : 0]);
+  if (!czesci.length) return null;
+  const suma = czesci.reduce((s, [w]) => s + w, 0);
+  return Math.round((czesci.reduce((s, [w, p]) => s + w * p, 0) / suma) * 100);
 }
 
-/** Wynik wyszukiwania: karty bez kontaktu. Najpierw to samo miasto, potem dłuższe doświadczenie. */
+/** Wynik wyszukiwania: karty bez kontaktu z % dopasowania, od najlepiej dopasowanych; przy remisie dłuższy staż.
+ * Bez żadnego kryterium = wszyscy, bez procentu. */
 export async function szukajHandlowcow(f: Filtry): Promise<KartaHandlowca[]> {
-  const karty = (await wiersze()).map(doKarty).filter((k) => pasuje(k, f));
-  const wMiescie = (k: KartaHandlowca) => (f.miasto && norm(k.miasto).includes(norm(f.miasto)) ? 1 : 0);
-  return karty.sort((a, b) => wMiescie(b) - wMiescie(a) || LATA.indexOf(b.lata) - LATA.indexOf(a.lata));
+  const karty = (await wiersze()).map(doKarty).map((k) => ({ ...k, dopasowanie: dopasowanie(k, f) }));
+  return karty
+    .filter((k) => k.dopasowanie === null || k.dopasowanie >= PROG_DOPASOWANIA)
+    .sort((a, b) => (b.dopasowanie ?? 0) - (a.dopasowanie ?? 0) || LATA.indexOf(b.lata) - LATA.indexOf(a.lata));
 }
 
 /** Z podanych id zostają tylko profile, które wolno teraz sprzedać (widoczne, ze zgodą). */

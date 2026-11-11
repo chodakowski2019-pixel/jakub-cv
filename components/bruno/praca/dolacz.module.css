@@ -10,8 +10,10 @@
   --grey: #8a909b;
   --line: #e2e3e6;
   --soft: #ececee;
-  --orange: #d9e000;
-  --orange-t: #6f7a00;
+  /* 12.11 (USER_001): strona /praca wraca do pomarańczu (limonka zostaje na pozostałych stronach). --orange-t = ten sam kolor
+     dla tekstu i obrysów, bo korzysta z niej też handlowcy.module.css. */
+  --orange: #f08a2b;
+  --orange-t: #f08a2b;
   --zielony: #3f9d5d;
   --head: var(--font-baza), "Geist", ui-sans-serif, system-ui, sans-serif;
   --body: var(--font-baza), "Geist", ui-sans-serif, system-ui, sans-serif;

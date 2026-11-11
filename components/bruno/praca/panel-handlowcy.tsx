@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { PelnyHandlowiec } from "@/lib/bruno/praca/handlowcy";
-import { handlowcow, kontaktow } from "@/lib/bruno/praca/kontakty-cennik";
+import { handlowcow, kontaktow, znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
 import { formatDaty } from "./panel-wspolne";
 import h from "./handlowcy.module.css";
 import s from "./praca.module.css";
@@ -79,7 +79,7 @@ export default function PanelHandlowcy({ handlowcy, naKoncie }: { handlowcy: Pel
                   <p className={h.pFakty}>
                     <span>Plan: <b>{x.plan}</b></span>
                     <span>Średnia sprzedaż: <b>{x.transakcja}</b></span>
-                    <span>Sprzedaje: <b>{x.rynek}</b></span>
+                    <span>Sprzedaje: <b>{znaczkiRynku(x.rynek).join(" + ")}</b></span>
                     <span>Kanały: <b>{x.kanaly.join(", ")}</b></span>
                     <span>Tryb: <b>{x.tryb.join(", ")}</b></span>
                     <span>Umowa: <b>{x.umowa.join(", ")}</b></span>

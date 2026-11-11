@@ -35,7 +35,8 @@ export async function POST(req: Request) {
 
   const wybrany = pakietPoLiczbie(b.pakiet);
   const pakiet = wybrany && wybrany.ile >= ids.length ? wybrany : pakietDla(ids.length);
-  const powrot = typeof b.powrot === "string" && b.powrot.startsWith("/praca/handlowcy") ? b.powrot : "/praca/handlowcy";
+  // 12.11: wyszukiwarka jest też w panelu firmy (/praca/panel?z=szukaj) i publicznie (/wyszukiwarka).
+  const powrot = typeof b.powrot === "string" && (b.powrot.startsWith("/praca/handlowcy") || b.powrot.startsWith("/praca/panel?z=szukaj") || b.powrot.startsWith("/wyszukiwarka")) ? b.powrot : "/praca/handlowcy";
 
   if (!process.env.BRUNO_STRIPE_SECRET_KEY) {
     if (process.env.NODE_ENV === "production") return NextResponse.json({ ok: false, blad: "Płatność online nie jest jeszcze włączona." }, { status: 503 });

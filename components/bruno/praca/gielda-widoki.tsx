@@ -2,6 +2,7 @@ import Link from "next/link";
 import KulaLimonka from "@/components/bruno/kula-limonka";
 import type { FirmaZKontaktem, MojProfil } from "@/lib/bruno/praca/handlowcy";
 import { DNI_WERYFIKACJI } from "@/lib/bruno/praca/profil-handlowca";
+import { znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
 import g from "./gielda.module.css";
 
 // 11.11 (USER_001): widoki panelu giełdy handlowców w stylu panelu Bruno AI (karty p-*, ekran startowy z kulą bcz-*).
@@ -207,7 +208,7 @@ export function MojProfilWidok({
                 ["Stanowisko", k.stanowisko],
                 ["W sprzedaży", k.lata],
                 ["Sytuacja", k.sytuacja],
-                ["Sprzedaje", k.rynek],
+                ["Sprzedaje", <Chipy key="r" lista={znaczkiRynku(k.rynek)} />],
                 ["Jak sprzedaje", k.kanaly.join(", ")],
                 ["Branże", <Chipy key="b" lista={k.branze} />],
                 ["Mocne strony", <Chipy key="m" lista={k.mocne} lim />],

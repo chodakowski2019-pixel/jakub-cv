@@ -3,6 +3,8 @@ import Dokument, { type SekcjaDok } from "@/components/bruno/praca/dokument";
 
 // 18.10 (USER_001: „czy mamy regulaminy?”): regulamin portalu ofert pracy salesbruno.com/praca.
 // 11.11: dopisana baza handlowców (Profil handlowca, weryfikacja do 7 dni, pkt 7a).
+// 12.11: dopisana sprzedaż kontaktów do handlowców firmom (pkt 5a), publiczna wyszukiwarka i skrócony profil (pkt 7a),
+// nowe pola profilu, mail o weryfikacji. Ceny pakietów celowo bez kwot: są w wyszukiwarce (lib/bruno/praca/kontakty-cennik.ts).
 // Wersja robocza przygotowana bez radcy prawnego. Przed skalowaniem sprzedaży do sprawdzenia przez prawnika.
 export const metadata: Metadata = { title: "Regulamin | SalesBruno.pl Praca", robots: { index: false, follow: true }, alternates: { canonical: "/praca/regulamin" } };
 
@@ -22,7 +24,11 @@ const SEKCJE: SekcjaDok[] = [
       <><b>Pracodawca</b>: przedsiębiorca, który zakłada konto pracodawcy i publikuje ogłoszenia o pracę.</>,
       <><b>Ogłoszenie</b>: oferta pracy opublikowana w Portalu.</>,
       <><b>Zgłoszenie</b>: dane i dokumenty, które Kandydat wysyła przez przycisk „Aplikuj”.</>,
-      <><b>Profil handlowca</b>: dane o doświadczeniu, specjalizacji, wynikach i oczekiwaniach Kandydata, ze zdjęciem i CV, jeśli je doda, wysłane przez formularz na salesbruno.pl/praca.</>,
+      <><b>Profil handlowca</b>: dane o doświadczeniu, specjalizacji, wynikach i oczekiwaniach Kandydata, ze zdjęciem, CV i linkami, jeśli je doda, wysłane przez formularz na salesbruno.pl/praca albo w panelu.</>,
+      <><b>Profil skrócony</b>: część Profilu handlowca pokazywana w wyszukiwarce: imię i pierwsza litera nazwiska, stanowisko, miasto, staż w sprzedaży, branże, mocne strony, komu sprzedaje, termin rozpoczęcia. Bez nazwiska, zdjęcia, telefonu, e-maila, linków, CV i opisu wyników.</>,
+      <><b>Wyszukiwarka</b>: strona salesbruno.pl/wyszukiwarka oraz wyszukiwarka w panelu Pracodawcy, w której opisuje się, jakiego handlowca się szuka.</>,
+      <><b>Kontakt</b>: prawo Pracodawcy do zobaczenia pełnego Profilu handlowca jednej osoby, z jej imieniem i nazwiskiem, telefonem, e-mailem, linkami, zdjęciem i CV.</>,
+      <><b>Pakiet</b>: opłacona z góry liczba Kontaktów.</>,
     ],
   },
   {
@@ -30,7 +36,9 @@ const SEKCJE: SekcjaDok[] = [
     punkty: [
       "przeglądanie ofert pracy w sprzedaży bez zakładania konta,",
       "konto Kandydata: zgłoszenia, zapisane oferty, alerty, profil i CV,",
-      "baza handlowców: Profil handlowca, który po weryfikacji widzą Pracodawcy zarejestrowani w Portalu,",
+      "baza handlowców: Profil handlowca, który po weryfikacji jest dostępny w Wyszukiwarce jako Profil skrócony, a w całości dla Pracodawcy, który odblokował Kontakt,",
+      "Wyszukiwarka handlowców: dostępna bez konta, pokazuje Profile skrócone i stopień dopasowania do opisu,",
+      "Pakiety Kontaktów dla Pracodawców,",
       "konto Pracodawcy: publikowanie Ogłoszeń, odbieranie Zgłoszeń i zmiana ich statusów,",
       "powiadomienia e-mail, jeśli użytkownik je włączy.",
     ],
@@ -58,6 +66,21 @@ const SEKCJE: SekcjaDok[] = [
     ],
   },
   {
+    tytul: "5a. Kontakty do handlowców (Pracodawca)",
+    punkty: [
+      "Wyszukiwarka jest bezpłatna. Pokazuje Profile skrócone handlowców pasujących do opisu i stopień dopasowania w procentach. Stopień dopasowania jest wyliczany automatycznie z porównania opisu z Profilem i ma charakter pomocniczy.",
+      "Żeby zobaczyć pełny Profil handlowca z danymi kontaktowymi, Pracodawca kupuje Pakiet. Liczba Kontaktów w Pakiecie i cena są podane w Wyszukiwarce przed płatnością.",
+      "Płatność jest jednorazowa i nie odnawia się sama. Obsługuje ją Stripe (karta, BLIK, przelew). Fakturę wysyłamy e-mailem.",
+      "Po płatności Pracodawca zakłada konto albo loguje się na istniejące. Kontakty do osób wybranych przed płatnością odblokowują się od razu i są widoczne w panelu.",
+      "Kontakty z Pakietu, których Pracodawca nie wykorzystał od razu, zostają na jego koncie przez 12 miesięcy od zakupu i można nimi odblokować kolejne osoby.",
+      "Odblokowanie Kontaktu jest wykonaniem usługi w całości. Opłata za odblokowany Kontakt nie podlega zwrotowi, z wyjątkiem pkt 9.",
+      "Pracodawca może używać danych z odblokowanego Profilu wyłącznie do własnej rekrutacji na stanowisko w sprzedaży. Nie może ich odsprzedawać, przekazywać innym podmiotom, publikować ani używać do marketingu.",
+      "Od chwili odblokowania Kontaktu Pracodawca jest osobnym administratorem danych tej osoby i sam odpowiada za ich przetwarzanie, w tym za obowiązek informacyjny wobec niej.",
+      "Kandydat może w każdej chwili usunąć Profil albo wycofać zgodę. Profil znika wtedy z Wyszukiwarki i z panelu Pracodawcy. Dane, które Pracodawca wcześniej pobrał, Pracodawca przetwarza już na własną odpowiedzialność.",
+      "Usługodawca nie gwarantuje, że handlowiec odpowie Pracodawcy ani że przyjmie ofertę.",
+    ],
+  },
+  {
     tytul: "6. Zasady treści Ogłoszeń",
     akapity: ["Pracodawca odpowiada za treść Ogłoszenia. Ogłoszenie nie może:"],
     punkty: [
@@ -77,26 +100,33 @@ const SEKCJE: SekcjaDok[] = [
     punkty: [
       "Profil handlowca jest bezpłatny. Kandydat wypełnia go po założeniu konta.",
       "Usługodawca sprawdza informacje z Profilu w ciągu 7 dni od jego wysłania. Wynik wysyła na e-mail Kandydata. Usługodawca może odmówić dodania Profilu do bazy, gdy dane są niepełne albo nieprawdziwe.",
-      "Profil po weryfikacji widzą wyłącznie Pracodawcy zarejestrowani w Portalu, na podstawie zgody Kandydata wyrażonej w formularzu. Pracodawca może skontaktować się z Kandydatem w sprawie pracy.",
+      "Po weryfikacji Profil skrócony jest widoczny w Wyszukiwarce dla każdego, kto z niej korzysta, także bez konta. Pełny Profil, z nazwiskiem, zdjęciem, telefonem, e-mailem, linkami, CV i opisem wyników, widzi wyłącznie Pracodawca, który odblokował Kontakt. Podstawą jest zgoda Kandydata wyrażona w formularzu.",
+      "Pracodawca, który odblokował Kontakt, może skontaktować się z Kandydatem w sprawie pracy. W panelu Kandydat widzi, które firmy odblokowały jego Kontakt.",
+      "Kandydat nie płaci za Profil, za jego weryfikację ani za kontakt ze strony Pracodawcy.",
       "Kandydat podaje prawdziwe dane, a zdjęcie przedstawia jego samego.",
-      <>Kandydat może w każdej chwili poprawić albo usunąć Profil i wycofać zgodę, pisząc na {MAIL}.</>,
+      "Kandydat może w każdej chwili poprawić Profil w panelu, w zakładce „Edycja profilu”. Po zapisaniu zmian Profil wraca do weryfikacji i do jej zakończenia nie jest widoczny w Wyszukiwarce.",
+      <>Kandydat może w każdej chwili usunąć Profil i wycofać zgodę, pisząc na {MAIL}.</>,
       "Profil nie gwarantuje kontaktu Pracodawcy ani zatrudnienia.",
     ],
   },
   {
     tytul: "8. Usuwanie treści i blokada konta",
     akapity: [
-      "Usługodawca może usunąć Ogłoszenie albo zablokować konto, które łamie Regulamin lub prawo. Jeśli usunięte zostało opłacone Ogłoszenie bez naruszenia Regulaminu po stronie Pracodawcy, Usługodawca zwraca płatność.",
+      "Usługodawca może usunąć Ogłoszenie albo Profil handlowca albo zablokować konto, które łamie Regulamin lub prawo, w tym konto Pracodawcy, który używa danych handlowców niezgodnie z pkt 5a. Jeśli usunięte zostało opłacone Ogłoszenie bez naruszenia Regulaminu po stronie Pracodawcy, Usługodawca zwraca płatność.",
     ],
   },
   {
     tytul: "9. Reklamacje",
-    akapity: [<>Reklamacje można zgłaszać na {MAIL}. Odpowiadamy w ciągu 14 dni.</>],
+    akapity: [
+      <>Reklamacje można zgłaszać na {MAIL}. Odpowiadamy w ciągu 14 dni.</>,
+      "Jeśli dane kontaktowe z odblokowanego Profilu okażą się błędne (telefon i e-mail nie należą do tej osoby albo nie działają), Pracodawca zgłasza to w ciągu 14 dni od odblokowania, a Usługodawca po sprawdzeniu zwraca Kontakt na konto Pracodawcy.",
+    ],
   },
   {
     tytul: "10. Odpowiedzialność",
     akapity: [
-      "Usługodawca nie gwarantuje zatrudnienia Kandydatowi ani określonej liczby Zgłoszeń Pracodawcy. Usługodawca nie jest stroną umowy zawieranej między Kandydatem a Pracodawcą.",
+      "Usługodawca nie gwarantuje zatrudnienia Kandydatowi, określonej liczby Zgłoszeń Pracodawcy ani określonej liczby handlowców w wynikach Wyszukiwarki. Usługodawca nie jest stroną umowy zawieranej między Kandydatem a Pracodawcą i nie prowadzi rekrutacji w imieniu Pracodawcy.",
+      "Usługodawca sprawdza Profil na podstawie informacji podanych przez Kandydata. Nie potwierdza jego wyników sprzedaży u poprzednich pracodawców.",
     ],
   },
   {
@@ -108,11 +138,11 @@ const SEKCJE: SekcjaDok[] = [
   {
     tytul: "12. Zmiany Regulaminu",
     akapity: [
-      "O zmianach Regulaminu informujemy e-mailem co najmniej 7 dni wcześniej. Opłacone Ogłoszenia działają do końca okresu na dotychczasowych zasadach.",
+      "O zmianach Regulaminu informujemy e-mailem co najmniej 7 dni wcześniej. Opłacone Ogłoszenia i Pakiety działają do końca okresu na dotychczasowych zasadach.",
     ],
   },
 ];
 
 export default function Page() {
-  return <Dokument tytul="Regulamin" data="11 listopada 2026" wstep="Ten regulamin opisuje zasady korzystania z portalu ofert pracy dla handlowców SalesBruno.pl Praca przez kandydatów i pracodawców." sekcje={SEKCJE} />;
+  return <Dokument tytul="Regulamin" data="12 listopada 2026" wstep="Ten regulamin opisuje zasady korzystania z portalu SalesBruno.pl Praca: ofert pracy dla handlowców, bazy handlowców i wyszukiwarki handlowców dla firm." sekcje={SEKCJE} />;
 }
