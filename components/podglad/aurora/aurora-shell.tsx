@@ -45,10 +45,8 @@ export default function AuroraShell({
           <AuroraCanvas fallbackClass={s.artFallback} kolory={limonka ? ZORZA_LIMONKA : ZORZA_POMARANCZ} />
           <div className={s.grain} />
           <div className={s.artInner}>
-            <div className={s.logo}>
-              <i />
-              Sales Bruno
-            </div>
+            {/* 11.11 (USER_001): sama nazwa, bez kulki. */}
+            <div className={s.logo}>Sales Bruno</div>
             {tytul && <h1>{tytul}</h1>}
             {podtytul && <p className={s.sub}>{podtytul}</p>}
             <ol className={s.steps}>

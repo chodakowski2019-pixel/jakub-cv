@@ -8,7 +8,6 @@ import g from "./gielda.module.css";
 // Start = ten sam układ co Czat w Bruno: kula, „Cześć …!”, pigułki z licznikami; zamiast pola czatu kafle ze stanem.
 
 const data = (iso: string) => new Date(iso).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Warsaw" });
-const FORMULARZ = "/praca/dolacz/profil";
 
 export type Pigulka = { tekst: string; licznik?: string | number; href: string; alarm?: boolean };
 export type Kafel = { etykieta: string; wartosc: string | number; dol: string; href: string };
@@ -51,16 +50,78 @@ const STATUS: Record<MojProfil["status"], { nazwa: string; chip: string; opis: s
   odrzucony: { nazwa: "Do poprawy", chip: "p-chip-zle", opis: "Profil wymaga uzupełnienia. Szczegóły wysłaliśmy na e-mail." },
 };
 
-/** Zakładka „Mój profil”: stan weryfikacji, 4 kroki i to, co firma widzi na karcie. */
-export function MojProfilWidok({ profil, firm }: { profil: MojProfil | null; firm: number }) {
+const Znaczek = () => (
+  <svg viewBox="0 0 20 20" width={16} height={16} aria-hidden="true">
+    <path d="M10 1.5l2.3 1.6 2.8-.2 1 2.6 2.3 1.6-.8 2.7.8 2.7-2.3 1.6-1 2.6-2.8-.2L10 18.5l-2.3-1.6-2.8.2-1-2.6-2.3-1.6.8-2.7-.8-2.7 2.3-1.6 1-2.6 2.8.2z" fill="#2f7a4b" />
+    <path d="M6.6 10.2l2.3 2.3 4.5-4.8" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+// 11.11 (USER_001: „dodajmy emoji przy każdym z tych”): znaczek przed etykietą wiersza w tabelkach profilu.
+const EMOJI: Record<string, string> = {
+  Stanowisko: "💼",
+  "W sprzedaży": "⏳",
+  Sytuacja: "🧭",
+  Sprzedaje: "🤝",
+  "Jak sprzedaje": "📞",
+  Branże: "🏭",
+  "Mocne strony": "💪",
+  "Plan w ostatnim roku": "🎯",
+  "Średnia wartość sprzedaży": "💰",
+  "Największy wynik": "🏆",
+  Miasto: "📍",
+  "Tryb pracy": "🏠",
+  Umowa: "📝",
+  "Podstawa miesięcznie": "💵",
+  "Może zacząć": "🚀",
+  Telefon: "📱",
+  "E-mail": "✉️",
+  CV: "📄",
+  LinkedIn: "🔗",
+  Strona: "🌐",
+  Facebook: "👥",
+  Instagram: "📸",
+};
+
+/** Tabelka etykieta | wartość (USER_001 11.11: dane profilu „bardziej w tabelkach”). Puste wiersze odpadają. */
+function Tabela({ wiersze }: { wiersze: [string, React.ReactNode][] }) {
+  return (
+    <table className={g.tabela}>
+      <tbody>
+        {wiersze.filter(([, v]) => v !== "" && v != null && v !== false).map(([et, v]) => (
+          <tr key={et}>
+            <th scope="row">
+              {EMOJI[et] && <span className={g.emoji} aria-hidden="true">{EMOJI[et]}</span>}
+              {et}
+            </th>
+            <td>{v}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+const Chipy = ({ lista, lim }: { lista: string[]; lim?: boolean }) =>
+  lista.length ? (
+    <span className={g.chipy}>
+      {lista.map((x) => (
+        <span key={x} className={`p-chip ${lim ? "p-chip-lim" : ""}`}>{x}</span>
+      ))}
+    </span>
+  ) : null;
+
+/** Zakładka „Mój profil” (USER_001 11.11): profil tak, jak pokazuje się pracodawcy. Po lewej karta jak na LP /praca
+ * (zdjęcie, „Sprawdzony profil”, mocne strony, plan), po prawej wersja rozwinięta. Edycja jest w osobnej zakładce. */
+export function MojProfilWidok({ profil, email, cvNazwa, firm }: { profil: MojProfil | null; email: string; cvNazwa: string | null; firm: number }) {
   if (!profil) {
     return (
       <div className="p-strona">
         <div className="p-naglowek"><h1>Mój profil</h1></div>
         <div className="p-karta p-karta-p">
-          <p className="p-pusto">Nie masz jeszcze profilu w bazie handlowców. Formularz ma 5 krótkich kroków i zajmuje około 5 minut.</p>
+          <p className="p-pusto">Nie masz jeszcze profilu w bazie handlowców. Uzupełnij go, a firmy zobaczą Cię po weryfikacji.</p>
           <p style={{ textAlign: "center", paddingBottom: 14 }}>
-            <a className="p-btn p-btn-3" href={FORMULARZ}>Wypełnij profil</a>
+            <Link className="p-btn p-btn-3" href="/praca/panel?z=edycja">Uzupełnij profil</Link>
           </p>
         </div>
       </div>
@@ -68,82 +129,108 @@ export function MojProfilWidok({ profil, firm }: { profil: MojProfil | null; fir
   }
   const st = STATUS[profil.status];
   const k = profil.karta;
-  const etap = profil.status === "zatwierdzony" ? (firm > 0 ? 4 : 3) : 2;
-  const kroki = ["Konto założone", "Profil wypełniony", "Weryfikacja profilu", "Firmy piszą do Ciebie"];
-  const dane: [string, string][] = [
-    ["Stanowisko", k.stanowisko],
-    ["Miasto", k.miasto],
-    ["W sprzedaży", k.lata],
-    ["Sytuacja", k.sytuacja],
-    ["Sprzedaje", k.rynek],
-    ["Plan w ostatnim roku", k.plan],
-    ["Średnia wartość sprzedaży", k.transakcja],
-    ["Oczekiwana podstawa", k.pensja ? `${k.pensja.toLocaleString("pl-PL")} zł netto` : ""],
-    ["Może zacząć", k.start],
-    ["Tryb pracy", k.tryb.join(", ")],
-    ["Umowa", k.umowa.join(", ")],
-    ["Jak sprzedaje", k.kanaly.join(", ")],
-  ];
   return (
     <div className="p-strona">
       <div className="p-naglowek">
         <div>
-          <h1>{k.imie}</h1>
-          <span className={`p-chip ${st.chip}`} style={{ marginTop: 10 }}>{st.nazwa}</span>
+          <h1>Mój profil</h1>
+          <p className={g.podtytul}>Tak widzi Cię firma, która odblokowała Twój kontakt.</p>
         </div>
         <div className="p-naglowek-prawo">
-          <a className="p-btn p-btn-2" href={FORMULARZ}>Edytuj profil</a>
+          <span className="p-chip">Firmy z kontaktem: {firm}</span>
+          <Link className="p-btn p-btn-2" href="/praca/panel?z=edycja">Edytuj profil</Link>
         </div>
       </div>
 
-      <div className="p-karta p-karta-p">
-        <p style={{ fontSize: 14, color: "var(--p-ink-2)", marginBottom: 16 }}>
-          {st.opis} Wysłano {data(profil.wyslano)}.
-        </p>
-        <ol className={g.kroki}>
-          {kroki.map((nazwa, i) => (
-            <li key={nazwa} className={`${g.krok} ${i < etap ? g.krokOk : i === etap ? g.krokTeraz : ""}`}>
-              <i>{i < etap ? "✓" : i + 1}</i>
-              {nazwa}
-            </li>
-          ))}
-        </ol>
-      </div>
-
-      <div className="p-karta">
-        <div className="p-karta-hd">
-          <h3>To widzi firma</h3>
-          <span className="p-karta-hd-meta">Telefon, e-mail i CV dopiero po odblokowaniu kontaktu</span>
-        </div>
-        <div className="p-karta-p">
-          <dl className={g.dane}>
-            {dane.filter(([, v]) => v).map(([et, v]) => (
-              <div key={et}>
-                <dt>{et}</dt>
-                <dd>{v}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className={g.chipy} style={{ marginTop: 18 }}>
-            {k.branze.map((x) => (
-              <span key={x} className="p-chip">{x}</span>
-            ))}
-            {k.mocne.map((x) => (
-              <span key={x} className="p-chip p-chip-lim">{x}</span>
-            ))}
+      <div className={g.profil}>
+        {/* Karta jak na LP: to firma widzi w wynikach wyszukiwania (bez nazwiska i zdjęcia, dopóki nie odblokuje kontaktu). */}
+        <article className={g.pk}>
+          <div className={g.pkFoto}>
+            {profil.zdjecie ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={profil.zdjecie} alt="" />
+            ) : (
+              <span aria-hidden="true">{k.imie[0]?.toUpperCase()}</span>
+            )}
+            <i />
           </div>
+          <div className={g.pkTresc}>
+            <h2>{k.imie}</h2>
+            {profil.status === "zatwierdzony" ? (
+              <p className={g.pkOk}><Znaczek /> Sprawdzony profil</p>
+            ) : (
+              <p className={`${g.pkOk} ${g.pkCzeka}`}>{st.nazwa}</p>
+            )}
+            <p className={g.pkRola}>{[k.stanowisko, k.miasto].filter(Boolean).join(" · ")}</p>
+            <span className={g.pkEtykieta}>Mocne strony</span>
+            <ul className={g.pkChipy}>
+              {k.mocne.map((x) => (
+                <li key={x}>{x}</li>
+              ))}
+            </ul>
+            {/* 11.11 (USER_001): na karcie oczekiwane wynagrodzenie zamiast planu (plan jest w tabelce „Wyniki”). */}
+            <span className={g.pkEtykieta}>Oczekiwane wynagrodzenie</span>
+            <p className={g.pkWynik}>{k.pensja ? `${k.pensja.toLocaleString("pl-PL").replace(/\u00a0/g, " ")} zł netto` : "Do ustalenia"}</p>
+          </div>
+        </article>
+
+        <div className={g.profilPrawa}>
+          {profil.opis && (
+            <div className="p-karta">
+              <div className="p-karta-hd"><h3>O mnie</h3></div>
+              <p className={`p-karta-p ${g.tekst}`}>{profil.opis}</p>
+            </div>
+          )}
+          <div className="p-karta">
+            <div className="p-karta-hd"><h3>Doświadczenie</h3></div>
+            <Tabela
+              wiersze={[
+                ["Stanowisko", k.stanowisko],
+                ["W sprzedaży", k.lata],
+                ["Sytuacja", k.sytuacja],
+                ["Sprzedaje", k.rynek],
+                ["Jak sprzedaje", k.kanaly.join(", ")],
+                ["Branże", <Chipy key="b" lista={k.branze} />],
+                ["Mocne strony", <Chipy key="m" lista={k.mocne} lim />],
+              ]}
+            />
+          </div>
+          <div className="p-karta">
+            <div className="p-karta-hd"><h3>Wyniki</h3></div>
+            <Tabela
+              wiersze={[
+                ["Plan w ostatnim roku", k.plan],
+                ["Średnia wartość sprzedaży", k.transakcja],
+                ["Największy wynik", profil.sukces && <span className={g.tekst}>{profil.sukces}</span>],
+              ]}
+            />
+          </div>
+          <div className="p-karta">
+            <div className="p-karta-hd"><h3>Oczekiwania</h3></div>
+            <Tabela
+              wiersze={[
+                ["Miasto", k.miasto],
+                ["Tryb pracy", k.tryb.join(", ")],
+                ["Umowa", k.umowa.join(", ")],
+                ["Podstawa miesięcznie", k.pensja ? `${k.pensja.toLocaleString("pl-PL")} zł netto` : ""],
+                ["Może zacząć", k.start],
+              ]}
+            />
+          </div>
+          <div className="p-karta">
+            <div className="p-karta-hd"><h3>Kontakt</h3></div>
+            <Tabela
+              wiersze={[
+                ["Telefon", profil.telefon],
+                ["E-mail", email],
+                ["CV", cvNazwa ?? ""],
+                ...profil.linki.map(([nazwa, adres]): [string, React.ReactNode] => [nazwa, <a key={nazwa} href={adres} target="_blank" rel="noreferrer">{adres.replace(/^https?:\/\/(www\.)?/, "")}</a>]),
+              ]}
+            />
+          </div>
+          <p className={g.stopka}>Zaktualizowano {data(profil.wyslano)}.</p>
         </div>
       </div>
-
-      {profil.sukces && (
-        <div className="p-karta">
-          <div className="p-karta-hd">
-            <h3>Największy wynik</h3>
-            <span className="p-karta-hd-meta">Widoczny po odblokowaniu kontaktu</span>
-          </div>
-          <p className="p-karta-p" style={{ fontSize: 15, lineHeight: 1.6, whiteSpace: "pre-line" }}>{profil.sukces}</p>
-        </div>
-      )}
     </div>
   );
 }

@@ -24,6 +24,8 @@ export const KROKI: { tytul: string; pytania: Pytanie[] }[] = [
       { klucz: "lata", typ: "jedna", pytanie: "Ile lat pracujesz w sprzedaży?", opcje: o(["Mniej niż rok", "1-3 lata", "3-5 lat", "5-10 lat", "Ponad 10 lat"]) },
       { klucz: "stanowisko", typ: "tekst", pytanie: "Obecne albo ostatnie stanowisko", podpowiedz: "np. Przedstawiciel handlowy", min: 2, maks: 120 },
       { klucz: "status", typ: "jedna", pytanie: "Twoja sytuacja", opcje: o(["Szukam pracy", "Pracuję, ale chcę zmienić", "Pracuję, słucham ofert"]) },
+      // 11.11 wieczór (USER_001: profil „bardziej rozwinięty”): kilka zdań o sobie na górze profilu, nieobowiązkowe.
+      { klucz: "opis", typ: "dlugi", pytanie: "Kilka zdań o sobie", podpowiedz: "Co sprzedajesz, komu i w czym jesteś najlepszy", opcjonalne: true, maks: 800 },
     ],
   },
   {
@@ -70,12 +72,59 @@ export const KROKI: { tytul: string; pytania: Pytanie[] }[] = [
       { klucz: "imie", typ: "tekst", pytanie: "Imię i nazwisko", podpowiedz: "np. Anna Kowalska", min: 3, maks: 120 },
       { klucz: "telefon", typ: "tel", pytanie: "Telefon", podpowiedz: "500 600 700", min: 9, maks: 20 },
       { klucz: "linkedin", typ: "url", pytanie: "Profil LinkedIn", podpowiedz: "https://linkedin.com/in/...", opcjonalne: true, maks: 300 },
+      // 11.11 wieczór (USER_001: „linki do social mediów”): firma widzi je po odblokowaniu kontaktu, razem z telefonem i e-mailem.
+      { klucz: "www", typ: "url", pytanie: "Strona albo portfolio", podpowiedz: "https://...", opcjonalne: true, maks: 300 },
+      { klucz: "facebook", typ: "url", pytanie: "Facebook", podpowiedz: "https://facebook.com/...", opcjonalne: true, maks: 300 },
+      { klucz: "instagram", typ: "url", pytanie: "Instagram", podpowiedz: "https://instagram.com/...", opcjonalne: true, maks: 300 },
     ],
   },
 ];
 
+/** Klucze linków w profilu (kolejność = kolejność na profilu). */
+export const LINKI_PROFILU: [string, string][] = [
+  ["linkedin", "LinkedIn"],
+  ["www", "Strona"],
+  ["facebook", "Facebook"],
+  ["instagram", "Instagram"],
+];
+
 export type Odpowiedzi = Record<string, string | string[]>;
+
+/** 11.11 (USER_001): miasto zawsze z wielkiej litery, także po myślniku: „bielsko-biała” → „Bielsko-Biała”,
+ * „nowy sącz” → „Nowy Sącz”. Łączniki w środku nazwy zostają małe („Kazimierz nad Wisłą”). */
+const MALE_W_MIESCIE = new Set(["nad", "pod", "na", "w", "we", "koło", "k."]);
+export function miastoZWielkiej(surowe: string): string {
+  return surowe
+    .trim()
+    .replace(/\s+/g, " ")
+    .split(" ")
+    .map((slowo, i) => (i > 0 && MALE_W_MIESCIE.has(slowo.toLowerCase()) ? slowo.toLowerCase() : slowo.split("-").map((cz) => (cz ? cz[0].toLocaleUpperCase("pl-PL") + cz.slice(1).toLocaleLowerCase("pl-PL") : cz)).join("-")))
+    .join(" ");
+}
 export type StatusProfilu = "weryfikacja" | "zatwierdzony" | "odrzucony";
+
+/** 11.11 (USER_001): numer telefonu grupami po 3 cyfry: „500600700” → „500 600 700”, „+48500600700” → „+48 500 600 700”.
+ * Kierunkowy (po „+” albo „00”) zostaje osobno. Numer o nietypowej długości też dzielimy po 3 od lewej. */
+export function telefonGrupami(surowe: string): string {
+  const s = surowe.trim();
+  let cyfry = s.replace(/\D/g, "");
+  if (!cyfry) return s;
+  let kierunkowy = "";
+  if (s.startsWith("+") || cyfry.startsWith("00")) {
+    if (cyfry.startsWith("00")) cyfry = cyfry.slice(2);
+    // Kierunkowy wpisany osobno („+1 305…”) bierzemy tak, jak jest. Bez odstępu: numer krajowy ma 9 cyfr
+    // (Polska i większość Europy), reszta z przodu to kierunkowy.
+    const wpisany = s.match(/^\+(\d{1,3})[\s-]/)?.[1].length;
+    const ile = wpisany ?? (cyfry.length > 9 ? cyfry.length - 9 : 0);
+    kierunkowy = `+${cyfry.slice(0, ile)} `;
+    cyfry = cyfry.slice(ile);
+    if (!ile) kierunkowy = "+";
+  } else if (cyfry.length === 11 && cyfry.startsWith("48")) {
+    kierunkowy = "+48 ";
+    cyfry = cyfry.slice(2);
+  }
+  return kierunkowy + (cyfry.match(/\d{1,3}/g) ?? []).join(" ");
+}
 
 /** Błąd jednego pola albo null. */
 export function bladPola(p: Pytanie, wartosc: unknown): string | null {
@@ -104,7 +153,7 @@ export function sprawdz(surowe: unknown): { ok: true; odpowiedzi: Odpowiedzi } |
       if (blad) return { ok: false, krok, klucz: p.klucz, blad };
       const w = s[p.klucz];
       if (p.typ === "wiele") odpowiedzi[p.klucz] = (w as string[]).filter((x) => p.opcje.some((y) => y.v === x));
-      else if (typeof w === "string" && w.trim()) odpowiedzi[p.klucz] = w.trim();
+      else if (typeof w === "string" && w.trim()) odpowiedzi[p.klucz] = p.klucz === "miasto" ? miastoZWielkiej(w) : p.typ === "tel" ? telefonGrupami(w) : w.trim();
     }
   }
   return { ok: true, odpowiedzi };

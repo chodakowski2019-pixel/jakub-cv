@@ -30,29 +30,16 @@ const IK = {
 };
 
 const MENU: Record<"kandydat" | "pracodawca", Sekcja[]> = {
+  // 11.11 (USER_001): handlowiec ma 3 zakładki: „Mój profil” (strona główna panelu, widok jak u pracodawcy),
+  // „Edycja profilu” (wszystkie pola, zdjęcie, CV, linki) i „Firmy” (kto dostał kontakt). „Wyloguj” na samym dole.
+  // Start z kulą, „Oferty pracy”, „Trening z Bruno” i „Ustawienia” zdjęte z menu (stare zakładki działają pod ?z=…).
   kandydat: [
     {
       tytul: "Handlowiec",
       linki: [
-        { nazwa: "Start", ikona: IK.start },
-        { z: "baza", nazwa: "Mój profil", ikona: IK.profil },
+        { nazwa: "Mój profil", ikona: IK.profil },
+        { z: "edycja", nazwa: "Edycja profilu", ikona: IK.ustawienia },
         { z: "firmy", nazwa: "Firmy", ikona: IK.firmy },
-      ],
-    },
-    {
-      tytul: "Oferty pracy",
-      linki: [
-        { z: "pulpit", nazwa: "Oferty dla mnie", ikona: IK.oferty },
-        { z: "aplikacje", nazwa: "Aplikacje", ikona: IK.aplikacje },
-        { z: "ulubione", nazwa: "Ulubione", ikona: IK.serce },
-        { href: "/praca/oferty", nazwa: "Szukaj ofert", ikona: IK.szukaj },
-      ],
-    },
-    {
-      tytul: "Inne",
-      linki: [
-        { href: "https://salesbruno.pl/?src=praca", nazwa: "Trening z Bruno", ikona: IK.trening, nowaKarta: true },
-        { z: "profil", nazwa: "Ustawienia", ikona: IK.ustawienia },
       ],
     },
   ],
@@ -90,12 +77,13 @@ const Ikona = ({ d }: { d: string }) => (
   </svg>
 );
 
-export default function UkladGieldy({ typ, nazwa, inicjal, podpis, liczniki = {}, children }: { typ: "kandydat" | "pracodawca"; /** Napis przy logo: imię handlowca albo nazwa firmy. */ nazwa: string; inicjal: string; podpis: string; liczniki?: Liczniki; children: React.ReactNode }) {
+export default function UkladGieldy({ typ, nazwa, zdjecie = null, liczniki = {}, children }: { typ: "kandydat" | "pracodawca"; /** Napis u góry paska: imię handlowca albo nazwa firmy. */ nazwa: string; /** 11.11 (USER_001): zdjęcie handlowca albo logo firmy w kółku zamiast gwiazdki; brak = inicjał. */ zdjecie?: string | null; liczniki?: Liczniki; children: React.ReactNode }) {
   const z = useSearchParams()?.get("z") ?? "";
   const sekcje = MENU[typ];
   const adres = (p: Pozycja) => p.href ?? (p.z ? `/praca/panel?z=${p.z}` : "/praca/panel");
   // „konto” (moje konto firmy) otwiera się z zakładki „Profil firmy”, więc świeci ten sam link.
-  const aktywny = (p: Pozycja) => !p.href && (p.z ?? "") === (z === "konto" ? "firma" : z);
+  // U handlowca stroną główną jest profil, więc stary adres ?z=baza świeci tę samą pozycję.
+  const aktywny = (p: Pozycja) => !p.href && (p.z ?? "") === (z === "konto" ? "firma" : typ === "kandydat" && z === "baza" ? "" : z);
   const wyloguj = async () => {
     await fetch("/api/bruno/praca/konto/wyloguj", { method: "POST" });
     location.href = "/praca";
@@ -133,7 +121,12 @@ export default function UkladGieldy({ typ, nazwa, inicjal, podpis, liczniki = {}
 
       <aside className="brl" aria-label="Panel">
         <Link href="/praca/panel" className="brl-logo" aria-label="Bruno Sales">
-          <i>✳</i>
+          {zdjecie ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className={g.twarz} src={zdjecie} alt="" />
+          ) : (
+            <span className={g.twarz} aria-hidden="true">{nazwa[0]?.toUpperCase()}</span>
+          )}
           <b>{nazwa}</b>
         </Link>
         {sekcje.map((s) => (
@@ -141,23 +134,17 @@ export default function UkladGieldy({ typ, nazwa, inicjal, podpis, liczniki = {}
             <div className="brl-sekcja">{s.tytul}</div>
             <nav>
               {s.linki.map((p) => link(p))}
-              {s.tytul === "Inne" && (
-                <button type="button" onClick={wyloguj}>
-                  <i><Ikona d={IK.wyjscie} /></i>
-                  <span>Wyloguj</span>
-                </button>
-              )}
             </nav>
           </div>
         ))}
         <div className="brl-rosnie" />
-        <Link href={typ === "kandydat" ? "/praca/panel?z=baza" : "/praca/handlowcy"} className="brl-plan">
-          <i>{inicjal}</i>
-          <div>
-            <b>{typ === "kandydat" ? "Mój profil" : "Baza handlowców"}</b>
-            <small>{podpis}</small>
-          </div>
-        </Link>
+        {/* 11.11 (USER_001): bez karty „Mój profil” na dole; „Wyloguj” na samym dole paska. */}
+        <nav>
+          <button type="button" onClick={wyloguj}>
+            <i><Ikona d={IK.wyjscie} /></i>
+            <span>Wyloguj</span>
+          </button>
+        </nav>
       </aside>
 
       <main className="br-tresc">{children}</main>

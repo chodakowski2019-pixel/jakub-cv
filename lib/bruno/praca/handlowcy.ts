@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { linkCV, type KontoPraca } from "./konta";
-import { KROKI, type Odpowiedzi } from "./profil-handlowca";
+import { KROKI, LINKI_PROFILU, miastoZWielkiej, telefonGrupami, type Odpowiedzi } from "./profil-handlowca";
 
 // 11.11 (USER_001): giełda handlowców, strona firm. Wyszukiwanie w bazie profili (praca_profile_handlowcow),
 // karta bez danych kontaktowych dla każdego, pełny profil dopiero po odblokowaniu (praca_odblokowania).
@@ -68,6 +68,9 @@ export type PelnyHandlowiec = KartaHandlowca & {
   email: string;
   telefon: string;
   linkedin: string | null;
+  /** 11.11: pozostałe linki z profilu (strona, Facebook, Instagram) jako [etykieta, adres]. */
+  linki: [string, string][];
+  opis: string;
   sukces: string;
   zdjecie: string | null;
   cv: string | null;
@@ -93,7 +96,8 @@ function doKarty(w: Wiersz): KartaHandlowca {
     id: w.konto_id,
     imie: `${imie || "Handlowiec"}${nazwisko ? ` ${nazwisko[0].toUpperCase()}.` : ""}`,
     stanowisko: t(o.stanowisko),
-    miasto: t(o.miasto),
+    // Starsze profile mają miasto tak, jak je wpisano („warszawa”), stąd poprawka także przy odczycie.
+    miasto: miastoZWielkiej(t(o.miasto)),
     lata: t(o.lata),
     sytuacja: t(o.status),
     rynek: t(o.rynek),
@@ -174,8 +178,10 @@ export async function odblokowaniHandlowcy(kontoId: string): Promise<PelnyHandlo
         ...doKarty(x),
         imie: t(o.imie) || x.konto?.imie || "Handlowiec",
         email: x.konto?.email ?? "",
-        telefon: t(o.telefon) || x.konto?.telefon || "",
+        telefon: telefonGrupami(t(o.telefon) || x.konto?.telefon || ""),
         linkedin: t(o.linkedin) || x.konto?.linkedin || null,
+        linki: LINKI_PROFILU.filter(([k]) => k !== "linkedin" && t(o[k])).map(([k, nazwa]) => [nazwa, t(o[k])] as [string, string]),
+        opis: t(o.opis),
         sukces: t(o.sukces),
         zdjecie,
         cv: x.konto?.cv_sciezka ? await linkCV(x.konto.cv_sciezka, 3600) : null,
@@ -194,14 +200,39 @@ export async function zapiszWyszukiwanie(f: Filtry, wynik: number, kontoId: stri
 
 // --- 11.11: panel handlowca (układ giełdy): własny profil w bazie i firmy, które mają jego kontakt ---
 
-export type MojProfil = { status: "weryfikacja" | "zatwierdzony" | "odrzucony"; karta: KartaHandlowca; sukces: string; wyslano: string };
+export type MojProfil = {
+  status: "weryfikacja" | "zatwierdzony" | "odrzucony";
+  karta: KartaHandlowca;
+  /** Surowe odpowiedzi z formularza: wypełniają pola w „Edycji profilu”. */
+  odpowiedzi: Odpowiedzi;
+  opis: string;
+  sukces: string;
+  telefon: string;
+  /** [etykieta, adres] tylko dla podanych linków. */
+  linki: [string, string][];
+  wyslano: string;
+  /** Zdjęcie z formularza profilu (link podpisany na godzinę) albo null. */
+  zdjecie: string | null;
+};
 
 /** Profil zalogowanego handlowca w bazie albo null, gdy jeszcze nie wypełnił formularza. */
 export async function mojProfil(kontoId: string): Promise<MojProfil | null> {
   const { data } = await supabaseAdmin.from("praca_profile_handlowcow").select("konto_id,odpowiedzi,status,zdjecie_sciezka,updated_at").eq("konto_id", kontoId).maybeSingle();
   if (!data) return null;
   const w = { ...data, konto: null } as unknown as Wiersz & { updated_at: string };
-  return { status: w.status as MojProfil["status"], karta: { ...doKarty(w), imie: t(w.odpowiedzi?.imie) || "Handlowiec" }, sukces: t(w.odpowiedzi?.sukces), wyslano: w.updated_at };
+  const o = w.odpowiedzi ?? {};
+  const zdjecie = w.zdjecie_sciezka ? (await supabaseAdmin.storage.from("praca-cv").createSignedUrl(w.zdjecie_sciezka, 3600)).data?.signedUrl ?? null : null;
+  return {
+    status: w.status as MojProfil["status"],
+    karta: { ...doKarty(w), imie: t(o.imie) || "Handlowiec" },
+    odpowiedzi: o,
+    opis: t(o.opis),
+    sukces: t(o.sukces),
+    telefon: telefonGrupami(t(o.telefon)),
+    linki: LINKI_PROFILU.filter(([k]) => t(o[k])).map(([k, nazwa]) => [nazwa, t(o[k])]),
+    wyslano: w.updated_at,
+    zdjecie,
+  };
 }
 
 export type FirmaZKontaktem = { nazwa: string; www: string | null; logo: string | null; kiedy: string };

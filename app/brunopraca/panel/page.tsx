@@ -4,6 +4,7 @@ import PanelFirmy from "@/components/bruno/praca/panel-firmy";
 import PanelKandydata from "@/components/bruno/praca/panel-kandydata";
 import UkladGieldy from "@/components/bruno/praca/uklad-gieldy";
 import { FirmyWidok, MojProfilWidok, StartGieldy } from "@/components/bruno/praca/gielda-widoki";
+import ProfilEdycja from "@/components/bruno/praca/profil-edycja";
 import g from "@/components/bruno/praca/gielda.module.css";
 import { kontaktow } from "@/lib/bruno/praca/kontakty-cennik";
 import s from "@/components/bruno/praca/praca.module.css";
@@ -51,7 +52,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     const aktywne = oferty.filter((o) => o.status === "aktywna").length;
     const firma = konto.nazwa_wyswietlana || konto.firma || "Twoja firma";
     return (
-      <UkladGieldy typ="pracodawca" nazwa={firma} inicjal={firma[0]?.toUpperCase() ?? "F"} podpis={konto.kontakty ? `Na koncie: ${kontaktow(konto.kontakty)}` : "Znajdź handlowca"} liczniki={{ handlowcy: handlowcy.length, kandydaci: nowych, ogloszenia: aktywne }}>
+      <UkladGieldy typ="pracodawca" nazwa={firma} zdjecie={konto.logo_url} liczniki={{ handlowcy: handlowcy.length, kandydaci: nowych, ogloszenia: aktywne }}>
         {!zakladka ? (
           <StartGieldy
             imie={konto.imie?.split(" ")[0] || firma}
@@ -111,28 +112,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     : [];
   const { data: al } = await supabaseAdmin.from("praca_alerty").select("id,opis,created_at").eq("konto_id", konto.id).order("created_at", { ascending: false });
   const [profil, firmy] = await Promise.all([mojProfil(konto.id), firmyZKontaktem(konto.id)]);
-  const imie = (profil?.karta.imie || konto.imie || konto.email.split("@")[0]).split(" ")[0];
-  const stan = !profil ? "do wypełnienia" : profil.status === "zatwierdzony" ? "sprawdzony" : profil.status === "odrzucony" ? "do poprawy" : "w weryfikacji";
   return (
-    <UkladGieldy typ="kandydat" nazwa={profil?.karta.imie || konto.imie || "Mój panel"} inicjal={imie[0]?.toUpperCase() ?? "H"} podpis={`Profil ${stan}`} liczniki={{ firmy: firmy.length, aplikacje: zgloszenia.length, ulubione: zapisane.length, pulpit: polecane.length }}>
-      {!zakladka ? (
-        <StartGieldy
-          imie={imie}
-          pytanie={profil ? "Twój profil pracuje za Ciebie." : "Zacznij od profilu handlowca."}
-          pigulki={[
-            { tekst: "Mój profil", licznik: stan, href: profil ? "/praca/panel?z=baza" : "/praca/dolacz/profil", alarm: !profil || profil.status === "odrzucony" },
-            { tekst: "Firmy z moim kontaktem", licznik: firmy.length, href: "/praca/panel?z=firmy" },
-            { tekst: "Oferty dla mnie", licznik: polecane.length, href: "/praca/panel?z=pulpit" },
-          ]}
-          kafle={[
-            { etykieta: "Profil", wartosc: profil ? (profil.status === "zatwierdzony" ? "✓" : "…") : "0", dol: stan, href: profil ? "/praca/panel?z=baza" : "/praca/dolacz/profil" },
-            { etykieta: "Firmy", wartosc: firmy.length, dol: "mają Twój kontakt", href: "/praca/panel?z=firmy" },
-            { etykieta: "Aplikacje", wartosc: zgloszenia.length, dol: "wysłane zgłoszenia", href: "/praca/panel?z=aplikacje" },
-            { etykieta: "Ulubione", wartosc: zapisane.length, dol: "zapisane oferty", href: "/praca/panel?z=ulubione" },
-          ]}
-        />
-      ) : zakladka === "baza" ? (
-        <MojProfilWidok profil={profil} firm={firmy.length} />
+    <UkladGieldy typ="kandydat" nazwa={profil?.karta.imie || konto.imie || "Mój panel"} zdjecie={profil?.zdjecie} liczniki={{ firmy: firmy.length }}>
+      {/* 11.11 (USER_001): handlowiec zaczyna od profilu, bez ekranu startowego. */}
+      {!zakladka || zakladka === "baza" ? (
+        <MojProfilWidok profil={profil} email={konto.email} cvNazwa={konto.cv_nazwa} firm={firmy.length} />
+      ) : zakladka === "edycja" ? (
+        <ProfilEdycja start={profil?.odpowiedzi ?? { ...(konto.imie ? { imie: konto.imie } : {}), ...(konto.telefon ? { telefon: konto.telefon } : {}) }} zdjecie={profil?.zdjecie ?? null} cvNazwa={konto.cv_nazwa} maProfil={Boolean(profil)} />
       ) : zakladka === "firmy" ? (
         <FirmyWidok firmy={firmy} sprawdzony={profil?.status === "zatwierdzony"} />
       ) : (

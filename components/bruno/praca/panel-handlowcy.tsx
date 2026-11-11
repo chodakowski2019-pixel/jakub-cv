@@ -74,6 +74,7 @@ export default function PanelHandlowcy({ handlowcy, naKoncie }: { handlowcy: Pel
                       <li key={t}>{t}</li>
                     ))}
                   </ul>
+                  {x.opis && <p className={h.pSukces}>{x.opis}</p>}
                   {x.sukces && <p className={h.pSukces}>{x.sukces}</p>}
                   <p className={h.pFakty}>
                     <span>Plan: <b>{x.plan}</b></span>
@@ -104,6 +105,12 @@ export default function PanelHandlowcy({ handlowcy, naKoncie }: { handlowcy: Pel
                       <a href={x.linkedin} target="_blank" rel="noreferrer">Profil</a>
                     </div>
                   )}
+                  {x.linki.map(([nazwa, adres]) => (
+                    <div key={nazwa}>
+                      <small>{nazwa}</small>
+                      <a href={adres} target="_blank" rel="noreferrer">Otwórz</a>
+                    </div>
+                  ))}
                   {x.cv && (
                     <div>
                       <small>CV</small>

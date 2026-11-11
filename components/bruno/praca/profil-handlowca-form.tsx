@@ -23,7 +23,7 @@ export function Weryfikacja({ email }: { email: string }) {
 }
 
 /** Zmniejsza zdjęcie do FOTO_BOK px na dłuższym boku i oddaje JPEG. Null = plik nie jest obrazem. */
-async function zmniejszZdjecie(plik: File): Promise<Blob | null> {
+export async function zmniejszZdjecie(plik: File): Promise<Blob | null> {
   const obraz = await createImageBitmap(plik).catch(() => null);
   if (!obraz) return null;
   const skala = Math.min(1, FOTO_BOK / Math.max(obraz.width, obraz.height));
