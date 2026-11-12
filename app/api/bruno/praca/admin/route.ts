@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
-import { czyAdminGieldy, usunHandlowca, ustawStatusProfilu } from "@/lib/bruno/praca/admin";
+import { czyAdminGieldy, przypomnijHandlowcowi, usunHandlowca, ustawStatusProfilu } from "@/lib/bruno/praca/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +11,13 @@ const STATUSY = ["zatwierdzony", "weryfikacja", "odrzucony"] as const;
 export async function POST(req: Request) {
   if (!czyAdminGieldy(await zalogowanePraca())) return NextResponse.json({ ok: false, blad: "Brak dostępu." }, { status: 403 });
   const b = await req.json().catch(() => ({}));
+  // 12.11 (USER_001): { id, akcja: "przypomnij" } = mail z prośbą o dokończenie profilu (zakładka „Niedokończone”).
+  if (b.akcja === "przypomnij") {
+    const id = String(b.id ?? "");
+    if (!/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ ok: false, blad: "Złe dane." }, { status: 400 });
+    const w = await przypomnijHandlowcowi(id);
+    return NextResponse.json(w, { status: w.ok ? 200 : 400 });
+  }
   const status = STATUSY.find((s) => s === b.status);
   const id = String(b.id ?? "");
   if (!status || !/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ ok: false, blad: "Złe dane." }, { status: 400 });

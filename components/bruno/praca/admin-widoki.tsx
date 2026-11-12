@@ -3,6 +3,7 @@ import type { FirmaAdmin, HandlowiecAdmin, NiedokonczonyAdmin, Wyszukiwanie } fr
 import { KROKI } from "@/lib/bruno/praca/profil-handlowca";
 import g from "./gielda.module.css";
 import AdminUsun from "./admin-usun";
+import AdminPrzypomnij from "./admin-przypomnij";
 
 // 11.11 (USER_001): panel administratora giełdy (konto chodak.job72@gmail.com), dwie zakładki w układzie panelu Bruno:
 // „Handlowcy” = wszystkie profile, klik otwiera profil z odhaczeniem „Zweryfikowany”; „Firmy” = konta firm i ich wyszukiwania.
@@ -152,6 +153,7 @@ export function AdminNiedokonczone({ lista }: { lista: NiedokonczonyAdmin[] }) {
                   <th>Etap formularza</th>
                   <th>Konto od</th>
                   <th>Ostatnio w formularzu</th>
+                  <th>Przypomnienie</th>
                   <th />
                 </tr>
               </thead>
@@ -171,6 +173,7 @@ export function AdminNiedokonczone({ lista }: { lista: NiedokonczonyAdmin[] }) {
                     <td><Etap x={x} /></td>
                     <td>{dataGodz(x.od)}</td>
                     <td>{x.ostatnio ? dataGodz(x.ostatnio) : "-"}</td>
+                    <td><AdminPrzypomnij id={x.id} email={x.email} ostatnie={x.przypomnienieAt} ile={x.przypomnien} /></td>
                     <td><AdminUsun id={x.id} imie={x.imie || x.email} /></td>
                   </tr>
                 ))}

@@ -86,12 +86,15 @@ export type NiedokonczonyAdmin = {
   wpisane: number;
   pol: number;
   ostatnio: string | null;
+  /** Ostatnie przypomnienie mailem i ile ich było. */
+  przypomnienieAt: string | null;
+  przypomnien: number;
 };
 
 /** 12.11 (USER_001): konta handlowców, którzy założyli konto, ale nie wysłali profilu, z etapem formularza. Najnowsze na górze. */
 export async function listaNiedokonczonych(): Promise<NiedokonczonyAdmin[]> {
   const [{ data: konta, error }, { data: profile }] = await Promise.all([
-    supabaseAdmin.from("praca_konta").select("id,email,imie,telefon,created_at,formularz_krok,formularz_szkic,formularz_at").eq("typ", "kandydat").order("created_at", { ascending: false }).limit(2000),
+    supabaseAdmin.from("praca_konta").select("id,email,imie,telefon,created_at,formularz_krok,formularz_szkic,formularz_at,przypomnienie_at,przypomnienia").eq("typ", "kandydat").order("created_at", { ascending: false }).limit(2000),
     supabaseAdmin.from("praca_profile_handlowcow").select("konto_id"),
   ]);
   if (error) console.error("[praca admin] niedokończone", error.message);
@@ -113,6 +116,8 @@ export async function listaNiedokonczonych(): Promise<NiedokonczonyAdmin[]> {
         wpisane: pytania.filter((p) => [s[p.klucz] ?? ""].flat().some((v) => String(v).trim())).length,
         pol: pytania.length,
         ostatnio: (k.formularz_at as string | null) ?? null,
+        przypomnienieAt: (k.przypomnienie_at as string | null) ?? null,
+        przypomnien: (k.przypomnienia as number | null) ?? 0,
       };
     });
 }
@@ -143,6 +148,38 @@ export function htmlZweryfikowany(imie: string, brakZdjecia = false, brakCV = fa
 ${braki ? `<p>${braki}</p>\n<p>Zaloguj się na: <a href="https://www.salesbruno.pl/login">www.salesbruno.pl/login</a></p>` : `<p>Jeżeli chcesz go edytować, zaloguj się na: <a href="https://www.salesbruno.pl/login">www.salesbruno.pl/login</a></p>`}
 <p>Pozdrawiam,<br/>Jakub Chodakowski</p>
 </div>`;
+}
+
+/** 12.11 (USER_001): przypomnienie dla handlowca, który założył konto, ale nie wysłał profilu. Zwykły list jak mail weryfikacji. */
+export function htmlPrzypomnienie(imie: string): string {
+  return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#141416">
+<p>Dzień dobry${imie ? ` ${esc(imie)}` : ""},</p>
+<p>Twój profil handlowca na SalesBruno.pl nie jest jeszcze dokończony.</p>
+<p>Firmy widzą tylko wysłane profile. Dokończenie zajmie kilka minut.</p>
+<p>Zaloguj się i dokończ profil: <a href="https://www.salesbruno.pl/login">www.salesbruno.pl/login</a></p>
+<p>Pozdrawiam,<br/>Jakub Chodakowski</p>
+</div>`;
+}
+export const TEMAT_PRZYPOMNIENIA = "Dokończ swój profil na SalesBruno.pl";
+
+/** Wysyła przypomnienie do konta kandydata bez wysłanego profilu i zapisuje datę + licznik. */
+export async function przypomnijHandlowcowi(id: string): Promise<{ ok: boolean; blad?: string; pominiety?: boolean }> {
+  const [{ data: k }, { data: profil }] = await Promise.all([
+    supabaseAdmin.from("praca_konta").select("email,imie,formularz_szkic,przypomnienia").eq("id", id).eq("typ", "kandydat").maybeSingle(),
+    supabaseAdmin.from("praca_profile_handlowcow").select("konto_id").eq("konto_id", id).maybeSingle(),
+  ]);
+  if (!k) return { ok: false, blad: "Nie ma takiego konta." };
+  if (profil) return { ok: false, blad: "Ten handlowiec już wysłał profil." };
+  const imie = (t((k.formularz_szkic as Odpowiedzi | null)?.imie) || (k.imie as string | null) || "").trim().split(/\s+/)[0] ?? "";
+  try {
+    const r = await wyslij({ do: k.email as string, od: NADAWCA_WEBINARU, replyTo: ADRES_WEBINARU, rodzaj: "inny", temat: TEMAT_PRZYPOMNIENIA, html: htmlPrzypomnienie(imie) });
+    if (r.pominiety) return { ok: true, pominiety: true };
+  } catch (e) {
+    console.error("[praca admin] przypomnienie", e);
+    return { ok: false, blad: "Mail nie wyszedł. Spróbuj ponownie." };
+  }
+  await supabaseAdmin.from("praca_konta").update({ przypomnienie_at: new Date().toISOString(), przypomnienia: ((k.przypomnienia as number | null) ?? 0) + 1 }).eq("id", id);
+  return { ok: true };
 }
 
 export type WynikStatusu = { ok: boolean; /** "wyslany" = mail poszedł teraz, "pominiety" = brak klucza poczty (lokalnie), "blad" = wysyłka nie wyszła, null = nie było co wysyłać. */ mail: "wyslany" | "pominiety" | "blad" | null };
