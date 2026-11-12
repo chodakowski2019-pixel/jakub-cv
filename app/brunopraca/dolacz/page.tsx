@@ -242,7 +242,7 @@ export default async function Page() {
                 </li>
               ))}
             </ol>
-            <KrokiAktywny lista="kroki-lista" />
+            <KrokiAktywny selektor="#kroki-lista > li, #konto-karta" />
           </div>
         </section>
 
@@ -253,7 +253,7 @@ export default async function Page() {
               <h2 className={d.h2}>Załóż profil.</h2>
               <p className={d.podH2}>Najpierw konto. Zaraz potem formularz profilu. Bezpłatnie.</p>
             </div>
-            <div className={d.karta}>
+            <div className={d.karta} id="konto-karta">
               {/* 11.11: bez konta albo zalogowany jako pracodawca = formularz rejestracji kandydata (konta są osobne dla każdego typu). */}
               {konto?.typ !== "kandydat" ? (
                 <KontoForm typ="kandydat" jedenTyp bezDanych dalej={PROFIL} naglowek="Zarejestruj się" opis="" przycisk="Zarejestruj się" />

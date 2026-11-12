@@ -689,6 +689,7 @@
   background: #fff;
   border-radius: 28px;
   padding: 30px;
+  transition: background 250ms ease, box-shadow 250ms ease;
 }
 .kartaH {
   font-family: var(--head);
@@ -1075,9 +1076,14 @@ textarea.wpis {
     margin-top: 22px !important;
   }
   /* 12.11 (USER_001): krok przy środku ekranu lekko na pomarańczowo (data-aktywny ustawia KrokiAktywny). */
-  .kroki li[data-aktywny] {
+  .kroki li[data-aktywny],
+  .karta[data-aktywny] {
     background: #fff4e8;
     box-shadow: 0 0 0 1.5px rgba(240, 138, 43, 0.45);
+  }
+  /* Cyfra w kółku aktywnego kroku na białym tle, żeby odcinała się od pomarańczu. */
+  .kroki li[data-aktywny] .numer {
+    background: #fff;
   }
   .tabele {
     grid-template-columns: minmax(0, 1fr);
@@ -1105,7 +1111,8 @@ textarea.wpis {
   .cta,
   .opcja,
   .postep i,
-  .kroki li {
+  .kroki li,
+  .karta {
     transition: none;
   }
   .cta:active,

@@ -2,12 +2,12 @@
 
 import { useEffect } from "react";
 
-// 12.11 (USER_001): na telefonie krok, przy którym się jest, lekko podświetla się na pomarańczowo.
-// Aktywny = karta, która przecina środek ekranu. Wygląd w dolacz.module.css (.kroki li[data-aktywny], tylko do 640 px).
-export default function KrokiAktywny({ lista }: { lista: string }) {
+// 12.11 (USER_001): na telefonie element, przy którym się jest (krok, panel rejestracji), lekko podświetla się na pomarańczowo.
+// Aktywny = element, który przecina środek ekranu. Wygląd w dolacz.module.css ([data-aktywny], tylko do 640 px).
+export default function KrokiAktywny({ selektor }: { selektor: string }) {
   useEffect(() => {
-    const karty = document.querySelectorAll<HTMLElement>(`#${lista} > li`);
-    if (!karty.length || !("IntersectionObserver" in window)) return;
+    const el = document.querySelectorAll<HTMLElement>(selektor);
+    if (!el.length || !("IntersectionObserver" in window)) return;
     const obs = new IntersectionObserver(
       (wpisy) => {
         for (const w of wpisy) {
@@ -17,8 +17,8 @@ export default function KrokiAktywny({ lista }: { lista: string }) {
       },
       { rootMargin: "-45% 0px -45% 0px" },
     );
-    karty.forEach((k) => obs.observe(k));
+    el.forEach((k) => obs.observe(k));
     return () => obs.disconnect();
-  }, [lista]);
+  }, [selektor]);
   return null;
 }
