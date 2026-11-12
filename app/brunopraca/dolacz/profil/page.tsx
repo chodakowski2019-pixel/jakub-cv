@@ -15,11 +15,11 @@ export default async function Page() {
   const konto = await zalogowanePraca();
   if (!konto) redirect("/praca");
   if (konto.typ !== "kandydat") redirect("/praca/panel");
-  const { data } = await supabaseAdmin.from("praca_profile_handlowcow").select("status").eq("konto_id", konto.id).maybeSingle();
+  const { data } = await supabaseAdmin.from("praca_profile_handlowcow").select("status,odpowiedzi").eq("konto_id", konto.id).maybeSingle();
   return (
     <div className={d.v} lang="pl">
       <BazaPasek />
-      <main className={d.formStrona}>{data ? <Weryfikacja email={konto.email} /> : <ProfilHandlowcaForm email={konto.email} imie={konto.imie} telefon={konto.telefon} />}</main>
+      <main className={d.formStrona}>{data ? <Weryfikacja email={konto.email} skad={((data.odpowiedzi as Record<string, unknown> | null)?.skad as string | undefined) ?? null} /> : <ProfilHandlowcaForm email={konto.email} imie={konto.imie} telefon={konto.telefon} />}</main>
     </div>
   );
 }

@@ -8,7 +8,44 @@ import { CV_MAKS_B, DNI_WERYFIKACJI, FOTO_BOK, KROKI, bladPola, type Odpowiedzi,
 // Szkic trzymany w sessionStorage, żeby odświeżenie strony nie kasowało odpowiedzi.
 const SZKIC = "praca_profil_szkic";
 
-export function Weryfikacja({ email }: { email: string }) {
+// 12.11 (USER_001): po „Wyślij do weryfikacji” okno „Ostatnie pytanie” z jednym polem „Skąd się o nas dowiedziałeś?”,
+// potem komunikat o weryfikacji. Pytanie raz; odpowiedź = źródło kanału.
+export function Weryfikacja({ email, skad: start = null }: { email: string; skad?: string | null }) {
+  const [skad, setSkad] = useState(start);
+  const [odp, setOdp] = useState("");
+  const [stan, setStan] = useState<"" | "wysylam">("");
+  const [blad, setBlad] = useState("");
+
+  async function wyslij(e: React.FormEvent) {
+    e.preventDefault();
+    if (!odp.trim()) return setBlad("Napisz, skąd się o nas dowiedziałeś.");
+    setStan("wysylam");
+    setBlad("");
+    const r = await fetch("/api/bruno/praca/profil-handlowca/skad", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ skad: odp }) }).catch(() => null);
+    const j = await r?.json().catch(() => null);
+    setStan("");
+    if (!j?.ok) return setBlad(j?.blad ?? "Nie udało się zapisać. Spróbuj ponownie.");
+    setSkad(odp.trim());
+  }
+
+  if (!skad)
+    return (
+      <form className={d.karta} onSubmit={wyslij} noValidate>
+        <h1 className={d.krokH}>Ostatnie pytanie</h1>
+        <div className={d.pytanie}>
+          <label className={d.etykieta} htmlFor="pole-skad">
+            Skąd się o nas dowiedziałeś?
+          </label>
+          <input id="pole-skad" className={d.wpis} value={odp} maxLength={300} onChange={(e) => setOdp(e.target.value)} placeholder="np. grupa na Facebooku, LinkedIn, znajomy" aria-invalid={!!blad} />
+          {blad && <p className={d.bladPola}>{blad}</p>}
+        </div>
+        <div className={d.akcje}>
+          <button type="submit" className={d.cta} disabled={stan === "wysylam"}>
+            {stan === "wysylam" ? "Wysyłam…" : "Wyślij"}
+          </button>
+        </div>
+      </form>
+    );
   return (
     <div className={`${d.karta} ${d.status}`}>
       <span className={d.statusZnak}>
