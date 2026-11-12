@@ -102,6 +102,8 @@ export async function POST(req: NextRequest) {
         const subP = event.data.object as Stripe.Subscription;
         if (subP.metadata?.produkt === "praca") {
           const koniec = event.type === "customer.subscription.deleted" || ["canceled", "unpaid", "incomplete_expired"].includes(subP.status);
+          // 12.11: koniec subskrypcji wyszukiwarki = zlecenie nie dostaje nowych handlowców.
+          if (koniec && subP.metadata.rodzaj === "subskrypcja") await (await import("@/lib/bruno/praca/zlecenia")).zakonczSubskrypcje(subP.id);
           if (koniec && subP.metadata.oferta) await supabaseAdmin.from("praca_oferty_firm").update({ status: "wstrzymana" }).eq("id", subP.metadata.oferta).eq("stripe_sub", subP.id);
           break;
         }
@@ -130,6 +132,12 @@ async function platnoscPraca(s: Stripe.Checkout.Session) {
   if (m.rodzaj === "kontakty") {
     const { zakupZeStripe } = await import("@/lib/bruno/praca/kontakty");
     await zakupZeStripe(s);
+    return;
+  }
+  // 12.11: subskrypcja i gwarancja z wyszukiwarki handlowców (Checkout z /api/bruno/praca/zlecenie). Zapis raz na sesję.
+  if (m.rodzaj === "subskrypcja" || m.rodzaj === "gwarancja") {
+    const { zlecenieZeStripe } = await import("@/lib/bruno/praca/zlecenia");
+    await zlecenieZeStripe(s);
     return;
   }
   // 18.10: jednorazowo; BLIK / Przelewy24 potwierdzają później (async_payment_succeeded). Ponowione zdarzenie = bez drugiego przedłużenia.

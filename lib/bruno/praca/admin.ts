@@ -122,6 +122,70 @@ export async function listaNiedokonczonych(): Promise<NiedokonczonyAdmin[]> {
     });
 }
 
+export type StatystykiGieldy = {
+  konta: number;
+  profile: number;
+  zweryfikowani: number;
+  /** Źródła zgrupowane (Facebook, LinkedIn…), najliczniejsze na górze; „Brak odpowiedzi” na końcu. */
+  zrodla: { nazwa: string; ile: number }[];
+  /** Odpowiedzi słowo w słowo, najnowsze na górze. */
+  odpowiedzi: { imie: string; skad: string; kiedy: string }[];
+  /** Ostatnie 14 dni (czas polski): nowe konta handlowców i wysłane profile. */
+  dni: { dzien: string; konta: number; profile: number }[];
+};
+
+/** 12.11 (USER_001): grupowanie odpowiedzi „Skąd się o nas dowiedziałeś?”: „FACEBOOK”, „fb”, „grupa na fb” = Facebook. */
+function zrodlo(surowe: string): string {
+  const x = surowe.trim().toLowerCase();
+  if (/facebook|\bfb\b|fejs/.test(x)) return "Facebook";
+  if (/linked/.test(x)) return "LinkedIn";
+  if (/google|szukark|internet/.test(x)) return "Google";
+  if (/instagram|\big\b/.test(x)) return "Instagram";
+  if (/mail|poczt/.test(x)) return "E-mail";
+  if (/znajom|polec|kolega|kolezank|koleżank/.test(x)) return "Polecenie";
+  return surowe.trim()[0].toLocaleUpperCase("pl-PL") + surowe.trim().slice(1);
+}
+
+const dzienPL = (iso: string) => new Date(iso).toLocaleDateString("sv-SE", { timeZone: "Europe/Warsaw" });
+
+/** 12.11 (USER_001): zakładka „Statystyki” w panelu administratora giełdy: liczby, skąd przyszli handlowcy, dzień po dniu. */
+export async function statystykiGieldy(): Promise<StatystykiGieldy> {
+  const [{ data: konta }, { data: profile }] = await Promise.all([
+    supabaseAdmin.from("praca_konta").select("id,created_at").eq("typ", "kandydat").limit(5000),
+    supabaseAdmin.from("praca_profile_handlowcow").select("konto_id,odpowiedzi,status,created_at,updated_at").order("updated_at", { ascending: false }).limit(5000),
+  ]);
+  const p = (profile ?? []) as { konto_id: string; odpowiedzi: Odpowiedzi | null; status: StatusProfilu; created_at: string | null; updated_at: string }[];
+  const grupy = new Map<string, number>();
+  let brak = 0;
+  for (const x of p) {
+    const skad = t(x.odpowiedzi?.skad).trim();
+    if (!skad) brak++;
+    else grupy.set(zrodlo(skad), (grupy.get(zrodlo(skad)) ?? 0) + 1);
+  }
+  const zrodla = [...grupy].map(([nazwa, ile]) => ({ nazwa, ile })).sort((a, b) => b.ile - a.ile);
+  if (brak) zrodla.push({ nazwa: "Brak odpowiedzi", ile: brak });
+
+  const dni: StatystykiGieldy["dni"] = [];
+  for (let i = 0; i < 14; i++) dni.push({ dzien: dzienPL(new Date(Date.now() - i * 86_400_000).toISOString()), konta: 0, profile: 0 });
+  const wDniu = new Map(dni.map((d) => [d.dzien, d]));
+  for (const k of konta ?? []) {
+    const d = wDniu.get(dzienPL(k.created_at as string));
+    if (d) d.konta++;
+  }
+  for (const x of p) {
+    const d = wDniu.get(dzienPL(x.created_at ?? x.updated_at));
+    if (d) d.profile++;
+  }
+  return {
+    konta: (konta ?? []).length,
+    profile: p.length,
+    zweryfikowani: p.filter((x) => x.status === "zatwierdzony").length,
+    zrodla,
+    odpowiedzi: p.filter((x) => t(x.odpowiedzi?.skad).trim()).map((x) => ({ imie: t(x.odpowiedzi?.imie) || "Bez imienia", skad: t(x.odpowiedzi?.skad).trim(), kiedy: x.updated_at })),
+    dni,
+  };
+}
+
 /** Dane konta handlowca do widoku profilu u administratora (e-mail, CV z linkiem na godzinę). */
 export async function kontoHandlowca(id: string): Promise<{ email: string; cvNazwa: string | null; cvLink: string | null; od: string } | null> {
   const { data } = await supabaseAdmin.from("praca_konta").select("email,cv_sciezka,cv_nazwa,created_at").eq("id", id).eq("typ", "kandydat").maybeSingle();
@@ -191,6 +255,14 @@ export async function ustawStatusProfilu(id: string, status: StatusProfilu): Pro
   if (error) console.error("[praca admin] status", error.message);
   const w = data?.[0] as unknown as { odpowiedzi: Odpowiedzi; mail_weryfikacji_at: string | null; zdjecie_sciezka: string | null; konto: { email: string; cv_sciezka: string | null } | null } | undefined;
   if (!w) return { ok: false, mail: null };
+  // 12.11: zweryfikowany profil trafia do firm z subskrypcją albo gwarancją, do których opisu pasuje.
+  if (status === "zatwierdzony") {
+    try {
+      await (await import("./zlecenia")).rozdajNowego(id);
+    } catch (e) {
+      console.error("[praca admin] zlecenia", e);
+    }
+  }
   if (status !== "zatwierdzony" || w.mail_weryfikacji_at || !w.konto?.email) return { ok: true, mail: null };
   try {
     const imie = t(w.odpowiedzi?.imie).trim().split(/\s+/)[0] ?? "";

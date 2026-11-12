@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { FirmaAdmin, HandlowiecAdmin, NiedokonczonyAdmin, Wyszukiwanie } from "@/lib/bruno/praca/admin";
+import type { FirmaAdmin, HandlowiecAdmin, NiedokonczonyAdmin, StatystykiGieldy, Wyszukiwanie } from "@/lib/bruno/praca/admin";
 import { KROKI } from "@/lib/bruno/praca/profil-handlowca";
 import g from "./gielda.module.css";
 import AdminUsun from "./admin-usun";
@@ -181,6 +181,118 @@ export function AdminNiedokonczone({ lista }: { lista: NiedokonczonyAdmin[] }) {
             </table>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+// 12.11 (USER_001): „Statystyki” = liczby giełdy, skąd przyszli handlowcy (zgrupowane i słowo w słowo), dzień po dniu.
+export function AdminStatystyki({ s }: { s: StatystykiGieldy }) {
+  const najwiecej = Math.max(1, ...s.zrodla.map((z) => z.ile));
+  const dzien = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString("pl-PL", { weekday: "short", day: "numeric", month: "short", timeZone: "Europe/Warsaw" });
+  return (
+    <div className="p-strona">
+      <div className="p-naglowek">
+        <h1>Statystyki</h1>
+      </div>
+      <div className="p-kafle">
+        {(
+          [
+            ["Konta handlowców", s.konta],
+            ["Wysłane profile", s.profile],
+            ["Zweryfikowani", s.zweryfikowani],
+            ["Konto bez profilu", s.konta - s.profile],
+          ] as [string, number][]
+        ).map(([et, n]) => (
+          <div className="p-kafel" key={et}>
+            <span className="p-kafel-et">{et}</span>
+            <span className="p-kafel-wart">{n}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-karta">
+        <div className="p-karta-hd"><h3 className={g.mocny}>Skąd się o nas dowiedzieli</h3></div>
+        {s.zrodla.length === 0 ? (
+          <p className="p-pusto">Brak profili.</p>
+        ) : (
+          <div className="p-tabela-wrap">
+            <table className={`p-tabela ${g.adminTabela}`}>
+              <thead>
+                <tr>
+                  <th>Źródło</th>
+                  <th>Profile</th>
+                  <th>Udział</th>
+                  <th style={{ width: "40%" }} />
+                </tr>
+              </thead>
+              <tbody>
+                {s.zrodla.map((z) => (
+                  <tr key={z.nazwa}>
+                    <td><b>{z.nazwa}</b></td>
+                    <td>{z.ile}</td>
+                    <td>{Math.round((z.ile / s.profile) * 100)} %</td>
+                    <td>
+                      <span style={{ display: "block", height: 8, borderRadius: 4, background: z.nazwa === "Brak odpowiedzi" ? "#dcdce0" : "#141416", width: `${(z.ile / najwiecej) * 100}%` }} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <div className="p-karta">
+        <div className="p-karta-hd"><h3 className={g.mocny}>Co dokładnie napisali</h3></div>
+        {s.odpowiedzi.length === 0 ? (
+          <p className="p-pusto">Nikt jeszcze nie odpowiedział.</p>
+        ) : (
+          <div className="p-tabela-wrap">
+            <table className={`p-tabela ${g.adminTabela}`}>
+              <thead>
+                <tr>
+                  <th>Handlowiec</th>
+                  <th>Odpowiedź</th>
+                  <th>Profil wysłany</th>
+                </tr>
+              </thead>
+              <tbody>
+                {s.odpowiedzi.map((o, i) => (
+                  <tr key={i}>
+                    <td><b>{o.imie}</b></td>
+                    <td>„{o.skad}”</td>
+                    <td>{dataGodz(o.kiedy)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <div className="p-karta">
+        <div className="p-karta-hd"><h3 className={g.mocny}>Ostatnie 14 dni</h3></div>
+        <div className="p-tabela-wrap">
+          <table className={`p-tabela ${g.adminTabela}`}>
+            <thead>
+              <tr>
+                <th>Dzień</th>
+                <th>Nowe konta</th>
+                <th>Wysłane profile</th>
+              </tr>
+            </thead>
+            <tbody>
+              {s.dni.map((d) => (
+                <tr key={d.dzien}>
+                  <td>{dzien(d.dzien)}</td>
+                  <td>{d.konta}</td>
+                  <td>{d.profile}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

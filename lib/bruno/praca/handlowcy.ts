@@ -167,6 +167,35 @@ export async function szukajHandlowcow(f: Filtry): Promise<KartaHandlowca[]> {
     .sort((a, b) => (b.dopasowanie ?? 0) - (a.dopasowanie ?? 0) || LATA.indexOf(b.lata) - LATA.indexOf(a.lata));
 }
 
+/** 12.11 (USER_001: „jeżeli ktoś ma zdjęcie, to jest ono wyblurowane”): zdjęcia do kart w publicznej wyszukiwarce.
+ * Serwer zmniejsza zdjęcie do 12 px i rozmywa, do przeglądarki idzie tylko plama barw (data URI), z której nie da się
+ * rozpoznać osoby. Prawdziwy plik nie opuszcza kubełka. Zwraca id → obrazek tylko dla osób, które mają zdjęcie. */
+export async function zamazaneZdjecia(ids: string[]): Promise<Record<string, string>> {
+  if (!ids.length) return {};
+  const { data } = await supabaseAdmin.from("praca_profile_handlowcow").select("konto_id,zdjecie_sciezka").in("konto_id", ids).not("zdjecie_sciezka", "is", null);
+  const { default: sharp } = await import("sharp");
+  const pary = await Promise.all(
+    (data ?? []).map(async (x) => {
+      try {
+        const { data: plik } = await supabaseAdmin.storage.from("praca-cv").download(x.zdjecie_sciezka as string);
+        if (!plik) return null;
+        const maly = await sharp(Buffer.from(await plik.arrayBuffer())).rotate().resize(12, 12, { fit: "cover" }).blur(1.2).jpeg({ quality: 50 }).toBuffer();
+        return [x.konto_id as string, `data:image/jpeg;base64,${maly.toString("base64")}`] as const;
+      } catch (e) {
+        console.error("[praca handlowcy] zdjecie", e);
+        return null;
+      }
+    }),
+  );
+  return Object.fromEntries(pary.filter((x) => x !== null));
+}
+
+/** Ilu handlowców wysłało profil w ostatnich 7 dniach (pasek „codziennie nowi handlowcy” w wyszukiwarce). */
+export async function nowychWTygodniu(): Promise<number> {
+  const { count } = await supabaseAdmin.from("praca_profile_handlowcow").select("konto_id", { count: "exact", head: true }).gte("created_at", new Date(Date.now() - 7 * 86_400_000).toISOString());
+  return count ?? 0;
+}
+
 /** Z podanych id zostają tylko profile, które wolno teraz sprzedać (widoczne, ze zgodą). */
 export async function widoczneId(ids: string[]): Promise<string[]> {
   if (!ids.length) return [];
