@@ -151,7 +151,9 @@ export async function plikCV(plik: FormDataEntryValue | null): Promise<null | st
 }
 
 export async function zapiszCV(folder: string, cv: { nazwa: string; dane: Buffer; typ: string }): Promise<string | null> {
-  const sciezka = `${folder}/${Date.now()}-${randomBytes(4).toString("hex")}-${cv.nazwa.replace(/\s+/g, "_")}`;
+  // Supabase Storage odrzuca polskie litery w kluczu (InvalidKey), więc nazwa w ścieżce tylko ASCII
+  const ascii = cv.nazwa.replace(/ł/g, "l").replace(/Ł/g, "L").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\w.\-]+/g, "_");
+  const sciezka = `${folder}/${Date.now()}-${randomBytes(4).toString("hex")}-${ascii}`;
   const { error } = await supabaseAdmin.storage.from("praca-cv").upload(sciezka, cv.dane, { contentType: cv.typ, upsert: false });
   if (error) {
     console.error("[praca cv]", error.message);
