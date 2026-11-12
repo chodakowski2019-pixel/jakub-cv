@@ -15,5 +15,5 @@ export const dynamic = "force-dynamic";
 
 export default async function PodgladBrunoLogowanie() {
   if (await zalogowanyEmail()) redirect("/bruno/panel");
-  return <LogowanieForm google />;
+  return <LogowanieForm />;
 }

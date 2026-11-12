@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { FirmaAdmin, HandlowiecAdmin, Wyszukiwanie } from "@/lib/bruno/praca/admin";
 import g from "./gielda.module.css";
+import AdminUsun from "./admin-usun";
 
 // 11.11 (USER_001): panel administratora giełdy (konto chodak.job72@gmail.com), dwie zakładki w układzie panelu Bruno:
 // „Handlowcy” = wszystkie profile, klik otwiera profil z odhaczeniem „Zweryfikowany”; „Firmy” = konta firm i ich wyszukiwania.
@@ -52,6 +53,7 @@ export function AdminHandlowcy({ lista }: { lista: HandlowiecAdmin[] }) {
                   <th>Firmy</th>
                   <th>Wysłano</th>
                   <th>Status</th>
+                  <th />
                 </tr>
               </thead>
               <tbody>
@@ -80,6 +82,7 @@ export function AdminHandlowcy({ lista }: { lista: HandlowiecAdmin[] }) {
                       <td>{x.firm}</td>
                       <td>{data(x.wyslano)}</td>
                       <td><span className={`p-chip ${chip}`}>{nazwa}</span></td>
+                      <td><AdminUsun id={x.id} imie={x.imie} /></td>
                     </tr>
                   );
                 })}

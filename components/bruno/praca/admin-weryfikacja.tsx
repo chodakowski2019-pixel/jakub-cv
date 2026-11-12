@@ -4,11 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { StatusProfilu } from "@/lib/bruno/praca/profil-handlowca";
 import g from "./gielda.module.css";
+import AdminUsun from "./admin-usun";
 
 // 11.11 (USER_001): administrator giełdy odhacza w profilu handlowca „Zweryfikowany”.
 // Zaznaczone = status „zatwierdzony” (profil widzą firmy), odznaczone = „weryfikacja”. Osobno „Odrzuć”.
 // Pierwsze zaznaczenie wysyła handlowcowi e-mail „Twój profil został zweryfikowany” (raz na profil, pilnuje serwer).
-export default function AdminWeryfikacja({ id, status: start }: { id: string; status: StatusProfilu }) {
+export default function AdminWeryfikacja({ id, imie, status: start }: { id: string; imie: string; status: StatusProfilu }) {
   const router = useRouter();
   const [status, setStatus] = useState(start);
   const [stan, setStan] = useState<"" | "zapis">("");
@@ -43,9 +44,12 @@ export default function AdminWeryfikacja({ id, status: start }: { id: string; st
         </span>
       </label>
       {blad && <span className={g.bladPola} style={{ marginTop: 0 }}>{blad}</span>}
-      <button type="button" className="p-btn p-btn-2 p-btn-s" disabled={stan === "zapis"} onClick={() => ustaw(status === "odrzucony" ? "weryfikacja" : "odrzucony")}>
-        {status === "odrzucony" ? "Cofnij odrzucenie" : "Odrzuć profil"}
-      </button>
+      <div style={{ display: "flex", gap: 8 }}>
+        <button type="button" className="p-btn p-btn-2 p-btn-s" disabled={stan === "zapis"} onClick={() => ustaw(status === "odrzucony" ? "weryfikacja" : "odrzucony")}>
+          {status === "odrzucony" ? "Cofnij odrzucenie" : "Odrzuć profil"}
+        </button>
+        <AdminUsun id={id} imie={imie} wroc />
+      </div>
     </div>
   );
 }

@@ -5,7 +5,6 @@ import { pobierzKonto } from "@/lib/bruno/db";
 import { czySzef, pobierzFirme } from "@/lib/bruno/firmy";
 import { crmWlaczony } from "@/lib/bruno/lejek";
 import LogowanieForm from "@/components/podglad/aurora/logowanie-form";
-import { googleSkonfigurowany } from "@/lib/bruno/google";
 import { metadaneBruno, stronaBruno } from "@/components/podglad/bruno-lp/serwer";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +31,6 @@ export default async function BrunoLoginPage({ searchParams }: Props) {
     redirect(src ? `/bruno/panel?src=${encodeURIComponent(String(src))}` : "/bruno/panel");
   }
   // 9.10 (USER_001): logowanie w wyglądzie Aurora, EN domyślnie, PL z ?pl. 11.10: PL też na salesbruno.pl.
-  const { jezyk, naDomenie } = await stronaBruno(searchParams);
-  return <LogowanieForm google={googleSkonfigurowany()} jezykStart={jezyk} naDomenieStart={naDomenie} />;
+  const { jezyk } = await stronaBruno(searchParams);
+  return <LogowanieForm jezykStart={jezyk} />;
 }

@@ -78,12 +78,21 @@ export async function kontoHandlowca(id: string): Promise<{ email: string; cvNaz
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
+/** 12.11 (USER_001): gdy w profilu brakuje zdjęcia, CV albo obu, mail po weryfikacji prosi o dodanie. */
+function dopiskBraki(brakZdjecia: boolean, brakCV: boolean): string {
+  if (brakZdjecia && brakCV) return "W profilu brakuje zdjęcia i CV. Dodaj je, a firmy chętniej się do Ciebie odezwą.";
+  if (brakZdjecia) return "W profilu brakuje zdjęcia. Dodaj je, a firmy chętniej się do Ciebie odezwą.";
+  if (brakCV) return "W profilu brakuje CV. Dodaj je, a firmy chętniej się do Ciebie odezwą.";
+  return "";
+}
+
 /** Treść maila po weryfikacji (tekst USER_001 z 11.11). Zwykły list, bez szablonu z grafiką. */
-function htmlZweryfikowany(imie: string): string {
+export function htmlZweryfikowany(imie: string, brakZdjecia = false, brakCV = false): string {
+  const braki = dopiskBraki(brakZdjecia, brakCV);
   return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#141416">
 <p>Dzień dobry${imie ? ` ${esc(imie)}` : ""},</p>
 <p>zweryfikowaliśmy Twój profil.</p>
-<p>Jeżeli chcesz go edytować, zaloguj się na: <a href="https://www.salesbruno.pl/login">www.salesbruno.pl/login</a></p>
+${braki ? `<p>${braki}</p>\n<p>Zaloguj się na: <a href="https://www.salesbruno.pl/login">www.salesbruno.pl/login</a></p>` : `<p>Jeżeli chcesz go edytować, zaloguj się na: <a href="https://www.salesbruno.pl/login">www.salesbruno.pl/login</a></p>`}
 <p>Pozdrawiam,<br/>Jakub Chodakowski</p>
 </div>`;
 }
@@ -93,14 +102,14 @@ export type WynikStatusu = { ok: boolean; /** "wyslany" = mail poszedł teraz, "
 /** Zmiana statusu profilu przez administratora. Nie rusza `updated_at`, żeby lista nie przeskakiwała.
  * Pierwsze przejście na „zatwierdzony” wysyła handlowcowi mail o weryfikacji. */
 export async function ustawStatusProfilu(id: string, status: StatusProfilu): Promise<WynikStatusu> {
-  const { data, error } = await supabaseAdmin.from("praca_profile_handlowcow").update({ status }).eq("konto_id", id).select("konto_id,odpowiedzi,mail_weryfikacji_at,konto:praca_konta(email)");
+  const { data, error } = await supabaseAdmin.from("praca_profile_handlowcow").update({ status }).eq("konto_id", id).select("konto_id,odpowiedzi,mail_weryfikacji_at,zdjecie_sciezka,konto:praca_konta(email,cv_sciezka)");
   if (error) console.error("[praca admin] status", error.message);
-  const w = data?.[0] as unknown as { odpowiedzi: Odpowiedzi; mail_weryfikacji_at: string | null; konto: { email: string } | null } | undefined;
+  const w = data?.[0] as unknown as { odpowiedzi: Odpowiedzi; mail_weryfikacji_at: string | null; zdjecie_sciezka: string | null; konto: { email: string; cv_sciezka: string | null } | null } | undefined;
   if (!w) return { ok: false, mail: null };
   if (status !== "zatwierdzony" || w.mail_weryfikacji_at || !w.konto?.email) return { ok: true, mail: null };
   try {
     const imie = t(w.odpowiedzi?.imie).trim().split(/\s+/)[0] ?? "";
-    const r = await wyslij({ do: w.konto.email, od: NADAWCA_WEBINARU, replyTo: ADRES_WEBINARU, rodzaj: "inny", temat: "Twój profil został zweryfikowany", html: htmlZweryfikowany(imie) });
+    const r = await wyslij({ do: w.konto.email, od: NADAWCA_WEBINARU, replyTo: ADRES_WEBINARU, rodzaj: "inny", temat: "Twój profil został zweryfikowany", html: htmlZweryfikowany(imie, !w.zdjecie_sciezka, !w.konto.cv_sciezka) });
     if (r.pominiety) return { ok: true, mail: "pominiety" };
     await supabaseAdmin.from("praca_profile_handlowcow").update({ mail_weryfikacji_at: new Date().toISOString() }).eq("konto_id", id);
     return { ok: true, mail: "wyslany" };
@@ -108,6 +117,28 @@ export async function ustawStatusProfilu(id: string, status: StatusProfilu): Pro
     console.error("[praca admin] mail weryfikacji", e);
     return { ok: true, mail: "blad" };
   }
+}
+
+/** 12.11 (USER_001): „X” przy handlowcu = usunięcie z bazy. Kasuje konto handlowca; profil, odblokowania, alerty i zapisane
+ * idą kaskadą w bazie, zgłoszenia i wyszukiwania zostają z pustym kontem. Pliki (CV, zdjęcie) usuwane z kubełka osobno.
+ * Tylko konta typu „kandydat”, konta firm tą drogą nie da się usunąć. */
+export async function usunHandlowca(id: string): Promise<boolean> {
+  const [{ data: konto }, { data: profil }] = await Promise.all([
+    supabaseAdmin.from("praca_konta").select("id,cv_sciezka").eq("id", id).eq("typ", "kandydat").maybeSingle(),
+    supabaseAdmin.from("praca_profile_handlowcow").select("zdjecie_sciezka").eq("konto_id", id).maybeSingle(),
+  ]);
+  if (!konto) return false;
+  const { error } = await supabaseAdmin.from("praca_konta").delete().eq("id", id).eq("typ", "kandydat");
+  if (error) {
+    console.error("[praca admin] usuń handlowca", error.message);
+    return false;
+  }
+  const pliki = [konto.cv_sciezka as string | null, (profil?.zdjecie_sciezka as string | null) ?? null].filter((x): x is string => !!x);
+  if (pliki.length) {
+    const { error: e } = await supabaseAdmin.storage.from("praca-cv").remove(pliki);
+    if (e) console.error("[praca admin] usuń pliki", e.message);
+  }
+  return true;
 }
 
 export type FirmaAdmin = {

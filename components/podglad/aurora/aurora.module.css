@@ -101,15 +101,15 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 13px;
-  font-size: 19px;
+  gap: 12px;
+  font-size: 30px;
   font-weight: 500;
   letter-spacing: -0.01em;
   margin: 0 0 28px;
 }
 .logo i {
-  width: 22px;
-  height: 22px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 0 22px rgba(251, 201, 149, 0.55);
@@ -709,7 +709,8 @@
 .limonka .kolko {
   border-top-color: #9eab00;
 }
+/* 12.11 (USER_001): kropka w logo biała także w wersji limonkowej. */
 .limonka .logo i {
-  background: radial-gradient(circle at 32% 26%, #fdfee2 0%, #e3ef3a 34%, #9eab00 80%, #5e6a00 100%);
-  box-shadow: 0 0 22px rgba(212, 224, 0, 0.55);
+  background: #fff;
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
 }

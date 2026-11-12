@@ -58,7 +58,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     } else if (zakladka === "handlowiec" && id) {
       const [profil, dane, firmy] = await Promise.all([mojProfil(id), kontoHandlowca(id), firmyZKontaktem(id)]);
       if (!profil || !dane) redirect("/praca/panel");
-      tresc = <MojProfilWidok profil={profil} email={dane.email} cvNazwa={dane.cvNazwa} cvLink={dane.cvLink} firm={firmy.length} admin={{ gora: <AdminWeryfikacja key={id} id={id} status={profil.status} /> }} />;
+      tresc = <MojProfilWidok profil={profil} email={dane.email} cvNazwa={dane.cvNazwa} cvLink={dane.cvLink} firm={firmy.length} admin={{ gora: <AdminWeryfikacja key={id} id={id} imie={String(profil.odpowiedzi?.imie ?? "") || "tego handlowca"} status={profil.status} /> }} />;
     } else {
       tresc = <AdminHandlowcy lista={await listaHandlowcow()} />;
     }

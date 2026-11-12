@@ -2,13 +2,11 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import AuroraShell from "./aurora-shell";
 import s from "./aurora.module.css";
 import { useEffect } from "react";
-import { adresStrony, useJezyk, useNaDomenie } from "./jezyk";
+import { useJezyk } from "./jezyk";
 import type { Jezyk } from "@/lib/bruno/domeny";
-import GooglePrzycisk from "./google-przycisk";
 
 // 9.10 (USER_001): EN domyślnie, PL z ?pl. 11.10: PL też na salesbruno.pl.
 const T = {
@@ -30,7 +28,7 @@ const T = {
     loguje: "Logging in...",
     brak: "No access yet?",
     rejestracja: "Request access",
-    bladBrak: "This email has no account yet. Request access below.",
+    bladBrak: "This email has no account yet.",
     bladGoogle: "Google sign-in failed. Try again or use your password.",
     wygasl: "Your access has ended.",
   },
@@ -52,7 +50,7 @@ const T = {
     loguje: "Loguję...",
     brak: "Nie masz jeszcze dostępu?",
     rejestracja: "Chcę otrzymać dostęp",
-    bladBrak: "Ten e-mail nie ma jeszcze konta. Kliknij „Chcę otrzymać dostęp” poniżej.",
+    bladBrak: "Ten e-mail nie ma jeszcze konta.",
     bladGoogle: "Logowanie przez Google nie wyszło. Spróbuj ponownie albo użyj hasła.",
     wygasl: "Twój dostęp się skończył.",
   },
@@ -63,10 +61,10 @@ const T = {
 
 const wygladaJakEmail = (v: string) => /^\S+@\S+\.\S+$/.test(v.trim());
 
-export default function LogowanieForm({ google = false, jezykStart, naDomenieStart }: { google?: boolean; jezykStart?: Jezyk; naDomenieStart?: boolean }) {
+// 12.11 (USER_001): bez przycisku „Kontynuuj z Google” i bez „Nie masz jeszcze dostępu?”.
+export default function LogowanieForm({ jezykStart }: { jezykStart?: Jezyk }) {
   const router = useRouter();
   const jezyk = useJezyk(jezykStart);
-  const naDomenie = useNaDomenie(naDomenieStart);
   const x = T[jezyk];
   // Błąd z powrotu z Google (?blad=google / ?blad=wygasl).
   useEffect(() => {
@@ -159,7 +157,6 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
       <form onSubmit={zaloguj} className={`${s.pane} ${s.enter}`}>
         <h2>{x.h2}</h2>
         <p className={s.lead}>{x.lead}</p>
-        {google && <GooglePrzycisk jezyk={jezyk} />}
 
         <div className={s.f}>
           <label htmlFor="email">{x.email}</label>
@@ -207,10 +204,6 @@ export default function LogowanieForm({ google = false, jezykStart, naDomenieSta
         </button>
 
         <p className={s.login}>
-          {/* 25.10 (USER_001): rejestracja wyłączona, „Chcę otrzymać dostęp” = umów spotkanie online. */}
-          {x.brak} <Link href={adresStrony(jezyk, "demo", naDomenie)}>{x.rejestracja}</Link>
-        </p>
-        <p className={s.login} style={{ marginTop: 6 }}>
           <a href="#" onClick={(e) => { e.preventDefault(); setReset("formularz"); }}>{x.zapomnialem}</a>
         </p>
       </form>
