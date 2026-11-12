@@ -6,7 +6,8 @@ export default function BazaPasek({ cta }: { cta?: { href: string; tekst: string
   return (
     <div className={d.pasek}>
       <a className={d.logo} href="/praca" aria-label="Bruno Sales">
-        <img src="/bruno/ikona.svg" alt="" width={30} height={30} />
+        {/* 12.11 (USER_001): białe kółko na środku i większe = osobna ikona-praca.svg. */}
+        <img src="/bruno/ikona-praca.svg" alt="" width={30} height={30} />
         Bruno Sales
       </a>
       {cta && (

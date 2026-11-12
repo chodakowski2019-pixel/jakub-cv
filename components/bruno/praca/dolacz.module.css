@@ -364,6 +364,7 @@
   padding: 10px 10px 26px;
   display: flex;
   flex-direction: column;
+  transition: background 250ms ease, box-shadow 250ms ease;
 }
 .scena {
   height: 208px;
@@ -763,6 +764,9 @@
   padding-bottom: 40px;
   border-bottom: 1px solid #dcdde0;
 }
+.stopkaGora p span {
+  display: block;
+}
 .stopkaGora p {
   font-size: 21px;
   line-height: 1.25;
@@ -1059,12 +1063,29 @@ textarea.wpis {
   .pasek {
     padding: 0 12px;
   }
+  /* 12.11 (USER_001): na telefonie mniej pustego miejsca nad i pod „Przestań szukać” i „4 kroki”. */
+  .goraSiatka {
+    padding-bottom: 4px;
+  }
+  .sekcja {
+    padding: 28px 0;
+  }
   .kroki {
     grid-template-columns: minmax(0, 1fr);
+    margin-top: 22px !important;
+  }
+  /* 12.11 (USER_001): krok przy środku ekranu lekko na pomarańczowo (data-aktywny ustawia KrokiAktywny). */
+  .kroki li[data-aktywny] {
+    background: #fff4e8;
+    box-shadow: 0 0 0 1.5px rgba(240, 138, 43, 0.45);
   }
   .tabele {
     grid-template-columns: minmax(0, 1fr);
-    margin-top: 40px;
+    margin-top: 22px;
+  }
+  /* 12.11 (USER_001): nagłówek zawsze w dwóch liniach, każda mieści się na szerokość telefonu. */
+  .h1 {
+    font-size: min(28px, 6.4vw);
   }
   .karta {
     padding: 22px 18px;
@@ -1083,7 +1104,8 @@ textarea.wpis {
   }
   .cta,
   .opcja,
-  .postep i {
+  .postep i,
+  .kroki li {
     transition: none;
   }
   .cta:active,

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import KontoForm from "@/components/bruno/praca/konto-form";
 import BazaPasek from "@/components/bruno/praca/baza-pasek";
+import KrokiAktywny from "@/components/bruno/praca/kroki-aktywny";
 import d from "@/components/bruno/praca/dolacz.module.css";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
@@ -229,7 +230,7 @@ export default async function Page() {
             <h2 className={d.h2} style={{ marginTop: 0 }}>
               4 kroki
             </h2>
-            <ol className={d.kroki}>
+            <ol className={d.kroki} id="kroki-lista">
               {ETAPY.map(([h, p], i) => (
                 <li key={h}>
                   <Scena nr={i} />
@@ -241,6 +242,7 @@ export default async function Page() {
                 </li>
               ))}
             </ol>
+            <KrokiAktywny lista="kroki-lista" />
           </div>
         </section>
 
@@ -297,7 +299,10 @@ export default async function Page() {
         <div className={d.szer}>
           <div className={d.stopkaGora}>
             <div>
-              <p>Zakładasz profil raz. Firmy kontaktują się z Tobą.</p>
+              <p>
+                <span>Zakładasz profil raz.</span>
+                <span>Firmy kontaktują się z Tobą.</span>
+              </p>
               <a className={d.cta} href={cta.href}>
                 {doProfilu ? "Przejdź do profilu" : "Załóż profil bezpłatnie"}
               </a>
