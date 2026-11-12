@@ -7,8 +7,8 @@ import { FirmyWidok, MojProfilWidok, StartGieldy } from "@/components/bruno/prac
 import ProfilEdycja from "@/components/bruno/praca/profil-edycja";
 import g from "@/components/bruno/praca/gielda.module.css";
 import { kontaktow } from "@/lib/bruno/praca/kontakty-cennik";
-import { czyAdminGieldy, firmyIWyszukiwania, kontoHandlowca, listaHandlowcow } from "@/lib/bruno/praca/admin";
-import { AdminFirmy, AdminHandlowcy } from "@/components/bruno/praca/admin-widoki";
+import { czyAdminGieldy, firmyIWyszukiwania, kontoHandlowca, listaHandlowcow, listaNiedokonczonych } from "@/lib/bruno/praca/admin";
+import { AdminFirmy, AdminHandlowcy, AdminNiedokonczone } from "@/components/bruno/praca/admin-widoki";
 import AdminWeryfikacja from "@/components/bruno/praca/admin-weryfikacja";
 import SzukajHandlowca from "@/components/bruno/praca/szukaj-handlowca";
 import WynikSzukania from "@/components/bruno/praca/wynik-szukania";
@@ -55,6 +55,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     let tresc: React.ReactNode;
     if (zakladka === "firmy") {
       tresc = <AdminFirmy {...(await firmyIWyszukiwania())} />;
+    } else if (zakladka === "niedokonczone") {
+      tresc = <AdminNiedokonczone lista={await listaNiedokonczonych()} />;
     } else if (zakladka === "handlowiec" && id) {
       const [profil, dane, firmy] = await Promise.all([mojProfil(id), kontoHandlowca(id), firmyZKontaktem(id)]);
       if (!profil || !dane) redirect("/praca/panel");

@@ -8,6 +8,12 @@ import { CV_MAKS_B, DNI_WERYFIKACJI, FOTO_BOK, KROKI, bladPola, type Odpowiedzi,
 // Szkic trzymany w sessionStorage, żeby odświeżenie strony nie kasowało odpowiedzi.
 const SZKIC = "praca_profil_szkic";
 
+// 12.11 (USER_001): postęp formularza (krok + wpisane odpowiedzi) leci też do bazy, administrator widzi go w zakładce „Niedokończone”.
+// Bez czekania na odpowiedź: błąd zapisu nie może zatrzymać handlowca.
+function zapiszPostep(krok: number, odpowiedzi: Odpowiedzi) {
+  fetch("/api/bruno/praca/profil-handlowca/postep", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ krok, odpowiedzi }), keepalive: true }).catch(() => {});
+}
+
 // 12.11 (USER_001): po „Wyślij do weryfikacji” okno „Ostatnie pytanie” z jednym polem „Skąd się o nas dowiedziałeś?”,
 // potem komunikat o weryfikacji. Pytanie raz; odpowiedź = źródło kanału.
 export function Weryfikacja({ email, skad: start = null }: { email: string; skad?: string | null }) {
@@ -104,10 +110,16 @@ export default function ProfilHandlowcaForm({ email, imie, telefon }: { email: s
   }
 
   useEffect(() => {
+    let szkic: Odpowiedzi = odp;
     try {
       const s = sessionStorage.getItem(SZKIC);
-      if (s) setOdp((o) => ({ ...o, ...JSON.parse(s) }));
+      if (s) {
+        szkic = { ...odp, ...JSON.parse(s) };
+        setOdp(szkic);
+      }
     } catch {}
+    zapiszPostep(0, szkic);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function ustaw(klucz: string, wartosc: string | string[]) {
@@ -146,7 +158,10 @@ export default function ProfilHandlowcaForm({ email, imie, telefon }: { email: s
     const b = bledyKroku(krok);
     setBledy(b);
     if (Object.keys(b).length) return;
-    if (krok + 1 < KROKI.length) return idzDo(krok + 1);
+    if (krok + 1 < KROKI.length) {
+      zapiszPostep(krok + 1, odp);
+      return idzDo(krok + 1);
+    }
     if (!zgoda) return setBlad("Zaznacz zgodę na pokazanie profilu pracodawcom.");
     setBlad("");
     setStan("wysylam");

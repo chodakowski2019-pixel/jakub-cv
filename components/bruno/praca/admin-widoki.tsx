@@ -1,5 +1,6 @@
 import Link from "next/link";
-import type { FirmaAdmin, HandlowiecAdmin, Wyszukiwanie } from "@/lib/bruno/praca/admin";
+import type { FirmaAdmin, HandlowiecAdmin, NiedokonczonyAdmin, Wyszukiwanie } from "@/lib/bruno/praca/admin";
+import { KROKI } from "@/lib/bruno/praca/profil-handlowca";
 import g from "./gielda.module.css";
 import AdminUsun from "./admin-usun";
 
@@ -86,6 +87,93 @@ export function AdminHandlowcy({ lista }: { lista: HandlowiecAdmin[] }) {
                     </tr>
                   );
                 })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// 12.11 (USER_001): „Niedokończone” = konta handlowców bez wysłanego profilu i krok, na którym przerwali formularz.
+// Formularz ma KROKI.length kroków; kropki = kroki, wypełnione = te, do których handlowiec doszedł.
+function Etap({ x }: { x: NiedokonczonyAdmin }) {
+  if (x.krok === null) return <span className="p-chip">{x.bezDanych ? "Brak danych (konto sprzed 12.11)" : "Nie otworzył formularza"}</span>;
+  return (
+    <span>
+      <span style={{ display: "flex", gap: 4, marginBottom: 6 }} aria-hidden="true">
+        {KROKI.map((k, i) => (
+          <i key={k.tytul} style={{ width: 18, height: 6, borderRadius: 3, background: i <= x.krok! ? "#141416" : "#dcdce0" }} />
+        ))}
+      </span>
+      <b>
+        Krok {x.krok + 1} z {KROKI.length}: {KROKI[x.krok].tytul}
+      </b>
+      <small>
+        Wpisane pola: {x.wpisane} z {x.pol}
+      </small>
+    </span>
+  );
+}
+
+export function AdminNiedokonczone({ lista }: { lista: NiedokonczonyAdmin[] }) {
+  const wFormularzu = lista.filter((x) => x.krok !== null);
+  return (
+    <div className="p-strona">
+      <div className="p-naglowek">
+        <h1>Niedokończone</h1>
+      </div>
+      <div className="p-kafle">
+        {(
+          [
+            ["Konto bez profilu", lista.length],
+            ["Nie zaczęli albo brak danych", lista.length - wFormularzu.length],
+            ["Przerwali w formularzu", wFormularzu.length],
+            ["Doszli do ostatniego kroku", wFormularzu.filter((x) => x.krok === KROKI.length - 1).length],
+          ] as [string, number][]
+        ).map(([et, n]) => (
+          <div className="p-kafel" key={et}>
+            <span className="p-kafel-et">{et}</span>
+            <span className="p-kafel-wart">{n}</span>
+          </div>
+        ))}
+      </div>
+      <div className="p-karta">
+        {lista.length === 0 ? (
+          <p className="p-pusto">Każdy, kto założył konto, wysłał profil.</p>
+        ) : (
+          <div className="p-tabela-wrap">
+            <table className={`p-tabela ${g.adminTabela}`}>
+              <thead>
+                <tr>
+                  <th>Handlowiec</th>
+                  <th>Kontakt</th>
+                  <th>Etap formularza</th>
+                  <th>Konto od</th>
+                  <th>Ostatnio w formularzu</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {lista.map((x) => (
+                  <tr key={x.id}>
+                    <td>
+                      <span className="p-osoba">
+                        <span className="p-inicjal" style={{ width: 36, height: 36 }}>{(x.imie || x.email)[0]?.toUpperCase()}</span>
+                        <b>{x.imie || "Bez imienia"}</b>
+                      </span>
+                    </td>
+                    <td>
+                      {x.telefon || "brak telefonu"}
+                      <small>{x.email}</small>
+                    </td>
+                    <td><Etap x={x} /></td>
+                    <td>{dataGodz(x.od)}</td>
+                    <td>{x.ostatnio ? dataGodz(x.ostatnio) : "-"}</td>
+                    <td><AdminUsun id={x.id} imie={x.imie || x.email} /></td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

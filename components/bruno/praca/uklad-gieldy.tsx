@@ -36,6 +36,8 @@ const MENU: Record<"kandydat" | "pracodawca" | "admin", Sekcja[]> = {
       tytul: "Giełda",
       linki: [
         { nazwa: "Handlowcy", ikona: IK.ludzie },
+        // 12.11 (USER_001): konta bez wysłanego profilu i etap, na którym przerwali formularz.
+        { z: "niedokonczone", nazwa: "Niedokończone", ikona: IK.profil },
         { z: "firmy", nazwa: "Firmy", ikona: IK.firmy },
       ],
     },

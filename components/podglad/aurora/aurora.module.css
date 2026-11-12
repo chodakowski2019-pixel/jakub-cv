@@ -561,8 +561,11 @@
 /* 14.10 (USER_001, telefon): zorza na całą szerokość bez czarnych pasków (bez odstępu i zaokrągleń),
    bez tytułu i kroków; zostaje pas z zorzą i logo, pod nim formularz. */
 @media (max-width: 900px) {
+  /* 12.11 (USER_001): odstęp logo → „Zaloguj się” o połowę mniejszy (198 → ok. 100 px):
+     pas zorzy nie rośnie ponad 200 px, logo przy dolnej krawędzi pasa, mniej miejsca nad formularzem. */
   .wrap {
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
     gap: 0;
     padding: 0;
   }
@@ -576,8 +579,8 @@
     display: none;
   }
   .artInner {
-    justify-content: center;
-    padding: 0 24px;
+    justify-content: flex-end;
+    padding: 0 24px 32px;
   }
   .leadBezTelefonu {
     display: none;
@@ -595,7 +598,8 @@
     margin: 0;
   }
   .side {
-    padding: 32px 16px 48px;
+    justify-content: flex-start;
+    padding: 66px 16px 48px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

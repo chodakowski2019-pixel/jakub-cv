@@ -2,7 +2,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { wyslij } from "@/lib/bruno/mail";
 import { NADAWCA_WEBINARU, ADRES_WEBINARU } from "@/lib/bruno/mail-webinar";
 import { linkCV, type KontoPraca } from "./konta";
-import { miastoZWielkiej, telefonGrupami, type Odpowiedzi, type StatusProfilu } from "./profil-handlowca";
+import { KROKI, miastoZWielkiej, telefonGrupami, type Odpowiedzi, type StatusProfilu } from "./profil-handlowca";
 
 // 11.11 (USER_001): konto właściciela giełdy. Po zalogowaniu widzi w panelu (/praca/panel) dwie zakładki:
 // „Handlowcy” (wszystkie profile, wejście w profil, odhaczenie „zweryfikowany”) i „Firmy” (konta firm i ich wyszukiwania).
@@ -67,6 +67,54 @@ export async function listaHandlowcow(): Promise<HandlowiecAdmin[]> {
       wyslano: w.updated_at,
     })),
   );
+}
+
+/** 12.11: od kiedy formularz zapisuje etap. Starsze konta bez zapisu = „brak danych”, nie „nie otworzył”. */
+const ZAPIS_ETAPOW_OD = "2026-11-12T20:00:00Z";
+
+export type NiedokonczonyAdmin = {
+  id: string;
+  imie: string;
+  email: string;
+  telefon: string;
+  od: string;
+  /** Najdalszy krok formularza (0 = pierwszy), null = brak zapisu. */
+  krok: number | null;
+  /** Konto sprzed zapisu etapów (nie wiadomo, czy otworzył formularz). */
+  bezDanych: boolean;
+  /** Ile pól wpisał / ile jest wszystkich. */
+  wpisane: number;
+  pol: number;
+  ostatnio: string | null;
+};
+
+/** 12.11 (USER_001): konta handlowców, którzy założyli konto, ale nie wysłali profilu, z etapem formularza. Najnowsze na górze. */
+export async function listaNiedokonczonych(): Promise<NiedokonczonyAdmin[]> {
+  const [{ data: konta, error }, { data: profile }] = await Promise.all([
+    supabaseAdmin.from("praca_konta").select("id,email,imie,telefon,created_at,formularz_krok,formularz_szkic,formularz_at").eq("typ", "kandydat").order("created_at", { ascending: false }).limit(2000),
+    supabaseAdmin.from("praca_profile_handlowcow").select("konto_id"),
+  ]);
+  if (error) console.error("[praca admin] niedokończone", error.message);
+  const zProfilem = new Set((profile ?? []).map((x) => x.konto_id as string));
+  const pytania = KROKI.flatMap((k) => k.pytania);
+  return (konta ?? [])
+    .filter((k) => !zProfilem.has(k.id as string))
+    .map((k) => {
+      const s = (k.formularz_szkic ?? {}) as Odpowiedzi;
+      const krok = (k.formularz_krok as number | null) ?? null;
+      return {
+        id: k.id as string,
+        imie: t(s.imie) || (k.imie as string | null) || "",
+        email: k.email as string,
+        telefon: telefonGrupami(t(s.telefon) || (k.telefon as string | null) || ""),
+        od: k.created_at as string,
+        krok,
+        bezDanych: krok === null && (k.created_at as string) < ZAPIS_ETAPOW_OD,
+        wpisane: pytania.filter((p) => [s[p.klucz] ?? ""].flat().some((v) => String(v).trim())).length,
+        pol: pytania.length,
+        ostatnio: (k.formularz_at as string | null) ?? null,
+      };
+    });
 }
 
 /** Dane konta handlowca do widoku profilu u administratora (e-mail, CV z linkiem na godzinę). */
