@@ -37,9 +37,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   return (
     <div className={g.publiczna}>
       <header className={g.publicznaGora}>
-        <Link href="/wyszukiwarka" className={g.publicznaLogo}>Sales Bruno</Link>
-        <Link href={konto ? "/praca/panel" : "/login"} className="p-btn p-btn-2 p-btn-s">
-          {konto ? "Mój panel" : "Zaloguj się"}
+        {/* 13.11 (USER_001): limonkowa kropka między „Sales” a „Bruno”; zamiast „Mój panel” przycisk dla handlowców → /praca. */}
+        <Link href="/wyszukiwarka" className={g.publicznaLogo} aria-label="Sales Bruno">
+          Sales<i aria-hidden />Bruno
+        </Link>
+        <Link href="/praca" className="p-btn p-btn-2 p-btn-s">
+          Dołącz jako handlowiec
         </Link>
       </header>
       <main className={g.publicznaTresc}>
