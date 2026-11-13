@@ -4,7 +4,7 @@ import BazaPasek from "@/components/bruno/praca/baza-pasek";
 import KontoForm from "@/components/bruno/praca/konto-form";
 import d from "@/components/bruno/praca/dolacz.module.css";
 import h from "@/components/bruno/praca/handlowcy.module.css";
-import { getStripeBruno } from "@/lib/bruno/stripe";
+import { getStripePraca, kluczStripePraca } from "@/lib/bruno/stripe";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 import { przypiszZakup, zakupPoSesji, zakupZeStripe } from "@/lib/bruno/praca/kontakty";
 import { kontaktow } from "@/lib/bruno/praca/kontakty-cennik";
@@ -19,9 +19,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const sp = await searchParams;
   const sesja = typeof sp.sesja === "string" ? sp.sesja.slice(0, 200) : "";
   let zakup = sesja ? await zakupPoSesji(sesja) : null;
-  if (!zakup && sesja.startsWith("cs_") && process.env.BRUNO_STRIPE_SECRET_KEY) {
+  if (!zakup && sesja.startsWith("cs_") && kluczStripePraca()) {
     try {
-      zakup = await zakupZeStripe(await getStripeBruno().checkout.sessions.retrieve(sesja));
+      zakup = await zakupZeStripe(await getStripePraca().checkout.sessions.retrieve(sesja));
     } catch (e) {
       console.error("[praca kontakty] sesja", e);
     }

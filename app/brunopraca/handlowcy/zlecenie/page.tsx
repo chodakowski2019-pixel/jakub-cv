@@ -4,7 +4,7 @@ import BazaPasek from "@/components/bruno/praca/baza-pasek";
 import KontoForm from "@/components/bruno/praca/konto-form";
 import d from "@/components/bruno/praca/dolacz.module.css";
 import h from "@/components/bruno/praca/handlowcy.module.css";
-import { getStripeBruno } from "@/lib/bruno/stripe";
+import { getStripePraca, kluczStripePraca } from "@/lib/bruno/stripe";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 import { GWARANCJA, SUBSKRYPCJA_PROG } from "@/lib/bruno/praca/kontakty-cennik";
 import { przypiszZlecenie, zleceniePoSesji, zlecenieZeStripe } from "@/lib/bruno/praca/zlecenia";
@@ -19,9 +19,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const sp = await searchParams;
   const sesja = typeof sp.sesja === "string" ? sp.sesja.slice(0, 200) : "";
   let zlecenie = sesja ? await zleceniePoSesji(sesja) : null;
-  if (!zlecenie && sesja.startsWith("cs_") && process.env.BRUNO_STRIPE_SECRET_KEY) {
+  if (!zlecenie && sesja.startsWith("cs_") && kluczStripePraca()) {
     try {
-      zlecenie = await zlecenieZeStripe(await getStripeBruno().checkout.sessions.retrieve(sesja));
+      zlecenie = await zlecenieZeStripe(await getStripePraca().checkout.sessions.retrieve(sesja));
     } catch (e) {
       console.error("[praca zlecenia] sesja", e);
     }

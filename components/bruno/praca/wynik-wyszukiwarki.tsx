@@ -5,6 +5,7 @@ import { odczytajOpis } from "@/lib/bruno/praca/opis-szukania";
 import { odblokowaneId, szukajHandlowcow, zamazaneZdjecia, zapiszWyszukiwanie, type Filtry } from "@/lib/bruno/praca/handlowcy";
 import { PACZKA, znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
 import { maKryteria } from "@/lib/bruno/praca/zlecenia";
+import { kluczStripePraca } from "@/lib/bruno/stripe";
 import g from "./gielda.module.css";
 import h from "./handlowcy.module.css";
 
@@ -104,7 +105,7 @@ export default async function WynikWyszukiwarki({ opis: surowy, kontoId }: { opi
         opis={opis}
         doOdblokowania={top.filter((k) => !juzMam.has(k.id)).map((k) => k.id)}
         maKryteria={maKryteria(filtry)}
-        test={!process.env.BRUNO_STRIPE_SECRET_KEY && process.env.NODE_ENV !== "production"}
+        test={!kluczStripePraca() && process.env.NODE_ENV !== "production"}
       />
     </div>
   );

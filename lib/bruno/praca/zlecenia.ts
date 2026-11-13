@@ -2,7 +2,7 @@ import type Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase";
 import { SKRZYNKA_JAKUBA, wyslij } from "@/lib/bruno/mail";
 import { szukajHandlowcow, type Filtry } from "./handlowcy";
-import { getStripeBruno } from "@/lib/bruno/stripe";
+import { getStripePraca } from "@/lib/bruno/stripe";
 import { GWARANCJA, SUBSKRYPCJA_PROG } from "./kontakty-cennik";
 import { odczytajOpis } from "./opis-szukania";
 
@@ -191,7 +191,7 @@ export async function anulujSubskrypcje(kontoId: string, zlecenieId: string): Pr
   if (!z) return false;
   if (z.stripe_sub) {
     try {
-      await getStripeBruno().subscriptions.update(z.stripe_sub, { cancel_at_period_end: true });
+      await getStripePraca().subscriptions.update(z.stripe_sub, { cancel_at_period_end: true });
     } catch (e) {
       console.error("[praca zlecenia] anuluj", e);
       return false;

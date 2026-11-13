@@ -24,10 +24,38 @@ export async function POST(req: NextRequest) {
 
   const raw = await req.text();
   let event: Stripe.Event;
+  // 13.11: wyszukiwarka handlowców płaci na głównym koncie Stripe (Love My Self), które ma własny sekret webhooka.
+  let zKontaPraca = false;
   try {
     event = getStripeBruno().webhooks.constructEvent(raw, sig, secret);
   } catch (err) {
-    return NextResponse.json({ error: `Invalid signature: ${err}` }, { status: 400 });
+    const sekretPraca = process.env.BRUNO_PRACA_STRIPE_WEBHOOK_SECRET;
+    try {
+      if (!sekretPraca) throw err;
+      event = getStripeBruno().webhooks.constructEvent(raw, sig, sekretPraca);
+      zKontaPraca = true;
+    } catch {
+      return NextResponse.json({ error: `Invalid signature: ${err}` }, { status: 400 });
+    }
+  }
+
+  // Główne konto obsługuje też inne produkty (lovemyself.pl). Stąd bierzemy wyłącznie zdarzenia wyszukiwarki handlowców.
+  if (zKontaPraca) {
+    try {
+      const o = event.data.object as { metadata?: Record<string, string> | null };
+      if (o.metadata?.produkt === "praca" && ["kontakty", "subskrypcja", "gwarancja"].includes(o.metadata.rodzaj ?? "")) {
+        if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") await platnoscPraca(event.data.object as Stripe.Checkout.Session);
+        else if (event.type === "customer.subscription.updated" || event.type === "customer.subscription.deleted") {
+          const sub = event.data.object as Stripe.Subscription;
+          const koniec = event.type === "customer.subscription.deleted" || ["canceled", "unpaid", "incomplete_expired"].includes(sub.status);
+          if (koniec && sub.metadata.rodzaj === "subskrypcja") await (await import("@/lib/bruno/praca/zlecenia")).zakonczSubskrypcje(sub.id);
+        }
+      }
+    } catch (e) {
+      console.error("[bruno stripe praca] webhook", e);
+      return NextResponse.json({ error: "handler" }, { status: 500 });
+    }
+    return NextResponse.json({ received: true });
   }
 
   try {

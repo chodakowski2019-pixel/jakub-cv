@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
-import { getStripeBruno } from "@/lib/bruno/stripe";
+import { getStripePraca, kluczStripePraca } from "@/lib/bruno/stripe";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 import { GWARANCJA, SUBSKRYPCJA_ZL } from "@/lib/bruno/praca/kontakty-cennik";
 import { odczytajOpis } from "@/lib/bruno/praca/opis-szukania";
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   const cena = rodzaj === "gwarancja" ? GWARANCJA.cena : SUBSKRYPCJA_ZL;
   const powrot = `/wyszukiwarka?q=${encodeURIComponent(opis)}`;
 
-  if (!process.env.BRUNO_STRIPE_SECRET_KEY) {
+  if (!kluczStripePraca()) {
     if (process.env.NODE_ENV === "production") return NextResponse.json({ ok: false, blad: "Płatność online nie jest jeszcze włączona." }, { status: 503 });
     const sesja = `test_${randomBytes(12).toString("hex")}`;
     await zapiszZlecenie({ sesja, rodzaj, email: pracodawca?.email ?? null, opis, kwotaGr: cena * 100, test: true });
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
   };
   const sesja =
     rodzaj === "gwarancja"
-      ? await getStripeBruno().checkout.sessions.create({
+      ? await getStripePraca().checkout.sessions.create({
           ...wspolne,
           mode: "payment",
           line_items: [{ price_data: { currency: "pln", unit_amount: cena * 100, product_data: { name: nazwa } }, quantity: 1 }],
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
           payment_intent_data: { metadata },
           invoice_creation: { enabled: true, invoice_data: { metadata, description: nazwa } },
         })
-      : await getStripeBruno().checkout.sessions.create({
+      : await getStripePraca().checkout.sessions.create({
           ...wspolne,
           mode: "subscription",
           line_items: [{ price_data: { currency: "pln", unit_amount: cena * 100, recurring: { interval: "month" }, product_data: { name: nazwa } }, quantity: 1 }],

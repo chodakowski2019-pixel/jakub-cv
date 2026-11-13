@@ -18,6 +18,23 @@ export function getStripeBruno(): Stripe {
   return _stripe;
 }
 
+// 13.11 (USER_001: „linki do płatności są nie do tego konta”): wyszukiwarka handlowców (paczka, subskrypcja, gwarancja)
+// rozlicza się na głównym koncie Stripe „Love My Self” (acct_1TlOUW…, nazwa publiczna Bruno AI), klucz
+// BRUNO_PRACA_STRIPE_SECRET_KEY, webhook z sekretem BRUNO_PRACA_STRIPE_WEBHOOK_SECRET. Bez tego klucza zostaje konto Bruno AI.
+// Ogłoszenia o pracę i Bruno Pro zostają na BRUNO_STRIPE_SECRET_KEY.
+let _stripePraca: Stripe | null = null;
+export function kluczStripePraca(): string | undefined {
+  return process.env.BRUNO_PRACA_STRIPE_SECRET_KEY || process.env.BRUNO_STRIPE_SECRET_KEY;
+}
+export function getStripePraca(): Stripe {
+  if (!_stripePraca) {
+    const key = kluczStripePraca();
+    if (!key) throw new Error("BRUNO_PRACA_STRIPE_SECRET_KEY missing");
+    _stripePraca = new Stripe(key);
+  }
+  return _stripePraca;
+}
+
 /** Produkt „Bruno Pro” w Stripe (konto Bruno AI). 11.10: roczny dostęp = płatność jednorazowa na ten produkt. */
 export const PRODUKT_PRO = process.env.BRUNO_STRIPE_PRODUKT ?? "prod_VPwr1XHuTOmD4W";
 /** 11.10 (USER_001): rok = jednorazowo 2 500 zł / 2 500 $ (w groszach / centach), dostęp na 365 dni bez odnawiania. */
