@@ -7,7 +7,6 @@ import { PACZKA, znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
 import { maKryteria } from "@/lib/bruno/praca/zlecenia";
 import { kluczStripePraca } from "@/lib/bruno/stripe";
 import g from "./gielda.module.css";
-import h from "./handlowcy.module.css";
 
 // 12.11 (USER_001): wynik publicznej wyszukiwarki /wyszukiwarka. Liczba dopasowanych + 3 najlepiej dopasowanych handlowców
 // (zdjęcie, jeśli jest, tylko jako zamazana plama), pod spodem zakup: paczka, subskrypcja, gwarancja.
@@ -39,66 +38,64 @@ export default async function WynikWyszukiwarki({ opis: surowy, kontoId }: { opi
           </div>
         </div>
       </div>
+      {/* 13.11 (USER_001: „w lepszej tabeli poukładane i cienka obwódka wokół”): karta = nagłówek + wiersze etykieta / wartość. */}
       {top.length > 0 && (
-        <div className={g.zmienneLp}>
-          <ul className={`${h.siatka} ${g.siatkaTop}`}>
-            {top.map((k) => (
-              <li key={k.id} className={h.karta}>
-                <div className={h.kartaGora}>
-                  {zdjecia[k.id] ? (
-                    <span className={g.fotoZamazane} title="Zdjęcie widoczne po odblokowaniu">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={zdjecia[k.id]} alt="" />
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="5" y="11" width="14" height="9" rx="2" />
-                        <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-                      </svg>
-                    </span>
-                  ) : (
-                    <span className={h.inicjal} aria-hidden="true">{k.imie[0]}</span>
-                  )}
+        <ul className={g.kartyH}>
+          {top.map((k) => (
+            <li key={k.id} className={g.kartaH}>
+              <div className={g.kartaHGora}>
+                {zdjecia[k.id] ? (
+                  <span className={g.fotoZamazane} title="Zdjęcie widoczne po odblokowaniu">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={zdjecia[k.id]} alt="" />
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="5" y="11" width="14" height="9" rx="2" />
+                      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                    </svg>
+                  </span>
+                ) : (
+                  <span className={g.kartaHInicjal} aria-hidden="true">{k.imie[0]}</span>
+                )}
+                <div>
+                  <h3>{k.imie}</h3>
+                  <p>{[k.stanowisko, k.miasto].filter(Boolean).join(" · ")}</p>
+                </div>
+                {juzMam.has(k.id) && <span className="p-chip">Kontakt w panelu</span>}
+              </div>
+              <dl className={g.kartaHWiersze}>
+                {k.dopasowanie != null && (
                   <div>
-                    <h3 className={h.imie}>{k.imie}</h3>
-                    <p className={h.rola}>{[k.stanowisko, k.miasto].filter(Boolean).join(" · ")}</p>
-                    {juzMam.has(k.id) && <p className={h.ok}>Kontakt już w panelu</p>}
+                    <dt>Dopasowanie</dt>
+                    <dd>
+                      <b>{k.dopasowanie} %</b>
+                      <span className={g.kartaHPasek} aria-hidden="true">
+                        <i style={{ width: `${k.dopasowanie}%` }} />
+                      </span>
+                    </dd>
                   </div>
+                )}
+                <div>
+                  <dt>W sprzedaży</dt>
+                  <dd>{k.lata}</dd>
                 </div>
-                <div className={h.kartaTresc}>
-                  <div className={h.fakty}>
-                    <div>
-                      <span className={h.etykieta}>W sprzedaży</span>
-                      <p>{k.lata}</p>
-                    </div>
-                    {k.dopasowanie != null && (
-                      <div>
-                        <span className={h.etykieta}>Dopasowanie</span>
-                        <p className={h.dopasowanie}>{k.dopasowanie} %</p>
-                        <div className={h.pasekDop} aria-hidden="true">
-                          <i style={{ width: `${k.dopasowanie}%` }} />
-                        </div>
-                      </div>
-                    )}
+                {znaczkiRynku(k.rynek).length > 0 && (
+                  <div>
+                    <dt>Sprzedaje</dt>
+                    <dd>{znaczkiRynku(k.rynek).join(" i ")}</dd>
                   </div>
-                  <span className={h.etykieta}>Branże</span>
-                  <ul className={h.tagi}>
-                    {k.branze.map((x) => (
-                      <li key={x}>{x}</li>
-                    ))}
-                    {znaczkiRynku(k.rynek).map((x) => (
-                      <li key={x}>{x}</li>
-                    ))}
-                  </ul>
-                  <span className={h.etykieta}>Mocne strony</span>
-                  <ul className={h.tagi}>
-                    {k.mocne.map((x) => (
-                      <li key={x}>{x}</li>
-                    ))}
-                  </ul>
+                )}
+                <div>
+                  <dt>Branże</dt>
+                  <dd>{k.branze.filter((x) => x !== "Inna").join(", ") || "Inna"}</dd>
                 </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+                <div>
+                  <dt>Mocne strony</dt>
+                  <dd>{k.mocne.join(", ")}</dd>
+                </div>
+              </dl>
+            </li>
+          ))}
+        </ul>
       )}
       {karty.length === 0 && <p className="p-karta p-pusto">Subskrypcja albo gwarancja: szukamy dalej z tym samym opisem, bez dodawania oferty drugi raz.</p>}
       <OfertaWyszukiwarki

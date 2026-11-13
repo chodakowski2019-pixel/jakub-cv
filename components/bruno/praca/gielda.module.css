@@ -953,3 +953,212 @@ textarea.wpis {
 .okienkoWiersz .okienkoPole {
   margin-bottom: 0;
 }
+
+/* 13.11: zakup w wyszukiwarce jako tabela porównawcza (komputer); na telefonie karty .ofertaSiatka */
+.tabOkno {
+  overflow: hidden;
+  border: 1px solid var(--p-ramka-2);
+  box-shadow: none;
+}
+.tab {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: var(--p-font);
+  font-size: 14.5px;
+  color: var(--p-ink);
+}
+.tab th,
+.tab td {
+  padding: 15px 22px;
+  text-align: left;
+  vertical-align: middle;
+  line-height: 1.4;
+}
+.tab thead th {
+  padding-top: 22px;
+  padding-bottom: 20px;
+  vertical-align: top;
+}
+.tab tbody tr {
+  border-top: 1px solid var(--p-ramka);
+}
+.tab tbody th {
+  width: 26%;
+  font-weight: 400;
+  font-size: 13.5px;
+  color: var(--p-ink-2);
+}
+.tab thead th:first-child {
+  width: 26%;
+}
+.tabNazwa {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.tab .planCena {
+  display: block;
+  white-space: nowrap;
+}
+.tabGlowna {
+  background: var(--p-lim-j);
+}
+.tab tfoot td {
+  padding-top: 18px;
+  padding-bottom: 22px;
+  border-top: 1px solid var(--p-ramka);
+}
+.tab tfoot button {
+  width: 100%;
+  justify-content: center;
+}
+.tabTak {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #2f7a4b;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tabNie {
+  display: inline-block;
+  width: 12px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--p-ink-4);
+}
+.ofertaSiatka {
+  display: none;
+}
+.planLista {
+  flex: 1;
+  margin: 4px 0 10px;
+  display: grid;
+  gap: 0;
+}
+.planLista > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 0;
+  border-top: 1px solid var(--p-ramka);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.planLista dt {
+  flex: 0 0 44%;
+  color: var(--p-ink-2);
+  font-size: 13px;
+}
+.planLista dd {
+  margin: 0;
+  text-align: right;
+}
+@media (max-width: 860px) {
+  .tabOkno {
+    display: none;
+  }
+  .ofertaSiatka {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+.tabBrutto {
+  vertical-align: bottom !important;
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--p-ink-3);
+}
+
+/* 13.11: karta handlowca w wyniku wyszukiwarki = nagłówek + tabela etykieta / wartość, cienka obwódka */
+.kartyH {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.kartaH {
+  background: #fff;
+  border: 1px solid var(--p-ramka-2);
+  border-radius: var(--p-radius);
+  overflow: hidden;
+  font-family: var(--p-font);
+  color: var(--p-ink);
+}
+.kartaHGora {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+}
+.kartaHGora > div {
+  flex: 1;
+  min-width: 0;
+}
+.kartaHGora h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.kartaHGora p {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: var(--p-ink-2);
+  overflow-wrap: anywhere;
+}
+.kartaHInicjal {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--p-s1);
+  font-size: 20px;
+  font-weight: 600;
+}
+.kartaHWiersze {
+  margin: 0;
+}
+.kartaHWiersze > div {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--p-ramka);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.kartaHWiersze dt {
+  font-size: 13px;
+  color: var(--p-ink-2);
+}
+.kartaHWiersze dd {
+  margin: 0;
+}
+.kartaHPasek {
+  display: block;
+  height: 5px;
+  margin-top: 7px;
+  border-radius: 99px;
+  background: var(--p-s1);
+  overflow: hidden;
+}
+.kartaHPasek i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--p-lim-c);
+}
+@media (max-width: 980px) {
+  .kartyH {
+    grid-template-columns: 1fr;
+  }
+}

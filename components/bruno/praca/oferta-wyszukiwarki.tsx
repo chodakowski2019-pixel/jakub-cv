@@ -42,56 +42,127 @@ export default function OfertaWyszukiwarki({
     window.location.href = j.url;
   }
 
+  // 13.11 (USER_001: „zrób to w ładniejszej tabeli, żeby było przejrzyściej”): porównanie w tabeli, wiersz = jedna cecha.
+  // Na telefonie ta sama treść jako karty (tabela z 4 kolumnami się nie mieści).
+  type Plan = { klucz: "paczka" | "subskrypcja" | "gwarancja"; nazwa: string; cena: string; okres: string; przycisk: string; glowny?: boolean; pola: (string | boolean)[] };
+  const WIERSZE = ["Co dostajesz", "Dopasowanie", "Kiedy", "Pełny profil: nazwisko, telefon, e-mail, zdjęcie, CV", "Bez dodawania oferty drugi raz", "Zwrot pieniędzy", "Rezygnacja"];
+  const plany: Plan[] = [
+    ...(ile > 0
+      ? [
+          {
+            klucz: "paczka" as const,
+            nazwa: "Paczka",
+            cena: `${PACZKA.cena} zł`,
+            okres: "jednorazowo",
+            przycisk: `Odblokuj · ${PACZKA.cena} zł`,
+            glowny: true,
+            pola: [
+              ile < PACZKA.ile ? `Kontakty: ${handlowcow(ile)} z wyniku + ${PACZKA.ile - ile} na koncie na ${WAZNOSC_MIES} miesięcy` : `Kontakty: ${handlowcow(ile)} z wyniku`,
+              "Jak w wyniku",
+              "Od razu",
+              true,
+              false,
+              false,
+              false,
+            ],
+          },
+        ]
+      : []),
+    ...(maKryteria
+      ? [
+          {
+            klucz: "subskrypcja" as const,
+            nazwa: "Subskrypcja",
+            cena: `${SUBSKRYPCJA_ZL} zł`,
+            okres: "/ mies.",
+            przycisk: `Włącz · ${SUBSKRYPCJA_ZL} zł / mies.`,
+            pola: ["Kontakt do każdego nowego dopasowanego handlowca", `Od ${SUBSKRYPCJA_PROG} %`, "Gdy tylko dołączy do bazy", true, true, false, "W panelu, w każdej chwili"],
+          },
+          {
+            klucz: "gwarancja" as const,
+            nazwa: "Gwarancja",
+            cena: `${GWARANCJA.cena} zł`,
+            okres: "jednorazowo",
+            przycisk: `Zamów · ${GWARANCJA.cena} zł`,
+            pola: [`Kontakty: ${GWARANCJA.ile} dopasowanych handlowców`, `Ponad ${GWARANCJA.prog} %`, `W ${GWARANCJA.dni} dni`, true, true, `Cała kwota, gdy będzie mniej niż ${GWARANCJA.ile}`, false],
+          },
+        ]
+      : []),
+  ];
+  const pole = (v: string | boolean) =>
+    v === true ? (
+      <svg className={g.tabTak} viewBox="0 0 24 24" role="img" aria-label="Tak">
+        <path d="M5 12.5l4.5 4.5L19 7.5" />
+      </svg>
+    ) : v === false ? (
+      <span className={g.tabNie} role="img" aria-label="Nie" />
+    ) : (
+      v
+    );
+  const guzik = (p: Plan) => (
+    <button type="button" className={`p-btn ${p.glowny ? "" : "p-btn-2"}`} disabled={!!stan} onClick={() => kup(p.klucz)}>
+      {stan === p.klucz ? "Chwileczkę…" : p.przycisk}
+    </button>
+  );
+  if (!plany.length) return null;
+
   return (
     <section className={g.oferta} aria-label="Dostęp do handlowców">
       {blad && <p className={g.trzyBlad} role="alert">{blad}</p>}
+      <div className={`p-karta ${g.tabOkno}`}>
+        <table className={g.tab} style={{ ["--kolumn" as string]: plany.length }}>
+          <thead>
+            <tr>
+              <th className={g.tabBrutto}>Ceny brutto</th>
+              {plany.map((p) => (
+                <th key={p.klucz} scope="col" className={p.glowny ? g.tabGlowna : ""}>
+                  <span className={g.tabNazwa}>{p.nazwa}</span>
+                  <span className={g.planCena}>{p.cena} <small>{p.okres}</small></span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {WIERSZE.map((w, i) => (
+              <tr key={w}>
+                <th scope="row">{w}</th>
+                {plany.map((p) => (
+                  <td key={p.klucz} className={p.glowny ? g.tabGlowna : ""}>{pole(p.pola[i])}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td />
+              {plany.map((p) => (
+                <td key={p.klucz} className={p.glowny ? g.tabGlowna : ""}>{guzik(p)}</td>
+              ))}
+            </tr>
+          </tfoot>
+        </table>
+      </div>
       <div className={g.ofertaSiatka}>
-        {ile > 0 && (
-          <div className={`p-karta ${g.plan}`}>
-            <h3>Paczka</h3>
-            <p className={g.planCena}>{PACZKA.cena} zł <small>jednorazowo</small></p>
-            <ul>
-              <li>Pełne profile: {handlowcow(ile)} z wyniku</li>
-              <li>Nazwisko, telefon, e-mail, zdjęcie i CV</li>
-              {ile < PACZKA.ile && <li>Pozostałe kontakty z paczki ({PACZKA.ile - ile}) czekają na koncie {WAZNOSC_MIES} miesięcy</li>}
-            </ul>
-            <button type="button" className="p-btn" disabled={!!stan} onClick={() => kup("paczka")}>
-              {stan === "paczka" ? "Chwileczkę…" : `Odblokuj · ${PACZKA.cena} zł`}
-            </button>
+        {plany.map((p) => (
+          <div className={`p-karta ${g.plan}`} key={p.klucz}>
+            <h3>{p.nazwa}</h3>
+            <p className={g.planCena}>{p.cena} <small>{p.okres}</small></p>
+            <dl className={g.planLista}>
+              {WIERSZE.map((w, i) =>
+                p.pola[i] === false ? null : (
+                  <div key={w}>
+                    <dt>{w}</dt>
+                    <dd>{pole(p.pola[i])}</dd>
+                  </div>
+                ),
+              )}
+            </dl>
+            {guzik(p)}
           </div>
-        )}
-        {maKryteria && (
-          <>
-            <div className={`p-karta ${g.plan}`}>
-              <h3>Subskrypcja</h3>
-              <p className={g.planCena}>{SUBSKRYPCJA_ZL} zł <small>/ mies.</small></p>
-              <ul>
-                <li>Dosyłamy kontakt do każdego nowego dopasowanego handlowca, gdy tylko dołączy do bazy</li>
-                <li>Dopasowanie co najmniej {SUBSKRYPCJA_PROG} %</li>
-                <li>Bez dodawania oferty drugi raz: wystarczy ten opis</li>
-                <li>Rezygnacja w panelu w każdej chwili</li>
-              </ul>
-              <button type="button" className="p-btn p-btn-2" disabled={!!stan} onClick={() => kup("subskrypcja")}>
-                {stan === "subskrypcja" ? "Chwileczkę…" : `Włącz · ${SUBSKRYPCJA_ZL} zł / mies.`}
-              </button>
-            </div>
-            <div className={`p-karta ${g.plan}`}>
-              <h3>Gwarancja</h3>
-              <p className={g.planCena}>{GWARANCJA.cena} zł <small>jednorazowo</small></p>
-              <ul>
-                <li>{GWARANCJA.ile} dopasowanych handlowców ponad {GWARANCJA.prog} % w {GWARANCJA.dni} dni</li>
-                <li>Albo zwrot całej kwoty</li>
-                <li>Bez dodawania oferty drugi raz: wystarczy ten opis</li>
-              </ul>
-              <button type="button" className="p-btn p-btn-2" disabled={!!stan} onClick={() => kup("gwarancja")}>
-                {stan === "gwarancja" ? "Chwileczkę…" : `Zamów · ${GWARANCJA.cena} zł`}
-              </button>
-            </div>
-          </>
-        )}
+        ))}
       </div>
       <p className={g.ofertaStopka}>
-        <a href="/praca/regulamin">Regulamin</a>
+        Ceny brutto. <a href="/praca/regulamin">Regulamin</a>
         {test ? " · Tryb testowy: bez płatności." : ""}
       </p>
     </section>
