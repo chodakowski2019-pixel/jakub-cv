@@ -985,9 +985,9 @@ textarea.wpis {
 }
 .tab tbody th {
   width: 26%;
-  font-weight: 400;
+  font-weight: 600;
   font-size: 13.5px;
-  color: var(--p-ink-2);
+  color: var(--p-ink);
 }
 .tab thead th:first-child {
   width: 26%;
@@ -1050,7 +1050,8 @@ textarea.wpis {
 }
 .planLista dt {
   flex: 0 0 44%;
-  color: var(--p-ink-2);
+  font-weight: 600;
+  color: var(--p-ink);
   font-size: 13px;
 }
 .planLista dd {

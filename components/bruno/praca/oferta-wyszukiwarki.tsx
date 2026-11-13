@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { GWARANCJA, PACZKA, SUBSKRYPCJA_PROG, SUBSKRYPCJA_ZL, WAZNOSC_MIES, handlowcow } from "@/lib/bruno/praca/kontakty-cennik";
+import { GWARANCJA, PACZKA, SUBSKRYPCJA_PROG, SUBSKRYPCJA_ZL } from "@/lib/bruno/praca/kontakty-cennik";
 import g from "./gielda.module.css";
 
 // 12.11 (USER_001): 3 sposoby zakupu pod wynikiem publicznej wyszukiwarki: paczka 3 handlowców (149 zł, jednorazowo),
@@ -45,7 +45,7 @@ export default function OfertaWyszukiwarki({
   // 13.11 (USER_001: „zrób to w ładniejszej tabeli, żeby było przejrzyściej”): porównanie w tabeli, wiersz = jedna cecha.
   // Na telefonie ta sama treść jako karty (tabela z 4 kolumnami się nie mieści).
   type Plan = { klucz: "paczka" | "subskrypcja" | "gwarancja"; nazwa: string; cena: string; okres: string; przycisk: string; glowny?: boolean; pola: (string | boolean)[] };
-  const WIERSZE = ["Co dostajesz", "Dopasowanie", "Kiedy", "Pełny profil: nazwisko, telefon, e-mail, zdjęcie, CV", "Bez dodawania oferty drugi raz", "Zwrot pieniędzy", "Rezygnacja"];
+  const WIERSZE = ["Co otrzymasz", "Dopasowanie", "Kiedy", "Pełny profil: nazwisko, telefon, e-mail, zdjęcie, CV", "Bez dodawania oferty drugi raz", "Zwrot pieniędzy", "Rezygnacja"];
   const plany: Plan[] = [
     ...(ile > 0
       ? [
@@ -57,13 +57,13 @@ export default function OfertaWyszukiwarki({
             przycisk: `Odblokuj · ${PACZKA.cena} zł`,
             glowny: true,
             pola: [
-              ile < PACZKA.ile ? `Kontakty: ${handlowcow(ile)} z wyniku + ${PACZKA.ile - ile} na koncie na ${WAZNOSC_MIES} miesięcy` : `Kontakty: ${handlowcow(ile)} z wyniku`,
+              "Kontakty: handlowcy, którzy pokazali się powyżej",
               "Jak w wyniku",
               "Od razu",
               true,
               false,
               false,
-              false,
+              "Opłata jednorazowa",
             ],
           },
         ]
@@ -76,7 +76,7 @@ export default function OfertaWyszukiwarki({
             cena: `${SUBSKRYPCJA_ZL} zł`,
             okres: "/ mies.",
             przycisk: `Włącz · ${SUBSKRYPCJA_ZL} zł / mies.`,
-            pola: ["Kontakt do każdego nowego dopasowanego handlowca", `Od ${SUBSKRYPCJA_PROG} %`, "Gdy tylko dołączy do bazy", true, true, false, "W panelu, w każdej chwili"],
+            pola: ["Kontakt do każdego nowego dopasowanego handlowca, który dołączy do naszej bazy", `Od ${SUBSKRYPCJA_PROG} % do Twojej oferty`, "Gdy tylko dołączy do bazy", true, true, false, "W panelu, w każdej chwili"],
           },
           {
             klucz: "gwarancja" as const,
@@ -84,7 +84,7 @@ export default function OfertaWyszukiwarki({
             cena: `${GWARANCJA.cena} zł`,
             okres: "jednorazowo",
             przycisk: `Zamów · ${GWARANCJA.cena} zł`,
-            pola: [`Kontakty: ${GWARANCJA.ile} dopasowanych handlowców`, `Ponad ${GWARANCJA.prog} %`, `W ${GWARANCJA.dni} dni`, true, true, `Cała kwota, gdy będzie mniej niż ${GWARANCJA.ile}`, false],
+            pola: [`Kontakty: ${GWARANCJA.ile} dopasowanych handlowców`, `Ponad ${GWARANCJA.prog} % do Twojej oferty`, `W ${GWARANCJA.dni} dni`, true, true, `Cała kwota, gdy będzie mniej niż ${GWARANCJA.ile} kontaktów z powyżej ${GWARANCJA.prog} % dopasowania`, "Opłata jednorazowa"],
           },
         ]
       : []),
@@ -162,7 +162,7 @@ export default function OfertaWyszukiwarki({
         ))}
       </div>
       <p className={g.ofertaStopka}>
-        Ceny brutto. <a href="/praca/regulamin">Regulamin</a>
+        <a href="/praca/regulamin">Regulamin</a>
         {test ? " · Tryb testowy: bez płatności." : ""}
       </p>
     </section>
