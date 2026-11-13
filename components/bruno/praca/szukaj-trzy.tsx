@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import KulaLimonka from "@/components/bruno/kula-limonka";
 import g from "./gielda.module.css";
 
-// 12.11 (USER_001: „tutaj powinny być 3 okienka: link do strony z ofertą, PDF, opis”): start publicznej wyszukiwarki.
+// 12.11 (USER_001): start publicznej wyszukiwarki, 3 źródła: link do strony z ofertą, PDF, opis. 13.11: w jednym okienku.
 // Firma używa jednego z trzech źródeł. Po wysłaniu ekran zmienia się w ładujące kółko („algorytm analizuje”),
 // serwer zamienia źródło na krótki opis (POST /api/bruno/praca/szukaj) i strona przechodzi do wyniku /wyszukiwarka?q=.
 const ADRES = "/wyszukiwarka?q=";
@@ -14,7 +14,7 @@ const PDF_MAKS_B = 4 * 1024 * 1024;
 const MIN_MS = 2400;
 const ETAPY = ["Czytamy, kogo szukasz…", "Porównujemy z profilami handlowców…", "Liczymy dopasowanie…"];
 
-export default function SzukajTrzy({ nowych }: { /** Profile dodane w ostatnich 7 dniach; 0 = bez liczby. */ nowych: number }) {
+export default function SzukajTrzy() {
   const router = useRouter();
   const [link, setLink] = useState("");
   const [plik, setPlik] = useState<File | null>(null);
@@ -63,61 +63,38 @@ export default function SzukajTrzy({ nowych }: { /** Profile dodane w ostatnich 
       </div>
     );
 
+  const gotowe = link.trim().length >= 4 || !!plik || opis.trim().length >= 2;
   return (
     <div className={g.trzy}>
-      <h1 className="bcz-hej">Znajdź handlowca.</h1>
-      <p className={g.trzyLead}>Wystarczy jedno z trzech. Wynik w kilka sekund, bez konta.</p>
+      <h1 className="bcz-hej">Szukasz specjalisty ds. sprzedaży? 🔎</h1>
       {blad && <p className={g.trzyBlad} role="alert">{blad}</p>}
-      <div className={g.trzySiatka}>
-        <form
-          className={`p-karta ${g.okienko}`}
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (link.trim().length >= 4) szukaj({ link: link.trim() });
-          }}
-        >
-          <span className={g.okienkoNr}>1</span>
-          <h2>Dodaj link do oferty</h2>
-          <p>Adres strony z ogłoszeniem o pracę.</p>
-          <input className={g.okienkoPole} type="text" inputMode="url" placeholder="https://…" value={link} onChange={(e) => setLink(e.target.value)} maxLength={600} aria-label="Link do strony z ofertą" />
-          <button type="submit" className="p-btn" disabled={link.trim().length < 4}>Szukaj</button>
-        </form>
-
-        <form
-          className={`p-karta ${g.okienko}`}
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (plik) szukaj({ plik });
-          }}
-        >
-          <span className={g.okienkoNr}>2</span>
-          <h2>Dodaj PDF</h2>
-          <p>Plik z ofertą albo opisem stanowiska, do 4 MB.</p>
+      {/* 13.11 (USER_001): jedno okienko z trzema pytaniami zamiast trzech kart. Liczy się pierwsze wypełnione: link, plik, opis. */}
+      <form
+        className={`p-karta ${g.okienko} ${g.okienkoJedno}`}
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (link.trim().length >= 4) szukaj({ link: link.trim() });
+          else if (plik) szukaj({ plik });
+          else if (opis.trim().length >= 2) szukaj({ opis: opis.trim() });
+        }}
+      >
+        <label className={g.okienkoWiersz}>
+          <span>Masz już ofertę pracy? Dodaj link do niej</span>
+          <input className={g.okienkoPole} type="text" inputMode="url" placeholder="https://…" value={link} onChange={(e) => setLink(e.target.value)} maxLength={600} />
+        </label>
+        <div className={g.okienkoWiersz}>
+          <span>Masz opisane w pliku PDF, kogo szukasz? Dodaj plik</span>
           <input ref={pole} type="file" accept="application/pdf,.pdf" hidden onChange={(e) => setPlik(e.target.files?.[0] ?? null)} />
           <button type="button" className={`${g.okienkoPole} ${g.okienkoPlik}`} onClick={() => pole.current?.click()}>
             {plik ? plik.name : "Wybierz plik PDF"}
           </button>
-          <button type="submit" className="p-btn" disabled={!plik}>Szukaj</button>
-        </form>
-
-        <form
-          className={`p-karta ${g.okienko}`}
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (opis.trim().length >= 2) szukaj({ opis: opis.trim() });
-          }}
-        >
-          <span className={g.okienkoNr}>3</span>
-          <h2>Opisz, jakiego handlowca szukasz</h2>
-          <p>Branża, miasto, doświadczenie.</p>
-          <textarea className={g.okienkoPole} rows={2} placeholder="np. Handlowiec OZE z Warszawy, min. 3 lata, B2B" value={opis} onChange={(e) => setOpis(e.target.value)} maxLength={600} aria-label="Opisz, jakiego handlowca szukasz" />
-          <button type="submit" className="p-btn" disabled={opis.trim().length < 2}>Szukaj</button>
-        </form>
-      </div>
-      <p className={g.trzyNowi}>
-        <i aria-hidden />
-        Codziennie dodajemy do bazy nowych handlowców.{nowych > 0 ? ` W ostatnich 7 dniach: ${nowych}.` : ""}
-      </p>
+        </div>
+        <label className={g.okienkoWiersz}>
+          <span>Chcesz opisać, kogo szukasz? Wpisz tutaj</span>
+          <textarea className={g.okienkoPole} rows={2} placeholder="np. Handlowiec OZE z Warszawy, min. 3 lata, B2B" value={opis} onChange={(e) => setOpis(e.target.value)} maxLength={600} />
+        </label>
+        <button type="submit" className="p-btn" disabled={!gotowe}>Szukaj</button>
+      </form>
     </div>
   );
 }

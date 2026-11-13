@@ -58,7 +58,7 @@ export default function PanelHandlowcy({ handlowcy, zlecenia = [], naKoncie }: {
         return (
           <div className={s.platnoscOk} key={z.id} style={{ alignItems: "flex-start", flexWrap: "wrap" }}>
             <div style={{ flex: 1, minWidth: 220 }}>
-              <b>{z.rodzaj === "subskrypcja" ? `Subskrypcja · ${SUBSKRYPCJA_ZL} zł / mies.` : `Gwarancja · ${GWARANCJA.ile} handlowców do ${formatDaty(z.termin ?? z.created_at)}`}</b>
+              <b>{z.rodzaj === "subskrypcja" ? `Subskrypcja · ${SUBSKRYPCJA_ZL} zł / mies.` : `Gwarancja · ${GWARANCJA.ile} handlowców ponad ${GWARANCJA.prog} % do ${formatDaty(z.termin ?? z.created_at)}`}</b>
               <br />
               Szukamy: „{z.opis}”.{" "}
               {z.rodzaj === "subskrypcja"

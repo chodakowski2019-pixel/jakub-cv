@@ -11,7 +11,7 @@ import { odczytajOpis } from "./opis-szukania";
 // ALBO strona powrotu (która pierwsza), zawsze raz (unikalna `sesja`).
 // Subskrypcja (13.11, USER_001): dosyłamy kontakty do handlowców, którzy dołączyli PO zakupie i pasują do opisu na co najmniej
 // SUBSKRYPCJA_PROG %. Handlowców z dnia zakupu firma odblokowuje paczką. Rezygnacja w panelu firmy (anulujSubskrypcje).
-// Gwarancja: do GWARANCJA.ile dopasowanych handlowców w GWARANCJA.dni dni; brak kompletu po terminie = zwrot (robi USER_001).
+// Gwarancja: do GWARANCJA.ile handlowców z dopasowaniem ponad GWARANCJA.prog % w GWARANCJA.dni dni; brak kompletu po terminie = zwrot (robi USER_001).
 
 export type RodzajZlecenia = "subskrypcja" | "gwarancja";
 export type Zlecenie = {
@@ -86,8 +86,8 @@ export async function zlecenieZeStripe(s: Stripe.Checkout.Session): Promise<Zlec
       await wyslij({
         do: SKRZYNKA_JAKUBA,
         rodzaj: "inny",
-        temat: `💰 Praca: ${rodzaj === "gwarancja" ? `GWARANCJA ${GWARANCJA.cena} zł (${GWARANCJA.ile} handlowców do ${termin})` : "SUBSKRYPCJA wyszukiwarki"}: ${email ?? "?"}`,
-        html: `<p>Płatność w wyszukiwarce handlowców salesbruno.pl/wyszukiwarka.</p><p><b>E-mail:</b> ${email ?? "-"}<br/><b>Rodzaj:</b> ${rodzaj}<br/><b>Kwota:</b> ${((s.amount_total ?? 0) / 100).toFixed(0)} ${(s.currency ?? "").toUpperCase()}<br/><b>Szuka:</b> ${esc(zlecenie.opis)}${termin ? `<br/><b>Termin gwarancji:</b> ${termin}. Brak ${GWARANCJA.ile} dopasowanych handlowców do tego dnia = zwrot ${GWARANCJA.cena} zł.` : ""}</p>`,
+        temat: `💰 Praca: ${rodzaj === "gwarancja" ? `GWARANCJA ${GWARANCJA.cena} zł (${GWARANCJA.ile} handlowców ponad ${GWARANCJA.prog} % do ${termin})` : "SUBSKRYPCJA wyszukiwarki"}: ${email ?? "?"}`,
+        html: `<p>Płatność w wyszukiwarce handlowców salesbruno.pl/wyszukiwarka.</p><p><b>E-mail:</b> ${email ?? "-"}<br/><b>Rodzaj:</b> ${rodzaj}<br/><b>Kwota:</b> ${((s.amount_total ?? 0) / 100).toFixed(0)} ${(s.currency ?? "").toUpperCase()}<br/><b>Szuka:</b> ${esc(zlecenie.opis)}${termin ? `<br/><b>Termin gwarancji:</b> ${termin}. Brak ${GWARANCJA.ile} handlowców z dopasowaniem ponad ${GWARANCJA.prog} % do tego dnia = zwrot ${GWARANCJA.cena} zł.` : ""}</p>`,
       });
     } catch (e) {
       console.error("[praca zlecenia] mail", e);
@@ -108,8 +108,9 @@ async function wydane(zlecenieId: string): Promise<number> {
  * Gwarancja: najwyżej GWARANCJA.ile osób łącznie, po komplecie zlecenie się kończy. Zwraca liczbę nowych kontaktów. */
 async function rozdaj(z: Zlecenie, tylko?: string[]): Promise<number> {
   if (!z.konto_id || z.status !== "aktywne" || !maKryteria(z.filtry)) return 0;
-  const prog = z.rodzaj === "subskrypcja" ? SUBSKRYPCJA_PROG : 0;
-  let ids = (await szukajHandlowcow(z.filtry)).filter((k) => (k.dopasowanie ?? 0) >= prog).map((k) => k.id);
+  // Subskrypcja: od SUBSKRYPCJA_PROG %. Gwarancja: ponad GWARANCJA.prog %.
+  const pasuje = (d: number) => (z.rodzaj === "subskrypcja" ? d >= SUBSKRYPCJA_PROG : d > GWARANCJA.prog);
+  let ids = (await szukajHandlowcow(z.filtry)).filter((k) => pasuje(k.dopasowanie ?? 0)).map((k) => k.id);
   if (tylko) ids = ids.filter((id) => tylko.includes(id));
   if (!ids.length) return 0;
   // Kontakt, który firma ma już z innego zakupu, nie liczy się do gwarancji.

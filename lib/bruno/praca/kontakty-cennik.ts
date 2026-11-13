@@ -11,8 +11,8 @@ export const PAKIETY: Pakiet[] = [PACZKA];
 /** Subskrypcja, zł / mies.: dosyłamy kontakty do NOWYCH handlowców (dołączyli po zakupie) z dopasowaniem od SUBSKRYPCJA_PROG %. */
 export const SUBSKRYPCJA_ZL = 290;
 export const SUBSKRYPCJA_PROG = 70;
-/** Gwarancja: `ile` dopasowanych handlowców w `dni` dni albo zwrot całej kwoty. */
-export const GWARANCJA = { cena: 990, ile: 5, dni: 30 };
+/** Gwarancja: `ile` handlowców z dopasowaniem PONAD `prog` % w `dni` dni albo zwrot całej kwoty (próg: USER_001 13.11). */
+export const GWARANCJA = { cena: 990, ile: 5, dni: 30, prog: 90 };
 
 export const MAKS_WYBRANYCH = PAKIETY[PAKIETY.length - 1].ile;
 /** Ile miesięcy niewykorzystane kontakty czekają na koncie firmy. */

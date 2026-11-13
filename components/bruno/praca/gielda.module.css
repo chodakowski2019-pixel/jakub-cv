@@ -931,3 +931,25 @@ textarea.wpis {
     grid-template-columns: 1fr;
   }
 }
+
+/* 13.11: start wyszukiwarki = jedno okienko z trzema pytaniami */
+.okienkoJedno {
+  max-width: 620px;
+  margin: 30px auto 0;
+  gap: 18px;
+  padding: 28px;
+  text-align: left;
+}
+.okienkoWiersz {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.okienkoWiersz > span {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.okienkoWiersz .okienkoPole {
+  margin-bottom: 0;
+}

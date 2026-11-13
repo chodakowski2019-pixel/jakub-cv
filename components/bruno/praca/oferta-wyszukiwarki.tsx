@@ -79,7 +79,7 @@ export default function OfertaWyszukiwarki({
               <h3>Gwarancja</h3>
               <p className={g.planCena}>{GWARANCJA.cena} zł <small>jednorazowo</small></p>
               <ul>
-                <li>{GWARANCJA.ile} dopasowanych handlowców w {GWARANCJA.dni} dni</li>
+                <li>{GWARANCJA.ile} dopasowanych handlowców ponad {GWARANCJA.prog} % w {GWARANCJA.dni} dni</li>
                 <li>Albo zwrot całej kwoty</li>
                 <li>Bez dodawania oferty drugi raz: wystarczy ten opis</li>
               </ul>
@@ -91,7 +91,7 @@ export default function OfertaWyszukiwarki({
         )}
       </div>
       <p className={g.ofertaStopka}>
-        Ceny brutto. Płatność obsługuje Stripe, faktura przychodzi e-mailem. <a href="/praca/regulamin">Regulamin</a>
+        <a href="/praca/regulamin">Regulamin</a>
         {test ? " · Tryb testowy: bez płatności." : ""}
       </p>
     </section>

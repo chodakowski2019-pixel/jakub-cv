@@ -3,11 +3,10 @@ import Link from "next/link";
 import SzukajTrzy from "@/components/bruno/praca/szukaj-trzy";
 import WynikWyszukiwarki from "@/components/bruno/praca/wynik-wyszukiwarki";
 import g from "@/components/bruno/praca/gielda.module.css";
-import { nowychWTygodniu } from "@/lib/bruno/praca/handlowcy";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 
 // 12.11 (USER_001: „wyszukiwarka będzie publiczna, jako podstrona »wyszukiwarka«”): salesbruno.pl/wyszukiwarka
-// (proxy: /wyszukiwarka → /brunopraca/wyszukiwarka). Bez logowania. 12.11 wieczór (USER_001): start = 3 okienka
+// (proxy: /wyszukiwarka → /brunopraca/wyszukiwarka). Bez logowania. 12.11 wieczór (USER_001): start = jedno okienko z 3 źródłami
 // (link do oferty, PDF, opis), potem ładujące kółko i wynik: liczba dopasowanych + 3 karty z zamazanym zdjęciem,
 // zakup paczki (149 zł), subskrypcji (290 zł / mies.) albo gwarancji (990 zł). Na razie poza indeksem.
 export const dynamic = "force-dynamic";
@@ -33,7 +32,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         </Link>
       </header>
       <main className={g.publicznaTresc}>
-        {opis ? <WynikWyszukiwarki opis={opis} kontoId={firma?.id ?? null} /> : <SzukajTrzy nowych={await nowychWTygodniu()} />}
+        {opis ? <WynikWyszukiwarki opis={opis} kontoId={firma?.id ?? null} /> : <SzukajTrzy />}
       </main>
     </div>
   );

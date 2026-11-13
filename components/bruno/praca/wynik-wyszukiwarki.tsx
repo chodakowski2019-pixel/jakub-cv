@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import OfertaWyszukiwarki from "./oferta-wyszukiwarki";
 import { PoleSzukania } from "./szukaj-handlowca";
 import { odczytajOpis } from "@/lib/bruno/praca/opis-szukania";
-import { nowychWTygodniu, odblokowaneId, szukajHandlowcow, zamazaneZdjecia, zapiszWyszukiwanie, type Filtry } from "@/lib/bruno/praca/handlowcy";
+import { odblokowaneId, szukajHandlowcow, zamazaneZdjecia, zapiszWyszukiwanie, type Filtry } from "@/lib/bruno/praca/handlowcy";
 import { PACZKA, znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
 import { maKryteria } from "@/lib/bruno/praca/zlecenia";
 import g from "./gielda.module.css";
@@ -17,7 +17,7 @@ export default async function WynikWyszukiwarki({ opis: surowy, kontoId }: { opi
   const opis = surowy.slice(0, 600);
   if (opis.trim().length < 2) redirect("/wyszukiwarka");
   const { filtry, etykiety } = odczytajOpis(opis);
-  const [karty, mam, nowych] = await Promise.all([szukajHandlowcow(filtry), kontoId ? odblokowaneId(kontoId) : Promise.resolve([]), nowychWTygodniu()]);
+  const [karty, mam] = await Promise.all([szukajHandlowcow(filtry), kontoId ? odblokowaneId(kontoId) : Promise.resolve([])]);
   await zapiszWyszukiwanie({ ...filtry, opis } as Filtry & { opis: string }, karty.length, kontoId);
   const top = karty.slice(0, PACZKA.ile);
   const zdjecia = await zamazaneZdjecia(top.map((k) => k.id));
@@ -31,7 +31,7 @@ export default async function WynikWyszukiwarki({ opis: surowy, kontoId }: { opi
           <h1>{karty.length ? <>Mamy <b className={g.liczbaWyniku}>{karty.length}</b> {karty.length === 1 ? "dopasowanego handlowca" : "dopasowanych handlowców"}.</> : "Nie mamy jeszcze takiego handlowca."}</h1>
           <p>
             {karty.length > top.length ? `Poniżej ${top.length} najlepiej dopasowanych. ` : ""}
-            Codziennie dodajemy do bazy nowych handlowców.{nowych > 0 ? ` W ostatnich 7 dniach: ${nowych}.` : ""}
+            Codziennie dodajemy do bazy nowych handlowców.
           </p>
           <div className={g.chipy} style={{ marginTop: 12 }}>
             {etykiety.length ? etykiety.map((e) => <span key={e} className="p-chip">{e}</span>) : <span className="p-chip">Bez zawężania: wszyscy handlowcy</span>}

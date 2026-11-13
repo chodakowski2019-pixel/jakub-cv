@@ -100,7 +100,7 @@ const SEKCJE: SekcjaDok[] = [
     punkty: [
       "Gwarancja kosztuje 990 zł brutto. Płatność jest jednorazowa i nie odnawia się sama. Obsługuje ją Stripe. Fakturę wysyłamy e-mailem.",
       "Gwarancja dotyczy jednego opisu: tego, z którym Pracodawca ją kupił. Opisu nie można zmienić po zakupie.",
-      "W ciągu 30 dni od płatności Usługodawca odblokowuje na koncie Pracodawcy Kontakty do 5 handlowców dopasowanych do opisu. Dopasowany handlowiec to osoba, która pojawia się w wynikach Wyszukiwarki dla tego opisu. Kontakty, które Pracodawca miał wcześniej, nie liczą się do tych 5.",
+      "W ciągu 30 dni od płatności Usługodawca odblokowuje na koncie Pracodawcy Kontakty do 5 handlowców dopasowanych do opisu w ponad 90 %. Stopień dopasowania jest wyliczany automatycznie z porównania opisu z Profilem, tak samo jak w Wyszukiwarce. Kontakty, które Pracodawca miał wcześniej, nie liczą się do tych 5.",
       "Jeśli po 30 dniach Pracodawca ma z gwarancji mniej niż 5 Kontaktów, Usługodawca zwraca całą kwotę w ciągu 14 dni, tą samą metodą płatności. Odblokowane Kontakty zostają na koncie Pracodawcy.",
       "Żeby dostać Kontakty, Pracodawca zakłada konto po płatności. Bieg 30 dni liczy się od płatności.",
       "Gwarancja dotyczy liczby Kontaktów. Nie obejmuje odpowiedzi handlowca ani zatrudnienia. Do Kontaktów z gwarancji stosuje się zasady z pkt 5a o używaniu danych.",

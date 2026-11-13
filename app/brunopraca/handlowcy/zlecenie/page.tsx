@@ -70,7 +70,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
             <p className={h.poP}>
               Został ostatni krok. {zlecenie.rodzaj === "gwarancja" ? "Na koncie pojawią się" : "Na konto będziemy dosyłać"} kontakty do handlowców dopasowanych do opisu: „{zlecenie.opis}”.{" "}
               {zlecenie.rodzaj === "gwarancja"
-                ? `Gwarancja: ${GWARANCJA.ile} handlowców do ${new Date(zlecenie.termin ?? Date.now()).toLocaleDateString("pl-PL")} albo zwrot ${GWARANCJA.cena} zł.`
+                ? `Gwarancja: ${GWARANCJA.ile} handlowców z dopasowaniem ponad ${GWARANCJA.prog} % do ${new Date(zlecenie.termin ?? Date.now()).toLocaleDateString("pl-PL")} albo zwrot ${GWARANCJA.cena} zł.`
                 : `Każdy nowy handlowiec z dopasowaniem od ${SUBSKRYPCJA_PROG} % trafi do panelu, damy znać e-mailem. Subskrypcję można wyłączyć w panelu.`}
             </p>
             <div className={d.karta}>

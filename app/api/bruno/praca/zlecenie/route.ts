@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   const metadata = { produkt: "praca", rodzaj, opis, konto: pracodawca?.id ?? "" };
   const nazwa =
     rodzaj === "gwarancja"
-      ? `SalesBruno.pl: ${GWARANCJA.ile} dopasowanych handlowców w ${GWARANCJA.dni} dni albo zwrot`
+      ? `SalesBruno.pl: ${GWARANCJA.ile} handlowców z dopasowaniem ponad ${GWARANCJA.prog} % w ${GWARANCJA.dni} dni albo zwrot`
       : "SalesBruno.pl: subskrypcja wyszukiwarki handlowców";
   const wspolne = {
     ...(pracodawca ? { customer_email: pracodawca.email } : {}),
