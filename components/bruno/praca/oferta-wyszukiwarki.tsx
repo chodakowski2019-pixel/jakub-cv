@@ -74,7 +74,7 @@ export default function OfertaWyszukiwarki({
             klucz: "subskrypcja" as const,
             nazwa: "Subskrypcja",
             cena: `${SUBSKRYPCJA_ZL} zł`,
-            okres: "/ mies.",
+            okres: "/ mies. (30 dni)",
             przycisk: `Włącz · ${SUBSKRYPCJA_ZL} zł / mies.`,
             pola: ["Kontakt do każdego nowego dopasowanego handlowca, który dołączy do naszej bazy", `Od ${SUBSKRYPCJA_PROG} % do Twojej oferty`, "Gdy tylko dołączy do bazy", true, true, false, "W panelu, w każdej chwili"],
           },

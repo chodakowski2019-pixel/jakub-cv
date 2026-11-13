@@ -85,12 +85,12 @@ const SEKCJE: SekcjaDok[] = [
   {
     tytul: "5b. Subskrypcja Wyszukiwarki (Pracodawca)",
     punkty: [
-      "Subskrypcja kosztuje 290 zł brutto miesięcznie. Odnawia się co miesiąc do rezygnacji. Płatność obsługuje Stripe (karta). Fakturę wysyłamy e-mailem.",
+      "Subskrypcja kosztuje 290 zł brutto za miesiąc, czyli 30 dni. Odnawia się co 30 dni do rezygnacji. Płatność obsługuje Stripe (karta). Fakturę wysyłamy e-mailem.",
       "Subskrypcja dotyczy jednego opisu: tego, z którym Pracodawca ją kupił. Pracodawca nie dodaje oferty drugi raz.",
       "Po płatności Pracodawca zakłada konto albo loguje się na istniejące.",
       "W czasie trwania subskrypcji Usługodawca dosyła na konto Pracodawcy Kontakty do handlowców, którzy dołączyli do bazy po zakupie subskrypcji i są dopasowani do opisu w co najmniej 70 %. O każdym takim handlowcu Usługodawca informuje e-mailem. Subskrypcja nie obejmuje handlowców, którzy byli w bazie w dniu zakupu: Kontakty do nich daje Pakiet (pkt 5a).",
       "Stopień dopasowania jest wyliczany automatycznie z porównania opisu z Profilem, tak samo jak w Wyszukiwarce.",
-      <>Pracodawca może zrezygnować w każdej chwili w panelu, w zakładce „Handlowcy”, albo pisząc na {MAIL}. Subskrypcja działa do końca opłaconego miesiąca. Opłata za rozpoczęty miesiąc nie podlega zwrotowi.</>,
+      <>Pracodawca może zrezygnować w każdej chwili w panelu, w zakładce „Handlowcy”, albo pisząc na {MAIL}. Subskrypcja działa do końca opłaconych 30 dni. Opłata za rozpoczęte 30 dni nie podlega zwrotowi.</>,
       "Kontakty odblokowane w czasie subskrypcji zostają na koncie Pracodawcy po jej zakończeniu.",
       "Subskrypcja nie gwarantuje określonej liczby handlowców. Do Kontaktów z subskrypcji stosuje się zasady z pkt 5a o używaniu danych.",
     ],

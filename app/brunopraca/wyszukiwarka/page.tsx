@@ -15,6 +15,17 @@ export const metadata: Metadata = {
   title: "Wyszukiwarka handlowców | Sales Bruno",
   description: "Link do oferty, PDF albo opis. Wyszukiwarka pokazuje, ilu handlowców pasuje, i trzech najlepiej dopasowanych.",
   alternates: { canonical: "/wyszukiwarka" },
+  // 13.11 (USER_001): podgląd linku z tym samym obrazkiem co /praca (plik w katalogu głównym, bo robots.txt zamyka /bruno/ i /praca/).
+  openGraph: {
+    title: "Szukasz specjalisty ds. sprzedaży?",
+    description: "Link do oferty, PDF albo opis. Wyszukiwarka pokazuje, ilu handlowców pasuje, i trzech najlepiej dopasowanych.",
+    url: "/wyszukiwarka",
+    siteName: "Bruno AI",
+    locale: "pl_PL",
+    type: "website",
+    images: [{ url: "/og-praca-baza.png", width: 1200, height: 630, alt: "Sales Bruno: wyszukiwarka handlowców" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og-praca-baza.png"] },
   robots: { index: false, follow: false },
 };
 

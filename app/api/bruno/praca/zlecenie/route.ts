@@ -62,7 +62,7 @@ export async function POST(req: Request) {
       : await getStripePraca().checkout.sessions.create({
           ...wspolne,
           mode: "subscription",
-          line_items: [{ price_data: { currency: "pln", unit_amount: cena * 100, recurring: { interval: "month" }, product_data: { name: nazwa } }, quantity: 1 }],
+          line_items: [{ price_data: { currency: "pln", unit_amount: cena * 100, recurring: { interval: "day", interval_count: 30 }, product_data: { name: nazwa } }, quantity: 1 }],
           subscription_data: { metadata },
         });
   return NextResponse.json({ ok: true, url: sesja.url });
