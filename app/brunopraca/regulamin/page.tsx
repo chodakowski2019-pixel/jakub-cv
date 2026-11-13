@@ -87,9 +87,10 @@ const SEKCJE: SekcjaDok[] = [
     punkty: [
       "Subskrypcja kosztuje 290 zł brutto miesięcznie. Odnawia się co miesiąc do rezygnacji. Płatność obsługuje Stripe (karta). Fakturę wysyłamy e-mailem.",
       "Subskrypcja dotyczy jednego opisu: tego, z którym Pracodawca ją kupił. Pracodawca nie dodaje oferty drugi raz.",
-      "W czasie trwania subskrypcji Pracodawca dostaje na konto Kontakty do wszystkich handlowców dopasowanych do opisu: tych, którzy są w bazie w dniu zakupu, i tych, którzy dołączą później. O każdym nowym dopasowanym handlowcu Usługodawca informuje e-mailem.",
-      "Dopasowany handlowiec to osoba, która pojawia się w wynikach Wyszukiwarki dla opisu Pracodawcy.",
-      <>Pracodawca może zrezygnować w każdej chwili, pisząc na {MAIL}. Subskrypcja działa do końca opłaconego miesiąca. Opłata za rozpoczęty miesiąc nie podlega zwrotowi.</>,
+      "Po płatności Pracodawca zakłada konto albo loguje się na istniejące.",
+      "W czasie trwania subskrypcji Usługodawca dosyła na konto Pracodawcy Kontakty do handlowców, którzy dołączyli do bazy po zakupie subskrypcji i są dopasowani do opisu w co najmniej 70 %. O każdym takim handlowcu Usługodawca informuje e-mailem. Subskrypcja nie obejmuje handlowców, którzy byli w bazie w dniu zakupu: Kontakty do nich daje Pakiet (pkt 5a).",
+      "Stopień dopasowania jest wyliczany automatycznie z porównania opisu z Profilem, tak samo jak w Wyszukiwarce.",
+      <>Pracodawca może zrezygnować w każdej chwili w panelu, w zakładce „Handlowcy”, albo pisząc na {MAIL}. Subskrypcja działa do końca opłaconego miesiąca. Opłata za rozpoczęty miesiąc nie podlega zwrotowi.</>,
       "Kontakty odblokowane w czasie subskrypcji zostają na koncie Pracodawcy po jej zakończeniu.",
       "Subskrypcja nie gwarantuje określonej liczby handlowców. Do Kontaktów z subskrypcji stosuje się zasady z pkt 5a o używaniu danych.",
     ],
@@ -169,5 +170,5 @@ const SEKCJE: SekcjaDok[] = [
 ];
 
 export default function Page() {
-  return <Dokument tytul="Regulamin" data="12 listopada 2026" wstep="Ten regulamin opisuje zasady korzystania z portalu SalesBruno.pl Praca: ofert pracy dla handlowców, bazy handlowców i wyszukiwarki handlowców dla firm." sekcje={SEKCJE} />;
+  return <Dokument tytul="Regulamin" data="13 listopada 2026" wstep="Ten regulamin opisuje zasady korzystania z portalu SalesBruno.pl Praca: ofert pracy dla handlowców, bazy handlowców i wyszukiwarki handlowców dla firm." sekcje={SEKCJE} />;
 }

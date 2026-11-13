@@ -2,14 +2,27 @@
 
 import { useEffect, useState } from "react";
 import type { PelnyHandlowiec } from "@/lib/bruno/praca/handlowcy";
-import { handlowcow, kontaktow, znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
+import { GWARANCJA, SUBSKRYPCJA_PROG, SUBSKRYPCJA_ZL, handlowcow, kontaktow, znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
+import type { Zlecenie } from "@/lib/bruno/praca/zlecenia";
 import { formatDaty } from "./panel-wspolne";
 import h from "./handlowcy.module.css";
 import s from "./praca.module.css";
 
 // 11.11 (USER_001): panel firmy, zakładka „Handlowcy”: osoby z bazy handlowców, których kontakt firma odblokowała
 // (zakup na /praca/handlowcy). Pełny profil: telefon, e-mail, LinkedIn, CV, zdjęcie, opis największego wyniku.
-export default function PanelHandlowcy({ handlowcy, naKoncie }: { handlowcy: PelnyHandlowiec[]; naKoncie: number }) {
+export default function PanelHandlowcy({ handlowcy, zlecenia = [], naKoncie }: { handlowcy: PelnyHandlowiec[]; /** 13.11: subskrypcje i gwarancje z wyszukiwarki. */ zlecenia?: Zlecenie[]; naKoncie: number }) {
+  // 13.11 (USER_001): subskrypcję firma wyłącza tutaj. Działa do końca opłaconego miesiąca.
+  const [wylaczone, setWylaczone] = useState<string[]>([]);
+  const [bladZ, setBladZ] = useState("");
+  async function wylacz(id: string) {
+    if (!confirm("Wyłączyć subskrypcję? Będzie działać do końca opłaconego miesiąca.")) return;
+    setBladZ("");
+    const odp = await fetch("/api/bruno/praca/zlecenie/anuluj", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) }).catch(() => null);
+    const j = await odp?.json().catch(() => null);
+    if (odp?.ok && j?.ok) setWylaczone((w) => [...w, id]);
+    else setBladZ(j?.blad ?? "Coś poszło nie tak. Spróbuj ponownie.");
+  }
+  const aktywne = zlecenia.filter((z) => z.status === "aktywne");
   // Parametr adresu czytamy po zamontowaniu (jak w panel-firmy.tsx), żeby serwer i przeglądarka renderowały to samo.
   const [swieze, setSwieze] = useState<number | null>(null);
   useEffect(() => {
@@ -40,6 +53,29 @@ export default function PanelHandlowcy({ handlowcy, naKoncie }: { handlowcy: Pel
         </a>
       </div>
 
+      {aktywne.map((z) => {
+        const konczySie = !!z.anulowano_at || wylaczone.includes(z.id);
+        return (
+          <div className={s.platnoscOk} key={z.id} style={{ alignItems: "flex-start", flexWrap: "wrap" }}>
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <b>{z.rodzaj === "subskrypcja" ? `Subskrypcja · ${SUBSKRYPCJA_ZL} zł / mies.` : `Gwarancja · ${GWARANCJA.ile} handlowców do ${formatDaty(z.termin ?? z.created_at)}`}</b>
+              <br />
+              Szukamy: „{z.opis}”.{" "}
+              {z.rodzaj === "subskrypcja"
+                ? konczySie
+                  ? "Wyłączona. Działa do końca opłaconego miesiąca."
+                  : `Dosyłamy każdego nowego handlowca z dopasowaniem od ${SUBSKRYPCJA_PROG} %.`
+                : `Brak kompletu do tego dnia = zwrot ${GWARANCJA.cena} zł.`}
+            </div>
+            {z.rodzaj === "subskrypcja" && !konczySie && (
+              <button type="button" className={s.btn} onClick={() => wylacz(z.id)}>
+                Wyłącz subskrypcję
+              </button>
+            )}
+          </div>
+        );
+      })}
+      {bladZ && <p className={s.firma} role="alert">{bladZ}</p>}
       {handlowcy.length === 0 ? (
         <div className={s.pustoDuze}>
           <span className={`${s.statusPig} ${s.statusWstrzymana}`}>● Brak odblokowanych kontaktów</span>

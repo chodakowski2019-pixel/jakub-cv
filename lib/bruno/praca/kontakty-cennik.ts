@@ -1,6 +1,6 @@
 // 11.11 (USER_001): giełda handlowców, cennik kontaktów dla firm. Plik bez importów serwera (czyta go też przeglądarka).
 // 12.11 (USER_001, decyzja): paczka 3 handlowców = 149 zł, subskrypcja = 290 zł / mies., gwarancja 5 handlowców w 30 dni
-// albo zwrot = 990 zł. Ceny brutto. Zastępuje pakiety 1 / 5 / 10 (99 / 349 / 499 zł). Zmiana ceny = tylko tutaj.
+// albo zwrot = 990 zł. Ceny brutto. 13.11 (USER_001): subskrypcja = dosyłamy nowych dopasowanych, minimum 70 % dopasowania. Zastępuje pakiety 1 / 5 / 10 (99 / 349 / 499 zł). Zmiana ceny = tylko tutaj.
 
 export type Pakiet = { ile: number; cena: number };
 
@@ -8,8 +8,9 @@ export type Pakiet = { ile: number; cena: number };
 export const PACZKA: Pakiet = { ile: 3, cena: 149 };
 /** Pakiety kontaktów, cena w zł. Rosnąco po liczbie kontaktów. */
 export const PAKIETY: Pakiet[] = [PACZKA];
-/** Subskrypcja: kontakty do wszystkich dopasowanych handlowców, obecnych i nowych, zł / mies. */
+/** Subskrypcja, zł / mies.: dosyłamy kontakty do NOWYCH handlowców (dołączyli po zakupie) z dopasowaniem od SUBSKRYPCJA_PROG %. */
 export const SUBSKRYPCJA_ZL = 290;
+export const SUBSKRYPCJA_PROG = 70;
 /** Gwarancja: `ile` dopasowanych handlowców w `dni` dni albo zwrot całej kwoty. */
 export const GWARANCJA = { cena: 990, ile: 5, dni: 30 };
 

@@ -6,7 +6,7 @@ import d from "@/components/bruno/praca/dolacz.module.css";
 import h from "@/components/bruno/praca/handlowcy.module.css";
 import { getStripeBruno } from "@/lib/bruno/stripe";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
-import { GWARANCJA } from "@/lib/bruno/praca/kontakty-cennik";
+import { GWARANCJA, SUBSKRYPCJA_PROG } from "@/lib/bruno/praca/kontakty-cennik";
 import { przypiszZlecenie, zleceniePoSesji, zlecenieZeStripe } from "@/lib/bruno/praca/zlecenia";
 
 // 12.11 (USER_001): powrót ze Stripe po zakupie subskrypcji albo gwarancji w wyszukiwarce (/praca/handlowcy/zlecenie?sesja=…).
@@ -68,10 +68,10 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
             </span>
             <h1 className={h.poH}>Załóż konto firmy</h1>
             <p className={h.poP}>
-              Został ostatni krok. Na koncie pojawią się kontakty do handlowców dopasowanych do opisu: „{zlecenie.opis}”.{" "}
+              Został ostatni krok. {zlecenie.rodzaj === "gwarancja" ? "Na koncie pojawią się" : "Na konto będziemy dosyłać"} kontakty do handlowców dopasowanych do opisu: „{zlecenie.opis}”.{" "}
               {zlecenie.rodzaj === "gwarancja"
                 ? `Gwarancja: ${GWARANCJA.ile} handlowców do ${new Date(zlecenie.termin ?? Date.now()).toLocaleDateString("pl-PL")} albo zwrot ${GWARANCJA.cena} zł.`
-                : "O każdym nowym dopasowanym handlowcu damy znać e-mailem."}
+                : `Każdy nowy handlowiec z dopasowaniem od ${SUBSKRYPCJA_PROG} % trafi do panelu, damy znać e-mailem. Subskrypcję można wyłączyć w panelu.`}
             </p>
             <div className={d.karta}>
               <KontoForm typ="pracodawca" jedenTyp dalej={tuWroc} naglowek="Konto firmy" opis="" przycisk="Załóż konto i pokaż kontakty" />

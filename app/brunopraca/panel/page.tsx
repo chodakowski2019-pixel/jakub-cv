@@ -17,6 +17,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 import { linkPlatnosci } from "@/lib/bruno/praca/platnosci";
 import { firmyZKontaktem, mojProfil, odblokowaniHandlowcy } from "@/lib/bruno/praca/handlowcy";
+import { zleceniaKonta } from "@/lib/bruno/praca/zlecenia";
 import { doOferty, ofertyKonta } from "@/lib/bruno/praca/oferty-firm";
 import { CENA_MIESIAC, doListy, ofertaPoId, ofertyPubliczne, type OfertaLista } from "@/lib/bruno/praca/oferty";
 
@@ -77,7 +78,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     const oferty = await ofertyKonta(konto.id);
     const ids = oferty.map((o) => o.id);
     const { data } = ids.length ? await supabaseAdmin.from("praca_zgloszenia").select(POLA_Z).in("oferta_id", ids).order("created_at", { ascending: false }) : { data: [] };
-    const handlowcy = await odblokowaniHandlowcy(konto.id);
+    const [handlowcy, zlecenia] = await Promise.all([odblokowaniHandlowcy(konto.id), zleceniaKonta(konto.id)]);
     const nowych = ((data ?? []) as Zgloszenie[]).filter((x) => x.status === "nowe").length;
     const aktywne = oferty.filter((o) => o.status === "aktywna").length;
     const firma = konto.nazwa_wyswietlana || konto.firma || "Twoja firma";
@@ -106,7 +107,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           />
         ) : (
           <div className={`${s.root} ${g.wnetrze}`} lang="pl">
-            <PanelFirmy bezMenu konto={konto} oferty={oferty} zgloszenia={(data ?? []) as Zgloszenie[]} handlowcy={handlowcy} cena={CENA_MIESIAC} zakladka={zakladka} linki={{ promo: linkPlatnosci(true, konto.id, konto.email), regularny: linkPlatnosci(false, konto.id, konto.email) }} />
+            <PanelFirmy bezMenu konto={konto} oferty={oferty} zgloszenia={(data ?? []) as Zgloszenie[]} handlowcy={handlowcy} zlecenia={zlecenia} cena={CENA_MIESIAC} zakladka={zakladka} linki={{ promo: linkPlatnosci(true, konto.id, konto.email), regularny: linkPlatnosci(false, konto.id, konto.email) }} />
           </div>
         )}
       </UkladGieldy>

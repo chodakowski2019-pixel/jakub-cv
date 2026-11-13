@@ -7,6 +7,7 @@ import type { OfertaFirmyWiersz } from "@/lib/bruno/praca/oferty-firm";
 import type { Zgloszenie } from "@/app/brunopraca/panel/page";
 import type { PelnyHandlowiec } from "@/lib/bruno/praca/handlowcy";
 import PanelHandlowcy from "./panel-handlowcy";
+import type { Zlecenie } from "@/lib/bruno/praca/zlecenia";
 import { formatDaty } from "./panel-wspolne";
 import { Cennik, Kontakt, MojeKonto, ProfilFirmy } from "./panel-firmy-ustawienia";
 import s from "./praca.module.css";
@@ -43,7 +44,7 @@ const MENU: [Zakladka, string, string][] = [
 
 export type LinkiPlatnosci = { promo: string; regularny: string };
 
-export default function PanelFirmy({ konto, oferty, zgloszenia, handlowcy, cena, zakladka, linki, bezMenu }: { /** 11.11: panel w układzie giełdy (uklad-gieldy.tsx): bez własnego menu, zakładka z adresu ?z=. */ bezMenu?: boolean; konto: KontoPraca; oferty: OfertaFirmyWiersz[]; zgloszenia: Zgloszenie[]; handlowcy: PelnyHandlowiec[]; cena: number; zakladka?: string; linki: LinkiPlatnosci }) {
+export default function PanelFirmy({ konto, oferty, zgloszenia, handlowcy, zlecenia = [], cena, zakladka, linki, bezMenu }: { /** 11.11: panel w układzie giełdy (uklad-gieldy.tsx): bez własnego menu, zakładka z adresu ?z=. */ bezMenu?: boolean; konto: KontoPraca; oferty: OfertaFirmyWiersz[]; zgloszenia: Zgloszenie[]; handlowcy: PelnyHandlowiec[]; /** 13.11: subskrypcje i gwarancje z wyszukiwarki. */ zlecenia?: Zlecenie[]; cena: number; zakladka?: string; linki: LinkiPlatnosci }) {
   // 18.10 (USER_001): najpierw płatność (Stripe Payment Link), potem dodanie ogłoszenia. kredyty = opłacone ogłoszenia do wystawienia.
   const kredyty = konto.kredyty ?? 0;
   const promoDostepna = !konto.promo_uzyta;
@@ -288,7 +289,7 @@ export default function PanelFirmy({ konto, oferty, zgloszenia, handlowcy, cena,
           </>
         )}
 
-        {z === "handlowcy" && <PanelHandlowcy handlowcy={handlowcy} naKoncie={konto.kontakty ?? 0} />}
+        {z === "handlowcy" && <PanelHandlowcy handlowcy={handlowcy} zlecenia={zlecenia} naKoncie={konto.kontakty ?? 0} />}
         {z === "firma" && <ProfilFirmy konto={konto} />}
         {z === "konto" && <MojeKonto konto={konto} />}
         {z === "cennik" && <Cennik cena={cena} pierwszaWykorzystana={!promoDostepna} linkPromo={linki.promo} linkRegularny={linki.regularny} />}

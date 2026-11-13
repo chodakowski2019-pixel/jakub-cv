@@ -2,13 +2,15 @@ import type Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase";
 import { SKRZYNKA_JAKUBA, wyslij } from "@/lib/bruno/mail";
 import { szukajHandlowcow, type Filtry } from "./handlowcy";
-import { GWARANCJA } from "./kontakty-cennik";
+import { getStripeBruno } from "@/lib/bruno/stripe";
+import { GWARANCJA, SUBSKRYPCJA_PROG } from "./kontakty-cennik";
 import { odczytajOpis } from "./opis-szukania";
 
 // 12.11 (USER_001): subskrypcja i gwarancja w wyszukiwarce handlowców. Zlecenie = zapisany opis firmy („wystarczy to, co już
 // dali”). Kolejność jak przy kontaktach: płatność (Stripe Checkout) → konto firmy → kontakty w panelu. Zapis robi webhook
 // ALBO strona powrotu (która pierwsza), zawsze raz (unikalna `sesja`).
-// Subskrypcja: kontakt do każdego dopasowanego handlowca, obecnego i nowego, dopóki trwa.
+// Subskrypcja (13.11, USER_001): dosyłamy kontakty do handlowców, którzy dołączyli PO zakupie i pasują do opisu na co najmniej
+// SUBSKRYPCJA_PROG %. Handlowców z dnia zakupu firma odblokowuje paczką. Rezygnacja w panelu firmy (anulujSubskrypcje).
 // Gwarancja: do GWARANCJA.ile dopasowanych handlowców w GWARANCJA.dni dni; brak kompletu po terminie = zwrot (robi USER_001).
 
 export type RodzajZlecenia = "subskrypcja" | "gwarancja";
@@ -25,8 +27,11 @@ export type Zlecenie = {
   status: "aktywne" | "zakonczone";
   termin: string | null;
   test: boolean;
+  created_at: string;
+  /** Subskrypcja: firma zrezygnowała, działa do końca opłaconego miesiąca. */
+  anulowano_at: string | null;
 };
-const POLA = "id,sesja,rodzaj,email,konto_id,opis,filtry,kwota_gr,stripe_sub,status,termin,test";
+const POLA = "id,sesja,rodzaj,email,konto_id,opis,filtry,kwota_gr,stripe_sub,status,termin,test,created_at,anulowano_at";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function rodzajZlecenia(v: unknown): RodzajZlecenia | null {
@@ -103,7 +108,8 @@ async function wydane(zlecenieId: string): Promise<number> {
  * Gwarancja: najwyżej GWARANCJA.ile osób łącznie, po komplecie zlecenie się kończy. Zwraca liczbę nowych kontaktów. */
 async function rozdaj(z: Zlecenie, tylko?: string[]): Promise<number> {
   if (!z.konto_id || z.status !== "aktywne" || !maKryteria(z.filtry)) return 0;
-  let ids = (await szukajHandlowcow(z.filtry)).map((k) => k.id);
+  const prog = z.rodzaj === "subskrypcja" ? SUBSKRYPCJA_PROG : 0;
+  let ids = (await szukajHandlowcow(z.filtry)).filter((k) => (k.dopasowanie ?? 0) >= prog).map((k) => k.id);
   if (tylko) ids = ids.filter((id) => tylko.includes(id));
   if (!ids.length) return 0;
   // Kontakt, który firma ma już z innego zakupu, nie liczy się do gwarancji.
@@ -123,7 +129,8 @@ async function rozdaj(z: Zlecenie, tylko?: string[]): Promise<number> {
   return ile;
 }
 
-/** Przypina zlecenie do konta pracodawcy (raz) i od razu odblokowuje kontakty do handlowców, którzy już pasują. */
+/** Przypina zlecenie do konta pracodawcy (raz). Gwarancja: od razu kontakty do handlowców, którzy już pasują.
+ * Subskrypcja: tylko do tych, którzy zostali zweryfikowani między płatnością a założeniem konta. */
 export async function przypiszZlecenie(z: Zlecenie, kontoId: string): Promise<{ ok: boolean; odblokowane: number }> {
   const { data: moje } = await supabaseAdmin
     .from("praca_zlecenia")
@@ -133,7 +140,12 @@ export async function przypiszZlecenie(z: Zlecenie, kontoId: string): Promise<{ 
     .select("id");
   // Zlecenie przypięte wcześniej: do tego samego konta = w porządku (odświeżenie strony), do innego = odmowa.
   if (!moje?.length) return { ok: (await zleceniePoSesji(z.sesja))?.konto_id === kontoId, odblokowane: 0 };
-  return { ok: true, odblokowane: await rozdaj({ ...z, konto_id: kontoId }) };
+  let tylko: string[] | undefined;
+  if (z.rodzaj === "subskrypcja") {
+    const { data: nowi } = await supabaseAdmin.from("praca_profile_handlowcow").select("konto_id").gte("mail_weryfikacji_at", z.created_at);
+    tylko = (nowi ?? []).map((x) => x.konto_id as string);
+  }
+  return { ok: true, odblokowane: await rozdaj({ ...z, konto_id: kontoId }, tylko) };
 }
 
 /** Nowy zweryfikowany profil: kontakt trafia do każdej firmy z aktywnym zleceniem, do którego handlowiec pasuje, firma dostaje mail. */
@@ -162,4 +174,28 @@ export async function rozdajNowego(handlowiecId: string): Promise<number> {
 export async function zakonczSubskrypcje(stripeSub: string) {
   const { error } = await supabaseAdmin.from("praca_zlecenia").update({ status: "zakonczone" }).eq("stripe_sub", stripeSub);
   if (error) console.error("[praca zlecenia] koniec subskrypcji", error.message);
+}
+
+/** Aktywne i niedawno zakończone zlecenia firmy do panelu (zakładka „Handlowcy”). */
+export async function zleceniaKonta(kontoId: string): Promise<Zlecenie[]> {
+  const { data } = await supabaseAdmin.from("praca_zlecenia").select(POLA).eq("konto_id", kontoId).order("created_at", { ascending: false }).limit(20);
+  return (data ?? []) as Zlecenie[];
+}
+
+/** 13.11 (USER_001): rezygnacja z subskrypcji w panelu firmy. Stripe kończy ją z końcem opłaconego miesiąca
+ * (webhook oznaczy wtedy zlecenie jako zakończone). Zlecenie testowe (bez Stripe) kończy się od razu. */
+export async function anulujSubskrypcje(kontoId: string, zlecenieId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin.from("praca_zlecenia").select(POLA).eq("id", zlecenieId).eq("konto_id", kontoId).eq("rodzaj", "subskrypcja").eq("status", "aktywne").maybeSingle();
+  const z = data as Zlecenie | null;
+  if (!z) return false;
+  if (z.stripe_sub) {
+    try {
+      await getStripeBruno().subscriptions.update(z.stripe_sub, { cancel_at_period_end: true });
+    } catch (e) {
+      console.error("[praca zlecenia] anuluj", e);
+      return false;
+    }
+  }
+  await supabaseAdmin.from("praca_zlecenia").update({ anulowano_at: new Date().toISOString(), ...(z.stripe_sub ? {} : { status: "zakonczone" }) }).eq("id", z.id);
+  return true;
 }

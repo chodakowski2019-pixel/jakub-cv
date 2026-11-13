@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { GWARANCJA, PACZKA, SUBSKRYPCJA_ZL, WAZNOSC_MIES, handlowcow } from "@/lib/bruno/praca/kontakty-cennik";
+import { GWARANCJA, PACZKA, SUBSKRYPCJA_PROG, SUBSKRYPCJA_ZL, WAZNOSC_MIES, handlowcow } from "@/lib/bruno/praca/kontakty-cennik";
 import g from "./gielda.module.css";
 
 // 12.11 (USER_001): 3 sposoby zakupu pod wynikiem publicznej wyszukiwarki: paczka 3 handlowców (149 zł, jednorazowo),
-// subskrypcja (290 zł / mies., bez dodawania oferty drugi raz) i gwarancja (990 zł, 5 handlowców w 30 dni albo zwrot).
+// subskrypcja (290 zł / mies., dosyłamy nowych dopasowanych od 70 %, bez dodawania oferty drugi raz) i gwarancja (990 zł, 5 handlowców w 30 dni albo zwrot).
 // Paczka idzie przez /api/bruno/praca/kontakty (jak dotąd), dwie pozostałe przez /api/bruno/praca/zlecenie.
 export default function OfertaWyszukiwarki({
   opis,
@@ -66,10 +66,10 @@ export default function OfertaWyszukiwarki({
               <h3>Subskrypcja</h3>
               <p className={g.planCena}>{SUBSKRYPCJA_ZL} zł <small>/ mies.</small></p>
               <ul>
-                <li>Kontakty do wszystkich dopasowanych handlowców, obecnych i nowych</li>
+                <li>Dosyłamy kontakt do każdego nowego dopasowanego handlowca, gdy tylko dołączy do bazy</li>
+                <li>Dopasowanie co najmniej {SUBSKRYPCJA_PROG} %</li>
                 <li>Bez dodawania oferty drugi raz: wystarczy ten opis</li>
-                <li>E-mail o każdym nowym dopasowanym handlowcu</li>
-                <li>Rezygnacja w każdej chwili</li>
+                <li>Rezygnacja w panelu w każdej chwili</li>
               </ul>
               <button type="button" className="p-btn p-btn-2" disabled={!!stan} onClick={() => kup("subskrypcja")}>
                 {stan === "subskrypcja" ? "Chwileczkę…" : `Włącz · ${SUBSKRYPCJA_ZL} zł / mies.`}
