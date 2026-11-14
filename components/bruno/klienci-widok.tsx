@@ -282,7 +282,7 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
               {historia.map((h) => (
                 <li key={h.id}>
                   <span className="pk-os-kiedy">{dataKrotka(h.kiedy, jezyk)}</span>
-                  <i className={`pk-os-kropka ${h.bruno ? "bruno" : ""} ${h.typ === "etap" || h.typ === "status" ? "zmiana" : ""} ${h.typ === "zadanie" && h.zrobione ? "zrobione" : ""}`} aria-hidden />
+                  <i className={`pk-os-kropka ${h.bruno ? "od-bruno" : ""} ${h.typ === "etap" || h.typ === "status" ? "zmiana" : ""} ${h.typ === "zadanie" && h.zrobione ? "zrobione" : ""}`} aria-hidden />
                   <div className="pk-os-tresc">
                     <Chip k={chipTypu(h)}>{nazwaTypu(h)}{h.bruno ? " · Bruno" : ""}</Chip>
                     {(h.typ === "notatka" || h.plik) && /^z\d+$/.test(h.id) ? (

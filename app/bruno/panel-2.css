@@ -326,7 +326,7 @@
 .pk-os-kiedy { font-size: 12px; color: var(--p-ink-3); font-variant-numeric: tabular-nums; padding-top: 2px; white-space: nowrap; }
 .pk-os-kiedy.zalegle { color: var(--p-zle-t); font-weight: 600; }
 .pk-os-kropka { width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid var(--p-s3); margin: 4px 0 0 7px; position: relative; z-index: 1; }
-.pk-os-kropka.bruno { border-color: var(--p-lim-c); background: var(--p-lim); }
+.pk-os-kropka.od-bruno { border-color: var(--p-lim-c); background: var(--p-lim); }
 .pk-os-kropka.zmiana { border-color: var(--p-ink); background: var(--p-ink); }
 .pk-os-kropka.zrobione { border-color: var(--p-ok); background: var(--p-ok); }
 .pk-os-tresc { min-width: 0; font-size: 13.5px; line-height: 1.45; }

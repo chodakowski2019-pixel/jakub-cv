@@ -814,12 +814,7 @@ export default function Rozmowa({ postacDomyslna, glosDomyslny = "m", karta, obi
                   <span className="block mt-1 text-slate-500">{trening.dlaczego}</span>
                 </div>
               )}
-              {!trening && sytuacjaStart && (
-                <div className="bruno-szklo rounded-2xl px-4 py-3 mb-5 max-w-xl text-sm text-slate-700">
-                  <span className="bsz-pigulka mr-2">{tr("From your pipeline", "Z Twojego lejka")}</span>
-                  {sytuacjaStart}
-                </div>
-              )}
+              {/* 14.11 (USER_001): treści sytuacji z lejka („Zagraj klienta…”) nie pokazujemy, idzie tylko do Bruno. */}
               <div className={`relative ${rinesk ? "brz-kula" : "size-64 sm:size-80"}`}>
                 {rinesk ? <KulaLimonka tempo="czeka" /> : <OrbBruno tempo="czeka" />}
               </div>
