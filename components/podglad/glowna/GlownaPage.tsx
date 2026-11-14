@@ -10,13 +10,13 @@ import "./glowna.css";
 
 // Treść z public/home.html (strona główna od 5.10), przetłumaczona na polski 6.10.
 const PHOTO = "/profilowe_jakub.png";
+// 14.11 (USER_001): w hero zdjęcie przycięte nad łukiem wycięcia (koszula do krawędzi karty).
+const PHOTO_HERO = "/profilowe_jakub-hero.png";
 const EMAIL = "hello@jakubchodakowski.com";
 const LINKEDIN = "https://www.linkedin.com/in/jakub-chodakowski";
 // 9.10 (USER_001): przyciski prowadzą na podstrony. Adresy podglądu, do podmiany przy przenosinach na prawdziwe adresy.
 // 11.10: Bruno żyje na własnych domenach; strona główna jest po polsku → salesbruno.pl.
 const BRUNO_LP = "https://salesbruno.pl";
-const PRACA = "/praca";
-const HANDLOWCY = "/handlowcy";
 
 // 9.10: zdjęcie w każdym kafelku. img: null = miejsce na zdjęcie (czeka na plik od USER_001).
 const MILESTONES: { d: string; t: string; img: string | null; alt: string; logo?: "instagram" | "obraz" }[] = [
@@ -116,7 +116,7 @@ export default function GlownaPage({ fontClass }: { fontClass: string }) {
 
             <div className="photo-col">
             <a href="#story" className="hero-photo glass in d3">
-              <span className="ph"><Image src={PHOTO} alt="Jakub Chodakowski" fill sizes="(max-width: 960px) 80vw, 360px" priority /></span>
+              <span className="ph"><Image src={PHOTO_HERO} alt="Jakub Chodakowski" fill sizes="(max-width: 960px) 80vw, 360px" priority /></span>
               <span className="cap">
                 <b>Jakub Chodakowski</b>
               </span>
@@ -208,21 +208,7 @@ export default function GlownaPage({ fontClass }: { fontClass: string }) {
           </div>
         </section>
 
-        <section className="sec" id="praca">
-          <h2 className="reveal">Znajdź <em>pracę</em></h2>
-          <p className="lead reveal">Oferty pracy dla handlowców z całego świata.</p>
-          <div className="bruno-cta reveal">
-            <a className="btn solid" href={PRACA}>Szukaj ofert <Arrow /></a>
-          </div>
-        </section>
-
-        <section className="sec" id="handlowcy">
-          <h2 className="reveal">Znajdź <em>handlowca</em></h2>
-          <p className="lead reveal">Handlowcy z całego świata.</p>
-          <div className="bruno-cta reveal">
-            <a className="btn solid" href={HANDLOWCY}>Szukaj handlowców <Arrow /></a>
-          </div>
-        </section>
+        {/* 14.11 (USER_001): sekcje „Znajdź pracę” i „Znajdź handlowca” usunięte. */}
 
         {/* 8. CONTACT */}
         <section className="sec" id="contact">
