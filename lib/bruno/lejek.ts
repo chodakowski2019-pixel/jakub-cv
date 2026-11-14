@@ -361,7 +361,7 @@ export async function typyAktywnosci(token: string): Promise<Map<string, string>
 /** 5.11 (USER_001, pkt 4: „leady mają mieć historię co tam Bruno dodał, notatki itd.”): jedna oś czasu deala
  *  z Pipedrive `/deals/{id}/flow`: notatki, zadania (zrobione i nie), zmiany etapu / statusu / wartości, pliki.
  *  `bruno` = wpis zrobiony przez Bruno (notatka ze stopką „przez Bruno”, aktywność „Trening Bruno”). */
-export type Zdarzenie = { id: string; kiedy: string; typ: "notatka" | "zadanie" | "etap" | "status" | "wartosc" | "plik" | "mail" | "inne"; tekst: string; pod: string | null; bruno: boolean; zrobione: boolean | null; data: string | null; /** klucz typu aktywności Pipedrive (call, email, „Trening Bruno”…) */ typKlucz: string | null };
+export type Zdarzenie = { id: string; kiedy: string; typ: "notatka" | "zadanie" | "etap" | "status" | "wartosc" | "plik" | "mail" | "inne"; tekst: string; pod: string | null; bruno: boolean; zrobione: boolean | null; data: string | null; /** klucz typu aktywności Pipedrive (call, email, „Trening Bruno”…) */ typKlucz: string | null; /** 14.11: plik przypięty do klienta (CRM Bruno). */ plik?: { id: number; nazwa: string; rodzaj: "pdf" | "audio" } | null };
 
 type FlowPd = { object: string; timestamp: string; data: Record<string, unknown> };
 const czysty = (s: unknown) => bezPrefiksu(String(s ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " "));

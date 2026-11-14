@@ -1,4 +1,3 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { zalogowanyEmail } from "@/lib/bruno/auth";
 import { pobierzKonto } from "@/lib/bruno/db";
@@ -7,6 +6,7 @@ import { crmWlaczony } from "@/lib/bruno/lejek";
 import { tDla } from "@/lib/bruno/i18n";
 import { supabaseAdmin } from "@/lib/supabase";
 import { KUBELEK_BRUNO } from "@/lib/bruno/nagrania";
+import { AUDIO, MAX_BAJTOW, PDF, audioDoTekstu, pdfDoTekstu } from "@/lib/bruno/plik-tekst";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -17,10 +17,7 @@ export const maxDuration = 120;
 //   POST {sciezka, nazwa, typ} → serwer ściąga z kubełka, PDF czyta Claude (Haiku, blok document), audio → OpenAI Whisper.
 // Małe pliki (< 4 MB) można wysłać od razu jako multipart POST (pole `plik`). Wynik: { nazwa, typ, tekst }.
 
-const MAX_BAJTOW = 25 * 1024 * 1024; // limit Whispera
 const MAX_TEKST = 20000; // 8.11: 10 min nagrania = ok. 10 000 znaków
-const AUDIO = /^audio\/|\.(mp3|m4a|wav|webm|ogg|mp4|mpeg|mpga)$/i;
-const PDF = /^application\/pdf$|\.pdf$/i;
 
 async function autoryzuj() {
   const email = await zalogowanyEmail();
@@ -48,38 +45,6 @@ export async function GET(req: Request) {
   }
   if (r.error || !r.data) return NextResponse.json({ blad: r.error?.message ?? "upload" }, { status: 500 });
   return NextResponse.json({ sciezka, url: r.data.signedUrl, token: r.data.token });
-}
-
-async function pdfDoTekstu(bajty: ArrayBuffer, jezyk: "pl" | "en"): Promise<string> {
-  if (!process.env.ANTHROPIC_API_KEY) throw new Error("Brak ANTHROPIC_API_KEY.");
-  const klient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const res = await klient.messages.create({
-    model: process.env.BRUNO_PLIK_MODEL ?? "claude-haiku-5-5",
-    max_tokens: 4000,
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "document", source: { type: "base64", media_type: "application/pdf", data: Buffer.from(bajty).toString("base64") } },
-          { type: "text", text: jezyk === "pl" ? "Przepisz treść tego dokumentu jako zwykły tekst: wszystkie fakty, nazwy, osoby, kwoty, daty, warunki. Bez komentarza, bez wstępu. Jeśli dokument jest długi, streść sekcje, ale kwoty i daty zostaw co do jednej. Max 6000 znaków." : "Transcribe this document as plain text: every fact, name, person, amount, date, term. No commentary, no intro. If long, summarize sections but keep every amount and date. Max 6000 characters." },
-        ],
-      },
-    ],
-  });
-  return res.content.filter((c): c is Anthropic.TextBlock => c.type === "text").map((c) => c.text).join("\n").trim();
-}
-
-async function audioDoTekstu(bajty: ArrayBuffer, nazwa: string, typ: string, jezyk: "pl" | "en"): Promise<string> {
-  if (!process.env.OPENAI_API_KEY) throw new Error("Brak OPENAI_API_KEY (transkrypcja).");
-  const fd = new FormData();
-  fd.append("file", new Blob([bajty], { type: typ || "audio/mpeg" }), nazwa);
-  fd.append("model", process.env.BRUNO_WHISPER_MODEL ?? "whisper-1");
-  fd.append("language", jezyk);
-  fd.append("response_format", "text");
-  const r = await fetch("https://api.openai.com/v1/audio/transcriptions", { method: "POST", headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` }, body: fd });
-  const tekst = await r.text();
-  if (!r.ok) throw new Error(`Whisper ${r.status}: ${tekst.slice(0, 200)}`);
-  return tekst.trim();
 }
 
 export async function POST(req: Request) {

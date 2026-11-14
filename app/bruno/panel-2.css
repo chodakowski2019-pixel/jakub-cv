@@ -518,3 +518,18 @@ a.kl2-imie:hover { text-decoration: underline; text-underline-offset: 3px; }
 .kl2-usuniety td:not(.kl2-td-edytuj) { opacity: .45; text-decoration: line-through; }
 .kl2-usuniety td.kl2-td-foto { filter: grayscale(1); }
 .kl2-usuniety .kl2-imie, .kl2-usuniety .kl2-kontakt { text-decoration: line-through; }
+
+/* ---------- KARTA KLIENTA: notatka, plik, głosówka (14.11) ---------- */
+.pk-dodaj { margin: 4px 0 14px; padding-bottom: 14px; border-bottom: 1px solid var(--p-ramka); }
+.pk-dodaj textarea { width: 100%; resize: vertical; min-height: 64px; padding: 10px 12px; border: 1px solid var(--p-ramka-2); border-radius: var(--p-radius-2); background: var(--p-tlo-2); font: inherit; font-size: 14px; color: var(--p-ink); outline: none; transition: border-color .15s, background .15s; }
+.pk-dodaj textarea:focus { border-color: var(--p-ink-3); background: #fff; }
+.pk-dodaj-pasek { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+.pk-dodaj-stan { font-size: 12.5px; margin-top: 6px; }
+.pk-dodaj-pasek .pk-dodaj-stan { margin-top: 0; }
+.pk-nagrywam { border-color: var(--p-zle) !important; color: var(--p-zle-t) !important; background: var(--p-zle-j) !important; }
+.pk-plik-linki { display: inline-flex; gap: 10px; margin-left: 10px; font-size: 12.5px; }
+.pk-plik-linki a { color: var(--p-ink-2); text-decoration: underline; text-underline-offset: 2px; }
+.pk-plik-audio { display: block; width: 100%; max-width: 360px; height: 34px; margin-top: 6px; }
+.pk-plik-tekst { margin-top: 4px; font-size: 12.5px; color: var(--p-ink-2); }
+.pk-plik-tekst summary { cursor: pointer; color: var(--p-ink-3); }
+.pk-plik-tekst p { margin: 4px 0 0; white-space: pre-wrap; max-height: 240px; overflow: auto; }

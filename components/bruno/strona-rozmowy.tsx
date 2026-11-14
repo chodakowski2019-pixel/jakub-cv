@@ -35,7 +35,9 @@ export default async function StronaRozmowy({ searchParams, jutro }: { searchPar
 
   // 12.10 (USER_001): bez „co sprzedajesz” i „kim jest klient” Bruno nie ma kogo grać.
   // Zamiast kreatora: komunikat „Uzupełnij Bruno” z przejściem do „Dostosuj Bruno”.
-  if (!konfig.produkt.trim() || !konfig.klient.trim()) {
+  // 14.11 (USER_001): trening z karty klienta, z lejka albo z planu dnia ma już klienta i etap z CRM, więc bez bramki.
+  const zCrm = Boolean(planPoz) || (typeof sytuacjaStart === "string" && sytuacjaStart.trim().length > 0) || (typeof klient === "string" && Number(klient) > 0);
+  if (!zCrm && (!konfig.produkt.trim() || !konfig.klient.trim())) {
     return (
       <div className="bruno-szklo rounded-3xl p-8 sm:p-10 max-w-xl mx-auto mt-6 text-center flex flex-col items-center gap-4">
         <h1 className="bruno-h1 text-[1.9rem] sm:text-[2.4rem]">

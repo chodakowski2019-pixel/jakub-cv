@@ -39,6 +39,9 @@ type WierszZdarzenia = {
   autor: string | null;
   bruno: boolean;
   utworzono: string;
+  plik_sciezka?: string | null;
+  plik_rodzaj?: string | null;
+  plik_nazwa?: string | null;
 };
 
 const sb = () => supabaseAdmin;
@@ -156,6 +159,7 @@ export async function historiaKlienta(firmaId: string, klientId: number): Promis
     zrobione: z.typ === "zadanie" ? Boolean(z.zrobione) : null,
     data: z.data,
     typKlucz: z.typ_zadania,
+    plik: z.typ === "plik" && z.plik_sciezka ? { id: z.id, nazwa: z.plik_nazwa ?? "plik", rodzaj: z.plik_rodzaj === "audio" ? "audio" : "pdf" } : null,
   }));
 }
 
@@ -168,6 +172,17 @@ async function zapiszZdarzenie(firmaId: string, klientId: number | null, z: Part
 
 export async function dodajNotatkeCrm(firmaId: string, klientId: number, tresc: string, autor: string, bruno = true) {
   return zapiszZdarzenie(firmaId, klientId, { typ: "notatka", tekst: tresc.slice(0, 6000), autor, bruno });
+}
+
+/** 14.11 (USER_001): plik z karty klienta (PDF albo głosówka). Plik zostaje w kubełku, w historii jego odczytana treść. */
+export async function dodajPlikCrm(firmaId: string, klientId: number, p: { sciezka: string; nazwa: string; rodzaj: "pdf" | "audio"; tekst: string }, autor: string) {
+  return zapiszZdarzenie(firmaId, klientId, { typ: "plik", tekst: p.tekst.slice(0, 20000), autor, bruno: false, plik_sciezka: p.sciezka, plik_rodzaj: p.rodzaj, plik_nazwa: p.nazwa.slice(0, 160) });
+}
+
+/** 14.11: ścieżka pliku w kubełku (pobranie / odsłuch z karty klienta). */
+export async function sciezkaPlikuCrm(firmaId: string, klientId: number, zdarzenieId: number): Promise<{ sciezka: string; nazwa: string } | null> {
+  const { data } = await sb().from("bruno_crm_zdarzenia").select("plik_sciezka, plik_nazwa").eq("firma_id", firmaId).eq("klient_id", klientId).eq("id", zdarzenieId).eq("typ", "plik").maybeSingle();
+  return data?.plik_sciezka ? { sciezka: String(data.plik_sciezka), nazwa: String(data.plik_nazwa ?? "plik") } : null;
 }
 
 export async function przesunEtapCrm(firmaId: string, klientId: number, etapId: number, autor: string) {

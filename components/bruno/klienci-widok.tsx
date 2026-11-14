@@ -7,6 +7,7 @@ import { zJako } from "@/lib/bruno/jako";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
 import { AwatarKlienta, DodajKlienta, ImportKlientow, SzybkieAkcje, WierszKlienta } from "@/components/bruno/klienci-akcje";
 import { plecZImienia, twarzKlienta } from "@/lib/bruno/plec";
+import KlientDodaj from "@/components/bruno/klient-dodaj";
 
 // 4.11 (USER_001, pkt 2): ZAKŁADKA KLIENCI (lista) + KARTA KLIENTA. Dane na żywo z CRM (Pipedrive).
 // 6.11: nowy system zakładek (panel-2.css, p-* / pk-*): kafelki nad listą (klienci, wartość, zaległe, bez kroku),
@@ -182,6 +183,27 @@ export default function KlienciLista({ firma, jezyk, szef, etapy, deale, q, blad
   );
 }
 
+/** 14.11: wpis „plik” w historii: nazwa, odsłuch (głosówka) albo otwarcie (PDF), pobranie, odczytana treść pod „Pokaż treść”. */
+function PlikWpis({ h, plik, href, jezyk }: { h: Zdarzenie; plik: NonNullable<Zdarzenie["plik"]>; href: string; jezyk: Jezyk }) {
+  const t = tDla(jezyk);
+  return (
+    <>
+      <b>{plik.rodzaj === "audio" ? "🎙️" : "📄"} {plik.nazwa}</b>
+      <span className="pk-plik-linki">
+        {plik.rodzaj === "pdf" && <a href={href} target="_blank" rel="noreferrer">{t("Open", "Otwórz")}</a>}
+        <a href={`${href}&pobierz=1`}>{t("Download", "Pobierz")}</a>
+      </span>
+      {plik.rodzaj === "audio" && <audio controls preload="none" src={href} className="pk-plik-audio" />}
+      {h.tekst && h.tekst !== "–" && (
+        <details className="pk-plik-tekst">
+          <summary>{plik.rodzaj === "audio" ? t("Transcript", "Transkrypcja") : t("Show text", "Pokaż treść")}</summary>
+          <p>{h.tekst}</p>
+        </details>
+      )}
+    </>
+  );
+}
+
 export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnosci, historia = [], handlowiec, linkCrm, jako = null, plec = null, zdjecie = null }: { /** 8.11: zapisana płeć (formularz edycji) i zdjęcie z profilu. */ plec?: "m" | "k" | null; zdjecie?: string | null; firma: Firma | null; jezyk: Jezyk; szef: boolean; deal: Deal; etapy: Etap[]; notatki: { id: number; tresc: string; kiedy: string }[]; aktywnosci: (Aktywnosc & { typNazwa: string })[]; /** 5.11 (pkt 4): jedna oś czasu z Pipedrive, wpisy Bruno oznaczone. */ historia?: Zdarzenie[]; handlowiec: Osoba | null; linkCrm: string | null; jako?: string | null }) {
   const t = tDla(jezyk);
   void firma;
@@ -193,12 +215,16 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
   const odBruno = historia.filter((h) => h.bruno).length;
   const dni = dniTemu(deal.ostatni_kontakt ?? deal.aktualizacja);
 
+  // 14.11: notatki + odczytane pliki (PDF, głosówki) z karty klienta, najnowsze pierwsze.
+  const zHistorii = historia.filter((h) => h.typ === "notatka" || h.typ === "plik").slice(0, 5).map((h) => (h.plik ? `[${h.plik.nazwa}] ${h.tekst.slice(0, 400)}` : h.tekst));
+  const wiedza = zHistorii.length ? zHistorii : notatki.slice(0, 4).map((n) => n.tresc);
+
   // Przycisk „Trenuj rozmowę z tym klientem”: Bruno gra tę osobę, na tym etapie, z notatkami jako kontekstem.
   const sytuacja = [
     jezyk === "pl"
       ? `Zagraj klienta: ${deal.osoba ?? "osoba decyzyjna"}${deal.organizacja ? ` z firmy ${deal.organizacja}` : ""}. Deal „${deal.tytul}”, wartość ${kwota}, etap lejka: ${etap?.nazwa ?? "?"}.`
       : `Play the customer: ${deal.osoba ?? "decision maker"}${deal.organizacja ? ` from ${deal.organizacja}` : ""}. Deal “${deal.tytul}”, value ${kwota}, pipeline stage: ${etap?.nazwa ?? "?"}.`,
-    notatki.length ? (jezyk === "pl" ? `Co wiemy z notatek: ${notatki.slice(0, 4).map((n) => n.tresc).join(" | ").slice(0, 900)}.` : `What we know from notes: ${notatki.slice(0, 4).map((n) => n.tresc).join(" | ").slice(0, 900)}.`) : "",
+    wiedza.length ? (jezyk === "pl" ? `Co wiemy z notatek i plików: ${wiedza.join(" | ").slice(0, 1400)}.` : `What we know from notes and files: ${wiedza.join(" | ").slice(0, 1400)}.`) : "",
     deal.status === "lost" && deal.powod_przegranej ? (jezyk === "pl" ? `Ten deal przegraliśmy, powód: ${deal.powod_przegranej}. Zagraj ten moment jeszcze raz.` : `We lost this deal, reason: ${deal.powod_przegranej}. Replay that moment.`) : "",
     jezyk === "pl" ? "Zachowuj się jak ta konkretna osoba w tym momencie procesu." : "Behave like this exact person at this point of the process.",
   ]
@@ -208,7 +234,7 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
 
   // 5.11 (pkt 5: „mniej tekstów, bardziej przejrzyste”): etykiety typów krótkie, jedna linia na wpis.
   const nazwaTypu = (h: Zdarzenie) =>
-    h.typ === "notatka" ? t("Note", "Notatka") : h.typ === "zadanie" ? (h.zrobione ? t("Done", "Zrobione") : t("Task", "Zadanie")) : h.typ === "etap" ? t("Stage", "Etap") : h.typ === "status" ? (h.tekst === "won" ? t("Won", "Wygrany") : h.tekst === "lost" ? t("Lost", "Przegrany") : t("Status", "Status")) : h.typ === "wartosc" ? t("Value", "Wartość") : h.typ === "plik" ? t("File", "Plik") : h.typ === "mail" ? "E-mail" : "";
+    h.typ === "notatka" ? t("Note", "Notatka") : h.typ === "zadanie" ? (h.zrobione ? t("Done", "Zrobione") : t("Task", "Zadanie")) : h.typ === "etap" ? t("Stage", "Etap") : h.typ === "status" ? (h.tekst === "won" ? t("Won", "Wygrany") : h.tekst === "lost" ? t("Lost", "Przegrany") : t("Status", "Status")) : h.typ === "wartosc" ? t("Value", "Wartość") : h.typ === "plik" ? (h.plik?.rodzaj === "audio" ? t("Voice note", "Głosówka") : t("File", "Plik")) : h.typ === "mail" ? "E-mail" : "";
   const tekstWpisu = (h: Zdarzenie) => (h.typ === "status" ? h.pod ?? "" : h.typ === "wartosc" ? h.tekst.replace(/(\d+)/g, (m) => formatKwota(Number(m), deal.waluta, jezyk)) : h.tekst);
   const chipTypu = (h: Zdarzenie): "" | "ok" | "zle" | "lim" | "ciemny" => (h.typ === "status" ? (h.tekst === "won" ? "ok" : h.tekst === "lost" ? "zle" : "") : h.typ === "etap" ? "ciemny" : h.typ === "zadanie" && h.zrobione ? "ok" : h.bruno ? "lim" : "");
   const statusChip = deal.status === "won" ? <Chip k="ok">{t("Won", "Wygrany")}</Chip> : deal.status === "lost" ? <Chip k="zle">{t("Lost", "Przegrany")}</Chip> : <Chip k="lim">{etap?.nazwa ?? t("Open", "Otwarty")}</Chip>;
@@ -255,6 +281,7 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
             <h2>{t("History", "Historia")}</h2>
             <span className="p-karta-hd-meta"><b>{historia.length}</b>{odBruno ? <span>· {odBruno} {t("from Bruno", "od Bruno")}</span> : null}</span>
           </div>
+          <KlientDodaj klientId={deal.id} jezyk={jezyk} />
           {historia.length === 0 ? (
             <Pusto tytul={t("Nothing yet", "Jeszcze nic")} />
           ) : (
@@ -265,7 +292,13 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
                   <i className={`pk-os-kropka ${h.bruno ? "bruno" : ""} ${h.typ === "etap" || h.typ === "status" ? "zmiana" : ""} ${h.typ === "zadanie" && h.zrobione ? "zrobione" : ""}`} aria-hidden />
                   <div className="pk-os-tresc">
                     <Chip k={chipTypu(h)}>{nazwaTypu(h)}{h.bruno ? " · Bruno" : ""}</Chip>
-                    {h.typ === "zadanie" ? naglowekZadania(tekstWpisu(h)) : tekstWpisu(h)}
+                    {h.plik ? (
+                      <PlikWpis h={h} plik={h.plik} href={`/api/bruno/klienci/${deal.id}/plik?z=${h.plik.id}`} jezyk={jezyk} />
+                    ) : h.typ === "zadanie" ? (
+                      naglowekZadania(tekstWpisu(h))
+                    ) : (
+                      tekstWpisu(h)
+                    )}
                     {h.pod && h.typ !== "status" ? <small>{h.pod}</small> : null}
                   </div>
                 </li>
