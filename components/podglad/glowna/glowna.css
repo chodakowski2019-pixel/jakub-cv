@@ -121,7 +121,7 @@
 .pgg .story{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}
 .pgg .story .tags{justify-content:flex-start;margin-top:30px}
 .pgg .portrait{position:relative;border-radius:28px;overflow:hidden;aspect-ratio:4/5;border:1px solid var(--line)}
-.pgg .portrait img{object-fit:cover;object-position:50% 25%;filter:saturate(.8)}
+.pgg .portrait img{object-fit:cover;object-position:50% 100%;filter:saturate(.8)}
 .pgg .portrait::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(4,20,15,.85)),linear-gradient(140deg,rgba(61,220,151,.18),transparent 50%)}
 .pgg .portrait .cap{position:absolute;left:20px;right:20px;bottom:18px;z-index:2;display:flex;justify-content:space-between;align-items:end}
 .pgg .portrait .cap b{font-weight:500;font-size:17px;display:block}
@@ -235,7 +235,7 @@
 .pgg .hero-photo{position:relative;display:block;margin:auto auto 0;width:min(340px,100%);height:min(48vh,440px);aspect-ratio:4/5;border-radius:24px;overflow:hidden;padding:0;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .pgg .hero-photo:hover{transform:translateY(-4px)}
 .pgg .hero-photo .ph{position:absolute;inset:8px 8px 8px 8px;border-radius:18px;overflow:hidden}
-.pgg .hero-photo .ph img{object-fit:cover;object-position:50% 40%}
+.pgg .hero-photo .ph img{object-fit:cover;object-position:50% 100%}
 .pgg .hero-photo .cap{position:absolute;left:8px;right:8px;bottom:8px;padding:40px 18px 16px;border-radius:0 0 18px 18px;background:linear-gradient(180deg,transparent,rgba(4,20,15,.85));display:flex;flex-direction:column;gap:4px}
 .pgg .hero-photo .cap b{font-size:15px;font-weight:500;color:#eafff5}
 .pgg .hero-photo .cap span{font-size:12px;color:rgba(234,255,245,.78)}

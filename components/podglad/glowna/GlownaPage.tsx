@@ -145,8 +145,8 @@ export default function GlownaPage({ fontClass }: { fontClass: string }) {
               </div>
             </div>
             <div className="portrait reveal">
-              <button type="button" className="zoom" onClick={() => setDuze({ src: PHOTO, alt: "Jakub Chodakowski" })} aria-label="Powiększ zdjęcie">
-                <Image src={PHOTO} alt="Portret Jakuba Chodakowskiego" fill sizes="(max-width: 960px) 100vw, 480px" />
+              <button type="button" className="zoom" onClick={() => setDuze({ src: PHOTO_HERO, alt: "Jakub Chodakowski" })} aria-label="Powiększ zdjęcie">
+                <Image src={PHOTO_HERO} alt="Portret Jakuba Chodakowskiego" fill sizes="(max-width: 960px) 100vw, 480px" />
               </button>
               <div className="cap">
                 <div><b>Jakub Chodakowski</b><span>Sprzedaż + AI</span></div>
