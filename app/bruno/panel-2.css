@@ -533,3 +533,14 @@ a.kl2-imie:hover { text-decoration: underline; text-underline-offset: 3px; }
 .pk-plik-tekst { margin-top: 4px; font-size: 12.5px; color: var(--p-ink-2); }
 .pk-plik-tekst summary { cursor: pointer; color: var(--p-ink-3); }
 .pk-plik-tekst p { margin: 4px 0 0; white-space: pre-wrap; max-height: 240px; overflow: auto; }
+.pk-stepper.klik li { cursor: pointer; }
+.pk-stepper.klik li:not(.jest):hover > i { background: var(--p-lim); }
+.pk-stepper.klik li:not(.jest):hover > span { color: var(--p-ink); }
+.pk-nastepny { margin-top: 12px; }
+.pk-edycja { margin: 0; padding: 0; border: 0; }
+.pk-wpis-akcje { display: inline-flex; gap: 2px; margin-left: 8px; opacity: 0; transition: opacity .15s; vertical-align: 1px; }
+.pk-os li:hover .pk-wpis-akcje, .pk-wpis-akcje:focus-within { opacity: 1; }
+.pk-wpis-akcje button { border: 0; background: none; padding: 2px 6px; border-radius: 8px; font-size: 13px; color: var(--p-ink-3); cursor: pointer; }
+.pk-wpis-akcje button:hover { background: var(--p-tlo); color: var(--p-ink); }
+.pk-wpis-akcje button:last-child:hover { color: var(--p-zle-t); }
+@media (hover: none) { .pk-wpis-akcje { opacity: 1; } }

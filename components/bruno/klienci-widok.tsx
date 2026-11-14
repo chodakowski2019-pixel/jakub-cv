@@ -7,7 +7,7 @@ import { zJako } from "@/lib/bruno/jako";
 import { zdjecieKlienta } from "@/lib/bruno/twarze";
 import { AwatarKlienta, DodajKlienta, ImportKlientow, SzybkieAkcje, WierszKlienta } from "@/components/bruno/klienci-akcje";
 import { plecZImienia, twarzKlienta } from "@/lib/bruno/plec";
-import KlientDodaj from "@/components/bruno/klient-dodaj";
+import KlientDodaj, { EtapyKlienta, WpisEdycja } from "@/components/bruno/klient-dodaj";
 
 // 4.11 (USER_001, pkt 2): ZAKŁADKA KLIENCI (lista) + KARTA KLIENTA. Dane na żywo z CRM (Pipedrive).
 // 6.11: nowy system zakładek (panel-2.css, p-* / pk-*): kafelki nad listą (klienci, wartość, zaległe, bez kroku),
@@ -258,14 +258,7 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
           {szef && handlowiec && <div><div className="pk-hero-et">{t("Rep", "Handlowiec")}</div><div className="pk-hero-w" style={{ fontSize: 16 }}><span className="p-osoba"><Twarz src={handlowiec.zdjecie} imie={handlowiec.imie} rozmiar={26} /><Link href={`/bruno/szef/${encodeURIComponent(handlowiec.email)}`}>{handlowiec.imie}</Link></span></div></div>}
           {deal.status === "lost" && deal.powod_przegranej && <div><div className="pk-hero-et">{t("Lost reason", "Powód przegranej")}</div><div className="pk-hero-w p-zle-t" style={{ fontSize: 14 }}>{deal.powod_przegranej}</div></div>}
         </div>
-        <ol className="pk-stepper" aria-label={t("Pipeline stage", "Etap lejka")}>
-          {etapy.map((e, i) => (
-            <li key={e.id} className={deal.status === "won" ? "won" : deal.status === "lost" && i <= idx ? "lost" : i < idx ? "byl" : i === idx ? "jest" : ""} title={e.nazwa}>
-              <i />
-              <span>{i + 1}. {e.nazwa}</span>
-            </li>
-          ))}
-        </ol>
+        <EtapyKlienta klientId={deal.id} etapy={etapy.map((e) => ({ id: e.id, nazwa: e.nazwa }))} idx={idx} status={deal.status} jezyk={jezyk} />
         <div className="pk-akcje">
           <Link href={linkTreningu} className="p-btn">{t("Train this call", "Trenuj rozmowę")} →</Link>
           <Link href={zJako(`/bruno/kokpit?deal=${encodeURIComponent(deal.tytul)}`, jako)} className="p-btn p-btn-2">{t("Tell Bruno", "Powiedz Bruno")}</Link>
@@ -292,8 +285,10 @@ export function KlientKarta({ firma, jezyk, szef, deal, etapy, notatki, aktywnos
                   <i className={`pk-os-kropka ${h.bruno ? "bruno" : ""} ${h.typ === "etap" || h.typ === "status" ? "zmiana" : ""} ${h.typ === "zadanie" && h.zrobione ? "zrobione" : ""}`} aria-hidden />
                   <div className="pk-os-tresc">
                     <Chip k={chipTypu(h)}>{nazwaTypu(h)}{h.bruno ? " · Bruno" : ""}</Chip>
-                    {h.plik ? (
-                      <PlikWpis h={h} plik={h.plik} href={`/api/bruno/klienci/${deal.id}/plik?z=${h.plik.id}`} jezyk={jezyk} />
+                    {(h.typ === "notatka" || h.plik) && /^z\d+$/.test(h.id) ? (
+                      <WpisEdycja klientId={deal.id} zdarzenieId={Number(h.id.slice(1))} tekst={h.tekst} edytowalny={h.typ === "notatka"} jezyk={jezyk}>
+                        {h.plik ? <PlikWpis h={h} plik={h.plik} href={`/api/bruno/klienci/${deal.id}/plik?z=${h.plik.id}`} jezyk={jezyk} /> : tekstWpisu(h)}
+                      </WpisEdycja>
                     ) : h.typ === "zadanie" ? (
                       naglowekZadania(tekstWpisu(h))
                     ) : (

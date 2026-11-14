@@ -24,11 +24,16 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (!czySzef(konto) && String(k.handlowiec ?? "").toLowerCase() !== email.toLowerCase()) return NextResponse.json({ blad: "To nie jest Twój klient." }, { status: 403 });
   const b = (await req.json().catch(() => ({}))) as Record<string, unknown>;
   // 9.11 (USER_001): szybkie akcje z wiersza listy: strzałka = następny etap, x = usuń (przegrany, na dół listy), cofnięcie.
-  if (b.akcja === "dalej" || b.akcja === "usun" || b.akcja === "przywroc") {
+  // 14.11 (USER_001): na karcie klienta klik w etap = przeniesienie na ten etap.
+  if (b.akcja === "dalej" || b.akcja === "usun" || b.akcja === "przywroc" || b.akcja === "etap") {
     try {
       const autor = email.toLowerCase();
       if (b.akcja === "usun") await zamknijCrm(firma.id, id, "lost", "Usunięty z listy", autor);
       else if (b.akcja === "przywroc") await przywrocCrm(firma.id, id, autor);
+      else if (b.akcja === "etap") {
+        if (Number(b.etap_id) === Number(k.etap_id)) return NextResponse.json({ ok: true });
+        await przesunEtapCrm(firma.id, id, Number(b.etap_id), autor);
+      }
       else {
         const etapy = await etapyFirmy(firma.id);
         const nast = etapy[etapy.findIndex((e) => e.id === Number(k.etap_id)) + 1];

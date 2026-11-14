@@ -185,6 +185,21 @@ export async function sciezkaPlikuCrm(firmaId: string, klientId: number, zdarzen
   return data?.plik_sciezka ? { sciezka: String(data.plik_sciezka), nazwa: String(data.plik_nazwa ?? "plik") } : null;
 }
 
+/** 14.11 (USER_001): edycja notatki z karty klienta. Tylko typ „notatka”. */
+export async function edytujNotatkeCrm(firmaId: string, klientId: number, zdarzenieId: number, tresc: string) {
+  const { data, error } = await sb().from("bruno_crm_zdarzenia").update({ tekst: tresc.slice(0, 6000) }).eq("firma_id", firmaId).eq("klient_id", klientId).eq("id", zdarzenieId).eq("typ", "notatka").select("id");
+  if (error) throw new Error(error.message);
+  if (!data?.length) throw new Error("Nie ma takiej notatki.");
+}
+
+/** 14.11: usunięcie notatki albo pliku z karty klienta. Zwraca ścieżkę pliku do skasowania z kubełka. */
+export async function usunWpisCrm(firmaId: string, klientId: number, zdarzenieId: number): Promise<string | null> {
+  const { data, error } = await sb().from("bruno_crm_zdarzenia").delete().eq("firma_id", firmaId).eq("klient_id", klientId).eq("id", zdarzenieId).in("typ", ["notatka", "plik"]).select("plik_sciezka");
+  if (error) throw new Error(error.message);
+  if (!data?.length) throw new Error("Nie ma takiego wpisu.");
+  return (data[0].plik_sciezka as string | null) ?? null;
+}
+
 export async function przesunEtapCrm(firmaId: string, klientId: number, etapId: number, autor: string) {
   const etapy = await etapyFirmy(firmaId);
   const e = etapy.find((x) => x.id === etapId);

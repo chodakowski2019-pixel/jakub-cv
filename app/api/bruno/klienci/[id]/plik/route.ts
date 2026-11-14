@@ -4,7 +4,7 @@ import { pobierzKonto } from "@/lib/bruno/db";
 import { czySzef, pobierzFirme } from "@/lib/bruno/firmy";
 import { crmWlaczony } from "@/lib/bruno/lejek";
 import { tDla } from "@/lib/bruno/i18n";
-import { dodajNotatkeCrm, dodajPlikCrm, sciezkaPlikuCrm } from "@/lib/bruno/crm";
+import { dodajNotatkeCrm, dodajPlikCrm, edytujNotatkeCrm, sciezkaPlikuCrm, usunWpisCrm } from "@/lib/bruno/crm";
 import { KUBELEK_BRUNO } from "@/lib/bruno/nagrania";
 import { AUDIO, MAX_BAJTOW, PDF, audioDoTekstu, pdfDoTekstu } from "@/lib/bruno/plik-tekst";
 import { supabaseAdmin } from "@/lib/supabase";
@@ -17,6 +17,7 @@ export const maxDuration = 120;
 //   GET  ?z=<id>       → pobranie / odsłuch pliku (podpisany adres na 1 h)
 //   POST {notatka}     → notatka handlowca w historii
 //   POST {sciezka, nazwa, typ} → PDF (Claude) albo audio (Whisper) → tekst; plik ZOSTAJE w kubełku, wpis „plik” w historii.
+//   PATCH {z, notatka} → edycja notatki; DELETE ?z=<id> → usunięcie notatki albo pliku (też z kubełka).
 // Handlowiec tylko swoi klienci, szef wszyscy.
 
 async function autoryzuj(idSurowe: string) {
@@ -84,5 +85,33 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   } catch (e) {
     console.error("[bruno klient plik]", e);
     return NextResponse.json({ blad: String((e as Error)?.message ?? e).slice(0, 300) }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const a = await autoryzuj((await params).id);
+  if ("blad" in a) return a.blad;
+  const b = (await req.json().catch(() => ({}))) as { z?: number; notatka?: string };
+  const tresc = String(b.notatka ?? "").trim();
+  if (!(Number(b.z) > 0) || !tresc) return NextResponse.json({ blad: a.t("Write a note.", "Wpisz notatkę.") }, { status: 400 });
+  try {
+    await edytujNotatkeCrm(a.firma.id, a.id, Number(b.z), tresc);
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return NextResponse.json({ blad: String((e as Error)?.message ?? e).slice(0, 300) }, { status: 400 });
+  }
+}
+
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const a = await autoryzuj((await params).id);
+  if ("blad" in a) return a.blad;
+  const z = Number(new URL(req.url).searchParams.get("z"));
+  if (!(z > 0)) return NextResponse.json({ blad: "400" }, { status: 400 });
+  try {
+    const sciezka = await usunWpisCrm(a.firma.id, a.id, z);
+    if (sciezka) void supabaseAdmin.storage.from(KUBELEK_BRUNO).remove([sciezka]).catch(() => null);
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return NextResponse.json({ blad: String((e as Error)?.message ?? e).slice(0, 300) }, { status: 400 });
   }
 }

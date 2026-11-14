@@ -130,3 +130,103 @@ export default function KlientDodaj({ klientId, jezyk }: { klientId: number; jez
     </div>
   );
 }
+
+/** 14.11 (USER_001): klik w etap = przeniesienie leada na ten etap; przycisk „Następny etap”. Wygrany / przegrany bez klikania. */
+export function EtapyKlienta({ klientId, etapy, idx, status, jezyk }: { klientId: number; etapy: { id: number; nazwa: string }[]; idx: number; status: string; jezyk: Jezyk }) {
+  const t = tDla(jezyk);
+  const router = useRouter();
+  const [cel, setCel] = useState<number | null>(null);
+  const [blad, setBlad] = useState<string | null>(null);
+  const otwarty = status !== "won" && status !== "lost";
+  const teraz = cel ?? idx;
+  const przenies = async (i: number) => {
+    if (!otwarty || cel !== null || i === idx) return;
+    setCel(i);
+    setBlad(null);
+    try {
+      const r = await fetch(`/api/bruno/klienci/${klientId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ akcja: "etap", etap_id: etapy[i].id }) });
+      const j = (await r.json().catch(() => ({}))) as { blad?: string };
+      if (!r.ok) throw new Error(j.blad || `HTTP ${r.status}`);
+      router.refresh();
+    } catch (e) {
+      setBlad(String((e as Error)?.message ?? e));
+    } finally {
+      setCel(null);
+    }
+  };
+  const nast = etapy[idx + 1];
+  return (
+    <>
+      <ol className={`pk-stepper ${otwarty ? "klik" : ""}`} aria-label={t("Pipeline stage", "Etap lejka")}>
+        {etapy.map((e, i) => (
+          <li
+            key={e.id}
+            className={status === "won" ? "won" : status === "lost" && i <= idx ? "lost" : i < teraz ? "byl" : i === teraz ? "jest" : ""}
+            title={otwarty && i !== idx ? `${t("Move to", "Przenieś na")}: ${e.nazwa}` : e.nazwa}
+            onClick={() => przenies(i)}
+            role={otwarty ? "button" : undefined}
+            tabIndex={otwarty ? 0 : undefined}
+            onKeyDown={(ev) => (ev.key === "Enter" || ev.key === " ") && przenies(i)}
+          >
+            <i />
+            <span>{i + 1}. {e.nazwa}</span>
+          </li>
+        ))}
+      </ol>
+      {otwarty && nast && (
+        <button type="button" className="p-btn p-btn-2 p-btn-s pk-nastepny" onClick={() => przenies(idx + 1)} disabled={cel !== null}>
+          {cel !== null ? t("Moving…", "Przenoszę…") : `${t("Next stage", "Następny etap")}: ${nast.nazwa} →`}
+        </button>
+      )}
+      {blad && <div className="p-zle-t pk-dodaj-stan">{blad}</div>}
+    </>
+  );
+}
+
+/** 14.11 (USER_001): ✎ edycja notatki w miejscu, ✕ usunięcie notatki albo pliku. */
+export function WpisEdycja({ klientId, zdarzenieId, tekst, edytowalny, jezyk, children }: { klientId: number; zdarzenieId: number; tekst: string; edytowalny: boolean; jezyk: Jezyk; children: React.ReactNode }) {
+  const t = tDla(jezyk);
+  const router = useRouter();
+  const [edycja, setEdycja] = useState(false);
+  const [wartosc, setWartosc] = useState(tekst);
+  const [praca, setPraca] = useState(false);
+  const [blad, setBlad] = useState<string | null>(null);
+  const api = `/api/bruno/klienci/${klientId}/plik`;
+  const wyslij = async (metoda: "PATCH" | "DELETE") => {
+    if (metoda === "DELETE" && !confirm(t("Delete this entry?", "Usunąć ten wpis?"))) return;
+    setPraca(true);
+    setBlad(null);
+    try {
+      const r = metoda === "DELETE" ? await fetch(`${api}?z=${zdarzenieId}`, { method: "DELETE" }) : await fetch(api, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ z: zdarzenieId, notatka: wartosc }) });
+      const j = (await r.json().catch(() => ({}))) as { blad?: string };
+      if (!r.ok) throw new Error(j.blad || `HTTP ${r.status}`);
+      setEdycja(false);
+      router.refresh();
+    } catch (e) {
+      setBlad(String((e as Error)?.message ?? e));
+    } finally {
+      setPraca(false);
+    }
+  };
+  if (edycja)
+    return (
+      <div className="pk-dodaj pk-edycja">
+        <textarea value={wartosc} onChange={(e) => setWartosc(e.target.value)} rows={3} maxLength={6000} autoFocus disabled={praca} onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) void wyslij("PATCH"); if (e.key === "Escape") setEdycja(false); }} />
+        <div className="pk-dodaj-pasek">
+          <button type="button" className="p-btn p-btn-s" onClick={() => wyslij("PATCH")} disabled={praca || !wartosc.trim()}>{praca ? t("Saving…", "Zapisuję…") : t("Save", "Zapisz")}</button>
+          <button type="button" className="p-btn p-btn-2 p-btn-s" onClick={() => { setEdycja(false); setWartosc(tekst); }} disabled={praca}>{t("Cancel", "Anuluj")}</button>
+        </div>
+        {blad && <div className="p-zle-t pk-dodaj-stan">{blad}</div>}
+      </div>
+    );
+  return (
+    <>
+      {children}
+      <span className="pk-wpis-akcje">
+        {edytowalny && <button type="button" onClick={() => setEdycja(true)} title={t("Edit", "Edytuj")} aria-label={t("Edit", "Edytuj")}>✎</button>}
+        <button type="button" onClick={() => wyslij("DELETE")} disabled={praca} title={t("Delete", "Usuń")} aria-label={t("Delete", "Usuń")}>✕</button>
+      </span>
+      {blad && <div className="p-zle-t pk-dodaj-stan">{blad}</div>}
+    </>
+  );
+}
