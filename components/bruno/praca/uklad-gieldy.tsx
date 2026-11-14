@@ -28,6 +28,7 @@ const IK = {
   ustawienia: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM19 12l2-1-1-3-2 .5-1.5-1.5.5-2-3-1-1 2h-2l-1-2-3 1 .5 2L6 7.5 4 7l-1 3 2 1v2l-2 1 1 3 2-.5L7.5 18 7 20l3 1 1-2h2l1 2 3-1-.5-2 1.5-1.5 2 .5 1-3-2-1z",
   wyjscie: "M10 4H5v16h5M14 8l4 4-4 4M18 12H9",
   wykres: "M4 20h16M7 16v-5M12 16V6M17 16v-8",
+  mapa: "M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11ZM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z",
 };
 
 const MENU: Record<"kandydat" | "pracodawca" | "admin", Sekcja[]> = {
@@ -42,6 +43,8 @@ const MENU: Record<"kandydat" | "pracodawca" | "admin", Sekcja[]> = {
         { z: "firmy", nazwa: "Firmy", ikona: IK.firmy },
         // 12.11 (USER_001): skąd przyszli handlowcy (słowo w słowo) i liczby dzień po dniu.
         { z: "statystyki", nazwa: "Statystyki", ikona: IK.wykres },
+        // 14.11 (USER_001): mapa Polski, 1 handlowiec = 1 zielona kropka w jego mieście.
+        { z: "mapa", nazwa: "Mapa", ikona: IK.mapa },
       ],
     },
   ],

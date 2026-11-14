@@ -3,6 +3,7 @@ import { wyslij } from "@/lib/bruno/mail";
 import { NADAWCA_WEBINARU, ADRES_WEBINARU } from "@/lib/bruno/mail-webinar";
 import { linkCV, type KontoPraca } from "./konta";
 import { KROKI, miastoZWielkiej, telefonGrupami, type Odpowiedzi, type StatusProfilu } from "./profil-handlowca";
+import { wspolrzedneMiasta } from "./miasta-polski";
 
 // 11.11 (USER_001): konto właściciela giełdy. Po zalogowaniu widzi w panelu (/praca/panel) dwie zakładki:
 // „Handlowcy” (wszystkie profile, wejście w profil, odhaczenie „zweryfikowany”) i „Firmy” (konta firm i ich wyszukiwania).
@@ -184,6 +185,23 @@ export async function statystykiGieldy(): Promise<StatystykiGieldy> {
     odpowiedzi: p.filter((x) => t(x.odpowiedzi?.skad).trim()).map((x) => ({ imie: t(x.odpowiedzi?.imie) || "Bez imienia", skad: t(x.odpowiedzi?.skad).trim(), kiedy: x.updated_at })),
     dni,
   };
+}
+
+export type PunktMapy = { id: string; imie: string; miasto: string; lat: number; lon: number };
+
+/** 14.11 (USER_001): zakładka „Mapa”: 1 handlowiec = 1 kropka w pierwszym wpisanym mieście. Nierozpoznane miasta osobno. */
+export async function mapaHandlowcow(): Promise<{ punkty: PunktMapy[]; bezMiasta: { id: string; imie: string; miasto: string }[] }> {
+  const { data } = await supabaseAdmin.from("praca_profile_handlowcow").select("konto_id,odpowiedzi").limit(5000);
+  const punkty: PunktMapy[] = [];
+  const bezMiasta: { id: string; imie: string; miasto: string }[] = [];
+  for (const w of (data ?? []) as { konto_id: string; odpowiedzi: Odpowiedzi | null }[]) {
+    const imie = t(w.odpowiedzi?.imie) || "Bez imienia";
+    const miasto = miastoZWielkiej(t(w.odpowiedzi?.miasto));
+    const k = wspolrzedneMiasta(miasto);
+    if (k) punkty.push({ id: w.konto_id, imie, miasto: miasto.split(/[,;/]/)[0].trim(), ...k });
+    else bezMiasta.push({ id: w.konto_id, imie, miasto });
+  }
+  return { punkty, bezMiasta };
 }
 
 /** Dane konta handlowca do widoku profilu u administratora (e-mail, CV z linkiem na godzinę). */

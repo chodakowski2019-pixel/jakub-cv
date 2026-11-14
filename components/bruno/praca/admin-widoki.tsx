@@ -1,5 +1,6 @@
 import Link from "next/link";
-import type { FirmaAdmin, HandlowiecAdmin, NiedokonczonyAdmin, StatystykiGieldy, Wyszukiwanie } from "@/lib/bruno/praca/admin";
+import type { FirmaAdmin, HandlowiecAdmin, NiedokonczonyAdmin, PunktMapy, StatystykiGieldy, Wyszukiwanie } from "@/lib/bruno/praca/admin";
+import { MAPA_SZER, MAPA_WYS, WOJEWODZTWA, naMape } from "@/lib/bruno/praca/mapa-polski";
 import { KROKI } from "@/lib/bruno/praca/profil-handlowca";
 import g from "./gielda.module.css";
 import AdminUsun from "./admin-usun";
@@ -293,6 +294,90 @@ export function AdminStatystyki({ s }: { s: StatystykiGieldy }) {
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// 14.11 (USER_001): „Mapa” = mapa Polski, 1 handlowiec = 1 mała zielona kropka. Kilku w jednym mieście = kropki
+// rozłożone spiralą wokół miasta. Klik w kropkę otwiera profil.
+export function AdminMapa({ punkty, bezMiasta }: { punkty: PunktMapy[]; bezMiasta: { id: string; imie: string; miasto: string }[] }) {
+  const miasta = new Map<string, PunktMapy[]>();
+  for (const p of punkty) miasta.set(p.miasto, [...(miasta.get(p.miasto) ?? []), p]);
+  const lista = [...miasta].sort((a, b) => b[1].length - a[1].length);
+  return (
+    <div className="p-strona">
+      <div className="p-naglowek">
+        <h1>Mapa</h1>
+      </div>
+      <div className="p-kafle">
+        {(
+          [
+            ["Handlowcy na mapie", punkty.length],
+            ["Miasta", miasta.size],
+            ["Bez rozpoznanego miasta", bezMiasta.length],
+          ] as [string, number][]
+        ).map(([et, n]) => (
+          <div className="p-kafel" key={et}>
+            <span className="p-kafel-et">{et}</span>
+            <span className="p-kafel-wart">{n}</span>
+          </div>
+        ))}
+      </div>
+      <div className="p-karta">
+        <svg viewBox={`0 0 ${MAPA_SZER} ${MAPA_WYS}`} style={{ display: "block", width: "100%", maxWidth: 720, margin: "0 auto" }} role="img" aria-label="Mapa Polski z handlowcami">
+          {WOJEWODZTWA.map((w) => (
+            <path key={w.nazwa} d={w.d} fill="#f3f3f5" stroke="#d4d4d8" strokeWidth={0.6} strokeLinejoin="round" />
+          ))}
+          {lista.flatMap(([, osoby]) =>
+            osoby.map((p, i) => {
+              const [x, y] = naMape(p.lat, p.lon);
+              const kat = i * 2.4;
+              const r = i === 0 ? 0 : 3.2 * Math.sqrt(i);
+              return (
+                <a key={p.id} href={`/praca/panel?z=handlowiec&id=${p.id}`}>
+                  <circle cx={x + r * Math.cos(kat)} cy={y + r * Math.sin(kat)} r={2.2} fill="#22c55e" stroke="#fff" strokeWidth={0.6}>
+                    <title>{`${p.imie}, ${p.miasto}`}</title>
+                  </circle>
+                </a>
+              );
+            }),
+          )}
+        </svg>
+      </div>
+      <div className="p-karta">
+        <div className="p-karta-hd"><h3 className={g.mocny}>Miasta</h3></div>
+        {lista.length === 0 ? (
+          <p className="p-pusto">Brak handlowców z rozpoznanym miastem.</p>
+        ) : (
+          <div className="p-tabela-wrap">
+            <table className={`p-tabela ${g.adminTabela}`}>
+              <thead>
+                <tr>
+                  <th>Miasto</th>
+                  <th>Handlowcy</th>
+                  <th>Kto</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lista.map(([miasto, osoby]) => (
+                  <tr key={miasto}>
+                    <td><b>{miasto}</b></td>
+                    <td>{osoby.length}</td>
+                    <td>{osoby.map((o) => o.imie).join(", ")}</td>
+                  </tr>
+                ))}
+                {bezMiasta.map((x) => (
+                  <tr key={x.id}>
+                    <td><b>{x.miasto || "Nie wpisał"}</b> <small>nie ma na mapie</small></td>
+                    <td>1</td>
+                    <td>{x.imie}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

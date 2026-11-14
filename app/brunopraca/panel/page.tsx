@@ -7,8 +7,8 @@ import { FirmyWidok, MojProfilWidok, StartGieldy } from "@/components/bruno/prac
 import ProfilEdycja from "@/components/bruno/praca/profil-edycja";
 import g from "@/components/bruno/praca/gielda.module.css";
 import { kontaktow } from "@/lib/bruno/praca/kontakty-cennik";
-import { czyAdminGieldy, firmyIWyszukiwania, kontoHandlowca, listaHandlowcow, listaNiedokonczonych, statystykiGieldy } from "@/lib/bruno/praca/admin";
-import { AdminFirmy, AdminHandlowcy, AdminNiedokonczone, AdminStatystyki } from "@/components/bruno/praca/admin-widoki";
+import { czyAdminGieldy, firmyIWyszukiwania, kontoHandlowca, listaHandlowcow, listaNiedokonczonych, mapaHandlowcow, statystykiGieldy } from "@/lib/bruno/praca/admin";
+import { AdminFirmy, AdminHandlowcy, AdminMapa, AdminNiedokonczone, AdminStatystyki } from "@/components/bruno/praca/admin-widoki";
 import AdminWeryfikacja from "@/components/bruno/praca/admin-weryfikacja";
 import SzukajHandlowca from "@/components/bruno/praca/szukaj-handlowca";
 import WynikSzukania from "@/components/bruno/praca/wynik-szukania";
@@ -58,6 +58,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       tresc = <AdminFirmy {...(await firmyIWyszukiwania())} />;
     } else if (zakladka === "statystyki") {
       tresc = <AdminStatystyki s={await statystykiGieldy()} />;
+    } else if (zakladka === "mapa") {
+      tresc = <AdminMapa {...(await mapaHandlowcow())} />;
     } else if (zakladka === "niedokonczone") {
       tresc = <AdminNiedokonczone lista={await listaNiedokonczonych()} />;
     } else if (zakladka === "handlowiec" && id) {
