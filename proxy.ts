@@ -127,6 +127,16 @@ export function proxy(request: NextRequest) {
   if ((jezyk === "pl" || hostBezPortu === "localhost") && pathname === "/pro") {
     return dalej(request, pathname, jezyk, "/brunopro");
   }
+  // 14.11 (USER_001): Academy (psychologia sprzedaży, subskrypcja 50 zł / mies., app/brunoakademia).
+  // 15.11 (USER_001 „push na academy”): adres /academy na salesbruno.pl i localhost; stary /akademia → /academy (308).
+  if (jezyk === "pl" || hostBezPortu === "localhost") {
+    if (pathname === "/academy") return dalej(request, pathname, jezyk, "/brunoakademia");
+    if (pathname === "/akademia") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/academy";
+      return NextResponse.redirect(url, 308);
+    }
+  }
   // 30.10 (USER_001): /kursy = kursy sprzedaży B2C z gwarancją pracy (app/brunokursy), tylko .pl i localhost.
   if ((jezyk === "pl" || hostBezPortu === "localhost") && (pathname === "/kursy" || pathname.startsWith("/kursy/"))) {
     return dalej(request, pathname, jezyk, `/brunokursy${pathname.slice("/kursy".length)}`);
