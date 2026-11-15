@@ -9,7 +9,7 @@ import a from "./akademia.module.css";
 // 15.11 (USER_001): psychologia sprzedaży zamiast technik. Każdy kursant ma swoją ścieżkę od dnia dołączenia:
 // lekcja odblokowuje się w sobotę, trening z Bruno w poniedziałek. Na górze koło 40 / 30 / 30
 // (wg USER_001 koło Rafała Mazura; źródło niepotwierdzone, więc na stronie bez nazwiska).
-// 15.11 LIVE na salesbruno.pl/academy, jeszcze bez płatności (przyciski prowadzą do #cena): link Stripe i dostęp do lekcji do zbudowania.
+// 15.11 LIVE na salesbruno.pl/academy z płatnością Stripe; dostęp do lekcji (konto, odblokowywanie, treningi) do zbudowania.
 const tytul = "Akademia Sprzedaży";
 const opis = "Psychologia sprzedaży: co sobotę lekcja, co poniedziałek trening rozmowy z Bruno AI. 50 zł miesięcznie.";
 
@@ -22,8 +22,8 @@ export const metadata: Metadata = {
 };
 
 const CENA = 50;
-// TODO: link Stripe (subskrypcja 50 zł / 30 dni), konto do decyzji USER_001.
-const PLATNOSC = "#cena";
+// 15.11 (USER_001): Payment Link Stripe, konto główne „Love My Self”, 50 zł co 30 dni (scripts/bruno-akademia-stripe.mjs).
+const PLATNOSC = "https://buy.stripe.com/5kQ6oHctwh04gBS5q53F60E";
 
 // Koło: kolor segmentu = kolor tagu przy lekcji.
 const KOLO = [

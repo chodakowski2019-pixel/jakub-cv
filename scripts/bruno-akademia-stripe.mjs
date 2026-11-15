@@ -1,4 +1,4 @@
-// 15.11 (USER_001): subskrypcja Academy (salesbruno.pl/akademia) = 50 zł co 30 dni, konto Stripe „Bruno AI”.
+// 15.11 (USER_001): subskrypcja Academy (salesbruno.pl/academy) = 50 zł co 30 dni, konto Stripe główne „Love My Self” (decyzja USER_001 15.11, wcześniej Bruno AI).
 // Zakłada produkt, cenę i Payment Link. Idempotentne: cena po lookup_key, link po metadanych, nie dubluje.
 //   node --env-file=.env.local scripts/bruno-akademia-stripe.mjs
 import Stripe from "stripe";
