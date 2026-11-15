@@ -45,6 +45,8 @@ const MENU: Record<"kandydat" | "pracodawca" | "admin", Sekcja[]> = {
         { z: "statystyki", nazwa: "Statystyki", ikona: IK.wykres },
         // 14.11 (USER_001): mapa Polski, 1 handlowiec = 1 zielona kropka w jego mieście.
         { z: "mapa", nazwa: "Mapa", ikona: IK.mapa },
+        // 15.11 (USER_001): newsletter liczy tylko, kto kliknął link.
+        { z: "newsletter", nazwa: "Newsletter", ikona: IK.wykres },
       ],
     },
   ],

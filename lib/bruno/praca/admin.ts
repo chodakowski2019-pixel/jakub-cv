@@ -204,6 +204,29 @@ export async function mapaHandlowcow(): Promise<{ punkty: PunktMapy[]; bezMiasta
   return { punkty, bezMiasta };
 }
 
+export type KlikniecieNewslettera = { email: string; mail: string; klikniec: number; pierwsze: string; ostatnie: string };
+
+/** 15.11 (USER_001): zakładka „Newsletter”: tylko kto kliknął link (tabele newsletter_linki + newsletter_klikniecia). */
+export async function klikniecaNewslettera(): Promise<{ wyslanych: number; lista: KlikniecieNewslettera[] }> {
+  const [{ data: linki }, { data: klik }] = await Promise.all([
+    supabaseAdmin.from("newsletter_linki").select("kod,email,mail").limit(20000),
+    supabaseAdmin.from("newsletter_klikniecia").select("kod,created_at").order("created_at").limit(20000),
+  ]);
+  const poKodzie = new Map((linki ?? []).map((l) => [l.kod as string, l as { email: string; mail: string }]));
+  const osoby = new Map<string, KlikniecieNewslettera>();
+  for (const k of (klik ?? []) as { kod: string; created_at: string }[]) {
+    const l = poKodzie.get(k.kod);
+    if (!l) continue;
+    const klucz = `${l.mail}|${l.email}`;
+    const o = osoby.get(klucz);
+    if (o) {
+      o.klikniec++;
+      o.ostatnie = k.created_at;
+    } else osoby.set(klucz, { email: l.email, mail: l.mail, klikniec: 1, pierwsze: k.created_at, ostatnie: k.created_at });
+  }
+  return { wyslanych: poKodzie.size, lista: [...osoby.values()].sort((a, b) => b.ostatnie.localeCompare(a.ostatnie)) };
+}
+
 /** Dane konta handlowca do widoku profilu u administratora (e-mail, CV z linkiem na godzinę). */
 export async function kontoHandlowca(id: string): Promise<{ email: string; cvNazwa: string | null; cvLink: string | null; od: string } | null> {
   const { data } = await supabaseAdmin.from("praca_konta").select("email,cv_sciezka,cv_nazwa,created_at").eq("id", id).eq("typ", "kandydat").maybeSingle();

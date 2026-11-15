@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { FirmaAdmin, HandlowiecAdmin, NiedokonczonyAdmin, PunktMapy, StatystykiGieldy, Wyszukiwanie } from "@/lib/bruno/praca/admin";
+import type { FirmaAdmin, HandlowiecAdmin, KlikniecieNewslettera, NiedokonczonyAdmin, PunktMapy, StatystykiGieldy, Wyszukiwanie } from "@/lib/bruno/praca/admin";
 import { MAPA_SZER, MAPA_WYS, WOJEWODZTWA, naMape } from "@/lib/bruno/praca/mapa-polski";
 import { KROKI } from "@/lib/bruno/praca/profil-handlowca";
 import g from "./gielda.module.css";
@@ -372,6 +372,63 @@ export function AdminMapa({ punkty, bezMiasta }: { punkty: PunktMapy[]; bezMiast
                     <td><b>{x.miasto || "Nie wpisał"}</b> <small>nie ma na mapie</small></td>
                     <td>1</td>
                     <td>{x.imie}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** 15.11 (USER_001): kto kliknął link w newsletterze. Nic więcej nie liczymy. */
+export function AdminNewsletter({ wyslanych, lista }: { wyslanych: number; lista: KlikniecieNewslettera[] }) {
+  const godz = (iso: string) => new Date(iso).toLocaleString("pl-PL", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Warsaw" });
+  return (
+    <div className="p-strona">
+      <div className="p-naglowek">
+        <h1>Newsletter</h1>
+      </div>
+      <div className="p-kafle">
+        {(
+          [
+            ["Wysłane linki", wyslanych],
+            ["Osoby, które kliknęły", lista.length],
+            ["Kliknięcia razem", lista.reduce((s, o) => s + o.klikniec, 0)],
+          ] as [string, number][]
+        ).map(([et, n]) => (
+          <div className="p-kafel" key={et}>
+            <span className="p-kafel-et">{et}</span>
+            <span className="p-kafel-wart">{n}</span>
+          </div>
+        ))}
+      </div>
+      <div className="p-karta">
+        <div className="p-karta-hd"><h3 className={g.mocny}>Kto kliknął</h3></div>
+        {lista.length === 0 ? (
+          <p className="p-pusto">Nikt jeszcze nie kliknął.</p>
+        ) : (
+          <div className="p-tabela-wrap">
+            <table className={`p-tabela ${g.adminTabela}`}>
+              <thead>
+                <tr>
+                  <th>E-mail</th>
+                  <th>Mail</th>
+                  <th>Kliknięcia</th>
+                  <th>Pierwsze</th>
+                  <th>Ostatnie</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lista.map((o) => (
+                  <tr key={`${o.mail}|${o.email}`}>
+                    <td><b>{o.email}</b></td>
+                    <td>{o.mail}</td>
+                    <td>{o.klikniec}</td>
+                    <td>{godz(o.pierwsze)}</td>
+                    <td>{godz(o.ostatnie)}</td>
                   </tr>
                 ))}
               </tbody>

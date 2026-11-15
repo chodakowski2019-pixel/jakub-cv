@@ -137,6 +137,10 @@ export function proxy(request: NextRequest) {
       return NextResponse.redirect(url, 308);
     }
   }
+  // 15.11 (USER_001): /l/<kod> = link z newslettera, zapis kliknięcia + przekierowanie (app/brunonewsletter/l).
+  if ((jezyk === "pl" || hostBezPortu === "localhost") && /^\/l\/[a-z0-9]+$/i.test(pathname)) {
+    return dalej(request, pathname, jezyk, `/brunonewsletter${pathname}`);
+  }
   // 30.10 (USER_001): /kursy = kursy sprzedaży B2C z gwarancją pracy (app/brunokursy), tylko .pl i localhost.
   if ((jezyk === "pl" || hostBezPortu === "localhost") && (pathname === "/kursy" || pathname.startsWith("/kursy/"))) {
     return dalej(request, pathname, jezyk, `/brunokursy${pathname.slice("/kursy".length)}`);
