@@ -38,15 +38,14 @@ export function Pojawianie() {
   return null;
 }
 
-// Telefon: po przewinięciu za pierwszy ekran na dole przykleja się cena + przycisk (znika przy sekcji z ceną).
+// Telefon: cena + przycisk przyklejają się na dole dopiero za cennikiem (15.11 USER_001), wyżej ich nie ma.
 export function PasekDolny({ cena, href }: { cena: number; href: string }) {
   const [widac, setWidac] = useState(false);
   useEffect(() => {
     const cenaEl = document.getElementById("cena");
     const sprawdz = () => {
       const r = cenaEl?.getBoundingClientRect();
-      const przyCenie = r ? r.top < window.innerHeight && r.bottom > 0 : false;
-      setWidac(window.scrollY > window.innerHeight * 0.8 && !przyCenie);
+      setWidac(r ? r.bottom < window.innerHeight : false);
     };
     sprawdz();
     window.addEventListener("scroll", sprawdz, { passive: true });
