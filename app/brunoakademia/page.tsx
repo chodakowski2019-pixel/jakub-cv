@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import BazaPasek from "@/components/bruno/praca/baza-pasek";
 import KulaLimonka from "@/components/bruno/kula-limonka";
-import { Pojawianie, PasekDolny } from "./ruch";
+import { Pojawianie, PasekDolny, SzklanyPasek } from "./ruch";
 import d from "@/components/bruno/praca/dolacz.module.css";
 import a from "./akademia.module.css";
 
@@ -213,6 +213,7 @@ export default function Page() {
   const cta = { href: PLATNOSC, tekst: "Dołącz do Academy" };
   return (
     <div className={d.v} lang="pl">
+      <SzklanyPasek />
       <BazaPasek cta={cta} />
       <main className={a.glowna}>
         <section className={a.zarobki}>
@@ -303,7 +304,7 @@ export default function Page() {
                   </svg>
                 </div>
                 <h3>Lekcja</h3>
-                <p>Krótki tekst o jednej rzeczy w Twojej głowie: stres przed telefonem, odmowa, cena, pewność siebie. Około 10 minut.</p>
+                <p>Tekst o jednej rzeczy w Twojej głowie: stres przed telefonem, odmowa, cena, pewność siebie. Około 10 minut.</p>
               </li>
               <li className={a.ciemna}>
                 <span className={a.dzien}>Poniedziałek</span>

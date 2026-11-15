@@ -64,3 +64,15 @@ export function PasekDolny({ cena, href }: { cena: number; href: string }) {
     </div>
   );
 }
+
+// 15.11 (USER_001): pod logo i przyciskiem u góry szklany pasek, gdy strona jest przewinięta w dół.
+export function SzklanyPasek() {
+  const [widac, setWidac] = useState(false);
+  useEffect(() => {
+    const sprawdz = () => setWidac(window.scrollY > 12);
+    sprawdz();
+    window.addEventListener("scroll", sprawdz, { passive: true });
+    return () => window.removeEventListener("scroll", sprawdz);
+  }, []);
+  return <div className={`${a.szklo} ${widac ? a.szkloWidac : ""}`} aria-hidden="true" />;
+}
