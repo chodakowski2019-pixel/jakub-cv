@@ -90,8 +90,8 @@ const MENU: Record<"kandydat" | "pracodawca" | "admin", Sekcja[]> = {
   ],
 };
 
-// 16.11 (USER_001): 3 rozmowy sprzedażowe z Bruno po 3 min, nagrania dla firm. Na razie tylko konta z mozeNagrywac().
-const NAGRAJ: Pozycja = { z: "nagraj", nazwa: "Nagraj rozmowę", ikona: IK.trening };
+// 16.11 (USER_001): rozmowa sprzedażowa z Bruno (do 3 podejść po 3 min), najlepsze nagranie dla firm. Na razie tylko konta z mozeNagrywac().
+const NAGRAJ: Pozycja = { z: "nagraj", nazwa: "Rozmowa z AI", ikona: IK.trening };
 
 const Ikona = ({ d }: { d: string }) => (
   <svg viewBox="0 0 24 24" width={13} height={13} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

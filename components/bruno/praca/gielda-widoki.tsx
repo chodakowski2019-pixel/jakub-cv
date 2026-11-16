@@ -132,7 +132,7 @@ export function MojProfilWidok({
   /** Link do pobrania CV (tylko widok administratora). */
   cvLink?: string | null;
   firm: number;
-  /** 16.11: rozmowy sprzedażowe z Bruno (zakładka „Nagraj rozmowę”); firma widzi je po odblokowaniu kontaktu. */
+  /** 16.11: podejścia do rozmowy sprzedażowej z Bruno; firma widzi najlepsze po odblokowaniu kontaktu. */
   rozmowy?: RozmowaTestowa[];
   /** 16.11: przycisk „Nagraj rozmowę” tylko dla kont z mozeNagrywac(). */
   nagraj?: boolean;
@@ -152,6 +152,7 @@ export function MojProfilWidok({
       </div>
     );
   }
+  const najlepsza = rozmowy.find((r) => r.najlepsza);
   const st = STATUS[profil.status];
   const k = profil.karta;
   return (
@@ -235,19 +236,14 @@ export function MojProfilWidok({
           {(rozmowy.length > 0 || (nagraj && !admin)) && (
             <div className="p-karta">
               <div className="p-karta-hd">
-                <h3>Rozmowy sprzedażowe z AI</h3>
-                <span className="p-chip">{rozmowy.length} / 3</span>
+                <h3>Rozmowa sprzedażowa z AI</h3>
+                {najlepsza?.ocena != null && <span className="p-chip">Ocena {najlepsza.ocena} / 10</span>}
               </div>
               <div className="p-karta-p" style={{ display: "grid", gap: 12 }}>
-                {rozmowy.map((r) => (
-                  <div key={r.nr} style={{ display: "grid", gap: 4 }}>
-                    <b>{r.nr}. {r.tytul}{r.ocena != null ? ` · ocena ${r.ocena} / 10` : ""}</b>
-                    {r.nagranie && <audio controls preload="none" src={r.nagranie} style={{ width: "100%" }} />}
-                  </div>
-                ))}
+                {najlepsza?.nagranie && <audio controls preload="none" src={najlepsza.nagranie} style={{ width: "100%" }} />}
                 {nagraj && !admin && rozmowy.length < 3 && (
                   <p>
-                    <Link className="p-btn p-btn-3" href="/praca/panel?z=nagraj">{rozmowy.length ? "Nagraj kolejną rozmowę" : "Nagraj rozmowę"}</Link>
+                    <Link className="p-btn p-btn-3" href="/praca/panel?z=nagraj">{rozmowy.length ? `Powtórz rozmowę (${rozmowy.length} z 3)` : "Nagraj rozmowę"}</Link>
                   </p>
                 )}
               </div>

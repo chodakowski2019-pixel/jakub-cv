@@ -80,7 +80,7 @@ export type PelnyHandlowiec = KartaHandlowca & {
   zdjecie: string | null;
   cv: string | null;
   odblokowano: string;
-  /** 16.11: rozmowy sprzedażowe z Bruno nagrane przez handlowca (zakładka „Nagraj rozmowę”). */
+  /** 16.11: najlepsze podejście handlowca do rozmowy sprzedażowej z Bruno (0 albo 1 pozycja). */
   rozmowy: RozmowaTestowa[];
 };
 
@@ -222,7 +222,7 @@ export async function odblokowaniHandlowcy(kontoId: string): Promise<PelnyHandlo
     .from("praca_profile_handlowcow")
     .select("konto_id,odpowiedzi,status,zdjecie_sciezka,konto:praca_konta(id,email,imie,telefon,linkedin,cv_sciezka)")
     .in("konto_id", [...kiedy.keys()]);
-  const testy = await rozmowyTestowe([...kiedy.keys()]);
+  const testy = await rozmowyTestowe([...kiedy.keys()], true);
   const pelne = await Promise.all(
     ((w ?? []) as unknown as Wiersz[]).map(async (x) => {
       const o = x.odpowiedzi ?? {};

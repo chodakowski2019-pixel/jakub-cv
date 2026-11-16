@@ -7,19 +7,18 @@ import type { Wypowiedz } from "@/lib/bruno/db";
 import type { RozmowaTestowa } from "@/lib/bruno/praca/rozmowy-testowe";
 import g from "./gielda.module.css";
 
-// 16.11 (USER_001): zakładka „Nagraj rozmowę” w panelu handlowca. 3 rozmowy sprzedażowe z Bruno po 3 minuty,
-// Bruno gra klienta z branży handlowca. Każda rozmowa nagrana i udostępniana firmom, które odblokują kontakt.
-// Układ (USER_001): krótki opis rozmowy → 3 rozmowy → zgoda → kula Bruno → „Zacznij rozmowę”.
+// 16.11 (USER_001): zakładka „Rozmowa sprzedażowa z AI” w panelu handlowca. JEDNA rozmowa (spotkanie na żywo, klient
+// mówi „za drogo”, w trakcie 3 różne obiekcje), do 3 podejść po 3 minuty; firma zobaczy najlepsze podejście.
+// Bruno gra klienta z branży handlowca. Układ (USER_001): opis rozmowy → 3 podejścia → zgoda → kula → „Zacznij rozmowę”.
 // Po kliknięciu zostaje sama kula, w niej odliczanie 3, 2, 1 (w tym czasie łączymy się z ElevenLabs).
-// Scenariusz, limit i czas pilnuje serwer (/api/bruno/praca/rozmowa-testowa/start i /koniec).
+// Limit i czas pilnuje serwer (/api/bruno/praca/rozmowa-testowa/start i /koniec).
 
-type Zadanie = { nr: number; tytul: string; zadanie: string };
 type Sytuacja = { branza: string; produkt: string; klient: string };
 type Stan = "lista" | "odliczanie" | "laczenie" | "trwa" | "konczenie";
 
 const czas = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
-export default function NagrajRozmowe({ zadania, nagrane, nastepna, sytuacje, sekund, zostaloStartow }: { zadania: Zadanie[]; nagrane: RozmowaTestowa[]; /** Numer rozmowy, którą można teraz nagrać, albo null (wszystkie nagrane / limit podejść). */ nastepna: number | null; /** Jedna sytuacja z profilu handlowca; konto bez profilu dostaje wszystkie branże do wyboru. */ sytuacje: Sytuacja[]; sekund: number; zostaloStartow: number }) {
+export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagrane, nastepna, sytuacje, sekund }: { tytul: string; zadanie: string; /** Ile obiekcji Bruno podnosi w rozmowie. */ obiekcji: number; /** Ile razy można powtórzyć rozmowę. */ podejsc: number; nagrane: RozmowaTestowa[]; /** Numer podejścia, które można teraz nagrać, albo null (wszystkie wykorzystane). */ nastepna: number | null; /** Jedna sytuacja z profilu handlowca; konto bez profilu dostaje wszystkie branże do wyboru. */ sytuacje: Sytuacja[]; sekund: number }) {
   const router = useRouter();
   const [stan, setStan] = useState<Stan>("lista");
   const [branza, setBranza] = useState(sytuacje[0]?.branza ?? "");
@@ -167,19 +166,21 @@ export default function NagrajRozmowe({ zadania, nagrane, nastepna, sytuacje, se
     );
   }
 
+  const data = (iso: string) => new Date(iso).toLocaleDateString("pl-PL", { day: "numeric", month: "long" });
+
   return (
     <div className="p-strona">
       <div className="p-naglowek">
         <div>
-          <h1>Nagraj rozmowę</h1>
-          <p className={g.podtytul}>Rozmawiasz głosem z Bruno. Bruno gra klienta z Twojej branży, Ty sprzedajesz. Nagrania i ocenę zobaczy firma, która odblokuje Twój kontakt.</p>
+          <h1>Rozmowa sprzedażowa z AI</h1>
+          <p className={g.podtytul}>Bruno gra klienta z Twojej branży, Ty sprzedajesz. Nagrania i ocenę zobaczy firma, która odblokuje Twój kontakt.</p>
         </div>
         <div className="p-naglowek-prawo">
-          <span className="p-chip">Nagrane: {nagrane.length} / {zadania.length}</span>
+          <span className="p-chip">Podejścia: {nagrane.length} / {podejsc}</span>
         </div>
       </div>
 
-      {/* 1. Jak będzie wyglądać rozmowa: co sprzedajesz i kim jest klient. */}
+      {/* 1. Jak będzie wyglądać rozmowa: sytuacja, co sprzedajesz i kim jest klient. */}
       <div className={g.nrGora}>
         {/* Handlowiec widzi branżę z profilu. Tylko konto bez profilu (testy) nie ma jej skąd wziąć, więc wybiera ją samo. */}
         {sytuacje.length > 1 ? <span className="p-chip">Test, wybierz branżę:</span> : <span className="p-chip">Branża: {syt.branza}</span>}
@@ -191,7 +192,11 @@ export default function NagrajRozmowe({ zadania, nagrane, nastepna, sytuacje, se
           </select>
         )}
       </div>
-      <div className={g.nrDwa}>
+      <div className={g.nrTrzy}>
+        <div className={`p-karta ${g.nrKafel}`}>
+          <span className={g.etykieta}>Rozmowa</span>
+          <p><b>{tytul}.</b> {zadanie} Bruno podniesie {obiekcji} różne obiekcje.</p>
+        </div>
         <div className={`p-karta ${g.nrKafel}`}>
           <span className={g.etykieta}>Sprzedajesz</span>
           <p>{syt.produkt}</p>
@@ -202,20 +207,21 @@ export default function NagrajRozmowe({ zadania, nagrane, nastepna, sytuacje, se
         </div>
       </div>
 
-      {/* 2. Trzy rozmowy po 3 minuty. */}
-      <h2 className={g.nrSekcja}>{zadania.length} rozmowy po {minut} minuty każda</h2>
+      {/* 2. Trzy podejścia po 3 minuty, firma zobaczy najlepsze. */}
+      <h2 className={g.nrSekcja}>{podejsc} podejścia po {minut} minuty. Firma zobaczy najlepsze.</h2>
       <div className={g.nrTrzy}>
-        {zadania.map((z) => {
-          const r = nagrane.find((x) => x.nr === z.nr);
-          const teraz = !r && z.nr === nastepna;
+        {Array.from({ length: podejsc }, (_, i) => i + 1).map((nr) => {
+          const r = nagrane.find((x) => x.nr === nr);
+          const teraz = !r && nr === nastepna;
           return (
-            <div key={z.nr} className={`p-karta ${g.nrKafel} ${r ? g.nrGotowa : teraz ? g.nrTeraz : g.nrCzeka}`}>
+            <div key={nr} className={`p-karta ${g.nrKafel} ${r ? g.nrGotowa : teraz ? g.nrTeraz : g.nrCzeka}`}>
               <div className={g.nrKafelGora}>
-                <span className={g.nrNr}>{r ? "✓" : z.nr}</span>
-                {r ? <span className="p-chip">{r.ocena != null ? `Ocena ${r.ocena} / 10` : "Nagrana"}</span> : teraz ? <span className="p-chip">Teraz</span> : null}
+                <span className={g.nrNr}>{r ? "✓" : nr}</span>
+                {r?.najlepsza ? <span className="p-chip p-chip-ok">Najlepsza</span> : teraz ? <span className="p-chip">Teraz</span> : null}
               </div>
-              <h3>{z.tytul}</h3>
-              <p className={g.nrOpis}>{z.zadanie}</p>
+              <h3>{r ? (r.ocena != null ? `Ocena ${r.ocena} / 10` : "Nagrana") : `Podejście ${nr}`}</h3>
+              <p className={g.nrOpis}>{r ? `Podejście ${nr} · ${data(r.kiedy)} · ${czas(r.sekundy)}` : teraz ? (nr === 1 ? "Pierwsza rozmowa." : "Możesz powtórzyć rozmowę i poprawić wynik.") : "Dostępne po poprzednim podejściu."}</p>
+              {r?.poprawka && <p className={g.nrOpis}><b>Do poprawy:</b> {r.poprawka}</p>}
               {r?.nagranie && <audio controls preload="none" src={r.nagranie} />}
             </div>
           );
@@ -235,14 +241,14 @@ export default function NagrajRozmowe({ zadania, nagrane, nastepna, sytuacje, se
             </label>
             {kula()}
             <button type="button" className="p-btn p-btn-3" disabled={!zgoda} onClick={zacznij} style={{ height: 50, padding: "0 34px", fontSize: 16, opacity: zgoda ? 1 : 0.4 }}>
-              Zacznij rozmowę {nastepna} z {zadania.length}
+              {nastepna === 1 ? "Zacznij rozmowę" : `Powtórz rozmowę (${nastepna} z ${podejsc})`}
             </button>
-            <small>Potrzebny mikrofon · rozmowa kończy się sama po {minut} minutach · pozostałe podejścia: {zostaloStartow}</small>
+            <small>Potrzebny mikrofon · rozmowa kończy się sama po {minut} minutach</small>
           </>
         ) : (
           <>
             {kula()}
-            <p className={g.tekst}>{nagrane.length >= zadania.length ? "Masz nagrane wszystkie rozmowy." : "Wykorzystane wszystkie podejścia. Napisz do nas, odblokujemy kolejne."}</p>
+            <p className={g.tekst}>{nagrane.length >= podejsc ? "Wszystkie podejścia wykorzystane. Firma zobaczy najlepsze." : "Wykorzystane wszystkie próby połączenia. Napisz do nas, odblokujemy kolejne."}</p>
           </>
         )}
       </div>

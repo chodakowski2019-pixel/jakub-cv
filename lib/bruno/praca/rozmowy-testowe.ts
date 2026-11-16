@@ -4,9 +4,10 @@ import { audioRozmowyEl } from "@/lib/bruno/elevenlabs";
 import { KUBELEK_BRUNO } from "@/lib/bruno/nagrania";
 import type { CelId, PostacId, PoziomId, TrybId } from "@/lib/bruno/postacie";
 
-// 16.11 (USER_001): zakładka „Nagraj rozmowę” w panelu handlowca giełdy. 3 rozmowy sprzedażowe z Bruno po 3 minuty,
-// te same 3 scenariusze dla każdego, a Bruno gra klienta z branży handlowca (z profilu). Nagranie i ocena trafiają do firm,
-// które odblokowały kontakt. Tabela praca_rozmowy_testowe (lib/bruno/sql/2026-11-16-praca-rozmowy-testowe.sql).
+// 16.11 (USER_001): zakładka „Rozmowa sprzedażowa z AI” w panelu handlowca giełdy. JEDNA rozmowa: spotkanie na żywo,
+// klient zna ofertę i mówi, że jest za droga; w rozmowie Bruno podnosi 3 różne obiekcje. Handlowiec może ją powtórzyć
+// do 3 razy (każde podejście 3 min), a firmom, które odblokowały kontakt, pokazujemy NAJLEPSZE podejście (najwyższa ocena).
+// Bruno gra klienta z branży handlowca (z profilu). Tabela praca_rozmowy_testowe, kolumna nr = numer podejścia.
 // Koszt: 0,10 $ / min głosu (rachunek ElevenLabs 6.10) → 3 × 3 min = 0,90 $ na handlowca + ocena trenera.
 
 export const ROZMOW_TESTOWYCH = 3;
@@ -63,29 +64,34 @@ export async function odpowiedziProfilu(kontoId: string): Promise<Record<string,
   return (data?.odpowiedzi as Record<string, unknown> | undefined) ?? null;
 }
 
-export type ScenariuszTestu = { nr: number; tytul: string; zadanie: string; tryb: TrybId; cel: CelId; postac: PostacId; poziom: PoziomId; obiekcja: string };
+export type ScenariuszTestu = { tytul: string; zadanie: string; tryb: TrybId; cel: CelId; postac: PostacId; poziom: PoziomId; obiekcje: string[] };
 
-export const SCENARIUSZE_TESTU: ScenariuszTestu[] = [
-  { nr: 1, tytul: "Pierwszy telefon", zadanie: "Dzwonisz do klienta pierwszy raz. Nie zna Cię. Umów spotkanie.", tryb: "cold", cel: "spotkanie", postac: "czerwony", poziom: "sredni", obiekcja: "Nie mam czasu, proszę wysłać ofertę mailem" },
-  { nr: 2, tytul: "Za drogo", zadanie: "Spotkanie na żywo. Klient zna ofertę i mówi, że jest za droga. Doprowadź do sprzedaży.", tryb: "zywo", cel: "sprzedaz", postac: "niebieski", poziom: "sredni", obiekcja: "Za drogo, konkurencja daje to samo taniej" },
-  { nr: 3, tytul: "Muszę się zastanowić", zadanie: "Spotkanie online po prezentacji. Klient odkłada decyzję. Uzyskaj decyzję albo następny krok z datą.", tryb: "online", cel: "decyzja", postac: "zielony", poziom: "sredni", obiekcja: "Muszę się zastanowić i z kimś to omówić" },
-];
+/** Jedyna rozmowa testu. Pierwsza obiekcja pada na otwarcie, dwie kolejne w trakcie. */
+export const SCENARIUSZ_TESTU: ScenariuszTestu = {
+  tytul: "Spotkanie na żywo",
+  zadanie: "Klient zna ofertę i mówi, że jest za droga. Doprowadź do sprzedaży.",
+  tryb: "zywo",
+  cel: "sprzedaz",
+  postac: "niebieski",
+  poziom: "sredni",
+  obiekcje: ["Za drogo, konkurencja daje to samo taniej", "Nie jestem pewien, czy tego teraz potrzebuję", "Muszę się zastanowić i z kimś to omówić"],
+};
 
 /** Konfiguracja Bruno na rozmowę testową (handlowiec giełdy nie ma własnego „Dostosuj Bruno”). */
-export function konfigTestu(s: ScenariuszTestu, syt: SytuacjaTestu): Konfig {
-  return { email: "", produkt: syt.produkt, klient: syt.klient, obiekcje: SCENARIUSZE_TESTU.map((x) => x.obiekcja).join("\n"), udana_rozmowa: "", skrypt: "", postac: s.postac, godzina_przypomnienia: 0, etap: s.tryb === "cold" ? "cold" : "oferta", rejestr: "pan", glos: "m", segment: syt.segment };
+export function konfigTestu(syt: SytuacjaTestu): Konfig {
+  const s = SCENARIUSZ_TESTU;
+  return { email: "", produkt: syt.produkt, klient: syt.klient, obiekcje: s.obiekcje.join("\n"), udana_rozmowa: "", skrypt: "", postac: s.postac, godzina_przypomnienia: 0, etap: "oferta", rejestr: "pan", glos: "m", segment: syt.segment };
 }
 
 type Wiersz = { id: string; konto_id: string; nr: number; status: string; start: string; sekundy: number | null; feedback: Feedback | null; ocena: number | null; nagranie_sciezka: string | null; el_conversation_id: string | null; branza: string | null };
 const POLA = "id,konto_id,nr,status,start,sekundy,feedback,ocena,nagranie_sciezka,el_conversation_id,branza";
 
-/** Stan handlowca: które rozmowy ma zaliczone i czy może wystartować kolejną. */
-export async function stanTestu(kontoId: string): Promise<{ zaliczone: number[]; startow: number; nastepna: ScenariuszTestu | null }> {
-  const { data } = await supabaseAdmin.from("praca_rozmowy_testowe").select("nr,status").eq("konto_id", kontoId);
-  const zaliczone = [...new Set((data ?? []).filter((x) => x.status === "zakonczona").map((x) => x.nr as number))].sort();
+/** Stan handlowca: ile podejść ma zaliczonych i numer kolejnego (null = 3 zaliczone albo wyczerpane starty). */
+export async function stanTestu(kontoId: string): Promise<{ zaliczone: number; startow: number; nastepna: number | null }> {
+  const { data } = await supabaseAdmin.from("praca_rozmowy_testowe").select("status").eq("konto_id", kontoId);
+  const zaliczone = (data ?? []).filter((x) => x.status === "zakonczona").length;
   const startow = (data ?? []).length;
-  const wolny = SCENARIUSZE_TESTU.find((s) => !zaliczone.includes(s.nr)) ?? null;
-  return { zaliczone, startow, nastepna: startow >= STARTOW_MAX ? null : wolny };
+  return { zaliczone, startow, nastepna: zaliczone >= ROZMOW_TESTOWYCH || startow >= STARTOW_MAX ? null : zaliczone + 1 };
 }
 
 /** Ściąga nagranie z konta ElevenLabs do naszego kubełka (plik bywa gotowy kilka sekund po rozłączeniu). */
@@ -107,23 +113,28 @@ export async function sciagnijNagranieTestu(a: { id: string; kontoId: string; el
   return null;
 }
 
-export type RozmowaTestowa = { nr: number; tytul: string; zadanie: string; /** Branża, z której Bruno grał klienta. */ branza: string; kiedy: string; sekundy: number; ocena: number | null; wygrana: string; poprawka: string; /** Link do mp3 podpisany na godzinę albo null, gdy pliku jeszcze nie ma. */ nagranie: string | null };
+export type RozmowaTestowa = { /** Numer podejścia (1-3). */ nr: number; /** Branża, z której Bruno grał klienta. */ branza: string; kiedy: string; sekundy: number; ocena: number | null; wygrana: string; poprawka: string; /** Link do mp3 podpisany na godzinę albo null, gdy pliku jeszcze nie ma. */ nagranie: string | null; /** Najwyżej ocenione podejście: tylko to widzi firma. */ najlepsza: boolean };
 
-/** Zaliczone rozmowy testowe handlowców (ostatnia zaliczona na każdy scenariusz), z linkami do nagrań. id konta → lista. */
-export async function rozmowyTestowe(kontoIds: string[]): Promise<Record<string, RozmowaTestowa[]>> {
+/** Zaliczone podejścia handlowców z linkami do nagrań, id konta → lista od 1. podejścia. `tylkoNajlepsza` = widok firmy. */
+export async function rozmowyTestowe(kontoIds: string[], tylkoNajlepsza = false): Promise<Record<string, RozmowaTestowa[]>> {
   if (!kontoIds.length) return {};
-  const { data, error } = await supabaseAdmin.from("praca_rozmowy_testowe").select(POLA).in("konto_id", kontoIds).eq("status", "zakonczona").order("start", { ascending: false });
+  const { data, error } = await supabaseAdmin.from("praca_rozmowy_testowe").select(POLA).in("konto_id", kontoIds).eq("status", "zakonczona").order("start", { ascending: true });
   if (error) console.error("[praca rozmowy testowe]", error.message);
+  const poKoncie: Record<string, Wiersz[]> = {};
+  for (const w of (data ?? []) as Wiersz[]) (poKoncie[w.konto_id] ??= []).push(w);
   const wynik: Record<string, RozmowaTestowa[]> = {};
-  for (const w of (data ?? []) as Wiersz[]) {
-    const lista = (wynik[w.konto_id] ??= []);
-    const s = SCENARIUSZE_TESTU.find((x) => x.nr === w.nr);
-    if (!s || lista.some((x) => x.nr === w.nr)) continue;
-    // Siatka bezpieczeństwa: plik nie zdążył się ściągnąć po rozmowie → próba przy pierwszym wyświetleniu.
-    const sciezka = w.nagranie_sciezka ?? (w.el_conversation_id ? await sciagnijNagranieTestu({ id: w.id, kontoId: w.konto_id, elId: w.el_conversation_id }) : null);
-    const nagranie = sciezka ? (await supabaseAdmin.storage.from(KUBELEK_BRUNO).createSignedUrl(sciezka, 3600)).data?.signedUrl ?? null : null;
-    lista.push({ nr: w.nr, tytul: s.tytul, zadanie: s.zadanie, branza: w.branza ?? "", kiedy: w.start, sekundy: w.sekundy ?? 0, ocena: w.ocena, wygrana: w.feedback?.wygrana ?? "", poprawka: w.feedback?.poprawka ?? "", nagranie });
+  for (const [kontoId, wiersze] of Object.entries(poKoncie)) {
+    // Najlepsza = najwyższa ocena; przy remisie (albo bez ocen) ostatnie podejście.
+    const top = wiersze.reduce((a, b) => ((b.ocena ?? -1) >= (a.ocena ?? -1) ? b : a));
+    const lista: RozmowaTestowa[] = [];
+    for (const [i, w] of wiersze.entries()) {
+      if (tylkoNajlepsza && w !== top) continue;
+      // Siatka bezpieczeństwa: plik nie zdążył się ściągnąć po rozmowie → próba przy pierwszym wyświetleniu.
+      const sciezka = w.nagranie_sciezka ?? (w.el_conversation_id ? await sciagnijNagranieTestu({ id: w.id, kontoId, elId: w.el_conversation_id }) : null);
+      const nagranie = sciezka ? (await supabaseAdmin.storage.from(KUBELEK_BRUNO).createSignedUrl(sciezka, 3600)).data?.signedUrl ?? null : null;
+      lista.push({ nr: i + 1, branza: w.branza ?? "", kiedy: w.start, sekundy: w.sekundy ?? 0, ocena: w.ocena, wygrana: w.feedback?.wygrana ?? "", poprawka: w.feedback?.poprawka ?? "", nagranie, najlepsza: w === top });
+    }
+    wynik[kontoId] = lista;
   }
-  for (const l of Object.values(wynik)) l.sort((a, b) => a.nr - b.nr);
   return wynik;
 }

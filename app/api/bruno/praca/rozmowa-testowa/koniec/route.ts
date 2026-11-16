@@ -6,7 +6,7 @@ import { listaObiekcji } from "@/lib/bruno/obiekcje";
 import { opisCelu } from "@/lib/bruno/postacie";
 import { ocenRozmowe } from "@/lib/bruno/rubryka";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
-import { SCENARIUSZE_TESTU, SEKUND_TESTU, SEKUND_TESTU_MAX, konfigTestu, mozeNagrywac, sciagnijNagranieTestu, sytuacjaZ } from "@/lib/bruno/praca/rozmowy-testowe";
+import { SCENARIUSZ_TESTU, SEKUND_TESTU, SEKUND_TESTU_MAX, konfigTestu, mozeNagrywac, sciagnijNagranieTestu, sytuacjaZ } from "@/lib/bruno/praca/rozmowy-testowe";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   const { data: rozmowa } = id ? await supabaseAdmin.from("praca_rozmowy_testowe").select("*").eq("id", id).eq("konto_id", konto.id).maybeSingle() : { data: null };
   if (!rozmowa) return NextResponse.json({ ok: false, blad: "Nie znaleziono rozmowy." }, { status: 404 });
   if (rozmowa.status !== "trwa") return NextResponse.json({ ok: true, przerwana: rozmowa.status === "przerwana", ocena: rozmowa.ocena });
-  const s = SCENARIUSZE_TESTU.find((x) => x.nr === rozmowa.nr)!;
+  const s = SCENARIUSZ_TESTU;
 
   const transkrypcja: Wypowiedz[] = Array.isArray(b?.transkrypcja)
     ? b.transkrypcja
@@ -35,11 +35,11 @@ export async function POST(req: Request) {
   const zPrzegladarki = Number(b?.sekundy) || 0;
   const sekundy = Math.round(Math.min(SEKUND_TESTU_MAX, Math.max(0, Math.min(odStartu, zPrzegladarki || odStartu))));
   const elId = typeof b?.el_conversation_id === "string" ? b.el_conversation_id.slice(0, 120) : null;
-  const konfig = konfigTestu(s, sytuacjaZ(rozmowa.branza, rozmowa.segment));
+  const konfig = konfigTestu(sytuacjaZ(rozmowa.branza, rozmowa.segment));
   const metryki = policzMetryki(transkrypcja, sekundy, listaObiekcji(konfig.obiekcje), "pl");
   const koniec = new Date().toISOString();
 
-  // Za krótka albo pusta rozmowa nie jest zaliczona: handlowiec nagrywa ten scenariusz jeszcze raz.
+  // Za krótka albo pusta rozmowa nie jest zaliczona i nie zjada podejścia.
   if (sekundy < 60 || metryki.slowa_handlowca < 20) {
     await supabaseAdmin.from("praca_rozmowy_testowe").update({ status: "przerwana", koniec, sekundy, transkrypcja, el_conversation_id: elId }).eq("id", id);
     return NextResponse.json({ ok: true, przerwana: true });
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     });
   }
   try {
-    const feedback = await ocenRozmowe({ transkrypcja, metryki, konfig, postac: s.postac, tryb: s.tryb, cel: opisCelu(s.cel, null, "pl"), obiekcja: s.obiekcja, poziom: s.poziom, imie: konto.imie, ucieta_limitem: b?.powod === "limit" || sekundy >= SEKUND_TESTU, jezyk: "pl" });
+    const feedback = await ocenRozmowe({ transkrypcja, metryki, konfig, postac: s.postac, tryb: s.tryb, cel: opisCelu(s.cel, null, "pl"), obiekcja: s.obiekcje.join(" · "), poziom: s.poziom, imie: konto.imie, ucieta_limitem: b?.powod === "limit" || sekundy >= SEKUND_TESTU, jezyk: "pl" });
     await supabaseAdmin.from("praca_rozmowy_testowe").update({ feedback, ocena: feedback.ocena }).eq("id", id);
     return NextResponse.json({ ok: true, ocena: feedback.ocena });
   } catch (e) {
