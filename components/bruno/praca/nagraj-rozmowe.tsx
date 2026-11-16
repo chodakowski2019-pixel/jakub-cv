@@ -206,10 +206,10 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
               </td>
             </tr>
             <tr>
-              <td>➡️ {syt.produkt}</td>
+              <td>➡️ <b>Sprzedajesz:</b> {syt.produkt}</td>
             </tr>
             <tr>
-              <td>➡️ {syt.klient}</td>
+              <td>➡️ <b>Klient:</b> {syt.klient}</td>
             </tr>
           </tbody>
         </table>
