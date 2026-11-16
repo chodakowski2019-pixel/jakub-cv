@@ -2596,3 +2596,12 @@
     margin-top: 12px;
   }
 }
+/* 16.11 (USER_001): na telefonie szara linia pod tytułem mniejsza, żeby mieściła się w jednej linii. */
+@media (max-width: 860px) {
+  .mAcad .h1Dwie > .g {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: clamp(18px, 6.2vw, 30px);
+    white-space: nowrap;
+  }
+}

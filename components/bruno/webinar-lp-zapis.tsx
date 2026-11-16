@@ -43,7 +43,7 @@ const T = {
   ],
   przycisk: "Chcę zarezerwować miejsce »",
   plan: WEBINAR.plan.map(([g, h]) => [g, h]) as [string, string][],
-  prowadzacy: "Byłem handlowcem, któremu nie wychodziło nic... Postanowiłem to zmienić i teraz pokażę, jak Ty możesz zrobić to samo.",
+  prowadzacy: "Byłem handlowcem, któremu nie wychodziło nic... Postanowiłem to zmienić i teraz pokażę, jak Ty możesz zmienić siebie.",
   // 16.11 (USER_001): obok planu koło 40 / 30 / 30 z /academy zamiast liczby „+34 %”. Zarobki: 85 ofert B2B / zlecenie, RocketJobs.pl, XI 2026.
   kolo: [
     "Techniki to tylko 30% sprzedaży.",
