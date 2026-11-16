@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { linkCV, type KontoPraca } from "./konta";
+import { rozmowyTestowe, type RozmowaTestowa } from "./rozmowy-testowe";
 import { KROKI, LINKI_PROFILU, miastoZWielkiej, telefonGrupami, type Odpowiedzi } from "./profil-handlowca";
 
 // 11.11 (USER_001): giełda handlowców, strona firm. Wyszukiwanie w bazie profili (praca_profile_handlowcow),
@@ -79,6 +80,8 @@ export type PelnyHandlowiec = KartaHandlowca & {
   zdjecie: string | null;
   cv: string | null;
   odblokowano: string;
+  /** 16.11: rozmowy sprzedażowe z Bruno nagrane przez handlowca (zakładka „Nagraj rozmowę”). */
+  rozmowy: RozmowaTestowa[];
 };
 
 type Wiersz = {
@@ -219,6 +222,7 @@ export async function odblokowaniHandlowcy(kontoId: string): Promise<PelnyHandlo
     .from("praca_profile_handlowcow")
     .select("konto_id,odpowiedzi,status,zdjecie_sciezka,konto:praca_konta(id,email,imie,telefon,linkedin,cv_sciezka)")
     .in("konto_id", [...kiedy.keys()]);
+  const testy = await rozmowyTestowe([...kiedy.keys()]);
   const pelne = await Promise.all(
     ((w ?? []) as unknown as Wiersz[]).map(async (x) => {
       const o = x.odpowiedzi ?? {};
@@ -235,6 +239,7 @@ export async function odblokowaniHandlowcy(kontoId: string): Promise<PelnyHandlo
         zdjecie,
         cv: x.konto?.cv_sciezka ? await linkCV(x.konto.cv_sciezka, 3600) : null,
         odblokowano: kiedy.get(x.konto_id) ?? "",
+        rozmowy: testy[x.konto_id] ?? [],
       };
     }),
   );

@@ -124,6 +124,18 @@ export default function PanelHandlowcy({ handlowcy, zlecenia = [], naKoncie }: {
                     <span>Start: <b>{x.start}</b></span>
                     <span>Sytuacja: <b>{x.sytuacja}</b></span>
                   </p>
+                  {/* 16.11 (USER_001): rozmowy sprzedażowe z Bruno nagrane przez handlowca. */}
+                  {x.rozmowy.length > 0 && (
+                    <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
+                      <b>Rozmowy sprzedażowe z AI ({x.rozmowy.length} / 3)</b>
+                      {x.rozmowy.map((r) => (
+                        <div key={r.nr} style={{ display: "grid", gap: 4 }}>
+                          <small>{r.nr}. {r.tytul}{r.ocena != null ? ` · ocena ${r.ocena} / 10` : ""}: {r.zadanie}</small>
+                          {r.nagranie && <audio controls preload="none" src={r.nagranie} style={{ width: "100%" }} />}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className={h.pKontakt}>
                   {x.telefon && (

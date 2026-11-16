@@ -18,6 +18,8 @@ import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 import { linkPlatnosci } from "@/lib/bruno/praca/platnosci";
 import { firmyZKontaktem, mojProfil, odblokowaniHandlowcy } from "@/lib/bruno/praca/handlowcy";
 import { zleceniaKonta } from "@/lib/bruno/praca/zlecenia";
+import NagrajRozmowe from "@/components/bruno/praca/nagraj-rozmowe";
+import { KLIENT_TESTU, PRODUKT_TESTU, SCENARIUSZE_TESTU, SEKUND_TESTU, STARTOW_MAX, mozeNagrywac, rozmowyTestowe, stanTestu } from "@/lib/bruno/praca/rozmowy-testowe";
 import { doOferty, ofertyKonta } from "@/lib/bruno/praca/oferty-firm";
 import { CENA_MIESIAC, doListy, ofertaPoId, ofertyPubliczne, type OfertaLista } from "@/lib/bruno/praca/oferty";
 
@@ -48,13 +50,21 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const z = (await searchParams).z;
   const zakladka = typeof z === "string" ? z : undefined;
   const POLA_Z = "id,oferta_id,imie,email,telefon,linkedin,wiadomosc,cv_nazwa,status,created_at";
+  const nagraj = mozeNagrywac(konto.email);
+  // 16.11: zakładka „Nagraj rozmowę” (3 rozmowy z Bruno), na razie tylko konta z mozeNagrywac(), każdego typu.
+  const widokNagraj = async () => {
+    const [stan, testy] = await Promise.all([stanTestu(konto.id), rozmowyTestowe([konto.id])]);
+    return <NagrajRozmowe zadania={SCENARIUSZE_TESTU.map(({ nr, tytul, zadanie }) => ({ nr, tytul, zadanie }))} nagrane={testy[konto.id] ?? []} nastepna={stan.nastepna?.nr ?? null} produkt={PRODUKT_TESTU} klient={KLIENT_TESTU} sekund={SEKUND_TESTU} zostaloStartow={Math.max(0, STARTOW_MAX - stan.startow)} />;
+  };
 
   // 11.11 (USER_001): konto właściciela giełdy widzi wszystkie profile handlowców i firmy (lib/bruno/praca/admin.ts).
   if (czyAdminGieldy(konto)) {
     const sp = await searchParams;
     const id = typeof sp.id === "string" && /^[0-9a-f-]{36}$/i.test(sp.id) ? sp.id : null;
     let tresc: React.ReactNode;
-    if (zakladka === "firmy") {
+    if (zakladka === "nagraj" && nagraj) {
+      tresc = await widokNagraj();
+    } else if (zakladka === "firmy") {
       tresc = <AdminFirmy {...(await firmyIWyszukiwania())} />;
     } else if (zakladka === "statystyki") {
       tresc = <AdminStatystyki s={await statystykiGieldy()} />;
@@ -65,14 +75,14 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     } else if (zakladka === "niedokonczone") {
       tresc = <AdminNiedokonczone lista={await listaNiedokonczonych()} />;
     } else if (zakladka === "handlowiec" && id) {
-      const [profil, dane, firmy] = await Promise.all([mojProfil(id), kontoHandlowca(id), firmyZKontaktem(id)]);
+      const [profil, dane, firmy, testy] = await Promise.all([mojProfil(id), kontoHandlowca(id), firmyZKontaktem(id), rozmowyTestowe([id])]);
       if (!profil || !dane) redirect("/praca/panel");
-      tresc = <MojProfilWidok profil={profil} email={dane.email} cvNazwa={dane.cvNazwa} cvLink={dane.cvLink} firm={firmy.length} admin={{ gora: <AdminWeryfikacja key={id} id={id} imie={String(profil.odpowiedzi?.imie ?? "") || "tego handlowca"} status={profil.status} /> }} />;
+      tresc = <MojProfilWidok profil={profil} email={dane.email} cvNazwa={dane.cvNazwa} cvLink={dane.cvLink} firm={firmy.length} rozmowy={testy[id] ?? []} admin={{ gora: <AdminWeryfikacja key={id} id={id} imie={String(profil.odpowiedzi?.imie ?? "") || "tego handlowca"} status={profil.status} /> }} />;
     } else {
       tresc = <AdminHandlowcy lista={await listaHandlowcow()} />;
     }
     return (
-      <UkladGieldy typ="admin" nazwa="Sales Bruno">
+      <UkladGieldy typ="admin" nazwa="Sales Bruno" nagraj={nagraj}>
         {tresc}
       </UkladGieldy>
     );
@@ -87,9 +97,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     const aktywne = oferty.filter((o) => o.status === "aktywna").length;
     const firma = konto.nazwa_wyswietlana || konto.firma || "Twoja firma";
     return (
-      <UkladGieldy typ="pracodawca" nazwa={firma} zdjecie={konto.logo_url} liczniki={{ handlowcy: handlowcy.length, kandydaci: nowych, ogloszenia: aktywne }}>
+      <UkladGieldy typ="pracodawca" nazwa={firma} zdjecie={konto.logo_url} nagraj={nagraj} liczniki={{ handlowcy: handlowcy.length, kandydaci: nowych, ogloszenia: aktywne }}>
         {/* 12.11 (USER_001): start firmy = wyszukiwarka z kulą Bruno („Opisz, jakiego handlowca szukasz”). */}
-        {!zakladka ? (
+        {zakladka === "nagraj" && nagraj ? (
+          await widokNagraj()
+        ) : !zakladka ? (
           <SzukajHandlowca imie={konto.imie?.split(" ")[0] || firma} />
         ) : zakladka === "szukaj" ? (
           <WynikSzukania opis={typeof (await searchParams).q === "string" ? String((await searchParams).q) : ""} kontoId={konto.id} naKoncie={konto.kontakty ?? 0} />
@@ -151,14 +163,17 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         .map(doListy)
     : [];
   const { data: al } = await supabaseAdmin.from("praca_alerty").select("id,opis,created_at").eq("konto_id", konto.id).order("created_at", { ascending: false });
-  const [profil, firmy] = await Promise.all([mojProfil(konto.id), firmyZKontaktem(konto.id)]);
+  const [profil, firmy, testy] = await Promise.all([mojProfil(konto.id), firmyZKontaktem(konto.id), rozmowyTestowe([konto.id])]);
+  const nagrane = testy[konto.id] ?? [];
   return (
-    <UkladGieldy typ="kandydat" nazwa={profil?.karta.imie || konto.imie || "Mój panel"} zdjecie={profil?.zdjecie} liczniki={{ firmy: firmy.length }}>
+    <UkladGieldy typ="kandydat" nazwa={profil?.karta.imie || konto.imie || "Mój panel"} zdjecie={profil?.zdjecie} nagraj={nagraj} liczniki={{ firmy: firmy.length }}>
       {/* 11.11 (USER_001): handlowiec zaczyna od profilu, bez ekranu startowego. */}
       {!zakladka || zakladka === "baza" ? (
-        <MojProfilWidok profil={profil} email={konto.email} cvNazwa={konto.cv_nazwa} firm={firmy.length} />
+        <MojProfilWidok profil={profil} email={konto.email} cvNazwa={konto.cv_nazwa} firm={firmy.length} rozmowy={nagrane} nagraj={nagraj} />
       ) : zakladka === "edycja" ? (
         <ProfilEdycja start={profil?.odpowiedzi ?? { ...(konto.imie ? { imie: konto.imie } : {}), ...(konto.telefon ? { telefon: konto.telefon } : {}) }} zdjecie={profil?.zdjecie ?? null} cvNazwa={konto.cv_nazwa} maProfil={Boolean(profil)} />
+      ) : zakladka === "nagraj" && nagraj ? (
+        await widokNagraj()
       ) : zakladka === "firmy" ? (
         <FirmyWidok firmy={firmy} sprawdzony={profil?.status === "zatwierdzony"} />
       ) : (

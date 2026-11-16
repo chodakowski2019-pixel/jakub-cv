@@ -1,6 +1,7 @@
 import Link from "next/link";
 import KulaLimonka from "@/components/bruno/kula-limonka";
 import type { FirmaZKontaktem, MojProfil } from "@/lib/bruno/praca/handlowcy";
+import type { RozmowaTestowa } from "@/lib/bruno/praca/rozmowy-testowe";
 import { DNI_WERYFIKACJI } from "@/lib/bruno/praca/profil-handlowca";
 import { znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
 import g from "./gielda.module.css";
@@ -121,6 +122,8 @@ export function MojProfilWidok({
   cvNazwa,
   cvLink,
   firm,
+  rozmowy = [],
+  nagraj = false,
   admin,
 }: {
   profil: MojProfil | null;
@@ -129,6 +132,10 @@ export function MojProfilWidok({
   /** Link do pobrania CV (tylko widok administratora). */
   cvLink?: string | null;
   firm: number;
+  /** 16.11: rozmowy sprzedażowe z Bruno (zakładka „Nagraj rozmowę”); firma widzi je po odblokowaniu kontaktu. */
+  rozmowy?: RozmowaTestowa[];
+  /** 16.11: przycisk „Nagraj rozmowę” tylko dla kont z mozeNagrywac(). */
+  nagraj?: boolean;
   /** 11.11: ten sam widok u administratora giełdy: zamiast „Edytuj profil” powrót do listy, nad profilem jego własna treść (odhaczenie weryfikacji). */
   admin?: { gora: React.ReactNode };
 }) {
@@ -225,6 +232,27 @@ export function MojProfilWidok({
               ]}
             />
           </div>
+          {(rozmowy.length > 0 || (nagraj && !admin)) && (
+            <div className="p-karta">
+              <div className="p-karta-hd">
+                <h3>Rozmowy sprzedażowe z AI</h3>
+                <span className="p-chip">{rozmowy.length} / 3</span>
+              </div>
+              <div className="p-karta-p" style={{ display: "grid", gap: 12 }}>
+                {rozmowy.map((r) => (
+                  <div key={r.nr} style={{ display: "grid", gap: 4 }}>
+                    <b>{r.nr}. {r.tytul}{r.ocena != null ? ` · ocena ${r.ocena} / 10` : ""}</b>
+                    {r.nagranie && <audio controls preload="none" src={r.nagranie} style={{ width: "100%" }} />}
+                  </div>
+                ))}
+                {nagraj && !admin && rozmowy.length < 3 && (
+                  <p>
+                    <Link className="p-btn p-btn-3" href="/praca/panel?z=nagraj">{rozmowy.length ? "Nagraj kolejną rozmowę" : "Nagraj rozmowę"}</Link>
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
           <div className="p-karta">
             <div className="p-karta-hd"><h3>Oczekiwania</h3></div>
             <Tabela

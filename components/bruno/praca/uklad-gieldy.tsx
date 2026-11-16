@@ -90,15 +90,18 @@ const MENU: Record<"kandydat" | "pracodawca" | "admin", Sekcja[]> = {
   ],
 };
 
+// 16.11 (USER_001): 3 rozmowy sprzedażowe z Bruno po 3 min, nagrania dla firm. Na razie tylko konta z mozeNagrywac().
+const NAGRAJ: Pozycja = { z: "nagraj", nazwa: "Nagraj rozmowę", ikona: IK.trening };
+
 const Ikona = ({ d }: { d: string }) => (
   <svg viewBox="0 0 24 24" width={13} height={13} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d={d} />
   </svg>
 );
 
-export default function UkladGieldy({ typ, nazwa, zdjecie = null, liczniki = {}, children }: { typ: "kandydat" | "pracodawca" | "admin"; /** Napis u góry paska: imię handlowca albo nazwa firmy. */ nazwa: string; /** 11.11 (USER_001): zdjęcie handlowca albo logo firmy w kółku zamiast gwiazdki; brak = inicjał. */ zdjecie?: string | null; liczniki?: Liczniki; children: React.ReactNode }) {
+export default function UkladGieldy({ typ, nazwa, zdjecie = null, liczniki = {}, nagraj = false, children }: { typ: "kandydat" | "pracodawca" | "admin"; /** Napis u góry paska: imię handlowca albo nazwa firmy. */ nazwa: string; /** 11.11 (USER_001): zdjęcie handlowca albo logo firmy w kółku zamiast gwiazdki; brak = inicjał. */ zdjecie?: string | null; liczniki?: Liczniki; /** 16.11: pokaż „Nagraj rozmowę” (tylko konta z mozeNagrywac). */ nagraj?: boolean; children: React.ReactNode }) {
   const z = useSearchParams()?.get("z") ?? "";
-  const sekcje = MENU[typ];
+  const sekcje = nagraj ? MENU[typ].map((s, i) => (i === 0 ? { ...s, linki: [...s.linki, NAGRAJ] } : s)) : MENU[typ];
   const adres = (p: Pozycja) => p.href ?? (p.z ? `/praca/panel?z=${p.z}` : "/praca/panel");
   // „konto” (moje konto firmy) otwiera się z zakładki „Profil firmy”, więc świeci ten sam link.
   // U handlowca stroną główną jest profil, więc stary adres ?z=baza świeci tę samą pozycję.
