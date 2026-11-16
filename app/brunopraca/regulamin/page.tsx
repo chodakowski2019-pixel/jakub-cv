@@ -130,9 +130,20 @@ const SEKCJE: SekcjaDok[] = [
       "Pracodawca, który odblokował Kontakt, może skontaktować się z Kandydatem w sprawie pracy. W panelu Kandydat widzi, które firmy odblokowały jego Kontakt.",
       "Kandydat nie płaci za Profil, za jego weryfikację ani za kontakt ze strony Pracodawcy.",
       "Kandydat podaje prawdziwe dane, a zdjęcie przedstawia jego samego.",
-      "Kandydat może w każdej chwili poprawić Profil w panelu, w zakładce „Edycja profilu”. Po zapisaniu zmian Profil wraca do weryfikacji i do jej zakończenia nie jest widoczny w Wyszukiwarce.",
+      "Kandydat może w każdej chwili poprawić Profil w panelu, w zakładce „Edycja profilu”. Zmiany w zweryfikowanym Profilu są widoczne od razu; Usługodawca może je sprawdzić później i, gdy są nieprawdziwe, cofnąć Profil do weryfikacji.",
       <>Kandydat może w każdej chwili usunąć Profil i wycofać zgodę, pisząc na {MAIL}.</>,
       "Profil nie gwarantuje kontaktu Pracodawcy ani zatrudnienia.",
+    ],
+  },
+  {
+    tytul: "7b. Rozmowa sprzedażowa z AI",
+    punkty: [
+      "W panelu, w zakładce „Rozmowa z AI”, Kandydat może przeprowadzić rozmowę sprzedażową z Bruno, czyli programem sztucznej inteligencji, który rozmawia głosem i gra klienta z branży Kandydata. Kandydat rozmawia z programem, nie z człowiekiem.",
+      "Rozmowa jest bezpłatna i dobrowolna. Kandydat ma 2 podejścia, każde do 3 minut. Podejście krótsze niż 30 sekund nie jest zapisywane i nie przepada.",
+      "Rozmowa jest nagrywana. Usługodawca zapisuje nagranie głosu, zapis tekstowy rozmowy i automatyczną ocenę w skali 1-10, którą wystawia program według stałych kryteriów (m.in. odpowiedzi na obiekcje, prośba o decyzję).",
+      "Pracodawca, który odblokował Kontakt, widzi nagranie i ocenę lepszego z dwóch podejść. Podstawą jest zgoda Kandydata, którą zaznacza przed każdą rozmową.",
+      "Ocena jest pomocą dla Pracodawcy, nie decyzją o zatrudnieniu. O kontakcie i zatrudnieniu decyduje człowiek po stronie Pracodawcy.",
+      <>Kandydat może w każdej chwili wycofać zgodę i poprosić o usunięcie nagrań, pisząc na {MAIL}. Nagrania znikają wtedy także z paneli Pracodawców.</>,
     ],
   },
   {
@@ -170,5 +181,5 @@ const SEKCJE: SekcjaDok[] = [
 ];
 
 export default function Page() {
-  return <Dokument tytul="Regulamin" data="13 listopada 2026" wstep="Ten regulamin opisuje zasady korzystania z portalu SalesBruno.pl Praca: ofert pracy dla handlowców, bazy handlowców i wyszukiwarki handlowców dla firm." sekcje={SEKCJE} />;
+  return <Dokument tytul="Regulamin" data="16 listopada 2026" wstep="Ten regulamin opisuje zasady korzystania z portalu SalesBruno.pl Praca: ofert pracy dla handlowców, bazy handlowców i wyszukiwarki handlowców dla firm." sekcje={SEKCJE} />;
 }

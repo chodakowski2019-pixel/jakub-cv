@@ -20,6 +20,7 @@ const SEKCJE: SekcjaDok[] = [
     punkty: [
       <><b>Kandydaci</b>: e-mail, hasło (zapisane w postaci skrótu), imię i nazwisko, telefon, miasto, profil zawodowy, preferencje pracy, link do LinkedIn, plik CV, treść Zgłoszeń, zapisane oferty i alerty.</>,
       <><b>Profil handlowca</b>: odpowiedzi z formularza (doświadczenie, stanowisko, kilka zdań o sobie, branże, sposób sprzedaży, mocne strony, realizacja planu, wartość sprzedaży, największy wynik, miasto, gotowość do zmiany miasta zamieszkania, tryb pracy, rodzaj umowy, oczekiwane wynagrodzenie, termin rozpoczęcia), imię i nazwisko, telefon oraz, jeśli je dodasz: linki (LinkedIn, strona albo portfolio, Facebook, Instagram), zdjęcie i plik CV.</>,
+      <><b>Rozmowa sprzedażowa z AI</b>: nagranie Twojego głosu, zapis tekstowy rozmowy, czas trwania, automatyczna ocena (1-10) i branża, z której program grał klienta.</>,
       <><b>Wyszukiwarka handlowców</b>: link do oferty, plik PDF z ofertą albo treść opisu, które podajesz w wyszukiwarce, krótki opis, który system z nich tworzy, liczba wyników i czas wyszukiwania. Jeśli jesteś zalogowany jako Pracodawca, wyszukiwanie jest przypisane do Twojego konta.</>,
       <><b>Zakup Kontaktów</b>: który Pracodawca i kiedy odblokował Kontakt do którego handlowca, wielkość Pakietu i liczba niewykorzystanych Kontaktów.</>,
       <><b>Subskrypcja i gwarancja</b>: e-mail, opis, z którym zostały kupione, kwota, termin gwarancji i Kontakty, które z nich wynikły.</>,
@@ -35,6 +36,7 @@ const SEKCJE: SekcjaDok[] = [
       "przekazanie Zgłoszenia Pracodawcy: zgoda Kandydata (art. 6 ust. 1 lit. a RODO),",
       "weryfikacja Profilu handlowca: umowa (art. 6 ust. 1 lit. b RODO),",
       "pokazanie Profilu skróconego (bez nazwiska, zdjęcia i danych kontaktowych) w publicznej wyszukiwarce oraz przekazanie pełnego Profilu Pracodawcy, który odblokował Kontakt: zgoda Kandydata (art. 6 ust. 1 lit. a RODO), do wycofania w każdej chwili,",
+      "nagranie i ocena Rozmowy sprzedażowej z AI oraz pokazanie lepszego podejścia Pracodawcy, który odblokował Kontakt: zgoda Kandydata (art. 6 ust. 1 lit. a RODO), zaznaczana przed każdą rozmową, do wycofania w każdej chwili,",
       "wiadomości o koncie i Profilu, np. o wyniku weryfikacji: umowa (art. 6 ust. 1 lit. b RODO),",
       "sprzedaż Pakietów Kontaktów, subskrypcji i gwarancji oraz rozliczenie odblokowań: umowa (art. 6 ust. 1 lit. b RODO),",
       "zapis wyszukiwań, żeby wiedzieć, jakich handlowców szukają firmy, i rozwijać bazę: prawnie uzasadniony interes (art. 6 ust. 1 lit. f RODO),",
@@ -48,9 +50,9 @@ const SEKCJE: SekcjaDok[] = [
     punkty: [
       "Pracodawcy, do którego Kandydat wysłał Zgłoszenie. Pracodawca staje się wtedy osobnym administratorem tych danych.",
       "Każdemu, kto korzysta z wyszukiwarki handlowców, także bez konta: Profil skrócony po weryfikacji, jeśli Kandydat się na to zgodził. Profil skrócony to imię i pierwsza litera nazwiska, stanowisko, miasto, staż w sprzedaży, branże, mocne strony, komu sprzedajesz i termin rozpoczęcia. Zdjęcie, jeśli je dodałeś, pokazujemy tam wyłącznie jako zamazaną plamę barw, z której nie da się rozpoznać osoby.",
-      "Pracodawcy, który odblokował Kontakt: pełny Profil handlowca, czyli także nazwisko, telefon, e-mail, linki, zdjęcie, CV, opis wyników i oczekiwania. Pracodawca staje się wtedy osobnym administratorem tych danych i może ich używać wyłącznie do własnej rekrutacji.",
+      "Pracodawcy, który odblokował Kontakt: pełny Profil handlowca, czyli także nazwisko, telefon, e-mail, linki, zdjęcie, CV, opis wyników, oczekiwania oraz nagranie i ocenę lepszego podejścia do Rozmowy sprzedażowej z AI. Pracodawca staje się wtedy osobnym administratorem tych danych i może ich używać wyłącznie do własnej rekrutacji.",
       "Kandydatowi: nazwę firmy, która odblokowała jego Kontakt, jej stronę i logo oraz datę odblokowania.",
-      "dostawcom usług, z których korzystamy: Supabase (baza danych i pliki), Vercel (serwery strony), Stripe (płatności), Resend (wysyłka e-maili), Anthropic (automatyczne streszczenie oferty z linku albo pliku PDF podanego w wyszukiwarce; nie przekazujemy tam Profili handlowców), Google (logowanie, jeśli użytkownik je wybierze).",
+      "dostawcom usług, z których korzystamy: Supabase (baza danych i pliki), Vercel (serwery strony), Stripe (płatności), Resend (wysyłka e-maili), ElevenLabs (rozmowa głosowa z AI: rozpoznawanie mowy i głos klienta; nagranie przechowuje do 30 dni, potem zostaje tylko u nas), Anthropic (automatyczne streszczenie oferty z linku albo pliku PDF podanego w wyszukiwarce oraz ocena zapisu tekstowego Rozmowy sprzedażowej z AI; nie przekazujemy tam Profili handlowców), Google (logowanie, jeśli użytkownik je wybierze).",
     ],
     po: ["Część dostawców działa poza Europejskim Obszarem Gospodarczym. Przekazanie odbywa się na podstawie standardowych klauzul umownych Komisji Europejskiej albo decyzji o odpowiednim stopniu ochrony."],
   },
@@ -60,6 +62,7 @@ const SEKCJE: SekcjaDok[] = [
       "dane konta: do usunięcia konta,",
       "Zgłoszenia i CV: do 12 miesięcy od wysłania albo do usunięcia konta,",
       "Profil handlowca ze zdjęciem i CV: do usunięcia Profilu, usunięcia konta albo wycofania zgody. Po usunięciu Profil znika z wyszukiwarki i z paneli Pracodawców, którzy odblokowali Kontakt,",
+      "nagrania, zapisy i oceny Rozmowy sprzedażowej z AI: do usunięcia Profilu, usunięcia konta albo wycofania zgody,",
       "zapis wyszukiwań: do 24 miesięcy,",
       "historia zakupów i odblokowań Kontaktów: do usunięcia konta Pracodawcy, a dane do faktur jak niżej,",
       "dane do faktur: 5 lat od końca roku podatkowego,",
@@ -85,11 +88,12 @@ const SEKCJE: SekcjaDok[] = [
     akapity: [
       "„Oferty dla Ciebie” pokazujemy na podstawie preferencji, które sam wpisujesz.",
       "W wyszukiwarce handlowców system automatycznie porównuje opis wpisany przez firmę z Profilem handlowca (branża, miasto, staż, komu sprzedaje, tryb pracy) i pokazuje stopień dopasowania w procentach. Od niego zależy kolejność wyników i to, czy Profil pojawi się w danym wyszukiwaniu. O kontakcie i zatrudnieniu zawsze decyduje człowiek po stronie firmy.",
+      "Rozmowę sprzedażową z AI ocenia automatycznie program, w skali 1-10, według stałych kryteriów (m.in. odpowiedzi na obiekcje, prośba o decyzję). Ocena trafia do Pracodawcy jako pomoc; o kontakcie i zatrudnieniu decyduje człowiek.",
       "Nie podejmujemy wobec Ciebie decyzji wywołujących skutki prawne w oparciu wyłącznie o automatyczne przetwarzanie.",
     ],
   },
 ];
 
 export default function Page() {
-  return <Dokument tytul="Polityka prywatności" data="12 listopada 2026" wstep="Tu opisujemy, jakie dane zbieramy w portalu SalesBruno.pl Praca, po co i jakie masz prawa." sekcje={SEKCJE} />;
+  return <Dokument tytul="Polityka prywatności" data="16 listopada 2026" wstep="Tu opisujemy, jakie dane zbieramy w portalu SalesBruno.pl Praca, po co i jakie masz prawa." sekcje={SEKCJE} />;
 }

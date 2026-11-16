@@ -12,9 +12,9 @@ import type { CelId, PostacId, PoziomId, TrybId } from "@/lib/bruno/postacie";
 
 // 16.11 wieczór (USER_001): 2 podejścia po 3 minuty. Koszt głosu: 2 × 3 min × 0,10 $ = 0,60 $ na handlowca (sufit 4 starty = 1,20 $).
 export const ROZMOW_TESTOWYCH = 2;
-/** 16.11 (USER_001: „dodaj tę zakładkę tylko u mnie, tam dopracuję”): zakładka widoczna tylko dla tych kont, każdego typu. */
+/** 16.11 (USER_001): zakładkę mają wszyscy handlowcy (konta kandydata) + te konta do testów (administrator giełdy). */
 const KONTA_NAGRAJ = ["chodak.job72@gmail.com"];
-export const mozeNagrywac = (email: string | null | undefined) => KONTA_NAGRAJ.includes((email ?? "").toLowerCase());
+export const mozeNagrywac = (konto: { email: string; typ: string } | null | undefined) => !!konto && (konto.typ === "kandydat" || KONTA_NAGRAJ.includes(konto.email.toLowerCase()));
 /** Twarda długość rozmowy testowej. Bez dogrywki: każde podejście ma tę samą długość. */
 export const SEKUND_TESTU = 180;
 /** 16.11 (USER_001): rozmowa liczy się (zapis nagrania i oceny) od 30 s; krótsza = przerwana, podejście nie przepada. */

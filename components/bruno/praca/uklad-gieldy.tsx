@@ -90,7 +90,7 @@ const MENU: Record<"kandydat" | "pracodawca" | "admin", Sekcja[]> = {
   ],
 };
 
-// 16.11 (USER_001): rozmowa sprzedażowa z Bruno (do 3 podejść po 3 min), najlepsze nagranie dla firm. Na razie tylko konta z mozeNagrywac().
+// 16.11 (USER_001): rozmowa sprzedażowa z Bruno (do 3 podejść po 3 min), najlepsze nagranie dla firm. Wszyscy handlowcy + konto testowe (mozeNagrywac).
 const NAGRAJ: Pozycja = { z: "nagraj", nazwa: "Rozmowa z AI", ikona: IK.trening };
 
 const Ikona = ({ d }: { d: string }) => (

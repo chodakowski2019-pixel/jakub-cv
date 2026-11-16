@@ -17,7 +17,7 @@ export const maxDuration = 60;
 // z ElevenLabs do naszego kubełka i woła trenera (ta sama rubryka co w panelu Bruno).
 export async function POST(req: Request) {
   const konto = await zalogowanePraca();
-  if (!konto || !mozeNagrywac(konto.email)) return NextResponse.json({ ok: false }, { status: 401 });
+  if (!konto || !mozeNagrywac(konto)) return NextResponse.json({ ok: false }, { status: 401 });
   const b = await req.json().catch(() => null);
   const id = String(b?.rozmowa_id ?? "");
   const { data: rozmowa } = id ? await supabaseAdmin.from("praca_rozmowy_testowe").select("*").eq("id", id).eq("konto_id", konto.id).maybeSingle() : { data: null };

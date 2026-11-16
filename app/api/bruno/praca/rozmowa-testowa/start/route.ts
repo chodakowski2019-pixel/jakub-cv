@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 // Tylko ElevenLabs: nagranie ściągamy z ich konta, więc bez nich nie byłoby czego pokazać firmie.
 export async function POST(req: Request) {
   const konto = await zalogowanePraca();
-  if (!konto || !mozeNagrywac(konto.email)) return NextResponse.json({ ok: false, blad: "Zaloguj się." }, { status: 401 });
+  if (!konto || !mozeNagrywac(konto)) return NextResponse.json({ ok: false, blad: "Zaloguj się." }, { status: 401 });
   const b = await req.json().catch(() => ({}));
   if (b?.zgoda !== true) return NextResponse.json({ ok: false, blad: "Zaznacz zgodę na nagranie i udostępnienie rozmowy firmom." }, { status: 400 });
 
@@ -32,8 +32,9 @@ export async function POST(req: Request) {
   }
 
   const s = SCENARIUSZ_TESTU;
-  // Bruno gra klienta z branży handlowca (profil); konto bez profilu może podać branżę w żądaniu.
-  const syt = sytuacjaZProfilu(await odpowiedziProfilu(konto.id), typeof b?.branza === "string" ? b.branza : null);
+  // Bruno gra klienta z branży handlowca (profil); handlowiec bez profilu = branża domyślna. Branżę z żądania bierze tylko konto testowe.
+  const odp = await odpowiedziProfilu(konto.id);
+  const syt = konto.typ === "kandydat" ? sytuacjaZProfilu(odp ?? {}) : sytuacjaZProfilu(odp, typeof b?.branza === "string" ? b.branza : null);
   const konfig = konfigTestu(syt);
   const { data: rozmowa, error } = await supabaseAdmin.from("praca_rozmowy_testowe").insert({ konto_id: konto.id, nr: stan.nastepna, zgoda_udostepnienia: true, branza: syt.branza, segment: syt.segment }).select("id").single();
   if (error || !rozmowa) {

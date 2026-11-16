@@ -50,12 +50,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const z = (await searchParams).z;
   const zakladka = typeof z === "string" ? z : undefined;
   const POLA_Z = "id,oferta_id,imie,email,telefon,linkedin,wiadomosc,cv_nazwa,status,created_at";
-  const nagraj = mozeNagrywac(konto.email);
-  // 16.11: zakładka „Rozmowa sprzedażowa z AI” (1 rozmowa z Bruno, do 3 podejść), na razie tylko konta z mozeNagrywac(), każdego typu.
+  const nagraj = mozeNagrywac(konto);
+  // 16.11: zakładka „Rozmowa sprzedażowa z AI” (1 rozmowa z Bruno, 2 podejścia): wszyscy handlowcy + konto testowe (mozeNagrywac).
   const widokNagraj = async () => {
     const [stan, testy, odp] = await Promise.all([stanTestu(konto.id), rozmowyTestowe([konto.id]), odpowiedziProfilu(konto.id)]);
-    // Konto bez profilu (testy) wybiera branżę samo: wszystkie sytuacje idą do przeglądarki.
-    const sytuacje = odp ? [sytuacjaZProfilu(odp)] : BRANZE_DO_WYBORU.map((b) => sytuacjaZ(b, "b2b"));
+    // Handlowiec: branża z profilu (bez profilu: domyślna). Tylko konto testowe (nie handlowiec) wybiera branżę z listy.
+    const sytuacje = odp || konto.typ === "kandydat" ? [sytuacjaZProfilu(odp ?? {})] : BRANZE_DO_WYBORU.map((b) => sytuacjaZ(b, "b2b"));
     return <NagrajRozmowe tytul={SCENARIUSZ_TESTU.tytul} zadanie={SCENARIUSZ_TESTU.zadanie} obiekcji={SCENARIUSZ_TESTU.obiekcje.length} podejsc={ROZMOW_TESTOWYCH} nagrane={testy[konto.id] ?? []} nastepna={stan.nastepna} sytuacje={sytuacje.map(({ branza, produkt, klient }) => ({ branza, produkt, klient }))} sekund={SEKUND_TESTU} />;
   };
 
