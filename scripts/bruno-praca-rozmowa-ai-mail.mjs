@@ -14,7 +14,7 @@ const TRYB = process.argv[2];
 const TEST = "chodakowski2019@gmail.com";
 const DNI = 7;
 const termin = new Date(Date.now() + DNI * 86_400_000).toLocaleDateString("pl-PL", { day: "numeric", month: "long", timeZone: "Europe/Warsaw" });
-export const TEMAT = "Rozmowa sprzedażowa z AI: zrób do 7 dni";
+export const TEMAT = "Rozmowa sprzedażowa z AI: masz 7 dni";
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const html = (imie) => `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#141416">
