@@ -3,6 +3,7 @@ import KontoForm from "@/components/bruno/praca/konto-form";
 import BazaPasek from "@/components/bruno/praca/baza-pasek";
 import KrokiAktywny from "@/components/bruno/praca/kroki-aktywny";
 import d from "@/components/bruno/praca/dolacz.module.css";
+import { Sociale } from "@/components/bruno/praca/sociale";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 import { DNI_WERYFIKACJI, KROKI } from "@/lib/bruno/praca/profil-handlowca";
@@ -316,6 +317,7 @@ export default async function Page() {
           </div>
           <div className={d.stopkaDol}>
             <span className={d.mono}>SalesBruno.pl · Praca</span>
+            <Sociale />
             <span className={d.mono}>© 2026</span>
           </div>
         </div>

@@ -3,6 +3,7 @@ import BazaPasek from "@/components/bruno/praca/baza-pasek";
 import KulaLimonka from "@/components/bruno/kula-limonka";
 import { Pojawianie, PasekDolny, SzklanyPasek } from "./ruch";
 import d from "@/components/bruno/praca/dolacz.module.css";
+import { Sociale } from "@/components/bruno/praca/sociale";
 import a from "./akademia.module.css";
 
 // 14.11 (USER_001): salesbruno.pl/academy (15.11, było /akademia) = Akademia Sprzedaży dla handlowców, subskrypcja 50 zł / mies.
@@ -410,6 +411,7 @@ export default function Page() {
           </div>
           <div className={d.stopkaDol}>
             <span className={d.mono}>SalesBruno.pl · Akademia</span>
+            <Sociale />
             <span className={d.mono}>© 2026</span>
           </div>
         </div>
