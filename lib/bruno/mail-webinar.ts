@@ -19,7 +19,7 @@ export const ADRES_WEBINARU = "jakub@salesbruno.com";
 export const NADAWCA_WEBINARU = `Jakub Chodakowski <${ADRES_WEBINARU}>`;
 /** Klauzula z pop-upu, powtórzona w mailu potwierdzającym (Aniserowicz 02-07: „bo nie wiemy, kto wpisał adres”). */
 export const KLAUZULA_WEBINARU =
-  "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o treningu handlowców z AI. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości. Jeśli to nie Ty podałeś ten adres, po prostu zignoruj tę wiadomość: bez kliknięcia nic więcej nie wyślę.";
+  "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o szkoleniach dla handlowców. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości. Jeśli to nie Ty podałeś ten adres, po prostu zignoruj tę wiadomość: bez kliknięcia nic więcej nie wyślę.";
 
 const F = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 const esc = (s: string) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -124,9 +124,9 @@ export function mailWebinarPotwierdzenie(a: Odbiorca): MailWebinaru {
         kalendarz(a.baza),
         p("<b>Plan 60 minut:</b>"),
         lista(WEBINAR.plan.map(([g, h]) => `<b>${esc(g)}</b> ${esc(h)}`)),
-        // 10.11: webinar dla firm (bez testu) = jedna liczba do policzenia przed spotkaniem.
+        // 16.11: webinar dla handlowców „Obraz siebie” (bez testu) = jedna rzecz do zapisania przed spotkaniem. Wersja dla firm (10.11) w historii git.
         !WEBINAR.test
-          ? p("Zanim się spotkamy, zrób jedną rzecz: policz, <b>ilu Twoich handlowców zrobiło w zeszłym miesiącu wynik, którego oczekujesz</b>. Jeśli robi go jeden z trzech, to nie jest problem rynku, tylko umiejętności reszty. Od tego zaczniemy o 19:00.")
+          ? p("Zanim się spotkamy, zrób jedną rzecz: zapisz, <b>w której chwili rozmowy z klientem tracisz pewność siebie</b>. Przyda się na webinarze.")
           : a.test
           ? p(`Zanim się spotkamy, zrób jedną rzecz: <b>test „Jakim jesteś handlowcem?”</b>, 4 pytania. Na początku webinaru omawiam wyniki. <a href="${esc(a.test)}" style="color:#111111;font-weight:700">Robię test »</a>`)
           : p("Twój wynik testu już mam. Na początku webinaru powiem, co z niego wynika."),
@@ -141,7 +141,7 @@ export function mailWebinarJutro(a: Odbiorca): MailWebinaru {
     temat: `Jutro ${WEBINAR.godzina}: ${WEBINAR.tytul.toLowerCase()}`,
     html: koperta({
       ps: !WEBINAR.test
-        ? "Odpisz na tego maila jednym zdaniem: <b>co sprzedajecie i jaką obiekcję słyszycie najczęściej</b>. Czytam każdą odpowiedź."
+        ? "Odpisz na tego maila jednym zdaniem: <b>co najbardziej blokuje Cię w rozmowie z klientem</b>. Czytam każdą odpowiedź."
         : a.test
         ? `Nie masz jeszcze wyniku testu (4 pytania), a od niego zaczynam: <a href="${esc(a.test)}" style="color:#111111;font-weight:700">robię test »</a>`
         : "Odpisz na tego maila jednym zdaniem: <b>co Cię najbardziej powstrzymuje przed pracą w sprzedaży</b>. Czytam każdą odpowiedź i odpowiem na webinarze.",
@@ -152,7 +152,7 @@ export function mailWebinarJutro(a: Odbiorca): MailWebinaru {
         p(`jutro o <b>${esc(WEBINAR.godzina)}</b> widzimy się na Zoomie. Nagrania nie będzie, więc zarezerwuj godzinę w kalendarzu.`),
         linia("Link do spotkania na Zoomie", WEBINAR.zoom),
         kalendarz(a.baza),
-        p(WEBINAR.test ? "Na żywo pokażę pierwszą rozmowę z klientem AI, który mówi „nie mam czasu” i „muszę się zastanowić”. Zobaczysz, że tego da się nauczyć." : "Na żywo pokażę rozmowę handlowca z klientem AI. Klient AI może być z Twojej branży."),
+        p(WEBINAR.test ? "Na żywo pokażę pierwszą rozmowę z klientem AI, który mówi „nie mam czasu” i „muszę się zastanowić”. Zobaczysz, że tego da się nauczyć." : "Pokażę, dlaczego techniki sprzedażowe to tylko 30% sukcesu i jak zmienić swój obraz siebie."),
       ].join("\n"),
     }),
   };
@@ -174,7 +174,7 @@ export function mailWebinarDzis(a: Odbiorca): MailWebinaru {
         lista([
           "Komputer albo telefon z Zoomem (działa też w przeglądarce).",
           "Słuchawki.",
-          !WEBINAR.test ? "Liczba: ilu handlowców zrobiło w zeszłym miesiącu wynik, którego oczekujesz." : a.test ? `Wynik testu „Jakim jesteś handlowcem?”: <a href="${esc(a.test)}" style="color:#111111">zrób go teraz, 4 pytania</a>.` : "Twój wynik testu, który już zrobiłeś.",
+          !WEBINAR.test ? "Kartka i długopis." : a.test ? `Wynik testu „Jakim jesteś handlowcem?”: <a href="${esc(a.test)}" style="color:#111111">zrób go teraz, 4 pytania</a>.` : "Twój wynik testu, który już zrobiłeś.",
         ]),
       ].join("\n"),
     }),

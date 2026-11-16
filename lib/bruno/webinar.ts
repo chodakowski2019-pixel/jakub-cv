@@ -7,27 +7,30 @@
 // zapisy B2B z 29.10 nie dostawały maili A. Po potwierdzeniu zapisu uczestnik robi test predyspozycji (przed webinarem).
 // 10.11 (USER_001: „będziemy robić webinary sprzedażowe o Bruno AI”): webinar DLA FIRM wraca, wt 17.11 19:00 czasu polskiego
 // (CET = UTC+1, start 18:00 UTC). Odbiorca: każdy, kto ma handlowców (liczba obojętna). Nowy klucz, nowy Zoom od USER_001.
+// 16.11 (USER_001): webinar dla firm odwołany (2/30 zapisów). Nowy temat DLA HANDLOWCÓW: „Obraz siebie = nasze wyniki sprzedażowe”
+// (szkolenie z mentalu). 16.11 (USER_001: „w czwartek jest”): czw 19.11 19:00 czasu polskiego (CET, start 18:00 UTC), nowy klucz.
+// Link Zoom stary (z 10.11), do potwierdzenia przez USER_001.
 export const WEBINAR = {
   /** Klucz webinaru w bazie (`bruno_webinar_zapisy.webinar`). */
-  klucz: "2026-11-17-firmy",
-  start: Date.UTC(2026, 10, 17, 18, 0, 0),
-  koniec: Date.UTC(2026, 10, 17, 19, 0, 0),
-  dzien: "wtorek",
-  dzienKrotko: "wt",
+  klucz: "2026-11-19-obraz-siebie",
+  start: Date.UTC(2026, 10, 19, 18, 0, 0),
+  koniec: Date.UTC(2026, 10, 19, 19, 0, 0),
+  dzien: "czwartek",
+  dzienKrotko: "czw",
   /** „Widzimy się we wtorek.” (maile). */
-  dzienWe: "we wtorek",
-  data: "17.11",
-  dataDluga: "17 listopada",
+  dzienWe: "w czwartek",
+  data: "19.11",
+  dataDluga: "19 listopada",
   /** Data PL dnia webinaru i dnia przed (do crona), format en-CA = RRRR-MM-DD. */
-  dataPL: "2026-11-17",
-  dataPLDzienPrzed: "2026-11-16",
+  dataPL: "2026-11-19",
+  dataPLDzienPrzed: "2026-11-18",
   godzina: "19:00",
-  ics: "20261117T180000Z",
-  icsKoniec: "20261117T190000Z",
+  ics: "20261119T180000Z",
+  icsKoniec: "20261119T190000Z",
   // 10.11 (USER_001: „dobre!”): tytuł = pytanie właściciela. Temat w Zoomie zmienia USER_001 ręcznie.
-  tytul: "Masz handlowców i nie wiesz, dlaczego nie sprzedają?",
+  tytul: "Obraz siebie = nasze wyniki sprzedażowe",
   /** Druga linia pod tytułem (szara). */
-  podtytul: "Dowiesz się, jak to zmienić.",
+  podtytul: "Dowiesz się, jak go zmienić.",
   // 10.11 (USER_001): link Zoom od USER_001.
   zoom: "https://us05web.zoom.us/j/89634931441?pwd=3uCuaZZaWivaaCfaA0naLy7lL4NAPI.1",
   zoomId: "896 3493 1441",
@@ -39,13 +42,15 @@ export const WEBINAR = {
   lp: "https://salesbruno.pl/webinar",
   /** Plan 60 minut (LP + mail potwierdzenia). */
   // 10.11: plan pod właściciela: kontrola i liczby (wniosek z Ewatex 28.10 i Mauricio 29.10), słowo „szkolenie” odstrasza.
+  // 16.11 (USER_001): przedziały czasowe (podział minut = propozycja agenta); na końcu szkolenie z hipnozy i sesja Q&A.
   plan: [
     // Każdy punkt kończy się efektem „dzięki temu…” (Popiel M8 L01).
-    ["19:00", "3 powody, dla których handlowcy nie sprzedają", "Nie umie, nie chce albo system nie działa. Dzięki temu rozpoznasz, który problem masz u siebie, zanim zatrudnisz kogoś nowego."],
-    ["19:15", "Na jakich etapach uciekają klienci", "Lejek sprzedaży etap po etapie i handlowiec po handlowcu. Dzięki temu wiesz, co naprawić najpierw."],
-    ["19:30", "Na żywo: handlowiec kontra klient AI", "AI gra trudnego klienta. Po rozmowie ocena i 3 rzeczy do poprawy. Dzięki temu zobaczysz, jak handlowiec ćwiczy rozmowę przed spotkaniem z prawdziwym klientem."],
-    ["19:45", "Bruno AI: poprawia wyniki sprzedażowe handlowców", "Kto ćwiczył, kto nie domyka, kto robi postęp. Dzięki temu rozmowa z handlowcem zaczyna się od liczb."],
-    ["20:00", "Pytania i co dalej", "Pytasz o swój zespół. Odpowiadam na żywo."],
+    ["19:00-19:10", "Skąd różnica w zarobkach handlowców", "Koło 40 / 30 / 30: obraz siebie, sposób myślenia, techniki. Dzięki temu wiesz, nad czym pracować najpierw."],
+    ["19:10-19:20", "Obraz siebie: sprzedajesz tyle, na ile się czujesz", "Dlaczego znasz techniki, a w rozmowie o nich zapominasz. Dzięki temu przestajesz szukać kolejnego skryptu."],
+    ["19:20-19:35", "Telefon, odmowa, cena: co dzieje się w głowie", "Strach przed telefonem, odmowa brana do siebie i cena, z której się tłumaczysz. Dzięki temu rozpoznasz to u siebie."],
+    ["19:35-19:45", "Jak zmienia się obraz siebie", "Od czego zacząć pracę nad obrazem siebie. Dzięki temu wiesz, co robić dalej."],
+    ["19:45-19:50", "Szkolenie z hipnozy", "4 indywidualne spotkania online po 50 minut. Dzięki temu wiesz, jak dalej pracować nad obrazem siebie."],
+    ["19:50-20:00", "Sesja Q&A", "Pytasz o swoją sytuację. Odpowiadam na żywo."],
   ] as [string, string, string][],
 };
 

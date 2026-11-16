@@ -10,5 +10,5 @@ type Props = { searchParams: Promise<Record<string, string | string[] | undefine
 export default async function Page({ searchParams }: Props) {
   const t = (await searchParams).t;
   const token = typeof t === "string" && /^[a-f0-9]{32}$/.test(t) ? t : undefined;
-  return <WebinarDziekiBardzo motyw="elmatic" token={token} />;
+  return <WebinarDziekiBardzo motyw="academy" token={token} />;
 }

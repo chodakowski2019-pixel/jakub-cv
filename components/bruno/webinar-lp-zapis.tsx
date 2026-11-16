@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import s from "./webinar-lp.module.css";
 import { WEBINAR, webinarLinkGoogle } from "@/lib/bruno/webinar";
 import Test from "@/app/brunokursy/test/test";
+import { KOLO, Kolo } from "./kolo-sprzedazy";
 
 // 29.10 (USER_001: „LP pod zapisy na webinar, nie LP sprzedażowe”): KRÓTKA strona zapisu. Wzór: Perspective, Sequel,
 // eWebinar, Unbounce (nagłówek = wynik + odbiorca, 3-5 punktów, prowadzący jako dowód, bez nawigacji).
@@ -24,30 +25,35 @@ const ICS = "/api/bruno/webinar/ics";
 /** Nadawca maila z linkiem Zoom (do strony „Dzięki” i okienka). */
 export const NADAWCA_ADRES = "jakub@salesbruno.com";
 
-// 10.11 (USER_001): webinar dla firm wraca, wt 17.11. Odbiorca = każdy, kto ma handlowców (liczba obojętna).
-// Teksty pod właściciela: kontrola i liczby (Ewatex 28.10, Mauricio 29.10). Wersja dla przyszłych handlowców (31.10) w historii git.
+// 16.11 (USER_001): webinar DLA HANDLOWCÓW „Obraz siebie = nasze wyniki sprzedażowe” (szkolenie z mentalu), układ strony bez zmian.
+// Punkty = słowa handlowców z badania SalesAI/sprzedaz/badanie-webinar-mental/ANALIZA-2026-11-16.md. Wersja dla firm (10.11) w historii git.
 const T = {
-  badge: "Dla właścicieli firm i szefów sprzedaży",
-  h1: "Masz handlowców i nie wiesz,\ndlaczego nie sprzedają?",
+  badge: "Webinar dla specjalistów ds. sprzedaży",
+  h1: "Obraz siebie\n= nasze wyniki sprzedażowe",
   h1Szary: WEBINAR.podtytul,
   wstep: "W 60 minut, na żywo, dowiesz się:",
   punkty: [
     // 10.11 (USER_001): „\n” = nowa linia na komputerze.
-    "dlaczego handlowcy nie sprzedają: nie umieją,\nnie chcą czy brakuje im systemu",
-    "na którym etapie rozmowy uciekają Ci klienci",
-    "jak handlowiec może trenować sprzedaż z AI,\nzamiast z prawdziwym klientem",
-    "jak widzieć pracę każdego handlowca w liczbach,\nbez pilnowania go",
+    // 16.11 (USER_001): punkty jego słowami.
+    "dlaczego techniki sprzedażowe to tylko 30% sukcesu",
+    "dlaczego jedni handlowcy zarabiają więcej, a inni mniej",
+    "jak zmienić swój obraz siebie",
+    "i wiele, wiele więcej",
   ],
   przycisk: "Chcę zarezerwować miejsce »",
   plan: WEBINAR.plan.map(([g, h]) => [g, h]) as [string, string][],
-  prowadzacy: "Sam byłem handlowcem, którego szef szkolił jednym spotkaniem: prezentacja i „radź sobie sam”. Dziś zbudowałem AI, które jest asystentem handlowca, gra klienta, uczy go sprzedaży i zarządza jego CRM za niego.",
-  // Badanie dotyczy pracowników obsługi klienta: średnio +14 %, początkujący +34 %.
-  liczba: ["+34 %", "Tyle więcej spraw na godzinę załatwiali początkujący pracownicy obsługi klienta, którym pomagało AI.", "Brynjolfsson, Li, Raymond, Quarterly Journal of Economics, 2025, 5 179 osób"] as [string, string, string],
+  prowadzacy: "Byłem handlowcem, któremu nie wychodziło nic... Postanowiłem to zmienić i teraz pokażę, jak Ty możesz zrobić to samo.",
+  // 16.11 (USER_001): obok planu koło 40 / 30 / 30 z /academy zamiast liczby „+34 %”. Zarobki: 85 ofert B2B / zlecenie, RocketJobs.pl, XI 2026.
+  kolo: [
+    "Techniki to tylko 30% sprzedaży.",
+    "Reszta dzieje się w Twojej głowie.",
+    "Najlepsi handlowcy zarabiają od 30 000 zł miesięcznie, połowa do 14 000 zł. Ta sama praca, 2 razy więcej pieniędzy. Różnica nie bierze się z technik.",
+    "Górna granica widełek w 85 ofertach pracy dla handlowców na B2B i umowie zlecenie, netto + VAT. RocketJobs.pl, listopad 2026",
+  ] as [string, string, string, string],
   faq: [
-    ["Mam tylko 2 handlowców. Czy to dla mnie?", "Tak. Wystarczy jeden handlowiec. Liczba osób w zespole jest bez znaczenia."],
+    ["Dla kogo jest ten webinar?", "Dla specjalistów ds. sprzedaży, którzy chcą polepszyć swoje wyniki sprzedażowe."],
     ["Gdzie się odbywa?", "Online, na Zoomie. Link otrzymasz na e-mail zaraz po potwierdzeniu zapisu, a potem przypomnienie dzień przed i godzinę przed. Wystarczy telefon albo komputer, kamera jest zbędna."],
     ["Czy będzie nagranie?", "Webinar jest tylko na żywo, bez nagrania, dlatego zapisz go w kalendarzu."],
-    ["Moi handlowcy omijają nawet CRM. To też ominą.", "CRM omijają, bo to dla nich dodatkowa robota bez korzyści dla nich samych. Tu handlowiec od razu dostaje ocenę, co poprawić, żeby sprzedawać więcej. A Ty widzisz, kto ćwiczył. Na webinarze pokażę, jak to uruchomić."],
   ] as [string, string][],
   // Pop-up (Aniserowicz 02.04: nagłówek, zdjęcie, „sprawdź maila”, pola, wielki przycisk, klauzula).
   okno: {
@@ -55,7 +61,7 @@ const T = {
     pod: `${WEBINAR.dzien}, ${WEBINAR.dataDluga}, ${WEBINAR.godzina}, Zoom`,
     przypomnienie: "Po zapisie kliknij „Potwierdzam zapis” w e-mailu. Wtedy otrzymasz link do spotkania.",
     przycisk: "Zapisuję się »",
-    klauzula: "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o treningu handlowców z AI. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości.",
+    klauzula: "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o szkoleniach dla handlowców. Administratorem Twoich danych jest Jakub Chodakowski. Dane będą przetwarzane do celów związanych z webinarem i wysyłką wiadomości.",
   },
 };
 
@@ -123,8 +129,9 @@ function Zegar({ maly }: { maly?: boolean }) {
 
 // 29.10 (USER_001: „zmienić kolorystycznie”): motywy do wyboru, ten sam układ i teksty. Podglądy /podglad/webinar-zapis/<motyw>.
 // 29.10 (USER_001): motyw „elmatic” = kolorystyka i UX strony Local AI Day (elmatic.net): granat, cienkie ramki, błękit, Poppins.
-export type MotywZapisu = "pomarancz" | "limonka" | "noc" | "blekit" | "elmatic";
-const MOTYW_KLASA: Record<MotywZapisu, string> = { pomarancz: "", limonka: s.mLimonka, noc: s.mNoc, blekit: s.mBlekit, elmatic: s.mElm };
+// 16.11 (USER_001): motyw „academy” = kolorystyka salesbruno.pl/academy (jasnoszare tło, czerń, pomarańcz, Geist + DM Mono).
+export type MotywZapisu = "pomarancz" | "limonka" | "noc" | "blekit" | "elmatic" | "academy";
+const MOTYW_KLASA: Record<MotywZapisu, string> = { pomarancz: "", limonka: s.mLimonka, noc: s.mNoc, blekit: s.mBlekit, elmatic: s.mElm, academy: s.mAcad };
 
 export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { motyw?: MotywZapisu; dziekiUrl?: string }) {
   const router = useRouter();
@@ -184,8 +191,9 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
   return (
     <div className={`${s.root} ${s.zapis} ${s.zapisA} ${MOTYW_KLASA[motyw]} bruno-lp-jasne`}>
       <nav className={s.nav}>
+        {/* 16.11 (USER_001): logo „Sales (kropka) Bruno” zamiast „Jakub Chodakowski”. */}
         <span className={s.logo}>
-          Jakub Chodakowski<i className={s.kropka} />
+          Sales<i className={s.kropka} />Bruno
         </span>
       </nav>
 
@@ -237,7 +245,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
             {przycisk()}
             <p className={s.ctaData}>
               <i className={s.live} />
-              {WEBINAR.dzien}, {WEBINAR.dataDluga}, {WEBINAR.godzina} · Zoom · bezpłatnie
+              {WEBINAR.dzien}, {WEBINAR.dataDluga}, {WEBINAR.godzina} · Zoom
             </p>
           </div>
         </div>
@@ -276,10 +284,23 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
               ))}
             </ol>
           </div>
-          <div className={s.liczba}>
-            <span className={s.wielka}>{T.liczba[0]}</span>
-            <p>{T.liczba[1]}</p>
-            <small>Źródło: {T.liczba[2]}</small>
+          <div className={`${s.liczba} ${s.koloBlok}`}>
+            <div className={s.koloRys}>
+              <Kolo bezKresek />
+            </div>
+            <ul className={s.koloLegenda}>
+              {KOLO.map((k) => (
+                <li key={k.klucz}>
+                  <b>{k.proc}%</b>
+                  {k.nazwa}
+                </li>
+              ))}
+            </ul>
+            <p>
+              <b>{T.kolo[0]}</b> {T.kolo[1]}
+            </p>
+            <p className={s.koloZarobki}>{T.kolo[2]}</p>
+            <small>Źródło: {T.kolo[3]}</small>
           </div>
         </div>
       </section>
@@ -365,7 +386,7 @@ export function WebinarDzieki({ motyw = "pomarancz" }: { motyw?: MotywZapisu }) 
     <div className={`${s.root} ${s.zapis} ${s.zapisA} ${MOTYW_KLASA[motyw]} bruno-lp-jasne`}>
       <nav className={s.nav}>
         <span className={s.logo}>
-          Jakub Chodakowski<i className={s.kropka} />
+          Sales<i className={s.kropka} />Bruno
         </span>
       </nav>
       <main className={s.dzieki}>
@@ -404,7 +425,7 @@ export function WebinarDziekiBardzo({ motyw = "pomarancz", token }: { motyw?: Mo
     <div className={`${s.root} ${s.zapis} ${s.zapisA} ${MOTYW_KLASA[motyw]} bruno-lp-jasne`}>
       <nav className={s.nav}>
         <span className={s.logo}>
-          Jakub Chodakowski<i className={s.kropka} />
+          Sales<i className={s.kropka} />Bruno
         </span>
       </nav>
       <main className={s.dzieki}>
@@ -465,7 +486,7 @@ export function WebinarWypisano({ motyw = "pomarancz" }: { motyw?: MotywZapisu }
     <div className={`${s.root} ${s.zapis} ${s.zapisA} ${MOTYW_KLASA[motyw]} bruno-lp-jasne`}>
       <nav className={s.nav}>
         <span className={s.logo}>
-          Jakub Chodakowski<i className={s.kropka} />
+          Sales<i className={s.kropka} />Bruno
         </span>
       </nav>
       <main className={s.dzieki}>
