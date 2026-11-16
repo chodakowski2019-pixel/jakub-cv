@@ -1291,3 +1291,43 @@ textarea.wpis {
     grid-template-columns: 1fr;
   }
 }
+.nrTabela {
+  margin-top: 0;
+}
+.nrTabela tr:first-child th,
+.nrTabela tr:first-child td {
+  border-top: 0;
+}
+.nrTabela tr:first-child th {
+  border-top-left-radius: var(--p-radius);
+}
+.nrTabela th {
+  width: 170px;
+}
+.nrRozmowa {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.nrRozmowa img {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.nrStart h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+@media (max-width: 820px) {
+  .nrTabela th {
+    width: 110px;
+  }
+  .nrTabela th,
+  .nrTabela td {
+    padding: 12px 14px;
+  }
+}

@@ -192,47 +192,38 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
           </select>
         )}
       </div>
-      <div className={g.nrTrzy}>
-        <div className={`p-karta ${g.nrKafel}`}>
-          <span className={g.etykieta}>Rozmowa</span>
-          <p><b>{tytul}.</b> {zadanie} Bruno podniesie {obiekcji} różne obiekcje.</p>
-        </div>
-        <div className={`p-karta ${g.nrKafel}`}>
-          <span className={g.etykieta}>Sprzedajesz</span>
-          <p>{syt.produkt}</p>
-        </div>
-        <div className={`p-karta ${g.nrKafel}`}>
-          <span className={g.etykieta}>Twój klient</span>
-          <p>{syt.klient}</p>
-        </div>
-      </div>
-
-      {/* 2. Trzy podejścia po 3 minuty, firma zobaczy najlepsze. */}
-      <h2 className={g.nrSekcja}>{podejsc} podejścia po {minut} minuty. Firma zobaczy najlepsze.</h2>
-      <div className={g.nrTrzy}>
-        {Array.from({ length: podejsc }, (_, i) => i + 1).map((nr) => {
-          const r = nagrane.find((x) => x.nr === nr);
-          const teraz = !r && nr === nastepna;
-          return (
-            <div key={nr} className={`p-karta ${g.nrKafel} ${r ? g.nrGotowa : teraz ? g.nrTeraz : g.nrCzeka}`}>
-              <div className={g.nrKafelGora}>
-                <span className={g.nrNr}>{r ? "✓" : nr}</span>
-                {r?.najlepsza ? <span className="p-chip p-chip-ok">Najlepsza</span> : teraz ? <span className="p-chip">Teraz</span> : null}
-              </div>
-              <h3>{r ? (r.ocena != null ? `Ocena ${r.ocena} / 10` : "Nagrana") : `Podejście ${nr}`}</h3>
-              <p className={g.nrOpis}>{r ? `Podejście ${nr} · ${data(r.kiedy)} · ${czas(r.sekundy)}` : teraz ? (nr === 1 ? "Pierwsza rozmowa." : "Możesz powtórzyć rozmowę i poprawić wynik.") : "Dostępne po poprzednim podejściu."}</p>
-              {r?.poprawka && <p className={g.nrOpis}><b>Do poprawy:</b> {r.poprawka}</p>}
-              {r?.nagranie && <audio controls preload="none" src={r.nagranie} />}
-            </div>
-          );
-        })}
+      {/* 16.11 (USER_001): rozmowa, produkt i klient w jednej tabeli; przy rozmowie zdjęcie w kółku. */}
+      <div className="p-karta">
+        <table className={`${g.tabela} ${g.nrTabela}`}>
+          <tbody>
+            <tr>
+              <th scope="row">Rozmowa</th>
+              <td>
+                <div className={g.nrRozmowa}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/jakub-224.jpg" alt="" width={56} height={56} />
+                  <span><b>{tytul}.</b> {zadanie} Bruno podniesie {obiekcji} różne obiekcje.</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Sprzedajesz</th>
+              <td>{syt.produkt}</td>
+            </tr>
+            <tr>
+              <th scope="row">Twój klient</th>
+              <td>{syt.klient}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       {info && <p className={g.tekst}>{info}</p>}
       {blad && <p className={g.bladPola}>{blad}</p>}
 
-      {/* 3. Zgoda (obowiązkowa) → kula Bruno → „Zacznij rozmowę”. */}
+      {/* 2. „3 podejścia…” na środku → zgoda (obowiązkowa) → kula Bruno → „Zacznij rozmowę”. */}
       <div className={`p-karta ${g.nrStart}`}>
+        <h2>{podejsc} podejścia po {minut} minuty. Firma zobaczy najlepsze.</h2>
         {nastepna ? (
           <>
             <label className={g.zgoda}>
@@ -248,10 +239,39 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
         ) : (
           <>
             {kula()}
-            <p className={g.tekst}>{nagrane.length >= podejsc ? "Wszystkie podejścia wykorzystane. Firma zobaczy najlepsze." : "Wykorzystane wszystkie próby połączenia. Napisz do nas, odblokujemy kolejne."}</p>
+            <p className={g.tekst}>{nagrane.length >= podejsc ? "Wszystkie podejścia wykorzystane." : "Wykorzystane wszystkie próby połączenia. Napisz do nas, odblokujemy kolejne."}</p>
           </>
         )}
       </div>
+
+      {/* Nagrane podejścia (dopiero gdy są): ocena, nagranie, które jest najlepsze. */}
+      {nagrane.length > 0 && (
+        <div className="p-karta">
+          <div className="p-karta-hd">
+            <h3>Twoje podejścia</h3>
+            <span className="p-chip">{nagrane.length} / {podejsc}</span>
+          </div>
+          <table className={`${g.tabela} ${g.nrTabela}`}>
+            <tbody>
+              {nagrane.map((r) => (
+                <tr key={r.nr}>
+                  <th scope="row">
+                    Podejście {r.nr} · {data(r.kiedy)}
+                    {r.najlepsza && <><br /><span className="p-chip p-chip-ok" style={{ marginTop: 6 }}>Najlepsza</span></>}
+                  </th>
+                  <td>
+                    <div style={{ display: "grid", gap: 8 }}>
+                      <b>{r.ocena != null ? `Ocena ${r.ocena} / 10` : "Bez oceny"} · {czas(r.sekundy)}</b>
+                      {r.poprawka && <span>Do poprawy: {r.poprawka}</span>}
+                      {r.nagranie && <audio controls preload="none" src={r.nagranie} style={{ width: "100%", maxWidth: 520 }} />}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
