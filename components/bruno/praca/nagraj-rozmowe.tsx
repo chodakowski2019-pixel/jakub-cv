@@ -172,71 +172,78 @@ export default function NagrajRozmowe({ zadania, nagrane, nastepna, sytuacje, se
       <div className="p-naglowek">
         <div>
           <h1>Nagraj rozmowę</h1>
+          <p className={g.podtytul}>Rozmawiasz głosem z Bruno. Bruno gra klienta z Twojej branży, Ty sprzedajesz. Nagrania i ocenę zobaczy firma, która odblokuje Twój kontakt.</p>
         </div>
         <div className="p-naglowek-prawo">
           <span className="p-chip">Nagrane: {nagrane.length} / {zadania.length}</span>
         </div>
       </div>
 
-      <div className="p-karta p-karta-p" style={{ display: "grid", gap: 18, padding: 24 }}>
-        {/* 1. Jak będzie wyglądać rozmowa: kim jest klient i co mu sprzedajesz. */}
-        <div style={{ display: "grid", gap: 8 }}>
-          <h3>Jak wygląda rozmowa</h3>
-          <p className={g.tekst}>
-            Rozmawiasz głosem z Bruno. Bruno gra klienta z branży, w której masz doświadczenie{sytuacje.length === 1 ? <>: <b>{syt.branza}</b></> : ""}. Ty sprzedajesz, on odpowiada jak prawdziwy klient.
-          </p>
-          {sytuacje.length > 1 && (
-            <label className={g.tekst}>
-              Branża:{" "}
-              <select className={g.wpis} style={{ width: "auto", display: "inline-block" }} value={branza} onChange={(e) => setBranza(e.target.value)}>
-                {sytuacje.map((x) => (
-                  <option key={x.branza}>{x.branza}</option>
-                ))}
-              </select>
-            </label>
-          )}
-          <p className={g.tekst}><b>Sprzedajesz:</b> {syt.produkt}</p>
-          <p className={g.tekst}><b>Klient:</b> {syt.klient}</p>
+      {/* 1. Jak będzie wyglądać rozmowa: co sprzedajesz i kim jest klient. */}
+      <div className={g.nrGora}>
+        {/* Handlowiec widzi branżę z profilu. Tylko konto bez profilu (testy) nie ma jej skąd wziąć, więc wybiera ją samo. */}
+        {sytuacje.length > 1 ? <span className="p-chip">Test, wybierz branżę:</span> : <span className="p-chip">Branża: {syt.branza}</span>}
+        {sytuacje.length > 1 && (
+          <select aria-label="Branża do testu" value={branza} onChange={(e) => setBranza(e.target.value)}>
+            {sytuacje.map((x) => (
+              <option key={x.branza}>{x.branza}</option>
+            ))}
+          </select>
+        )}
+      </div>
+      <div className={g.nrDwa}>
+        <div className={`p-karta ${g.nrKafel}`}>
+          <span className={g.etykieta}>Sprzedajesz</span>
+          <p>{syt.produkt}</p>
         </div>
+        <div className={`p-karta ${g.nrKafel}`}>
+          <span className={g.etykieta}>Twój klient</span>
+          <p>{syt.klient}</p>
+        </div>
+      </div>
 
-        {/* 2. Trzy rozmowy po 3 minuty. */}
-        <div style={{ display: "grid", gap: 10 }}>
-          <h3>{zadania.length} rozmowy po {minut} minuty każda</h3>
-          {zadania.map((z) => {
-            const r = nagrane.find((x) => x.nr === z.nr);
-            return (
-              <div key={z.nr} style={{ display: "grid", gap: 6 }}>
-                <p className={g.tekst}>
-                  <b>{z.nr}. {z.tytul}.</b> {z.zadanie}{" "}
-                  {r ? <span className="p-chip">{r.ocena != null ? `Nagrana · ocena ${r.ocena} / 10` : "Nagrana"}</span> : z.nr === nastepna ? <span className="p-chip">Teraz</span> : null}
-                </p>
-                {r?.nagranie && <audio controls preload="none" src={r.nagranie} style={{ width: "100%", maxWidth: 520 }} />}
+      {/* 2. Trzy rozmowy po 3 minuty. */}
+      <h2 className={g.nrSekcja}>{zadania.length} rozmowy po {minut} minuty każda</h2>
+      <div className={g.nrTrzy}>
+        {zadania.map((z) => {
+          const r = nagrane.find((x) => x.nr === z.nr);
+          const teraz = !r && z.nr === nastepna;
+          return (
+            <div key={z.nr} className={`p-karta ${g.nrKafel} ${r ? g.nrGotowa : teraz ? g.nrTeraz : g.nrCzeka}`}>
+              <div className={g.nrKafelGora}>
+                <span className={g.nrNr}>{r ? "✓" : z.nr}</span>
+                {r ? <span className="p-chip">{r.ocena != null ? `Ocena ${r.ocena} / 10` : "Nagrana"}</span> : teraz ? <span className="p-chip">Teraz</span> : null}
               </div>
-            );
-          })}
-          <p className={g.podtytul}>Nagrania i ocenę zobaczy firma, która odblokuje Twój kontakt.</p>
-        </div>
+              <h3>{z.tytul}</h3>
+              <p className={g.nrOpis}>{z.zadanie}</p>
+              {r?.nagranie && <audio controls preload="none" src={r.nagranie} />}
+            </div>
+          );
+        })}
+      </div>
 
-        {info && <p className={g.tekst}>{info}</p>}
-        {blad && <p className={g.bladPola}>{blad}</p>}
+      {info && <p className={g.tekst}>{info}</p>}
+      {blad && <p className={g.bladPola}>{blad}</p>}
 
+      {/* 3. Zgoda (obowiązkowa) → kula Bruno → „Zacznij rozmowę”. */}
+      <div className={`p-karta ${g.nrStart}`}>
         {nastepna ? (
           <>
-            {/* 3. Zgoda, obowiązkowa. */}
             <label className={g.zgoda}>
               <input type="checkbox" checked={zgoda} onChange={(e) => setZgoda(e.target.checked)} />
               <span>Zgadzam się na nagranie rozmowy oraz udostępnienie nagrania i oceny firmom, które odblokują mój kontakt.</span>
             </label>
-            <div style={{ display: "grid", justifyItems: "center", gap: 18, padding: "10px 0 6px" }}>
-              {kula()}
-              <button type="button" className="p-btn p-btn-3" disabled={!zgoda} onClick={zacznij} style={{ height: 48, padding: "0 30px", fontSize: 16, opacity: zgoda ? 1 : 0.45 }}>
-                Zacznij rozmowę {nastepna} z {zadania.length}
-              </button>
-              <p className={g.podtytul}>Potrzebny mikrofon. Rozmowa kończy się sama po {minut} minutach. Pozostałe podejścia: {zostaloStartow}.</p>
-            </div>
+            {kula()}
+            <button type="button" className="p-btn p-btn-3" disabled={!zgoda} onClick={zacznij} style={{ height: 50, padding: "0 34px", fontSize: 16, opacity: zgoda ? 1 : 0.4 }}>
+              Zacznij rozmowę {nastepna} z {zadania.length}
+            </button>
+            <small>Potrzebny mikrofon · rozmowa kończy się sama po {minut} minutach · pozostałe podejścia: {zostaloStartow}</small>
           </>
         ) : (
-          <p className={g.podtytul}>{nagrane.length >= zadania.length ? "Masz nagrane wszystkie rozmowy." : "Wykorzystane wszystkie podejścia. Napisz do nas, odblokujemy kolejne."}</p>
+          <>
+            {kula()}
+            <p className={g.tekst}>{nagrane.length >= zadania.length ? "Masz nagrane wszystkie rozmowy." : "Wykorzystane wszystkie podejścia. Napisz do nas, odblokujemy kolejne."}</p>
+          </>
         )}
       </div>
     </div>

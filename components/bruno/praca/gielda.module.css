@@ -1172,3 +1172,122 @@ textarea.wpis {
     grid-template-columns: 1fr;
   }
 }
+
+/* 16.11 (USER_001): zakładka „Nagraj rozmowę”: 2 kafle sytuacji, 3 kafle rozmów, karta startu z kulą. */
+.nrGora {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.nrGora select {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--p-ramka-2);
+  background: var(--p-karta);
+  font: inherit;
+  font-size: 13px;
+}
+.nrDwa,
+.nrTrzy {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.nrTrzy {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.nrKafel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 22px;
+}
+.nrKafel .etykieta {
+  margin: 0;
+}
+.nrKafel p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.nrKafel h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.nrKafel p.nrOpis {
+  font-size: 13.5px;
+  color: var(--p-ink-2);
+  line-height: 1.45;
+}
+.nrKafel audio {
+  width: 100%;
+  margin-top: 4px;
+}
+.nrKafelGora {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.nrNr {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--p-s1);
+  font-size: 13px;
+  font-weight: 600;
+}
+.nrTeraz {
+  border-color: var(--p-ink);
+}
+.nrTeraz .nrNr,
+.nrGotowa .nrNr {
+  background: var(--p-lim);
+}
+.nrCzeka {
+  opacity: 0.6;
+}
+.nrSekcja {
+  margin: 10px 0 -6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.nrStart {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  padding: 30px 22px 28px;
+  text-align: center;
+}
+.nrStart .zgoda {
+  max-width: 520px;
+  text-align: left;
+  padding: 12px 14px;
+  border: 1px solid var(--p-ramka-2);
+  border-radius: var(--p-radius-2);
+  background: var(--p-tlo-2);
+  cursor: pointer;
+}
+.nrStart .zgoda input {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--p-ink);
+}
+.nrStart small {
+  font-size: 12.5px;
+  color: var(--p-ink-3);
+}
+@media (max-width: 820px) {
+  .nrDwa,
+  .nrTrzy {
+    grid-template-columns: 1fr;
+  }
+}
