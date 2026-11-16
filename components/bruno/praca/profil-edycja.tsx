@@ -8,7 +8,7 @@ import g from "./gielda.module.css";
 
 // 11.11 (USER_001): panel handlowca, zakładka „Edycja profilu”: wszystkie pola profilu na jednej stronie (te same pytania
 // co formularz po rejestracji, KROKI), zdjęcie, CV w PDF, linki. Zapis tym samym API co formularz:
-// POST /api/bruno/praca/profil-handlowca. Po zapisie profil wraca do weryfikacji (tak działa API).
+// POST /api/bruno/praca/profil-handlowca. 16.11 (USER_001): zatwierdzony profil po zapisie zostaje zatwierdzony; niezatwierdzony dalej czeka na weryfikację.
 export default function ProfilEdycja({ start, zdjecie, cvNazwa, maProfil }: { start: Odpowiedzi; /** Obecne zdjęcie (link podpisany) albo null. */ zdjecie: string | null; cvNazwa: string | null; /** Profil już istnieje: zgoda na pokazanie firmom była dana przy pierwszym wysłaniu. */ maProfil: boolean }) {
   const router = useRouter();
   const [odp, setOdp] = useState<Odpowiedzi>(start);
@@ -94,7 +94,7 @@ export default function ProfilEdycja({ start, zdjecie, cvNazwa, maProfil }: { st
       <div className="p-naglowek">
         <div>
           <h1>Edycja profilu</h1>
-          <p className={g.podtytul}>Po zapisaniu zmian profil wraca do weryfikacji.</p>
+          <p className={g.podtytul}>Zmiany widać w profilu od razu po zapisaniu.</p>
         </div>
       </div>
       <form className={g.form} onSubmit={zapisz} noValidate>
@@ -186,7 +186,7 @@ export default function ProfilEdycja({ start, zdjecie, cvNazwa, maProfil }: { st
         )}
 
         <div className={g.zapis}>
-          {blad ? <span className={g.bladPola} style={{ marginTop: 0 }}>{blad}</span> : stan === "zapisane" ? <span className={g.zapisOk}>✓ Zapisane. Profil czeka na weryfikację.</span> : <span>Zmiany zapisują się po kliknięciu.</span>}
+          {blad ? <span className={g.bladPola} style={{ marginTop: 0 }}>{blad}</span> : stan === "zapisane" ? <span className={g.zapisOk}>✓ Zapisane.</span> : <span>Zmiany zapisują się po kliknięciu.</span>}
           <button type="submit" className="p-btn" disabled={stan === "wysylam"}>
             {stan === "wysylam" ? "Zapisuję…" : "Zapisz profil"}
           </button>

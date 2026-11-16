@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 // POST /api/bruno/praca/profil-handlowca (11.11): kandydat wysyła formularz do bazy handlowców (multipart).
 // Pola: odpowiedzi (JSON), zgoda, cv (PDF, nieobowiązkowe), zdjecie (JPEG zmniejszony w przeglądarce, nieobowiązkowe).
 // Zapis w praca_profile_handlowcow ze statusem „weryfikacja” + kopia danych kontaktowych w praca_konta + mail do USER_001.
+// 16.11 (USER_001): edycja zatwierdzonego profilu NIE cofa go do weryfikacji (Grzegorek i Angielski zniknęli firmom po dodaniu CV / zdjęcia).
 // Pliki w prywatnym magazynie praca-cv (kandydaci/<id konta>/), pobieranie tylko podpisanym linkiem z serwera.
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 const zaczynaSie = (b: Buffer, bajty: number[]) => bajty.every((x, i) => b[i] === x);
@@ -52,7 +53,9 @@ export async function POST(req: Request) {
     if (!sciezka) return NextResponse.json({ ok: false, blad: "Nie udało się zapisać CV. Spróbuj ponownie.", krok: ostatni }, { status: 500 });
     Object.assign(zmianyKonta, { cv_sciezka: sciezka, cv_nazwa: cvPlik.nazwa });
   }
-  const profil: Record<string, unknown> = { konto_id: konto.id, odpowiedzi: d, status: "weryfikacja", zgoda_pracodawcy: true, updated_at: new Date().toISOString() };
+  const { data: stary } = await supabaseAdmin.from("praca_profile_handlowcow").select("status").eq("konto_id", konto.id).maybeSingle();
+  const zatwierdzony = stary?.status === "zatwierdzony";
+  const profil: Record<string, unknown> = { konto_id: konto.id, odpowiedzi: d, status: zatwierdzony ? "zatwierdzony" : "weryfikacja", zgoda_pracodawcy: true, updated_at: new Date().toISOString() };
   if (fotoDane) {
     const sciezka = `kandydaci/${konto.id}/zdjecie-${Date.now()}.jpg`;
     const { error } = await supabaseAdmin.storage.from("praca-cv").upload(sciezka, fotoDane, { contentType: "image/jpeg", upsert: false });
@@ -78,8 +81,8 @@ export async function POST(req: Request) {
       do: SKRZYNKA_JAKUBA,
       replyTo: konto.email,
       rodzaj: "inny",
-      temat: `Praca: profil handlowca do weryfikacji: ${d.imie}`,
-      html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>Nowy profil w bazie handlowców. Czeka na weryfikację (do 7 dni).</p><p><b>E-mail:</b> ${esc(konto.email)}<br/>${wiersze}<br/><b>CV:</b> ${cvPlik ? esc(cvPlik.nazwa) : "brak"}<br/><b>Zdjęcie:</b> ${fotoDane ? "jest" : "brak"}</p></div>`,
+      temat: zatwierdzony ? `Praca: zatwierdzony handlowiec zmienił profil: ${d.imie}` : `Praca: profil handlowca do weryfikacji: ${d.imie}`,
+      html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>${zatwierdzony ? "Zatwierdzony handlowiec zmienił profil. Zostaje widoczny dla firm." : "Nowy profil w bazie handlowców. Czeka na weryfikację (do 7 dni)."}</p><p><b>E-mail:</b> ${esc(konto.email)}<br/>${wiersze}<br/><b>CV:</b> ${cvPlik ? esc(cvPlik.nazwa) : "brak"}<br/><b>Zdjęcie:</b> ${fotoDane ? "jest" : "brak"}</p></div>`,
     });
   } catch (e) {
     console.error("[praca profil handlowca] mail", e);
