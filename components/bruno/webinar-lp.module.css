@@ -2605,15 +2605,7 @@
     white-space: nowrap;
   }
 }
-/* 16.11 (USER_001): nowe zdjęcie prowadzącego jest kwadratowe; na telefonie zdjęcie mniejsze. */
-.mAcad.zapisA .heroFoto img {
-  aspect-ratio: 1 / 1;
-  object-position: 50% 30%;
-}
-.mAcad .prowadzacyZapis img,
-.mAcad .oknoGlowa img {
-  object-position: 50% 25%;
-}
+/* 16.11 (USER_001): na telefonie zdjęcie prowadzącego mniejsze. */
 @media (max-width: 860px) {
   .mAcad.zapisA .heroFotoTel {
     width: 72%;
