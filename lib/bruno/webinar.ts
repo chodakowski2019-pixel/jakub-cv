@@ -28,7 +28,7 @@ export const WEBINAR = {
   ics: "20261119T180000Z",
   icsKoniec: "20261119T190000Z",
   // 10.11 (USER_001: „dobre!”): tytuł = pytanie właściciela. Temat w Zoomie zmienia USER_001 ręcznie.
-  tytul: "Obraz siebie = nasze wyniki sprzedażowe",
+  tytul: "Obraz siebie = wyniki sprzedażowe",
   /** Druga linia pod tytułem (szara). */
   podtytul: "Dowiesz się, jak go zmienić.",
   // 10.11 (USER_001): link Zoom od USER_001.

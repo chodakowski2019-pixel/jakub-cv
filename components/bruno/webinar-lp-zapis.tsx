@@ -29,7 +29,8 @@ export const NADAWCA_ADRES = "jakub@salesbruno.com";
 // Punkty = słowa handlowców z badania SalesAI/sprzedaz/badanie-webinar-mental/ANALIZA-2026-11-16.md. Wersja dla firm (10.11) w historii git.
 const T = {
   badge: "Webinar dla specjalistów ds. sprzedaży",
-  h1: "Obraz siebie\n= nasze wyniki sprzedażowe",
+  // 16.11 (USER_001): tytuł bez „nasze”, w jednej linii (łamie go przeglądarka).
+  h1: "Obraz siebie = wyniki sprzedażowe",
   h1Szary: WEBINAR.podtytul,
   wstep: "W 60 minut, na żywo, dowiesz się:",
   punkty: [
@@ -47,9 +48,14 @@ const T = {
   kolo: [
     "Techniki to tylko 30% sprzedaży.",
     "Reszta dzieje się w Twojej głowie.",
-    "Najlepsi handlowcy zarabiają od 30 000 zł miesięcznie, połowa do 14 000 zł. Ta sama praca, 2 razy więcej pieniędzy. Różnica nie bierze się z technik.",
     "Górna granica widełek w 85 ofertach pracy dla handlowców na B2B i umowie zlecenie, netto + VAT. RocketJobs.pl, listopad 2026",
-  ] as [string, string, string, string],
+  ] as [string, string, string],
+  // 16.11 (USER_001): na telefonie każda grupa = osobny akapit, każdy element = osobna linia; na komputerze jeden ciąg.
+  zarobki: [
+    ["Najlepsi handlowcy zarabiają", "od 30 000 zł miesięcznie,", "połowa do 14 000 zł."],
+    ["Ta sama praca,", "2 razy więcej pieniędzy."],
+    ["Różnica nie bierze się z technik."],
+  ],
   faq: [
     ["Dla kogo jest ten webinar?", "Dla specjalistów ds. sprzedaży, którzy chcą polepszyć swoje wyniki sprzedażowe."],
     ["Gdzie się odbywa?", "Online, na Zoomie. Link otrzymasz na e-mail zaraz po potwierdzeniu zapisu, a potem przypomnienie dzień przed i godzinę przed. Wystarczy telefon albo komputer, kamera jest zbędna."],
@@ -140,6 +146,16 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
   const [blad, setBlad] = useState("");
 
   useEffect(() => zdarzenie("wejscie"), []);
+
+  // 16.11 (USER_001): przycisk przyklejony na dole telefonu pojawia się dopiero, gdy przycisk z góry strony zniknie za górną krawędzią ekranu.
+  const [pasek, setPasek] = useState(false);
+  useEffect(() => {
+    const gora = document.getElementById("cta-gora");
+    const sprawdz = () => setPasek(gora ? gora.getBoundingClientRect().bottom < 0 : true);
+    sprawdz();
+    window.addEventListener("scroll", sprawdz, { passive: true });
+    return () => window.removeEventListener("scroll", sprawdz);
+  }, []);
 
   // Okienko: Escape zamyka, strona pod spodem się nie przewija.
   useEffect(() => {
@@ -241,7 +257,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
               </li>
             ))}
           </ul>
-          <div className={s.ctaHero}>
+          <div className={s.ctaHero} id="cta-gora">
             {przycisk()}
             <p className={s.ctaData}>
               <i className={s.live} />
@@ -276,9 +292,13 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
               Plan <span className={s.g}>60 minut</span>
             </h2>
             <ol className={s.planZapis}>
-              {T.plan.map(([g, h]) => (
+              {T.plan.map(([g, h], i) => (
                 <li key={h}>
-                  <span className={s.planGodz}>{g}</span>
+                  {/* 16.11 (USER_001): na telefonie numer punktu zamiast przedziału czasu. */}
+                  <span className={s.planGodz}>
+                    <span className={s.planCzas}>{g}</span>
+                    <span className={s.planNr}>{i + 1}</span>
+                  </span>
                   <span>{h}</span>
                 </li>
               ))}
@@ -291,6 +311,8 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
             <ul className={s.koloLegenda}>
               {KOLO.map((k) => (
                 <li key={k.klucz}>
+                  {/* 16.11 (USER_001): kropka w kolorze paska koła. */}
+                  <i style={{ background: k.kolor }} />
                   <b>{k.proc}%</b>
                   {k.nazwa}
                 </li>
@@ -299,8 +321,21 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
             <p>
               <b>{T.kolo[0]}</b> {T.kolo[1]}
             </p>
-            <p className={s.koloZarobki}>{T.kolo[2]}</p>
-            <small>Źródło: {T.kolo[3]}</small>
+            <p className={s.koloZarobki}>
+              {T.zarobki.map((linie, i) => (
+                <span key={i} className={s.akapitTel}>
+                  {i > 0 && " "}
+                  {linie.map((l, j) => (
+                    <span key={l}>
+                      {j > 0 && " "}
+                      {j > 0 && <br className={s.brTel} />}
+                      {l}
+                    </span>
+                  ))}
+                </span>
+              ))}
+            </p>
+            <small>Źródło: {T.kolo[2]}</small>
           </div>
         </div>
       </section>
@@ -330,7 +365,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
         </div>
       </section>
 
-      <a className={s.pasekTel} href="#" onClick={(e) => (e.preventDefault(), setOtwarte(true))}>
+      <a className={`${s.pasekTel} ${pasek ? "" : s.pasekTelUkryty}`} href="#" tabIndex={pasek ? 0 : -1} aria-hidden={!pasek} onClick={(e) => (e.preventDefault(), setOtwarte(true))}>
         {T.przycisk}
       </a>
 
