@@ -6,7 +6,7 @@ import { listaObiekcji } from "@/lib/bruno/obiekcje";
 import { opisCelu } from "@/lib/bruno/postacie";
 import { ocenRozmowe } from "@/lib/bruno/rubryka";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
-import { SCENARIUSZ_TESTU, SEKUND_TESTU, SEKUND_TESTU_MAX, konfigTestu, mozeNagrywac, sciagnijNagranieTestu, sytuacjaZ } from "@/lib/bruno/praca/rozmowy-testowe";
+import { SCENARIUSZ_TESTU, SYTUACJA_TESTU_TRENER, SEKUND_TESTU_MAX, konfigTestu, mozeNagrywac, sciagnijNagranieTestu, sytuacjaZ } from "@/lib/bruno/praca/rozmowy-testowe";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     });
   }
   try {
-    const feedback = await ocenRozmowe({ transkrypcja, metryki, konfig, postac: s.postac, tryb: s.tryb, cel: opisCelu(s.cel, null, "pl"), obiekcja: s.obiekcje.join(" · "), poziom: s.poziom, imie: konto.imie, ucieta_limitem: b?.powod === "limit" || sekundy >= SEKUND_TESTU, jezyk: "pl" });
+    const feedback = await ocenRozmowe({ transkrypcja, metryki, konfig, postac: s.postac, tryb: s.tryb, cel: opisCelu(s.cel, null, "pl"), obiekcja: s.obiekcje.join(" · "), poziom: s.poziom, imie: konto.imie, ucieta_limitem: false, sytuacja: SYTUACJA_TESTU_TRENER, jezyk: "pl" });
     await supabaseAdmin.from("praca_rozmowy_testowe").update({ feedback, ocena: feedback.ocena }).eq("id", id);
     return NextResponse.json({ ok: true, ocena: feedback.ocena });
   } catch (e) {

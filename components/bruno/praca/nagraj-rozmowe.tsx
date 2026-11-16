@@ -8,7 +8,7 @@ import type { RozmowaTestowa } from "@/lib/bruno/praca/rozmowy-testowe";
 import g from "./gielda.module.css";
 
 // 16.11 (USER_001): zakładka „Rozmowa sprzedażowa z AI” w panelu handlowca. JEDNA rozmowa (spotkanie na żywo, klient
-// mówi „za drogo”, w trakcie 3 różne obiekcje), do 3 podejść po 3 minuty; firma zobaczy najlepsze podejście.
+// mówi „za drogo”, w trakcie 3 różne obiekcje), do 2 podejść po 2 minuty; firma zobaczy najlepsze podejście.
 // Bruno gra klienta z branży handlowca. Układ (USER_001): opis rozmowy → 3 podejścia → zgoda → kula → „Zacznij rozmowę”.
 // Po kliknięciu zostaje sama kula, w niej odliczanie 3, 2, 1 (w tym czasie łączymy się z ElevenLabs).
 // Limit i czas pilnuje serwer (/api/bruno/praca/rozmowa-testowa/start i /koniec).
@@ -147,7 +147,7 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
         <div style={{ display: "grid", justifyItems: "center", gap: 22, textAlign: "center" }}>
           {kula(
             stan === "odliczanie" ? (
-              <span key={odliczanie} aria-live="assertive" style={{ position: "relative", fontSize: 76, fontWeight: 600, lineHeight: 1, color: "#16181d" }}>
+              <span key={odliczanie} aria-live="assertive" style={{ position: "relative", fontSize: 76, fontWeight: 600, lineHeight: 1, color: "#fff", textShadow: "0 2px 14px rgba(20, 20, 22, 0.35)" }}>
                 {odliczanie}
               </span>
             ) : null,
@@ -220,7 +220,7 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
 
       {/* 2. „3 podejścia…” na środku → kula Bruno → „Zacznij rozmowę” → pod przyciskiem zgoda (obowiązkowa). */}
       <div className={`p-karta ${g.nrStart}`}>
-        <h2>{podejsc} podejścia po {minut} minuty. Firma zobaczy najlepsze.</h2>
+        <h2>{podejsc} podejścia po {minut} minuty. Firma zobaczy lepsze.</h2>
         {nastepna ? (
           <>
             {kula()}
@@ -240,7 +240,7 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
         )}
       </div>
 
-      {/* Nagrane podejścia (dopiero gdy są): ocena, nagranie, które jest najlepsze. */}
+      {/* Nagrane podejścia (dopiero gdy są): ocena, nagranie, które jest najlepsze. 16.11 (USER_001): bez feedbacku trenera. */}
       {nagrane.length > 0 && (
         <div className="p-karta">
           <div className="p-karta-hd">
@@ -258,7 +258,6 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
                   <td>
                     <div style={{ display: "grid", gap: 8 }}>
                       <b>{r.ocena != null ? `Ocena ${r.ocena} / 10` : "Bez oceny"} · {czas(r.sekundy)}</b>
-                      {r.poprawka && <span>Do poprawy: {r.poprawka}</span>}
                       {r.nagranie && <audio controls preload="none" src={r.nagranie} style={{ width: "100%", maxWidth: 520 }} />}
                     </div>
                   </td>

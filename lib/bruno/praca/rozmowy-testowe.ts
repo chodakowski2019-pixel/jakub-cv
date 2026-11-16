@@ -6,20 +6,21 @@ import type { CelId, PostacId, PoziomId, TrybId } from "@/lib/bruno/postacie";
 
 // 16.11 (USER_001): zakładka „Rozmowa sprzedażowa z AI” w panelu handlowca giełdy. JEDNA rozmowa: spotkanie na żywo,
 // klient zna ofertę i mówi, że jest za droga; w rozmowie Bruno podnosi 3 różne obiekcje. Handlowiec może ją powtórzyć
-// do 3 razy (każde podejście 3 min), a firmom, które odblokowały kontakt, pokazujemy NAJLEPSZE podejście (najwyższa ocena).
+// do 2 razy (każde podejście 2 min), a firmom, które odblokowały kontakt, pokazujemy NAJLEPSZE podejście (najwyższa ocena).
 // Bruno gra klienta z branży handlowca (z profilu). Tabela praca_rozmowy_testowe, kolumna nr = numer podejścia.
-// Koszt: 0,10 $ / min głosu (rachunek ElevenLabs 6.10) → 3 × 3 min = 0,90 $ na handlowca + ocena trenera.
+// Koszt: 0,10 $ / min głosu (rachunek ElevenLabs 6.10) → 2 × 2 min = 0,40 $ na handlowca + ocena trenera.
 
-export const ROZMOW_TESTOWYCH = 3;
+// 16.11 wieczór (USER_001): 2 podejścia po 2 minuty (było 3 × 3 min). Koszt głosu: 2 × 2 min × 0,10 $ = 0,40 $ na handlowca.
+export const ROZMOW_TESTOWYCH = 2;
 /** 16.11 (USER_001: „dodaj tę zakładkę tylko u mnie, tam dopracuję”): zakładka widoczna tylko dla tych kont, każdego typu. */
 const KONTA_NAGRAJ = ["chodak.job72@gmail.com"];
 export const mozeNagrywac = (email: string | null | undefined) => KONTA_NAGRAJ.includes((email ?? "").toLowerCase());
-/** Twarda długość rozmowy testowej. Bez dogrywki: firma dostaje 3 nagrania tej samej długości. */
-export const SEKUND_TESTU = 180;
+/** Twarda długość rozmowy testowej. Bez dogrywki: każde podejście ma tę samą długość. */
+export const SEKUND_TESTU = 120;
 /** Sufit czasu po stronie serwera (opóźnienie rozłączenia). */
 export const SEKUND_TESTU_MAX = SEKUND_TESTU + 15;
-/** Ile razy handlowiec może w ogóle wystartować rozmowę (3 + 2 zapasowe na kłopoty z mikrofonem) = sufit kosztu 15 min. */
-export const STARTOW_MAX = 5;
+/** Ile razy handlowiec może w ogóle wystartować rozmowę (2 + 2 zapasowe na kłopoty z mikrofonem) = sufit kosztu 8 min. */
+export const STARTOW_MAX = 4;
 
 /** Sytuacja rozmowy: co handlowiec sprzedaje i komu. Jedna na branżę z profilu, klient = firma albo osoba (pole „Komu sprzedajesz?”). */
 type Branza = { produkt: string; firma: string; osoba: string };
@@ -66,10 +67,25 @@ export async function odpowiedziProfilu(kontoId: string): Promise<Record<string,
 
 export type ScenariuszTestu = { tytul: string; zadanie: string; tryb: TrybId; cel: CelId; postac: PostacId; poziom: PoziomId; obiekcje: string[] };
 
+/**
+ * 16.11 (USER_001: „jak by się spotykali na żywo, ale system musi pamiętać, że oni siebie nie widzą”):
+ * dla Bruno to spotkanie twarzą w twarz, na którym handlowiec zamyka sprzedaż, ale cała rozmowa idzie samym głosem.
+ * Trafia do promptu jako „sytuacja” (nadrzędna wobec reszty), do pierwszej wypowiedzi i do trenera.
+ */
+export const SYTUACJA_TESTU =
+  "Spotkanie na żywo w Twoim biurze. Handlowiec przyszedł, żeby zamknąć sprzedaż: znasz już ofertę i masz wątpliwości. " +
+  "To rozmowa wyłącznie głosowa: nie widzicie się. Nie mówisz o niczym, co trzeba zobaczyć (wygląd, gesty, uśmiech, ulotka, ekran, umowa na stole, podpis). " +
+  "Gdy handlowiec mówi „proszę spojrzeć” albo „pokażę panu”, prosisz, żeby powiedział to słowami. Decyzję i następny krok ustalacie tylko słowami. " +
+  "Rozmowa trwa 2 minuty, więc od pierwszego zdania zmierzasz do decyzji. Jeśli handlowiec dobrze odpowie na Twoje obiekcje i wprost poprosi o decyzję, możesz się zgodzić.";
+/** To samo dla trenera: czego nie oceniać (bez obrazu, bez dogrywki). */
+export const SYTUACJA_TESTU_TRENER =
+  "Test handlowca na giełdzie pracy: rozmowa głosowa z AI, 2 minuty, BEZ dogrywki. Klient gra spotkanie na żywo, na którym handlowiec ma zamknąć sprzedaż, ale nie widzą się. " +
+  "Nie oceniaj niczego wizualnego. Jeśli rozmowa urywa się na ostatniej wypowiedzi klienta, to limit czasu aplikacji, nie błąd handlowca. Najważniejsze: odpowiedzi na obiekcje i prośba o decyzję.";
+
 /** Jedyna rozmowa testu. Pierwsza obiekcja pada na otwarcie, dwie kolejne w trakcie. */
 export const SCENARIUSZ_TESTU: ScenariuszTestu = {
   tytul: "Spotkanie na żywo",
-  zadanie: "Klient zna ofertę i mówi, że jest za droga. Doprowadź do sprzedaży.",
+  zadanie: "Klient zna ofertę i mówi, że jest za droga. Zamknij sprzedaż.",
   tryb: "zywo",
   cel: "sprzedaz",
   postac: "niebieski",

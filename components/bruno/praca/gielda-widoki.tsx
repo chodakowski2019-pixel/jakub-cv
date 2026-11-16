@@ -241,9 +241,9 @@ export function MojProfilWidok({
               </div>
               <div className="p-karta-p" style={{ display: "grid", gap: 12 }}>
                 {najlepsza?.nagranie && <audio controls preload="none" src={najlepsza.nagranie} style={{ width: "100%" }} />}
-                {nagraj && !admin && rozmowy.length < 3 && (
+                {nagraj && !admin && rozmowy.length < 2 && (
                   <p>
-                    <Link className="p-btn p-btn-3" href="/praca/panel?z=nagraj">{rozmowy.length ? `Powtórz rozmowę (${rozmowy.length} z 3)` : "Nagraj rozmowę"}</Link>
+                    <Link className="p-btn p-btn-3" href="/praca/panel?z=nagraj">{rozmowy.length ? "Powtórz rozmowę" : "Nagraj rozmowę"}</Link>
                   </p>
                 )}
               </div>
