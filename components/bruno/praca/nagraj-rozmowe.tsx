@@ -220,7 +220,7 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
 
       {/* 2. „3 podejścia…” na środku → kula Bruno → „Zacznij rozmowę” → pod przyciskiem zgoda (obowiązkowa). */}
       <div className={`p-karta ${g.nrStart}`}>
-        <h2>{podejsc} podejścia po {minut} minuty. Firma zobaczy lepsze.</h2>
+        <h2>{podejsc} podejścia po {minut} minuty.</h2>
         {nastepna ? (
           <>
             {kula()}
@@ -235,7 +235,7 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
         ) : (
           <>
             {kula()}
-            <p className={g.tekst}>{nagrane.length >= podejsc ? "Wszystkie podejścia wykorzystane." : "Wykorzystane wszystkie próby połączenia. Napisz do nas, odblokujemy kolejne."}</p>
+            <p className={g.tekst}>Udało się! To już wszystko</p>
           </>
         )}
       </div>
