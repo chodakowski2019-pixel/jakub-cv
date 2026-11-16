@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     siteName: "Jakub Chodakowski",
     locale: "pl_PL",
     type: "website",
-    images: [{ url: "/bruno/webinar-og.png?v=1611b", width: 1200, height: 630, alt: `Webinar, ${WEBINAR.dzien} ${WEBINAR.data}, ${WEBINAR.godzina}` }],
+    images: [{ url: "/bruno/webinar-og.png?v=1611c", width: 1200, height: 630, alt: `Webinar, ${WEBINAR.dzien} ${WEBINAR.data}, ${WEBINAR.godzina}` }],
   },
   robots: { index: false, follow: true },
 };

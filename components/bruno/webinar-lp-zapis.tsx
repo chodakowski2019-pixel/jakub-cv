@@ -22,6 +22,8 @@ const START = WEBINAR.start;
 const KONIEC = START + 60 * 60 * 1000;
 const GCAL = webinarLinkGoogle();
 const ICS = "/api/bruno/webinar/ics";
+// 16.11 (USER_001): nowe zdjęcie prowadzącego (koszula w paski, jasna ściana; przycięte do kwadratu) w hero, przy bio i w okienku zapisu.
+const FOTO = "/bruno/jakub-webinar-koszula.jpg";
 /** Nadawca maila z linkiem Zoom (do strony „Dzięki” i okienka). */
 export const NADAWCA_ADRES = "jakub@salesbruno.com";
 
@@ -237,7 +239,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
           </h1>
           {/* 29.10 (USER_001): na telefonie zdjęcie od razu pod „Bez pilnowania ich.”. */}
           <div className={`${s.heroFoto} ${s.heroFotoTel}`}>
-            <img src="/bruno/jakub-webinar.jpg?v=2" alt="Jakub Chodakowski" width={960} height={863} />
+            <img src={FOTO} alt="Jakub Chodakowski" width={703} height={703} />
             <div className={s.heroFotoPodpis}>
               <b>Jakub Chodakowski, CEO</b>
               <span>prowadzi webinar</span>
@@ -267,7 +269,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
         </div>
         <div className={`${s.heroFoto} ${s.heroFotoKomp}`}>
           {/* 29.10 (USER_001): kadr ucięty nad zaokrągleniem koszuli, dół prosty (public/bruno/jakub-webinar.jpg = /jakub.jpg bez dolnych 110 px). */}
-          <img src="/bruno/jakub-webinar.jpg?v=2" alt="Jakub Chodakowski" width={960} height={863} />
+          <img src={FOTO} alt="Jakub Chodakowski" width={703} height={703} />
           <div className={s.heroFotoPodpis}>
             <b>Jakub Chodakowski, CEO</b>
             <span>prowadzi webinar</span>
@@ -278,7 +280,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
       {/* KTO: osobna sekcja (USER_001 29.10). */}
       <section className={`${s.sekcja} ${s.sekcjaZapis} ${s.sekcjaProwadzacy}`}>
         <div className={s.prowadzacyZapis}>
-          <img src="/jakub.jpg" alt="Jakub Chodakowski" width={88} height={88} />
+          <img src={FOTO} alt="Jakub Chodakowski" width={88} height={88} />
           <p>
             <b className={s.bioImie}>Jakub Chodakowski, CEO.</b> {T.prowadzacy}
           </p>
@@ -379,7 +381,7 @@ export default function WebinarLpZapis({ motyw = "pomarancz", dziekiUrl }: { mot
               ×
             </button>
             <div className={s.oknoGlowa}>
-              <img src="/jakub.jpg" alt="" width={56} height={56} />
+              <img src={FOTO} alt="" width={56} height={56} />
               <div>
                 <h2 className={s.h2} id="okno-tytul">{T.okno.tytul}</h2>
                 <p className={s.oknoPod}>{T.okno.pod}</p>

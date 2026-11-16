@@ -2605,3 +2605,33 @@
     white-space: nowrap;
   }
 }
+/* 16.11 (USER_001): nowe zdjęcie prowadzącego jest kwadratowe; na telefonie zdjęcie mniejsze. */
+.mAcad.zapisA .heroFoto img {
+  aspect-ratio: 1 / 1;
+  object-position: 50% 30%;
+}
+.mAcad .prowadzacyZapis img,
+.mAcad .oknoGlowa img {
+  object-position: 50% 25%;
+}
+@media (max-width: 860px) {
+  .mAcad.zapisA .heroFotoTel {
+    width: 72%;
+    max-width: 300px;
+    margin: 14px auto 24px;
+  }
+  .mAcad.zapisA .heroFotoTel .heroFotoPodpis {
+    left: 10px;
+    bottom: 10px;
+    padding: 8px 11px;
+  }
+}
+@media (max-width: 860px) {
+  .mAcad.zapisA .heroFotoTel .heroFotoPodpis b {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .mAcad.zapisA .heroFotoTel .heroFotoPodpis span {
+    font-size: 11px;
+  }
+}
