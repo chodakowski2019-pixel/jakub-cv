@@ -192,12 +192,11 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
           </select>
         )}
       </div>
-      {/* 16.11 (USER_001): rozmowa, produkt i klient w jednej tabeli; przy rozmowie zdjęcie w kółku. */}
+      {/* 16.11 (USER_001): rozmowa, produkt i klient w jednej tabeli bez etykiet; przy rozmowie zdjęcie w kółku, przed produktem i klientem strzałka. */}
       <div className="p-karta">
         <table className={`${g.tabela} ${g.nrTabela}`}>
           <tbody>
             <tr>
-              <th scope="row">Rozmowa</th>
               <td>
                 <div className={g.nrRozmowa}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -207,12 +206,10 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
               </td>
             </tr>
             <tr>
-              <th scope="row">Sprzedajesz</th>
-              <td>{syt.produkt}</td>
+              <td>➡️ {syt.produkt}</td>
             </tr>
             <tr>
-              <th scope="row">Twój klient</th>
-              <td>{syt.klient}</td>
+              <td>➡️ {syt.klient}</td>
             </tr>
           </tbody>
         </table>
@@ -221,20 +218,19 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
       {info && <p className={g.tekst}>{info}</p>}
       {blad && <p className={g.bladPola}>{blad}</p>}
 
-      {/* 2. „3 podejścia…” na środku → zgoda (obowiązkowa) → kula Bruno → „Zacznij rozmowę”. */}
+      {/* 2. „3 podejścia…” na środku → kula Bruno → „Zacznij rozmowę” → pod przyciskiem zgoda (obowiązkowa). */}
       <div className={`p-karta ${g.nrStart}`}>
         <h2>{podejsc} podejścia po {minut} minuty. Firma zobaczy najlepsze.</h2>
         {nastepna ? (
           <>
-            <label className={g.zgoda}>
-              <input type="checkbox" checked={zgoda} onChange={(e) => setZgoda(e.target.checked)} />
-              <span>Zgadzam się na nagranie rozmowy oraz udostępnienie nagrania i oceny firmom, które odblokują mój kontakt.</span>
-            </label>
             {kula()}
             <button type="button" className="p-btn p-btn-3" disabled={!zgoda} onClick={zacznij} style={{ height: 50, padding: "0 34px", fontSize: 16, opacity: zgoda ? 1 : 0.4 }}>
               {nastepna === 1 ? "Zacznij rozmowę" : `Powtórz rozmowę (${nastepna} z ${podejsc})`}
             </button>
-            <small>Potrzebny mikrofon · rozmowa kończy się sama po {minut} minutach</small>
+            <label className={g.zgoda}>
+              <input type="checkbox" checked={zgoda} onChange={(e) => setZgoda(e.target.checked)} />
+              <span>Zgadzam się na nagranie rozmowy oraz udostępnienie nagrania i oceny firmom, które odblokują mój kontakt.</span>
+            </label>
           </>
         ) : (
           <>
