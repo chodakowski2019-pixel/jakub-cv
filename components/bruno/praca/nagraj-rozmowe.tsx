@@ -8,7 +8,7 @@ import type { RozmowaTestowa } from "@/lib/bruno/praca/rozmowy-testowe";
 import g from "./gielda.module.css";
 
 // 16.11 (USER_001): zakładka „Rozmowa sprzedażowa z AI” w panelu handlowca. JEDNA rozmowa (spotkanie na żywo, klient
-// mówi „za drogo”, w trakcie 3 różne obiekcje), do 2 podejść po 2 minuty; firma zobaczy najlepsze podejście.
+// mówi „za drogo”, w trakcie 3 różne obiekcje), do 2 podejść po 3 minuty; firma zobaczy najlepsze podejście.
 // Bruno gra klienta z branży handlowca. Układ (USER_001): opis rozmowy → 3 podejścia → zgoda → kula → „Zacznij rozmowę”.
 // Po kliknięciu zostaje sama kula, w niej odliczanie 3, 2, 1 (w tym czasie łączymy się z ElevenLabs).
 // Limit i czas pilnuje serwer (/api/bruno/praca/rozmowa-testowa/start i /koniec).
@@ -51,7 +51,7 @@ export default function NagrajRozmowe({ tytul, zadanie, obiekcji, podejsc, nagra
       body: JSON.stringify({ rozmowa_id: rozmowaId.current, transkrypcja: transkrypcja.current, sekundy: Math.round((Date.now() - start.current) / 1000), el_conversation_id: elId, powod }),
     }).catch(() => null);
     const j = await odp?.json().catch(() => null);
-    if (j?.przerwana) setInfo("Rozmowa była za krótka i nie została zapisana. Nagraj ją jeszcze raz.");
+    if (j?.przerwana) setInfo("Rozmowa trwała krócej niż 30 sekund i nie została zapisana. Nagraj ją jeszcze raz.");
     else if (!j?.ok) setBlad("Nie udało się zapisać rozmowy. Odśwież stronę.");
     setStan("lista");
     router.refresh();

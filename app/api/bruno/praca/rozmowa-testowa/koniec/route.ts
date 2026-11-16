@@ -6,7 +6,7 @@ import { listaObiekcji } from "@/lib/bruno/obiekcje";
 import { opisCelu } from "@/lib/bruno/postacie";
 import { ocenRozmowe } from "@/lib/bruno/rubryka";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
-import { SCENARIUSZ_TESTU, SYTUACJA_TESTU_TRENER, SEKUND_TESTU_MAX, konfigTestu, mozeNagrywac, sciagnijNagranieTestu, sytuacjaZ } from "@/lib/bruno/praca/rozmowy-testowe";
+import { MIN_SEKUND_TESTU, SCENARIUSZ_TESTU, SYTUACJA_TESTU_TRENER, SEKUND_TESTU_MAX, konfigTestu, mozeNagrywac, sciagnijNagranieTestu, sytuacjaZ } from "@/lib/bruno/praca/rozmowy-testowe";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -39,8 +39,9 @@ export async function POST(req: Request) {
   const metryki = policzMetryki(transkrypcja, sekundy, listaObiekcji(konfig.obiekcje), "pl");
   const koniec = new Date().toISOString();
 
-  // Za krótka albo pusta rozmowa nie jest zaliczona i nie zjada podejścia.
-  if (sekundy < 60 || metryki.slowa_handlowca < 20) {
+  // 16.11 (USER_001): rozmowa krótsza niż 30 s nie jest zaliczona i nie zjada podejścia. Od 30 s zapisujemy nagranie i ocenę,
+  // także gdy handlowiec sam zakończy rozmowę wcześniej.
+  if (sekundy < MIN_SEKUND_TESTU) {
     await supabaseAdmin.from("praca_rozmowy_testowe").update({ status: "przerwana", koniec, sekundy, transkrypcja, el_conversation_id: elId }).eq("id", id);
     return NextResponse.json({ ok: true, przerwana: true });
   }
