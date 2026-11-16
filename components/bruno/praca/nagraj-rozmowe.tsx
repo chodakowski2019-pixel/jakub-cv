@@ -8,21 +8,25 @@ import type { RozmowaTestowa } from "@/lib/bruno/praca/rozmowy-testowe";
 import g from "./gielda.module.css";
 
 // 16.11 (USER_001): zakładka „Nagraj rozmowę” w panelu handlowca. 3 rozmowy sprzedażowe z Bruno po 3 minuty,
-// każda nagrana i udostępniana firmom, które odblokują kontakt. Scenariusz, limit i czas pilnuje serwer
-// (/api/bruno/praca/rozmowa-testowa/start i /koniec); tu tylko połączenie z ElevenLabs i zegar.
+// Bruno gra klienta z branży handlowca. Każda rozmowa nagrana i udostępniana firmom, które odblokują kontakt.
+// Układ (USER_001): krótki opis rozmowy → 3 rozmowy → zgoda → kula Bruno → „Zacznij rozmowę”.
+// Po kliknięciu zostaje sama kula, w niej odliczanie 3, 2, 1 (w tym czasie łączymy się z ElevenLabs).
+// Scenariusz, limit i czas pilnuje serwer (/api/bruno/praca/rozmowa-testowa/start i /koniec).
 
 type Zadanie = { nr: number; tytul: string; zadanie: string };
-type Stan = "lista" | "laczenie" | "trwa" | "konczenie";
+type Sytuacja = { branza: string; produkt: string; klient: string };
+type Stan = "lista" | "odliczanie" | "laczenie" | "trwa" | "konczenie";
 
 const czas = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
-const data = (iso: string) => new Date(iso).toLocaleDateString("pl-PL", { day: "numeric", month: "long" });
 
-export default function NagrajRozmowe({ zadania, nagrane, nastepna, produkt, klient, sekund, zostaloStartow }: { zadania: Zadanie[]; nagrane: RozmowaTestowa[]; /** Numer rozmowy, którą można teraz nagrać, albo null (wszystkie nagrane / limit podejść). */ nastepna: number | null; produkt: string; klient: string; sekund: number; zostaloStartow: number }) {
+export default function NagrajRozmowe({ zadania, nagrane, nastepna, sytuacje, sekund, zostaloStartow }: { zadania: Zadanie[]; nagrane: RozmowaTestowa[]; /** Numer rozmowy, którą można teraz nagrać, albo null (wszystkie nagrane / limit podejść). */ nastepna: number | null; /** Jedna sytuacja z profilu handlowca; konto bez profilu dostaje wszystkie branże do wyboru. */ sytuacje: Sytuacja[]; sekund: number; zostaloStartow: number }) {
   const router = useRouter();
   const [stan, setStan] = useState<Stan>("lista");
-  const [zgoda, setZgoda] = useState(nagrane.length > 0);
+  const [branza, setBranza] = useState(sytuacje[0]?.branza ?? "");
+  const [zgoda, setZgoda] = useState(false);
   const [blad, setBlad] = useState("");
   const [info, setInfo] = useState("");
+  const [odliczanie, setOdliczanie] = useState(3);
   const [sekundy, setSekundy] = useState(0);
   const [mowi, setMowi] = useState(false);
   const el = useRef<{ endSession: () => Promise<void>; getId: () => string } | null>(null);
@@ -31,6 +35,8 @@ export default function NagrajRozmowe({ zadania, nagrane, nastepna, produkt, kli
   const rozmowaId = useRef("");
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const konczenie = useRef(false);
+  const syt = sytuacje.find((x) => x.branza === branza) ?? sytuacje[0];
+  const minut = sekund / 60;
 
   const zakoncz = async (powod: "limit" | "recznie") => {
     if (konczenie.current) return;
@@ -65,13 +71,27 @@ export default function NagrajRozmowe({ zadania, nagrane, nastepna, produkt, kli
     setInfo("");
     konczenie.current = false;
     transkrypcja.current = [];
+    start.current = 0;
     setSekundy(0);
-    setStan("laczenie");
+    setOdliczanie(3);
+    setStan("odliczanie");
+    window.scrollTo({ top: 0 });
+    // Odliczanie 3, 2, 1 chowa czas łączenia: serwer i odliczanie idą równolegle.
+    const odliczono = new Promise<void>((gotowe) => {
+      let n = 3;
+      const t = setInterval(() => {
+        n -= 1;
+        if (n > 0) return setOdliczanie(n);
+        clearInterval(t);
+        gotowe();
+      }, 1000);
+    });
     try {
-      const odp = await fetch("/api/bruno/praca/rozmowa-testowa/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ zgoda }) });
+      const [odp] = await Promise.all([fetch("/api/bruno/praca/rozmowa-testowa/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ zgoda, branza }) }), odliczono]);
       const dane = await odp.json().catch(() => null);
       if (!odp.ok || !dane?.ok) throw new Error(dane?.blad ?? "Nie udało się zacząć rozmowy.");
       rozmowaId.current = dane.rozmowa_id;
+      setStan("laczenie");
       const { Conversation } = await import("@elevenlabs/client");
       const polaczenie = dane.polaczenie === "webrtc" ? ({ conversationToken: dane.token, connectionType: "webrtc" } as const) : ({ signedUrl: dane.token, connectionType: "websocket" } as const);
       el.current = await Conversation.startSession({
@@ -112,17 +132,31 @@ export default function NagrajRozmowe({ zadania, nagrane, nastepna, produkt, kli
     }
   };
 
+  const kula = (srodek?: React.ReactNode) => (
+    <div style={{ position: "relative", width: 200, height: 200, display: "grid", placeItems: "center" }}>
+      <div style={{ position: "absolute", inset: 0 }}>
+        <KulaLimonka tempo={stan === "trwa" ? (mowi ? "mowi" : "slucha") : "czeka"} />
+      </div>
+      {srodek}
+    </div>
+  );
+
+  // Po „Zacznij rozmowę” zostaje sam Bruno: kula, w niej odliczanie, potem zegar i „Zakończ rozmowę”.
   if (stan !== "lista") {
-    const z = zadania.find((x) => x.nr === nastepna);
     return (
-      <div className="p-strona">
-        <div className="p-karta p-karta-p" style={{ textAlign: "center", display: "grid", justifyItems: "center", gap: 14, padding: "36px 20px" }}>
-          <span className="p-chip">Rozmowa {nastepna} z {zadania.length}: {z?.tytul}</span>
-          <div style={{ width: 180, height: 180 }}>
-            <KulaLimonka tempo={stan === "trwa" ? (mowi ? "mowi" : "slucha") : "czeka"} />
+      <div className="p-strona" style={{ minHeight: "70vh", display: "grid", placeItems: "center" }}>
+        <div style={{ display: "grid", justifyItems: "center", gap: 22, textAlign: "center" }}>
+          {kula(
+            stan === "odliczanie" ? (
+              <span key={odliczanie} aria-live="assertive" style={{ position: "relative", fontSize: 76, fontWeight: 600, lineHeight: 1, color: "#16181d" }}>
+                {odliczanie}
+              </span>
+            ) : null,
+          )}
+          <div>
+            <h2 style={{ fontVariantNumeric: "tabular-nums", fontSize: 26, fontWeight: 600 }}>{stan === "trwa" ? czas(Math.max(0, sekund - sekundy)) : "Bruno"}</h2>
+            <p className={g.podtytul}>{stan === "trwa" ? (mowi ? "Bruno mówi" : "Bruno słucha") : stan === "konczenie" ? "Zapisuję rozmowę…" : stan === "laczenie" ? "Łączę z Bruno…" : "Za chwilę zaczynasz rozmowę"}</p>
           </div>
-          <h1 style={{ fontVariantNumeric: "tabular-nums" }}>{stan === "trwa" ? czas(Math.max(0, sekund - sekundy)) : stan === "laczenie" ? "Łączę z Bruno…" : "Zapisuję rozmowę…"}</h1>
-          <p className={g.podtytul} style={{ maxWidth: 460 }}>{z?.zadanie}</p>
           {stan === "trwa" && (
             <button type="button" className="p-btn p-btn-2" onClick={() => zakoncz("recznie")}>
               Zakończ rozmowę
@@ -138,63 +172,73 @@ export default function NagrajRozmowe({ zadania, nagrane, nastepna, produkt, kli
       <div className="p-naglowek">
         <div>
           <h1>Nagraj rozmowę</h1>
-          <p className={g.podtytul}>3 rozmowy sprzedażowe z Bruno, każda po {sekund / 60} minuty. Nagrania i ocenę zobaczy firma, która odblokuje Twój kontakt.</p>
         </div>
         <div className="p-naglowek-prawo">
           <span className="p-chip">Nagrane: {nagrane.length} / {zadania.length}</span>
         </div>
       </div>
 
-      <div className="p-karta">
-        <div className="p-karta-hd"><h3>Co sprzedajesz</h3></div>
-        <dl className={g.dane}>
-          <dt>Produkt</dt>
-          <dd>{produkt}</dd>
-          <dt>Klient</dt>
-          <dd>{klient}</dd>
-        </dl>
+      <div className="p-karta p-karta-p" style={{ display: "grid", gap: 18, padding: 24 }}>
+        {/* 1. Jak będzie wyglądać rozmowa: kim jest klient i co mu sprzedajesz. */}
+        <div style={{ display: "grid", gap: 8 }}>
+          <h3>Jak wygląda rozmowa</h3>
+          <p className={g.tekst}>
+            Rozmawiasz głosem z Bruno. Bruno gra klienta z branży, w której masz doświadczenie{sytuacje.length === 1 ? <>: <b>{syt.branza}</b></> : ""}. Ty sprzedajesz, on odpowiada jak prawdziwy klient.
+          </p>
+          {sytuacje.length > 1 && (
+            <label className={g.tekst}>
+              Branża:{" "}
+              <select className={g.wpis} style={{ width: "auto", display: "inline-block" }} value={branza} onChange={(e) => setBranza(e.target.value)}>
+                {sytuacje.map((x) => (
+                  <option key={x.branza}>{x.branza}</option>
+                ))}
+              </select>
+            </label>
+          )}
+          <p className={g.tekst}><b>Sprzedajesz:</b> {syt.produkt}</p>
+          <p className={g.tekst}><b>Klient:</b> {syt.klient}</p>
+        </div>
+
+        {/* 2. Trzy rozmowy po 3 minuty. */}
+        <div style={{ display: "grid", gap: 10 }}>
+          <h3>{zadania.length} rozmowy po {minut} minuty każda</h3>
+          {zadania.map((z) => {
+            const r = nagrane.find((x) => x.nr === z.nr);
+            return (
+              <div key={z.nr} style={{ display: "grid", gap: 6 }}>
+                <p className={g.tekst}>
+                  <b>{z.nr}. {z.tytul}.</b> {z.zadanie}{" "}
+                  {r ? <span className="p-chip">{r.ocena != null ? `Nagrana · ocena ${r.ocena} / 10` : "Nagrana"}</span> : z.nr === nastepna ? <span className="p-chip">Teraz</span> : null}
+                </p>
+                {r?.nagranie && <audio controls preload="none" src={r.nagranie} style={{ width: "100%", maxWidth: 520 }} />}
+              </div>
+            );
+          })}
+          <p className={g.podtytul}>Nagrania i ocenę zobaczy firma, która odblokuje Twój kontakt.</p>
+        </div>
+
+        {info && <p className={g.tekst}>{info}</p>}
+        {blad && <p className={g.bladPola}>{blad}</p>}
+
+        {nastepna ? (
+          <>
+            {/* 3. Zgoda, obowiązkowa. */}
+            <label className={g.zgoda}>
+              <input type="checkbox" checked={zgoda} onChange={(e) => setZgoda(e.target.checked)} />
+              <span>Zgadzam się na nagranie rozmowy oraz udostępnienie nagrania i oceny firmom, które odblokują mój kontakt.</span>
+            </label>
+            <div style={{ display: "grid", justifyItems: "center", gap: 18, padding: "10px 0 6px" }}>
+              {kula()}
+              <button type="button" className="p-btn p-btn-3" disabled={!zgoda} onClick={zacznij} style={{ height: 48, padding: "0 30px", fontSize: 16, opacity: zgoda ? 1 : 0.45 }}>
+                Zacznij rozmowę {nastepna} z {zadania.length}
+              </button>
+              <p className={g.podtytul}>Potrzebny mikrofon. Rozmowa kończy się sama po {minut} minutach. Pozostałe podejścia: {zostaloStartow}.</p>
+            </div>
+          </>
+        ) : (
+          <p className={g.podtytul}>{nagrane.length >= zadania.length ? "Masz nagrane wszystkie rozmowy." : "Wykorzystane wszystkie podejścia. Napisz do nas, odblokujemy kolejne."}</p>
+        )}
       </div>
-
-      {info && <p className="p-pusto">{info}</p>}
-      {blad && <p className={g.bladPola}>{blad}</p>}
-
-      {zadania.map((z) => {
-        const r = nagrane.find((x) => x.nr === z.nr);
-        return (
-          <div className="p-karta" key={z.nr}>
-            <div className="p-karta-hd">
-              <h3>{z.nr}. {z.tytul}</h3>
-              {r ? <span className="p-chip">{r.ocena != null ? `Ocena ${r.ocena} / 10` : "Nagrana"}</span> : null}
-            </div>
-            <div style={{ padding: "0 18px 18px", display: "grid", gap: 12 }}>
-              <p className={g.tekst}>{z.zadanie}</p>
-              {r ? (
-                <>
-                  {r.nagranie ? <audio controls preload="none" src={r.nagranie} style={{ width: "100%" }} /> : <p className={g.podtytul}>Nagranie pojawi się za chwilę. Odśwież stronę.</p>}
-                  {r.wygrana && <p className={g.tekst}><b>Dobrze:</b> {r.wygrana}</p>}
-                  {r.poprawka && <p className={g.tekst}><b>Do poprawy:</b> {r.poprawka}</p>}
-                  <p className={g.podtytul}>Nagrana {data(r.kiedy)} · {czas(r.sekundy)}</p>
-                </>
-              ) : z.nr === nastepna ? (
-                <>
-                  <label className={g.zgoda}>
-                    <input type="checkbox" checked={zgoda} onChange={(e) => setZgoda(e.target.checked)} />
-                    <span>Zgadzam się na nagranie rozmowy oraz udostępnienie nagrania i oceny firmom, które odblokują mój kontakt.</span>
-                  </label>
-                  <div>
-                    <button type="button" className="p-btn p-btn-3" disabled={!zgoda} onClick={zacznij}>
-                      Zacznij rozmowę
-                    </button>
-                  </div>
-                  <p className={g.podtytul}>Potrzebny mikrofon. Rozmowa kończy się sama po {sekund / 60} minutach. Pozostałe podejścia: {zostaloStartow}.</p>
-                </>
-              ) : (
-                <p className={g.podtytul}>{nastepna ? `Dostępna po rozmowie ${nastepna}.` : "Wykorzystane wszystkie podejścia. Napisz do nas, odblokujemy kolejne."}</p>
-              )}
-            </div>
-          </div>
-        );
-      })}
     </div>
   );
 }

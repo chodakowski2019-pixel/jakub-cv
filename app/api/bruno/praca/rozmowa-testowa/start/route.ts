@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
-import { SEKUND_TESTU, STARTOW_MAX, konfigTestu, mozeNagrywac, stanTestu } from "@/lib/bruno/praca/rozmowy-testowe";
+import { SEKUND_TESTU, STARTOW_MAX, konfigTestu, mozeNagrywac, odpowiedziProfilu, stanTestu, sytuacjaZProfilu } from "@/lib/bruno/praca/rozmowy-testowe";
 import { instrukcjeKlienta } from "@/lib/bruno/postacie";
 import { MIN_KREDYTOW_EL, elevenlabsWlaczone, glosElevenlabs, pierwszaWypowiedz, podpisanyUrlEl, polaczenieEl, tokenRozmowyEl, ustawieniaGlosu, wolneKredytyEl } from "@/lib/bruno/elevenlabs";
 
@@ -32,8 +32,10 @@ export async function POST(req: Request) {
   }
 
   const s = stan.nastepna;
-  const konfig = konfigTestu(s);
-  const { data: rozmowa, error } = await supabaseAdmin.from("praca_rozmowy_testowe").insert({ konto_id: konto.id, nr: s.nr, zgoda_udostepnienia: true }).select("id").single();
+  // Bruno gra klienta z branży handlowca (profil); konto bez profilu może podać branżę w żądaniu.
+  const syt = sytuacjaZProfilu(await odpowiedziProfilu(konto.id), typeof b?.branza === "string" ? b.branza : null);
+  const konfig = konfigTestu(s, syt);
+  const { data: rozmowa, error } = await supabaseAdmin.from("praca_rozmowy_testowe").insert({ konto_id: konto.id, nr: s.nr, zgoda_udostepnienia: true, branza: syt.branza, segment: syt.segment }).select("id").single();
   if (error || !rozmowa) {
     console.error("[praca rozmowa testowa] insert", error);
     return NextResponse.json({ ok: false, blad: "Nie udało się zapisać rozmowy. Spróbuj ponownie." }, { status: 500 });

@@ -19,7 +19,7 @@ import { linkPlatnosci } from "@/lib/bruno/praca/platnosci";
 import { firmyZKontaktem, mojProfil, odblokowaniHandlowcy } from "@/lib/bruno/praca/handlowcy";
 import { zleceniaKonta } from "@/lib/bruno/praca/zlecenia";
 import NagrajRozmowe from "@/components/bruno/praca/nagraj-rozmowe";
-import { KLIENT_TESTU, PRODUKT_TESTU, SCENARIUSZE_TESTU, SEKUND_TESTU, STARTOW_MAX, mozeNagrywac, rozmowyTestowe, stanTestu } from "@/lib/bruno/praca/rozmowy-testowe";
+import { BRANZE_DO_WYBORU, SCENARIUSZE_TESTU, SEKUND_TESTU, STARTOW_MAX, mozeNagrywac, odpowiedziProfilu, rozmowyTestowe, stanTestu, sytuacjaZ, sytuacjaZProfilu } from "@/lib/bruno/praca/rozmowy-testowe";
 import { doOferty, ofertyKonta } from "@/lib/bruno/praca/oferty-firm";
 import { CENA_MIESIAC, doListy, ofertaPoId, ofertyPubliczne, type OfertaLista } from "@/lib/bruno/praca/oferty";
 
@@ -53,8 +53,10 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const nagraj = mozeNagrywac(konto.email);
   // 16.11: zakładka „Nagraj rozmowę” (3 rozmowy z Bruno), na razie tylko konta z mozeNagrywac(), każdego typu.
   const widokNagraj = async () => {
-    const [stan, testy] = await Promise.all([stanTestu(konto.id), rozmowyTestowe([konto.id])]);
-    return <NagrajRozmowe zadania={SCENARIUSZE_TESTU.map(({ nr, tytul, zadanie }) => ({ nr, tytul, zadanie }))} nagrane={testy[konto.id] ?? []} nastepna={stan.nastepna?.nr ?? null} produkt={PRODUKT_TESTU} klient={KLIENT_TESTU} sekund={SEKUND_TESTU} zostaloStartow={Math.max(0, STARTOW_MAX - stan.startow)} />;
+    const [stan, testy, odp] = await Promise.all([stanTestu(konto.id), rozmowyTestowe([konto.id]), odpowiedziProfilu(konto.id)]);
+    // Konto bez profilu (testy) wybiera branżę samo: wszystkie sytuacje idą do przeglądarki.
+    const sytuacje = odp ? [sytuacjaZProfilu(odp)] : BRANZE_DO_WYBORU.map((b) => sytuacjaZ(b, "b2b"));
+    return <NagrajRozmowe zadania={SCENARIUSZE_TESTU.map(({ nr, tytul, zadanie }) => ({ nr, tytul, zadanie }))} nagrane={testy[konto.id] ?? []} nastepna={stan.nastepna?.nr ?? null} sytuacje={sytuacje.map(({ branza, produkt, klient }) => ({ branza, produkt, klient }))} sekund={SEKUND_TESTU} zostaloStartow={Math.max(0, STARTOW_MAX - stan.startow)} />;
   };
 
   // 11.11 (USER_001): konto właściciela giełdy widzi wszystkie profile handlowców i firmy (lib/bruno/praca/admin.ts).

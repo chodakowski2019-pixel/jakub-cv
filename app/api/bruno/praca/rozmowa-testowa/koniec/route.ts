@@ -6,7 +6,7 @@ import { listaObiekcji } from "@/lib/bruno/obiekcje";
 import { opisCelu } from "@/lib/bruno/postacie";
 import { ocenRozmowe } from "@/lib/bruno/rubryka";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
-import { SCENARIUSZE_TESTU, SEKUND_TESTU, SEKUND_TESTU_MAX, konfigTestu, mozeNagrywac, sciagnijNagranieTestu } from "@/lib/bruno/praca/rozmowy-testowe";
+import { SCENARIUSZE_TESTU, SEKUND_TESTU, SEKUND_TESTU_MAX, konfigTestu, mozeNagrywac, sciagnijNagranieTestu, sytuacjaZ } from "@/lib/bruno/praca/rozmowy-testowe";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
   const zPrzegladarki = Number(b?.sekundy) || 0;
   const sekundy = Math.round(Math.min(SEKUND_TESTU_MAX, Math.max(0, Math.min(odStartu, zPrzegladarki || odStartu))));
   const elId = typeof b?.el_conversation_id === "string" ? b.el_conversation_id.slice(0, 120) : null;
-  const konfig = konfigTestu(s);
+  const konfig = konfigTestu(s, sytuacjaZ(rozmowa.branza, rozmowa.segment));
   const metryki = policzMetryki(transkrypcja, sekundy, listaObiekcji(konfig.obiekcje), "pl");
   const koniec = new Date().toISOString();
 
