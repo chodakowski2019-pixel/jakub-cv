@@ -1076,6 +1076,46 @@ textarea.wpis {
 .ofertaSiatka {
   display: none;
 }
+/* 17.11: karty pakietów na telefonie */
+.planGlowny {
+  border: 2px solid var(--p-lim-c);
+}
+.planGora {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.planGora h3 {
+  font-size: 18px;
+}
+.planGora .planCena {
+  font-size: 26px;
+  white-space: nowrap;
+}
+.plan ul.planPunkty {
+  margin: 2px 0 6px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--p-ramka);
+  gap: 9px;
+  color: var(--p-ink);
+}
+.plan ul.planPunkty li {
+  position: relative;
+  padding-left: 24px;
+  background: none;
+}
+.plan ul.planPunkty li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.3em;
+  width: 11px;
+  height: 6px;
+  border-left: 2px solid #2f7a4a;
+  border-bottom: 2px solid #2f7a4a;
+  transform: rotate(-45deg);
+}
 .planLista {
   flex: 1;
   margin: 4px 0 10px;

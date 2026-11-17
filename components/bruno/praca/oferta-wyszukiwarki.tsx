@@ -128,19 +128,20 @@ export default function OfertaWyszukiwarki({
       </div>
       <div className={g.ofertaSiatka}>
         {plany.map((p) => (
-          <div className={`p-karta ${g.plan}`} key={p.klucz}>
-            <h3>{p.nazwa}</h3>
-            <p className={g.planCena}>{p.cena} <small>{p.okres}</small></p>
-            <dl className={g.planLista}>
-              {WIERSZE.map((w, i) =>
-                p.pola[i] === false ? null : (
-                  <div key={w}>
-                    <dt>{nazwaWiersza(w)}</dt>
-                    <dd>{pole(p.pola[i])}</dd>
-                  </div>
-                ),
-              )}
-            </dl>
+          // 17.11 (USER_001: „na telefonach poprawić widoczność pakietów”): karta = nazwa i cena w jednym wierszu
+          // + krótka lista z ptaszkami (bez długich etykiet tabeli, które na 390 px dawały 1,5 ekranu na pakiet).
+          <div className={`p-karta ${g.plan} ${p.glowny ? g.planGlowny : ""}`} key={p.klucz}>
+            <div className={g.planGora}>
+              <h3>{p.nazwa}</h3>
+              <p className={g.planCena}>{p.cena} <small>{p.okres}</small></p>
+            </div>
+            <ul className={g.planPunkty}>
+              <li><b>{handlowcow(p.pakiet.ile)}</b> (min. {PAKIET_PROG}% dopasowania do firmy)</li>
+              <li><b>Nagrania sprzedażowe</b> pod Twojego klienta (rozmowa z AI)</li>
+              <li>Pełny profil: nazwisko, telefon, e-mail, zdjęcie, CV</li>
+              <li>Dostarczenie <b>do {p.pakiet.dni} dni</b></li>
+              <li>Płatność jednorazowa</li>
+            </ul>
             {guzik(p)}
           </div>
         ))}
