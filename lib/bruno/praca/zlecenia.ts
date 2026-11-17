@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { SKRZYNKA_JAKUBA, wyslij } from "@/lib/bruno/mail";
 import { szukajHandlowcow, type Filtry } from "./handlowcy";
 import { getStripePraca } from "@/lib/bruno/stripe";
-import { GWARANCJA, SUBSKRYPCJA_PROG } from "./kontakty-cennik";
+import { GWARANCJA, PAKIET_PROG, SUBSKRYPCJA_PROG, pakietFirmyPoKwocie } from "./kontakty-cennik";
 import { odczytajOpis } from "./opis-szukania";
 
 // 12.11 (USER_001): subskrypcja i gwarancja w wyszukiwarce handlowców. Zlecenie = zapisany opis firmy („wystarczy to, co już
@@ -61,7 +61,7 @@ export async function zapiszZlecenie(z: { sesja: string; rodzaj: RodzajZlecenia;
         filtry: odczytajOpis(z.opis).filtry,
         kwota_gr: z.kwotaGr,
         stripe_sub: z.stripeSub ?? null,
-        termin: z.rodzaj === "gwarancja" ? new Date(Date.now() + GWARANCJA.dni * 86_400_000).toISOString() : null,
+        termin: z.rodzaj === "gwarancja" ? new Date(Date.now() + (pakietFirmyPoKwocie(z.kwotaGr)?.dni ?? GWARANCJA.dni) * 86_400_000).toISOString() : null,
         test: !!z.test,
       },
       { onConflict: "sesja", ignoreDuplicates: true },
@@ -82,12 +82,13 @@ export async function zlecenieZeStripe(s: Stripe.Checkout.Session): Promise<Zlec
   const { zlecenie, nowe } = await zapiszZlecenie({ sesja: s.id, rodzaj, email, opis: m.opis ?? "", kwotaGr: s.amount_total ?? 0, stripeSub });
   if (zlecenie && nowe) {
     const termin = zlecenie.termin ? new Date(zlecenie.termin).toLocaleDateString("pl-PL") : null;
+    const pk = rodzaj === "gwarancja" ? pakietFirmyPoKwocie(s.amount_total ?? 0) : null;
     try {
       await wyslij({
         do: SKRZYNKA_JAKUBA,
         rodzaj: "inny",
-        temat: `💰 Praca: ${rodzaj === "gwarancja" ? `GWARANCJA ${GWARANCJA.cena} zł (${GWARANCJA.ile} handlowców ponad ${GWARANCJA.prog} % do ${termin})` : "SUBSKRYPCJA wyszukiwarki"}: ${email ?? "?"}`,
-        html: `<p>Płatność w wyszukiwarce handlowców salesbruno.pl/wyszukiwarka.</p><p><b>E-mail:</b> ${email ?? "-"}<br/><b>Rodzaj:</b> ${rodzaj}<br/><b>Kwota:</b> ${((s.amount_total ?? 0) / 100).toFixed(0)} ${(s.currency ?? "").toUpperCase()}<br/><b>Szuka:</b> ${esc(zlecenie.opis)}${termin ? `<br/><b>Termin gwarancji:</b> ${termin}. Brak ${GWARANCJA.ile} handlowców z dopasowaniem ponad ${GWARANCJA.prog} % do tego dnia = zwrot ${GWARANCJA.cena} zł.` : ""}</p>`,
+        temat: `💰 Praca: ${pk ? `PAKIET ${pk.nazwa.toUpperCase()} ${pk.cena} zł (${pk.ile} handlowców z nagraniami${pk.podKlienta ? " pod klienta" : ""} do ${termin})` : rodzaj === "gwarancja" ? `GWARANCJA ${GWARANCJA.cena} zł (${GWARANCJA.ile} handlowców ponad ${GWARANCJA.prog} % do ${termin})` : "SUBSKRYPCJA wyszukiwarki"}: ${email ?? "?"}`,
+        html: `<p>Płatność w wyszukiwarce handlowców salesbruno.pl/wyszukiwarka.</p><p><b>E-mail:</b> ${email ?? "-"}<br/><b>Rodzaj:</b> ${rodzaj}<br/><b>Kwota:</b> ${((s.amount_total ?? 0) / 100).toFixed(0)} ${(s.currency ?? "").toUpperCase()}<br/><b>Szuka:</b> ${esc(zlecenie.opis)}${pk ? `<br/><b>Do dostarczenia do ${termin}:</b> ${pk.ile} handlowców z nagraniami sprzedażowymi${pk.podKlienta ? " pod klienta firmy" : ""}. Kontakty od ${PAKIET_PROG} % dopasowania odblokowują się same, resztę i nagrania robimy ręcznie.` : termin ? `<br/><b>Termin gwarancji:</b> ${termin}. Brak ${GWARANCJA.ile} handlowców z dopasowaniem ponad ${GWARANCJA.prog} % do tego dnia = zwrot ${GWARANCJA.cena} zł.` : ""}</p>`,
       });
     } catch (e) {
       console.error("[praca zlecenia] mail", e);
@@ -109,7 +110,10 @@ async function wydane(zlecenieId: string): Promise<number> {
 async function rozdaj(z: Zlecenie, tylko?: string[]): Promise<number> {
   if (!z.konto_id || z.status !== "aktywne" || !maKryteria(z.filtry)) return 0;
   // Subskrypcja: od SUBSKRYPCJA_PROG %. Gwarancja: ponad GWARANCJA.prog %.
-  const pasuje = (d: number) => (z.rodzaj === "subskrypcja" ? d >= SUBSKRYPCJA_PROG : d > GWARANCJA.prog);
+  // 17.11: pakiet (rozpoznany po kwocie) = do pk.ile osób od PAKIET_PROG %.
+  const pk = z.rodzaj === "gwarancja" ? pakietFirmyPoKwocie(z.kwota_gr) : null;
+  const limit = pk ? pk.ile : GWARANCJA.ile;
+  const pasuje = (d: number) => (z.rodzaj === "subskrypcja" ? d >= SUBSKRYPCJA_PROG : pk ? d >= PAKIET_PROG : d > GWARANCJA.prog);
   let ids = (await szukajHandlowcow(z.filtry)).filter((k) => pasuje(k.dopasowanie ?? 0)).map((k) => k.id);
   if (tylko) ids = ids.filter((id) => tylko.includes(id));
   if (!ids.length) return 0;
@@ -118,7 +122,7 @@ async function rozdaj(z: Zlecenie, tylko?: string[]): Promise<number> {
   const juz = new Set((mam ?? []).map((x) => x.handlowiec_id as string));
   ids = ids.filter((id) => !juz.has(id));
   const dotad = z.rodzaj === "gwarancja" ? await wydane(z.id) : 0;
-  if (z.rodzaj === "gwarancja") ids = ids.slice(0, Math.max(0, GWARANCJA.ile - dotad));
+  if (z.rodzaj === "gwarancja") ids = ids.slice(0, Math.max(0, limit - dotad));
   if (!ids.length) return 0;
   const { data: wstawione, error } = await supabaseAdmin
     .from("praca_odblokowania")
@@ -126,7 +130,7 @@ async function rozdaj(z: Zlecenie, tylko?: string[]): Promise<number> {
     .select("handlowiec_id");
   if (error) console.error("[praca zlecenia] rozdaj", error.message);
   const ile = wstawione?.length ?? 0;
-  if (z.rodzaj === "gwarancja" && dotad + ile >= GWARANCJA.ile) await supabaseAdmin.from("praca_zlecenia").update({ status: "zakonczone" }).eq("id", z.id);
+  if (z.rodzaj === "gwarancja" && dotad + ile >= limit) await supabaseAdmin.from("praca_zlecenia").update({ status: "zakonczone" }).eq("id", z.id);
   return ile;
 }
 

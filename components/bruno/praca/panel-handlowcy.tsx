@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { PelnyHandlowiec } from "@/lib/bruno/praca/handlowcy";
-import { GWARANCJA, SUBSKRYPCJA_PROG, SUBSKRYPCJA_ZL, handlowcow, kontaktow, znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
+import { GWARANCJA, SUBSKRYPCJA_PROG, SUBSKRYPCJA_ZL, pakietFirmyPoKwocie, handlowcow, kontaktow, znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
 import type { Zlecenie } from "@/lib/bruno/praca/zlecenia";
 import { formatDaty } from "./panel-wspolne";
 import h from "./handlowcy.module.css";
@@ -55,16 +55,19 @@ export default function PanelHandlowcy({ handlowcy, zlecenia = [], naKoncie }: {
 
       {aktywne.map((z) => {
         const konczySie = !!z.anulowano_at || wylaczone.includes(z.id);
+        const pk = z.rodzaj === "gwarancja" ? pakietFirmyPoKwocie(z.kwota_gr) : null;
         return (
           <div className={s.platnoscOk} key={z.id} style={{ alignItems: "flex-start", flexWrap: "wrap" }}>
             <div style={{ flex: 1, minWidth: 220 }}>
-              <b>{z.rodzaj === "subskrypcja" ? `Subskrypcja · ${SUBSKRYPCJA_ZL} zł / mies.` : `Gwarancja · ${GWARANCJA.ile} handlowców ponad ${GWARANCJA.prog} % do ${formatDaty(z.termin ?? z.created_at)}`}</b>
+              <b>{pk ? `Pakiet ${pk.nazwa} · ${handlowcow(pk.ile)} z nagraniami${pk.podKlienta ? " pod Twojego klienta" : ""} do ${formatDaty(z.termin ?? z.created_at)}` : z.rodzaj === "subskrypcja" ? `Subskrypcja · ${SUBSKRYPCJA_ZL} zł / mies.` : `Gwarancja · ${GWARANCJA.ile} handlowców ponad ${GWARANCJA.prog} % do ${formatDaty(z.termin ?? z.created_at)}`}</b>
               <br />
               Szukamy: „{z.opis}”.{" "}
               {z.rodzaj === "subskrypcja"
                 ? konczySie
                   ? "Wyłączona. Działa do końca opłaconego miesiąca."
                   : `Dosyłamy każdego nowego handlowca z dopasowaniem od ${SUBSKRYPCJA_PROG} %.`
+                : pk
+                ? "Profile i nagrania sprzedażowe pojawią się tutaj."
                 : `Brak kompletu do tego dnia = zwrot ${GWARANCJA.cena} zł.`}
             </div>
             {z.rodzaj === "subskrypcja" && !konczySie && (

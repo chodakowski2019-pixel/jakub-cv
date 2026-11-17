@@ -1,37 +1,51 @@
 "use client";
 
 import { useState } from "react";
-import { GWARANCJA, PACZKA, SUBSKRYPCJA_PROG, SUBSKRYPCJA_ZL } from "@/lib/bruno/praca/kontakty-cennik";
+import { PAKIETY_FIRM, PAKIET_PROG, handlowcow, type PakietFirmy } from "@/lib/bruno/praca/kontakty-cennik";
 import g from "./gielda.module.css";
 
 // 12.11 (USER_001): 3 sposoby zakupu pod wynikiem publicznej wyszukiwarki: paczka 3 handlowców (149 zł, jednorazowo),
 // subskrypcja (290 zł / mies., dosyłamy nowych dopasowanych od 70 %, bez dodawania oferty drugi raz) i gwarancja (990 zł, 5 handlowców w 30 dni albo zwrot).
 // Paczka idzie przez /api/bruno/praca/kontakty (jak dotąd), dwie pozostałe przez /api/bruno/praca/zlecenie.
+// 17.11 (USER_001): zamiast paczki, subskrypcji i gwarancji = 3 pakiety handlowców z nagraniami sprzedażowymi, płatność jednorazowa
+// (500 zł = 3 do 7 dni, 1 000 zł = 10 pod klienta firmy do 14 dni, 1 500 zł = 20 pod klienta firmy do 60 dni). Wszystkie przez /api/bruno/praca/zlecenie.
+/** 1000 → „1 000” (pl-PL nie grupuje liczb czterocyfrowych). */
+const zl = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+/** 17.11 (USER_001): dopisek w nawiasie przy nazwie wiersza bez pogrubienia. */
+function nazwaWiersza(w: string) {
+  const i = w.indexOf(" (");
+  if (i < 0) return w;
+  return (
+    <>
+      {w.slice(0, i)} <span style={{ fontWeight: 400 }}>{w.slice(i + 1)}</span>
+    </>
+  );
+}
+
 export default function OfertaWyszukiwarki({
   opis,
-  doOdblokowania,
   maKryteria,
   test,
 }: {
   opis: string;
-  /** Id pokazanych handlowców, których kontaktu firma jeszcze nie ma (najwyżej tylu, ilu mieści paczka). */
-  doOdblokowania: string[];
-  /** false = z opisu nie wyszło żadne kryterium: subskrypcji i gwarancji nie sprzedajemy. */
+  /** Id pokazanych handlowców (zostaje dla zgodności z wynikiem, pakiety go nie używają). */
+  doOdblokowania?: string[];
+  /** false = z opisu nie wyszło żadne kryterium: pakietów nie sprzedajemy (nie wiadomo, kogo szukać). */
   maKryteria: boolean;
   /** Lokalnie bez klucza Stripe: zakup testowy. */
   test: boolean;
 }) {
-  const [stan, setStan] = useState<"" | "paczka" | "subskrypcja" | "gwarancja">("");
+  const [stan, setStan] = useState<"" | PakietFirmy["klucz"]>("");
   const [blad, setBlad] = useState("");
-  const ile = doOdblokowania.length;
 
-  async function kup(co: "paczka" | "subskrypcja" | "gwarancja") {
+  async function kup(p: PakietFirmy) {
     setBlad("");
-    setStan(co);
-    const odp = await fetch(co === "paczka" ? "/api/bruno/praca/kontakty" : "/api/bruno/praca/zlecenie", {
+    setStan(p.klucz);
+    const odp = await fetch("/api/bruno/praca/zlecenie", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(co === "paczka" ? { wybrani: doOdblokowania, pakiet: PACZKA.ile, powrot: `/wyszukiwarka?q=${encodeURIComponent(opis)}` } : { rodzaj: co, opis }),
+      body: JSON.stringify({ rodzaj: "pakiet", pakiet: p.klucz, opis }),
     }).catch(() => null);
     const j = await odp?.json().catch(() => null);
     if (!odp?.ok || !j?.ok || !j.url) {
@@ -42,53 +56,21 @@ export default function OfertaWyszukiwarki({
     window.location.href = j.url;
   }
 
-  // 13.11 (USER_001: „zrób to w ładniejszej tabeli, żeby było przejrzyściej”): porównanie w tabeli, wiersz = jedna cecha.
-  // Na telefonie ta sama treść jako karty (tabela z 4 kolumnami się nie mieści).
-  type Plan = { klucz: "paczka" | "subskrypcja" | "gwarancja"; nazwa: string; cena: string; okres: string; przycisk: string; glowny?: boolean; pola: (string | boolean)[] };
-  const WIERSZE = ["Co otrzymasz", "Dopasowanie", "Kiedy", "Pełny profil: nazwisko, telefon, e-mail, zdjęcie, CV", "Bez dodawania oferty drugi raz", "Zwrot pieniędzy", "Rezygnacja"];
-  const plany: Plan[] = [
-    ...(ile > 0
-      ? [
-          {
-            klucz: "paczka" as const,
-            nazwa: "Paczka",
-            cena: `${PACZKA.cena} zł`,
-            okres: "jednorazowo",
-            przycisk: `Odblokuj · ${PACZKA.cena} zł`,
-            glowny: true,
-            pola: [
-              "Kontakty: handlowcy, którzy pokazali się powyżej",
-              "Jak w wyniku",
-              "Od razu",
-              true,
-              false,
-              false,
-              "Opłata jednorazowa",
-            ],
-          },
-        ]
-      : []),
-    ...(maKryteria
-      ? [
-          {
-            klucz: "subskrypcja" as const,
-            nazwa: "Subskrypcja",
-            cena: `${SUBSKRYPCJA_ZL} zł`,
-            okres: "/ mies. (30 dni)",
-            przycisk: `Włącz · ${SUBSKRYPCJA_ZL} zł / mies.`,
-            pola: ["Kontakt do każdego nowego dopasowanego handlowca, który dołączy do naszej bazy", `Od ${SUBSKRYPCJA_PROG} % do Twojej oferty`, "Gdy tylko dołączy do bazy", true, true, false, "W panelu, w każdej chwili"],
-          },
-          {
-            klucz: "gwarancja" as const,
-            nazwa: "Gwarancja",
-            cena: `${GWARANCJA.cena} zł`,
-            okres: "jednorazowo",
-            przycisk: `Zamów · ${GWARANCJA.cena} zł`,
-            pola: [`Kontakty: ${GWARANCJA.ile} dopasowanych handlowców`, `Ponad ${GWARANCJA.prog} % do Twojej oferty`, `W ${GWARANCJA.dni} dni`, true, true, `Cała kwota, gdy będzie mniej niż ${GWARANCJA.ile} kontaktów z powyżej ${GWARANCJA.prog} % dopasowania`, "Opłata jednorazowa"],
-          },
-        ]
-      : []),
-  ];
+  type Plan = { klucz: PakietFirmy["klucz"]; pakiet: PakietFirmy; nazwa: string; cena: string; okres: string; przycisk: string; glowny?: boolean; pola: (string | boolean)[] };
+  // 17.11 (USER_001): nagrania i „pod Twojego klienta” = jeden wiersz, we wszystkich pakietach; przy liczbie handlowców próg dopasowania.
+  const WIERSZE = [`Handlowcy (min. ${PAKIET_PROG}% dopasowania handlowca do firmy)`, "Nagrania sprzedażowe (otrzymasz nagranie, jak handlowiec sprzedaje Twojemu klientowi; to rozmowa sprzedażowa z AI)", "Pełny profil: nazwisko, telefon, e-mail, zdjęcie, CV", "Czas dostarczenia", "Płatność"];
+  const plany: Plan[] = maKryteria
+    ? PAKIETY_FIRM.map((p) => ({
+        klucz: p.klucz,
+        pakiet: p,
+        nazwa: p.nazwa,
+        cena: `${zl(p.cena)} zł`,
+        okres: "brutto",
+        przycisk: `Zamów · ${zl(p.cena)} zł`,
+        glowny: p.klucz === "m",
+        pola: [handlowcow(p.ile), true, true, `Do ${p.dni} dni`, "Jednorazowa"],
+      }))
+    : [];
   const pole = (v: string | boolean) =>
     v === true ? (
       <svg className={g.tabTak} viewBox="0 0 24 24" role="img" aria-label="Tak">
@@ -100,7 +82,7 @@ export default function OfertaWyszukiwarki({
       v
     );
   const guzik = (p: Plan) => (
-    <button type="button" className={`p-btn ${p.glowny ? "" : "p-btn-2"}`} disabled={!!stan} onClick={() => kup(p.klucz)}>
+    <button type="button" className={`p-btn ${p.glowny ? "" : "p-btn-2"}`} disabled={!!stan} onClick={() => kup(p.pakiet)}>
       {stan === p.klucz ? "Chwileczkę…" : p.przycisk}
     </button>
   );
@@ -108,12 +90,14 @@ export default function OfertaWyszukiwarki({
 
   return (
     <section className={g.oferta} aria-label="Dostęp do handlowców">
+      {/* 17.11 (USER_001): nagłówek nad pakietami. Liczba podana przez USER_001 (baza giełdy 17.11 = 13 profili), sprawdzić przed push. */}
+      <h2 className={g.ofertaNaglowek}>+1000 handlowców w bazie</h2>
       {blad && <p className={g.trzyBlad} role="alert">{blad}</p>}
       <div className={`p-karta ${g.tabOkno}`}>
         <table className={g.tab} style={{ ["--kolumn" as string]: plany.length }}>
           <thead>
             <tr>
-              <th className={g.tabBrutto}>Ceny brutto</th>
+              <th className={g.tabBrutto} />
               {plany.map((p) => (
                 <th key={p.klucz} scope="col" className={p.glowny ? g.tabGlowna : ""}>
                   <span className={g.tabNazwa}>{p.nazwa}</span>
@@ -125,7 +109,7 @@ export default function OfertaWyszukiwarki({
           <tbody>
             {WIERSZE.map((w, i) => (
               <tr key={w}>
-                <th scope="row">{w}</th>
+                <th scope="row">{nazwaWiersza(w)}</th>
                 {plany.map((p) => (
                   <td key={p.klucz} className={p.glowny ? g.tabGlowna : ""}>{pole(p.pola[i])}</td>
                 ))}
@@ -151,7 +135,7 @@ export default function OfertaWyszukiwarki({
               {WIERSZE.map((w, i) =>
                 p.pola[i] === false ? null : (
                   <div key={w}>
-                    <dt>{w}</dt>
+                    <dt>{nazwaWiersza(w)}</dt>
                     <dd>{pole(p.pola[i])}</dd>
                   </div>
                 ),

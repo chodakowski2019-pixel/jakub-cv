@@ -877,6 +877,15 @@ textarea.wpis {
 .oferta {
   margin-top: 10px;
 }
+.ofertaNaglowek {
+  margin: 28px 0 14px;
+  text-align: center;
+  font-family: var(--p-font);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--p-ink);
+}
 .ofertaSiatka {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -955,9 +964,28 @@ textarea.wpis {
   gap: 2px;
 }
 .okienkoWiersz > span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.01em;
+}
+/* 17.11 (USER_001): numer pytania w białym kółku */
+.okienkoNr {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1.5px solid #18181b;
+  color: #18181b;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
 }
 .okienkoWiersz .okienkoPole {
   margin-bottom: 0;
@@ -983,6 +1011,12 @@ textarea.wpis {
   text-align: left;
   vertical-align: middle;
   line-height: 1.4;
+}
+/* 17.11 (USER_001): pionowe kreski między kolumnami */
+.tab th + th,
+.tab th + td,
+.tab td + td {
+  border-left: 1px solid var(--p-ramka);
 }
 .tab thead th {
   padding-top: 22px;
@@ -1093,6 +1127,8 @@ textarea.wpis {
   list-style: none;
 }
 .kartaH {
+  display: flex;
+  flex-direction: column;
   background: #fff;
   border: 1px solid var(--p-ramka-2);
   border-radius: var(--p-radius);
@@ -1136,22 +1172,32 @@ textarea.wpis {
 }
 .kartaHWiersze {
   margin: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
+/* ostatni wiersz do dołu karty, żeby kreska szła do końca */
+.kartaHWiersze > div:last-child {
+  flex: 1;
+}
+/* 17.11 (USER_001): pionowa kreska między etykietą a wartością, na całą wysokość wiersza */
 .kartaHWiersze > div {
   display: grid;
   grid-template-columns: 112px minmax(0, 1fr);
-  gap: 12px;
-  padding: 12px 20px;
+  padding: 0 20px;
   border-top: 1px solid var(--p-ramka);
   font-size: 14px;
   line-height: 1.45;
 }
 .kartaHWiersze dt {
+  padding: 12px 12px 12px 0;
+  border-right: 1px solid var(--p-ramka);
   font-size: 13px;
   color: var(--p-ink-2);
 }
 .kartaHWiersze dd {
   margin: 0;
+  padding: 12px 0 12px 12px;
 }
 .kartaHPasek {
   display: block;

@@ -107,6 +107,17 @@ const SEKCJE: SekcjaDok[] = [
     ],
   },
   {
+    // 17.11 (USER_001): pakiety handlowców, płatność jednorazowa. W Wyszukiwarce zastępują paczkę, subskrypcję i gwarancję.
+    tytul: "5d. Pakiety handlowców (Pracodawca)",
+    punkty: [
+      "Od 17 listopada 2026 r. w Wyszukiwarce sprzedajemy trzy Pakiety handlowców: Basic, 3 handlowców z nagraniami sprzedażowymi pod klienta Pracodawcy za 500 zł brutto, dostarczenie do 7 dni; Pro, 10 handlowców z nagraniami sprzedażowymi pod klienta Pracodawcy za 1 000 zł brutto, dostarczenie do 14 dni; VIP, 20 handlowców z nagraniami sprzedażowymi pod klienta Pracodawcy za 1 500 zł brutto, dostarczenie do 60 dni. Paczka, subskrypcja i gwarancja (pkt 5a-5c) nie są już sprzedawane; zakupione wcześniej działają na dotychczasowych zasadach.",
+      "Płatność jest jednorazowa i nie odnawia się sama. Obsługuje ją Stripe. Fakturę wysyłamy e-mailem.",
+      "Pakiet dotyczy jednego opisu: tego, z którym Pracodawca go kupił. Termin dostarczenia liczy się od płatności.",
+      "Pakiet obejmuje pełne Profile handlowców dopasowanych do opisu w co najmniej 80 % (z danymi kontaktowymi) oraz nagrania ich rozmów sprzedażowych z klientem takim jak klient Pracodawcy. Klienta w rozmowie gra sztuczna inteligencja (AI). Stopień dopasowania jest wyliczany automatycznie.",
+      "Pakiet nie obejmuje odpowiedzi handlowca ani zatrudnienia. Do Kontaktów z Pakietu stosuje się zasady z pkt 5a o używaniu danych.",
+    ],
+  },
+  {
     tytul: "6. Zasady treści Ogłoszeń",
     akapity: ["Pracodawca odpowiada za treść Ogłoszenia. Ogłoszenie nie może:"],
     punkty: [

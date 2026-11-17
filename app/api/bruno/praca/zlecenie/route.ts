@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getStripePraca, kluczStripePraca } from "@/lib/bruno/stripe";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
-import { GWARANCJA, SUBSKRYPCJA_ZL } from "@/lib/bruno/praca/kontakty-cennik";
+import { GWARANCJA, SUBSKRYPCJA_ZL, pakietFirmyPoKluczu } from "@/lib/bruno/praca/kontakty-cennik";
 import { odczytajOpis } from "@/lib/bruno/praca/opis-szukania";
 import { maKryteria, rodzajZlecenia, zapiszZlecenie } from "@/lib/bruno/praca/zlecenia";
 
@@ -16,7 +16,10 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   const b = await req.json().catch(() => ({}));
   const origin = new URL(req.url).origin;
-  const rodzaj = rodzajZlecenia(b.rodzaj);
+  // 17.11 (USER_001): { rodzaj: "pakiet", pakiet: "s" | "m" | "l" } = pakiet handlowców, płatność jednorazowa; w bazie rodzaj "gwarancja".
+  const pakiet = b.rodzaj === "pakiet" ? pakietFirmyPoKluczu(b.pakiet) : null;
+  if (b.rodzaj === "pakiet" && !pakiet) return NextResponse.json({ ok: false, blad: "Wybierz pakiet." }, { status: 400 });
+  const rodzaj = pakiet ? "gwarancja" : rodzajZlecenia(b.rodzaj);
   // Metadane Stripe mieszczą 500 znaków na pole.
   const opis = String(b.opis ?? "").trim().slice(0, 450);
   if (!rodzaj || opis.length < 2) return NextResponse.json({ ok: false, blad: "Opisz, jakiego handlowca szukasz." }, { status: 400 });
@@ -24,7 +27,7 @@ export async function POST(req: Request) {
 
   const konto = await zalogowanePraca();
   const pracodawca = konto?.typ === "pracodawca" ? konto : null;
-  const cena = rodzaj === "gwarancja" ? GWARANCJA.cena : SUBSKRYPCJA_ZL;
+  const cena = pakiet ? pakiet.cena : rodzaj === "gwarancja" ? GWARANCJA.cena : SUBSKRYPCJA_ZL;
   const powrot = `/wyszukiwarka?q=${encodeURIComponent(opis)}`;
 
   if (!kluczStripePraca()) {
@@ -34,15 +37,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, test: true, url: `/praca/handlowcy/zlecenie?sesja=${sesja}` });
   }
 
-  const metadata = { produkt: "praca", rodzaj, opis, konto: pracodawca?.id ?? "" };
+  const metadata = { produkt: "praca", rodzaj, opis, konto: pracodawca?.id ?? "", ...(pakiet ? { pakiet: pakiet.klucz } : {}) };
   const nazwa =
-    rodzaj === "gwarancja"
+    pakiet
+      ? `SalesBruno.pl: pakiet ${pakiet.nazwa}, ${pakiet.ile} handlowców z nagraniami sprzedażowymi${pakiet.podKlienta ? " pod Twojego klienta" : ""} do ${pakiet.dni} dni`
+      : rodzaj === "gwarancja"
       ? `SalesBruno.pl: ${GWARANCJA.ile} handlowców z dopasowaniem ponad ${GWARANCJA.prog} % w ${GWARANCJA.dni} dni albo zwrot`
       : "SalesBruno.pl: subskrypcja wyszukiwarki handlowców";
   const wspolne = {
     ...(pracodawca ? { customer_email: pracodawca.email } : {}),
     metadata,
-    allow_promotion_codes: true,
+    // Pakiet rozpoznajemy po kwocie, więc bez kodów rabatowych.
+    allow_promotion_codes: !pakiet,
     tax_id_collection: { enabled: true },
     billing_address_collection: "required" as const,
     locale: "pl" as const,

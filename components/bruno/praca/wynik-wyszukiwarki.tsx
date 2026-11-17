@@ -31,7 +31,7 @@ export default async function WynikWyszukiwarki({ opis: surowy, kontoId }: { opi
           <h1>{karty.length ? <>Mamy <b className={g.liczbaWyniku}>{karty.length}</b> {karty.length === 1 ? "dopasowanego handlowca" : "dopasowanych handlowców"}.</> : "Nie mamy jeszcze takiego handlowca."}</h1>
           <p>
             {karty.length > top.length ? `Poniżej ${top.length} najlepiej dopasowanych. ` : ""}
-            Codziennie dodajemy do bazy nowych handlowców.
+            Codziennie dodajemy do bazy nowych handlowców. Jeżeli nie mamy tych, których potrzebujesz, znajdziemy ich.
           </p>
           <div className={g.chipy} style={{ marginTop: 12 }}>
             {etykiety.length ? etykiety.map((e) => <span key={e} className="p-chip">{e}</span>) : <span className="p-chip">Bez zawężania: wszyscy handlowcy</span>}
@@ -97,7 +97,7 @@ export default async function WynikWyszukiwarki({ opis: surowy, kontoId }: { opi
           ))}
         </ul>
       )}
-      {karty.length === 0 && <p className="p-karta p-pusto">Subskrypcja albo gwarancja: szukamy dalej z tym samym opisem, bez dodawania oferty drugi raz.</p>}
+      {karty.length === 0 && <p className="p-karta p-pusto">Wybierz pakiet, a znajdziemy handlowców dla Ciebie.</p>}
       <OfertaWyszukiwarki
         opis={opis}
         doOdblokowania={top.filter((k) => !juzMam.has(k.id)).map((k) => k.id)}

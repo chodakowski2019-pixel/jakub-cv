@@ -79,18 +79,18 @@ export default function SzukajTrzy() {
         }}
       >
         <label className={g.okienkoWiersz}>
-          <span>Masz już ofertę pracy? Dodaj link do niej</span>
+          <span><b className={g.okienkoNr}>1</b>Masz już ofertę pracy? Dodaj link do niej</span>
           <input className={g.okienkoPole} type="text" inputMode="url" placeholder="https://…" value={link} onChange={(e) => setLink(e.target.value)} maxLength={600} />
         </label>
         <div className={g.okienkoWiersz}>
-          <span>Masz opisane w pliku PDF, kogo szukasz? Dodaj plik</span>
+          <span><b className={g.okienkoNr}>2</b>Masz opisane w pliku PDF, kogo szukasz? Dodaj plik</span>
           <input ref={pole} type="file" accept="application/pdf,.pdf" hidden onChange={(e) => setPlik(e.target.files?.[0] ?? null)} />
           <button type="button" className={`${g.okienkoPole} ${g.okienkoPlik}`} onClick={() => pole.current?.click()}>
             {plik ? plik.name : "Wybierz plik PDF"}
           </button>
         </div>
         <label className={g.okienkoWiersz}>
-          <span>Chcesz opisać, kogo szukasz? Wpisz tutaj</span>
+          <span><b className={g.okienkoNr}>3</b>Chcesz opisać, kogo szukasz? Wpisz tutaj</span>
           <textarea className={g.okienkoPole} rows={2} placeholder="np. Handlowiec OZE z Warszawy, min. 3 lata, B2B" value={opis} onChange={(e) => setOpis(e.target.value)} maxLength={600} />
         </label>
         <button type="submit" className="p-btn" disabled={!gotowe}>Szukaj</button>
