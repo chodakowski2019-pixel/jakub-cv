@@ -1094,24 +1094,36 @@ textarea.wpis {
   white-space: nowrap;
 }
 .plan ul.planPunkty {
-  margin: 2px 0 6px;
-  padding: 12px 0 0;
-  border-top: 1px solid var(--p-ramka);
-  gap: 9px;
+  margin: 2px 0 8px;
+  padding: 0;
+  gap: 0;
   color: var(--p-ink);
 }
 .plan ul.planPunkty li {
-  position: relative;
-  padding-left: 24px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  padding: 0;
+  border-top: 1px solid var(--p-ramka);
   background: none;
 }
-.plan ul.planPunkty li::before {
+.plan ul.planPunkty li:last-child {
+  border-bottom: 1px solid var(--p-ramka);
+}
+.plan ul.planPunkty li > span:last-child {
+  padding: 10px 0 10px 12px;
+}
+.planPtaszek {
+  position: relative;
+  border-right: 1px solid var(--p-ramka);
+}
+.planPtaszek::before {
   content: "";
   position: absolute;
-  left: 2px;
-  top: 0.3em;
+  left: 9px;
+  top: 50%;
   width: 11px;
   height: 6px;
+  margin-top: -5px;
   border-left: 2px solid #2f7a4a;
   border-bottom: 2px solid #2f7a4a;
   transform: rotate(-45deg);

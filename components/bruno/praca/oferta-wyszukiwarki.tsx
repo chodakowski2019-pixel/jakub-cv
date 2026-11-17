@@ -66,7 +66,8 @@ export default function OfertaWyszukiwarki({
         nazwa: p.nazwa,
         cena: `${zl(p.cena)} zł`,
         okres: "brutto",
-        przycisk: `Zamów · ${zl(p.cena)} zł`,
+        // 17.11 (USER_001): teksty przycisków per pakiet
+        przycisk: { s: "Chcę ten pakiet", m: "To coś dla mnie", l: "Wybieram ten pakiet" }[p.klucz],
         glowny: p.klucz === "m",
         pola: [handlowcow(p.ile), true, true, `Do ${p.dni} dni`, "Jednorazowa"],
       }))
@@ -136,11 +137,19 @@ export default function OfertaWyszukiwarki({
               <p className={g.planCena}>{p.cena} <small>{p.okres}</small></p>
             </div>
             <ul className={g.planPunkty}>
-              <li><b>{handlowcow(p.pakiet.ile)}</b> (min. {PAKIET_PROG}% dopasowania do firmy)</li>
-              <li><b>Nagrania sprzedażowe</b> pod Twojego klienta (rozmowa z AI)</li>
-              <li>Pełny profil: nazwisko, telefon, e-mail, zdjęcie, CV</li>
-              <li>Dostarczenie <b>do {p.pakiet.dni} dni</b></li>
-              <li>Płatność jednorazowa</li>
+              {/* 17.11 (USER_001): każdy punkt oddzielony poziomą kreską, za ptaszkiem pionowa kreska */}
+              {[
+                <><b>{handlowcow(p.pakiet.ile)}</b> (min. {PAKIET_PROG}% dopasowania do firmy)</>,
+                <><b>Nagrania sprzedażowe</b> pod Twojego klienta (rozmowa z AI)</>,
+                <>Pełny profil: nazwisko, telefon, e-mail, zdjęcie, CV</>,
+                <>Dostarczenie <b>do {p.pakiet.dni} dni</b></>,
+                <>Płatność jednorazowa</>,
+              ].map((t, i) => (
+                <li key={i}>
+                  <span className={g.planPtaszek} aria-hidden="true" />
+                  <span>{t}</span>
+                </li>
+              ))}
             </ul>
             {guzik(p)}
           </div>
