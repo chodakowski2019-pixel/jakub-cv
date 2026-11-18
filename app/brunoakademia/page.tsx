@@ -23,8 +23,8 @@ export const metadata: Metadata = {
 };
 
 const CENA = 50;
-// 15.11 (USER_001): Payment Link Stripe, konto główne „Love My Self”, 50 zł co 30 dni (scripts/bruno-akademia-stripe.mjs).
-const PLATNOSC = "https://buy.stripe.com/5kQ6oHctwh04gBS5q53F60E";
+// 18.11 (USER_001): Payment Link Stripe przeniesiony na konto Bruno AI (acct_1UP6gm…, dawniej „Food Squad”), 50 zł co 30 dni. Konto główne zostaje tylko dla lovemyself.
+const PLATNOSC = "https://buy.stripe.com/4gM8wP9gZ7jt7Zpayu3AY0d";
 
 // Koło: kolor segmentu = kolor tagu przy lekcji.
 const KOLO = [

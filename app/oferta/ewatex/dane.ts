@@ -49,7 +49,7 @@ export const RAZEM = {
 export const KONTAKT_ZGLOSZENIA = "jakub@salesbruno.com";
 
 // 5.11 (USER_001): link Stripe do pierwszej płatności (zaliczka 50 % za CRM = 7 250 zł). Pokazywany po podpisie i w mailu.
-export const LINK_PLATNOSC_1 = "https://buy.stripe.com/bJe9ATgJM39eetK19P3F60y";
+export const LINK_PLATNOSC_1 = "https://buy.stripe.com/cNi4gz3WF7jta7x3623AY0h";
 
 export const WAZNA_DO = "wtorku 11.11.2026";
 export const TELEFON_KIEDY = "piątek 7.11, 9:00";

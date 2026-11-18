@@ -22,6 +22,8 @@ export function getStripeBruno(): Stripe {
 // rozlicza się na głównym koncie Stripe „Love My Self” (acct_1TlOUW…, nazwa publiczna Bruno AI), klucz
 // BRUNO_PRACA_STRIPE_SECRET_KEY, webhook z sekretem BRUNO_PRACA_STRIPE_WEBHOOK_SECRET. Bez tego klucza zostaje konto Bruno AI.
 // Ogłoszenia o pracę i Bruno Pro zostają na BRUNO_STRIPE_SECRET_KEY.
+// 18.11 (USER_001, porządek Stripe): konto główne acct_1TlOUW… zostaje TYLKO dla lovemyself. BRUNO_PRACA_STRIPE_* usunięte z Vercel,
+// więc wyszukiwarka idzie na konto Bruno AI (acct_1UP6gm…, BRUNO_STRIPE_SECRET_KEY). Nie ustawiać BRUNO_PRACA_STRIPE_* z powrotem.
 let _stripePraca: Stripe | null = null;
 export function kluczStripePraca(): string | undefined {
   return process.env.BRUNO_PRACA_STRIPE_SECRET_KEY || process.env.BRUNO_STRIPE_SECRET_KEY;

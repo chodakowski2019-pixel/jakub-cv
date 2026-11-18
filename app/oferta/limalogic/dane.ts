@@ -42,7 +42,7 @@ export const ANALIZA = {
 };
 
 // 5.11 (USER_001): link Stripe do płatności 5 000 zł. Przycisk „Zapłać” po podpisie; w mailu do Jakuba jako przypomnienie.
-export const LINK_PLATNOSC = "https://buy.stripe.com/00w6oH2SWcJO71iaKp3F60z";
+export const LINK_PLATNOSC = "https://buy.stripe.com/fZu4gzbp7cDN3J921Y3AY0g";
 
 export const TELEFON_KIEDY = "poniedziałek 24.11, 10:00";
 

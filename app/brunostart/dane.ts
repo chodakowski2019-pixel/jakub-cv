@@ -30,7 +30,7 @@ export const PAKIETY: Pakiet[] = [
     podpis: "Jedna rozmowa dziennie. Jak lekcja języka.",
     punkty: ["1 rozmowa głosowa dziennie (30 rozmów)", "Lekcja dnia: jeden sposób na rozmowę", "Ocena po każdej rozmowie", "Bruno udaje klienta z Twojej branży"],
     polecany: false,
-    stripe: "https://buy.stripe.com/5kQdR9bps7pu99qbOt3F60B",
+    stripe: "https://buy.stripe.com/cNi00j8cVcDN6Vl0XU3AY0e",
   },
   {
     id: "pro",
@@ -47,7 +47,7 @@ export const PAKIETY: Pakiet[] = [
       "Egzamin i dyplom z wynikiem",
     ],
     polecany: true,
-    stripe: "https://buy.stripe.com/8x23cv3X04digBS19P3F60A",
+    stripe: "https://buy.stripe.com/aFa6oHctbfPZenN5ea3AY0f",
   },
 ];
 
