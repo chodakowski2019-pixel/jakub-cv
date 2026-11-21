@@ -1,11 +1,14 @@
 import { DOMENA, SCIEZKI, jezykZHosta } from "@/lib/bruno/domeny";
 import { GRUPY, stronaGrupy, wszystkieArtykuly } from "@/lib/bruno/blog";
+import { BAZA, wszystkieArtykuly as artykulyAi } from "@/lib/blog-ai";
+import { BAZA_NARZEDZI, wszystkieNarzedzia } from "@/lib/narzedzia-ai";
 
 export const dynamic = "force-dynamic";
 
 // 21.10 (USER_001, Search Console): mapa witryny per domena. Proxy omija pliki z rozszerzeniem, więc host czytamy sami.
 // salesbruno.pl / .com = strony publiczne Bruno (bez panelu, rejestracji, webinaru i /praca, które mają noindex).
 // jakubchodakowski.com = strona główna + wersja EN.
+// 21.11 (USER_001): + blog o AI (/blog) i katalog narzędzi AI (/ai). Strony tematów i kategorii mają noindex, więc ich tu nie ma.
 function wpisy(host: string | null): string[] {
   const j = jezykZHosta(host);
   if (j) {
@@ -15,7 +18,15 @@ function wpisy(host: string | null): string[] {
     const blog = j === "pl" ? ["/blog", ...GRUPY.filter((g) => stronaGrupy(g.slug)).map((g) => `/blog/temat/${g.slug}`), ...wszystkieArtykuly().map((a) => `/blog/${a.slug}`)] : [];
     return [P.firmy, P.demo, P.bezpieczenstwo, "/regulamin", "/polityka-prywatnosci", ...blog].map((s) => `${d}${s === "/" ? "" : s}`);
   }
-  return ["https://jakubchodakowski.com", "https://jakubchodakowski.com/en"];
+  const d = "https://jakubchodakowski.com";
+  return [
+    d,
+    `${d}/en`,
+    `${d}${BAZA}`,
+    ...artykulyAi().map((a) => `${d}${BAZA}/${a.slug}`),
+    `${d}${BAZA_NARZEDZI}`,
+    ...wszystkieNarzedzia().map((n) => `${d}${BAZA_NARZEDZI}/${n.slug}`),
+  ];
 }
 
 export async function GET(req: Request) {

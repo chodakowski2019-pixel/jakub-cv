@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AUTOR, BAZA, DOMENA, GRUPY, STRONA_SZKOLEN, grupa, renderujMarkdown, wariantGrupy, type Artykul, type Grupa } from "@/lib/blog-ai";
+import { AUTOR, BAZA, DOMENA, GRUPY, grupa, renderujMarkdown, wariantGrupy, type Artykul, type Grupa } from "@/lib/blog-ai";
 
 // 21.11.2026: klocki bloga w układzie czytelni lovemyself (zwiazki-lp/src/app/blog), tak jak blog Bruno (app/brunoblog/widok.tsx):
 // okładka, kafel, wezwanie, pełny tekst (W skrócie, okładka, spis „W tym tekście”, treść, wezwanie, źródła, autor).
@@ -57,10 +57,10 @@ export function Wezwanie() {
         zespołu, mówię to w pierwszej rozmowie.
       </p>
       <div className="bai-akcje">
-        <Link href={`${STRONA_SZKOLEN}#formularz`} className="bai-przycisk">
+        <Link href="/#formularz" className="bai-przycisk">
           Sprawdź wolny termin
         </Link>
-        <Link href={`${STRONA_SZKOLEN}#rozklad`} className="bai-drugi-link">
+        <Link href="/#rozklad" className="bai-drugi-link">
           Zobacz rozkład dnia
         </Link>
       </div>

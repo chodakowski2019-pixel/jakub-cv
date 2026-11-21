@@ -513,6 +513,12 @@ export default function SzkoleniaAiPage({ fontClass, motyw = "ciemny", przelaczn
               <a href="#cena">Cena</a>
               <a href="#pytania">Pytania</a>
             </div>
+            {/* 21.11 (USER_001): blog i katalog narzędzi jako podstrony strony głównej. */}
+            <div>
+              <p className="mono">Wiedza</p>
+              <a href="/blog">Blog o AI w firmie</a>
+              <a href="/ai">Narzędzia AI</a>
+            </div>
             <div>
               <p className="mono">Kontakt</p>
               <a href={KONTAKT.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>

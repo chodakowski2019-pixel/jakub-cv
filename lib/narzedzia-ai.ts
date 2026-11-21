@@ -10,9 +10,10 @@ import { parsujFaq, parsujFrontmatter, slugify, zrodlaPoId, type Zrodlo } from "
 // dotyczących danych na stronie producenta. Każdy fakt ma źródło w content/blog-ai/_zrodla.json, a wpis ma datę sprawdzenia.
 // Każda podstrona odpowiada na pytanie polskiej firmy: ile kosztuje wersja firmowa, czy działa po polsku, co z danymi.
 //
-// PODGLĄD: katalog stoi pod /podglad/narzedzia-ai z noindex, razem z blogiem (lib/blog-ai.ts, PODGLAD).
+// 21.11.2026 (USER_001: „a to jako podstrona ai”): katalog pod jakubchodakowski.com/ai (app/ai), indeksowany razem z blogiem
+// (lib/blog-ai.ts, PODGLAD). Stare adresy /podglad/narzedzia-ai przekierowane (next.config.ts).
 
-export const BAZA_NARZEDZI = "/podglad/narzedzia-ai";
+export const BAZA_NARZEDZI = "/ai";
 
 export type Kategoria = { slug: string; nazwa: string; opis: string };
 

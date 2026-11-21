@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Kafel, Okladka, adresGrupy, adresTekstu, ileTekstow, ileZrodel } from "./widok";
-import { BAZA, DOMENA, GRUPY, PODGLAD, STRONA_SZKOLEN, artykulyGrupy, grupa, wszystkieArtykuly } from "@/lib/blog-ai";
+import { BAZA, DOMENA, GRUPY, PODGLAD, artykulyGrupy, grupa, wszystkieArtykuly } from "@/lib/blog-ai";
 
 // 21.11.2026 (USER_001): lista bloga w układzie czytelni lovemyself: nagłówek, pasek tematów, wyróżniony tekst, sekcje per temat.
 const TYTUL = "Blog o AI w firmie | Jakub Chodakowski";
@@ -36,7 +36,7 @@ export default function Page() {
             {ileTekstow(wszystkie.length)} · {GRUPY.length} tematy
           </p>
           <div className="bai-akcje">
-            <Link href={`${STRONA_SZKOLEN}#formularz`} className="bai-przycisk">
+            <Link href="/#formularz" className="bai-przycisk">
               Sprawdź wolny termin
             </Link>
             <span className="bai-notka">Szkolenie AI dla zespołu do 12 osób</span>

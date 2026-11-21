@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Lista, type Kafel } from "./lista";
-import { DOMENA, PODGLAD, STRONA_SZKOLEN } from "@/lib/blog-ai";
+import { DOMENA, PODGLAD } from "@/lib/blog-ai";
 import { BAZA_NARZEDZI, CECHY, CENNIKI, kategoria, kategorieZNarzedziami, wszystkieNarzedzia } from "@/lib/narzedzia-ai";
 
 // 21.11.2026 (USER_001): lista narzędzi AI po polsku, budowa jak w katalogach narzędzi: licznik, kategorie,
@@ -70,7 +70,7 @@ export default function Page() {
             {ostatnie ? ` · Sprawdzono: ${dataPoPolsku(ostatnie)}` : ""}
           </p>
           <div className="bai-akcje">
-            <Link href={`${STRONA_SZKOLEN}#formularz`} className="bai-przycisk">
+            <Link href="/#formularz" className="bai-przycisk">
               Sprawdź wolny termin
             </Link>
             <span className="bai-notka">Na szkoleniu pracuję na narzędziach, których firma już używa</span>

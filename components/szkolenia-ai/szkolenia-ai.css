@@ -385,7 +385,7 @@ body:has(.sza)::after { display: none; }
 .sza .smuga.dolna { top: auto; right: auto; left: -15%; bottom: -30%; width: 90%; height: 26rem; transform: rotate(-14deg); animation-duration: 20s; }
 .sza .stopka-w { position: relative; z-index: 2; max-width: var(--max); margin: 0 auto; padding: 0 var(--bok); display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 3rem; align-items: start; }
 .sza .mail { display: inline-block; font-weight: 300; font-size: clamp(1.5rem, 3.3vw, 2.9rem); line-height: 1.1; letter-spacing: -0.045em; margin-bottom: 0.9rem; }
-.sza .stopka nav { display: grid; grid-template-columns: repeat(3, auto); gap: clamp(1.5rem, 4vw, 3.5rem); justify-content: end; }
+.sza .stopka nav { display: grid; grid-template-columns: repeat(4, auto); gap: clamp(1.5rem, 4vw, 3.5rem); justify-content: end; }
 .sza .stopka nav .mono { margin-bottom: 0.9rem; }
 .sza .stopka nav a { display: block; font-size: 1rem; padding: 0.3rem 0; color: var(--tekst); opacity: 0.9; transition: opacity 140ms ease-out; }
 @media (hover: hover) { .sza .stopka nav a:hover { opacity: 1; } .sza .mail:hover { color: var(--akcent-jasny); } }

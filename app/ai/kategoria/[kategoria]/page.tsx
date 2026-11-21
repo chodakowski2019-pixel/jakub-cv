@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Wezwanie } from "../../../blog-ai/widok";
+import { Wezwanie } from "../../../blog/widok";
 import { DOMENA, PODGLAD } from "@/lib/blog-ai";
 import { BAZA_NARZEDZI, CENNIKI, KATEGORIE, kategoria, kategorieZNarzedziami, narzedziaKategorii } from "@/lib/narzedzia-ai";
 

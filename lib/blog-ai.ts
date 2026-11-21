@@ -6,14 +6,16 @@ import path from "node:path";
 // tak samo jak blog Bruno (lib/bruno/blog.ts). Artykuły w .md, własny parser frontmattera i mini Markdown, bez nowych paczek.
 // Wygląd = styl strony szkoleń (components/szkolenia-ai/szkolenia-ai.css): czerń, Geist, limonka.
 //
-// PODGLĄD: blog stoi pod /podglad/blog-ai z noindex, tak jak strona szkoleń. Publikacja = decyzja USER_001:
-// 1) PODGLAD na false, 2) BAZA i STRONA_SZKOLEN na adresy docelowe, 3) przenieść app/podglad/blog-ai, 4) dopisać adresy do app/sitemap.xml/route.ts.
+// 21.11.2026 (USER_001: „bez podglądu, to ma być podstrona”): blog pod jakubchodakowski.com/blog (app/blog), indeksowany,
+// w mapie witryny. Stare adresy /podglad/blog-ai przekierowane (next.config.ts). Strona szkoleń = strona główna (/).
+// Uwaga: na localhost i salesbruno.pl adres /blog to blog Bruno (proxy.ts). Lokalnie ten blog widać pod 127.0.0.1:3077/blog.
+// Gdyby blog miał wrócić do podglądu: PODGLAD = true (noindex) i BAZA na adres podglądu.
 
-export const PODGLAD = true;
+export const PODGLAD = false;
 /** Adres bloga. W treści artykułów linki pisze się jako /blog/<slug>, renderer podmienia początek na BAZA. */
-export const BAZA = "/podglad/blog-ai";
-/** Strona sprzedażowa szkoleń. W treści: /szkolenie albo /szkolenie#cena. */
-export const STRONA_SZKOLEN = "/podglad/szkolenia-ai";
+export const BAZA = "/blog";
+/** Strona sprzedażowa szkoleń = strona główna. W treści: /szkolenie albo /szkolenie#cena. */
+export const STRONA_SZKOLEN = "/";
 export const DOMENA = "https://jakubchodakowski.com";
 
 export const AUTOR = {
@@ -219,7 +221,8 @@ export function artykulyGrupy(slug: string): Artykul[] {
 /** /blog/<slug> → adres bloga, /szkolenie → strona sprzedażowa. Jedno miejsce zmiany przy publikacji. */
 function adres(href: string): string {
   if (href === "/blog" || href.startsWith("/blog/")) return `${BAZA}${href.slice("/blog".length)}`;
-  if (href === "/szkolenie" || href.startsWith("/szkolenie#")) return `${STRONA_SZKOLEN}${href.slice("/szkolenie".length)}`;
+  if (href === "/szkolenie") return STRONA_SZKOLEN;
+  if (href.startsWith("/szkolenie#")) return `${STRONA_SZKOLEN.replace(/\/$/, "")}/${href.slice("/szkolenie".length)}`;
   return href;
 }
 

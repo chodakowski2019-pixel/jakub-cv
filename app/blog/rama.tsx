@@ -28,7 +28,7 @@ export function Rama({ children, etykieta, start }: { children: React.ReactNode;
             <Link href={STRONA_SZKOLEN} className="bai-mono">
               Szkolenie AI
             </Link>
-            <Link href={`${STRONA_SZKOLEN}#formularz`} className="bai-przycisk bai-przycisk-maly">
+            <Link href="/#formularz" className="bai-przycisk bai-przycisk-maly">
               Sprawdź wolny termin
             </Link>
           </nav>
