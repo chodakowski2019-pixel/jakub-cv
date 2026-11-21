@@ -223,7 +223,8 @@ body:has(.sza)::after { display: none; }
 /* USER_001 21.11.2026: „to zdjęcie daj na bardziej limonkowo”. Duoton: zdjęcie czarno-białe, jasne miejsca barwi limonka
    (warstwa limonki nałożona przez mnożenie), cienie zostają czarne. Dół przyciemniony, żeby biały napis był czytelny. */
 .sza .kadr img { object-fit: cover; object-position: 60% 40%; filter: grayscale(1) contrast(1.18) brightness(1.02); }
-.sza .kadr::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(3, 4, 5, 0.6), rgba(3, 4, 5, 0) 46%), var(--akcent); mix-blend-mode: multiply; }
+/* 21.11 wieczorem, USER_001: „daj mniej limonki na tym zdjęciu u góry”. Limonka w połowie siły: jasne miejsca blado-limonkowe, nie pełne. */
+.sza .kadr::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(3, 4, 5, 0.6), rgba(3, 4, 5, 0) 46%), linear-gradient(rgba(var(--akcent-rgb), 0.42), rgba(var(--akcent-rgb), 0.42)); mix-blend-mode: multiply; }
 .sza .kadr figcaption { position: absolute; z-index: 1; left: 1.4rem; top: 1.25rem; right: 40%; color: var(--na-zdjeciu); opacity: 0.85; }
 .sza .kadr-napis { color: var(--na-zdjeciu); position: absolute; z-index: 1; left: 1.4rem; bottom: 1.25rem; font-weight: 300; font-size: clamp(2.2rem, 4.8vw, 4.25rem); line-height: 0.95; letter-spacing: -0.045em; }
 .sza .trojka { display: flex; gap: clamp(1.5rem, 3vw, 2.75rem); margin: 2rem 0 1.75rem; }

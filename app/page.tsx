@@ -1,25 +1,35 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
-import GlownaPage from "@/components/podglad/glowna/GlownaPage";
+import { Geist, Geist_Mono } from "next/font/google";
+import SzkoleniaAiPage from "@/components/szkolenia-ai/SzkoleniaAiPage";
 
-// Strona główna jakubchodakowski.com od 9.10 (USER_001: „to będzie strona główna").
-// Wcześniej: public/home.html (5.10, zostaje pod /en) i stara strona „transformacja AI"
-// (historia w git, commit 9fe396a).
+// Strona główna jakubchodakowski.com od 21.11.2026 = strona „Szkolenie AI dla firm” (USER_001: „to ma być strona główna”).
+// Wersja czarna z limonką (motyw="ciemny"), ta sama co podgląd /podglad/szkolenia-ai.
+// Poprzednia strona główna (od 9.10, „Sprzedaż + AI”, components/podglad/glowna/GlownaPage) zostaje pod /podglad/glowna;
+// starsze: public/home.html (/en) i strona „transformacja AI” (historia w git, commit 9fe396a).
+// Kroje Geist i Geist Mono z polskimi znakami (globalny Geist Mono z layoutu ma tylko znaki łacińskie).
 
-const inter = Inter({ subsets: ["latin", "latin-ext"], weight: ["300", "400", "500", "600"], variable: "--pgg-inter" });
-const serif = Instrument_Serif({ subsets: ["latin", "latin-ext"], weight: "400", style: ["normal", "italic"], variable: "--pgg-serif" });
+const geist = Geist({ subsets: ["latin", "latin-ext"], variable: "--sza-sans", display: "swap" });
+const geistMono = Geist_Mono({ subsets: ["latin", "latin-ext"], variable: "--sza-mono", display: "swap" });
 
-const TYTUL = "Jakub Chodakowski | Sprzedaż + AI";
-const OPIS = "Twoi handlowcy domykają więcej z AI. Zbudowałem Bruno AI, klienta AI, z którym handlowcy ćwiczą rozmowy, zanim zadzwonią do prawdziwego.";
+const TYTUL = "Szkolenie AI dla firm | Jakub Chodakowski";
+const OPIS = "Warsztat AI dla zespołu do 12 osób: każdy pracuje na swoim laptopie i na zadaniach z firmy. Rozkład dnia, cena i wolne terminy.";
+const OG = "Szkolenie AI dla firm. Jeden dzień, zespół do 12 osób";
 
 export const metadata: Metadata = {
-  title: TYTUL,
+  title: { absolute: TYTUL },
   description: OPIS,
   alternates: { canonical: "/" },
-  openGraph: { title: TYTUL, description: OPIS, url: "/", type: "website", locale: "pl_PL", images: [{ url: "/profilowe_jakub.png", alt: "Jakub Chodakowski" }] },
-  twitter: { card: "summary_large_image", title: TYTUL, description: OPIS, images: ["/profilowe_jakub.png"] },
+  openGraph: {
+    title: OG,
+    description: OPIS,
+    url: "/",
+    type: "website",
+    locale: "pl_PL",
+    images: [{ url: "/talk-crash-mondays.png", width: 1614, height: 1058, alt: "Jakub Chodakowski prowadzi wystąpienie o AI" }],
+  },
+  twitter: { card: "summary_large_image", title: OG, description: OPIS, images: ["/talk-crash-mondays.png"] },
 };
 
 export default function Home() {
-  return <GlownaPage fontClass={`${inter.variable} ${serif.variable}`} />;
+  return <SzkoleniaAiPage fontClass={`${geist.variable} ${geistMono.variable}`} motyw="ciemny" />;
 }
