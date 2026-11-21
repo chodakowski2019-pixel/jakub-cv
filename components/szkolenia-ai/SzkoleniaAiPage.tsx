@@ -7,10 +7,11 @@ import Gwiazdy from "./Gwiazdy";
 import Orbita from "./Orbita";
 import Kolory from "./Kolory";
 import Kula from "./Kula";
+import Loga from "./Loga";
 import { PALETY, STARE, klasyGen, zmienne } from "./motywy";
 import {
   BADANIE, BILET, CENA, CENY, DLA_KOGO, FORMULARZ, FOTO, HERO, HERO_TAG, KONTAKT, PROWADZACY, PROWADZACY_LICZBY,
-  PRZEBIEG, PYTANIA, ROZKLAD, SCHODY, SCHODY_OPIS, SCHODY_TAKZE, SYTUACJA, TASMA, zl,
+  PRZEBIEG, PYTANIA, ROZKLAD, SCHODY, SCHODY_OPIS, SCHODY_TAKZE, SYTUACJA, zl,
 } from "./dane";
 import "./szkolenia-ai.css";
 import "./szkolenia-ai-kivo.css";
@@ -82,11 +83,12 @@ const Obrys = () => (
   </svg>
 );
 
-function Glowa({ nad, tytul, id, opis, children }: { nad: string; tytul: string; id: string; opis?: string; children?: ReactNode }) {
+// nad = mała etykieta nad nagłówkiem; bez niej sekcja zaczyna się od razu od nagłówka.
+function Glowa({ nad, tytul, id, opis, children }: { nad?: string; tytul: string; id: string; opis?: string; children?: ReactNode }) {
   return (
     <div className="glowa">
       <div>
-        <p className="mono nad">{nad}</p>
+        {nad && <p className="mono nad">{nad}</p>}
         <h2 id={id}><Zdanie tekst={kropka(tytul)} /></h2>
       </div>
       {(opis || children) && (
@@ -129,7 +131,6 @@ export default function SzkoleniaAiPage({ fontClass, motyw = "ciemny", przelaczn
   const kivo = motyw === "kivo";
   const bloki = ROZKLAD.wiersze.filter((w) => w.opis);
   const przerwy = ROZKLAD.wiersze.filter((w) => !w.opis);
-  const powtorz = (l: string[]) => [...l, ...l, ...l, ...l];
 
   return (
     <div className={`sza${w.klasy} ${fontClass}`} style={w.style} lang="pl">
@@ -148,13 +149,12 @@ export default function SzkoleniaAiPage({ fontClass, motyw = "ciemny", przelaczn
           <section className="hero k-hero" aria-labelledby="h1">
             <div className="k-gora">
               <div>
-                <p className="mono nad">{HERO.nad} · w firmie albo online</p>
+                <p className="mono nad">{HERO.nad}</p>
                 <h1 id="h1">
                   <span>{s(HERO.h1[0])}</span> <span>{s(HERO.h1[1])}</span>
                 </h1>
               </div>
               <div>
-                <p className="lead">{s(HERO.lead)} <strong>{s(HERO.mocne)}</strong></p>
                 <div className="akcje">
                   <a href="#formularz" className="btn" data-cta="hero">{HERO.cta} <Strzalka /></a>
                   <a href="#rozklad" className="btn puste">{HERO.cta2}</a>
@@ -167,7 +167,7 @@ export default function SzkoleniaAiPage({ fontClass, motyw = "ciemny", przelaczn
               <figure className="kadr">
                 <Image src={FOTO.src} alt={FOTO.alt} fill sizes="(max-width: 1024px) 100vw, 560px" loading="eager" fetchPriority="high" />
                 <figcaption>{FOTO.podpis}</figcaption>
-                <p className="kadr-napis" aria-hidden="true">AI<br />w praktyce</p>
+                <p className="kadr-napis" aria-hidden="true">O AI i danych</p>
               </figure>
               <ol className="k-kroki" aria-label="Co zostaje po szkoleniu">
                 {SCHODY.map((x, i) => (
@@ -201,11 +201,10 @@ export default function SzkoleniaAiPage({ fontClass, motyw = "ciemny", przelaczn
             <div className="hero-w">
               <div className="pocisk">
                 <Obrys />
-                <p className="mono nad">{HERO.nad} · w firmie albo online</p>
+                <p className="mono nad">{HERO.nad}</p>
                 <h1 id="h1">
                   <span>{s(HERO.h1[0])}</span> <span>{s(HERO.h1[1])}</span>
                 </h1>
-                <p className="lead">{s(HERO.lead)} <strong>{s(HERO.mocne)}</strong></p>
                 <div className="akcje">
                   <a href="#formularz" className="btn" data-cta="hero">{HERO.cta}</a>
                   <a href="#rozklad" className="btn puste">{HERO.cta2}</a>
@@ -215,22 +214,20 @@ export default function SzkoleniaAiPage({ fontClass, motyw = "ciemny", przelaczn
               <figure className="kadr">
                 <Image src={FOTO.src} alt={FOTO.alt} fill sizes="(max-width: 1024px) 100vw, 620px" loading="eager" fetchPriority="high" />
                 <figcaption className="mono">{FOTO.podpis}</figcaption>
-                <p className="kadr-napis" aria-hidden="true">AI<br />w praktyce</p>
+                <p className="kadr-napis" aria-hidden="true">O AI i danych</p>
               </figure>
             </div>
-            <div className="hero-dol">
-              <p className="znaczek">{s(HERO_TAG)}</p>
-              <span className="prazki" aria-hidden="true" />
-              <p className="pod">{HERO.pod}</p>
-            </div>
+            {/* USER_001 21.11.2026: tabliczka „1 dzień. Do 12 osób. Od 3 900 zł netto.” i dopisek o formularzu usunięte z pierwszego ekranu. */}
           </section>
         )}
 
         {/* SYTUACJA: problem */}
         <section className="sek" aria-labelledby="sytuacja">
           <div className="sek-w">
-            <Glowa nad="Sytuacja" tytul={SYTUACJA.tytul} id="sytuacja" opis={SYTUACJA.opis} />
-            <ol className="wiersze">
+            {/* USER_001 21.11.2026: etykieta „Sytuacja” nad nagłówkiem usunięta. */}
+            <Glowa tytul={SYTUACJA.tytul} id="sytuacja" opis={SYTUACJA.opis} />
+            {/* USER_001 21.11.2026: „to trzeba w kafelki dać”. 4 sytuacje jako kafelki 2 × 2 (klasa kafle). */}
+            <ol className="wiersze kafle">
               {SYTUACJA.wiersze.map((w, i) => (
                 <li className="poj" key={w.co}>
                   <span className="mono nr">0{i + 1}</span>
@@ -239,9 +236,7 @@ export default function SzkoleniaAiPage({ fontClass, motyw = "ciemny", przelaczn
                 </li>
               ))}
             </ol>
-            <div className="liczby">
-              {SYTUACJA.liczby.map((l) => <Liczba key={l.n} {...l} />)}
-            </div>
+            {/* USER_001 21.11.2026: liczby GUS (39,8% Polaków, 17,8% firm) usunięte z tej sekcji. */}
           </div>
         </section>
         <Kreska />
@@ -317,16 +312,8 @@ export default function SzkoleniaAiPage({ fontClass, motyw = "ciemny", przelaczn
           </div>
         </section>
 
-        {/* TAŚMA */}
-        <div className="tasma">
-          <p className="ukryte">Szkolenie dla działów: {TASMA.duza.join(", ")}. Narzędzia: {TASMA.mala.join(", ")}.</p>
-          <div className="tasma-rzad duza" aria-hidden="true">
-            <div>{powtorz(TASMA.duza).map((x, i) => <span key={i}>{x}<b>✦</b></span>)}</div>
-          </div>
-          <div className="tasma-rzad mala" aria-hidden="true">
-            <div>{powtorz([...TASMA.mala, ...TASMA.mala]).map((x, i) => <span key={i}>{x}<b>✦</b></span>)}</div>
-          </div>
-        </div>
+        {/* LOGA NARZĘDZI (w miejscu przewijanej taśmy z działami i narzędziami; USER_001 21.11.2026) */}
+        <Loga />
         <Kreska w="prawo" />
 
         {/* ROZKŁAD DNIA: orbita */}

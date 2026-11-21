@@ -184,6 +184,13 @@ body:has(.sza)::after { display: none; }
 .sza .wiersze .nr { transition: color 200ms ease-out; }
 .sza .wiersze .meta { margin-top: 0.4rem; font-size: 1rem; color: var(--akcent-jasny); }
 @media (hover: hover) { .sza .wiersze li:hover { background: var(--najazd-slaby); } .sza .wiersze li:hover .nr { color: var(--akcent-jasny); } }
+/* Kafelki (sekcja „Sytuacja”, USER_001 21.11.2026: „to trzeba w kafelki dać”): 2 × 2, numer w pigułce, zdanie, skutek.
+   Tylko wersja czarna; wersja Kivo ma własny wygląd tej listy. */
+.sza:not(.kivo) .wiersze.kafle { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; border-top: 0; }
+.sza:not(.kivo) .wiersze.kafle li { display: flex; flex-direction: column; gap: 0.7rem; padding: clamp(1.5rem, 2.6vw, 2.25rem); border: 1px solid var(--linia); border-radius: 0.75rem; background: var(--karta); transition: border-color 200ms ease-out, background-color 200ms ease-out; }
+.sza:not(.kivo) .wiersze.kafle .nr { align-self: flex-start; margin-bottom: 0.6rem; padding: 0.3rem 0.7rem; border: 1px solid var(--linia2); border-radius: 999px; color: var(--akcent-jasny); }
+.sza:not(.kivo) .wiersze.kafle h3 { font-size: clamp(1.35rem, 2vw, 1.75rem); line-height: 1.2; }
+@media (hover: hover) { .sza:not(.kivo) .wiersze.kafle li:hover { border-color: var(--linia2); background: var(--najazd-slaby); } }
 .sza .zycie { margin-top: clamp(2.5rem, 5vw, 4rem); }
 .sza .zycie li { grid-template-columns: 4.5rem minmax(0, 1fr); padding: 1.05rem 0; }
 .sza .zycie p { font-size: 1.0625rem; color: var(--tekst); }
@@ -213,13 +220,23 @@ body:has(.sza)::after { display: none; }
 .sza .firma { display: grid; grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
 .sza .firma .wyciecie { margin-top: 0; aspect-ratio: 4 / 4.1; }
 .sza .kadr { position: relative; aspect-ratio: 16 / 10.6; overflow: hidden; border: 1px solid var(--linia2); border-radius: 1.25rem 46% 46% 1.25rem / 1.25rem 50% 50% 1.25rem; background: var(--tlo2); }
-.sza .kadr img { object-fit: cover; object-position: 60% 40%; filter: grayscale(1) contrast(1.1) brightness(0.72); }
-.sza .kadr::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, rgba(var(--akcent-rgb), 0.3), rgba(3, 4, 5, 0.05) 70%); mix-blend-mode: soft-light; }
+/* USER_001 21.11.2026: „to zdjęcie daj na bardziej limonkowo”. Duoton: zdjęcie czarno-białe, jasne miejsca barwi limonka
+   (warstwa limonki nałożona przez mnożenie), cienie zostają czarne. Dół przyciemniony, żeby biały napis był czytelny. */
+.sza .kadr img { object-fit: cover; object-position: 60% 40%; filter: grayscale(1) contrast(1.18) brightness(1.02); }
+.sza .kadr::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(3, 4, 5, 0.6), rgba(3, 4, 5, 0) 46%), var(--akcent); mix-blend-mode: multiply; }
 .sza .kadr figcaption { position: absolute; z-index: 1; left: 1.4rem; top: 1.25rem; right: 40%; color: var(--na-zdjeciu); opacity: 0.85; }
 .sza .kadr-napis { color: var(--na-zdjeciu); position: absolute; z-index: 1; left: 1.4rem; bottom: 1.25rem; font-weight: 300; font-size: clamp(2.2rem, 4.8vw, 4.25rem); line-height: 0.95; letter-spacing: -0.045em; }
 .sza .trojka { display: flex; gap: clamp(1.5rem, 3vw, 2.75rem); margin: 2rem 0 1.75rem; }
 .sza .trojka dd { font-weight: 300; font-size: clamp(1.75rem, 2.6vw, 2.25rem); line-height: 1; letter-spacing: -0.04em; margin-bottom: 0.6rem; }
 .sza .trojka dt { font-size: 0.9375rem; line-height: 1.4; color: var(--cichy); max-width: 10em; }
+
+/* ---------- Loga narzędzi: ChatGPT, Claude, Gemini w jednym rzędzie (USER_001 21.11.2026) ---------- */
+.sza .loga { padding: clamp(2.5rem, 5vw, 4rem) var(--bok) clamp(3rem, 6vw, 4.5rem); }
+.sza .loga ul { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: clamp(2rem, 7vw, 6.5rem); }
+.sza .loga li { display: flex; align-items: center; gap: 0.8rem; color: var(--cichy); transition: color 200ms ease-out; }
+.sza .loga svg { width: clamp(2rem, 3vw, 2.6rem); height: clamp(2rem, 3vw, 2.6rem); flex: none; }
+.sza .loga span { font-size: clamp(1.5rem, 2.6vw, 2.25rem); font-weight: 400; letter-spacing: -0.03em; line-height: 1; }
+@media (hover: hover) { .sza .loga li:hover { color: var(--tekst); } }
 
 /* ---------- Taśma: wielkie napisy samym konturem ---------- */
 .sza .tasma { padding: clamp(1rem, 3vw, 2.5rem) 0 clamp(2.5rem, 5vw, 4rem); overflow: hidden; }
@@ -298,7 +315,8 @@ body:has(.sza)::after { display: none; }
 /* ---------- Pytania ---------- */
 .sza .pyt { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
 .sza .wyciecie { position: relative; aspect-ratio: 4 / 3; margin-top: 2rem; background: var(--tlo2); clip-path: polygon(0 0, calc(100% - 1.6rem) 0, 100% 1.6rem, 100% calc(100% - 1.6rem), calc(100% - 1.6rem) 100%, 0 100%); }
-.sza .wyciecie img { object-fit: cover; object-position: 50% 16%; filter: grayscale(1) contrast(1.08) brightness(0.9); }
+/* Portret w kolorze, zdjęcie z pomarańczowym tłem (USER_001 21.11.2026). */
+.sza .wyciecie img { object-fit: cover; object-position: 50% 16%; }
 @media (min-width: 64.01rem) { .sza .pyt > div:first-child { position: sticky; top: 6.5rem; } }
 .sza .pyt > div:first-child .btn { margin-top: 1.25rem; }
 .sza .pytania { border-top: 1px solid var(--linia); }
@@ -420,6 +438,7 @@ body:has(.sza)::after { display: none; }
   .sza .zycie li > p { grid-column: auto; }
   .sza .schody { grid-template-columns: minmax(0, 1fr); }
   .sza .dwie, .sza .liczby { grid-template-columns: minmax(0, 1fr); }
+  .sza:not(.kivo) .wiersze.kafle { grid-template-columns: minmax(0, 1fr); }
   .sza .kadr { border-radius: 1.25rem; aspect-ratio: 4 / 3.4; }
   .sza .trojka { flex-wrap: wrap; }
   .sza .form { grid-template-columns: minmax(0, 1fr); }

@@ -37,9 +37,7 @@ export const zl = (n: number) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, T
 export const HERO = {
   nad: "Szkolenie AI dla firm",
   h1: ["Zespół nie potrzebuje wykładu o AI.", "Potrzebuje dnia pracy z AI."],
-  lead: "Jeden dzień warsztatu dla zespołu do 12 osób. Każdy pracuje na swoim laptopie, na zadaniach z firmy.",
-  // Główna obietnica: na stronie wyróżniona jaśniejszym kolorem.
-  mocne: "Każdy wychodzi z działającym asystentem AI.",
+  // Wstęp pod nagłówkiem usunięty (USER_001 21.11.2026: „usuń”).
   cta: "Sprawdź wolny termin",
   cta2: "Zobacz rozkład dnia",
   pod: "Formularz zajmuje 1 minutę. Odpowiadam osobiście w 24 godziny.",
@@ -57,7 +55,8 @@ export const BILET: { k: string; w: string }[] = [
 export const FOTO = {
   src: "/talk-crash-mondays.png",
   alt: "Jakub Chodakowski prowadzi wystąpienie o AI przed pełną salą",
-  podpis: "CRASH Mondays, sierpień 2024. Wystąpienie o AI i danych.",
+  // „Wystąpienie o AI i danych” usunięte z podpisu; temat stoi dużym napisem na zdjęciu: „O AI i danych” (USER_001 21.11.2026).
+  podpis: "CRASH Mondays, sierpień 2024.",
 };
 
 export const SYTUACJA = {
@@ -72,18 +71,7 @@ export const SYTUACJA = {
       skutek: "Firma ma podejmować działania, które rozwijają kompetencje AI pracowników.",
     },
   ],
-  liczby: [
-    {
-      n: "39,8%",
-      opis: "Polaków w wieku od 16 do 74 lat korzysta z narzędzi AI. Rok wcześniej: 22,7%.",
-      zrodlo: "GUS, Społeczeństwo informacyjne w Polsce w 2026 r.",
-    },
-    {
-      n: "17,8%",
-      opis: "firm w Polsce korzysta z AI. Rok wcześniej: 8,7%.",
-      zrodlo: "GUS, informacja z 29.10.2026",
-    },
-  ],
+  // Liczby GUS (39,8% Polaków, 17,8% firm) usunięte ze strony (USER_001 21.11.2026: „usuń”). Źródła zostają w RESEARCH-2026-11-20.md.
 };
 
 // Dowód pożyczony z badania, skoro własnych wyników klientów jeszcze nie ma.
@@ -211,16 +199,14 @@ export const PROWADZACY = {
   tytul: "Kto prowadzi",
   imie: "Jakub Chodakowski",
   lead: "Od 2022 roku buduję narzędzia z AI. Na szkoleniu pokazuję to, czego sam używam w pracy każdego dnia.",
+  // Życiorys skrócony 21.11.2026 (USER_001): usunięte 2023 strona z artykułami, 2024 CRASH Mondays, 2026 Itera City i Bruno AI.
   os: [
     { rok: "2022", co: "Premiera ChatGPT, 30.11.2022. Od tego dnia buduję i wdrażam narzędzia z AI." },
-    { rok: "2023", co: "Buduję stronę, która sama publikuje artykuły pisane z AI." },
     { rok: "2024", co: "Certyfikat AI for Managers, Elephant AI. 7 tygodni, ponad 35 godzin, egzamin. Prowadząca: Maria Parysz." },
-    { rok: "2024", co: "Wystąpienie na CRASH Mondays o AI i danych." },
-    { rok: "2025", co: "Szkolę nauczycieli z praktycznego użycia AI, na konferencji." },
-    { rok: "2026", co: "Itera City: aplikacja mobilna, przewodnik turystyczny oparty o AI." },
-    { rok: "2026", co: "Bruno AI: aplikacja, w której głosowa AI prowadzi rozmowę na żywo i ją ocenia." },
+    { rok: "2025", co: "Szkolę nauczycieli z praktycznego użycia AI." },
   ],
   cert: { src: "/cert-ai-managers.png", alt: "Certyfikat AI for Managers, Elephant AI, Jakub Chodakowski", podpis: "Certyfikat AI for Managers, 20.06.2024" },
+  // USER_001 21.11.2026: zdjęcie w kolorze; najpierw oryginał z prawdziwym tłem, potem: „jednak weź to moje zdjęcie z pomarańczowym tłem”.
   portret: { src: "/profilowe_jakub-hero.png", alt: "Jakub Chodakowski" },
 };
 
@@ -350,15 +336,9 @@ export const SCHODY_TAKZE = [
   { t: "Spotkanie po 14 dniach.", o: "45 minut online. Pytania z praktyki i poprawki." },
 ];
 
-// Liczby przy prowadzącym: tylko fakty z życiorysu. Podpis czyta się po liczbie.
+// Liczby przy prowadzącym: tylko fakty z życiorysu. „35+ godzin” i „2024 występuję i szkolę” usunięte (USER_001 21.11.2026).
 export const PROWADZACY_LICZBY = [
   { n: "2022", o: "od tego roku buduję z AI" },
-  { n: "35+", o: "godzin kursu AI for Managers" },
-  { n: "2024", o: "od tego roku występuję i szkolę z AI" },
 ];
 
-// Przewijana taśma: działy, dla których jest szkolenie, i narzędzia, na których pracujemy.
-export const TASMA = {
-  duza: ["Marketing", "Obsługa klienta", "Administracja", "HR"],
-  mala: ["ChatGPT", "Copilot", "Gemini", "Claude"],
-};
+// Przewijana taśma z działami i nazwami narzędzi usunięta (USER_001 21.11.2026). Zostały loga ChatGPT, Claude, Gemini: Loga.tsx.
