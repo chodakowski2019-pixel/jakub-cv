@@ -1,0 +1,1196 @@
+{
+ "gus-2026-firmy": {
+  "liczba": "17,8%",
+  "teza": "W 2026 r. z technologii AI korzystało 17,8% firm w Polsce. Rok wcześniej 8,7%.",
+  "nazwa": "GUS, Społeczeństwo informacyjne w Polsce w 2026 r.",
+  "url": "https://stat.gov.pl/dla-mediow/informacje-prasowe/ai-zakupy-i-sprawy-urzedowe-tak-polacy-korzystaja-z-internetu-w-2026-roku,57,1.html"
+ },
+ "gus-2026-male": {
+  "liczba": "13,7%",
+  "teza": "W 2026 r. z AI korzystało 13,7% małych firm (od 10 do 49 pracujących), 30,3% średnich i 59,8% dużych.",
+  "nazwa": "GUS, Społeczeństwo informacyjne w Polsce w 2026 r.",
+  "url": "https://publikacje.new.stat.gov.pl/sites/default/files/2026-10/spoleczenstwo_informacyjne_w_polsce_w_2026.xlsx"
+ },
+ "gus-2026-biuro": {
+  "liczba": "9,6%",
+  "teza": "W 2026 r. 9,6% firm w Polsce stosowało AI do prac biurowych i procesów zarządczych.",
+  "nazwa": "GUS, Społeczeństwo informacyjne w Polsce w 2026 r.",
+  "url": "https://publikacje.new.stat.gov.pl/sites/default/files/2026-10/spoleczenstwo_informacyjne_w_polsce_w_2026.pdf"
+ },
+ "gus-2026-osoby": {
+  "liczba": "39,8%",
+  "teza": "W 2026 r. z narzędzi AI korzystało 39,8% osób w wieku od 16 do 74 lat w Polsce.",
+  "nazwa": "GUS, Społeczeństwo informacyjne w Polsce w 2026 r.",
+  "url": "https://stat.gov.pl/dla-mediow/informacje-prasowe/ai-zakupy-i-sprawy-urzedowe-tak-polacy-korzystaja-z-internetu-w-2026-roku,57,1.html"
+ },
+ "gus-2025-budownictwo": {
+  "liczba": "2,6%",
+  "teza": "W 2025 r. z AI korzystało 2,6% firm budowlanych w Polsce. To najmniej ze wszystkich badanych sekcji.",
+  "nazwa": "GUS, Wykorzystanie technologii informacyjno-komunikacyjnych w 2025 r.",
+  "url": "https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5497/1/19/1/spoleczenstwo_informacyjne_w_polsce_2025.pdf"
+ },
+ "gus-2025-transport": {
+  "liczba": "3,4%",
+  "teza": "W 2025 r. z AI korzystało 3,4% firm z sekcji transport i gospodarka magazynowa.",
+  "nazwa": "GUS, Wykorzystanie technologii informacyjno-komunikacyjnych w 2025 r.",
+  "url": "https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5497/1/19/1/spoleczenstwo_informacyjne_w_polsce_2025.pdf"
+ },
+ "gus-2025-przetworstwo": {
+  "liczba": "7,8%",
+  "teza": "W 2025 r. z AI korzystało 7,8% firm przetwórstwa przemysłowego.",
+  "nazwa": "GUS, Wykorzystanie technologii informacyjno-komunikacyjnych w 2025 r.",
+  "url": "https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5497/1/19/1/spoleczenstwo_informacyjne_w_polsce_2025.pdf"
+ },
+ "gus-2025-profesjonalna": {
+  "liczba": "23,2%",
+  "teza": "W 2025 r. z AI korzystało 23,2% firm z sekcji działalność profesjonalna, naukowa i techniczna. Do tej sekcji należą biura rachunkowe.",
+  "nazwa": "GUS, Wykorzystanie technologii informacyjno-komunikacyjnych w 2025 r.",
+  "url": "https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5497/1/19/1/spoleczenstwo_informacyjne_w_polsce_2025.pdf"
+ },
+ "gus-2025-finanse": {
+  "liczba": "2,6%",
+  "teza": "W 2025 r. 2,6% firm w Polsce używało AI w finansach i księgowości, a 3,7% w pracach biurowych, HR i zarządzaniu.",
+  "nazwa": "GUS, Wykorzystanie technologii informacyjno-komunikacyjnych w 2025 r.",
+  "url": "https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5497/1/19/1/spoleczenstwo_informacyjne_w_polsce_2025.pdf"
+ },
+ "gus-2025-bariery": {
+  "liczba": "",
+  "teza": "W 2025 r. najczęstszym powodem niekorzystania z AI w polskich firmach był brak ludzi i wiedzy.",
+  "nazwa": "GUS, Wykorzystanie technologii informacyjno-komunikacyjnych w 2025 r.",
+  "url": "https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5497/1/19/1/spoleczenstwo_informacyjne_w_polsce_2025.pdf"
+ },
+ "eurostat-2025-administracja": {
+  "liczba": "0,89%",
+  "teza": "W 2025 r. AI do spraw administracyjnych i zarządzania stosowało w Polsce 0,89% firm budowlanych, 1,61% transportowych i 3,34% przetwórczych.",
+  "nazwa": "Eurostat, AI w przedsiębiorstwach, dane za 2025 r.",
+  "url": "https://ec.europa.eu/eurostat/databrowser/view/isoc_eb_ain2/default/table?lang=en"
+ },
+ "eurostat-2025-budownictwo": {
+  "liczba": "2,35% i 10,79%",
+  "teza": "W 2025 r. AI stosowało 2,35% firm budowlanych w Polsce. Średnia w Unii: 10,79%.",
+  "nazwa": "Eurostat, AI w przedsiębiorstwach, dane za 2025 r.",
+  "url": "https://ec.europa.eu/eurostat/databrowser/view/isoc_eb_ain2/default/table?lang=en"
+ },
+ "eurostat-2025-transport": {
+  "liczba": "2,97% i 11,15%",
+  "teza": "W 2025 r. AI stosowało 2,97% firm transportowych w Polsce. Średnia w Unii: 11,15%.",
+  "nazwa": "Eurostat, AI w przedsiębiorstwach, dane za 2025 r.",
+  "url": "https://ec.europa.eu/eurostat/databrowser/view/isoc_eb_ain2/default/table?lang=en"
+ },
+ "eurostat-2025-przetworstwo": {
+  "liczba": "7,7% i 17,27%",
+  "teza": "W 2025 r. AI stosowało 7,7% firm przetwórstwa przemysłowego w Polsce. Średnia w Unii: 17,27%.",
+  "nazwa": "Eurostat, AI w przedsiębiorstwach, dane za 2025 r.",
+  "url": "https://ec.europa.eu/eurostat/databrowser/view/isoc_eb_ain2/default/table?lang=en"
+ },
+ "eurostat-2025-ksiegowe": {
+  "liczba": "20,48% i 37,92%",
+  "teza": "W 2025 r. AI stosowało 20,48% polskich firm z działów obejmujących m.in. działalność prawniczą i rachunkowo-księgową. Średnia w Unii: 37,92%.",
+  "nazwa": "Eurostat, AI w przedsiębiorstwach, dane za 2025 r.",
+  "url": "https://ec.europa.eu/eurostat/databrowser/view/isoc_eb_ain2/default/table?lang=en"
+ },
+ "hbs-bcg-szybkosc": {
+  "liczba": "25,1%",
+  "teza": "W eksperymencie Harvard Business School i BCG 758 konsultantów z dostępem do AI wykonało 12,2% więcej zadań i robiło je 25,1% szybciej.",
+  "nazwa": "Harvard Business School i BCG, badanie 758 konsultantów, 2023",
+  "url": "https://www.hbs.edu/faculty/Pages/item.aspx?num=64700"
+ },
+ "hbs-bcg-granica": {
+  "liczba": "19%",
+  "teza": "W zadaniu wybranym spoza możliwości AI osoby korzystające z AI o 19% rzadziej dochodziły do poprawnego rozwiązania niż osoby bez AI.",
+  "nazwa": "Harvard Business School i BCG, badanie 758 konsultantów, 2023",
+  "url": "https://www.hbs.edu/faculty/Pages/item.aspx?num=64700"
+ },
+ "noy-zhang": {
+  "liczba": "40%",
+  "teza": "W eksperymencie na 453 specjalistach ChatGPT skrócił średni czas zadań pisarskich o 40% i podniósł jakość tekstów o 18%.",
+  "nazwa": "Noy i Zhang, Science, 2023",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/37440646/"
+ },
+ "brynjolfsson": {
+  "liczba": "14%",
+  "teza": "U 5 179 pracowników obsługi klienta asystent AI podniósł liczbę spraw rozwiązanych na godzinę średnio o 14%, a u nowych i słabszych pracowników o 34%.",
+  "nazwa": "Brynjolfsson, Li i Raymond, NBER, 2023",
+  "url": "https://www.nber.org/papers/w31161"
+ },
+ "stlouisfed": {
+  "liczba": "5,4%",
+  "teza": "Użytkownicy generatywnej AI w USA oszczędzali średnio 5,4% godzin pracy, czyli 2,2 godziny tygodniowo. To deklaracje z ankiety.",
+  "nazwa": "Bank Rezerwy Federalnej w St. Louis, 2025",
+  "url": "https://www.stlouisfed.org/on-the-economy/2025/feb/impact-generative-ai-work-productivity"
+ },
+ "xero-uk": {
+  "liczba": "7,1 godziny",
+  "teza": "W badaniu Xero 520 księgowych z Wielkiej Brytanii deklarowało, że AI oszczędza biuru średnio 7,1 godziny tygodniowo.",
+  "nazwa": "Xero, badanie biur księgowych w Wielkiej Brytanii, maj 2026",
+  "url": "https://www.xero.com/uk/media-releases/modern-practice-playbook-uk/"
+ },
+ "bcg-2025-5-godzin": {
+  "liczba": "5 godzin",
+  "teza": "Regularne używanie AI jest wyraźnie częstsze u pracowników po co najmniej 5 godzinach szkolenia, z dostępem do szkolenia na żywo i coachingu.",
+  "nazwa": "BCG, AI at Work 2025, ponad 10 600 badanych",
+  "url": "https://www.bcg.com/publications/2025/ai-at-work-momentum-builds-but-gaps-remain"
+ },
+ "bcg-2025-jedna-trzecia": {
+  "liczba": "1 z 3",
+  "teza": "Tylko jedna trzecia pracowników uznała, że została właściwie przeszkolona z AI.",
+  "nazwa": "BCG, AI at Work 2025, ponad 10 600 badanych",
+  "url": "https://www.bcg.com/publications/2025/ai-at-work-momentum-builds-but-gaps-remain"
+ },
+ "bcg-2025-lider": {
+  "liczba": "z 15% do 55%",
+  "teza": "Przy mocnym wsparciu przełożonych odsetek pracowników pozytywnie nastawionych do generatywnej AI rośnie z 15% do 55%.",
+  "nazwa": "BCG, AI at Work 2025, ponad 10 600 badanych",
+  "url": "https://www.bcg.com/publications/2025/ai-at-work-momentum-builds-but-gaps-remain"
+ },
+ "bcg-2026-36": {
+  "liczba": "36%",
+  "teza": "W 2026 r. tylko 36% badanych czuło się właściwie przeszkolonych z AI. Tyle samo co rok wcześniej.",
+  "nazwa": "BCG, AI at Work 2026, 11 749 badanych",
+  "url": "https://web-assets.bcg.com/e7/c7/00d913744cccb1e4f65bbf54fe86/ai-at-work-slideshow-june-2026.pdf"
+ },
+ "bcg-2026-czas": {
+  "liczba": "66%",
+  "teza": "66% szeregowych pracowników regularnie używających AI dostaje mało wskazówek, co zrobić z zaoszczędzonym czasem, albo nie dostaje żadnych.",
+  "nazwa": "BCG, AI at Work 2026, 11 749 badanych",
+  "url": "https://web-assets.bcg.com/e7/c7/00d913744cccb1e4f65bbf54fe86/ai-at-work-slideshow-june-2026.pdf"
+ },
+ "gallup-2026-przelozony": {
+  "liczba": "78% i 44%",
+  "teza": "W firmach, które wdrożyły AI, często używa jej 78% pracowników pewnych wsparcia przełożonego i 44% pozostałych.",
+  "nazwa": "Gallup, badanie 21 648 pracowników w USA, sierpień 2026",
+  "url": "https://www.gallup.com/workplace/713063/ai-workplace-productivity.aspx"
+ },
+ "gallup-2026-plan": {
+  "liczba": "26%",
+  "teza": "26% pracowników w USA mówi, że ich organizacja zakomunikowała jasny plan włączania AI do pracy.",
+  "nazwa": "Gallup, badanie 21 648 pracowników w USA, sierpień 2026",
+  "url": "https://www.gallup.com/699797/indicator-artificial-intelligence.aspx"
+ },
+ "ms-2024-39": {
+  "liczba": "39%",
+  "teza": "Tylko 39% osób używających AI w pracy dostało szkolenie z AI od swojej firmy.",
+  "nazwa": "Microsoft i LinkedIn, Work Trend Index 2024, 31 000 osób",
+  "url": "https://www.microsoft.com/en-us/worklab/work-trend-index/ai-at-work-is-here-now-comes-the-hard-part"
+ },
+ "kpmg-pl-29": {
+  "liczba": "29%",
+  "teza": "Tylko 29% badanych w Polsce przeszło jakiekolwiek szkolenie z AI.",
+  "nazwa": "KPMG, badanie zaufania do AI, 1 082 badanych z Polski, 2025",
+  "url": "https://kpmg.com/pl/pl/media/korzysta-z-ai-regularnie-przewaznie-bez-zadnego-przeszkolenia-i-czesto-bez-wiedzy-pracodawcy.html"
+ },
+ "kpmg-pl-55": {
+  "liczba": "55%",
+  "teza": "55% pracowników korzystających z AI w Polsce nie ujawnia tego i przedstawia wyniki AI jako własne.",
+  "nazwa": "KPMG, badanie zaufania do AI, 1 082 badanych z Polski, 2025",
+  "url": "https://kpmg.com/pl/pl/media/korzysta-z-ai-regularnie-przewaznie-bez-zadnego-przeszkolenia-i-czesto-bez-wiedzy-pracodawcy.html"
+ },
+ "kpmg-pl-46": {
+  "liczba": "46%",
+  "teza": "46% badanych w Polsce ocenia swoją wiedzę potrzebną do świadomego korzystania z AI jako niską.",
+  "nazwa": "KPMG, badanie zaufania do AI, 1 082 badanych z Polski, 2025",
+  "url": "https://kpmg.com/pl/pl/media/korzysta-z-ai-regularnie-przewaznie-bez-zadnego-przeszkolenia-i-czesto-bez-wiedzy-pracodawcy.html"
+ },
+ "parp-bkl-64": {
+  "liczba": "64%",
+  "teza": "64% firm, które już korzystają z AI, używa najczęściej narzędzi darmowych i ogólnodostępnych.",
+  "nazwa": "PARP, Bilans Kapitału Ludzkiego 2026",
+  "url": "https://redakcja.parp.gov.pl/storage/publications/pdf/Badanie-AI---raport-podsumowujacy_21_04_2026.pdf"
+ },
+ "parp-bkl-48": {
+  "liczba": "48%",
+  "teza": "Mimo braków kompetencji 48% firm nie podejmuje żadnych działań, a 23% inwestuje w rozwój pracowników.",
+  "nazwa": "PARP, Bilans Kapitału Ludzkiego 2026",
+  "url": "https://redakcja.parp.gov.pl/attachments/article/90550/11%20maja%20BKL.pdf"
+ },
+ "parp-poufne": {
+  "liczba": "",
+  "teza": "PARP ostrzega, że pracownicy często nieświadomie wpisują do publicznych narzędzi AI poufne informacje o klientach, umowach, projektach i finansach.",
+  "nazwa": "PARP, Sztuczna inteligencja w MŚP: od czego zacząć",
+  "url": "https://www.parp.gov.pl/component/content/article/90973:sztuczna-inteligencja-w-msp-od-czego-zaczac-aby-nie-popelnic-kosztownych-bledow"
+ },
+ "parp-jeden-proces": {
+  "liczba": "",
+  "teza": "PARP radzi małym firmom zacząć od jednego procesu i mierzyć efekty, np. oszczędność czasu i liczbę błędów.",
+  "nazwa": "PARP, Sztuczna inteligencja w MŚP: od czego zacząć",
+  "url": "https://www.parp.gov.pl/component/content/article/90973:sztuczna-inteligencja-w-msp-od-czego-zaczac-aby-nie-popelnic-kosztownych-bledow"
+ },
+ "parp-narzedzie": {
+  "liczba": "",
+  "teza": "Według PARP częsty błąd małych firm to zaczynanie od wyboru narzędzia, bez ustalenia, jaki problem ma ono rozwiązać.",
+  "nazwa": "PARP, Sztuczna inteligencja w MŚP: od czego zacząć",
+  "url": "https://www.parp.gov.pl/component/content/article/90973:sztuczna-inteligencja-w-msp-od-czego-zaczac-aby-nie-popelnic-kosztownych-bledow"
+ },
+ "parp-kompetencje": {
+  "liczba": "",
+  "teza": "Według PARP zakup narzędzia nie wystarczy. Pracownicy muszą rozumieć ograniczenia AI, umieć formułować polecenia i krytycznie oceniać wyniki.",
+  "nazwa": "PARP, Sztuczna inteligencja w MŚP: od czego zacząć",
+  "url": "https://www.parp.gov.pl/component/content/article/90973:sztuczna-inteligencja-w-msp-od-czego-zaczac-aby-nie-popelnic-kosztownych-bledow"
+ },
+ "cena-pisanczuk": {
+  "liczba": "od 2 500 zł",
+  "teza": "Warsztat ChatGPT dla grupy do 12 osób: od 2 500 zł netto za dzień.",
+  "nazwa": "pisanczuk.com, cennik, stan na 21.11.2026",
+  "url": "https://pisanczuk.com/szkolenie-chatgpt-dla-firm/"
+ },
+ "cena-smartcode": {
+  "liczba": "5 900 zł",
+  "teza": "Szkolenie stacjonarne dla grupy do 8 osób: 5 900 zł netto. To samo szkolenie online: 4 900 zł netto.",
+  "nazwa": "smartcodeit.pl, cennik, stan na 21.11.2026",
+  "url": "https://smartcodeit.pl/szkolenia/ai-od-podstaw"
+ },
+ "cena-smartcode-otwarte": {
+  "liczba": "990 zł",
+  "teza": "Udział jednej osoby w szkoleniu otwartym: 990 zł netto.",
+  "nazwa": "smartcodeit.pl, cennik, stan na 21.11.2026",
+  "url": "https://smartcodeit.pl/szkolenia/ai-od-podstaw"
+ },
+ "cena-mkmlabs": {
+  "liczba": "od 5 999 zł",
+  "teza": "Jednodniowy warsztat u klienta dla grupy do 10 osób: od 5 999 zł netto. Online: od 3 999 zł netto. Dwa dni: od 9 999 zł netto.",
+  "nazwa": "mkmlabs.pl, cennik, stan na 21.11.2026",
+  "url": "https://mkmlabs.pl/szkolenia-ai-dla-firm/"
+ },
+ "widelki-jablonski": {
+  "liczba": "7 000 do 10 000 zł",
+  "teza": "Szkolenie zamknięte z AI kosztuje najczęściej od 7 000 do 10 000 zł netto za dzień. W trybie zdalnym bywa o około 20% tańsze.",
+  "nazwa": "arturjablonski.com, zestawienie cen, sierpień 2026",
+  "url": "https://arturjablonski.com/blog/ile-kosztuje-szkolenie-ai-dla-firmy/"
+ },
+ "koszty-dodatkowe": {
+  "liczba": "500 do 3 000 zł",
+  "teza": "Do szkolenia stacjonarnego dochodzą dojazd i nocleg trenera (500 do 2 000 zł), sala (500 do 3 000 zł za dzień) i catering (50 do 150 zł na osobę).",
+  "nazwa": "arturjablonski.com, zestawienie cen, sierpień 2026",
+  "url": "https://arturjablonski.com/blog/ile-kosztuje-szkolenie-ai-dla-firmy/"
+ },
+ "cena-buzzcenter": {
+  "liczba": "ok. 13 000 zł",
+  "teza": "Przykładowa cena jednodniowego szkolenia dedykowanego: około 13 000 zł netto.",
+  "nazwa": "buzzcenter.pl, poradnik o cenach szkoleń AI",
+  "url": "https://buzzcenter.pl/ile-kosztuje-szkolenie-ai-dla-firmy/"
+ },
+ "widelki-aiport": {
+  "liczba": "4 000 do 9 500 zł",
+  "teza": "Jednodniowe szkolenie AI dla zespołu do 15 osób kosztuje w Polsce od 4 000 do 9 500 zł netto.",
+  "nazwa": "aiport.pl, poradnik o cenach szkoleń AI, 2026",
+  "url": "https://aiport.pl/poradniki-ai/ile-kosztuje-szkolenie-ai-dla-firmy-w-2026-roku-i-kiedy-naprawde-sie-oplaca/"
+ },
+ "aiport-otwarte": {
+  "liczba": "od 749 zł",
+  "teza": "Miejsce na szkoleniu otwartym z AI kosztuje od 749 zł netto do około 5 000 zł za osobę.",
+  "nazwa": "aiport.pl, poradnik o cenach szkoleń AI, 2026",
+  "url": "https://aiport.pl/poradniki-ai/ile-kosztuje-szkolenie-ai-dla-firmy-w-2026-roku-i-kiedy-naprawde-sie-oplaca/"
+ },
+ "kfs-bur": {
+  "liczba": "",
+  "teza": "Od 1 stycznia 2026 r. szkolenie finansowane z KFS może prowadzić tylko realizator wpisany do Bazy Usług Rozwojowych.",
+  "nazwa": "Powiatowy Urząd Pracy w Wieluniu, zasady KFS 2026",
+  "url": "https://wielun.praca.gov.pl/documents/d/powiatowy-urzad-pracy-w-wieluniu/kfs-2026"
+ },
+ "kfs-70": {
+  "liczba": "70%",
+  "teza": "Firma zatrudniająca więcej niż 9 osób może dostać z KFS 70% kosztów szkolenia.",
+  "nazwa": "Powiatowy Urząd Pracy w Wieluniu, zasady KFS 2026",
+  "url": "https://wielun.praca.gov.pl/documents/d/powiatowy-urzad-pracy-w-wieluniu/kfs-2026"
+ },
+ "aiact-art4": {
+  "liczba": "",
+  "teza": "Art. 4 AI Act po zmianie z lipca 2026 r.: firmy podejmują środki, które wspierają rozwój kompetencji AI u personelu. Przepis nie wymaga określonego poziomu wiedzy u każdej osoby.",
+  "nazwa": "Rozporządzenie (UE) 2026/1744, EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=OJ:L_202601744"
+ },
+ "aiact-zmiana": {
+  "liczba": "2026/1744",
+  "teza": "Art. 4 zmieniło rozporządzenie (UE) 2026/1744 z 8 lipca 2026 r., ogłoszone 24 lipca 2026 r.",
+  "nazwa": "Rozporządzenie (UE) 2026/1744, EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=OJ:L_202601744"
+ },
+ "aiact-od-2025": {
+  "liczba": "2 lutego 2025 r.",
+  "teza": "Art. 4 AI Act stosuje się od 2 lutego 2025 r.",
+  "nazwa": "Rozporządzenie (UE) 2024/1689 (AI Act), EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=OJ:L_202401689"
+ },
+ "aiact-podmiot": {
+  "liczba": "",
+  "teza": "Firma, która tylko korzysta z gotowego narzędzia AI w pracy, jest w AI Act „podmiotem stosującym”. Art. 4 jej dotyczy.",
+  "nazwa": "Rozporządzenie (UE) 2024/1689 (AI Act), EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=OJ:L_202401689"
+ },
+ "aiact-kary": {
+  "liczba": "15 000 000 EUR lub 3%",
+  "teza": "Kara do 15 000 000 EUR lub 3% obrotu dotyczy przepisów wymienionych w art. 99 ust. 4 AI Act. Art. 4 nie ma w tym wykazie.",
+  "nazwa": "Rozporządzenie (UE) 2024/1689 (AI Act), EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=OJ:L_202401689"
+ },
+ "ke-certyfikat": {
+  "liczba": "",
+  "teza": "Do wykazania zgodności z art. 4 nie trzeba certyfikatu. Wystarczy wewnętrzny rejestr szkoleń albo innych działań.",
+  "nazwa": "Komisja Europejska, pytania i odpowiedzi o kompetencjach AI, aktualizacja z 20 października 2026 r.",
+  "url": "https://digital-strategy.ec.europa.eu/en/faqs/ai-literacy-questions-answers"
+ },
+ "ke-chatgpt": {
+  "liczba": "",
+  "teza": "Firma, której pracownicy używają ChatGPT do tekstów albo tłumaczeń, podlega art. 4 i powinna poinformować ich o ryzykach, np. o halucynacjach.",
+  "nazwa": "Komisja Europejska, pytania i odpowiedzi o kompetencjach AI, aktualizacja z 20 października 2026 r.",
+  "url": "https://digital-strategy.ec.europa.eu/en/faqs/ai-literacy-questions-answers"
+ },
+ "ke-nadzor": {
+  "liczba": "2 sierpnia 2026 r.",
+  "teza": "Przepisy o nadzorze i egzekwowaniu stosuje się od 2 sierpnia 2026 r. Nadzór należy do krajowych organów nadzoru rynku.",
+  "nazwa": "Komisja Europejska, pytania i odpowiedzi o kompetencjach AI, aktualizacja z 20 października 2026 r.",
+  "url": "https://digital-strategy.ec.europa.eu/en/faqs/ai-literacy-questions-answers"
+ },
+ "ke-kary": {
+  "liczba": "",
+  "teza": "Kary za naruszenie art. 4 mogą nakładać krajowe organy na podstawie prawa krajowego. Sankcja jest bardziej prawdopodobna, gdy incydent wynikł z braku szkolenia.",
+  "nazwa": "Komisja Europejska, pytania i odpowiedzi o kompetencjach AI, aktualizacja z 20 października 2026 r.",
+  "url": "https://digital-strategy.ec.europa.eu/en/faqs/ai-literacy-questions-answers"
+ },
+ "ke-test": {
+  "liczba": "",
+  "teza": "Art. 4 AI Act nie nakłada obowiązku mierzenia wiedzy pracowników o AI.",
+  "nazwa": "Komisja Europejska, pytania i odpowiedzi o kompetencjach AI, aktualizacja z 20 października 2026 r.",
+  "url": "https://digital-strategy.ec.europa.eu/en/faqs/ai-literacy-questions-answers"
+ },
+ "ke-minimum": {
+  "liczba": "4 kroki",
+  "teza": "Minimum programu według Komisji: ogólne zrozumienie AI w organizacji, rola firmy, ryzyko używanych systemów i działania dobrane do wiedzy osób.",
+  "nazwa": "Komisja Europejska, pytania i odpowiedzi o kompetencjach AI, aktualizacja z 20 października 2026 r.",
+  "url": "https://digital-strategy.ec.europa.eu/en/faqs/ai-literacy-questions-answers"
+ },
+ "ke-inne-osoby": {
+  "liczba": "",
+  "teza": "Obowiązek z art. 4 obejmuje także inne osoby działające w imieniu firmy, np. wykonawcę albo usługodawcę.",
+  "nazwa": "Komisja Europejska, pytania i odpowiedzi o kompetencjach AI, aktualizacja z 20 października 2026 r.",
+  "url": "https://digital-strategy.ec.europa.eu/en/faqs/ai-literacy-questions-answers"
+ },
+ "pl-ustawa": {
+  "liczba": "Dz.U. 2026 poz. 1003",
+  "teza": "Polska ustawa o systemach sztucznej inteligencji została uchwalona 3 lipca 2026 r. i ogłoszona 27 lipca 2026 r.",
+  "nazwa": "Ustawa o systemach sztucznej inteligencji, Dz.U. 2026 poz. 1003",
+  "url": "https://api.sejm.gov.pl/eli/acts/DU/2026/1003/text.pdf"
+ },
+ "pl-kribsi": {
+  "liczba": "",
+  "teza": "Organem nadzoru rynku systemów AI w Polsce jest Komisja Rozwoju i Bezpieczeństwa Sztucznej Inteligencji.",
+  "nazwa": "Ustawa o systemach sztucznej inteligencji, Dz.U. 2026 poz. 1003",
+  "url": "https://api.sejm.gov.pl/eli/acts/DU/2026/1003/text.pdf"
+ },
+ "rodo-28": {
+  "liczba": "",
+  "teza": "Powierzenie przetwarzania danych wymaga umowy. Podmiot przetwarzający działa wyłącznie na udokumentowane polecenie administratora.",
+  "nazwa": "RODO, art. 28 ust. 3, EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=CELEX:32016R0679"
+ },
+ "rodo-5": {
+  "liczba": "",
+  "teza": "RODO wymaga przetwarzania danych osobowych w sposób zapewniający ich bezpieczeństwo, w tym ochronę przed niedozwolonym przetwarzaniem.",
+  "nazwa": "RODO, art. 5 ust. 1 lit. f, EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=CELEX:32016R0679"
+ },
+ "rodo-32": {
+  "liczba": "",
+  "teza": "Administrator ma zapewnić, by każda osoba z dostępem do danych osobowych przetwarzała je wyłącznie na jego polecenie.",
+  "nazwa": "RODO, art. 32 ust. 4, EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=CELEX:32016R0679"
+ },
+ "rodo-83": {
+  "liczba": "20 000 000 EUR lub 4%",
+  "teza": "Naruszenie podstawowych zasad przetwarzania z art. 5 RODO podlega karze do 20 000 000 EUR lub do 4% rocznego światowego obrotu.",
+  "nazwa": "RODO, art. 83 ust. 5, EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=CELEX:32016R0679"
+ },
+ "rodo-72h": {
+  "liczba": "72 godziny",
+  "teza": "Naruszenie ochrony danych osobowych administrator zgłasza organowi nadzorczemu w miarę możliwości w 72 godziny od stwierdzenia.",
+  "nazwa": "RODO, art. 33 ust. 1, EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=CELEX:32016R0679"
+ },
+ "uodo-msp": {
+  "liczba": "",
+  "teza": "Zanim narzędzie AI zostanie użyte na danych klientów lub pracowników, firma musi mieć umowę z dostawcą, podstawę przetwarzania, informację dla osób i wiedzę, gdzie dane są przechowywane.",
+  "nazwa": "UODO, lista pytań o AI i RODO, wersja dla MŚP, sierpień 2026",
+  "url": "https://uodo.gov.pl/pl/file/7926"
+ },
+ "uodo-trening": {
+  "liczba": "",
+  "teza": "Dostawca narzędzia AI, który wykorzystuje wprowadzone dane do własnych celów, np. do trenowania modeli, w tym zakresie sam staje się administratorem danych.",
+  "nazwa": "UODO, lista pytań o AI i RODO, wersja dla MŚP, sierpień 2026",
+  "url": "https://uodo.gov.pl/pl/file/7926"
+ },
+ "uodo-zadania": {
+  "liczba": "",
+  "teza": "Lista UODO dla MŚP wymienia zadania firmy: szkolenie zespołu, zasady wprowadzania danych i postępowanie w razie błędu.",
+  "nazwa": "UODO, lista pytań o AI i RODO, wersja dla MŚP, sierpień 2026",
+  "url": "https://uodo.gov.pl/pl/file/7926"
+ },
+ "uodo-58": {
+  "liczba": "58,5%",
+  "teza": "W ankiecie UODO z 2025 r. 58,5% z 492 organizacji uznało, że AI nie wiąże się z danymi osobowymi, albo nie umiało tego ocenić.",
+  "nazwa": "UODO, ankieta o AI i danych osobowych, 492 organizacje, 2025",
+  "url": "https://uodo.gov.pl/pl/file/7022"
+ },
+ "edpb": {
+  "liczba": "",
+  "teza": "Raport grupy zadaniowej ds. ChatGPT: odpowiedzialności za zgodność z RODO nie wolno przerzucać na użytkowników, a model może generować wyniki zmyślone.",
+  "nazwa": "Europejska Rada Ochrony Danych, raport z 23 maja 2024 r.",
+  "url": "https://www.edpb.europa.eu/system/files/documents/2024-05/edpb_20240523_report_chatgpt_taskforce_en.pdf"
+ },
+ "kp-100": {
+  "liczba": "",
+  "teza": "Kodeks pracy zobowiązuje pracownika do zachowania w tajemnicy informacji, których ujawnienie mogłoby narazić pracodawcę na szkodę.",
+  "nazwa": "Kodeks pracy, art. 100 par. 2 pkt 4",
+  "url": "https://api.sejm.gov.pl/eli/acts/DU/1974/141/text/U/D19740141Lj.pdf"
+ },
+ "kp-104": {
+  "liczba": "50 pracowników",
+  "teza": "Regulamin pracy jest obowiązkowy u pracodawcy zatrudniającego co najmniej 50 pracowników. Mniejszy pracodawca może go wprowadzić dobrowolnie.",
+  "nazwa": "Kodeks pracy, art. 104",
+  "url": "https://api.sejm.gov.pl/eli/acts/DU/1974/141/text/U/D19740141Lj.pdf"
+ },
+ "uznk-11": {
+  "liczba": "",
+  "teza": "Informacja jest tajemnicą przedsiębiorstwa tylko wtedy, gdy firma z należytą starannością działa, żeby utrzymać ją w poufności.",
+  "nazwa": "Ustawa o zwalczaniu nieuczciwej konkurencji, art. 11",
+  "url": "https://api.sejm.gov.pl/eli/acts/DU/1993/211/text/U/D19930211Lj.pdf"
+ },
+ "infor-brak-zakazu": {
+  "liczba": "",
+  "teza": "Polskie przepisy nie zakazują korzystania z ChatGPT w pracy. O granicach decydują regulaminy wewnętrzne i polityki bezpieczeństwa informacji.",
+  "nazwa": "Infor.pl, ChatGPT w pracy, 2026",
+  "url": "https://www.infor.pl/prawo/praca/7612153,chatgpt-w-pracy-moze-kosztowac-etat-prawnicy-wskazuja-granice.html"
+ },
+ "eset-27": {
+  "liczba": "27%",
+  "teza": "Tylko 27% firm ma spisaną politykę korzystania z narzędzi AI. Badanie z marca 2026 r.",
+  "nazwa": "ESET i DAGMA, Cyberportret polskiego biznesu 2026, 1 026 pracowników",
+  "url": "https://www.eset.com/pl/about/newsroom/press-releases/news/co-trzeci-uzytkownik-ai-w-polskiej-firmie-obejdzie-zakaz-zeby-nie-rezygnowac-z-ulubionego-narzedzia-raport/"
+ },
+ "eset-62": {
+  "liczba": "62%",
+  "teza": "62% polskich pracowników pracujących przy komputerze korzysta z narzędzi AI w obowiązkach służbowych.",
+  "nazwa": "ESET i DAGMA, Cyberportret polskiego biznesu 2026, 1 026 pracowników",
+  "url": "https://www.eset.com/pl/about/newsroom/press-releases/news/co-trzeci-uzytkownik-ai-w-polskiej-firmie-obejdzie-zakaz-zeby-nie-rezygnowac-z-ulubionego-narzedzia-raport/"
+ },
+ "eset-35": {
+  "liczba": "35%",
+  "teza": "35% użytkowników AI przyznało, że próbowałoby obejść firmowe blokady. 26% wygenerowałoby treści na prywatnym sprzęcie i przesłało je na pocztę służbową.",
+  "nazwa": "ESET i DAGMA, Cyberportret polskiego biznesu 2026, 1 026 pracowników",
+  "url": "https://www.eset.com/pl/about/newsroom/press-releases/news/co-trzeci-uzytkownik-ai-w-polskiej-firmie-obejdzie-zakaz-zeby-nie-rezygnowac-z-ulubionego-narzedzia-raport/"
+ },
+ "eset-10": {
+  "liczba": "10%",
+  "teza": "10% pracowników przyznało, że udostępnia otwartym modelom AI wrażliwe dane firmowe. Tylko 38% firm zainwestowało w firmowe licencje AI.",
+  "nazwa": "ESET i DAGMA, Cyberportret polskiego biznesu 2026, 1 026 pracowników",
+  "url": "https://www.eset.com/pl/about/newsroom/press-releases/news/co-trzeci-uzytkownik-ai-w-polskiej-firmie-obejdzie-zakaz-zeby-nie-rezygnowac-z-ulubionego-narzedzia-raport/"
+ },
+ "ms-2024-78": {
+  "liczba": "78%",
+  "teza": "78% użytkowników AI przynosiło do pracy własne narzędzia AI. W małych i średnich firmach 80%.",
+  "nazwa": "Microsoft i LinkedIn, Work Trend Index 2024, 31 000 osób",
+  "url": "https://www.microsoft.com/en-us/worklab/work-trend-index/ai-at-work-is-here-now-comes-the-hard-part"
+ },
+ "ms-2024-52": {
+  "liczba": "52%",
+  "teza": "52% osób używających AI w pracy niechętnie przyznawało się do tego przy najważniejszych zadaniach.",
+  "nazwa": "Microsoft i LinkedIn, Work Trend Index 2024, 31 000 osób",
+  "url": "https://www.microsoft.com/en-us/worklab/work-trend-index/ai-at-work-is-here-now-comes-the-hard-part"
+ },
+ "pp-shadow": {
+  "liczba": "",
+  "teza": "Shadow AI to używanie sztucznej inteligencji w organizacji bez oficjalnego nadzoru, kontroli lub akceptacji osób odpowiedzialnych za bezpieczeństwo.",
+  "nazwa": "Poradnik Przedsiębiorcy, Shadow AI a RODO i prywatność",
+  "url": "https://poradnikprzedsiebiorcy.pl/-shadow-ai-czyli-pracownik-wykorzystujacy-chatgpt-w-pracy-a-rodo-i-prywatnosc"
+ },
+ "chatgpt-business-cena": {
+  "liczba": "25 USD i 20 USD",
+  "teza": "ChatGPT Business: 25 USD za użytkownika miesięcznie przy rozliczeniu miesięcznym albo 20 USD przy rocznym.",
+  "nazwa": "OpenAI, centrum pomocy ChatGPT Business",
+  "url": "https://help.openai.com/pl-pl/articles/8792828-chatgpt-business-overview"
+ },
+ "chatgpt-business-pln": {
+  "liczba": "71 zł",
+  "teza": "Polska strona cennika OpenAI podaje dla stanowiska Standard w ChatGPT Business 71 zł miesięcznie.",
+  "nazwa": "OpenAI, cennik dla firm, strona polska",
+  "url": "https://openai.com/pl-PL/business/pricing/"
+ },
+ "chatgpt-business-premium": {
+  "liczba": "355 zł",
+  "teza": "Stanowisko Premium w ChatGPT Business: 355 zł miesięcznie (100 USD przy rozliczeniu rocznym, 125 USD przy miesięcznym).",
+  "nazwa": "OpenAI, cennik dla firm, strona polska",
+  "url": "https://openai.com/pl-PL/business/pricing/"
+ },
+ "chatgpt-min-2": {
+  "liczba": "2 miejsca",
+  "teza": "ChatGPT Business wymaga co najmniej 2 opłaconych miejsc.",
+  "nazwa": "OpenAI, centrum pomocy ChatGPT Business",
+  "url": "https://help.openai.com/pl-pl/articles/8792828-chatgpt-business-overview"
+ },
+ "chatgpt-team-nazwa": {
+  "liczba": "29 sierpnia 2025 r.",
+  "teza": "Plan ChatGPT Team zmienił nazwę na ChatGPT Business 29 sierpnia 2025 r.",
+  "nazwa": "OpenAI, centrum pomocy ChatGPT Business",
+  "url": "https://help.openai.com/pl-pl/articles/8792828-chatgpt-business-overview"
+ },
+ "chatgpt-zawartosc": {
+  "liczba": "",
+  "teza": "ChatGPT Business obejmuje m.in. połączenia z Google Workspace, Slack i Microsoft 365, logowanie SSO oraz wspólne rozliczenia i administrację.",
+  "nazwa": "OpenAI, cennik dla firm, strona polska",
+  "url": "https://openai.com/pl-PL/business/pricing/"
+ },
+ "chatgpt-bez-treningu": {
+  "liczba": "",
+  "teza": "OpenAI deklaruje, że domyślnie nie używa danych z planów ChatGPT Business i Enterprise do trenowania modeli.",
+  "nazwa": "OpenAI, poufność danych biznesowych",
+  "url": "https://openai.com/pl-PL/business-data/"
+ },
+ "chatgpt-plus": {
+  "liczba": "20 USD",
+  "teza": "ChatGPT Plus, plan dla jednej osoby, kosztuje 20 USD miesięcznie.",
+  "nazwa": "OpenAI, centrum pomocy ChatGPT Plus",
+  "url": "https://help.openai.com/pl-pl/articles/6950777-what-is-chatgpt-plus"
+ },
+ "chatgpt-indywidualne": {
+  "liczba": "",
+  "teza": "W planach indywidualnych ChatGPT (Free, Plus, Pro) OpenAI może wykorzystywać treści użytkownika do trenowania modeli.",
+  "nazwa": "OpenAI, centrum pomocy: dane a trenowanie modeli",
+  "url": "https://help.openai.com/pl-pl/articles/5722486-how-your-data-is-used-to-improve-model-performance"
+ },
+ "chatgpt-wylaczenie": {
+  "liczba": "",
+  "teza": "Trenowanie na rozmowach z konta indywidualnego wyłącza opcja „Ulepszaj model dla wszystkich” w ustawieniach, w części Zarządzanie danymi.",
+  "nazwa": "OpenAI, centrum pomocy: dane a trenowanie modeli",
+  "url": "https://help.openai.com/pl-pl/articles/5722486-how-your-data-is-used-to-improve-model-performance"
+ },
+ "chatgpt-dpa": {
+  "liczba": "",
+  "teza": "OpenAI podpisuje z klientami planów Business i Enterprise załącznik o przetwarzaniu danych (DPA).",
+  "nazwa": "OpenAI, poufność danych biznesowych",
+  "url": "https://openai.com/pl-PL/enterprise-privacy/"
+ },
+ "chatgpt-vat": {
+  "liczba": "",
+  "teza": "Przy zakupie ChatGPT Business firma podaje numer identyfikacji podatkowej. Zakup zostaje wtedy zwolniony z VAT.",
+  "nazwa": "OpenAI, centrum pomocy ChatGPT Business",
+  "url": "https://help.openai.com/pl-pl/articles/8792536-managing-billing-and-seats-in-chatgpt-business"
+ },
+ "chatgpt-platnosc": {
+  "liczba": "",
+  "teza": "W samoobsługowym ChatGPT Business nie ma przelewów bankowych ani odroczonych terminów płatności.",
+  "nazwa": "OpenAI, centrum pomocy ChatGPT Business",
+  "url": "https://help.openai.com/pl-pl/articles/8792536-managing-billing-and-seats-in-chatgpt-business"
+ },
+ "copilot-cena": {
+  "liczba": "18,20 €",
+  "teza": "Dodatek Microsoft 365 Copilot dla firm: 18,20 € za użytkownika miesięcznie przy płatności rocznej, bez VAT. Do 31 grudnia 2026 r. cena promocyjna 15,60 €.",
+  "nazwa": "Microsoft, cennik Microsoft 365 Copilot dla firm, strona polska",
+  "url": "https://www.microsoft.com/pl-pl/copilot/pricing/business"
+ },
+ "copilot-miesiecznie": {
+  "liczba": "21,84 €",
+  "teza": "Przy subskrypcji miesięcznej dodatek Copilot kosztuje 21,84 € za użytkownika, bez VAT.",
+  "nazwa": "Microsoft, cennik Microsoft 365 Copilot dla firm, strona polska",
+  "url": "https://www.microsoft.com/pl-pl/copilot/pricing/business"
+ },
+ "copilot-pakiet": {
+  "liczba": "20,36 €",
+  "teza": "Pakiet Microsoft 365 Business Standard z Copilotem: 20,36 € za użytkownika miesięcznie przy płatności rocznej, bez VAT.",
+  "nazwa": "Microsoft, cennik Microsoft 365 Copilot dla firm, strona polska",
+  "url": "https://www.microsoft.com/pl-pl/copilot/pricing/business"
+ },
+ "m365-standard": {
+  "liczba": "12,13 €",
+  "teza": "Sam plan Microsoft 365 Business Standard, bez Copilota: 12,13 € za użytkownika miesięcznie przy płatności rocznej, bez VAT.",
+  "nazwa": "Microsoft, cennik Microsoft 365 Copilot dla firm, strona polska",
+  "url": "https://www.microsoft.com/pl-pl/microsoft-365/business/microsoft-365-business-standard"
+ },
+ "copilot-wymog": {
+  "liczba": "300 użytkowników",
+  "teza": "Dodatek Copilot dla firm wymaga subskrypcji Microsoft 365 i jest przeznaczony dla maksymalnie 300 użytkowników.",
+  "nazwa": "Microsoft, cennik Microsoft 365 Copilot dla firm, strona polska",
+  "url": "https://www.microsoft.com/pl-pl/microsoft-365/business/microsoft-365-plans-and-pricing"
+ },
+ "copilot-chat": {
+  "liczba": "",
+  "teza": "Copilot Chat jest dostępny bez dopłaty dla użytkowników z kontem firmowym i subskrypcją Microsoft 365.",
+  "nazwa": "Microsoft, Copilot Chat",
+  "url": "https://www.microsoft.com/pl-pl/microsoft-365/business/microsoft-365-plans-and-pricing"
+ },
+ "copilot-chat-ograniczenia": {
+  "liczba": "",
+  "teza": "Bezpłatny Copilot Chat korzysta z danych z internetu. Nie sięga do plików, poczty i czatów firmy.",
+  "nazwa": "Microsoft, Copilot Chat",
+  "url": "https://www.microsoft.com/pl-pl/microsoft-365/business/microsoft-365-plans-and-pricing"
+ },
+ "copilot-bez-treningu": {
+  "liczba": "",
+  "teza": "Microsoft deklaruje, że polecenia i odpowiedzi w Copilot nie są używane do trenowania dużych modeli językowych.",
+  "nazwa": "Microsoft, ochrona danych w Copilot",
+  "url": "https://www.microsoft.com/pl-pl/copilot/pricing/business"
+ },
+ "copilot-dpa": {
+  "liczba": "",
+  "teza": "Korzystanie z Copilot przez organizacje obejmuje dodatek o ochronie danych (DPA). Microsoft działa jako podmiot przetwarzający.",
+  "nazwa": "Microsoft Learn, ochrona danych firmowych w Copilot",
+  "url": "https://learn.microsoft.com/pl-pl/copilot/plan/enterprise-data-protection"
+ },
+ "claude-team": {
+  "liczba": "25 USD i 20 USD",
+  "teza": "Claude Team, miejsce standardowe: 25 USD miesięcznie albo 20 USD przy rozliczeniu rocznym.",
+  "nazwa": "Anthropic, cennik Claude",
+  "url": "https://claude.com/pricing"
+ },
+ "claude-team-premium": {
+  "liczba": "125 USD i 100 USD",
+  "teza": "Claude Team, miejsce Premium z 5 razy większym limitem użycia: 125 USD miesięcznie albo 100 USD przy rozliczeniu rocznym.",
+  "nazwa": "Anthropic, cennik Claude",
+  "url": "https://claude.com/pricing"
+ },
+ "claude-min": {
+  "liczba": "2 osoby",
+  "teza": "Plan Claude Team wymaga minimum dwóch członków.",
+  "nazwa": "Anthropic, centrum pomocy Claude",
+  "url": "https://support.claude.com/en/articles/9266767-what-is-the-team-plan"
+ },
+ "claude-enterprise": {
+  "liczba": "20 miejsc",
+  "teza": "Claude Enterprise: 20 USD za miejsce miesięcznie przy rozliczeniu rocznym, minimum 20 miejsc, zużycie rozliczane osobno według stawek API.",
+  "nazwa": "Anthropic, cennik Claude",
+  "url": "https://claude.com/pricing"
+ },
+ "claude-pro": {
+  "liczba": "20 USD",
+  "teza": "Claude Pro dla jednej osoby: 20 USD miesięcznie albo 200 USD za rok z góry, czyli 17 USD miesięcznie.",
+  "nazwa": "Anthropic, cennik Claude",
+  "url": "https://claude.com/pricing"
+ },
+ "claude-podatek": {
+  "liczba": "",
+  "teza": "Ceny Claude Team podane przez Anthropic dotyczą klientów z USA i nie zawierają podatków. Cena, waluta i podatek zależą od regionu.",
+  "nazwa": "Anthropic, centrum pomocy Claude",
+  "url": "https://support.claude.com/en/articles/9266767-what-is-the-team-plan"
+ },
+ "claude-bez-treningu": {
+  "liczba": "",
+  "teza": "Anthropic deklaruje, że domyślnie nie używa danych z produktów komercyjnych (Team, Enterprise, API) do trenowania modeli.",
+  "nazwa": "Anthropic, centrum prywatności",
+  "url": "https://privacy.claude.com/en/articles/7996868-is-my-data-used-for-model-training"
+ },
+ "claude-indywidualne": {
+  "liczba": "",
+  "teza": "W planach indywidualnych Claude rozmowy służą do ulepszania modeli, jeśli użytkownik na to zezwala w ustawieniach.",
+  "nazwa": "Anthropic, centrum prywatności",
+  "url": "https://privacy.claude.com/en/articles/10023580-is-my-data-used-for-model-training"
+ },
+ "claude-dpa": {
+  "liczba": "",
+  "teza": "Warunki komercyjne Anthropic obejmują dodatek o przetwarzaniu danych (DPA).",
+  "nazwa": "Anthropic, warunki komercyjne",
+  "url": "https://www.anthropic.com/legal/commercial-terms"
+ },
+ "workspace-ceny": {
+  "liczba": "31,50 zł",
+  "teza": "Google Workspace: Business Starter 31,50 zł, Business Standard 63,00 zł, Business Plus 99,00 zł za użytkownika miesięcznie, bez podatku, przy abonamencie rocznym.",
+  "nazwa": "Google Workspace, cennik, strona polska",
+  "url": "https://workspace.google.com/pricing?hl=pl"
+ },
+ "workspace-300": {
+  "liczba": "300 użytkowników",
+  "teza": "Plany Starter, Standard i Plus można kupić dla maksymalnie 300 użytkowników.",
+  "nazwa": "Google Workspace, cennik, strona polska",
+  "url": "https://workspace.google.com/pricing?hl=pl"
+ },
+ "workspace-roczny": {
+  "liczba": "16%",
+  "teza": "Abonament roczny Google Workspace daje 16% oszczędności. Opłaty są naliczane co miesiąc.",
+  "nazwa": "Google Workspace, cennik, strona polska",
+  "url": "https://workspace.google.com/pricing?hl=pl"
+ },
+ "gemini-starter": {
+  "liczba": "",
+  "teza": "Już plan Business Starter zawiera asystenta Gemini w Gmailu i czat z Gemini.",
+  "nazwa": "Google Workspace, cennik, strona polska",
+  "url": "https://workspace.google.com/pricing?hl=pl"
+ },
+ "gemini-standard": {
+  "liczba": "",
+  "teza": "Plan Business Standard obejmuje asystenta Gemini w Gmailu, Dokumentach, Meet i innych usługach Workspace.",
+  "nazwa": "Google Workspace, cennik, strona polska",
+  "url": "https://workspace.google.com/pricing?hl=pl"
+ },
+ "gemini-bez-treningu": {
+  "liczba": "",
+  "teza": "Google deklaruje, że Workspace nie używa danych klientów, w tym poleceń, do trenowania modeli bez ich zgody.",
+  "nazwa": "Google Workspace, centrum wiedzy o prywatności Gemini",
+  "url": "https://knowledge.workspace.google.com/admin/generative-ai/generative-ai-in-google-workspace-privacy-hub?hl=pl"
+ },
+ "piib-starannosc": {
+  "liczba": "",
+  "teza": "Raport Polskiej Izby Inżynierów Budownictwa: wyniki z narzędzi AI trzeba krytycznie ocenić i zweryfikować oraz udokumentować sposób użycia danych i narzędzi.",
+  "nazwa": "Polska Izba Inżynierów Budownictwa, raport o AI, 2026",
+  "url": "https://www.piib.org.pl/images/stories/aktualnosci/2026-06/PIIB_raport_AI.pdf"
+ },
+ "piib-rozdrobnienie": {
+  "liczba": "",
+  "teza": "Raport PIIB: duża liczba małych i średnich firm, ograniczony kapitał i niski poziom cyfryzacji powodują nierówne wdrażanie nowych technologii w budownictwie.",
+  "nazwa": "Polska Izba Inżynierów Budownictwa, raport o AI, 2026",
+  "url": "https://www.piib.org.pl/images/stories/aktualnosci/2026-06/PIIB_raport_AI.pdf"
+ },
+ "futuremind-transport": {
+  "liczba": "12,1%",
+  "teza": "Z AI codziennie korzysta 12,1% pracowników transportu i logistyki, przy średniej krajowej 15,8%.",
+  "nazwa": "Raport Future Mind, cytowany przez Forsal, 2026",
+  "url": "https://forsal.pl/transport/aktualnosci/artykuly/11268428,ai-w-tsl-koniecznosc-nie-ciekawostka.html"
+ },
+ "kpmg-produkcja": {
+  "liczba": "56%",
+  "teza": "W globalnym badaniu KPMG 56% producentów zmaga się z jakością i integracją danych, a 40% wskazuje lukę kompetencji i opór wobec zmian.",
+  "nazwa": "KPMG, Sektor przemysłowy wkracza w nową erę, 2025",
+  "url": "https://kpmg.com/pl/pl/media/media-press-sektor-przemyslowy-wkracza-w-nowa-ere.html"
+ },
+ "bcg-2025-godziny": {
+  "liczba": "18% i 82%",
+  "teza": "W badaniu BCG z 2025 r. AI używa regularnie 18% osób bez szkolenia, 63% po 1 do 5 godzinach szkolenia, 82% po 5 do 10 godzinach i 89% po ponad 10 godzinach.",
+  "nazwa": "BCG, AI at Work 2025, ponad 10 600 badanych",
+  "url": "https://web-assets.bcg.com/80/28/18c9f7e44966a7c286adae9a8e00/20250613-ai-at-work-2025-slides-japanese.pdf"
+ },
+ "bcg-2025-na-zywo": {
+  "liczba": "79% i 67%",
+  "teza": "Po szkoleniu na żywo AI używa regularnie 79% badanych. Po szkoleniu w innej formie 67%.",
+  "nazwa": "BCG, AI at Work 2025, ponad 10 600 badanych",
+  "url": "https://web-assets.bcg.com/80/28/18c9f7e44966a7c286adae9a8e00/20250613-ai-at-work-2025-slides-japanese.pdf"
+ },
+ "bcg-2025-coach": {
+  "liczba": "84% i 70%",
+  "teza": "Wśród osób, które miały coacha, AI używa regularnie 84%. Wśród osób bez coacha 70%.",
+  "nazwa": "BCG, AI at Work 2025, ponad 10 600 badanych",
+  "url": "https://web-assets.bcg.com/80/28/18c9f7e44966a7c286adae9a8e00/20250613-ai-at-work-2025-slides-japanese.pdf"
+ },
+ "saks-belcourt": {
+  "liczba": "62%, 44%, 34%",
+  "teza": "Według specjalistów ds. szkoleń ze 150 organizacji materiał ze szkolenia stosuje w pracy 62% pracowników od razu, 44% po 6 miesiącach i 34% po roku.",
+  "nazwa": "Saks i Belcourt, Human Resource Management, 2006",
+  "url": "https://doi.org/10.1002/hrm.20135"
+ },
+ "saks-przed-po": {
+  "liczba": "",
+  "teza": "W tym samym badaniu działania przed szkoleniem i po nim były silniej związane z użyciem umiejętności w pracy niż działania w trakcie szkolenia.",
+  "nazwa": "Saks i Belcourt, Human Resource Management, 2006",
+  "url": "https://doi.org/10.1002/hrm.20135"
+ },
+ "hughes-2020": {
+  "liczba": "",
+  "teza": "W metaanalizie z 2020 r. z utrzymaniem efektów szkolenia najsilniej wiązało się wsparcie współpracowników i przełożonego.",
+  "nazwa": "Hughes i in., metaanaliza o utrzymaniu efektów szkoleń, 2020",
+  "url": "https://europepmc.org/article/MED/31136198"
+ },
+ "sitzmann-2006": {
+  "liczba": "",
+  "teza": "Gdy w obu formach użyto tych samych metod nauczania, szkolenie przez internet i w sali były równie skuteczne.",
+  "nazwa": "Sitzmann i in., metaanaliza szkoleń przez internet i w sali, 2006",
+  "url": "https://doi.org/10.1111/j.1744-6570.2006.00049.x"
+ },
+ "means-2013": {
+  "liczba": "45 badań",
+  "teza": "Metaanaliza 45 badań: uczący się online wypadali średnio nieco lepiej niż stacjonarnie, ale istotna przewaga dotyczyła tylko nauki mieszanej.",
+  "nazwa": "Means i in., metaanaliza nauki online i mieszanej, 2013",
+  "url": "https://doi.org/10.1177/016146811311500307"
+ },
+ "lacerenza-2017": {
+  "liczba": "335 prób",
+  "teza": "Metaanaliza 335 prób szkoleń: lepiej działają szkolenia z analizą potrzeb, praktyką i informacją zwrotną, prowadzone na żywo i na miejscu w firmie.",
+  "nazwa": "Lacerenza i in., metaanaliza szkoleń, 2017",
+  "url": "https://europepmc.org/article/MED/28749153"
+ },
+ "cena-imperium": {
+  "liczba": "850 zł",
+  "teza": "Miejsce na jednodniowym szkoleniu otwartym z AI: 850 zł netto, tyle samo zdalnie i stacjonarnie.",
+  "nazwa": "imperiumszkoleniowe.pl, strona szkolenia, stan na 21.11.2026",
+  "url": "https://imperiumszkoleniowe.pl/szkolenie/ai-w-codziennej-pracy/"
+ },
+ "excel-co-potrafi": {
+  "liczba": "",
+  "teza": "Copilot w Excelu na podstawie opisu słownego generuje formuły, tworzy wykresy i tabele przestawne, stosuje formatowanie i wprowadza zmiany w skoroszycie.",
+  "nazwa": "Microsoft, pytania i odpowiedzi o Copilot w Excelu",
+  "url": "https://support.microsoft.com/pl-pl/excel/copilot/frequently-asked-questions-about-copilot-in-excel"
+ },
+ "excel-tryby": {
+  "liczba": "3 tryby",
+  "teza": "Copilot w Excelu ma trzy tryby: edytowanie, planowanie i czat.",
+  "nazwa": "Microsoft, pytania i odpowiedzi o Copilot w Excelu",
+  "url": "https://support.microsoft.com/pl-pl/excel/copilot/frequently-asked-questions-about-copilot-in-excel"
+ },
+ "excel-licencja": {
+  "liczba": "",
+  "teza": "Copilot w Excelu wymaga odpowiedniej licencji, na przykład firmowej subskrypcji Microsoft 365 uprawniającej do Copilot Chat albo subskrypcji Microsoft Copilot.",
+  "nazwa": "Microsoft, pytania i odpowiedzi o Copilot w Excelu",
+  "url": "https://support.microsoft.com/pl-pl/excel/copilot/frequently-asked-questions-about-copilot-in-excel"
+ },
+ "excel-ograniczenia": {
+  "liczba": "",
+  "teza": "Microsoft zastrzega, że Copilot w Excelu może popełniać błędy. Odradza opieranie na nim decyzji finansowych i prawnych i każe weryfikować wyniki.",
+  "nazwa": "Microsoft, pytania i odpowiedzi o Copilot w Excelu",
+  "url": "https://support.microsoft.com/pl-pl/excel/copilot/frequently-asked-questions-about-copilot-in-excel"
+ },
+ "excel-polski": {
+  "liczba": "",
+  "teza": "Copilot w Excelu obsługuje polecenia po polsku. Microsoft uprzedza, że w językach innych niż angielski może działać gorzej.",
+  "nazwa": "Microsoft, pytania i odpowiedzi o Copilot w Excelu",
+  "url": "https://support.microsoft.com/pl-pl/excel/copilot/frequently-asked-questions-about-copilot-in-excel"
+ },
+ "doradztwo-37": {
+  "liczba": "",
+  "teza": "Doradca podatkowy ma obowiązek zachować w tajemnicy fakty i informacje poznane w związku z wykonywaniem zawodu. Obowiązek nie jest ograniczony w czasie.",
+  "nazwa": "Ustawa o doradztwie podatkowym, art. 37",
+  "url": "https://api.sejm.gov.pl/eli/acts/DU/1996/475/text/U/D19960475Lj.pdf"
+ },
+ "doradztwo-37-pracownicy": {
+  "liczba": "",
+  "teza": "Tajemnica obejmuje także osoby zatrudnione przez doradcę podatkowego.",
+  "nazwa": "Ustawa o doradztwie podatkowym, art. 37",
+  "url": "https://api.sejm.gov.pl/eli/acts/DU/1996/475/text/U/D19960475Lj.pdf"
+ },
+ "rachunkowosc-tajemnica": {
+  "liczba": "",
+  "teza": "Ustawa o rachunkowości nie nakłada na firmy usługowo prowadzące księgi ustawowej tajemnicy zawodowej. Wymaga między innymi ubezpieczenia OC.",
+  "nazwa": "Ustawa o rachunkowości, rozdział 8a",
+  "url": "https://api.sejm.gov.pl/eli/acts/DU/1994/591/text/U/D19940591Lj.pdf"
+ },
+ "ies-transport": {
+  "liczba": "3,0% i 11,2%",
+  "teza": "W 2025 r. AI stosowało 3,0% polskich firm transportowych przy średniej unijnej 11,2%. To ostatnie miejsce w Unii.",
+  "nazwa": "Instytut Europy Środkowej, analiza AI w transporcie, 2026",
+  "url": "https://ies.lublin.pl/wp-content/uploads/2026/04/ies-komentarze-1597-102-2026.pdf"
+ },
+ "ies-transport-generatywna": {
+  "liczba": "1,9%",
+  "teza": "W 2025 r. generatywną AI wykorzystywało 1,9% polskich firm transportowych.",
+  "nazwa": "Instytut Europy Środkowej, analiza AI w transporcie, 2026",
+  "url": "https://ies.lublin.pl/wp-content/uploads/2026/04/ies-komentarze-1597-102-2026.pdf"
+ },
+ "ies-transport-impuls": {
+  "liczba": "",
+  "teza": "Według analizy IEŚ niski poziom AI w polskim transporcie nie wynika z barier finansowych ani kompetencyjnych, tylko z braku impulsu do zmiany.",
+  "nazwa": "Instytut Europy Środkowej, analiza AI w transporcie, 2026",
+  "url": "https://ies.lublin.pl/wp-content/uploads/2026/04/ies-komentarze-1597-102-2026.pdf"
+ },
+ "kpmg-produkcja-proba": {
+  "liczba": "183 osoby",
+  "teza": "Badanie KPMG o AI w przemyśle objęło 183 liderów z firm produkcyjnych w ośmiu krajach. Opisuje duże organizacje, nie małe polskie firmy.",
+  "nazwa": "KPMG International, Intelligent manufacturing, 2025",
+  "url": "https://assets.kpmg.com/content/dam/kpmgsites/xx/pdf/2026/06/intelligent-manufacturing-report.pdf"
+ },
+ "xero-uk-5": {
+  "liczba": "5%",
+  "teza": "Tylko 5% brytyjskich biur księgowych spodziewało się, że AI zmniejszy zatrudnienie w ciągu roku.",
+  "nazwa": "Xero, badanie biur księgowych w Wielkiej Brytanii, maj 2026",
+  "url": "https://www.xero.com/uk/media-releases/modern-practice-playbook-uk/"
+ },
+ "aiact-art4-stare": {
+  "liczba": "",
+  "teza": "Pierwotne brzmienie art. 4 AI Act wymagało środków zapewniających w możliwie największym stopniu odpowiedni poziom kompetencji AI u personelu.",
+  "nazwa": "Rozporządzenie (UE) 2024/1689 (AI Act), EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=OJ:L_202401689"
+ },
+ "aiact-msp": {
+  "liczba": "",
+  "teza": "Po zmianie z 2026 r. art. 4 zobowiązuje Komisję i państwa członkowskie do wspierania firm, w szczególności małych i średnich, oraz do publikacji praktycznych przykładów.",
+  "nazwa": "Rozporządzenie (UE) 2026/1744, EUR-Lex",
+  "url": "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=OJ:L_202601744"
+ },
+ "perplexity-darmowy": {
+  "liczba": "",
+  "teza": "Perplexity ma plan darmowy z ograniczonym dziennym użyciem.",
+  "nazwa": "Perplexity, cennik",
+  "url": "https://www.perplexity.ai/hub/pricing"
+ },
+ "perplexity-pro": {
+  "liczba": "17 USD",
+  "teza": "Perplexity Pro, plan dla jednej osoby, kosztuje 17 USD miesięcznie przy rozliczeniu rocznym.",
+  "nazwa": "Perplexity, cennik",
+  "url": "https://www.perplexity.ai/hub/pricing"
+ },
+ "perplexity-firmy": {
+  "liczba": "od 40 USD",
+  "teza": "Plan firmowy Enterprise Pro kosztuje od 40 USD miesięcznie albo 400 USD rocznie za miejsce.",
+  "nazwa": "Perplexity, centrum pomocy: plany",
+  "url": "https://www.perplexity.ai/help-center/en/articles/11187416-which-perplexity-subscription-plan-is-right-for-you"
+ },
+ "perplexity-dane-firmy": {
+  "liczba": "",
+  "teza": "Perplexity deklaruje, że dane z planów Enterprise nie są używane do trenowania modeli.",
+  "nazwa": "Perplexity, centrum pomocy: plany",
+  "url": "https://www.perplexity.ai/help-center/en/articles/11187416-which-perplexity-subscription-plan-is-right-for-you"
+ },
+ "perplexity-dane-osoba": {
+  "liczba": "",
+  "teza": "W planach dla jednej osoby zbieranie danych jest domyślnie włączone. Wyłącza się je w ustawieniach.",
+  "nazwa": "Perplexity, centrum pomocy: plany",
+  "url": "https://www.perplexity.ai/help-center/en/articles/11187416-which-perplexity-subscription-plan-is-right-for-you"
+ },
+ "perplexity-jezyk": {
+  "liczba": "11 języków",
+  "teza": "Centrum pomocy Perplexity działa w 11 językach. Polskiego wśród nich nie ma.",
+  "nazwa": "Perplexity, centrum pomocy",
+  "url": "https://www.perplexity.ai/help-center/en/articles/11187416-which-perplexity-subscription-plan-is-right-for-you"
+ },
+ "notebook-nazwa": {
+  "liczba": "",
+  "teza": "NotebookLM zmienił nazwę na Gemini Notebook.",
+  "nazwa": "Google Workspace, strona Gemini Notebook",
+  "url": "https://workspace.google.com/products/gemini-notebook/"
+ },
+ "notebook-darmowy": {
+  "liczba": "",
+  "teza": "Z Gemini Notebook można korzystać bezpłatnie na zwykłym koncie Google.",
+  "nazwa": "Google, pomoc: plany Gemini Notebook",
+  "url": "https://support.google.com/gemininotebook/answer/16213268?hl=en"
+ },
+ "notebook-limity": {
+  "liczba": "100 notatników",
+  "teza": "Wersja bezpłatna pozwala mieć 100 notatników i 50 źródeł w jednym notatniku. Plan Pro podnosi limit do 500 notatników i 300 źródeł.",
+  "nazwa": "Google, pomoc: plany Gemini Notebook",
+  "url": "https://support.google.com/gemininotebook/answer/16213268?hl=en"
+ },
+ "notebook-workspace": {
+  "liczba": "",
+  "teza": "Gemini Notebook jest dostępny we wszystkich abonamentach Google Workspace.",
+  "nazwa": "Google Workspace, strona Gemini Notebook",
+  "url": "https://workspace.google.com/products/gemini-notebook/"
+ },
+ "notebook-dane": {
+  "liczba": "",
+  "teza": "Google deklaruje, że u użytkowników Google Workspace wgrane pliki, pytania i odpowiedzi nie są przeglądane przez ludzi ani używane do trenowania modeli.",
+  "nazwa": "Google, pomoc: plany Gemini Notebook",
+  "url": "https://support.google.com/gemininotebook/answer/16213268?hl=en"
+ },
+ "notebook-polski": {
+  "liczba": "",
+  "teza": "Strona Gemini Notebook w Google Workspace jest dostępna po polsku.",
+  "nazwa": "Google Workspace, strona Gemini Notebook",
+  "url": "https://workspace.google.com/products/gemini-notebook/"
+ },
+ "deepl-darmowy": {
+  "liczba": "1 plik",
+  "teza": "Wersja darmowa DeepL pozwala przetłumaczyć 1 plik miesięcznie. Plan Team daje 20 plików, a Business 100.",
+  "nazwa": "DeepL, cennik",
+  "url": "https://www.deepl.com/en/pro"
+ },
+ "deepl-individual": {
+  "liczba": "7,49 EUR",
+  "teza": "Plan Individual kosztuje 7,49 EUR miesięcznie przy rozliczeniu rocznym, z VAT. To cena pokazana dla Niemiec.",
+  "nazwa": "DeepL, cennik",
+  "url": "https://www.deepl.com/en/pro"
+ },
+ "deepl-team": {
+  "liczba": "24,99 EUR",
+  "teza": "Plan Team kosztuje 24,99 EUR za użytkownika miesięcznie przy rozliczeniu rocznym, z VAT.",
+  "nazwa": "DeepL, cennik",
+  "url": "https://www.deepl.com/en/pro"
+ },
+ "deepl-business": {
+  "liczba": "49,99 EUR",
+  "teza": "Plan Business kosztuje 49,99 EUR za użytkownika miesięcznie przy rozliczeniu rocznym i zawiera DeepL Write Pro.",
+  "nazwa": "DeepL, cennik",
+  "url": "https://www.deepl.com/en/pro"
+ },
+ "deepl-zespol": {
+  "liczba": "od 2 użytkowników",
+  "teza": "Administracja zespołem w planach Team i Business działa od 2 użytkowników.",
+  "nazwa": "DeepL, cennik",
+  "url": "https://www.deepl.com/en/pro"
+ },
+ "deepl-polski": {
+  "liczba": "",
+  "teza": "Polski jest na oficjalnej liście języków tłumaczenia DeepL.",
+  "nazwa": "DeepL, dokumentacja: obsługiwane języki",
+  "url": "https://developers.deepl.com/docs/getting-started/supported-languages"
+ },
+ "deepl-write-polski": {
+  "liczba": "",
+  "teza": "Funkcja poprawiania tekstu nie obejmuje języka polskiego. Działa między innymi dla angielskiego i niemieckiego.",
+  "nazwa": "DeepL, dokumentacja: obsługiwane języki",
+  "url": "https://developers.deepl.com/docs/getting-started/supported-languages"
+ },
+ "deepl-dane": {
+  "liczba": "",
+  "teza": "DeepL deklaruje, że treści subskrybentów Pro są przechowywane tylko tak długo, jak to potrzebne, i nigdy nie służą do trenowania modeli.",
+  "nazwa": "DeepL, strona o bezpieczeństwie danych",
+  "url": "https://www.deepl.com/en/pro"
+ },
+ "notion-darmowy": {
+  "liczba": "",
+  "teza": "Notion ma plan darmowy. Notion AI działa w nim tylko jako wersja próbna.",
+  "nazwa": "Notion, cennik",
+  "url": "https://www.notion.com/pricing"
+ },
+ "notion-plus": {
+  "liczba": "9,50 EUR",
+  "teza": "Plan Plus kosztuje 9,50 EUR za osobę miesięcznie przy płatności rocznej. Notion AI jest w nim tylko w wersji próbnej.",
+  "nazwa": "Notion, cennik",
+  "url": "https://www.notion.com/pricing"
+ },
+ "notion-business": {
+  "liczba": "19,50 EUR",
+  "teza": "Plan Business, pierwszy z pełnym Notion AI, kosztuje 19,50 EUR za osobę miesięcznie przy płatności rocznej.",
+  "nazwa": "Notion, cennik",
+  "url": "https://www.notion.com/pricing"
+ },
+ "notion-jezyk": {
+  "liczba": "22 języki",
+  "teza": "Na liście języków interfejsu Notion są 22 pozycje. Polskiego wśród nich nie ma.",
+  "nazwa": "Notion, pomoc: języki interfejsu",
+  "url": "https://www.notion.com/help/change-your-language"
+ },
+ "notion-dane": {
+  "liczba": "",
+  "teza": "Notion deklaruje, że domyślnie ani Notion, ani dostawcy modeli nie używają danych klientów do trenowania modeli. Dotyczy to każdego planu.",
+  "nazwa": "Notion, bezpieczeństwo Notion AI",
+  "url": "https://www.notion.com/help/notion-ai-security-practices"
+ },
+ "notion-retencja": {
+  "liczba": "do 30 dni",
+  "teza": "W planach Free, Plus i Business dostawca modelu AI przechowuje dane do 30 dni, a potem je usuwa.",
+  "nazwa": "Notion, bezpieczeństwo Notion AI",
+  "url": "https://www.notion.com/help/notion-ai-security-practices"
+ },
+ "notion-dpa": {
+  "liczba": "",
+  "teza": "Notion ma umowę o przetwarzaniu danych (DPA).",
+  "nazwa": "Notion, bezpieczeństwo Notion AI",
+  "url": "https://www.notion.com/help/notion-ai-security-practices"
+ },
+ "fireflies-darmowy": {
+  "liczba": "400 minut",
+  "teza": "Plan Free jest bezpłatny, z ograniczoną liczbą podsumowań i 400 minutami miejsca na nagrania na zespół.",
+  "nazwa": "Fireflies.ai, cennik",
+  "url": "https://fireflies.ai/pricing"
+ },
+ "fireflies-pro": {
+  "liczba": "10 USD",
+  "teza": "Plan Pro kosztuje 10 USD za miejsce miesięcznie przy rozliczeniu rocznym albo 18 USD przy płatności co miesiąc.",
+  "nazwa": "Fireflies.ai, cennik",
+  "url": "https://fireflies.ai/pricing"
+ },
+ "fireflies-business": {
+  "liczba": "19 USD",
+  "teza": "Plan Business kosztuje 19 USD za miejsce miesięcznie przy rozliczeniu rocznym albo 29 USD przy płatności co miesiąc.",
+  "nazwa": "Fireflies.ai, cennik",
+  "url": "https://fireflies.ai/pricing"
+ },
+ "fireflies-jezyki": {
+  "liczba": "ponad 100 języków",
+  "teza": "Fireflies robi transkrypcje i podsumowania w ponad 100 językach.",
+  "nazwa": "Fireflies.ai, przewodnik: obsługiwane języki",
+  "url": "https://guide.fireflies.ai/articles/2973706448-learn-about-fireflies-supported-languages"
+ },
+ "fireflies-polski": {
+  "liczba": "16 języków",
+  "teza": "Polski jest na liście języków transkrypcji i na liście 16 języków interfejsu Fireflies.",
+  "nazwa": "Fireflies.ai, przewodnik: obsługiwane języki",
+  "url": "https://guide.fireflies.ai/articles/2973706448-learn-about-fireflies-supported-languages"
+ },
+ "fireflies-dane": {
+  "liczba": "",
+  "teza": "Fireflies deklaruje, że nie używa danych ze spotkań do trenowania modeli AI. Dostawcy AI mają umowny zakaz trenowania na tych danych.",
+  "nazwa": "Fireflies.ai, strona o bezpieczeństwie",
+  "url": "https://fireflies.ai/pricing"
+ },
+ "fireflies-lokalizacja": {
+  "liczba": "",
+  "teza": "Wybór miejsca przechowywania danych ze spotkań jest dostępny tylko w planie Enterprise.",
+  "nazwa": "Fireflies.ai, cennik",
+  "url": "https://fireflies.ai/security"
+ },
+ "gamma-plany": {
+  "liczba": "",
+  "teza": "Gamma ma plan darmowy oraz płatne plany dla jednej osoby i dla organizacji.",
+  "nazwa": "Gamma, centrum pomocy",
+  "url": "https://help.gamma.app/en/articles/12281928-does-gamma-use-my-content-to-train-its-ai-features"
+ },
+ "gamma-business": {
+  "liczba": "40 USD",
+  "teza": "Plan Business kosztuje 40 USD za osobę miesięcznie i jest rozliczany rocznie.",
+  "nazwa": "Gamma, centrum pomocy",
+  "url": "https://help.gamma.app/en/articles/11594955-what-options-does-gamma-offer-for-business"
+ },
+ "gamma-kredyty": {
+  "liczba": "10 000 kredytów",
+  "teza": "W planie Business każda osoba dostaje 10 000 kredytów AI miesięcznie.",
+  "nazwa": "Gamma, centrum pomocy",
+  "url": "https://help.gamma.app/en/articles/11594955-what-options-does-gamma-offer-for-business"
+ },
+ "gamma-dane-firmy": {
+  "liczba": "",
+  "teza": "W przestrzeniach Business i Enterprise dane są automatycznie wyłączone z trenowania AI. Tego ustawienia nie da się zmienić.",
+  "nazwa": "Gamma, centrum pomocy",
+  "url": "https://help.gamma.app/en/articles/12281928-does-gamma-use-my-content-to-train-its-ai-features"
+ },
+ "gamma-dane-osoba": {
+  "liczba": "",
+  "teza": "W planach dla jednej osoby dane domyślnie mogą służyć do trenowania modeli AI. Zgodę można wyłączyć w ustawieniach konta.",
+  "nazwa": "Gamma, centrum pomocy",
+  "url": "https://help.gamma.app/en/articles/12281928-does-gamma-use-my-content-to-train-its-ai-features"
+ },
+ "gamma-jezyk": {
+  "liczba": "14 języków",
+  "teza": "Centrum pomocy Gamma jest dostępne w 14 językach. Polskiego wśród nich nie ma.",
+  "nazwa": "Gamma, centrum pomocy",
+  "url": "https://help.gamma.app/en/articles/12281928-does-gamma-use-my-content-to-train-its-ai-features"
+ },
+ "elevenlabs-darmowy": {
+  "liczba": "10 000 kredytów",
+  "teza": "ElevenLabs ma plan darmowy z 10 000 kredytów miesięcznie.",
+  "nazwa": "ElevenLabs, cennik",
+  "url": "https://elevenlabs.io/pricing"
+ },
+ "elevenlabs-starter": {
+  "liczba": "6 USD",
+  "teza": "Plan Starter kosztuje 6 USD miesięcznie przy płatności co miesiąc, bez podatków, i daje 30 000 kredytów miesięcznie.",
+  "nazwa": "ElevenLabs, cennik",
+  "url": "https://elevenlabs.io/pricing"
+ },
+ "elevenlabs-scale": {
+  "liczba": "299 USD",
+  "teza": "Plan Scale kosztuje 299 USD miesięcznie za cały plan i obejmuje 3 miejsca. Plan Business to 990 USD i 10 miejsc.",
+  "nazwa": "ElevenLabs, cennik",
+  "url": "https://elevenlabs.io/pricing"
+ },
+ "elevenlabs-jezyki": {
+  "liczba": "74 języki",
+  "teza": "Zamiana tekstu na mowę działa w 74 językach. Strona cennika nie wymienia ich z nazwy.",
+  "nazwa": "ElevenLabs, cennik",
+  "url": "https://elevenlabs.io/pricing"
+ },
+ "elevenlabs-dane": {
+  "liczba": "",
+  "teza": "Polityka prywatności ElevenLabs mówi, że dane użytkowników służą do trenowania i ulepszania modeli AI.",
+  "nazwa": "ElevenLabs, polityka prywatności",
+  "url": "https://elevenlabs.io/privacy-policy"
+ },
+ "elevenlabs-rezygnacja": {
+  "liczba": "",
+  "teza": "Z trenowania można zrezygnować w ustawieniach konta. Rezygnacja działa tylko na przyszłość.",
+  "nazwa": "ElevenLabs, polityka prywatności",
+  "url": "https://elevenlabs.io/privacy-policy"
+ },
+ "elevenlabs-usa": {
+  "liczba": "",
+  "teza": "Dane osobowe są przekazywane do USA i tam przechowywane.",
+  "nazwa": "ElevenLabs, polityka prywatności",
+  "url": "https://elevenlabs.io/privacy-policy"
+ },
+ "elevenlabs-polska": {
+  "liczba": "",
+  "teza": "Administratorem danych mieszkańców Europejskiego Obszaru Gospodarczego jest ElevenLabs Poland sp. z o.o. z siedzibą w Warszawie.",
+  "nazwa": "ElevenLabs, polityka prywatności",
+  "url": "https://elevenlabs.io/privacy-policy"
+ },
+ "elevenlabs-firmy": {
+  "liczba": "",
+  "teza": "Gdy z usługi korzysta się przez klienta biznesowego, ElevenLabs działa jako podmiot przetwarzający, a o danych decyduje umowa z tym klientem.",
+  "nazwa": "ElevenLabs, polityka prywatności",
+  "url": "https://elevenlabs.io/privacy-policy"
+ }
+}

@@ -1,0 +1,319 @@
+/* Szkolenie AI dla firm. Wersja 2 wyglądu (21.11.2026): jasno, spokojnie, prosto.
+   Wzór: oferta PHC i „O mnie” na tej samej domenie (biel, akcent #0071e3, Poppins + Inter, karty z cienką ramką).
+   Zasady: jeden kolor akcentu, dużo powietrza, zero gradientów, zero emoji, przyciski z lekko zaokrąglonym rogiem
+   (nie pigułki), cień tylko tam, gdzie coś się unosi (formularz, pasek). Wszystko pod .sza. */
+
+/* Strona główna serwisu ma ciemne tło z poświatą (globals.css). Tu biała kartka. */
+html:has(.sza),
+body:has(.sza) { background: #fff; }
+body:has(.sza)::before,
+body:has(.sza)::after { display: none; }
+
+.sza {
+  --tlo: #fff;
+  --tlo2: #f5f5f7;
+  --tekst: #1d1d1f;
+  --cichy: #6e6e73;
+  --ramka: rgba(0, 0, 0, 0.09);
+  --ramka-pola: #d2d2d7;
+  --akcent: #0071e3;
+  --akcent-ciemny: #0060c2;
+  --akcent-mgla: rgba(0, 113, 227, 0.08);
+  --akcent-tekst: #0a57b0;
+  --ok: #16a34a;
+  --blad: #d92d20;
+  --head: var(--sza-head), "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --body: var(--sza-body), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --max: 70rem;
+  --bok: clamp(1.25rem, 4vw, 2.5rem);
+  --gora: 4rem;
+  --r: 1.5rem;
+  --r-maly: 0.875rem;
+  --sprezyna: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  width: 100%;
+  background: var(--tlo);
+  color: var(--tekst);
+  font-family: var(--body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+  color-scheme: light;
+}
+.sza *, .sza *::before, .sza *::after { box-sizing: border-box; }
+.sza a { color: inherit; }
+.sza ul, .sza ol { list-style: none; margin: 0; padding: 0; }
+.sza p { margin: 0; }
+.sza :focus-visible { outline: 3px solid var(--akcent); outline-offset: 3px; border-radius: 6px; }
+.sza [id] { scroll-margin-top: calc(var(--gora) + 1.5rem); }
+
+/* ---------- Typografia: duży tekst ciasno, mały luźno ---------- */
+.sza h1, .sza h2, .sza h3 { font-family: var(--head); font-weight: 600; color: var(--tekst); margin: 0; text-wrap: balance; }
+.sza h1 { font-size: clamp(2.2rem, 4.3vw, 3.5rem); line-height: 1.08; letter-spacing: -0.03em; }
+.sza h1 span { display: block; }
+.sza h1 .akc { color: var(--akcent); }
+.sza h2 { font-size: clamp(1.85rem, 3.4vw, 2.75rem); line-height: 1.1; letter-spacing: -0.025em; }
+.sza h3 { font-size: 1.1875rem; line-height: 1.3; letter-spacing: -0.01em; }
+.sza .nad { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--akcent); margin-bottom: 0.9rem; }
+.sza .lead { font-size: clamp(1.0625rem, 1.4vw, 1.25rem); line-height: 1.55; color: var(--cichy); max-width: 36em; text-wrap: pretty; }
+.sza small, .sza .maly-tekst { font-size: 0.875rem; line-height: 1.5; color: var(--cichy); }
+.sza .srodek { text-align: center; }
+
+/* ---------- Przycisk ---------- */
+.sza .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+  min-height: 3.25rem; padding: 0.8rem 1.5rem;
+  background: var(--akcent); color: #fff; border: 1px solid var(--akcent); border-radius: var(--r-maly);
+  font: inherit; font-weight: 600; font-size: 1.0625rem; line-height: 1.2; text-decoration: none; cursor: pointer; white-space: nowrap;
+  transition: background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out, transform 100ms ease-out;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.sza .btn .strz { width: 1rem; height: 1rem; flex: none; transition: transform 260ms var(--sprezyna); }
+.sza .btn:active { transform: scale(0.97); }
+.sza .btn.puste { background: transparent; color: var(--akcent-tekst); border-color: rgba(0, 113, 227, 0.35); }
+.sza .btn.maly { min-height: 2.5rem; padding: 0.45rem 1rem; font-size: 0.9375rem; border-radius: 0.75rem; }
+.sza .btn.duzy { width: 100%; min-height: 3.5rem; }
+.sza .btn[disabled] { opacity: 0.6; cursor: progress; }
+@media (hover: hover) {
+  .sza .btn:hover { background: var(--akcent-ciemny); border-color: var(--akcent-ciemny); }
+  .sza .btn.puste:hover { background: var(--akcent-mgla); border-color: var(--akcent); color: var(--akcent-tekst); }
+  .sza .btn:hover .strz { transform: translateX(3px); }
+}
+.sza .akcje { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+.sza .akcje.srodek { justify-content: center; margin-top: 2.5rem; }
+
+/* ---------- Górny pasek: półprzezroczysty, treść przewija się pod nim ---------- */
+.sza .gora { position: sticky; top: 0; z-index: 50; background: rgba(255, 255, 255, 0.82); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid var(--ramka); }
+.sza .gora-w { max-width: var(--max); margin: 0 auto; padding: 0 var(--bok); height: var(--gora); display: flex; align-items: center; gap: 2rem; }
+.sza .marka { font-family: var(--head); font-weight: 600; font-size: 1.0625rem; letter-spacing: -0.01em; text-decoration: none; white-space: nowrap; }
+.sza .gora-nav { display: flex; gap: 1.75rem; margin-left: auto; font-size: 0.9375rem; color: var(--cichy); }
+.sza .gora-nav a { text-decoration: none; transition: color 140ms ease-out; }
+@media (hover: hover) { .sza .gora-nav a:hover { color: var(--tekst); } }
+
+/* ---------- Hero ---------- */
+.sza .hero { padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(1rem, 2vw, 1.5rem); }
+.sza .hero-w { max-width: var(--max); margin: 0 auto; padding: 0 var(--bok); display: grid; grid-template-columns: minmax(0, 1.32fr) minmax(0, 0.68fr); gap: clamp(2rem, 5vw, 4.5rem); align-items: center; }
+.sza .hero .lead { margin-top: 1.5rem; }
+.sza .pod { margin-top: 1rem; font-size: 0.9375rem; color: var(--cichy); }
+.sza .hero-foto { position: relative; margin: 0; aspect-ratio: 4 / 4.7; border-radius: 1.75rem; overflow: hidden; background: var(--tlo2); }
+.sza .hero-foto img { object-fit: cover; object-position: 69% 40%; }
+.sza .hero-foto figcaption { position: absolute; left: 0.9rem; right: 0.9rem; bottom: 0.9rem; padding: 0.6rem 0.9rem; border-radius: 0.875rem; background: rgba(255, 255, 255, 0.86); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); font-size: 0.8125rem; line-height: 1.4; color: var(--tekst); }
+
+/* Fakty pod hero: jeden rząd, cienkie kreski */
+.sza .fakty { max-width: var(--max); margin: clamp(2.5rem, 5vw, 4rem) auto 0; padding: 0 var(--bok); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.sza .fakty > div { padding: 0.25rem 1.25rem; border-left: 1px solid var(--ramka); }
+.sza .fakty > div:first-child { padding-left: 0; border-left: 0; }
+.sza .fakty dt { font-size: 0.8125rem; color: var(--cichy); margin-bottom: 0.2rem; }
+.sza .fakty dd { margin: 0; font-family: var(--head); font-weight: 600; font-size: 1.0625rem; line-height: 1.3; letter-spacing: -0.01em; }
+
+/* ---------- Sekcje ---------- */
+.sza .sek { padding: clamp(4rem, 9vw, 7rem) 0; }
+.sza .sek.szara { background: var(--tlo2); }
+.sza .sek-w { max-width: var(--max); margin: 0 auto; padding: 0 var(--bok); }
+.sza .sek-w.waska { max-width: 52rem; }
+.sza .sek-glowa { max-width: 42rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.sza .sek-glowa .lead { margin-top: 1rem; }
+
+/* ---------- Karty i siatki ---------- */
+.sza .karta { background: #fff; border: 1px solid var(--ramka); border-radius: var(--r); padding: clamp(1.4rem, 2.4vw, 2rem); }
+.sza .karta > h3 + p { margin-top: 0.5rem; color: var(--cichy); }
+.sza .karta > h3 + p.kwota { margin-top: 1rem; color: var(--tekst); }
+.sza .kroki .karta > h3 + p.meta { margin-top: 0.3rem; color: var(--akcent-tekst); }
+.sza .siatka { display: grid; gap: 1rem; }
+.sza .siatka.dwa { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sza .siatka.trzy { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* Lista z ptaszkami */
+.sza .lista { display: grid; gap: 0.8rem; margin-top: 1.1rem; }
+.sza .lista li { display: grid; grid-template-columns: 1.25rem 1fr; gap: 0.75rem; align-items: start; line-height: 1.5; }
+.sza .znak { width: 1.25rem; height: 1.25rem; margin-top: 0.15rem; }
+.sza .znak.tak circle { fill: var(--akcent-mgla); }
+.sza .znak.tak path { stroke: var(--akcent); }
+.sza .znak.nie circle { fill: rgba(0, 0, 0, 0.06); }
+.sza .znak.nie path { stroke: var(--cichy); }
+
+/* Liczby ze źródłem */
+.sza .liczby { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2rem; margin-top: clamp(2.5rem, 5vw, 4rem); }
+.sza .liczba b { display: block; font-family: var(--head); font-weight: 600; font-size: clamp(2.25rem, 4vw, 3.25rem); line-height: 1; letter-spacing: -0.03em; color: var(--akcent); margin-bottom: 0.75rem; font-variant-numeric: tabular-nums; }
+.sza .liczba p { font-size: 0.9688rem; line-height: 1.5; }
+.sza .liczba small { display: block; margin-top: 0.5rem; font-size: 0.8125rem; }
+.sza .wniosek { margin-top: clamp(2rem, 4vw, 3rem); max-width: 34em; font-family: var(--head); font-weight: 500; font-size: clamp(1.25rem, 2.1vw, 1.625rem); line-height: 1.35; letter-spacing: -0.015em; text-wrap: balance; }
+
+/* ---------- Rozkład dnia: oś czasu ---------- */
+.sza .os-dnia { display: grid; gap: 0.75rem; }
+.sza .os-dnia li { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+.sza .os-dnia time { font-family: var(--head); font-weight: 600; font-size: 1.25rem; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; padding-top: 1.55rem; }
+.sza .os-dnia .zostaje { margin-top: 1rem; padding: 0.7rem 0.9rem; border-radius: 0.75rem; background: var(--akcent-mgla); color: var(--tekst); font-size: 0.9688rem; font-weight: 500; line-height: 1.45; }
+.sza .os-dnia .zostaje span { display: inline-block; margin-right: 0.4rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--akcent-tekst); }
+.sza .os-dnia .przerwa { align-items: center; padding: 0.15rem 0; }
+.sza .os-dnia .przerwa time { font-family: var(--body); font-weight: 500; font-size: 0.9375rem; color: var(--cichy); padding-top: 0; }
+.sza .os-dnia .przerwa span { font-size: 0.9375rem; color: var(--cichy); padding-left: clamp(1.4rem, 2.4vw, 2rem); }
+
+/* ---------- Przebieg: 3 kroki z numerem w kółku ---------- */
+.sza .kolko { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--akcent-mgla); color: var(--akcent-tekst); font-family: var(--head); font-weight: 600; font-size: 1.0625rem; margin-bottom: 1.25rem; }
+.sza .meta { margin-top: 0.3rem; font-size: 0.9375rem; font-weight: 500; color: var(--akcent-tekst); }
+.sza .kroki .meta + p { margin-top: 0.8rem; color: var(--cichy); }
+
+/* ---------- Prowadzący ---------- */
+.sza .osoba { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 5vw, 4.5rem); align-items: start; }
+.sza .portret { position: relative; aspect-ratio: 4 / 4.6; border-radius: 1.75rem; overflow: hidden; background: var(--tlo2); }
+.sza .portret img { object-fit: cover; object-position: 50% 15%; }
+.sza .osoba .portret { position: sticky; top: calc(var(--gora) + 2rem); }
+.sza .portret.maly { position: relative; top: auto; width: 3.5rem; aspect-ratio: 1; border-radius: 50%; flex: none; }
+.sza .os-zycia li { display: grid; grid-template-columns: 3.75rem minmax(0, 1fr); gap: 1rem; padding: 0.9rem 0; border-top: 1px solid var(--ramka); }
+.sza .os-zycia li:last-child { border-bottom: 1px solid var(--ramka); }
+.sza .os-zycia time { font-family: var(--head); font-weight: 600; color: var(--cichy); font-variant-numeric: tabular-nums; }
+.sza .cert { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 1.1rem; align-items: center; margin-top: 1.5rem; padding: 0.6rem; border: 1px solid var(--ramka); border-radius: 1.125rem; text-decoration: none; transition: border-color 160ms ease-out, background-color 160ms ease-out; }
+.sza .cert-img { position: relative; aspect-ratio: 1798 / 1274; border-radius: 0.625rem; overflow: hidden; }
+.sza .cert-img img { object-fit: cover; }
+.sza .cert strong { display: block; font-weight: 600; font-size: 0.9688rem; }
+@media (hover: hover) { .sza .cert:hover { border-color: var(--akcent); background: var(--akcent-mgla); } }
+
+/* ---------- Cena ---------- */
+.sza .cennik .karta { display: flex; flex-direction: column; }
+.sza .cennik .glowna { border-color: var(--akcent); box-shadow: 0 0 0 1px var(--akcent); }
+.sza .kwota { margin-top: 1rem; font-family: var(--head); font-weight: 600; font-size: clamp(2.1rem, 3.4vw, 2.75rem); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.sza .cennik .meta { color: var(--cichy); font-weight: 400; }
+.sza .cennik .lista { margin-top: 1.4rem; padding-top: 1.25rem; border-top: 1px solid var(--ramka); }
+.sza .pod-cena { margin-top: 1rem; }
+.sza .rachunek { margin-top: 0.6rem; }
+.sza .rachunek li { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid var(--ramka); }
+.sza .rachunek b { font-family: var(--head); font-weight: 600; font-size: 1.25rem; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.sza .rachunek + .maly-tekst { margin-top: 1rem; }
+.sza .akcje + .maly-tekst { margin-top: 0.9rem; }
+
+/* ---------- Pytania ---------- */
+.sza .pytania { background: #fff; border: 1px solid var(--ramka); border-radius: var(--r); padding: 0.5rem clamp(1.25rem, 2.4vw, 2rem); }
+.sza .pytania details { border-top: 1px solid var(--ramka); interpolate-size: allow-keywords; }
+.sza .pytania details:first-child { border-top: 0; }
+.sza .pytania summary { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.15rem 0; cursor: pointer; list-style: none; font-family: var(--head); font-weight: 600; font-size: 1.0625rem; line-height: 1.35; letter-spacing: -0.01em; -webkit-tap-highlight-color: transparent; }
+.sza .pytania summary::-webkit-details-marker { display: none; }
+.sza .pytania summary i { position: relative; width: 1rem; height: 1rem; flex: none; }
+.sza .pytania summary i::before, .sza .pytania summary i::after { content: ""; position: absolute; left: 0; top: calc(50% - 1px); width: 100%; height: 2px; border-radius: 1px; background: var(--akcent); transition: transform 300ms var(--sprezyna); }
+.sza .pytania summary i::after { transform: rotate(90deg); }
+.sza .pytania details[open] summary i::after { transform: rotate(0deg); }
+.sza .pytania details p { padding: 0 2.5rem 1.3rem 0; color: var(--cichy); max-width: 42em; }
+.sza .pytania details::details-content { block-size: 0; overflow: clip; transition: block-size 340ms var(--sprezyna), content-visibility 340ms allow-discrete; }
+.sza .pytania details[open]::details-content { block-size: auto; }
+
+/* ---------- Formularz ---------- */
+.sza .kontakt { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(2rem, 5vw, 4.5rem); align-items: start; }
+.sza .kontakt .sek-glowa { margin-bottom: 0; position: sticky; top: calc(var(--gora) + 2rem); }
+.sza .obietnica { margin-top: 1.5rem; padding: 0.9rem 1.1rem; border-radius: 0.875rem; background: var(--tlo2); font-size: 0.9688rem; line-height: 1.5; }
+.sza .kto-odp { display: flex; align-items: center; gap: 0.9rem; margin-top: 1.75rem; font-size: 0.9688rem; }
+.sza .kto-odp strong { display: block; font-weight: 600; }
+.sza .kto-odp a { color: var(--akcent-tekst); }
+.sza .form { background: #fff; border: 1px solid var(--ramka); border-radius: var(--r); padding: clamp(1.4rem, 3vw, 2.25rem); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.15rem; margin: 0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 18px 50px -30px rgba(0, 0, 0, 0.18); }
+.sza .form .szer { grid-column: 1 / -1; }
+.sza .pole { border: 0; margin: 0; padding: 0; min-width: 0; }
+.sza .pole > label, .sza .pole legend { display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.4rem; padding: 0; }
+.sza .pole em { font-style: normal; font-weight: 400; color: var(--cichy); margin-left: 0.3rem; }
+.sza .form input:not([type="radio"]):not([type="checkbox"]), .sza .form textarea {
+  display: block; width: 100%; min-height: 3rem; padding: 0.7rem 0.9rem;
+  background: #fff; color: var(--tekst); border: 1px solid var(--ramka-pola); border-radius: 0.75rem;
+  font: inherit; font-size: 1rem; line-height: 1.4; -webkit-appearance: none; appearance: none;
+  transition: border-color 140ms ease-out, box-shadow 140ms ease-out;
+}
+.sza .form textarea { resize: vertical; min-height: 5.25rem; }
+.sza .form ::placeholder { color: #a1a1a6; }
+.sza .form input:not([type="radio"]):not([type="checkbox"]):focus, .sza .form textarea:focus { outline: none; border-color: var(--akcent); box-shadow: 0 0 0 4px var(--akcent-mgla); }
+.sza .zle input:not([type="radio"]):not([type="checkbox"]) { border-color: var(--blad); }
+.sza .b { margin-top: 0.4rem; font-size: 0.8438rem; font-weight: 500; color: var(--blad); }
+.sza .wybor { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.sza .wybor label { position: relative; display: block; margin: 0; cursor: pointer; }
+.sza .wybor input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.sza .wybor span { display: block; min-height: 2.75rem; padding: 0.6rem 1rem; border: 1px solid var(--ramka-pola); border-radius: 0.75rem; font-weight: 500; font-size: 0.9688rem; transition: background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out, transform 100ms ease-out; }
+.sza .wybor label:active span { transform: scale(0.97); }
+.sza .wybor input:checked + span { background: var(--akcent-mgla); border-color: var(--akcent); color: var(--akcent-tekst); font-weight: 600; }
+.sza .wybor input:focus-visible + span { outline: 3px solid var(--akcent); outline-offset: 2px; }
+.sza .zgoda label { display: grid; grid-template-columns: 1.375rem 1fr; gap: 0.7rem; align-items: start; font-weight: 400; font-size: 0.8438rem; line-height: 1.5; color: var(--cichy); cursor: pointer; }
+.sza .zgoda input { -webkit-appearance: none; appearance: none; width: 1.375rem; height: 1.375rem; margin: 0; border: 1px solid var(--ramka-pola); border-radius: 0.4rem; background: #fff; cursor: pointer; display: grid; place-items: center; transition: background-color 120ms ease-out, border-color 120ms ease-out; }
+.sza .zgoda input::after { content: ""; width: 0.7rem; height: 0.4rem; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: translateY(-1px) rotate(-45deg) scale(0); transition: transform 160ms var(--sprezyna); }
+.sza .zgoda input:checked { background: var(--akcent); border-color: var(--akcent); }
+.sza .zgoda input:checked::after { transform: translateY(-1px) rotate(-45deg) scale(1); }
+.sza .zgoda.zle input { border-color: var(--blad); }
+.sza .zgoda a, .sza .b a { color: var(--akcent-tekst); text-decoration: underline; text-underline-offset: 3px; }
+.sza .pulapka { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.sza .form.ok { display: block; }
+.sza .form.ok h3 { font-size: clamp(1.6rem, 2.6vw, 2.1rem); letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+.sza .form.ok p { color: var(--cichy); }
+.sza .form.ok:focus { outline: none; }
+
+/* ---------- Stopka ---------- */
+.sza .stopka { border-top: 1px solid var(--ramka); }
+.sza .stopka-w { max-width: var(--max); margin: 0 auto; padding: 1.75rem var(--bok) 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 2rem; font-size: 0.875rem; color: var(--cichy); }
+.sza .stopka nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+.sza .stopka a { text-decoration: none; transition: color 140ms ease-out; }
+@media (hover: hover) { .sza .stopka a:hover { color: var(--tekst); } }
+
+/* ---------- Dolny pasek z przyciskiem (telefon) ---------- */
+.sza .dol { display: none; }
+
+/* ---------- Pojawianie przy przewijaniu (tylko gdy działa JS i nie ma ograniczenia ruchu) ---------- */
+.sza[data-js] .poj { opacity: 0; transform: translateY(16px); }
+.sza[data-js] .poj.on { opacity: 1; transform: none; transition: opacity 560ms ease-out, transform 700ms var(--sprezyna); }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 60rem) {
+  .sza .gora-nav { display: none; }
+  .sza .gora-w { justify-content: space-between; }
+  .sza .hero-w, .sza .osoba, .sza .kontakt { grid-template-columns: minmax(0, 1fr); }
+  .sza .hero-foto { aspect-ratio: 16 / 10; }
+  .sza .osoba .portret { position: relative; top: auto; max-width: 20rem; }
+  .sza .kontakt .sek-glowa { position: static; }
+  .sza .siatka.trzy { grid-template-columns: minmax(0, 1fr); }
+  .sza .liczby { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sza .fakty { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 1.25rem; }
+  .sza .fakty > div:nth-child(4) { padding-left: 0; border-left: 0; }
+}
+
+/* ---------- Telefon ---------- */
+@media (max-width: 40rem) {
+  .sza { font-size: 1rem; }
+  .sza .siatka.dwa { grid-template-columns: minmax(0, 1fr); }
+  .sza .fakty { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sza .fakty > div { padding: 0 0 0 1rem; }
+  .sza .fakty > div:nth-child(odd) { padding-left: 0; border-left: 0; }
+  .sza .fakty > div:nth-child(4) { padding-left: 1rem; border-left: 1px solid var(--ramka); }
+  .sza .liczby { gap: 1.5rem 1.25rem; }
+  .sza .os-dnia li { grid-template-columns: 3.4rem minmax(0, 1fr); gap: 0.75rem; }
+  .sza .os-dnia time { font-size: 1.0625rem; }
+  .sza .form { grid-template-columns: minmax(0, 1fr); }
+  .sza .akcje .btn { flex: 1 1 100%; }
+  .sza .gora .btn { display: none; }
+  .sza .hero-foto { aspect-ratio: 16 / 11; }
+  .sza .cert { grid-template-columns: 6rem minmax(0, 1fr); }
+
+  /* Dolny pasek: wjeżdża od dołu i tą samą drogą znika */
+  .sza .dol { display: flex; position: fixed; left: 0.75rem; right: 0.75rem; bottom: calc(0.75rem + env(safe-area-inset-bottom)); z-index: 60; box-shadow: 0 10px 30px -10px rgba(0, 60, 130, 0.45); transform: translateY(180%); transition: transform 420ms var(--sprezyna), background-color 160ms ease-out; }
+  .sza[data-dol="1"] .dol { transform: none; }
+  .sza .stopka-w { padding-bottom: 6rem; }
+}
+
+/* ---------- Dostępność ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .sza *, .sza *::before, .sza *::after { transition-duration: 1ms !important; animation: none !important; }
+  .sza .btn:active, .sza .wybor label:active span { transform: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .sza .gora { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .sza .hero-foto figcaption { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (prefers-contrast: more) {
+  .sza { --cichy: #3a3a3c; --ramka: rgba(0, 0, 0, 0.4); --ramka-pola: #6e6e73; }
+}
+
+/* ---------- Druk: strona jako oferta na kartce (do przekazania dalej) ---------- */
+@media print {
+  .sza .gora, .sza .dol, .sza .akcje, .sza .pod, .sza .form, .sza .akcje + .maly-tekst { display: none !important; }
+  .sza .sek { padding: 1.5rem 0; }
+  .sza .hero { padding: 1rem 0 1.5rem; }
+  .sza .karta, .sza .liczby, .sza .osoba, .sza .os-dnia li, .sza .pytania details, .sza .fakty { break-inside: avoid; }
+  .sza .sek-glowa { break-after: avoid; break-inside: avoid; position: static !important; }
+  .sza .osoba .portret { position: relative; top: auto; max-width: 12rem; }
+  .sza .pytania details::details-content { block-size: auto; content-visibility: visible; }
+  .sza[data-js] .poj { opacity: 1; transform: none; }
+  .sza, .sza .sek.szara, .sza .zostaje, .sza .kolko, .sza .obietnica { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

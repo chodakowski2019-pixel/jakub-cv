@@ -1,0 +1,353 @@
+import Image from "next/image";
+import Formularz from "./Formularz";
+import Ruch from "./Ruch";
+import Druk from "./Druk";
+import { BADANIE, BILET, CENA, CENY, DLA_KOGO, EFEKT, FORMULARZ, FOTO, HERO, KONTAKT, PROWADZACY, PRZEBIEG, PYTANIA, ROZKLAD, SYTUACJA, zl } from "./dane";
+import "./szkolenia-ai.css";
+
+// Szkolenie AI dla firm. Wersja 2 wyglądu (21.11.2026, USER_001: „bardzo nowoczesny, przyjazny dla oka,
+// przyjemny i skuteczny, czyli prosty”). Jasna strona w stylu oferty PHC i „O mnie”: biel, jeden niebieski
+// akcent, Poppins na nagłówki, Inter na tekst, dużo powietrza, karty z cienką ramką.
+// Poprzednia wersja (żółty „ROZKŁAD”) leży w _wersja-rozklad/.
+// Kolejność: hero → dlaczego teraz → co zostaje → rozkład dnia → przebieg → prowadzący → dla kogo →
+// cena → pytania → formularz. Jeden przycisk „Sprawdź wolny termin”, powtórzony.
+// Komponent serwerowy. Po stronie przeglądarki działają tylko Formularz, Ruch i Druk.
+
+// Twarda spacja: jednoliterowe słowa i liczby nie łamią się między wierszami.
+const TS = String.fromCharCode(160);
+const s = (t: string) => t.replace(/(^|\s)([wzioauWZIOAU])\s/g, `$1$2${TS}`).replace(/(\d)\s(\d{3})(?!\d)/g, `$1${TS}$2`).replace(/(\d)\s(r\.)/g, `$1${TS}$2`);
+
+const Strzalka = () => (
+  <svg className="strz" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 8h10M9 4l4 4-4 4" />
+  </svg>
+);
+const Ptaszek = () => (
+  <svg className="znak tak" viewBox="0 0 20 20" aria-hidden="true">
+    <circle cx="10" cy="10" r="10" />
+    <path d="M5.8 10.4l2.7 2.7 5.7-6" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+const Krzyzyk = () => (
+  <svg className="znak nie" viewBox="0 0 20 20" aria-hidden="true">
+    <circle cx="10" cy="10" r="10" />
+    <path d="M7 7l6 6M13 7l-6 6" fill="none" strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+);
+
+function Glowa({ nad, tytul, id, lead }: { nad: string; tytul: string; id: string; lead?: string }) {
+  return (
+    <div className="sek-glowa poj">
+      <p className="nad">{nad}</p>
+      <h2 id={id}>{s(tytul)}</h2>
+      {lead && <p className="lead">{s(lead)}</p>}
+    </div>
+  );
+}
+
+export default function SzkoleniaAiPage({ fontClass }: { fontClass: string }) {
+  const liczby = [...SYTUACJA.liczby, ...BADANIE.liczby];
+  return (
+    <div className={`sza ${fontClass}`} lang="pl">
+      <Ruch />
+
+      <header className="gora">
+        <div className="gora-w">
+          <a href="/" className="marka">Jakub Chodakowski</a>
+          <nav className="gora-nav" aria-label="Sekcje strony">
+            <a href="#rozklad">Rozkład dnia</a>
+            <a href="#prowadzacy">Prowadzący</a>
+            <a href="#cena">Cena</a>
+            <a href="#pytania">Pytania</a>
+          </nav>
+          <a href="#formularz" className="btn maly">{HERO.cta}</a>
+        </div>
+      </header>
+
+      <main>
+        {/* HERO */}
+        <section className="hero" aria-labelledby="h1">
+          <div className="hero-w">
+            <div className="hero-tekst">
+              <p className="nad">{HERO.nad}</p>
+              <h1 id="h1">
+                <span>{s(HERO.h1[0])}</span> <span className="akc">{s(HERO.h1[1])}</span>
+              </h1>
+              <p className="lead">{s(HERO.lead)}</p>
+              <div className="akcje">
+                <a href="#formularz" className="btn" data-cta="hero">{HERO.cta} <Strzalka /></a>
+                <a href="#rozklad" className="btn puste">{HERO.cta2}</a>
+              </div>
+              <p className="pod">{HERO.pod}</p>
+            </div>
+            <figure className="hero-foto">
+              <Image src={FOTO.src} alt={FOTO.alt} fill sizes="(max-width: 960px) 100vw, 540px" priority />
+              <figcaption>{FOTO.podpis}</figcaption>
+            </figure>
+          </div>
+          <dl className="fakty" aria-label="Szkolenie w skrócie">
+            {BILET.map((b) => (
+              <div key={b.k}>
+                <dt>{b.k}</dt>
+                <dd>{b.w}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        {/* DLACZEGO TERAZ */}
+        <section className="sek" aria-labelledby="sytuacja">
+          <div className="sek-w">
+            <Glowa nad="Dlaczego teraz" tytul={SYTUACJA.tytul} id="sytuacja" />
+            <div className="siatka dwa">
+              {SYTUACJA.wiersze.map((w) => (
+                <div className="karta poj" key={w.co}>
+                  <h3>{s(w.co)}</h3>
+                  <p>{s(w.skutek)}</p>
+                </div>
+              ))}
+            </div>
+            <div className="liczby">
+              {liczby.map((l) => (
+                <div className="liczba poj" key={l.n}>
+                  <b>{l.n}</b>
+                  <p>{s(l.opis)}</p>
+                  <small>{l.zrodlo}</small>
+                </div>
+              ))}
+            </div>
+            <p className="wniosek poj">{s(BADANIE.wniosek)}</p>
+          </div>
+        </section>
+
+        {/* CO ZOSTAJE */}
+        <section className="sek szara" aria-labelledby="efekt">
+          <div className="sek-w">
+            <Glowa nad="Efekt" tytul={EFEKT.tytul} id="efekt" />
+            <div className="siatka trzy">
+              {EFEKT.grupy.map((g) => (
+                <div className="karta poj" key={g.kto}>
+                  <h3>{g.kto}</h3>
+                  <ul className="lista">
+                    {g.co.map((c) => (
+                      <li key={c}><Ptaszek /><span>{s(c)}</span></li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ROZKŁAD DNIA */}
+        <section className="sek" aria-labelledby="rozklad">
+          <div className="sek-w waska">
+            <Glowa nad="Program" tytul={ROZKLAD.tytul} id="rozklad" lead={ROZKLAD.uwaga} />
+            <ol className="os-dnia">
+              {ROZKLAD.wiersze.map((w) =>
+                w.opis ? (
+                  <li className="blok poj" key={w.g}>
+                    <time>{w.g}</time>
+                    <div className="karta">
+                      <h3>{w.blok}</h3>
+                      <p>{s(w.opis)}</p>
+                      <p className="zostaje"><span>Zostaje</span> {s(w.zostaje ?? "")}</p>
+                    </div>
+                  </li>
+                ) : (
+                  <li className="przerwa" key={w.g}>
+                    <time>{w.g}</time>
+                    <span>{w.blok}</span>
+                  </li>
+                ),
+              )}
+            </ol>
+            <div className="akcje srodek poj">
+              <a href="#formularz" className="btn">{HERO.cta} <Strzalka /></a>
+            </div>
+          </div>
+        </section>
+
+        {/* PRZEBIEG */}
+        <section className="sek szara" aria-labelledby="przebieg">
+          <div className="sek-w">
+            <Glowa nad="Współpraca" tytul={PRZEBIEG.tytul} id="przebieg" />
+            <ol className="siatka trzy kroki">
+              {PRZEBIEG.kroki.map((k, i) => (
+                <li className="karta poj" key={k.tytul}>
+                  <span className="kolko" aria-hidden="true">{i + 1}</span>
+                  <h3>{k.tytul}</h3>
+                  <p className="meta">{k.meta}</p>
+                  <p>{s(k.co)}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* PROWADZĄCY */}
+        <section className="sek" aria-labelledby="prowadzacy">
+          <div className="sek-w">
+            <div className="osoba">
+              <div className="portret poj">
+                <Image src={PROWADZACY.portret.src} alt={PROWADZACY.portret.alt} fill sizes="(max-width: 960px) 80vw, 400px" />
+              </div>
+              <div>
+                <div className="sek-glowa poj">
+                  <p className="nad">{PROWADZACY.tytul}</p>
+                  <h2 id="prowadzacy">{PROWADZACY.imie}</h2>
+                  <p className="lead">{s(PROWADZACY.lead)}</p>
+                </div>
+                <ul className="os-zycia poj">
+                  {PROWADZACY.os.map((o) => (
+                    <li key={o.co}>
+                      <time>{o.rok}</time>
+                      <span>{s(o.co)}</span>
+                    </li>
+                  ))}
+                </ul>
+                <a className="cert poj" href={PROWADZACY.cert.src} target="_blank" rel="noopener noreferrer">
+                  <span className="cert-img">
+                    <Image src={PROWADZACY.cert.src} alt={PROWADZACY.cert.alt} fill sizes="160px" />
+                  </span>
+                  <span>
+                    <strong>{PROWADZACY.cert.podpis}</strong>
+                    <small>Otwórz w pełnym rozmiarze</small>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* DLA KOGO */}
+        <section className="sek szara" aria-labelledby="dla-kogo">
+          <div className="sek-w">
+            <Glowa nad="Dopasowanie" tytul={DLA_KOGO.tytul} id="dla-kogo" />
+            <div className="siatka dwa">
+              <div className="karta poj">
+                <h3>To szkolenie jest dla</h3>
+                <ul className="lista">
+                  {DLA_KOGO.tak.map((t) => (
+                    <li key={t}><Ptaszek /><span>{s(t)}</span></li>
+                  ))}
+                </ul>
+              </div>
+              <div className="karta poj">
+                <h3>To szkolenie nie jest dla</h3>
+                <ul className="lista">
+                  {DLA_KOGO.nie.map((t) => (
+                    <li key={t}><Krzyzyk /><span>{s(t)}</span></li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CENA */}
+        <section className="sek" aria-labelledby="cena">
+          <div className="sek-w">
+            <Glowa nad="Cena" tytul="Jedna cena za całą grupę" id="cena" lead={`${CENA.netto} ${CENA.platnosc}`} />
+            <div className="siatka trzy cennik">
+              {CENA.formy.map((f) => (
+                <div className={`karta poj${f.glowna ? " glowna" : ""}`} key={f.forma}>
+                  <h3>{f.forma}</h3>
+                  <p className="kwota">{zl(f.cena)}</p>
+                  <p className="meta">netto za grupę</p>
+                  <ul className="lista">
+                    <li><Ptaszek /><span>{f.czas}</span></li>
+                    <li><Ptaszek /><span>{f.grupa}</span></li>
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            <div className="siatka dwa pod-cena">
+              <div className="karta poj">
+                <h3>W cenie</h3>
+                <ul className="lista">
+                  {CENA.wCenie.map((c) => (
+                    <li key={c}><Ptaszek /><span>{s(c)}</span></li>
+                  ))}
+                </ul>
+              </div>
+              <div className="karta poj">
+                <h3>Koszt na osobę</h3>
+                <ul className="rachunek">
+                  {CENA.osoby.map((n) => (
+                    <li key={n}>
+                      <span>{n} osób</span>
+                      <b>{zl(Math.round(CENY.wFirmie / n))}</b>
+                    </li>
+                  ))}
+                </ul>
+                <p className="maly-tekst">Warsztat w firmie, netto za osobę. {s(CENA.rynek)}</p>
+              </div>
+            </div>
+
+            <div className="akcje srodek poj">
+              <a href="#formularz" className="btn">{HERO.cta} <Strzalka /></a>
+              <Druk napis={CENA.druk.przycisk} />
+            </div>
+            <p className="maly-tekst srodek">{s(CENA.druk.opis)}</p>
+          </div>
+        </section>
+
+        {/* PYTANIA */}
+        <section className="sek szara" aria-labelledby="pytania">
+          <div className="sek-w waska">
+            <Glowa nad="Pytania" tytul="Najczęstsze pytania" id="pytania" />
+            <div className="pytania poj">
+              {PYTANIA.lista.map((q) => (
+                <details key={q.p}>
+                  <summary>
+                    <span>{s(q.p)}</span>
+                    <i aria-hidden="true" />
+                  </summary>
+                  <p>{s(q.o)}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* FORMULARZ */}
+        <section className="sek" aria-labelledby="formularz">
+          <div className="sek-w kontakt">
+            <div className="sek-glowa poj">
+              <p className="nad">Kontakt</p>
+              <h2 id="formularz">{s(FORMULARZ.tytul)}</h2>
+              <p className="lead">{s(FORMULARZ.lead)}</p>
+              <p className="obietnica">{s(FORMULARZ.obietnica)}</p>
+              <div className="kto-odp">
+                <div className="portret maly">
+                  <Image src={PROWADZACY.portret.src} alt="" fill sizes="96px" />
+                </div>
+                <p>
+                  <strong>{FORMULARZ.kto}</strong>
+                  <a href={`mailto:${KONTAKT.email}?subject=Szkolenie%20AI%20dla%20firmy`}>{KONTAKT.email}</a>
+                </p>
+              </div>
+            </div>
+            <Formularz />
+          </div>
+        </section>
+      </main>
+
+      <footer className="stopka">
+        <div className="stopka-w">
+          <span>Jakub Chodakowski © 2026 · NIP {KONTAKT.nip}</span>
+          <nav aria-label="Dokumenty i kontakt">
+            <a href="/regulamin">Regulamin</a>
+            <a href="/polityka-prywatnosci">Polityka prywatności</a>
+            <a href={KONTAKT.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href={`mailto:${KONTAKT.email}`}>{KONTAKT.email}</a>
+          </nav>
+        </div>
+      </footer>
+
+      <a href="#formularz" className="dol btn">{HERO.cta} <Strzalka /></a>
+    </div>
+  );
+}

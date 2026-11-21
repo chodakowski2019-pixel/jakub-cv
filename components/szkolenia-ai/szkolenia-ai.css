@@ -1,0 +1,861 @@
+/* Szkolenie AI dla firm. Wersja 3 wyglądu (21.11.2026): ciemny styl wzorowany na szablonie Framer „Dominion”.
+   Czerń, wolno płynące gwiazdy, smuga światła, lekki krój Geist, drobne napisy mono, cienkie linie z „ząbkiem”,
+   obrys w kształcie pocisku, schody, orbita, taśma, wielki napis w stopce. Jeden akcent: limonka (#d9e000 wypełnienia, #e9f542 tekst i linie), ta sama co w Bruno.
+   Wszystko pod .sza. Poprzednie wersje w _wersja-rozklad/ i _wersja-2-jasna/. */
+
+html:has(.sza),
+body:has(.sza) { background: #030405; }
+body:has(.sza)::before,
+body:has(.sza)::after { display: none; }
+
+.sza {
+  --tlo: #030405;
+  --tlo2: #0a0d0f;
+  --karta: rgba(238, 243, 243, 0.025);
+  --tekst: #eef3f3;
+  --tekst2: #d0d7d8;
+  --cichy: #a7b1b4;
+  --akcent: #d9e000;
+  --akcent-jasny: #e9f542;
+  --akcent-rgb: 217, 224, 0;
+  --na-akcencie: #141416;
+  --akcent-najazd: #e9f542;
+  --szklo: rgba(3, 4, 5, 0.58);
+  --listwa: rgba(8, 11, 13, 0.62);
+  --najazd: rgba(238, 243, 243, 0.07);
+  --najazd-slaby: rgba(238, 243, 243, 0.02);
+  --obrys-tlo: #000;
+  --kontur: rgba(238, 243, 243, 0.6);
+  --kontur-slaby: rgba(238, 243, 243, 0.34);
+  --form-tlo: rgba(10, 13, 15, 0.85);
+  --pole-tlo: rgba(238, 243, 243, 0.03);
+  --pole-tlo-2: rgba(238, 243, 243, 0.05);
+  --smuga-brzeg: rgba(var(--akcent-rgb), 0.08);
+  --smuga-srodek: rgba(228, 236, 226, 0.26);
+  --poswiata: rgba(var(--akcent-rgb), 0.06);
+  --na-zdjeciu: #eef3f3;
+  --linia: rgba(238, 243, 243, 0.13);
+  --linia2: rgba(238, 243, 243, 0.27);
+  --blad: #ff9d94;
+  --gw-kolor: #eef3f3;
+  --gw-poswiata: #e9f542;
+  --gw-moc: 1;
+  --sans: var(--sza-sans), "Geist", ui-sans-serif, system-ui, sans-serif;
+  --mono: var(--sza-mono), "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --max: 85rem;
+  --bok: clamp(1.25rem, 2.8vw, 2.5rem);
+  --sprezyna: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  width: 100%;
+  background: var(--tlo);
+  color: var(--tekst);
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+  color-scheme: dark;
+}
+.sza *, .sza *::before, .sza *::after { box-sizing: border-box; }
+.sza a { color: inherit; text-decoration: none; }
+.sza ul, .sza ol { list-style: none; margin: 0; padding: 0; }
+.sza p, .sza figure, .sza dl, .sza dd { margin: 0; }
+.sza :focus-visible { outline: 2px solid var(--akcent-jasny); outline-offset: 3px; border-radius: 4px; }
+.sza [id] { scroll-margin-top: 6.5rem; }
+.sza .ukryte { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- Typografia: duży tekst lekko i ciasno ----------
+   Czytelność (21.11.2026): tekst do czytania ma 17 px i kolor --tekst2, drobny druk 15 px i --cichy,
+   napisy mono 12 px tylko jako krótkie etykiety. Trzy kolory tekstu: --tekst (nagłówki i to, co najważniejsze),
+   --tekst2 (zdania do czytania), --cichy (dopiski, źródła). Wiersz ma najwyżej ok. 65 znaków. */
+.sza h1, .sza h2, .sza h3 { margin: 0; font-weight: 400; color: var(--tekst); }
+.sza h1 { font-size: clamp(2.25rem, 3.8vw, 3.4rem); line-height: 1.05; letter-spacing: -0.04em; text-wrap: balance; }
+.sza h1 span + span { color: var(--akcent-jasny); }
+.sza h1 span { display: block; }
+.sza h2 { font-size: clamp(1.9rem, 3.1vw, 2.75rem); line-height: 1.08; letter-spacing: -0.035em; text-wrap: balance; }
+.sza h3 { font-size: 1.375rem; line-height: 1.2; letter-spacing: -0.025em; }
+.sza .mono { font-family: var(--mono); font-size: 0.75rem; font-weight: 400; line-height: 1.5; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cichy); }
+.sza .nad { margin-bottom: 1.25rem; font-size: 0.8125rem; color: var(--akcent-jasny); }
+.sza .lead { margin-top: 1.5rem; font-size: 1.1875rem; line-height: 1.55; color: var(--tekst2); max-width: 31em; text-wrap: pretty; }
+.sza .lead strong { display: block; margin-top: 0.5rem; font-weight: 500; color: var(--tekst); }
+.sza .opis { margin-top: 1.1rem; font-size: 1.0625rem; line-height: 1.6; color: var(--tekst2); max-width: 30em; text-wrap: pretty; }
+.sza small, .sza .maly-tekst { font-size: 0.9375rem; line-height: 1.55; color: var(--cichy); }
+.sza b, .sza strong { font-weight: 600; }
+.sza .srodek { text-align: center; }
+
+/* Słowa rozjaśniają się po kolei (tylko gdy działa JS) */
+.sza[data-js] .zd .sl { opacity: 0.26; transition: opacity 700ms ease-out; transition-delay: calc(var(--i) * 55ms); }
+.sza[data-js] .zd.on .sl { opacity: 1; }
+
+/* ---------- Przycisk: jasny prostokąt z małym rogiem ---------- */
+.sza .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+  min-height: 3rem; padding: 0.7rem 1.4rem;
+  background: var(--akcent); color: var(--na-akcencie); border: 1px solid var(--akcent); border-radius: 0.5rem;
+  font: inherit; font-weight: 500; font-size: 1rem; line-height: 1.2; cursor: pointer; white-space: nowrap;
+  transition: background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out, transform 100ms ease-out;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.sza .btn .strz { width: 0.95rem; height: 0.95rem; flex: none; transition: transform 260ms var(--sprezyna); }
+.sza .btn:active { transform: scale(0.97); }
+.sza .btn.puste { background: var(--szklo); color: var(--tekst); border-color: var(--linia2); }
+.sza .btn.maly { min-height: 2.6rem; padding: 0.45rem 1.05rem; font-size: 0.9375rem; }
+.sza .btn.duzy { width: 100%; min-height: 3.25rem; }
+.sza .btn[disabled] { opacity: 0.6; cursor: progress; }
+@media (hover: hover) {
+  .sza .btn:hover { background: var(--akcent-najazd); border-color: var(--akcent-najazd); }
+  .sza .btn.puste:hover { background: var(--najazd); border-color: var(--tekst); }
+  .sza .btn:hover .strz { transform: translateX(3px); }
+}
+.sza .akcje { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.25rem; }
+.sza .akcje.srodek { justify-content: center; margin-top: 2.5rem; }
+.sza .akcje + .maly-tekst { margin-top: 0.9rem; }
+
+/* ---------- Górny pasek: szkło na pełnej szerokości ekranu (USER_001 21.11.2026: „ten pasek ma być na pełnej szerokości”).
+   Tło od brzegu do brzegu, nazwisko i przycisk wyrównane do treści strony (szerokość --max). Tak samo jak pasek bloga. ---------- */
+.sza .gora {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  width: 100%;
+  height: 4.25rem; padding: 0 max(var(--bok), calc((100% - var(--max)) / 2 + var(--bok)));
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1.5rem;
+  border: 0; border-bottom: 1px solid var(--linia); border-radius: 0;
+  background: var(--listwa); -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%);
+}
+.sza .marka { font-weight: 600; font-size: 0.8125rem; letter-spacing: 0.24em; text-transform: uppercase; white-space: nowrap; }
+.sza .gora .btn { justify-self: end; }
+
+/* ---------- Hero ---------- */
+.sza .hero { position: relative; min-height: 100svh; padding: 7.25rem 0 3rem; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+.sza .gwiazdy { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.sza .smuga {
+  position: absolute; top: -22%; right: -12%; width: 78%; height: 95%; pointer-events: none;
+  background: linear-gradient(128deg, transparent 36%, var(--smuga-brzeg) 44%, var(--smuga-srodek) 50%, var(--smuga-brzeg) 56%, transparent 66%);
+  filter: blur(26px); transform: rotate(-8deg); animation: sza-smuga 16s ease-in-out infinite alternate;
+}
+.sza .hero::before { content: ""; position: absolute; left: -10%; bottom: -30%; width: 55%; height: 70%; pointer-events: none; background: radial-gradient(closest-side, var(--poswiata), transparent); filter: blur(30px); }
+.sza .ziarno { position: absolute; inset: 0; pointer-events: none; opacity: 0.2; mix-blend-mode: soft-light; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>"); }
+@keyframes sza-smuga { from { opacity: 0.75; transform: rotate(-8deg) translate3d(0, 0, 0); } to { opacity: 1; transform: rotate(-6deg) translate3d(-3%, 2%, 0); } }
+
+.sza .hero-w { position: relative; z-index: 2; width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 var(--bok); display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr); gap: clamp(1.25rem, 2.5vw, 2.5rem); align-items: center; }
+.sza .hero h1 { font-size: clamp(2.1rem, 3.3vw, 3rem); }
+
+/* Obrys w kształcie pocisku + cienka linia od czubka w prawo */
+.sza .pocisk { position: relative; padding: clamp(3rem, 6vw, 6rem) 12% clamp(3rem, 5.5vw, 5.5rem) clamp(1.5rem, 4vw, 3.5rem); }
+.sza .obrys { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.sza .obrys path { fill: var(--obrys-tlo); stroke: var(--linia2); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.sza .pocisk::before { content: ""; position: absolute; left: 0.6rem; top: 2.5rem; bottom: 2.5rem; width: 1px; background: var(--linia); }
+.sza .pocisk::after { content: ""; position: absolute; left: 100%; top: 50%; width: 100vw; height: 1px; background: var(--linia); }
+.sza .pocisk > :not(.obrys) { position: relative; }
+
+/* Zdjęcie z wystąpienia w pierwszym ekranie (USER_001 21.11.2026: „to powinno być na początku”) */
+.sza .hero .kadr { aspect-ratio: 1 / 0.84; }
+.sza .hero .kadr-napis { font-size: clamp(2rem, 3.6vw, 3.2rem); }
+
+.sza .hero-dol { position: relative; z-index: 2; width: 100%; max-width: var(--max); margin: 2.25rem auto 0; padding: 0 var(--bok); display: flex; align-items: center; gap: clamp(1.5rem, 4vw, 4rem); }
+.sza .znaczek { margin-left: clamp(1.75rem, 5vw, 4.5rem); padding: 0.7rem 1.25rem; border: 1px solid var(--linia2); border-radius: 0.5rem; background: var(--szklo); font-size: clamp(1rem, 1.5vw, 1.3rem); letter-spacing: -0.02em; white-space: nowrap; }
+.sza .prazki { flex: none; width: 4.3rem; height: 5rem; background: repeating-linear-gradient(90deg, var(--linia2) 0 1px, transparent 1px 22px); -webkit-mask-image: linear-gradient(to bottom, transparent, #000 40%); mask-image: linear-gradient(to bottom, transparent, #000 40%); }
+.sza .pod { font-size: 0.9375rem; color: var(--cichy); }
+
+/* ---------- Sekcje ---------- */
+.sza .sek { position: relative; padding: clamp(4.5rem, 9vw, 8rem) 0; }
+.sza .sek-w { max-width: var(--max); margin: 0 auto; padding: 0 var(--bok); }
+.sza .glowa { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 23rem); gap: 2rem; align-items: end; margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+.sza .glowa .bok { font-size: 1.0625rem; line-height: 1.6; color: var(--tekst2); }
+.sza .glowa .bok .btn { margin-top: 1rem; }
+.sza .duze { font-size: clamp(1.7rem, 3.3vw, 2.9rem); line-height: 1.14; letter-spacing: -0.035em; max-width: 21em; text-wrap: pretty; }
+
+/* Linia z „ząbkiem” między sekcjami + krótki jasny odcinek */
+.sza .kreska { display: flex; align-items: flex-start; height: 13px; }
+.sza .kreska span { display: block; height: 0; border-top: 1px solid var(--linia); }
+.sza .kreska span:first-child { flex: 0 0 26%; }
+.sza .kreska span:last-child { flex: 1; margin-top: 12px; position: relative; }
+.sza .kreska span:last-child::after { content: ""; position: absolute; left: 14%; top: -1px; width: 5.5rem; height: 1px; background: var(--akcent-jasny); }
+.sza .kreska svg { flex: none; width: 28px; height: 13px; }
+.sza .kreska path { stroke: var(--linia); stroke-width: 1; }
+.sza .kreska.prawo { transform: scaleX(-1); }
+
+/* ---------- Wiersze: numer, duży tekst, opis ---------- */
+.sza .wiersze { border-top: 1px solid var(--linia); }
+.sza .wiersze li { display: grid; grid-template-columns: 4.5rem minmax(0, 1.15fr) minmax(0, 1fr); gap: 0.5rem 1.5rem; align-items: baseline; padding: 1.6rem 0; border-bottom: 1px solid var(--linia); transition: background-color 200ms ease-out; }
+.sza .wiersze h3 { font-size: clamp(1.3rem, 2.1vw, 1.85rem); letter-spacing: -0.03em; }
+.sza .wiersze p { font-size: 1.0625rem; color: var(--tekst2); }
+.sza .wiersze .nr { transition: color 200ms ease-out; }
+.sza .wiersze .meta { margin-top: 0.4rem; font-size: 1rem; color: var(--akcent-jasny); }
+@media (hover: hover) { .sza .wiersze li:hover { background: var(--najazd-slaby); } .sza .wiersze li:hover .nr { color: var(--akcent-jasny); } }
+.sza .zycie { margin-top: clamp(2.5rem, 5vw, 4rem); }
+.sza .zycie li { grid-template-columns: 4.5rem minmax(0, 1fr); padding: 1.05rem 0; }
+.sza .zycie p { font-size: 1.0625rem; color: var(--tekst); }
+
+/* Liczby ze źródłem */
+.sza .liczby { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem clamp(2rem, 6vw, 6rem); max-width: 62rem; margin-top: clamp(3rem, 6vw, 5rem); }
+.sza .liczba b { display: block; font-weight: 300; font-size: clamp(2.6rem, 4.6vw, 4rem); line-height: 1; letter-spacing: -0.045em; margin-bottom: 0.9rem; font-variant-numeric: tabular-nums; }
+.sza .liczba p { font-size: 1.0625rem; color: var(--tekst2); max-width: 25em; }
+.sza .liczba small { display: block; margin-top: 0.7rem; font-size: 0.875rem; }
+
+/* ---------- Schody: 4 stopnie w dół, na całą szerokość (tekst ma miejsce na 16 px) ---------- */
+.sza .schody { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.sza .schody li { position: relative; height: 11.5rem; margin-top: calc(var(--i) * 3.5rem); padding: 0 1.75rem 1.1rem 1.1rem; }
+.sza .schody li::before { content: ""; position: absolute; left: 0; right: 2.75rem; bottom: 0; height: 1px; background: var(--linia2); }
+.sza .schody li::after { content: ""; position: absolute; right: 0; top: 100%; width: 2.75rem; height: 3.5rem; background: linear-gradient(to top right, transparent calc(50% - 0.6px), var(--linia2) calc(50% - 0.6px), var(--linia2) calc(50% + 0.6px), transparent calc(50% + 0.6px)); }
+.sza .schody li:last-child::before { right: 0; }
+.sza .schody li:last-child::after { display: none; }
+.sza .schody li > i { position: absolute; left: -5px; bottom: -5px; width: 11px; height: 11px; border-radius: 50%; background: var(--akcent-jasny); box-shadow: 0 0 0 5px rgba(var(--akcent-rgb), 0.16), 0 0 18px rgba(var(--akcent-rgb), 0.85); }
+.sza .schody h3 { margin: 0.5rem 0 0.4rem; }
+.sza .schody p { font-size: 1rem; line-height: 1.5; color: var(--tekst2); }
+.sza .takze-nad { margin: clamp(2.5rem, 5vw, 4rem) 0 0.9rem; }
+.sza .takze { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--linia); }
+.sza .takze li { font-size: 1.0625rem; color: var(--tekst2); }
+.sza .takze b { display: block; font-weight: 500; color: var(--tekst); }
+
+/* ---------- Kadr z wybrzuszeniem (zdjęcie w hero) + prowadzący: portret i liczby ---------- */
+.sza .firma { display: grid; grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+.sza .firma .wyciecie { margin-top: 0; aspect-ratio: 4 / 4.1; }
+.sza .kadr { position: relative; aspect-ratio: 16 / 10.6; overflow: hidden; border: 1px solid var(--linia2); border-radius: 1.25rem 46% 46% 1.25rem / 1.25rem 50% 50% 1.25rem; background: var(--tlo2); }
+.sza .kadr img { object-fit: cover; object-position: 60% 40%; filter: grayscale(1) contrast(1.1) brightness(0.72); }
+.sza .kadr::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, rgba(var(--akcent-rgb), 0.3), rgba(3, 4, 5, 0.05) 70%); mix-blend-mode: soft-light; }
+.sza .kadr figcaption { position: absolute; z-index: 1; left: 1.4rem; top: 1.25rem; right: 40%; color: var(--na-zdjeciu); opacity: 0.85; }
+.sza .kadr-napis { color: var(--na-zdjeciu); position: absolute; z-index: 1; left: 1.4rem; bottom: 1.25rem; font-weight: 300; font-size: clamp(2.2rem, 4.8vw, 4.25rem); line-height: 0.95; letter-spacing: -0.045em; }
+.sza .trojka { display: flex; gap: clamp(1.5rem, 3vw, 2.75rem); margin: 2rem 0 1.75rem; }
+.sza .trojka dd { font-weight: 300; font-size: clamp(1.75rem, 2.6vw, 2.25rem); line-height: 1; letter-spacing: -0.04em; margin-bottom: 0.6rem; }
+.sza .trojka dt { font-size: 0.9375rem; line-height: 1.4; color: var(--cichy); max-width: 10em; }
+
+/* ---------- Taśma: wielkie napisy samym konturem ---------- */
+.sza .tasma { padding: clamp(1rem, 3vw, 2.5rem) 0 clamp(2.5rem, 5vw, 4rem); overflow: hidden; }
+.sza .tasma-rzad > div { display: flex; width: max-content; animation: sza-tasma 60s linear infinite; }
+.sza .tasma-rzad span { display: inline-flex; align-items: center; white-space: nowrap; }
+.sza .tasma-rzad b { font-weight: 400; color: var(--akcent-jasny); -webkit-text-stroke: 0; }
+.sza .tasma .duza span { font-weight: 300; font-size: clamp(3rem, 7.6vw, 6.9rem); line-height: 1.15; letter-spacing: -0.045em; color: transparent; -webkit-text-stroke: 1px var(--kontur); }
+.sza .tasma .duza b { font-size: 0.3em; margin: 0 0.9em; }
+.sza .tasma .mala > div { animation-direction: reverse; animation-duration: 75s; }
+.sza .tasma .mala span { font-size: clamp(1.2rem, 2.3vw, 1.9rem); letter-spacing: -0.025em; color: var(--cichy); }
+.sza .tasma .mala b { font-size: 0.5em; margin: 0 1.1em; }
+@keyframes sza-tasma { to { transform: translate3d(-50%, 0, 0); } }
+
+/* ---------- Rozkład dnia: orbita (komputer, z JS) albo lista ---------- */
+.sza .orbita { display: none; position: relative; aspect-ratio: 1000 / 470; max-width: 66rem; margin: 1rem auto 0; }
+.sza .orbita svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.sza .orbita ellipse { fill: none; stroke: var(--linia2); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.sza .orbita-punkty button { position: absolute; width: 0; height: 0; padding: 0; border: 0; background: none; color: var(--cichy); cursor: pointer; font: inherit; }
+.sza .orbita-punkty i { position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--linia2); background: var(--tlo); transition: background-color 300ms ease-out, box-shadow 400ms ease-out, transform 300ms var(--sprezyna); }
+.sza .orbita-punkty i::before { content: ""; position: absolute; inset: -16px; }
+.sza .orbita-punkty span { position: absolute; left: 1.1rem; top: -0.8rem; white-space: nowrap; font-size: 1rem; line-height: 1.6; transition: color 300ms ease-out; }
+.sza .orbita-punkty span b { font-weight: 500; font-variant-numeric: tabular-nums; margin-right: 0.3rem; }
+.sza .orbita-punkty button:nth-child(2) span, .sza .orbita-punkty button:nth-child(3) span { left: auto; right: 1.1rem; }
+.sza .orbita-punkty .wybrany { color: var(--tekst); }
+.sza .orbita-punkty .wybrany i { background: var(--akcent-jasny); border-color: var(--akcent-jasny); transform: scale(1.15); box-shadow: 0 0 0 6px rgba(var(--akcent-rgb), 0.15), 0 0 24px rgba(var(--akcent-rgb), 0.9); }
+.sza .orbita-punkty button:focus-visible { outline: none; }
+.sza .orbita-punkty button:focus-visible i { outline: 2px solid var(--akcent-jasny); outline-offset: 4px; }
+.sza .orbita-srodek { position: absolute; left: 50%; top: 50%; width: min(33rem, 56%); transform: translate(-50%, -50%); text-align: center; animation: sza-wejscie 520ms var(--sprezyna); }
+.sza .orbita-srodek h3 { margin: 0.6rem 0 0.75rem; font-size: clamp(1.8rem, 3.3vw, 2.9rem); letter-spacing: -0.04em; line-height: 1.05; }
+.sza .orbita-srodek .opis { margin: 0 auto; max-width: 27em; }
+.sza .zostaje { margin-top: 0.9rem; font-size: 1.0625rem; color: var(--tekst); }
+.sza .zostaje b { font-weight: 500; color: var(--akcent-jasny); margin-right: 0.25rem; }
+.sza .przerwy { display: none; margin-top: 2rem; text-align: center; font-size: 0.9375rem; color: var(--cichy); }
+@keyframes sza-wejscie { from { opacity: 0; transform: translate(-50%, calc(-50% + 10px)); } to { opacity: 1; transform: translate(-50%, -50%); } }
+
+.sza .lista-dnia { border-top: 1px solid var(--linia); }
+.sza .lista-dnia li { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 1.25rem; padding: 1.4rem 0; border-bottom: 1px solid var(--linia); }
+.sza .lista-dnia time { font-weight: 300; font-size: 1.5rem; letter-spacing: -0.03em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.sza .lista-dnia h3 + p { margin-top: 0.4rem; font-size: 1.0625rem; color: var(--tekst2); }
+.sza .lista-dnia .przerwa { padding: 0.6rem 0; align-items: center; }
+.sza .lista-dnia .przerwa time, .sza .lista-dnia .przerwa span { font-family: var(--mono); font-weight: 400; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cichy); }
+
+@media (min-width: 52rem) {
+  .sza[data-js] .orbita { display: block; }
+  .sza[data-js] .lista-dnia { display: none; }
+  .sza[data-js] .przerwy { display: block; }
+}
+
+/* ---------- Panele, listy, cena ---------- */
+.sza .panel { border: 1px solid var(--linia); border-radius: 0.75rem; background: var(--karta); padding: clamp(1.4rem, 2.6vw, 2.25rem); }
+.sza .panel-t { font-size: 1.1875rem; font-weight: 500; line-height: 1.3; letter-spacing: -0.015em; }
+.sza .dwie { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.sza .cennik { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.sza .panel.glowna { border-color: rgba(var(--akcent-rgb), 0.6); background: rgba(var(--akcent-rgb), 0.05); }
+.sza .kwota { margin: 1.1rem 0 0.4rem; font-weight: 300; font-size: clamp(2.4rem, 4.1vw, 3.5rem); line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+.sza .cicho { font-size: 0.9375rem; color: var(--cichy); }
+.sza .pod-cena { margin-top: 1rem; }
+.sza .lista { display: grid; gap: 0.8rem; margin-top: 1.25rem; }
+.sza .cennik .lista { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--linia); }
+.sza .lista li { display: grid; grid-template-columns: 1.25rem 1fr; gap: 0.75rem; align-items: start; font-size: 1.0625rem; line-height: 1.5; }
+.sza .znak { width: 1.25rem; height: 1.25rem; margin-top: 0.2rem; }
+.sza .znak circle { fill: rgba(var(--akcent-rgb), 0.1); stroke: rgba(var(--akcent-rgb), 0.35); stroke-width: 1; }
+.sza .znak.tak path { stroke: var(--akcent-jasny); }
+.sza .znak.nie circle { fill: transparent; stroke: var(--linia2); }
+.sza .znak.nie path { stroke: var(--cichy); }
+.sza .rachunek { margin-top: 0.6rem; }
+.sza .rachunek li { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--linia); font-size: 1.0625rem; }
+.sza .rachunek b { font-weight: 300; font-size: 1.5rem; letter-spacing: -0.035em; font-variant-numeric: tabular-nums; }
+.sza .rachunek + .maly-tekst { margin-top: 1rem; }
+/* Pewniki: 3 rzeczy, które zdejmują ryzyko. Stoją tuż nad przyciskiem. */
+.sza .pewniki { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2.5rem; margin-top: clamp(2rem, 4vw, 3rem); padding-top: clamp(1.5rem, 3vw, 2rem); border-top: 1px solid var(--linia); }
+.sza .pewniki li { display: grid; grid-template-columns: 1.25rem minmax(0, 1fr); gap: 0.75rem; align-items: start; }
+.sza .pewniki b { display: block; font-size: 1.1875rem; font-weight: 500; line-height: 1.3; letter-spacing: -0.015em; }
+.sza .pewniki p { margin-top: 0.3rem; font-size: 1.0625rem; color: var(--tekst2); }
+
+/* ---------- Pytania ---------- */
+.sza .pyt { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+.sza .wyciecie { position: relative; aspect-ratio: 4 / 3; margin-top: 2rem; background: var(--tlo2); clip-path: polygon(0 0, calc(100% - 1.6rem) 0, 100% 1.6rem, 100% calc(100% - 1.6rem), calc(100% - 1.6rem) 100%, 0 100%); }
+.sza .wyciecie img { object-fit: cover; object-position: 50% 16%; filter: grayscale(1) contrast(1.08) brightness(0.9); }
+@media (min-width: 64.01rem) { .sza .pyt > div:first-child { position: sticky; top: 6.5rem; } }
+.sza .pyt > div:first-child .btn { margin-top: 1.25rem; }
+.sza .pytania { border-top: 1px solid var(--linia); }
+.sza .pytania details { border-bottom: 1px solid var(--linia); interpolate-size: allow-keywords; }
+.sza .pytania summary { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.25rem 0; cursor: pointer; list-style: none; font-weight: 500; font-size: 1.1875rem; line-height: 1.35; letter-spacing: -0.015em; -webkit-tap-highlight-color: transparent; }
+.sza .pytania summary::-webkit-details-marker { display: none; }
+.sza .pytania summary i { position: relative; width: 1.75rem; height: 1.75rem; flex: none; border: 1px solid var(--linia2); border-radius: 50%; transition: border-color 200ms ease-out, background-color 200ms ease-out; }
+.sza .pytania summary i::before, .sza .pytania summary i::after { content: ""; position: absolute; left: calc(50% - 0.3rem); top: calc(50% - 0.5px); width: 0.6rem; height: 1px; background: var(--tekst); transition: transform 300ms var(--sprezyna); }
+.sza .pytania summary i::after { transform: rotate(90deg); }
+.sza .pytania details[open] summary i::after { transform: rotate(0deg); }
+.sza .pytania details[open] summary i { border-color: var(--akcent-jasny); }
+@media (hover: hover) { .sza .pytania summary:hover i { background: var(--najazd); } }
+.sza .pytania details p { padding: 0 3.5rem 1.5rem 0; font-size: 1.0625rem; line-height: 1.6; color: var(--tekst2); max-width: 38em; }
+.sza .pytania details::details-content { block-size: 0; overflow: clip; transition: block-size 340ms var(--sprezyna), content-visibility 340ms allow-discrete; }
+.sza .pytania details[open]::details-content { block-size: auto; }
+
+/* ---------- Kontakt: pocisk + formularz ---------- */
+.sza .kontakt { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(2rem, 4vw, 4rem); align-items: center; }
+.sza .kontakt .pocisk { padding-right: 26%; }
+.sza .kontakt .pocisk::after { display: none; }
+.sza .dalej-t { margin-top: 1.5rem; font-size: 1.0625rem; font-weight: 500; }
+.sza .dalej { display: grid; gap: 0.6rem; margin-top: 0.8rem; max-width: 26em; }
+.sza .dalej li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); gap: 0.7rem; align-items: start; font-size: 1.0625rem; line-height: 1.5; color: var(--tekst2); }
+.sza .dalej li span { display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border: 1px solid var(--linia2); border-radius: 50%; font-size: 0.8125rem; line-height: 1; color: var(--akcent-jasny); font-variant-numeric: tabular-nums; }
+.sza .obietnica { margin-top: 1.5rem; padding-left: 1rem; border-left: 1px solid var(--akcent-jasny); font-size: 1.0625rem; line-height: 1.55; max-width: 26em; }
+.sza .form { position: relative; z-index: 1; border: 1px solid var(--linia); border-radius: 0.75rem; background: var(--form-tlo); padding: clamp(1.4rem, 3vw, 2.25rem); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.15rem; margin: 0; }
+.sza .form .szer { grid-column: 1 / -1; }
+.sza .pole { border: 0; margin: 0; padding: 0; min-width: 0; }
+.sza .pole > label, .sza .pole legend { display: block; font-size: 0.9375rem; font-weight: 500; line-height: 1.4; color: var(--tekst2); margin-bottom: 0.45rem; padding: 0; }
+.sza .pole em { font-style: normal; font-weight: 400; color: var(--cichy); margin-left: 0.35rem; }
+.sza .form input:not([type="radio"]):not([type="checkbox"]), .sza .form textarea {
+  display: block; width: 100%; min-height: 3rem; padding: 0.7rem 0.9rem;
+  background: var(--pole-tlo); color: var(--tekst); border: 1px solid var(--linia2); border-radius: 0.5rem;
+  font: inherit; font-size: 1rem; line-height: 1.4; -webkit-appearance: none; appearance: none;
+  transition: border-color 140ms ease-out, box-shadow 140ms ease-out, background-color 140ms ease-out;
+}
+.sza .form textarea { resize: vertical; min-height: 5.25rem; }
+.sza .form ::placeholder { color: var(--cichy); opacity: 0.75; }
+.sza .form input:not([type="radio"]):not([type="checkbox"]):focus, .sza .form textarea:focus { outline: none; border-color: var(--akcent-jasny); background: var(--pole-tlo-2); box-shadow: 0 0 0 4px rgba(var(--akcent-rgb), 0.12); }
+.sza .zle input:not([type="radio"]):not([type="checkbox"]) { border-color: var(--blad); }
+.sza .b { margin-top: 0.45rem; font-size: 0.9375rem; color: var(--blad); }
+.sza .wybor { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.sza .wybor label { position: relative; display: block; margin: 0; cursor: pointer; }
+.sza .wybor input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.sza .wybor span { display: block; min-height: 2.75rem; padding: 0.55rem 1rem; border: 1px solid var(--linia2); border-radius: 0.5rem; font-size: 1rem; transition: background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out, transform 100ms ease-out; }
+.sza .wybor label:active span { transform: scale(0.97); }
+.sza .wybor input:checked + span { background: var(--akcent); border-color: var(--akcent); color: var(--na-akcencie); font-weight: 500; }
+.sza .wybor input:focus-visible + span { outline: 2px solid var(--akcent-jasny); outline-offset: 3px; }
+.sza .zgoda label { display: grid; grid-template-columns: 1.25rem 1fr; gap: 0.7rem; align-items: start; font-size: 0.9375rem; font-weight: 400; line-height: 1.5; color: var(--cichy); cursor: pointer; }
+.sza .zgoda input { -webkit-appearance: none; appearance: none; width: 1.25rem; height: 1.25rem; margin: 0.1rem 0 0; border: 1px solid var(--linia2); border-radius: 0.3rem; background: transparent; cursor: pointer; display: grid; place-items: center; transition: background-color 120ms ease-out, border-color 120ms ease-out; }
+.sza .zgoda input::after { content: ""; width: 0.6rem; height: 0.35rem; border-left: 1.5px solid var(--na-akcencie); border-bottom: 1.5px solid var(--na-akcencie); transform: translateY(-1px) rotate(-45deg) scale(0); transition: transform 160ms var(--sprezyna); }
+.sza .zgoda input:checked { background: var(--akcent); border-color: var(--akcent); }
+.sza .zgoda input:checked::after { transform: translateY(-1px) rotate(-45deg) scale(1); }
+.sza .zgoda.zle input { border-color: var(--blad); }
+.sza .zgoda a, .sza .b a { color: var(--tekst); text-decoration: underline; text-underline-offset: 3px; }
+.sza .pulapka { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.sza .form.ok { display: block; }
+.sza .form.ok h3 { font-size: clamp(1.7rem, 2.8vw, 2.4rem); letter-spacing: -0.035em; margin-bottom: 0.75rem; }
+.sza .form.ok p { color: var(--cichy); }
+.sza .form.ok:focus { outline: none; }
+
+/* ---------- Stopka: e-mail, kolumny, wielki napis nad gwiazdami ---------- */
+.sza .stopka { position: relative; overflow: hidden; border-top: 1px solid var(--linia); padding-top: clamp(3rem, 6vw, 4.5rem); }
+.sza .stopka .gwiazdy { top: auto; bottom: 0; height: min(30rem, 70%); }
+.sza .smuga.dolna { top: auto; right: auto; left: -15%; bottom: -30%; width: 90%; height: 26rem; transform: rotate(-14deg); animation-duration: 20s; }
+.sza .stopka-w { position: relative; z-index: 2; max-width: var(--max); margin: 0 auto; padding: 0 var(--bok); display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 3rem; align-items: start; }
+.sza .mail { display: inline-block; font-weight: 300; font-size: clamp(1.5rem, 3.3vw, 2.9rem); line-height: 1.1; letter-spacing: -0.045em; margin-bottom: 0.9rem; }
+.sza .stopka nav { display: grid; grid-template-columns: repeat(3, auto); gap: clamp(1.5rem, 4vw, 3.5rem); justify-content: end; }
+.sza .stopka nav .mono { margin-bottom: 0.9rem; }
+.sza .stopka nav a { display: block; font-size: 1rem; padding: 0.3rem 0; color: var(--tekst); opacity: 0.9; transition: opacity 140ms ease-out; }
+@media (hover: hover) { .sza .stopka nav a:hover { opacity: 1; } .sza .mail:hover { color: var(--akcent-jasny); } }
+.sza .znak-wodny { position: relative; z-index: 1; margin: clamp(3rem, 7vw, 6rem) 0 0; text-align: center; white-space: nowrap; font-weight: 300; font-size: 12.7vw; line-height: 0.9; letter-spacing: 0.01em; color: transparent; -webkit-text-stroke: 1px var(--kontur-slaby); user-select: none; }
+.sza .stopka-dol { position: relative; z-index: 2; max-width: var(--max); margin: 0 auto; padding: 1.75rem var(--bok) 1.5rem; display: flex; justify-content: space-between; gap: 1rem; font-size: 0.875rem; color: var(--cichy); }
+
+/* ---------- Dolny pasek z przyciskiem (telefon) ---------- */
+.sza .dol { display: none; }
+
+/* ---------- Pojawianie przy przewijaniu (tylko gdy działa JS i nie ma ograniczenia ruchu) ---------- */
+.sza[data-js] .poj { opacity: 0; transform: translateY(18px); }
+.sza[data-js] .poj.on { opacity: 1; transform: none; transition: opacity 700ms ease-out, transform 800ms var(--sprezyna); }
+.sza[data-js] .schody .poj.on { transition-delay: calc(var(--i) * 110ms); }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 64rem) {
+  .sza .hero-w { grid-template-columns: minmax(0, 1fr); }
+  .sza .hero .kadr { aspect-ratio: 16 / 10.6; }
+  .sza .pocisk { padding-right: 20%; }
+  .sza .firma, .sza .pyt, .sza .kontakt { grid-template-columns: minmax(0, 1fr); }
+  .sza .schody { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.5rem; }
+  .sza .schody li { height: auto; margin-top: 0; padding: 1.5rem 0 1.25rem 1.1rem; }
+  .sza .schody li::before { right: 0; }
+  .sza .schody li::after { display: none; }
+  .sza .cennik { grid-template-columns: minmax(0, 1fr); }
+  .sza .takze, .sza .pewniki { grid-template-columns: minmax(0, 1fr); }
+  .sza .glowa { grid-template-columns: minmax(0, 1fr) minmax(0, 18rem); }
+  .sza .wyciecie { max-width: 22rem; }
+  .sza .stopka-w { grid-template-columns: minmax(0, 1fr); }
+  .sza .stopka nav { justify-content: start; }
+}
+
+/* ---------- Telefon ---------- */
+@media (max-width: 40rem) {
+  .sza .gora .btn { display: none; }
+  .sza .gora { grid-template-columns: 1fr; height: 3.75rem; padding-inline: var(--bok); }
+  .sza .hero { min-height: 0; padding: 7rem 0 3rem; }
+  .sza .pocisk { padding: 2.25rem 1.25rem 2.25rem 1.5rem; }
+  .sza .obrys { display: none; }
+  .sza .pocisk { border: 1px solid var(--linia2); border-radius: 1.25rem; background: var(--obrys-tlo); }
+  .sza .pocisk::before, .sza .pocisk::after { display: none; }
+  .sza .kontakt .pocisk { padding-right: 1.25rem; }
+  .sza .hero-dol { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+  .sza .znaczek { margin-left: 0; white-space: normal; }
+  .sza .prazki { display: none; }
+  .sza .akcje .btn { flex: 1 1 100%; }
+  .sza .glowa { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .sza .wiersze li { grid-template-columns: 3rem minmax(0, 1fr); }
+  .sza .wiersze li > p { grid-column: 2; }
+  .sza .zycie li { grid-template-columns: 3.5rem minmax(0, 1fr); }
+  .sza .zycie li > p { grid-column: auto; }
+  .sza .schody { grid-template-columns: minmax(0, 1fr); }
+  .sza .dwie, .sza .liczby { grid-template-columns: minmax(0, 1fr); }
+  .sza .kadr { border-radius: 1.25rem; aspect-ratio: 4 / 3.4; }
+  .sza .trojka { flex-wrap: wrap; }
+  .sza .form { grid-template-columns: minmax(0, 1fr); }
+  .sza .stopka nav { grid-template-columns: repeat(2, auto); }
+  .sza .stopka-dol { flex-direction: column; padding-bottom: 6rem; }
+  .sza .kreska span:first-child { flex-basis: 12%; }
+
+  /* Dolny pasek: wjeżdża od dołu i tą samą drogą znika */
+  .sza .dol { display: flex; position: fixed; left: 0.75rem; right: 0.75rem; bottom: calc(0.75rem + env(safe-area-inset-bottom)); z-index: 60; min-height: 3.25rem; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7); transform: translateY(180%); transition: transform 420ms var(--sprezyna), background-color 160ms ease-out; }
+  .sza[data-dol="1"] .dol { transform: none; }
+}
+
+/* ---------- Dostępność ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .sza *, .sza *::before, .sza *::after { transition-duration: 1ms !important; transition-delay: 0ms !important; animation: none !important; }
+  .sza .btn:active, .sza .wybor label:active span { transform: none; }
+  .sza .tasma-rzad > div { flex-wrap: wrap; width: auto; justify-content: center; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .sza .gora { background: var(--tlo2); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (prefers-contrast: more) {
+  .sza { --tekst2: #eef3f3; --cichy: #d0d7d8; --linia: rgba(238, 243, 243, 0.4); --linia2: rgba(238, 243, 243, 0.6); }
+}
+
+/* ---------- Druk: jasna kartka z ofertą (do przekazania dalej) ---------- */
+@media print {
+  html:has(.sza), body:has(.sza) { background: #fff; }
+  .sza { --tlo: #fff; --tlo2: #f3f3f3; --karta: #fff; --tekst: #111; --tekst2: #222; --cichy: #555; --akcent: #111; --akcent-jasny: #111; --akcent-rgb: 17, 17, 17; --na-akcencie: #fff; --linia: #ccc; --linia2: #999; --obrys-tlo: transparent; color-scheme: light; }
+  .sza .gora, .sza .dol, .sza .akcje, .sza .form, .sza .gwiazdy, .sza .smuga, .sza .ziarno, .sza .kolory, .sza .tasma, .sza .orbita, .sza .przerwy, .sza .znak-wodny, .sza .kreska, .sza .prazki, .sza .glowa .btn, .sza .akcje + .maly-tekst { display: none !important; }
+  .sza .lista-dnia { display: block !important; }
+  .sza .hero { min-height: 0; padding: 1rem 0; }
+  .sza .hero::before { display: none; }
+  .sza .obrys path { fill: none; }
+  .sza .sek { padding: 1.5rem 0; }
+  .sza .nad { color: #555; }
+  .sza .panel, .sza .wiersze li, .sza .lista-dnia li, .sza .liczby, .sza .firma, .sza .schody li, .sza .pytania details { break-inside: avoid; }
+  .sza .glowa { break-after: avoid; }
+  .sza .tasma .duza span, .sza .znak-wodny { -webkit-text-stroke: 0; }
+  .sza .kadr img, .sza .wyciecie img { filter: grayscale(1); }
+  .sza .kadr::after { display: none; }
+  .sza .kadr figcaption, .sza .kadr-napis { color: #fff; }
+  .sza .pytania details::details-content { block-size: auto; content-visibility: visible; }
+  .sza[data-js] .poj { opacity: 1; transform: none; }
+  .sza[data-js] .zd .sl { opacity: 1; }
+  .sza .schody li > i { box-shadow: none; }
+}
+
+/* ---------- WERSJA JASNA (21.11.2026): ten sam układ na jasnym tle. Klasa .jasna na korzeniu strony.
+   Limonka #d9e000 zostaje wypełnieniem (przyciski, punkty, zakreślenie w nagłówku).
+   Na tekst i linie idzie ciemna limonka #6f7a00, bo czysta limonka na jasnym tle jest nieczytelna. ---------- */
+html:has(.sza.jasna),
+body:has(.sza.jasna) { background: #f3f5f3; }
+.sza.jasna {
+  --tlo: #f3f5f3;
+  --tlo2: #e8ebe9;
+  --karta: rgba(255, 255, 255, 0.7);
+  --tekst: #0b0e10;
+  --tekst2: #262d30;
+  --cichy: #586265;
+  --akcent-jasny: #6f7a00;
+  --linia: rgba(11, 14, 16, 0.13);
+  --linia2: rgba(11, 14, 16, 0.3);
+  --blad: #c0281c;
+  --gw-kolor: #0b0e10;
+  --gw-poswiata: #c5cf00;
+  --gw-moc: 0.5;
+  --szklo: rgba(255, 255, 255, 0.72);
+  --listwa: rgba(255, 255, 255, 0.72);
+  --najazd: rgba(11, 14, 16, 0.06);
+  --najazd-slaby: rgba(11, 14, 16, 0.025);
+  --obrys-tlo: rgba(255, 255, 255, 0.5);
+  --kontur: rgba(11, 14, 16, 0.62);
+  --kontur-slaby: rgba(11, 14, 16, 0.28);
+  --form-tlo: rgba(255, 255, 255, 0.9);
+  --pole-tlo: #fff;
+  --pole-tlo-2: #fff;
+  --smuga-brzeg: rgba(var(--akcent-rgb), 0.16);
+  --smuga-srodek: rgba(var(--akcent-rgb), 0.5);
+  --poswiata: rgba(var(--akcent-rgb), 0.28);
+  color-scheme: light;
+}
+.sza.jasna .smuga { filter: blur(34px); }
+.sza.jasna .ziarno { opacity: 0.1; mix-blend-mode: multiply; }
+/* Drugie zdanie nagłówka: ciemny tekst zakreślony limonką */
+.sza.jasna h1 span:first-child { margin-bottom: 0.16em; }
+.sza.jasna h1 span + span { display: inline; color: var(--tekst); padding: 0 0.12em; margin-left: -0.12em; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  background: linear-gradient(to bottom, transparent 9%, var(--akcent) 9%, var(--akcent) 95%, transparent 95%); }
+@media (min-width: 64rem) { .sza.jasna h1 span + span { white-space: nowrap; } }
+.sza.jasna .schody li > i,
+.sza.jasna .orbita-punkty .wybrany i { background: var(--akcent); border: 1px solid #6f7a00; box-shadow: 0 0 0 5px rgba(var(--akcent-rgb), 0.3), 0 0 16px rgba(var(--akcent-rgb), 0.75); }
+.sza.jasna .panel.glowna { border-color: #aab400; background: #f7fbd0; }
+.sza.jasna .znak circle { fill: rgba(var(--akcent-rgb), 0.35); stroke: rgba(111, 122, 0, 0.45); }
+.sza.jasna .znak.nie circle { fill: transparent; stroke: var(--linia2); }
+.sza.jasna .tasma-rzad b { color: #9aa600; }
+.sza.jasna .pytania details[open] summary i { background: var(--akcent); border-color: #6f7a00; }
+.sza.jasna .obietnica { border-left-width: 2px; }
+.sza.jasna .form input:not([type="radio"]):not([type="checkbox"]):focus, .sza.jasna .form textarea:focus { box-shadow: 0 0 0 4px rgba(var(--akcent-rgb), 0.4); }
+.sza.jasna .form { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 24px 60px -36px rgba(11, 14, 16, 0.3); }
+@media (max-width: 40rem) { .sza.jasna .dol { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); } }
+@media (prefers-contrast: more) { .sza.jasna { --tekst2: #0b0e10; --cichy: #33393b; --linia: rgba(11, 14, 16, 0.4); --linia2: rgba(11, 14, 16, 0.6); } }
+@media (prefers-reduced-transparency: reduce) { .sza.jasna .gora { background: #fff; } }
+@media print { .sza.jasna h1 span + span { background: none; padding: 0; margin: 0; } }
+
+/* ---------- Panel kolorów (tylko podgląd, komponent Kolory). Wygląd panelu nie zależy od wybranej palety. ---------- */
+.sza .kolory { position: fixed; right: 1rem; bottom: 1rem; z-index: 70; width: 19.5rem; max-width: calc(100vw - 2rem); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 0.9rem; background: rgba(14, 16, 19, 0.94); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.75); font-family: var(--sans); color: #e8edf1; }
+.sza .kolory:not(.otwarte) { width: auto; }
+.sza .kolory button { font: inherit; cursor: pointer; }
+.sza .kolory-uchwyt { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; width: 100%; min-height: 2.5rem; padding: 0.4rem 0.9rem; border: 0; background: transparent; color: #e8edf1; font-size: 0.9375rem; font-weight: 500; }
+.sza .kolory-uchwyt span { font-size: 1.1rem; line-height: 1; color: #aab3bd; }
+.sza .kolory-panel { padding: 0.2rem 0.9rem 0.85rem; display: grid; gap: 0.7rem; }
+.sza .kolory-probki { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
+.sza .kolory-probki button { width: 1.9rem; height: 1.9rem; padding: 0; border: 2px solid rgba(255, 255, 255, 0.25); border-radius: 50%; background: linear-gradient(135deg, var(--pb) 0 58%, var(--pa) 58% 100%); transition: transform 120ms ease-out, border-color 120ms ease-out; }
+.sza .kolory-probki button[aria-pressed="true"] { border-color: #fff; transform: scale(1.14); box-shadow: 0 0 0 2px rgba(14, 16, 19, 0.94), 0 0 0 4px #fff; }
+.sza .kolory-probki.stare { padding-top: 0.65rem; border-top: 1px solid rgba(255, 255, 255, 0.14); }
+.sza .kolory-probki.stare button { width: 1.45rem; height: 1.45rem; }
+.sza .kolory-probki span { margin-left: 0.25rem; font-size: 0.75rem; color: #8f99a3; }
+.sza .kolory-rzad { display: flex; align-items: center; gap: 0.8rem; padding-top: 0.65rem; border-top: 1px solid rgba(255, 255, 255, 0.14); }
+.sza .kolory-rzad label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8125rem; color: #c3cbd3; }
+.sza .kolory-rzad input[type="color"] { width: 1.9rem; height: 1.9rem; padding: 0; border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 0.4rem; background: none; cursor: pointer; }
+.sza .kolory-mat { display: flex; margin-left: auto; padding: 0.15rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.55rem; }
+.sza .kolory-mat button { min-height: 1.75rem; padding: 0.2rem 0.6rem; border: 0; border-radius: 0.4rem; background: transparent; color: #e8edf1; font-size: 0.8125rem; }
+.sza .kolory-mat button[aria-pressed="true"] { background: #e8edf1; color: #14181d; font-weight: 500; }
+.sza .kolory-opis { font-size: 0.75rem; line-height: 1.4; color: #aab3bd; font-family: var(--mono); }
+.sza .kolory-opis b { font-family: var(--sans); font-size: 0.875rem; font-weight: 500; color: #fff; }
+@media (hover: hover) { .sza .kolory-probki button:hover { transform: scale(1.1); } }
+@media (max-width: 40rem) { .sza .kolory { right: 0.75rem; bottom: calc(4.75rem + env(safe-area-inset-bottom)); } }
+
+/* ---------- TRZY NOWE WERSJE KOLORÓW (21.11.2026) ----------
+   USER_001: „trzeba kolorystykę zmienić, bardziej metaliczna? nowoczesna? szklana? Styl strony mi się podoba,
+   ale najgorszy jest ten czarny/ciemny styl, a ten biały wyszedł słabo”.
+   Układ, kroje i treść bez zmian. Zmienia się tylko kolor i materiał:
+   .tytan  = jasny metal: szczotkowane srebro, ciemny tekst, szklane karty, limonka jako wypełnienie (klasa obok .jasna),
+   .szklo  = matowe szkło na stalowym błękicie z plamami światła, biały tekst,
+   .grafit = ciemny metal (grafit, nie czerń), srebrne nagłówki, limonka.
+   Wspólne: nieruchome tło pod całą stroną (::before), więc karty i szkło mają co rozmywać.
+   Wszystko w @media screen: druk zostaje jasną kartką. */
+@media screen {
+  .sza:is(.tytan, .szklo, .grafit) { isolation: isolate; }
+  .sza:is(.tytan, .szklo, .grafit)::before { content: ""; position: fixed; left: 0; top: 0; width: 100%; height: 100lvh; z-index: -1; pointer-events: none; background: var(--tlo-obraz); }
+
+  /* Metaliczny tekst: gradient z góry na dół na dużych napisach i liczbach */
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .sza:is(.tytan, .grafit) :is(h1 > span:first-child, h2 .sl, .orbita-srodek h3, .kwota, .liczba b, .trojka dd, .rachunek b, .lista-dnia time) { background-image: var(--metal); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .sza.grafit h1 > span + span { background-image: linear-gradient(180deg, #f8ff8a 8%, #e2ec00 52%, #b4bf00 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    /* Nagłówek ma kilka wierszy: gradient powtarza się w każdym wierszu (wysokość wiersza = 1,05em), inaczej drugi wiersz wychodzi szary */
+    .sza:is(.tytan, .grafit) h1 > span { background-size: 100% 1.05em; background-repeat: repeat-y; }
+  }
+
+  /* ===== GRAFIT: ciemny metal ===== */
+  html:has(.sza.grafit), body:has(.sza.grafit) { background: #1d2126; }
+  .sza.grafit {
+    --tlo: #1f2328;
+    --tlo2: #2a2f36;
+    --tlo-obraz:
+      linear-gradient(112deg, transparent 22%, rgba(255, 255, 255, 0.08) 36%, transparent 50%),
+      linear-gradient(112deg, transparent 58%, rgba(255, 255, 255, 0.05) 70%, transparent 82%),
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 3px),
+      radial-gradient(95% 75% at 82% -5%, #4d5661 0%, transparent 62%),
+      linear-gradient(180deg, #30363d 0%, #1b1e23 100%);
+    --karta: linear-gradient(180deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.03));
+    --tekst: #f5f7f9;
+    --tekst2: #d7dde3;
+    --cichy: #aab3bd;
+    --szklo: rgba(255, 255, 255, 0.07);
+    --listwa: rgba(40, 45, 51, 0.62);
+    --najazd: rgba(255, 255, 255, 0.11);
+    --najazd-slaby: rgba(255, 255, 255, 0.035);
+    --obrys-tlo: rgba(18, 21, 25, 0.72);
+    --kontur: rgba(240, 244, 248, 0.72);
+    --kontur-slaby: rgba(240, 244, 248, 0.4);
+    --form-tlo: rgba(26, 30, 35, 0.72);
+    --pole-tlo: rgba(255, 255, 255, 0.055);
+    --pole-tlo-2: rgba(255, 255, 255, 0.09);
+    --smuga-brzeg: rgba(255, 255, 255, 0.07);
+    --smuga-srodek: rgba(255, 255, 255, 0.34);
+    --poswiata: rgba(var(--akcent-rgb), 0.07);
+    --linia: rgba(235, 240, 246, 0.17);
+    --linia2: rgba(235, 240, 246, 0.34);
+    --gw-kolor: #f5f7f9;
+    --gw-moc: 0.75;
+    --metal: linear-gradient(180deg, #ffffff 14%, #dfe4ea 48%, #98a2ad 96%);
+  }
+  .sza.grafit :is(.panel, .form) { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.17), 0 30px 60px -36px rgba(0, 0, 0, 0.8); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  .sza.grafit .gora { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 14px 36px -22px rgba(0, 0, 0, 0.8); }
+  .sza.grafit .btn:not(.puste) { background: linear-gradient(180deg, #f2f766 0%, #d9e000 50%, #c0c800 100%); border-color: #e3eb2c; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 10px 26px -12px rgba(var(--akcent-rgb), 0.6); }
+  .sza.grafit .btn.puste { background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.04)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+  .sza.grafit .kadr { box-shadow: 0 40px 80px -44px rgba(0, 0, 0, 0.9); }
+
+  /* ===== SZKŁO: matowe szkło na stalowym błękicie ===== */
+  html:has(.sza.szklo), body:has(.sza.szklo) { background: #20334a; }
+  .sza.szklo {
+    --tlo: #213449;
+    --tlo2: #2a4159;
+    --tlo-obraz:
+      radial-gradient(40% 36% at 14% 12%, rgba(88, 158, 255, 0.5) 0%, transparent 72%),
+      radial-gradient(36% 34% at 86% 24%, rgba(38, 212, 194, 0.4) 0%, transparent 72%),
+      radial-gradient(44% 40% at 72% 92%, rgba(var(--akcent-rgb), 0.2) 0%, transparent 72%),
+      radial-gradient(38% 38% at 10% 86%, rgba(150, 128, 255, 0.36) 0%, transparent 72%),
+      linear-gradient(160deg, #22354b 0%, #2d4862 48%, #1e3046 100%);
+    --karta: linear-gradient(160deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.06));
+    --tekst: #f7fafc;
+    --tekst2: #dfe7ef;
+    --cichy: #c2ceda;
+    --szklo: rgba(255, 255, 255, 0.1);
+    --listwa: rgba(255, 255, 255, 0.1);
+    --najazd: rgba(255, 255, 255, 0.17);
+    --najazd-slaby: rgba(255, 255, 255, 0.05);
+    --obrys-tlo: rgba(255, 255, 255, 0.075);
+    --kontur: rgba(255, 255, 255, 0.78);
+    --kontur-slaby: rgba(255, 255, 255, 0.44);
+    --form-tlo: linear-gradient(160deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.07));
+    --pole-tlo: rgba(255, 255, 255, 0.1);
+    --pole-tlo-2: rgba(255, 255, 255, 0.17);
+    --smuga-brzeg: rgba(255, 255, 255, 0.08);
+    --smuga-srodek: rgba(255, 255, 255, 0.32);
+    --poswiata: rgba(var(--akcent-rgb), 0.1);
+    --linia: rgba(255, 255, 255, 0.2);
+    --linia2: rgba(255, 255, 255, 0.4);
+    --gw-kolor: #ffffff;
+    --gw-poswiata: #cfe9ff;
+    --gw-moc: 0.85;
+  }
+  .sza.szklo::before { left: -8%; top: -8%; width: 116%; height: 116lvh; animation: sza-plyw 46s ease-in-out infinite alternate; }
+  @keyframes sza-plyw { from { transform: translate3d(-2.5%, -2%, 0) scale(1); } to { transform: translate3d(2.5%, 2.5%, 0) scale(1.06); } }
+  .sza.szklo :is(.panel, .form, .gora, .znaczek, .btn.puste) { -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%); }
+  .sza.szklo :is(.panel, .form) { border-color: rgba(255, 255, 255, 0.3); border-radius: 1.25rem; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(255, 255, 255, 0.06), 0 30px 70px -40px rgba(4, 12, 24, 0.8); }
+  .sza.szklo .panel.glowna { border-color: rgba(233, 245, 66, 0.8); background: linear-gradient(160deg, rgba(233, 245, 66, 0.22), rgba(255, 255, 255, 0.07)); }
+  .sza.szklo .gora { border-color: rgba(255, 255, 255, 0.28); border-radius: 1rem; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 14px 40px -24px rgba(4, 12, 24, 0.75); }
+  .sza.szklo .btn { border-radius: 0.8rem; }
+  .sza.szklo .btn:not(.puste) { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 12px 30px -12px rgba(var(--akcent-rgb), 0.55); }
+  .sza.szklo .btn.puste { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28); }
+  .sza.szklo .znaczek { border-radius: 0.8rem; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+  .sza.szklo .kadr { border-color: rgba(255, 255, 255, 0.45); box-shadow: 0 40px 80px -44px rgba(4, 12, 24, 0.9); }
+  .sza.szklo .form input:not([type="radio"]):not([type="checkbox"]), .sza.szklo .form textarea, .sza.szklo .wybor span { border-radius: 0.7rem; }
+
+  /* ===== TYTAN: jasny metal (rozszerza .jasna) ===== */
+  html:has(.sza.tytan), body:has(.sza.tytan) { background: #c4cad1; }
+  .sza.jasna.tytan {
+    --tlo: #c9ced5;
+    --tlo2: #b7bec6;
+    --tlo-obraz:
+      linear-gradient(112deg, transparent 20%, rgba(255, 255, 255, 0.8) 35%, transparent 50%),
+      linear-gradient(112deg, transparent 56%, rgba(255, 255, 255, 0.45) 68%, transparent 80%),
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 3px),
+      linear-gradient(180deg, #e3e6ea 0%, #c8ced5 50%, #b3bac2 100%);
+    --karta: linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.42));
+    --tekst: #0d1116;
+    --tekst2: #232a32;
+    --cichy: #3c4650;
+    --akcent-jasny: #2c3300;
+    --linia: rgba(13, 17, 22, 0.17);
+    --linia2: rgba(13, 17, 22, 0.36);
+    --szklo: rgba(255, 255, 255, 0.55);
+    --listwa: rgba(236, 239, 242, 0.62);
+    --najazd: rgba(255, 255, 255, 0.75);
+    --najazd-slaby: rgba(255, 255, 255, 0.3);
+    --obrys-tlo: rgba(255, 255, 255, 0.44);
+    --kontur: rgba(13, 17, 22, 0.66);
+    --kontur-slaby: rgba(13, 17, 22, 0.3);
+    --form-tlo: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5));
+    --pole-tlo: rgba(255, 255, 255, 0.82);
+    --pole-tlo-2: #fff;
+    --smuga-brzeg: rgba(255, 255, 255, 0.3);
+    --smuga-srodek: rgba(255, 255, 255, 0.9);
+    --poswiata: rgba(var(--akcent-rgb), 0.22);
+    --gw-kolor: #ffffff;
+    --gw-poswiata: #ffffff;
+    --gw-moc: 1;
+    --metal: linear-gradient(180deg, #05070a 12%, #262d35 55%, #454f5a 100%);
+  }
+  .sza.tytan .ziarno { opacity: 0.16; }
+  .sza.tytan :is(.panel, .form) { border-color: rgba(255, 255, 255, 0.9); box-shadow: 0 0 0 1px rgba(13, 17, 22, 0.07), inset 0 1px 0 #fff, 0 30px 60px -38px rgba(20, 28, 40, 0.6); -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%); }
+  .sza.tytan .panel.glowna { border-color: #b3bd00; background: linear-gradient(180deg, rgba(242, 248, 130, 0.9), rgba(233, 245, 66, 0.5)); }
+  .sza.tytan .gora { border-color: rgba(255, 255, 255, 0.85); box-shadow: 0 0 0 1px rgba(13, 17, 22, 0.07), inset 0 1px 0 #fff, 0 14px 36px -22px rgba(20, 28, 40, 0.5); }
+  .sza.tytan .btn:not(.puste) { background: linear-gradient(180deg, #f1f660 0%, #d9e000 50%, #c2ca00 100%); border-color: #a9b200; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 12px 26px -14px rgba(70, 80, 0, 0.75), 0 2px 4px rgba(40, 50, 0, 0.18); }
+  .sza.tytan .btn.puste { background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.55)); border-color: rgba(255, 255, 255, 0.95); box-shadow: 0 0 0 1px rgba(13, 17, 22, 0.16), 0 10px 22px -14px rgba(13, 17, 22, 0.5); }
+  .sza.tytan .znaczek { border-color: rgba(255, 255, 255, 0.95); box-shadow: 0 0 0 1px rgba(13, 17, 22, 0.14), 0 10px 22px -16px rgba(13, 17, 22, 0.5); }
+  /* Limonka na srebrze jest czytelna tylko jako wypełnienie: etykiety i wyróżnienia to ciemny tekst na limonkowym tle */
+  .sza.tytan .nad { display: inline-block; padding: 0.22rem 0.55rem; border-radius: 0.3rem; background: var(--akcent); color: #14181d; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 0 0 1px rgba(120, 130, 0, 0.35); }
+  .sza.tytan :is(.wiersze .meta, .zostaje b) { display: inline-block; padding: 0 0.4em; border-radius: 0.25em; background: var(--akcent); color: #14181d; }
+  .sza.tytan .dalej li span { background: var(--akcent); border-color: #a9b200; color: #14181d; }
+  .sza.tytan .znak circle { fill: #d9e000; stroke: #a9b200; }
+  .sza.tytan .znak.nie circle { fill: rgba(255, 255, 255, 0.5); stroke: var(--linia2); }
+  .sza.tytan .tasma-rzad b { color: var(--tekst); }
+  .sza.tytan .kadr { border-color: rgba(255, 255, 255, 0.9); box-shadow: 0 0 0 1px rgba(13, 17, 22, 0.12), 0 40px 80px -44px rgba(20, 28, 40, 0.8); }
+  .sza.tytan .kadr img { filter: grayscale(1) contrast(1.08) brightness(0.86); }
+  .sza.tytan .wyciecie img { filter: grayscale(1) contrast(1.06); }
+  .sza.tytan h1 > span:first-child { margin-bottom: 0.16em; }
+}
+
+/* ---------- KOLORYSTYKA WYLICZANA (21.11.2026): klasa .gen ----------
+   USER_001 odrzucił także Tytan / Szkło / Grafit („nadal mi się nie podoba ta kolorystyka”).
+   Tu cała kolorystyka wynika z 2 kolorów ustawianych na korzeniu (motywy.ts): --b = tło, --a = akcent,
+   oraz z materiału: .mat-metal (połysk, szczotkowanie, metaliczne nagłówki) albo .mat-szklo (plamy światła, rozmyte karty).
+   --ink = kolor tekstu (jasny albo ciemny, dobrany do tła), --a-tekst = akcent poprawiony tak, żeby był czytelny jako tekst,
+   .gen-j = tło jasne. Wszystko w @media screen: druk zostaje jasną kartką. */
+@media screen {
+  html:has(.sza.gen), body:has(.sza.gen) { background: #1b1e23; }
+  html:has(.sza.gen-j), body:has(.sza.gen-j) { background: #d6dade; }
+  .sza.gen {
+    isolation: isolate;
+    --tlo: var(--b);
+    --tlo2: color-mix(in oklab, var(--b), var(--ink) 9%);
+    --tekst: var(--ink);
+    --tekst2: color-mix(in oklab, var(--ink), var(--b) 14%);
+    --cichy: color-mix(in oklab, var(--ink), var(--b) 30%);
+    --akcent: var(--a);
+    --akcent-jasny: var(--a-tekst);
+    --akcent-rgb: var(--a-rgb);
+    --na-akcencie: var(--na-a);
+    --akcent-najazd: color-mix(in oklab, var(--a), #fff 16%);
+    --linia: rgba(var(--ink-rgb), 0.17);
+    --linia2: rgba(var(--ink-rgb), 0.36);
+    --kontur: rgba(var(--ink-rgb), 0.72);
+    --kontur-slaby: rgba(var(--ink-rgb), 0.38);
+    --poswiata: rgba(var(--a-rgb), 0.1);
+    --gw-kolor: #ffffff;
+    --gw-poswiata: var(--a);
+    --gw-moc: 0.8;
+  }
+  .sza.gen::before { content: ""; position: fixed; left: 0; top: 0; width: 100%; height: 100lvh; z-index: -1; pointer-events: none; background: var(--tlo-obraz); }
+
+  /* ciemne tło */
+  .sza.gen:not(.gen-j) {
+    --karta: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+    --szklo: rgba(255, 255, 255, 0.08);
+    --listwa: color-mix(in oklab, color-mix(in oklab, var(--b), #fff 7%) 64%, transparent);
+    --najazd: rgba(255, 255, 255, 0.11);
+    --najazd-slaby: rgba(255, 255, 255, 0.035);
+    --obrys-tlo: color-mix(in oklab, color-mix(in oklab, var(--b), #000 40%) 74%, transparent);
+    --form-tlo: color-mix(in oklab, color-mix(in oklab, var(--b), #000 24%) 74%, transparent);
+    --pole-tlo: rgba(255, 255, 255, 0.06);
+    --pole-tlo-2: rgba(255, 255, 255, 0.1);
+    --smuga-brzeg: rgba(255, 255, 255, 0.07);
+    --smuga-srodek: rgba(255, 255, 255, 0.32);
+    --metal: linear-gradient(180deg, #fff 14%, color-mix(in oklab, #fff, var(--b) 14%) 50%, color-mix(in oklab, #fff, var(--b) 46%) 96%);
+    color-scheme: dark;
+  }
+  .sza.gen:not(.gen-j) :is(.panel, .form) { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.17), 0 30px 60px -36px rgba(0, 0, 0, 0.75); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+  .sza.gen:not(.gen-j) .gora { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 14px 36px -22px rgba(0, 0, 0, 0.75); }
+  .sza.gen:not(.gen-j) .btn.puste { background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.04)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+  .sza.gen:not(.gen-j) .kadr { box-shadow: 0 40px 80px -44px rgba(0, 0, 0, 0.9); }
+
+  /* jasne tło */
+  .sza.gen.gen-j {
+    --karta: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.45));
+    --szklo: rgba(255, 255, 255, 0.55);
+    --listwa: rgba(255, 255, 255, 0.6);
+    --najazd: rgba(255, 255, 255, 0.75);
+    --najazd-slaby: rgba(255, 255, 255, 0.3);
+    --obrys-tlo: rgba(255, 255, 255, 0.46);
+    --form-tlo: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.54));
+    --pole-tlo: rgba(255, 255, 255, 0.84);
+    --pole-tlo-2: #fff;
+    --smuga-brzeg: rgba(255, 255, 255, 0.3);
+    --smuga-srodek: rgba(255, 255, 255, 0.9);
+    --poswiata: rgba(var(--a-rgb), 0.16);
+    --gw-poswiata: #ffffff;
+    --gw-moc: 1;
+    --blad: #c0281c;
+    --metal: linear-gradient(180deg, #000 10%, var(--ink) 50%, color-mix(in oklab, var(--ink), var(--b) 32%) 100%);
+    color-scheme: light;
+  }
+  .sza.gen-j .ziarno { opacity: 0.14; mix-blend-mode: multiply; }
+  .sza.gen-j .smuga { filter: blur(34px); }
+  .sza.gen-j :is(.panel, .form) { border-color: rgba(255, 255, 255, 0.92); box-shadow: 0 0 0 1px rgba(var(--ink-rgb), 0.07), inset 0 1px 0 #fff, 0 30px 60px -38px rgba(var(--ink-rgb), 0.5); -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%); }
+  .sza.gen-j .panel.glowna { border-color: color-mix(in oklab, var(--a), #000 10%); background: linear-gradient(180deg, rgba(var(--a-rgb), 0.2), rgba(var(--a-rgb), 0.08)); }
+  .sza.gen-j .gora { border-color: rgba(255, 255, 255, 0.88); box-shadow: 0 0 0 1px rgba(var(--ink-rgb), 0.07), inset 0 1px 0 #fff, 0 14px 36px -22px rgba(var(--ink-rgb), 0.45); }
+  .sza.gen-j .btn.puste { background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.58)); border-color: rgba(255, 255, 255, 0.96); box-shadow: 0 0 0 1px rgba(var(--ink-rgb), 0.16), 0 10px 22px -14px rgba(var(--ink-rgb), 0.5); }
+  .sza.gen-j .znaczek { border-color: rgba(255, 255, 255, 0.96); box-shadow: 0 0 0 1px rgba(var(--ink-rgb), 0.14), 0 10px 22px -16px rgba(var(--ink-rgb), 0.5); }
+  .sza.gen-j .kadr { border-color: rgba(255, 255, 255, 0.9); box-shadow: 0 0 0 1px rgba(var(--ink-rgb), 0.12), 0 40px 80px -44px rgba(var(--ink-rgb), 0.8); }
+  .sza.gen-j .kadr img { filter: grayscale(1) contrast(1.08) brightness(0.86); }
+  .sza.gen-j .znak circle { fill: rgba(var(--a-rgb), 0.16); stroke: rgba(var(--a-rgb), 0.6); }
+  .sza.gen-j .znak.nie circle { fill: rgba(255, 255, 255, 0.5); stroke: var(--linia2); }
+  .sza.gen-j .obietnica { border-left-width: 2px; }
+
+  /* przycisk główny: akcent z połyskiem, w każdej palecie */
+  .sza.gen .btn:not(.puste) { background: linear-gradient(180deg, color-mix(in oklab, var(--a), #fff 26%) 0%, var(--a) 52%, color-mix(in oklab, var(--a), #000 14%) 100%); border-color: color-mix(in oklab, var(--a), #fff 12%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 10px 26px -12px rgba(var(--a-rgb), 0.65); }
+  @media (hover: hover) { .sza.gen .btn:not(.puste):hover { filter: brightness(1.07); } }
+  .sza.gen .kadr::after { background: linear-gradient(120deg, rgba(var(--a-rgb), 0.34), rgba(3, 4, 5, 0.05) 70%); }
+
+  /* MATERIAŁ: metal */
+  .sza.gen.mat-metal:not(.gen-j) {
+    --tlo-obraz:
+      linear-gradient(112deg, transparent 22%, rgba(255, 255, 255, 0.09) 36%, transparent 50%),
+      linear-gradient(112deg, transparent 58%, rgba(255, 255, 255, 0.055) 70%, transparent 82%),
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 3px),
+      radial-gradient(95% 75% at 82% -5%, color-mix(in oklab, var(--b), #fff 28%) 0%, transparent 62%),
+      linear-gradient(180deg, color-mix(in oklab, var(--b), #fff 10%) 0%, color-mix(in oklab, var(--b), #000 28%) 100%);
+  }
+  .sza.gen.gen-j.mat-metal {
+    --tlo-obraz:
+      linear-gradient(112deg, transparent 20%, rgba(255, 255, 255, 0.8) 35%, transparent 50%),
+      linear-gradient(112deg, transparent 56%, rgba(255, 255, 255, 0.45) 68%, transparent 80%),
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 3px),
+      linear-gradient(180deg, color-mix(in oklab, var(--b), #fff 42%) 0%, var(--b) 50%, color-mix(in oklab, var(--b), #000 11%) 100%);
+  }
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .sza.gen.mat-metal :is(h1 > span:first-child, h2 .sl, .orbita-srodek h3, .kwota, .liczba b, .trojka dd, .rachunek b, .lista-dnia time) { background-image: var(--metal); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .sza.gen.mat-metal:not(.gen-j) h1 > span + span { background-image: linear-gradient(180deg, color-mix(in oklab, var(--a-tekst), #fff 38%) 10%, var(--a-tekst) 55%, color-mix(in oklab, var(--a-tekst), #000 20%) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .sza.gen.mat-metal h1 > span { background-size: 100% 1.05em; background-repeat: repeat-y; }
+  }
+
+  /* MATERIAŁ: szkło */
+  .sza.gen.mat-szklo { --cichy: color-mix(in oklab, var(--ink), var(--b) 22%); }
+  .sza.gen.mat-szklo:not(.gen-j) {
+    --tlo-obraz:
+      radial-gradient(40% 36% at 14% 12%, color-mix(in oklab, var(--a) 34%, transparent) 0%, transparent 72%),
+      radial-gradient(36% 34% at 86% 24%, color-mix(in oklab, color-mix(in oklab, var(--b), #fff 48%) 46%, transparent) 0%, transparent 72%),
+      radial-gradient(44% 40% at 72% 92%, color-mix(in oklab, var(--a) 22%, transparent) 0%, transparent 72%),
+      radial-gradient(38% 38% at 10% 86%, color-mix(in oklab, color-mix(in oklab, var(--b), #fff 34%) 42%, transparent) 0%, transparent 72%),
+      linear-gradient(160deg, color-mix(in oklab, var(--b), #000 14%) 0%, color-mix(in oklab, var(--b), #fff 12%) 48%, color-mix(in oklab, var(--b), #000 20%) 100%);
+    --karta: linear-gradient(160deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.06));
+    --listwa: rgba(255, 255, 255, 0.1);
+    --obrys-tlo: rgba(255, 255, 255, 0.075);
+    --form-tlo: linear-gradient(160deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.07));
+    --linia: rgba(255, 255, 255, 0.2);
+    --linia2: rgba(255, 255, 255, 0.4);
+  }
+  .sza.gen.gen-j.mat-szklo {
+    --tlo-obraz:
+      radial-gradient(40% 36% at 14% 12%, color-mix(in oklab, var(--a) 30%, transparent) 0%, transparent 72%),
+      radial-gradient(36% 34% at 86% 24%, rgba(255, 255, 255, 0.95) 0%, transparent 72%),
+      radial-gradient(44% 40% at 72% 92%, color-mix(in oklab, var(--a) 20%, transparent) 0%, transparent 72%),
+      radial-gradient(38% 38% at 10% 86%, rgba(255, 255, 255, 0.8) 0%, transparent 72%),
+      linear-gradient(160deg, color-mix(in oklab, var(--b), #fff 30%) 0%, var(--b) 50%, color-mix(in oklab, var(--b), #000 9%) 100%);
+    --karta: linear-gradient(160deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.34));
+  }
+  .sza.gen.mat-szklo::before { left: -8%; top: -8%; width: 116%; height: 116lvh; animation: sza-plyw 46s ease-in-out infinite alternate; }
+  .sza.gen.mat-szklo :is(.panel, .form, .gora, .znaczek, .btn.puste) { -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%); }
+  .sza.gen.mat-szklo :is(.panel, .form) { border-radius: 1.25rem; }
+  .sza.gen.mat-szklo:not(.gen-j) :is(.panel, .form) { border-color: rgba(255, 255, 255, 0.3); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(255, 255, 255, 0.06), 0 30px 70px -40px rgba(0, 0, 0, 0.8); }
+  .sza.gen.mat-szklo:not(.gen-j) .panel.glowna { border-color: rgba(var(--a-rgb), 0.85); background: linear-gradient(160deg, rgba(var(--a-rgb), 0.24), rgba(255, 255, 255, 0.07)); }
+  .sza.gen.mat-szklo:not(.gen-j) .gora { border-color: rgba(255, 255, 255, 0.28); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 14px 40px -24px rgba(0, 0, 0, 0.75); }
+  .sza.gen.mat-szklo .gora { border-radius: 1rem; }
+  .sza.gen.mat-szklo :is(.btn, .znaczek) { border-radius: 0.8rem; }
+  .sza.gen.mat-szklo .form input:not([type="radio"]):not([type="checkbox"]), .sza.gen.mat-szklo .form textarea, .sza.gen.mat-szklo .wybor span { border-radius: 0.7rem; }
+}

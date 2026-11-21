@@ -1,0 +1,387 @@
+import Image from "next/image";
+import Formularz from "./Formularz";
+import Ruch from "./Ruch";
+import Druk from "./Druk";
+import { BADANIE, BILET, CENA, CENY, DLA_KOGO, EFEKT, FORMULARZ, FOTO, HERO, KONTAKT, PROWADZACY, PRZEBIEG, PYTANIA, ROZKLAD, SYTUACJA, zl } from "./dane";
+import "./szkolenia-ai.css";
+
+// Szkolenie AI dla firm (20.11.2026). Konwencja wyglądu: ROZKŁAD, czyli żółty plakat odjazdów
+// z dworca: żółć, czerń, biel, ostre krawędzie, linie i tabele. Bez zaokrągleń, cieni, gradientów i emoji.
+// Kolejność sekcji wg analizy stron sprzedających szkolenia firmowe (USA, UK, PL) z 20.11.2026:
+// hero z faktami → zdjęcie z sali → problem → dowód z badania → co zostaje → rozkład dnia →
+// przebieg → dla kogo → prowadzący → cena → pytania → formularz. Jeden przycisk, powtórzony 5 razy.
+// Komponent serwerowy. Po stronie przeglądarki działają tylko Formularz, Ruch i Druk.
+
+// Jednoliterowe słowa nie zostają na końcu wiersza.
+const TS = String.fromCharCode(160); // twarda spacja
+const s = (t: string) => t.replace(/(^|\s)([wzioauWZIOAU])\s/g, `$1$2${TS}`).replace(/(\d)\s(\d{3})(?!\d)/g, `$1${TS}$2`).replace(/(\d)\s(r\.)/g, `$1${TS}$2`);
+
+const Strzalka = () => (
+  <svg className="strz" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M2 8h12M9 3l5 5-5 5" />
+  </svg>
+);
+
+function Glowa({ nr, tytul, id }: { nr: string; tytul: string; id: string }) {
+  return (
+    <div className="sek-glowa poj">
+      <span className="nr" aria-hidden="true">{nr}</span>
+      <h2 id={id}>{s(tytul)}</h2>
+    </div>
+  );
+}
+
+function Liczby({ lista }: { lista: { n: string; opis: string; zrodlo: string }[] }) {
+  return (
+    <div className="liczby">
+      {lista.map((l) => (
+        <div className="liczba poj" key={l.n}>
+          <b>{l.n}</b>
+          <p>{s(l.opis)}</p>
+          <small>Źródło: {l.zrodlo}</small>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function SzkoleniaAiPage({ fontClass }: { fontClass: string }) {
+  return (
+    <div className={`sza ${fontClass}`} lang="pl">
+      <Ruch />
+
+      <header className="gora">
+        <div className="gora-w">
+          <a href="/" className="marka">Jakub Chodakowski</a>
+          <nav className="gora-nav" aria-label="Sekcje strony">
+            <a href="#rozklad">Rozkład dnia</a>
+            <a href="#prowadzacy">Prowadzący</a>
+            <a href="#cena">Cena</a>
+            <a href="#pytania">Pytania</a>
+          </nav>
+          <a href="#formularz" className="btn maly">{HERO.cta}</a>
+        </div>
+      </header>
+
+      <main>
+        {/* HERO */}
+        <section className="hero" aria-labelledby="h1">
+          <div className="hero-w">
+            <div className="hero-tekst">
+              <p className="nad">{HERO.nad}</p>
+              <h1 id="h1">
+                {HERO.h1.map((w) => (
+                  <span key={w}>{s(w)} </span>
+                ))}
+              </h1>
+              <p className="lead">{s(HERO.lead)}</p>
+              <div className="akcje">
+                <a href="#formularz" className="btn" data-cta="hero">{HERO.cta} <Strzalka /></a>
+                <a href="#rozklad" className="btn puste">{HERO.cta2}</a>
+              </div>
+              <p className="pod">{HERO.pod}</p>
+            </div>
+            <dl className="bilet" aria-label="Szkolenie w skrócie">
+              {BILET.map((b) => (
+                <div key={b.k}>
+                  <dt>{b.k}</dt>
+                  <dd>{b.w}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        <figure className="foto-pas">
+          <Image src={FOTO.src} alt={FOTO.alt} fill sizes="100vw" priority />
+          <figcaption>{FOTO.podpis}</figcaption>
+        </figure>
+
+        {/* 01 SYTUACJA */}
+        <section className="sek" aria-labelledby="sytuacja">
+          <div className="sek-w">
+            <Glowa nr="01" tytul={SYTUACJA.tytul} id="sytuacja" />
+            <div className="sek-tresc">
+              <div className="tab dwa poj" role="table" aria-label="Sytuacja w firmach">
+                <div className="w glowka" role="row">
+                  <span role="columnheader">Co się dzieje</span>
+                  <span role="columnheader">Co z tego wynika</span>
+                </div>
+                {SYTUACJA.wiersze.map((w) => (
+                  <div className="w" role="row" key={w.co}>
+                    <strong role="cell">{s(w.co)}</strong>
+                    <span role="cell">{s(w.skutek)}</span>
+                  </div>
+                ))}
+              </div>
+              <Liczby lista={SYTUACJA.liczby} />
+            </div>
+          </div>
+        </section>
+
+        {/* 02 BADANIE */}
+        <section className="sek" aria-labelledby="badanie">
+          <div className="sek-w">
+            <Glowa nr="02" tytul={BADANIE.tytul} id="badanie" />
+            <div className="sek-tresc">
+              <Liczby lista={BADANIE.liczby} />
+              <p className="wniosek poj">{s(BADANIE.wniosek)}</p>
+            </div>
+          </div>
+        </section>
+
+        {/* 03 EFEKT */}
+        <section className="sek" aria-labelledby="efekt">
+          <div className="sek-w">
+            <Glowa nr="03" tytul={EFEKT.tytul} id="efekt" />
+            <div className="sek-tresc">
+              <div className="tab kto poj">
+                {EFEKT.grupy.map((g) => (
+                  <div className="w" key={g.kto}>
+                    <strong className="etyk">{g.kto}</strong>
+                    <ul>
+                      {g.co.map((c) => (
+                        <li key={c}>{s(c)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 04 ROZKŁAD DNIA */}
+        <section className="sek zolta" aria-labelledby="rozklad">
+          <div className="sek-w">
+            <Glowa nr="04" tytul={ROZKLAD.tytul} id="rozklad" />
+            <div className="sek-tresc">
+              <ol className="rozklad poj">
+                <li className="w glowka" aria-hidden="true">
+                  <span>Godz.</span>
+                  <span>Co robi zespół</span>
+                  <span>Co zostaje</span>
+                </li>
+                {ROZKLAD.wiersze.map((w) =>
+                  w.opis ? (
+                    <li className="w" key={w.g}>
+                      <time>{w.g}</time>
+                      <div>
+                        <strong>{w.blok}</strong>
+                        <p>{s(w.opis)}</p>
+                      </div>
+                      <p className="zostaje">{s(w.zostaje ?? "")}</p>
+                    </li>
+                  ) : (
+                    <li className="w przerwa" key={w.g}>
+                      <time>{w.g}</time>
+                      <strong>{w.blok}</strong>
+                    </li>
+                  ),
+                )}
+              </ol>
+              <p className="uwaga">{s(ROZKLAD.uwaga)}</p>
+              <a href="#formularz" className="btn">{HERO.cta} <Strzalka /></a>
+            </div>
+          </div>
+        </section>
+
+        {/* 05 PRZEBIEG */}
+        <section className="sek" aria-labelledby="przebieg">
+          <div className="sek-w">
+            <Glowa nr="05" tytul={PRZEBIEG.tytul} id="przebieg" />
+            <div className="sek-tresc">
+              <ol className="tab kroki poj">
+                {PRZEBIEG.kroki.map((k) => (
+                  <li className="w" key={k.kiedy}>
+                    <strong className="etyk">{k.kiedy}</strong>
+                    <span>{s(k.co)}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        {/* 06 DLA KOGO */}
+        <section className="sek" aria-labelledby="dla-kogo">
+          <div className="sek-w">
+            <Glowa nr="06" tytul={DLA_KOGO.tytul} id="dla-kogo" />
+            <div className="sek-tresc">
+              <div className="dwie poj">
+                <div className="kol tak">
+                  <h3>Tak</h3>
+                  <ul>
+                    {DLA_KOGO.tak.map((t) => (
+                      <li key={t}>{s(t)}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="kol nie">
+                  <h3>Nie</h3>
+                  <ul>
+                    {DLA_KOGO.nie.map((t) => (
+                      <li key={t}>{s(t)}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 07 PROWADZĄCY */}
+        <section className="sek" aria-labelledby="prowadzacy">
+          <div className="sek-w">
+            <Glowa nr="07" tytul={PROWADZACY.tytul} id="prowadzacy" />
+            <div className="sek-tresc">
+              <div className="osoba poj">
+                <div className="portret">
+                  <Image src={PROWADZACY.portret.src} alt={PROWADZACY.portret.alt} fill sizes="(max-width: 800px) 60vw, 260px" />
+                </div>
+                <div>
+                  <h3>{PROWADZACY.imie}</h3>
+                  <p className="lead">{s(PROWADZACY.lead)}</p>
+                </div>
+              </div>
+              <div className="tab os poj">
+                {PROWADZACY.os.map((o) => (
+                  <div className="w" key={o.co}>
+                    <time>{o.rok}</time>
+                    <span>{s(o.co)}</span>
+                  </div>
+                ))}
+              </div>
+              <a className="cert poj" href={PROWADZACY.cert.src} target="_blank" rel="noopener noreferrer">
+                <span className="cert-img">
+                  <Image src={PROWADZACY.cert.src} alt={PROWADZACY.cert.alt} fill sizes="220px" />
+                </span>
+                <span>
+                  <strong>{PROWADZACY.cert.podpis}</strong>
+                  <small>Otwórz w pełnym rozmiarze</small>
+                </span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* 08 CENA */}
+        <section className="sek" aria-labelledby="cena">
+          <div className="sek-w">
+            <Glowa nr="08" tytul={CENA.tytul} id="cena" />
+            <div className="sek-tresc">
+              <table className="cennik poj">
+                <thead>
+                  <tr>
+                    <th scope="col">Forma</th>
+                    <th scope="col">Czas</th>
+                    <th scope="col">Grupa</th>
+                    <th scope="col" className="kw">Cena netto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {CENA.formy.map((f) => (
+                    <tr key={f.forma} className={f.glowna ? "glowna" : undefined}>
+                      <th scope="row">{f.forma}</th>
+                      <td data-k="Czas">{f.czas}</td>
+                      <td data-k="Grupa">{f.grupa}</td>
+                      <td data-k="Cena netto" className="kw">{zl(f.cena)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="uwaga">{CENA.netto} {CENA.platnosc}</p>
+
+              <div className="dwie rowne poj">
+                <div className="kol">
+                  <h3>W cenie</h3>
+                  <ul>
+                    {CENA.wCenie.map((c) => (
+                      <li key={c}>{s(c)}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="kol">
+                  <h3>Rachunek na osobę</h3>
+                  <ul className="rachunek">
+                    {CENA.osoby.map((n) => (
+                      <li key={n}>
+                        <span>{n} osób</span>
+                        <b>{zl(Math.round(CENY.wFirmie / n))}</b>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="maly-tekst">Warsztat w firmie, cena netto za osobę. {s(CENA.rynek)}</p>
+                </div>
+              </div>
+
+              <div className="akcje-cena poj">
+                <a href="#formularz" className="btn">{HERO.cta} <Strzalka /></a>
+                <Druk napis={CENA.druk.przycisk} />
+                <p className="maly-tekst">{s(CENA.druk.opis)}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 09 PYTANIA */}
+        <section className="sek" aria-labelledby="pytania">
+          <div className="sek-w">
+            <Glowa nr="09" tytul={PYTANIA.tytul} id="pytania" />
+            <div className="sek-tresc">
+              <div className="pytania poj">
+                {PYTANIA.lista.map((q) => (
+                  <details key={q.p}>
+                    <summary>
+                      <span>{s(q.p)}</span>
+                      <i aria-hidden="true" />
+                    </summary>
+                    <p>{s(q.o)}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 10 FORMULARZ */}
+        <section className="sek zolta" aria-labelledby="formularz">
+          <div className="sek-w">
+            <div className="sek-glowa poj">
+              <span className="nr" aria-hidden="true">10</span>
+              <h2 id="formularz">{s(FORMULARZ.tytul)}</h2>
+              <p className="lead">{s(FORMULARZ.lead)}</p>
+              <p className="obietnica">{s(FORMULARZ.obietnica)}</p>
+              <div className="kto-odp">
+                <div className="portret maly">
+                  <Image src={PROWADZACY.portret.src} alt="" fill sizes="96px" />
+                </div>
+                <p>
+                  <strong>{FORMULARZ.kto}</strong>
+                  <a href={`mailto:${KONTAKT.email}?subject=Szkolenie%20AI%20dla%20firmy`}>{KONTAKT.email}</a>
+                </p>
+              </div>
+            </div>
+            <div className="sek-tresc">
+              <Formularz />
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="stopka">
+        <div className="stopka-w">
+          <span>Jakub Chodakowski © 2026 · NIP {KONTAKT.nip}</span>
+          <nav aria-label="Dokumenty i kontakt">
+            <a href="/regulamin">Regulamin</a>
+            <a href="/polityka-prywatnosci">Polityka prywatności</a>
+            <a href={KONTAKT.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href={`mailto:${KONTAKT.email}`}>{KONTAKT.email}</a>
+          </nav>
+        </div>
+      </footer>
+
+      <a href="#formularz" className="dol btn">{HERO.cta} <Strzalka /></a>
+    </div>
+  );
+}

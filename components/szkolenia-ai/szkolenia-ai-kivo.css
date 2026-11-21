@@ -1,0 +1,345 @@
+/* Szkolenie AI dla firm. Wersja 4 wyglądu (21.11.2026): styl wzorowany na stronie Kivo (kivoagentic.ai),
+   którą wskazał USER_001: „zrób w takim stylu https://www.awwwards.com/sites/kivo”.
+   Co przeniesione: jasne ciepłe tło, jeden akcent pomarańczowy, cienkie duże nagłówki w dwóch odcieniach,
+   białe karty z dużym zaokrągleniem i cienką ramką, kropkowana faktura, pomarańczowa karta z kulą z płytek,
+   pływający pasek, etykiety z pomarańczową kropką. Odtworzony jest sam styl: treść, zdjęcia, rysunki i kod są nasze.
+   Krój: Outfit (darmowy, z polskimi znakami) zamiast płatnego Atyp ze wzoru.
+   Wszystko pod .sza.kivo, jako nakładka na szkolenia-ai.css (układ sekcji i treść bez zmian).
+   Czytelność z 21.11 zostaje: tekst do czytania 17 px, drobny druk min. 15 px. */
+
+html:has(.sza.kivo),
+body:has(.sza.kivo) { background: #f4f1ee; }
+
+.sza.kivo {
+  --tlo: #f4f1ee;
+  --tlo2: #ebe6e1;
+  --karta: #ffffff;
+  --tekst: #141312;
+  --tekst2: #3d3936;
+  --cichy: #6e6863;
+  --szary: #8c8580;
+  --akcent: #fe4f02;
+  --akcent-jasny: #cf3f00;
+  --akcent-rgb: 254, 79, 2;
+  --na-akcencie: #ffffff;
+  --akcent-najazd: #ff6a2a;
+  --szklo: #ffffff;
+  --listwa: rgba(255, 255, 255, 0.9);
+  --najazd: rgba(20, 19, 18, 0.05);
+  --najazd-slaby: rgba(20, 19, 18, 0.025);
+  --obrys-tlo: transparent;
+  --kontur: rgba(20, 19, 18, 0.25);
+  --kontur-slaby: rgba(20, 19, 18, 0.1);
+  --form-tlo: #ffffff;
+  --pole-tlo: #ffffff;
+  --pole-tlo-2: #ffffff;
+  --na-zdjeciu: #ffffff;
+  --linia: #e7e1db;
+  --linia2: #d6cec6;
+  --blad: #c0281c;
+  --sans: var(--sza-kivo), "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --r: 1.75rem;
+  --cien: 0 30px 70px -40px rgba(90, 70, 50, 0.4);
+  --cien-slaby: 0 20px 50px -36px rgba(90, 70, 50, 0.28);
+  --kropki: radial-gradient(rgba(20, 19, 18, 0.075) 1px, transparent 1.2px);
+  background: var(--tlo);
+  color-scheme: light;
+}
+
+/* ---------- Rzeczy z wersji ciemnej, których tu nie ma ---------- */
+.sza.kivo :is(.gwiazdy, .smuga, .ziarno, .prazki, .obrys, .kreska) { display: none; }
+.sza.kivo .pocisk { padding: 0; border: 0; background: none; }
+.sza.kivo .pocisk::before, .sza.kivo .pocisk::after { display: none; }
+
+/* ---------- Typografia: cienkie duże nagłówki, druga część szara ---------- */
+.sza.kivo h1, .sza.kivo h2 { font-weight: 300; letter-spacing: -0.035em; }
+.sza.kivo h1 { font-size: clamp(2.5rem, 4.6vw, 4rem); line-height: 1.04; }
+.sza.kivo h1 span:first-child { color: var(--szary); }
+.sza.kivo h1 span + span { color: var(--tekst); }
+.sza.kivo h2 { font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.08; }
+.sza.kivo h2 .sl.dwa { color: var(--szary); }
+.sza.kivo h3 { font-weight: 500; font-size: 1.25rem; line-height: 1.25; letter-spacing: -0.015em; }
+.sza.kivo .mono { font-family: var(--sans); font-size: 0.875rem; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--cichy); }
+.sza.kivo .nad { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.1rem; font-size: 1rem; color: #1e1e1e; }
+.sza.kivo .nad::before { content: ""; flex: none; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--akcent); box-shadow: 0 0 0 4px rgba(254, 79, 2, 0.14); }
+.sza.kivo .lead { margin-top: 0; font-size: 1.25rem; line-height: 1.6; color: #3a3a3a; max-width: 27em; }
+.sza.kivo .lead strong { font-weight: 500; }
+.sza.kivo b, .sza.kivo strong { font-weight: 600; }
+.sza.kivo[data-js] .zd .sl { opacity: 0.2; }
+.sza.kivo[data-js] .zd.on .sl { opacity: 1; }
+
+/* ---------- Przyciski ---------- */
+.sza.kivo .btn { border-radius: 0.875rem; font-weight: 500; }
+.sza.kivo .btn:not(.puste) { background: linear-gradient(180deg, #f8662a 0%, #de4300 100%); border-color: transparent; color: #fff; text-shadow: 0 1px 0 rgba(110, 30, 0, 0.3); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.12), 0 12px 26px -12px rgba(254, 79, 2, 0.7); }
+.sza.kivo .btn.puste { background: #fff; border-color: var(--linia2); color: var(--tekst); box-shadow: 0 6px 16px -12px rgba(90, 70, 50, 0.5); }
+@media (hover: hover) {
+  .sza.kivo .btn:not(.puste):hover { filter: brightness(1.06); }
+  .sza.kivo .btn.puste:hover { background: #fff; border-color: var(--tekst); }
+}
+
+/* ---------- Pasek: pływająca biała listwa na środku ---------- */
+.sza.kivo .gora { width: fit-content; max-width: calc(100% - 2rem); height: auto; padding: 0.4rem 0.4rem 0.4rem 1.2rem; display: flex; align-items: center; justify-content: space-between; gap: 1.6rem; border: 1px solid #ece7e2; border-radius: 1.15rem; background: var(--listwa); box-shadow: 0 14px 34px -18px rgba(90, 70, 50, 0.45); }
+.sza.kivo .marka { white-space: nowrap; font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.02em; text-transform: none; }
+.sza.kivo .gora .btn { min-height: 2.6rem; }
+
+/* ---------- Pierwszy ekran: nagłówek i wstęp, pod nimi trzy karty ---------- */
+.sza.kivo .hero { display: block; min-height: 0; padding: 6.75rem 0 1.5rem; overflow: visible; background: linear-gradient(180deg, #fff 0%, #fff 48%, var(--tlo) 100%); }
+.sza.kivo .hero::before { display: none; }
+.sza.kivo .k-gora { max-width: var(--max); margin: 0 auto; padding: 1.75rem var(--bok) 0; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 2rem clamp(2rem, 6vw, 6rem); align-items: end; }
+.sza.kivo .k-gora .akcje { margin-top: 1.6rem; }
+.sza.kivo .k-gora .pod { margin-top: 0.9rem; }
+.sza.kivo .k-bento { max-width: var(--max); margin: clamp(2.25rem, 4.5vw, 3.5rem) auto 0; padding: 0 var(--bok); display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 0.92fr); gap: 1rem; align-items: stretch; }
+
+/* karta 1: zdjęcie z wystąpienia, w kolorze */
+.sza.kivo .kadr { aspect-ratio: auto; min-height: 31rem; border: 0; border-radius: var(--r); background: var(--tlo2); box-shadow: var(--cien); }
+.sza.kivo .kadr img { filter: none; object-position: 64% 40%; }
+.sza.kivo .kadr::after { background: linear-gradient(180deg, rgba(20, 10, 5, 0) 46%, rgba(20, 10, 5, 0.78) 100%); mix-blend-mode: normal; }
+.sza.kivo .kadr figcaption { left: 1rem; top: 1rem; right: auto; max-width: calc(100% - 2rem); padding: 0.4rem 0.85rem; border-radius: 999px; background: rgba(255, 255, 255, 0.94); color: var(--tekst); opacity: 1; font-size: 0.875rem; font-weight: 500; line-height: 1.35; box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.5); }
+.sza.kivo .kadr-napis { left: 1.5rem; bottom: 1.35rem; font-weight: 300; font-size: clamp(2.2rem, 3.8vw, 3.4rem); letter-spacing: -0.04em; }
+
+
+/* karta 2: cztery rzeczy, które zostają */
+.sza.kivo .k-kroki { display: grid; gap: 0.75rem; }
+.sza.kivo .k-kroki li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.15rem 1rem; align-content: center; padding: 1.05rem 1.3rem 1.15rem; border: 1px solid #e8e4e0; border-radius: 1.5rem; background-color: #f6f4f2; background-image: var(--kropki); background-size: 7px 7px; }
+.sza.kivo .k-nr { font-size: 0.8125rem; font-weight: 500; color: var(--cichy); letter-spacing: 0.02em; }
+.sza.kivo .k-nr b { color: var(--tekst); }
+.sza.kivo .k-znak { grid-row: span 2; align-self: center; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.7rem 0.3rem 0.45rem; border: 1px solid #e8e4e0; border-radius: 999px; background: #fff; font-size: 0.8125rem; font-weight: 500; color: var(--tekst2); }
+.sza.kivo .k-znak .znak { width: 1rem; height: 1rem; margin: 0; }
+.sza.kivo .k-kroki h3 { font-size: 1.1875rem; }
+.sza.kivo .k-kroki p { grid-column: 1 / -1; margin-top: 0.15rem; font-size: 0.9375rem; line-height: 1.45; color: var(--cichy); }
+
+/* karta 3: pomarańczowa, z kulą i tabliczką faktów */
+.sza.kivo .k-pom { position: relative; display: flex; flex-direction: column; overflow: hidden; padding: 1.1rem; border-radius: var(--r); background: radial-gradient(120% 90% at 30% 0%, #ff9a63 0%, rgba(255, 154, 99, 0) 60%), linear-gradient(170deg, #ff7a3d 0%, #fe4f02 55%, #ee4400 100%); box-shadow: 0 30px 60px -36px rgba(254, 79, 2, 0.7); }
+.sza.kivo .k-pom::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1.2px); background-size: 7px 7px; pointer-events: none; }
+.sza.kivo .k-pom > * { position: relative; }
+.sza.kivo .k-pom-nad { align-self: flex-start; padding: 0.45rem 0.9rem; border-radius: 999px; background: rgba(255, 255, 255, 0.94); font-size: 0.9375rem; font-weight: 500; color: var(--tekst); box-shadow: 0 8px 18px -12px rgba(120, 30, 0, 0.7); }
+.sza.kivo .k-kula { flex: 1 1 auto; width: 100%; min-height: 13rem; }
+.sza.kivo .k-fakty { margin: 0; padding: 0.3rem 1.1rem; border-radius: 1.15rem; background: rgba(255, 255, 255, 0.95); box-shadow: 0 16px 30px -20px rgba(120, 30, 0, 0.8); }
+.sza.kivo .k-fakty div { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid #efe8e2; font-size: 0.9375rem; }
+.sza.kivo .k-fakty div:last-child { border-bottom: 0; }
+.sza.kivo .k-fakty dt { color: var(--cichy); }
+.sza.kivo .k-fakty dd { font-weight: 500; color: var(--tekst); text-align: right; }
+
+/* ---------- Sekcje ---------- */
+.sza.kivo .sek { padding: clamp(4rem, 8vw, 7rem) 0; }
+.sza.kivo .glowa { grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); margin-bottom: clamp(2rem, 4vw, 3.25rem); }
+.sza.kivo .glowa .bok { color: var(--cichy); }
+.sza.kivo .opis { color: var(--tekst2); }
+
+/* Wiersze → siatka komórek w jednej białej karcie (sytuacje 2 × 2, kroki 3 obok siebie) */
+.sza.kivo .wiersze { border: 1px solid var(--linia); border-radius: var(--r); background: #fff; box-shadow: var(--cien-slaby); overflow: hidden; }
+.sza.kivo .wiersze:not(.zycie) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sza.kivo .wiersze.kroki { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sza.kivo .wiersze li { display: block; padding: 1.75rem 2rem 2rem; border: 0; box-shadow: 1px 0 0 var(--linia), 0 1px 0 var(--linia); background: none; }
+.sza.kivo .wiersze .nr { display: inline-flex; align-items: center; justify-content: center; min-width: 2.1rem; height: 2.1rem; margin-bottom: 1.1rem; padding: 0 0.6rem; border-radius: 999px; background: rgba(254, 79, 2, 0.1); font-size: 0.875rem; font-weight: 600; color: var(--akcent-jasny); }
+.sza.kivo .wiersze h3 { font-size: 1.375rem; letter-spacing: -0.02em; }
+.sza.kivo .wiersze p { margin-top: 0.55rem; color: var(--cichy); }
+.sza.kivo .wiersze .meta { margin-top: 0.35rem; font-size: 0.9375rem; font-weight: 500; color: var(--akcent-jasny); }
+@media (hover: hover) { .sza.kivo .wiersze li:hover { background: #fdfbf9; } .sza.kivo .wiersze li:hover .nr { color: var(--akcent-jasny); } }
+/* życiorys: lista w białej karcie */
+.sza.kivo .zycie { padding: 0.35rem 2rem; }
+.sza.kivo .zycie li { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 1.25rem; align-items: baseline; padding: 1rem 0; box-shadow: 0 1px 0 var(--linia); }
+.sza.kivo .zycie li:last-child { box-shadow: none; }
+.sza.kivo .zycie .nr { min-width: 0; height: auto; margin: 0; padding: 0; background: none; font-size: 0.9375rem; }
+.sza.kivo .zycie p { margin-top: 0; color: var(--tekst); }
+
+/* Liczby w białych kartach */
+.sza.kivo .liczby { gap: 1rem; max-width: none; }
+.sza.kivo .liczba { padding: 1.75rem 2rem 1.9rem; border: 1px solid var(--linia); border-radius: var(--r); background: #fff; box-shadow: var(--cien-slaby); }
+.sza.kivo .liczba b { font-weight: 300; color: var(--tekst); }
+.sza.kivo .liczba p { color: var(--tekst2); max-width: 26em; }
+
+/* Teza: zdanie na środku, jak sekcje „centralne” we wzorze */
+.sza.kivo .teza .sek-w { text-align: center; }
+.sza.kivo .teza .nad { justify-content: center; }
+.sza.kivo .teza .duze { margin-inline: auto; max-width: 19em; font-size: clamp(1.9rem, 3.4vw, 2.9rem); line-height: 1.1; }
+.sza.kivo .teza .liczby { max-width: 56rem; margin-inline: auto; text-align: left; }
+
+/* Schody → cztery białe karty, lekko schodkowo */
+.sza.kivo .schody { gap: 1rem; }
+.sza.kivo .schody li { height: auto; min-height: 11.5rem; margin-top: calc(var(--i) * 1.1rem); padding: 1.5rem 1.6rem 1.7rem; border: 1px solid var(--linia); border-radius: 1.5rem; background-color: #fff; box-shadow: var(--cien-slaby); }
+.sza.kivo .schody li::before, .sza.kivo .schody li::after { display: none; }
+.sza.kivo .schody li > i { left: auto; right: 1.4rem; top: 1.65rem; bottom: auto; width: 9px; height: 9px; background: var(--akcent); box-shadow: 0 0 0 4px rgba(254, 79, 2, 0.14); }
+.sza.kivo .schody .mono { color: var(--akcent-jasny); }
+.sza.kivo .schody h3 { margin: 0.9rem 0 0.45rem; font-size: 1.3125rem; }
+.sza.kivo .schody p { color: var(--cichy); }
+.sza.kivo .takze { border-top-color: var(--linia2); }
+.sza.kivo .takze li { color: var(--cichy); }
+
+/* Prowadzący: portret w ramce jak makiety we wzorze */
+.sza.kivo .wyciecie { clip-path: none; overflow: hidden; border: 2px solid #d9cfc6; border-radius: 1.5rem; background: var(--tlo2); box-shadow: 0 30px 70px -34px rgba(90, 70, 50, 0.5); }
+.sza.kivo .wyciecie img { filter: none; }
+.sza.kivo .trojka dd { font-weight: 300; }
+
+/* Taśma: cienkie jasne napisy */
+.sza.kivo .tasma .duza span { font-weight: 300; color: #d9d1ca; -webkit-text-stroke: 0; }
+.sza.kivo .tasma-rzad b { color: var(--akcent); }
+.sza.kivo .tasma .mala span { color: var(--cichy); }
+
+/* Orbita: przerywany okrąg, etykiety jako pigułki, opis na białej karcie */
+.sza.kivo .orbita ellipse { stroke: rgba(150, 111, 95, 0.45); stroke-dasharray: 4 6; }
+.sza.kivo .orbita-punkty button { color: var(--tekst2); }
+.sza.kivo .orbita-punkty i { background: #fff; border-color: var(--linia2); }
+/* pigułki stoją nad górnymi punktami i pod dolnymi, więc nie wchodzą pod białą kartę w środku */
+.sza.kivo .orbita { margin-top: 3.5rem; margin-bottom: 3rem; }
+.sza.kivo .orbita-punkty button span, .sza.kivo .orbita-punkty button:nth-child(2) span, .sza.kivo .orbita-punkty button:nth-child(3) span { left: 50%; right: auto; top: -3.1rem; transform: translateX(-50%); }
+.sza.kivo .orbita-punkty button:nth-child(3) span, .sza.kivo .orbita-punkty button:nth-child(4) span { top: 1rem; }
+.sza.kivo .orbita-punkty span { padding: 0.3rem 0.85rem; border: 1px solid var(--linia2); border-radius: 999px; background: #fff; box-shadow: 0 8px 18px -14px rgba(90, 70, 50, 0.6); font-size: 0.9375rem; }
+.sza.kivo .orbita-punkty .wybrany { color: var(--tekst); }
+.sza.kivo .orbita-punkty .wybrany span { border-color: var(--akcent); box-shadow: 0 0 0 4px rgba(254, 79, 2, 0.12); }
+.sza.kivo .orbita-punkty .wybrany i { background: var(--akcent); border-color: var(--akcent); box-shadow: 0 0 0 5px rgba(254, 79, 2, 0.16); }
+.sza.kivo .orbita-srodek { width: min(31rem, 54%); padding: 1.9rem 2rem 2rem; border: 1px solid var(--linia); border-radius: 1.5rem; background: #fff; box-shadow: var(--cien); }
+.sza.kivo .orbita-srodek h3 { font-weight: 300; font-size: clamp(1.7rem, 2.8vw, 2.4rem); letter-spacing: -0.035em; }
+.sza.kivo .orbita-srodek .mono { color: var(--akcent-jasny); }
+.sza.kivo .zostaje b { color: var(--akcent-jasny); }
+.sza.kivo .lista-dnia { border: 1px solid var(--linia); border-radius: var(--r); background: #fff; padding: 0.25rem 1.25rem; }
+.sza.kivo .lista-dnia li:last-child { border-bottom: 0; }
+.sza.kivo .lista-dnia .przerwa time, .sza.kivo .lista-dnia .przerwa span { font-family: var(--sans); font-size: 0.875rem; letter-spacing: 0; text-transform: none; }
+
+/* Karty, listy, cena */
+.sza.kivo .panel { border-color: var(--linia); border-radius: var(--r); background: #fff; box-shadow: var(--cien-slaby); }
+.sza.kivo .panel.glowna { border: 1.5px solid rgba(254, 79, 2, 0.6); background: linear-gradient(180deg, #fff1e8 0%, #fff 62%); box-shadow: 0 34px 64px -40px rgba(254, 79, 2, 0.6); }
+.sza.kivo .kwota, .sza.kivo .rachunek b { font-weight: 300; }
+.sza.kivo .znak circle { fill: rgba(254, 79, 2, 0.1); stroke: rgba(254, 79, 2, 0.4); }
+.sza.kivo .znak.tak path { stroke: var(--akcent-jasny); }
+.sza.kivo .znak.nie circle { fill: #f6f4f2; stroke: var(--linia2); }
+.sza.kivo .znak.nie path { stroke: var(--cichy); }
+.sza.kivo .lista li { color: var(--tekst2); }
+.sza.kivo .pewniki p { color: var(--cichy); }
+
+/* Pytania */
+.sza.kivo .pytania { border: 1px solid var(--linia); border-radius: var(--r); background: #fff; padding: 0.35rem 1.75rem; box-shadow: var(--cien-slaby); }
+.sza.kivo .pytania details:last-child { border-bottom: 0; }
+.sza.kivo .pytania summary i { border-color: var(--linia2); }
+.sza.kivo .pytania details[open] summary i { background: var(--akcent); border-color: var(--akcent); }
+.sza.kivo .pytania details[open] summary i::before, .sza.kivo .pytania details[open] summary i::after { background: #fff; }
+.sza.kivo .pytania details p { color: var(--cichy); }
+
+/* Kontakt i formularz */
+.sza.kivo .kontakt { align-items: start; }
+.sza.kivo .kontakt .pocisk { padding: 1rem 0 0; }
+.sza.kivo .obietnica { border-left: 2px solid var(--akcent); color: var(--tekst2); }
+.sza.kivo .dalej li span { border-color: rgba(254, 79, 2, 0.4); background: rgba(254, 79, 2, 0.08); }
+.sza.kivo .form { border-color: var(--linia); border-radius: var(--r); box-shadow: var(--cien); }
+.sza.kivo .form input:not([type="radio"]):not([type="checkbox"]), .sza.kivo .form textarea, .sza.kivo .wybor span { border-radius: 0.75rem; border-color: var(--linia2); }
+.sza.kivo .wybor input:checked + span { background: var(--tekst); border-color: var(--tekst); color: #fff; }
+.sza.kivo .zgoda input { border-radius: 0.35rem; }
+
+/* Stopka */
+.sza.kivo .stopka { border-top-color: var(--linia); }
+.sza.kivo .mail { font-weight: 300; }
+.sza.kivo .znak-wodny { font-weight: 300; color: rgba(20, 19, 18, 0.07); -webkit-text-stroke: 0; }
+@media (max-width: 40rem) { .sza.kivo .dol { box-shadow: 0 14px 30px -12px rgba(254, 79, 2, 0.75); } }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 64rem) {
+  .sza.kivo .k-gora { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .sza.kivo .k-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sza.kivo .k-bento .kadr { grid-column: 1 / -1; min-height: 0; aspect-ratio: 16 / 9.5; }
+  .sza.kivo .wiersze.kroki { grid-template-columns: minmax(0, 1fr); }
+  .sza.kivo .schody li { margin-top: 0; min-height: 0; }
+  .sza.kivo .glowa { grid-template-columns: minmax(0, 1fr) minmax(0, 18rem); }
+}
+
+/* ---------- Telefon ---------- */
+@media (max-width: 40rem) {
+  .sza.kivo .gora { padding: 0.75rem 1.1rem; }
+  .sza.kivo .hero { padding-top: 5.5rem; }
+  .sza.kivo .k-bento { grid-template-columns: minmax(0, 1fr); }
+  .sza.kivo .k-bento .kadr { aspect-ratio: 4 / 3.3; }
+  .sza.kivo .k-kula { min-height: 15rem; }
+  .sza.kivo .lead { font-size: 1.125rem; }
+  .sza.kivo .wiersze:not(.zycie) { grid-template-columns: minmax(0, 1fr); }
+  .sza.kivo .wiersze li { padding: 1.4rem 1.25rem 1.6rem; }
+  .sza.kivo .zycie { padding: 0.25rem 1.25rem; }
+  .sza.kivo .zycie li { grid-template-columns: 3.25rem minmax(0, 1fr); gap: 0.75rem; }
+  .sza.kivo .glowa { grid-template-columns: minmax(0, 1fr); }
+  .sza.kivo .pytania { padding: 0.25rem 1.1rem; }
+  .sza.kivo .liczba { padding: 1.4rem 1.25rem 1.5rem; }
+}
+
+/* ---------- Druk: bez cieni i kolorowej karty ---------- */
+@media print {
+  .sza.kivo .k-pom, .sza.kivo .k-kula { display: none !important; }
+  .sza.kivo :is(.panel, .wiersze, .liczba, .pytania, .form, .kadr, .schody li, .orbita-srodek) { box-shadow: none; }
+  .sza.kivo .hero { background: #fff; padding-top: 0; }
+}
+
+/* =====================================================================================================
+   2026: SZKŁO, ŚWIATŁO, RUCH (21.11.2026)
+   USER_001: „zostaniemy przy tym, tylko trochę zmienimy: dodaj kilka bardziej nowoczesnych elementów,
+   żeby UX/UI był jak z 2026 roku, szklany pasek u góry itd.”
+   1. szklany pasek (nazwisko i przycisk) z linią postępu czytania,
+   2. miękka poświata za pierwszym ekranem (szkło ma co rozmywać),
+   3. szklane etykiety i tabliczka na kartach pierwszego ekranu, kula widoczna przez szkło,
+   4. światło pod kursorem na kartach,
+   5. błysk na głównym przycisku, wejście kart pierwszego ekranu, zdjęcie przesuwane przy przewijaniu,
+   6. liczby liczone od zera i kula obracana kursorem (w Ruch.tsx i Kula.tsx).
+   Wszystko wyłącza się przy ograniczonym ruchu albo ograniczonej przezroczystości (ustawienia systemu).
+   Próba z 21.11 (zdjęcie w tle pierwszego ekranu, w pasku samo nazwisko i przycisk) została cofnięta
+   tego samego dnia na życzenie USER_001: „wracamy do tej poprzedniej strony”.
+   ===================================================================================================== */
+
+/* ---------- 1. Szklany pasek ---------- */
+.sza.kivo .gora { border-color: rgba(255, 255, 255, 0.78); background: rgba(255, 255, 255, 0.6); -webkit-backdrop-filter: blur(22px) saturate(180%); backdrop-filter: blur(22px) saturate(180%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.3), 0 0 0 1px rgba(90, 70, 50, 0.07), 0 18px 40px -22px rgba(90, 70, 50, 0.5); transition: top 320ms var(--sprezyna), background-color 300ms ease-out, box-shadow 300ms ease-out; }
+.sza.kivo[data-dalej="1"] .gora { top: 0.75rem; background: rgba(255, 255, 255, 0.66); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.3), 0 0 0 1px rgba(90, 70, 50, 0.09), 0 22px 46px -22px rgba(90, 70, 50, 0.62); }
+/* linia postępu czytania na dolnej krawędzi paska (sam CSS, tam gdzie przeglądarka to umie) */
+@supports (animation-timeline: scroll()) {
+  .sza.kivo .gora::after { content: ""; position: absolute; left: 1.15rem; right: 1.15rem; bottom: -1px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, #ff9a63, #fe4f02); transform-origin: 0 50%; transform: scaleX(0); animation: k-postep linear both; animation-timeline: scroll(root block); }
+}
+@keyframes k-postep { to { transform: scaleX(1); } }
+
+/* ---------- 2. Poświata za pierwszym ekranem ---------- */
+.sza.kivo .hero { position: relative; overflow-x: clip; }
+.sza.kivo .hero::before { content: ""; display: block; position: absolute; left: -6%; right: -6%; top: -6rem; bottom: auto; width: auto; height: 46rem; z-index: 0; pointer-events: none; filter: blur(28px);
+  background: radial-gradient(34% 46% at 80% 26%, rgba(254, 79, 2, 0.17), transparent 70%), radial-gradient(30% 44% at 10% 34%, rgba(255, 160, 100, 0.2), transparent 70%), radial-gradient(34% 40% at 48% 4%, rgba(255, 205, 160, 0.34), transparent 70%);
+  animation: k-zorza 20s ease-in-out infinite alternate; }
+@keyframes k-zorza { from { transform: translate3d(-2%, 0, 0) scale(1); } to { transform: translate3d(2.5%, 3%, 0) scale(1.07); } }
+.sza.kivo .k-gora, .sza.kivo .k-bento { position: relative; z-index: 1; }
+
+/* ---------- 3. Szkło na kartach pierwszego ekranu ---------- */
+.sza.kivo .kadr figcaption { border: 1px solid rgba(255, 255, 255, 0.5); background: rgba(255, 255, 255, 0.2); color: #fff; -webkit-backdrop-filter: blur(16px) saturate(170%); backdrop-filter: blur(16px) saturate(170%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 8px 20px -12px rgba(0, 0, 0, 0.6); text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35); }
+.sza.kivo .k-pom-nad { border: 1px solid rgba(255, 255, 255, 0.75); background: rgba(255, 255, 255, 0.72); -webkit-backdrop-filter: blur(14px) saturate(160%); backdrop-filter: blur(14px) saturate(160%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 8px 18px -12px rgba(120, 30, 0, 0.7); }
+/* kula wchodzi pod tabliczkę, więc widać ją rozmytą przez szkło */
+.sza.kivo .k-kula { margin: -0.5rem 0 -4.25rem; min-height: 17rem; }
+.sza.kivo .k-fakty { z-index: 1; border: 1px solid rgba(255, 255, 255, 0.8); background: rgba(255, 255, 255, 0.66); -webkit-backdrop-filter: blur(18px) saturate(170%); backdrop-filter: blur(18px) saturate(170%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 18px 34px -20px rgba(120, 30, 0, 0.85); }
+.sza.kivo .k-fakty div { border-bottom-color: rgba(120, 60, 20, 0.14); }
+.sza.kivo .k-fakty dt { color: #4a433e; }
+/* dolny przycisk na telefonie: szklana obwódka */
+@media (max-width: 40rem) { .sza.kivo .dol { box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.55), 0 14px 30px -12px rgba(254, 79, 2, 0.75); } }
+
+/* ---------- 4. Światło pod kursorem na kartach ---------- */
+@media (hover: hover) {
+  .sza.kivo :is(.panel, .liczba, .k-kroki li, .wiersze:not(.zycie) li, .schody li) { position: relative; }
+  .sza.kivo :is(.panel, .liczba, .k-kroki li, .wiersze:not(.zycie) li)::before,
+  .sza.kivo .schody li::before { content: ""; display: block; position: absolute; inset: 0; left: 0; right: 0; bottom: 0; width: auto; height: auto; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 260ms ease-out;
+    background: radial-gradient(17rem circle at var(--mx, -40rem) var(--my, -40rem), rgba(254, 79, 2, 0.1), transparent 62%); }
+  .sza.kivo :is(.panel, .liczba, .k-kroki li, .wiersze:not(.zycie) li, .schody li):hover::before { opacity: 1; }
+}
+
+/* ---------- 5. Błysk na przycisku, wejście kart, zdjęcie przy przewijaniu, zanikające brzegi taśmy ---------- */
+.sza.kivo .btn:not(.puste):not(.dol) { position: relative; overflow: hidden; }
+.sza.kivo .btn:not(.puste):not(.dol)::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 36%, rgba(255, 255, 255, 0.38) 50%, transparent 64%); transform: translateX(-130%); }
+@media (hover: hover) { .sza.kivo .btn:not(.puste):not(.dol):hover::after { transform: translateX(130%); transition: transform 700ms ease-out; } }
+.sza.kivo .tasma { -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); }
+@media (prefers-reduced-motion: no-preference) {
+  .sza.kivo .k-gora > *, .sza.kivo .k-bento > :not(.kadr) { animation: k-wejscie 760ms var(--sprezyna) both; }
+  .sza.kivo .k-bento > .kadr { animation: k-wjazd 760ms var(--sprezyna) both; }
+  .sza.kivo .k-gora > :nth-child(2) { animation-delay: 90ms; }
+  .sza.kivo .k-bento > :nth-child(1) { animation-delay: 160ms; }
+  .sza.kivo .k-bento > :nth-child(2) { animation-delay: 240ms; }
+  .sza.kivo .k-bento > :nth-child(3) { animation-delay: 320ms; }
+  @supports (animation-timeline: view()) {
+    .sza.kivo .kadr img { animation: k-paralaksa linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+  }
+}
+@keyframes k-wejscie { from { opacity: 0; transform: translateY(18px); } }
+@keyframes k-wjazd { from { transform: translateY(18px); } }
+@keyframes k-paralaksa { from { transform: scale(1.1) translateY(-3.5%); } to { transform: scale(1.1) translateY(3.5%); } }
+
+/* ---------- Ograniczona przezroczystość: szkło staje się pełnym tłem ---------- */
+@media (prefers-reduced-transparency: reduce) {
+  .sza.kivo .gora, .sza.kivo .k-fakty, .sza.kivo .k-pom-nad { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .sza.kivo .kadr figcaption { background: rgba(20, 19, 18, 0.82); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media print { .sza.kivo .hero::before, .sza.kivo .gora::after { display: none !important; } }

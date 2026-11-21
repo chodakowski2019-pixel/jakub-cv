@@ -1,0 +1,324 @@
+/* Blog o AI w firmie (21.11.2026). Układ = czytelnia lovemyself (szerokości 44 / 52 / 72 rem, nagłówek, pasek tematów,
+   wyróżniony tekst, sekcje per temat, „W skrócie”, spis, źródła). Wygląd = strona szkoleń AI (szkolenia-ai.css):
+   czerń, lekki Geist, napisy mono wersalikami, cienkie linie, jeden akcent limonkowy. Bez gradientów w kolorach, pigułek i emoji.
+   Czytelność: tekst do czytania 18 px, wiersz do ok. 70 znaków, trzy kolory tekstu jak na stronie szkoleń. Wszystko pod .bai. */
+
+html:has(.bai),
+body:has(.bai) { background: #030405; }
+body:has(.bai)::before,
+body:has(.bai)::after { display: none; }
+
+.bai {
+  --tlo: #030405;
+  --tlo2: #0a0d0f;
+  --karta: rgba(238, 243, 243, 0.03);
+  --tekst: #eef3f3;
+  --tekst2: #d0d7d8;
+  --cichy: #a7b1b4;
+  --akcent: #d9e000;
+  --akcent-jasny: #e9f542;
+  --na-akcencie: #141416;
+  --linia: rgba(238, 243, 243, 0.13);
+  --linia2: rgba(238, 243, 243, 0.27);
+  --smuga-brzeg: rgba(217, 224, 0, 0.08);
+  --smuga-srodek: rgba(228, 236, 226, 0.22);
+  --sans: var(--sza-sans), "Geist", ui-sans-serif, system-ui, sans-serif;
+  --mono: var(--sza-mono), "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --bok: clamp(1.25rem, 2.8vw, 2.5rem);
+  --sprezyna: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--tlo);
+  color: var(--tekst);
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+  color-scheme: dark;
+}
+.bai *, .bai *::before, .bai *::after { box-sizing: border-box; }
+.bai main { flex: 1; }
+.bai a { color: inherit; text-decoration: none; }
+.bai :where(p) { margin: 0; }
+.bai h1, .bai h2, .bai h3 { margin: 0; font-weight: 400; color: var(--tekst); }
+.bai :focus-visible { outline: 2px solid var(--akcent-jasny); outline-offset: 3px; border-radius: 4px; }
+.bai [id] { scroll-margin-top: 6rem; }
+
+.bai .bai-mono { font-family: var(--mono); font-size: 0.75rem; line-height: 1.5; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cichy); }
+
+/* Szerokości z czytelni lovemyself: 44 rem tekst, 52 rem okładka, 72 rem listy. */
+.bai-w3, .bai-w5, .bai-w6 { margin-inline: auto; padding-inline: var(--bok); width: 100%; }
+.bai-w3 { max-width: calc(44rem + 2 * var(--bok)); }
+.bai-w5 { max-width: calc(52rem + 2 * var(--bok)); }
+.bai-w6 { max-width: calc(72rem + 2 * var(--bok)); }
+
+/* ---------- Listwa górna ---------- */
+.bai-nav { position: sticky; top: 0; z-index: 50; background: rgba(3, 4, 5, 0.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--linia); }
+.bai-nav-wnetrze { max-width: calc(72rem + 2 * var(--bok)); margin-inline: auto; padding: 0.875rem var(--bok); display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.bai-logo { display: flex; align-items: baseline; gap: 0.75rem; font-size: 1.0625rem; letter-spacing: -0.02em; color: var(--tekst); white-space: nowrap; }
+.bai-menu { display: flex; align-items: center; gap: 1.5rem; }
+.bai-menu a.bai-mono { transition: color 0.2s; }
+.bai-menu a.bai-mono:hover { color: var(--akcent-jasny); }
+@media (max-width: 700px) {
+  .bai-menu a.bai-mono { display: none; }
+  .bai-logo .bai-mono { display: none; }
+}
+
+/* ---------- Przycisk: jeden następny krok ---------- */
+.bai .bai-przycisk { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0.75rem 1.5rem; background: var(--akcent); color: var(--na-akcencie); font-size: 1rem; font-weight: 500; letter-spacing: -0.01em; border-radius: 0.375rem; transition: background 0.2s, transform 0.2s var(--sprezyna); }
+.bai .bai-przycisk:hover { background: var(--akcent-jasny); transform: translateY(-1px); }
+.bai .bai-przycisk-maly { min-height: 2.5rem; padding: 0.5rem 1rem; font-size: 0.9375rem; white-space: nowrap; }
+.bai-akcje { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 2rem; }
+.bai-notka { font-size: 0.9375rem; color: var(--cichy); }
+.bai .bai-drugi-link { font-size: 0.9375rem; color: var(--tekst2); border-bottom: 1px solid var(--linia2); padding-bottom: 2px; transition: color 0.2s, border-color 0.2s; }
+.bai .bai-drugi-link:hover { color: var(--akcent-jasny); border-color: var(--akcent-jasny); }
+
+/* ---------- Nagłówek listy ---------- */
+.bai-hero { position: relative; border-bottom: 1px solid var(--linia); overflow: hidden; }
+.bai-smuga { position: absolute; inset: -40% -10% auto 35%; height: 140%; background: radial-gradient(ellipse at 60% 40%, var(--smuga-srodek), var(--smuga-brzeg) 38%, transparent 68%); transform: rotate(-18deg); filter: blur(40px); opacity: 0.55; pointer-events: none; }
+.bai-hero-wnetrze { position: relative; padding-block: clamp(3.5rem, 8vw, 5.5rem); }
+.bai .bai-brow { display: inline-block; color: var(--akcent-jasny); }
+.bai .bai-h1 { margin-top: 1rem; max-width: 48rem; font-size: clamp(2.75rem, 6.2vw, 4.5rem); line-height: 1.02; letter-spacing: -0.045em; text-wrap: balance; }
+.bai .bai-h1 span + span { color: var(--akcent-jasny); }
+.bai .bai-h1-temat { font-size: clamp(2.25rem, 4.6vw, 3.4rem); line-height: 1.06; }
+.bai-lead { margin-top: 1.5rem; max-width: 40rem; font-size: 1.1875rem; line-height: 1.6; color: var(--tekst2); }
+.bai .bai-licznik { margin-top: 1.5rem; }
+
+/* ---------- Pasek tematów: napisy mono rozdzielone cienką linią, bez pigułek ---------- */
+.bai-pasek { position: sticky; top: 3.75rem; z-index: 40; background: rgba(3, 4, 5, 0.86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--linia); }
+.bai-pasek-wnetrze { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+.bai-pasek-wnetrze::-webkit-scrollbar { display: none; }
+.bai .bai-pasek-link { flex: none; padding: 0.9rem 1.25rem; border-right: 1px solid var(--linia); white-space: nowrap; transition: color 0.2s, background 0.2s; }
+.bai .bai-pasek-link:first-child { border-left: 1px solid var(--linia); }
+.bai .bai-pasek-link:hover { color: var(--akcent-jasny); background: var(--karta); }
+
+/* ---------- Okładka: czarna tablica, siatka cienkich linii, smuga światła, numer ---------- */
+.bai-okladka { position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; background: var(--tlo2); border: 1px solid var(--linia); border-radius: 0.5rem; padding: 1rem 1.125rem; isolation: isolate; }
+.bai-okladka::before { content: ""; position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(var(--linia) 1px, transparent 1px), linear-gradient(90deg, var(--linia) 1px, transparent 1px); background-size: 3rem 3rem; opacity: 0.55; mask-image: linear-gradient(120deg, transparent 5%, #000 60%); -webkit-mask-image: linear-gradient(120deg, transparent 5%, #000 60%); }
+.bai-okladka::after { content: ""; position: absolute; z-index: -1; width: 70%; height: 190%; top: -45%; background: linear-gradient(90deg, transparent, var(--smuga-brzeg) 30%, var(--smuga-srodek) 50%, var(--smuga-brzeg) 70%, transparent); filter: blur(22px); opacity: 0.8; }
+.bai-okladka-1::after { left: 42%; transform: rotate(24deg); }
+.bai-okladka-2::after { left: 8%; transform: rotate(-22deg); }
+.bai-okladka-3::after { left: 52%; transform: rotate(-12deg); width: 46%; }
+.bai-okladka-4::after { left: 20%; transform: rotate(38deg); width: 52%; }
+.bai-okladka-nr { font-family: var(--sans); font-weight: 300; font-size: clamp(3.25rem, 8vw, 5.5rem); line-height: 0.9; letter-spacing: -0.06em; color: var(--tekst); }
+.bai-okladka-grupa { font-family: var(--mono); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cichy); padding-top: 0.625rem; border-top: 1px solid var(--linia2); position: relative; }
+.bai-okladka-grupa::before { content: ""; position: absolute; top: -1px; left: 0; width: 1.75rem; height: 3px; background: var(--akcent); }
+
+/* ---------- Wyróżniony tekst ---------- */
+.bai-wyrozniony { padding-block: clamp(3rem, 6vw, 4rem); }
+.bai-wyrozniony-siatka { display: grid; gap: 2rem; align-items: center; }
+@media (min-width: 1024px) { .bai-wyrozniony-siatka { grid-template-columns: 1fr 1fr; gap: 3rem; } }
+.bai-wyrozniony-okladka { aspect-ratio: 4 / 3; padding: 1.5rem 1.75rem; }
+.bai-wyrozniony-okladka .bai-okladka-nr { font-size: clamp(5rem, 13vw, 9rem); }
+.bai .bai-etykieta { color: var(--akcent-jasny); }
+.bai .bai-wyrozniony-tytul { margin-top: 0.75rem; font-size: clamp(2rem, 4.2vw, 3rem); line-height: 1.08; letter-spacing: -0.04em; text-wrap: balance; transition: color 0.2s; }
+.bai-wyrozniony-siatka:hover .bai-wyrozniony-tytul { color: var(--akcent-jasny); }
+.bai-czytaj { display: inline-block; margin-top: 1.5rem; padding-bottom: 2px; border-bottom: 2px solid var(--akcent); color: var(--akcent-jasny); font-weight: 500; }
+
+/* ---------- Sekcje per temat ---------- */
+.bai-dol { padding-bottom: 6rem; }
+.bai-sekcja { margin-top: 4rem; padding-top: 2.5rem; border-top: 1px solid var(--linia); position: relative; }
+.bai-sekcja::before { content: ""; position: absolute; top: -1px; left: 0; width: 3rem; height: 3px; background: var(--akcent); }
+.bai-sekcja-glowa { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.bai .bai-h2 { font-size: clamp(1.9rem, 3.4vw, 2.5rem); line-height: 1.1; letter-spacing: -0.035em; }
+.bai .bai-h2 a { transition: color 0.2s; }
+.bai .bai-h2 a:hover { color: var(--akcent-jasny); }
+.bai-pytanie { margin-top: 0.5rem; max-width: 40rem; font-size: 1.0625rem; color: var(--cichy); }
+.bai-siatka { margin-top: 2rem; display: grid; gap: 2.5rem 1.5rem; }
+@media (min-width: 640px) { .bai-siatka { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .bai-siatka { grid-template-columns: repeat(3, 1fr); } }
+.bai-siatka-temat { margin-top: 3.5rem; }
+.bai .bai-wszystko { display: inline-block; margin-top: 2rem; padding-bottom: 2px; border-bottom: 2px solid var(--akcent); color: var(--akcent-jasny); font-size: 0.9375rem; font-weight: 500; }
+
+/* ---------- Kafel ---------- */
+.bai .bai-kafel { display: block; }
+.bai-kafel-okladka { aspect-ratio: 16 / 10; transition: border-color 0.25s, transform 0.4s var(--sprezyna); }
+.bai-kafel:hover .bai-kafel-okladka, .bai-kafel:hover .bai-powiazane-okladka { border-color: var(--linia2); transform: translateY(-2px); }
+.bai .bai-kafel-tytul { margin-top: 1rem; font-size: 1.3125rem; line-height: 1.2; letter-spacing: -0.025em; text-wrap: balance; transition: color 0.2s; }
+.bai-kafel:hover .bai-kafel-tytul, .bai-kafel:hover .bai-powiazane-tytul { color: var(--akcent-jasny); }
+.bai-kafel-opis { margin-top: 0.5rem; font-size: 1rem; line-height: 1.55; color: var(--tekst2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.bai .bai-kafel-meta { margin-top: 0.75rem; }
+
+/* ---------- Nagłówek artykułu ---------- */
+.bai-art-glowa { padding-top: clamp(2rem, 5vw, 3rem); padding-bottom: 2rem; }
+.bai-okruszki { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.bai-okruszki a { transition: color 0.2s; }
+.bai-okruszki a:hover { color: var(--akcent-jasny); }
+.bai .bai-art-h1 { margin-top: 1rem; font-size: clamp(2rem, 4.6vw, 2.75rem); line-height: 1.1; letter-spacing: -0.04em; text-wrap: balance; }
+.bai-art-opis { margin-top: 1rem; font-size: clamp(1.125rem, 2vw, 1.25rem); line-height: 1.55; color: var(--tekst2); }
+.bai-podpis { margin-top: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+.bai-podpis img { width: 2.75rem; height: 2.75rem; flex: none; border-radius: 50%; object-fit: cover; border: 1px solid var(--linia2); }
+.bai-podpis-kto { font-size: 0.9375rem; font-weight: 500; color: var(--tekst); line-height: 1.35; }
+.bai-podpis-kto span { font-weight: 400; color: var(--cichy); }
+.bai-podpis-meta { margin-top: 0.125rem; display: flex; flex-wrap: wrap; gap: 0 0.5rem; font-size: 0.875rem; color: var(--cichy); }
+.bai-kropka { color: var(--linia2); }
+
+/* W skrócie: odpowiedź od razu, w jednym bloku. */
+.bai-skrot { margin-top: 1.75rem; padding: 1.25rem 1.375rem; background: var(--karta); border: 1px solid var(--linia); border-left: 3px solid var(--akcent); border-radius: 0.375rem; }
+.bai .bai-skrot-etykieta { color: var(--akcent-jasny); }
+.bai-skrot-tekst { margin-top: 0.5rem; font-size: 1.125rem; line-height: 1.6; color: var(--tekst); }
+
+.bai-art-okladka { aspect-ratio: 16 / 9; padding: 1.5rem 1.75rem; }
+@media (min-width: 640px) { .bai-art-okladka { aspect-ratio: 21 / 9; } }
+.bai-art-okladka .bai-okladka-nr { font-size: clamp(4.5rem, 12vw, 8rem); }
+
+/* Spis treści: zwinięty, jak na lovemyself. */
+.bai-spis { margin-top: 2rem; border: 1px solid var(--linia); border-radius: 0.375rem; background: var(--karta); }
+.bai-spis summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.875rem 1.125rem; cursor: pointer; list-style: none; font-weight: 500; color: var(--tekst); }
+.bai-spis summary::-webkit-details-marker { display: none; }
+.bai-spis summary::after { content: "+"; font-family: var(--mono); color: var(--akcent-jasny); margin-left: auto; padding-left: 0.5rem; }
+.bai-spis[open] summary::after { content: "−"; }
+.bai-spis summary .bai-mono { margin-left: auto; }
+.bai-spis summary::after { margin-left: 0; }
+.bai-spis ol { list-style: none; margin: 0; padding: 0.25rem 1.125rem 1rem; border-top: 1px solid var(--linia); }
+.bai-spis li { display: flex; gap: 0.875rem; align-items: baseline; padding: 0.5rem 0; border-bottom: 1px solid var(--linia); }
+.bai-spis li:last-child { border-bottom: 0; }
+.bai .bai-spis-nr { color: var(--akcent-jasny); flex: none; }
+.bai-spis a { color: var(--tekst2); font-size: 1rem; line-height: 1.4; transition: color 0.2s; }
+.bai-spis a:hover { color: var(--akcent-jasny); }
+
+/* ---------- Treść artykułu ---------- */
+.bai-tresc { margin-top: 2rem; font-size: 1.125rem; line-height: 1.75; color: var(--tekst2); }
+.bai-tresc p { margin-top: 1.25rem; }
+.bai-tresc > p:first-child { margin-top: 0; font-size: 1.1875rem; color: var(--tekst); }
+.bai-tresc h2 { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--linia); position: relative; font-size: clamp(1.75rem, 3.4vw, 2.25rem); line-height: 1.12; letter-spacing: -0.035em; text-wrap: balance; }
+.bai-tresc h2::before { content: ""; position: absolute; top: -1px; left: 0; width: 2.5rem; height: 3px; background: var(--akcent); }
+.bai-tresc h3 { margin-top: 2.25rem; font-size: 1.3125rem; font-weight: 500; line-height: 1.25; letter-spacing: -0.02em; }
+.bai-tresc strong { font-weight: 600; color: var(--tekst); }
+.bai-tresc a { color: var(--akcent-jasny); text-decoration: underline; text-decoration-color: rgba(233, 245, 66, 0.4); text-underline-offset: 3px; transition: text-decoration-color 0.2s; }
+.bai-tresc a:hover { text-decoration-color: var(--akcent-jasny); }
+.bai-tresc ul, .bai-tresc ol { margin: 1.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+.bai-tresc li { position: relative; padding-left: 1.75rem; }
+.bai-tresc ul > li::before { content: ""; position: absolute; left: 0.125rem; top: 0.78em; width: 0.75rem; height: 2px; background: var(--akcent); }
+.bai-tresc ol { counter-reset: p; }
+.bai-tresc ol > li { counter-increment: p; padding-left: 2.25rem; }
+.bai-tresc ol > li::before { content: counter(p, decimal-leading-zero); position: absolute; left: 0; top: 0.42em; font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--akcent-jasny); }
+.bai-tresc hr { margin: 2.5rem 0 0; border: 0; border-top: 1px solid var(--linia); }
+
+/* Ramka z jedną myślą: duży, lekki tekst z limonkową kreską. */
+.bai-tresc blockquote { margin: 2.5rem 0 0; padding: 0.25rem 0 0.25rem 1.5rem; border-left: 2px solid var(--akcent); font-size: clamp(1.375rem, 2.8vw, 1.75rem); line-height: 1.3; letter-spacing: -0.03em; color: var(--tekst); text-wrap: balance; }
+
+/* Polecenie do wklejenia: gotowe polecenie dla AI. */
+.bai-polecenie { margin-top: 1.5rem; padding: 1.125rem 1.25rem 1.25rem; background: var(--tlo2); border: 1px solid var(--linia2); border-radius: 0.375rem; }
+.bai-tresc .bai-polecenie-etykieta { margin: 0; font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--akcent-jasny); }
+.bai-tresc .bai-polecenie-tekst { margin-top: 0.625rem; font-size: 1.0625rem; line-height: 1.65; color: var(--tekst); }
+
+/* Tabela: cienkie linie, nagłówki mono. */
+.bai-tabela { margin-top: 1.75rem; overflow-x: auto; border: 1px solid var(--linia); border-radius: 0.375rem; }
+.bai-tabela table { width: 100%; border-collapse: collapse; text-align: left; font-size: 1rem; line-height: 1.5; }
+.bai-tabela th { padding: 0.75rem 1rem; font-family: var(--mono); font-size: 0.75rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cichy); background: var(--karta); border-bottom: 1px solid var(--linia2); white-space: nowrap; }
+.bai-tabela td { padding: 0.75rem 1rem; vertical-align: top; border-bottom: 1px solid var(--linia); color: var(--tekst2); }
+.bai-tabela tr:last-child td { border-bottom: 0; }
+.bai-tabela td:first-child { color: var(--tekst); }
+
+/* ---------- Wezwanie ---------- */
+.bai-wezwanie { margin-top: 4rem; padding: clamp(1.5rem, 4vw, 2.25rem); background: var(--tlo2); border: 1px solid var(--linia2); border-radius: 0.5rem; position: relative; overflow: hidden; }
+.bai-wezwanie::before { content: ""; position: absolute; top: 0; left: 0; width: 4rem; height: 3px; background: var(--akcent); }
+.bai .bai-wezwanie-nad { color: var(--akcent-jasny); }
+.bai-wezwanie-tytul { margin-top: 0.75rem; font-size: clamp(1.5rem, 3.2vw, 2rem); line-height: 1.15; letter-spacing: -0.035em; color: var(--tekst); text-wrap: balance; }
+.bai-wezwanie-tekst { margin-top: 0.875rem; font-size: 1.0625rem; line-height: 1.6; color: var(--tekst2); max-width: 36rem; }
+.bai-wezwanie .bai-akcje { margin-top: 1.5rem; }
+
+/* ---------- Źródła ---------- */
+.bai-zrodla { margin-top: 3.5rem; padding: clamp(1.5rem, 4vw, 2rem); border: 1px solid var(--linia); border-radius: 0.5rem; background: var(--karta); }
+.bai .bai-h2-maly { font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.03em; }
+.bai-zrodla-opis { margin-top: 0.5rem; font-size: 0.9375rem; color: var(--cichy); }
+.bai-zrodla ol { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; gap: 1.5rem; }
+.bai-zrodla li { display: flex; gap: 1rem; align-items: baseline; }
+.bai .bai-zrodla-nr { color: var(--akcent-jasny); flex: none; }
+.bai-zrodla-liczba { font-size: 1.5rem; line-height: 1.15; letter-spacing: -0.03em; color: var(--akcent-jasny); }
+.bai-zrodla-teza { margin-top: 0.25rem; font-size: 1rem; line-height: 1.55; color: var(--tekst2); }
+.bai-zrodla li a { display: inline-block; margin-top: 0.375rem; font-size: 0.9375rem; color: var(--cichy); text-decoration: underline; text-decoration-color: var(--linia2); text-underline-offset: 3px; transition: color 0.2s; }
+.bai-zrodla li a:hover { color: var(--akcent-jasny); }
+
+/* ---------- Autor ---------- */
+.bai-autor { margin-top: 2.5rem; display: flex; gap: 1rem; align-items: flex-start; padding-top: 1.5rem; border-top: 1px solid var(--linia); }
+.bai-autor img { width: 3.5rem; height: 3.5rem; flex: none; border-radius: 50%; object-fit: cover; border: 1px solid var(--linia2); }
+.bai-autor strong { font-weight: 500; color: var(--tekst); }
+.bai-autor p { margin-top: 0.25rem; font-size: 1rem; line-height: 1.55; color: var(--tekst2); }
+
+/* ---------- Powiązane i pozostałe tematy ---------- */
+.bai-powiazane { margin-top: 3.5rem; padding-top: 2.5rem; border-top: 1px solid var(--linia); }
+.bai-powiazane-dol { margin-bottom: 6rem; }
+.bai-powiazane-siatka { margin-top: 1.5rem; display: grid; gap: 1.5rem; }
+@media (min-width: 640px) { .bai-powiazane-siatka { grid-template-columns: repeat(3, 1fr); } }
+.bai-powiazane-okladka { aspect-ratio: 16 / 10; padding: 0.75rem 0.875rem; transition: border-color 0.25s, transform 0.4s var(--sprezyna); }
+.bai-powiazane-okladka .bai-okladka-nr { font-size: 2.75rem; }
+.bai-powiazane-tytul { margin-top: 0.75rem; font-size: 1.0625rem; line-height: 1.3; letter-spacing: -0.015em; color: var(--tekst); transition: color 0.2s; }
+.bai-tematy { margin-top: 1.5rem; display: grid; gap: 0; border-top: 1px solid var(--linia); }
+.bai .bai-temat { display: grid; gap: 0.25rem 2rem; padding: 1.125rem 0; border-bottom: 1px solid var(--linia); transition: padding-left 0.3s var(--sprezyna); }
+@media (min-width: 768px) { .bai .bai-temat { grid-template-columns: 18rem 1fr; align-items: baseline; } }
+.bai .bai-temat:hover { padding-left: 0.75rem; }
+.bai-temat-nazwa { font-size: 1.25rem; letter-spacing: -0.025em; color: var(--tekst); transition: color 0.2s; }
+.bai-temat:hover .bai-temat-nazwa { color: var(--akcent-jasny); }
+.bai-temat-opis { font-size: 1rem; color: var(--cichy); }
+
+/* ---------- Stopka ---------- */
+.bai-stopka { border-top: 1px solid var(--linia); }
+.bai-stopka-wnetrze { max-width: calc(72rem + 2 * var(--bok)); margin-inline: auto; padding: 1.75rem var(--bok); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 2rem; font-size: 0.9375rem; color: var(--cichy); }
+.bai-stopka a { transition: color 0.2s; }
+.bai-stopka a:hover { color: var(--akcent-jasny); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bai *, .bai *::before, .bai *::after { transition: none !important; }
+}
+
+/* ================= Katalog narzędzi AI (21.11.2026) =================
+   Budowa jak w katalogach narzędzi: filtry z boku, kafle z nazwą, opisem i ceną, tabliczka faktów na podstronie.
+   Ten sam styl co blog: cienkie linie, napisy mono, jeden akcent. Znak narzędzia to dwie litery, bez cudzych logo. */
+.bai-katalog { display: grid; gap: 2.5rem; padding-top: clamp(2.5rem, 5vw, 3.5rem); }
+@media (min-width: 900px) { .bai-katalog { grid-template-columns: 17rem 1fr; gap: 3rem; align-items: start; } }
+.bai-filtry { display: grid; gap: 0.625rem; }
+@media (min-width: 900px) { .bai-filtry { position: sticky; top: 8rem; } }
+.bai .bai-filtry-nad { margin-top: 1.25rem; }
+.bai-pole { width: 100%; min-height: 2.875rem; padding: 0.625rem 0.875rem; font: inherit; font-size: 1rem; color: var(--tekst); background: var(--karta); border: 1px solid var(--linia2); border-radius: 0.375rem; }
+.bai-pole::placeholder { color: var(--cichy); }
+.bai-pole:focus { outline: 2px solid var(--akcent-jasny); outline-offset: 2px; }
+.bai-filtry-grupa { display: grid; border-top: 1px solid var(--linia); }
+.bai-filtr { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 0.25rem; font: inherit; font-size: 0.9375rem; text-align: left; color: var(--tekst2); background: none; border: 0; border-bottom: 1px solid var(--linia); cursor: pointer; transition: color 0.2s, padding-left 0.3s var(--sprezyna); }
+.bai-filtr:hover { color: var(--tekst); padding-left: 0.5rem; }
+.bai-filtr[aria-pressed="true"] { color: var(--akcent-jasny); padding-left: 0.75rem; box-shadow: inset 3px 0 0 var(--akcent); }
+.bai-filtr[aria-pressed="true"] .bai-mono { color: var(--akcent-jasny); }
+.bai-filtr-czysc { margin-top: 0.75rem; justify-self: start; padding: 0 0 2px; font: inherit; font-size: 0.9375rem; color: var(--tekst2); background: none; border: 0; border-bottom: 1px solid var(--linia2); cursor: pointer; }
+.bai-filtr-czysc:hover { color: var(--akcent-jasny); border-color: var(--akcent-jasny); }
+.bai .bai-katalog-ile { margin-bottom: 1rem; }
+.bai-narzedzia { display: grid; gap: 1.25rem; }
+@media (min-width: 640px) { .bai-narzedzia { grid-template-columns: repeat(2, 1fr); } }
+.bai-narzedzia-kategoria { margin-top: 3.5rem; }
+@media (min-width: 1024px) { .bai-narzedzia-kategoria { grid-template-columns: repeat(3, 1fr); } }
+.bai .bai-narzedzie { display: flex; flex-direction: column; gap: 1rem; padding: 1.375rem; background: var(--karta); border: 1px solid var(--linia); border-radius: 0.5rem; transition: border-color 0.25s, transform 0.4s var(--sprezyna); }
+.bai .bai-narzedzie:hover { border-color: var(--linia2); transform: translateY(-2px); }
+.bai-narzedzie-glowa { display: flex; align-items: center; gap: 0.875rem; }
+.bai-znak { display: grid; place-items: center; flex: none; width: 2.75rem; height: 2.75rem; font-family: var(--mono); font-size: 0.875rem; letter-spacing: 0.04em; color: var(--tekst); background: var(--tlo2); border: 1px solid var(--linia2); border-radius: 0.375rem; position: relative; }
+.bai-znak::after { content: ""; position: absolute; left: -1px; bottom: -1px; width: 1rem; height: 3px; background: var(--akcent); }
+.bai-znak-duzy { width: 3.5rem; height: 3.5rem; font-size: 1.0625rem; }
+.bai .bai-narzedzie-nazwa { font-size: 1.3125rem; line-height: 1.2; letter-spacing: -0.025em; transition: color 0.2s; }
+.bai-narzedzie:hover .bai-narzedzie-nazwa { color: var(--akcent-jasny); }
+.bai-narzedzie-producent { font-size: 0.875rem; color: var(--cichy); }
+.bai-narzedzie-opis { font-size: 1rem; line-height: 1.55; color: var(--tekst2); flex: 1; }
+.bai-narzedzie-fakty { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 0; padding-top: 0.875rem; border-top: 1px solid var(--linia); }
+.bai-narzedzie-fakty dd { margin: 0.125rem 0 0; font-size: 0.9375rem; line-height: 1.35; color: var(--tekst); }
+.bai .bai-narzedzie-stopka { display: flex; justify-content: space-between; gap: 1rem; }
+.bai .bai-narzedzie-wiecej { color: var(--akcent-jasny); }
+.bai-katalog-zasada { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--linia); max-width: 44rem; font-size: 0.9375rem; color: var(--cichy); }
+
+/* Podstrona narzędzia */
+.bai-narzedzie-tytul { margin-top: 1rem; display: flex; align-items: flex-start; gap: 1rem; }
+.bai .bai-narzedzie-tytul .bai-art-h1 { margin-top: 0; }
+.bai .bai-sprawdzono { margin-top: 1.25rem; }
+.bai-fakty { margin: 1.5rem 0 0; display: grid; border: 1px solid var(--linia); border-left: 3px solid var(--akcent); border-radius: 0.375rem; background: var(--karta); }
+.bai-fakty > div { display: grid; gap: 0.125rem 1.5rem; padding: 0.875rem 1.25rem; border-bottom: 1px solid var(--linia); }
+.bai-fakty > div:last-child { border-bottom: 0; }
+@media (min-width: 640px) { .bai-fakty > div { grid-template-columns: 9.5rem 1fr; align-items: baseline; } }
+.bai-fakty dd { margin: 0; font-size: 1.0625rem; line-height: 1.5; color: var(--tekst); }
+.bai-cechy { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+.bai .bai-cecha { position: relative; padding-left: 1rem; }
+.bai .bai-cecha::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 0.5rem; height: 2px; background: var(--akcent); }
+.bai .bai-przycisk-obrys { display: inline-flex; align-items: center; min-height: 3rem; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 500; color: var(--tekst); border: 1px solid var(--linia2); border-radius: 0.375rem; transition: border-color 0.2s, color 0.2s; }
+.bai .bai-przycisk-obrys:hover { color: var(--akcent-jasny); border-color: var(--akcent-jasny); }

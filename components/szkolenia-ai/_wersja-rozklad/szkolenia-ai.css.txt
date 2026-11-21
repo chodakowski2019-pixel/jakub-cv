@@ -1,0 +1,334 @@
+/* Szkolenie AI dla firm (20.11.2026).
+   Konwencja: ROZKŁAD = żółty plakat odjazdów z dworca. Żółć, czerń, biel, jeden krój w dwóch szerokościach,
+   ostre krawędzie, linie i tabele. Lista „nie”: zaokrąglenia, cienie, gradienty, szkło, pigułki, emoji.
+   Wszystko pod .sza, zero wycieku na resztę serwisu. */
+
+/* Strona główna serwisu ma ciemne tło z poświatą (globals.css). Tu biała kartka. */
+html:has(.sza),
+body:has(.sza) { background: #fff; }
+body:has(.sza)::before,
+body:has(.sza)::after { display: none; }
+
+.sza {
+  --zolty: #ffd400;
+  --tusz: #0b0b0b;
+  --papier: #fff;
+  --szary: #5a5a5a;
+  --cicha: #cfcfcf;
+  --blad: #b00020;
+  --f: var(--sza-font), "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --max: 77.5rem;
+  --bok: clamp(1rem, 4vw, 2.5rem);
+  --gora: 3.5rem;
+  --sprezyna: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  width: 100%;
+  background: var(--papier);
+  color: var(--tusz);
+  font-family: var(--f);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+  color-scheme: light;
+}
+.sza *, .sza *::before, .sza *::after { box-sizing: border-box; }
+.sza a { color: inherit; }
+.sza ul, .sza ol { list-style: none; margin: 0; padding: 0; }
+.sza :focus-visible { outline: 3px solid var(--tusz); outline-offset: 3px; }
+.sza [id] { scroll-margin-top: calc(var(--gora) + 1.25rem); }
+
+/* Nagłówki: ten sam krój, zwężony i gruby. Duży tekst = ujemny tracking, ciasna interlinia. */
+.sza h1, .sza h2, .sza h3, .sza .nr, .sza .liczba b, .sza time, .sza .kw, .sza .rachunek b {
+  font-stretch: 72%;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1;
+}
+.sza h2 { font-size: clamp(1.9rem, 3.3vw, 3rem); text-wrap: balance; }
+.sza h3 { font-size: 1.5rem; }
+.sza .lead { font-size: clamp(1.1rem, 1.5vw, 1.3rem); line-height: 1.45; max-width: 38em; text-wrap: pretty; }
+.sza small, .sza .maly-tekst, .sza .uwaga { font-size: 0.875rem; line-height: 1.45; color: var(--szary); }
+.sza .zolta small, .sza .zolta .uwaga { color: rgba(11, 11, 11, 0.78); }
+
+/* ---------- Przycisk ---------- */
+.sza .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.7rem;
+  min-height: 3.25rem; padding: 0.85rem 1.4rem;
+  background: var(--tusz); color: var(--papier);
+  border: 2px solid var(--tusz); border-radius: 0;
+  font: inherit; font-weight: 700; font-stretch: 88%; font-size: 1.0625rem; line-height: 1.1; letter-spacing: 0.005em;
+  text-decoration: none; cursor: pointer; white-space: nowrap;
+  transition: background-color 120ms ease-out, color 120ms ease-out, transform 100ms ease-out;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.sza .btn .strz { width: 1rem; height: 1rem; flex: none; transition: transform 240ms var(--sprezyna); }
+.sza .btn:active { transform: scale(0.97); }
+.sza .btn.puste { background: transparent; color: var(--tusz); }
+.sza .btn.maly { min-height: 2.5rem; padding: 0.45rem 0.9rem; font-size: 0.9375rem; }
+.sza .btn.duzy { width: 100%; min-height: 3.75rem; font-size: 1.1875rem; }
+.sza .btn[disabled] { opacity: 0.6; cursor: progress; }
+@media (hover: hover) {
+  .sza .btn:hover { background: var(--papier); color: var(--tusz); }
+  .sza .btn.puste:hover { background: var(--tusz); color: var(--papier); }
+  .sza .btn:hover .strz { transform: translateX(4px); }
+}
+
+/* ---------- Górny pasek ---------- */
+.sza .gora { position: sticky; top: 0; z-index: 50; background: var(--papier); border-bottom: 2px solid var(--tusz); }
+.sza .gora-w { max-width: var(--max); margin: 0 auto; padding: 0 var(--bok); height: var(--gora); display: flex; align-items: center; gap: 1.5rem; }
+.sza .marka { font-weight: 800; font-stretch: 80%; font-size: 1.125rem; text-decoration: none; letter-spacing: -0.005em; white-space: nowrap; }
+.sza .gora-nav { display: flex; gap: 1.5rem; margin-left: auto; font-size: 0.9375rem; font-weight: 500; }
+.sza .gora-nav a { text-decoration: none; padding: 0.25rem 0; border-bottom: 2px solid transparent; transition: border-color 120ms ease-out; }
+@media (hover: hover) { .sza .gora-nav a:hover { border-bottom-color: var(--tusz); } }
+
+/* ---------- Hero ---------- */
+.sza .hero { background: var(--zolty); }
+.sza .hero-w {
+  max-width: var(--max); margin: 0 auto; padding: clamp(2.5rem, 6vw, 5rem) var(--bok) clamp(2.5rem, 5vw, 4rem);
+  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: clamp(2rem, 5vw, 5rem); align-items: end;
+}
+.sza .nad { font-weight: 700; font-stretch: 88%; font-size: 0.9375rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.25rem; }
+.sza h1 { font-size: clamp(2.6rem, 5.9vw, 5.4rem); line-height: 0.94; letter-spacing: -0.02em; font-stretch: 68%; margin-bottom: 1.75rem; }
+.sza h1 span { display: block; text-wrap: balance; }
+.sza h1 span + span { margin-top: 0.12em; }
+.sza .akcje { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+.sza .pod { margin-top: 0.9rem; font-size: 0.9375rem; font-weight: 500; }
+
+/* Tabliczka z faktami: biała kartka z czarną ramką, jak wklejka na plakacie. */
+.sza .bilet { background: var(--papier); border: 2px solid var(--tusz); margin: 0; }
+.sza .bilet > div { display: grid; grid-template-columns: 5.5rem 1fr; gap: 0.75rem; align-items: baseline; padding: 0.8rem 1rem; }
+.sza .bilet > div + div { border-top: 1px solid var(--tusz); }
+.sza .bilet dt { font-size: 0.75rem; font-weight: 700; font-stretch: 88%; text-transform: uppercase; letter-spacing: 0.08em; }
+.sza .bilet dd { margin: 0; font-weight: 700; font-stretch: 85%; font-size: 1.125rem; line-height: 1.2; }
+
+/* ---------- Zdjęcie z sali: druk dwubarwny, czerń na żółci ---------- */
+.sza .foto-pas { position: relative; margin: 0; height: clamp(15rem, 44vw, 34rem); background: var(--zolty); border-top: 2px solid var(--tusz); overflow: hidden; }
+.sza .foto-pas img { object-fit: cover; object-position: 62% 38%; filter: grayscale(1) contrast(1.18) brightness(1.06); mix-blend-mode: multiply; }
+.sza .foto-pas figcaption { position: absolute; left: 0; bottom: 0; background: var(--tusz); color: var(--papier); padding: 0.55rem var(--bok) 0.55rem max(var(--bok), calc((100vw - var(--max)) / 2 + var(--bok))); font-size: 0.875rem; font-weight: 500; }
+
+/* ---------- Sekcje ---------- */
+.sza .sek { border-top: 2px solid var(--tusz); }
+.sza .sek.zolta { background: var(--zolty); }
+.sza .sek-w {
+  max-width: var(--max); margin: 0 auto; padding: clamp(3rem, 7vw, 6rem) var(--bok);
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(1.5rem, 4vw, 4rem); align-items: start;
+}
+.sza .sek-glowa { position: sticky; top: calc(var(--gora) + 2rem); }
+.sza .nr { display: block; font-size: clamp(3rem, 5.5vw, 5rem); font-stretch: 62%; line-height: 0.85; margin-bottom: 0.9rem; }
+.sza .sek-glowa .lead { margin-top: 1.25rem; }
+.sza .sek-tresc > * + * { margin-top: 2.5rem; }
+.sza .sek-tresc > .uwaga { margin-top: 1rem; }
+
+/* ---------- Tabele z linii ---------- */
+.sza .tab { border-bottom: 1px solid var(--tusz); }
+.sza .tab .w { display: grid; gap: 0.5rem 1.5rem; padding: 1rem 0; border-top: 1px solid var(--tusz); align-items: baseline; }
+.sza .tab .w:first-child { border-top-width: 2px; }
+.sza .tab.dwa .w { grid-template-columns: 1fr 1fr; }
+.sza .tab.kto .w, .sza .tab.kroki .w { grid-template-columns: 11rem 1fr; }
+.sza .tab.os .w { grid-template-columns: 5rem 1fr; }
+.sza .glowka { font-size: 0.75rem; font-weight: 700; font-stretch: 88%; text-transform: uppercase; letter-spacing: 0.08em; padding-block: 0.6rem !important; }
+.sza .tab strong { font-weight: 700; }
+.sza .etyk { font-stretch: 85%; font-size: 1.0625rem; }
+.sza .tab.kto li + li { margin-top: 0.5rem; }
+.sza .tab.os time { font-size: 1.5rem; }
+
+/* Liczby ze źródłem */
+.sza .liczby { display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid var(--tusz); border-bottom: 1px solid var(--tusz); }
+.sza .liczba { padding: 1.5rem 1.5rem 1.5rem 0; }
+.sza .liczba + .liczba { border-left: 1px solid var(--tusz); padding-left: 1.5rem; }
+.sza .liczba b { display: block; font-size: clamp(3.5rem, 7.5vw, 6.5rem); font-stretch: 62%; line-height: 0.9; margin-bottom: 0.75rem; }
+.sza .liczba p { font-weight: 500; max-width: 22em; }
+.sza .liczba small { display: block; margin-top: 0.6rem; }
+
+/* ---------- Rozkład dnia ---------- */
+.sza .rozklad { border-bottom: 2px solid var(--tusz); }
+.sza .rozklad .w { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) 13.5rem; gap: 0.35rem 1.5rem; padding: 1.1rem 0; border-top: 1px solid var(--tusz); align-items: baseline; }
+.sza .rozklad .w:first-child { border-top-width: 2px; }
+.sza .rozklad time { font-size: 2.25rem; font-stretch: 66%; }
+.sza .rozklad strong { display: block; font-weight: 800; font-stretch: 80%; font-size: 1.375rem; line-height: 1.15; margin-bottom: 0.3rem; }
+.sza .rozklad p { margin: 0; }
+.sza .rozklad .zostaje { font-weight: 700; font-stretch: 88%; line-height: 1.3; }
+.sza .rozklad .przerwa { padding-block: 0.45rem; }
+.sza .rozklad .przerwa time, .sza .rozklad .przerwa strong { font-size: 1.0625rem; font-weight: 600; opacity: 0.62; margin: 0; }
+
+/* Wniosek z badania i obietnica przy formularzu: zdanie wytłuszczone, z grubą kreską z lewej */
+.sza .wniosek, .sza .obietnica { font-weight: 700; font-stretch: 88%; font-size: clamp(1.25rem, 2vw, 1.625rem); line-height: 1.25; max-width: 28em; padding-left: 1rem; border-left: 6px solid var(--tusz); text-wrap: balance; }
+.sza .obietnica { font-size: 1.0625rem; margin-top: 1.5rem; }
+.sza .akcje-cena { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; }
+.sza .akcje-cena .maly-tekst { flex: 1 1 14rem; }
+
+/* ---------- Tak / Nie ---------- */
+.sza .dwie { display: grid; grid-template-columns: 1fr 1fr; border: 2px solid var(--tusz); }
+.sza .dwie .kol { display: flex; flex-direction: column; }
+.sza .dwie .kol > ul { flex: 1; display: grid; grid-auto-rows: 1fr; }
+.sza .dwie li { display: flex; align-items: center; }
+.sza .dwie .kol + .kol { border-left: 2px solid var(--tusz); }
+.sza .dwie h3 { padding: 0.8rem 1.25rem; border-bottom: 2px solid var(--tusz); }
+.sza .dwie .tak h3 { background: var(--zolty); }
+.sza .dwie .nie h3 { background: var(--tusz); color: var(--papier); }
+.sza .dwie li { padding: 0.95rem 1.25rem; }
+.sza .dwie li + li { border-top: 1px solid var(--tusz); }
+.sza .dwie.rowne h3 { background: none; color: inherit; }
+.sza .dwie.rowne .maly-tekst { padding: 0.95rem 1.25rem; border-top: 1px solid var(--tusz); }
+.sza .dwie .rachunek li { justify-content: space-between; align-items: center; gap: 1rem; }
+.sza .rachunek b { font-size: 1.75rem; font-stretch: 66%; }
+
+/* ---------- Prowadzący ---------- */
+.sza .osoba { display: grid; grid-template-columns: 13rem 1fr; gap: 2rem; align-items: end; }
+.sza .osoba h3 { font-size: clamp(2rem, 3.2vw, 2.75rem); margin-bottom: 0.9rem; }
+.sza .portret { position: relative; aspect-ratio: 4 / 5; background: var(--zolty); border: 2px solid var(--tusz); overflow: hidden; }
+.sza .portret img { object-fit: cover; object-position: 50% 12%; filter: grayscale(1) contrast(1.12); }
+.sza .portret.maly { width: 5rem; aspect-ratio: 1; flex: none; }
+.sza .cert { display: grid; grid-template-columns: 11rem 1fr; gap: 1.25rem; align-items: center; border: 2px solid var(--tusz); text-decoration: none; transition: background-color 120ms ease-out; }
+.sza .cert-img { position: relative; aspect-ratio: 1798 / 1274; border-right: 2px solid var(--tusz); }
+.sza .cert-img img { object-fit: cover; }
+.sza .cert strong { display: block; font-stretch: 85%; }
+@media (hover: hover) { .sza .cert:hover { background: var(--zolty); } }
+
+/* ---------- Cennik ---------- */
+.sza .cennik { width: 100%; border-collapse: collapse; border-top: 2px solid var(--tusz); border-bottom: 2px solid var(--tusz); }
+.sza .cennik th, .sza .cennik td { text-align: left; padding: 1rem 1rem 1rem 0; border-top: 1px solid var(--tusz); vertical-align: baseline; font-weight: 400; }
+.sza .cennik thead th { border-top: 0; padding-block: 0.6rem; font-size: 0.75rem; font-weight: 700; font-stretch: 88%; text-transform: uppercase; letter-spacing: 0.08em; }
+.sza .cennik tbody th { font-weight: 800; font-stretch: 80%; font-size: 1.25rem; line-height: 1.15; }
+.sza .cennik .kw { text-align: right; padding-right: 0; white-space: nowrap; }
+.sza .cennik td.kw { font-size: 2rem; font-weight: 800; }
+.sza .cennik .glowna th, .sza .cennik .glowna td { background: var(--zolty); }
+.sza .cennik .glowna th { padding-left: 1rem; }
+.sza .cennik .glowna td.kw { padding-right: 1rem; }
+
+/* ---------- Pytania ---------- */
+.sza .pytania { border-bottom: 2px solid var(--tusz); }
+.sza .pytania details { border-top: 1px solid var(--tusz); interpolate-size: allow-keywords; }
+.sza .pytania details:first-child { border-top-width: 2px; }
+.sza .pytania summary { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.1rem 0; cursor: pointer; list-style: none; font-weight: 800; font-stretch: 80%; font-size: 1.3125rem; line-height: 1.2; -webkit-tap-highlight-color: transparent; }
+.sza .pytania summary::-webkit-details-marker { display: none; }
+.sza .pytania summary i { position: relative; width: 1.125rem; height: 1.125rem; flex: none; }
+.sza .pytania summary i::before, .sza .pytania summary i::after { content: ""; position: absolute; left: 0; top: calc(50% - 1.5px); width: 100%; height: 3px; background: var(--tusz); transition: transform 280ms var(--sprezyna); }
+.sza .pytania summary i::after { transform: rotate(90deg); }
+.sza .pytania details[open] summary i::after { transform: rotate(0deg); }
+.sza .pytania summary:active { background: rgba(11, 11, 11, 0.06); }
+.sza .pytania details p { padding: 0 3rem 1.4rem 0; max-width: 40em; }
+.sza .pytania details::details-content { block-size: 0; overflow: clip; transition: block-size 320ms var(--sprezyna), content-visibility 320ms allow-discrete; }
+.sza .pytania details[open]::details-content { block-size: auto; }
+
+/* ---------- Formularz ---------- */
+.sza .kto-odp { display: flex; align-items: center; gap: 1rem; margin-top: 2rem; }
+.sza .kto-odp strong { display: block; font-stretch: 85%; }
+.sza .form { background: var(--papier); border: 2px solid var(--tusz); padding: clamp(1.25rem, 3vw, 2.25rem); display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 0; }
+.sza .form .szer { grid-column: 1 / -1; }
+.sza .pole { border: 0; margin: 0; padding: 0; min-width: 0; }
+.sza .pole > label, .sza .pole legend { display: block; font-weight: 700; font-stretch: 88%; font-size: 0.9375rem; margin-bottom: 0.4rem; padding: 0; }
+.sza .pole em { font-style: normal; font-weight: 400; color: var(--szary); margin-left: 0.35rem; }
+.sza .form input:not([type="radio"]):not([type="checkbox"]), .sza .form textarea {
+  display: block; width: 100%; min-height: 3.25rem; padding: 0.8rem 0.9rem;
+  background: var(--papier); color: var(--tusz); border: 2px solid var(--tusz); border-radius: 0;
+  font: inherit; font-size: 1.0625rem; line-height: 1.3; -webkit-appearance: none; appearance: none;
+}
+.sza .form textarea { resize: vertical; min-height: 5.5rem; }
+.sza .form input:focus-visible, .sza .form textarea:focus-visible { outline: 3px solid var(--tusz); outline-offset: 2px; background: #fffbe0; }
+.sza .zle input:not([type="radio"]):not([type="checkbox"]) { border-color: var(--blad); }
+.sza .b { margin-top: 0.4rem; font-size: 0.875rem; font-weight: 600; color: var(--blad); }
+.sza .wybor { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.sza .wybor label { position: relative; display: block; margin: 0; cursor: pointer; }
+.sza .wybor input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.sza .wybor span { display: block; min-height: 3rem; padding: 0.7rem 1.1rem; border: 2px solid var(--tusz); font-weight: 600; font-stretch: 88%; transition: background-color 100ms ease-out, color 100ms ease-out, transform 100ms ease-out; }
+.sza .wybor label:active span { transform: scale(0.97); }
+.sza .wybor input:checked + span { background: var(--tusz); color: var(--papier); }
+.sza .wybor input:focus-visible + span { outline: 3px solid var(--tusz); outline-offset: 3px; }
+.sza .zgoda label { display: grid; grid-template-columns: 1.5rem 1fr; gap: 0.75rem; align-items: start; font-weight: 400; font-size: 0.875rem; line-height: 1.45; cursor: pointer; }
+.sza .zgoda label { font-stretch: 100%; }
+.sza .zgoda input { -webkit-appearance: none; appearance: none; width: 1.5rem; height: 1.5rem; margin: 0; border: 2px solid var(--tusz); border-radius: 0; background: var(--papier); cursor: pointer; display: grid; place-items: center; }
+.sza .zgoda input::after { content: ""; width: 0.75rem; height: 0.75rem; background: var(--tusz); transform: scale(0); transition: transform 140ms var(--sprezyna); }
+.sza .zgoda input:checked::after { transform: scale(1); }
+.sza .zgoda.zle input { border-color: var(--blad); }
+.sza .pulapka { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.sza .form.ok { display: block; }
+.sza .form.ok h3 { font-size: clamp(2rem, 3.4vw, 3rem); margin-bottom: 0.9rem; }
+.sza .form.ok:focus { outline: none; }
+
+/* ---------- Stopka ---------- */
+.sza .stopka { background: var(--tusz); color: var(--papier); }
+.sza .stopka-w { max-width: var(--max); margin: 0 auto; padding: 1.75rem var(--bok) 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem 2rem; font-size: 0.875rem; }
+.sza .stopka nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+.sza .stopka :focus-visible { outline-color: var(--zolty); }
+
+/* ---------- Dolny pasek z przyciskiem (telefon) ---------- */
+.sza .dol { display: none; }
+
+/* ---------- Pojawianie przy przewijaniu (tylko gdy działa JS i nie ma ograniczenia ruchu) ---------- */
+.sza[data-js] .poj { opacity: 0; transform: translateY(14px); }
+.sza[data-js] .poj.on { opacity: 1; transform: none; transition: opacity 520ms ease-out, transform 620ms var(--sprezyna); }
+
+/* ---------- Telefon i tablet ---------- */
+@media (max-width: 60rem) {
+  .sza .gora-nav { display: none; }
+  .sza .gora-w { justify-content: space-between; }
+  .sza .hero-w, .sza .sek-w { grid-template-columns: minmax(0, 1fr); }
+  .sza .sek-glowa { position: static; }
+  .sza .nr { font-size: 3rem; }
+}
+@media (max-width: 40rem) {
+  .sza { font-size: 1rem; }
+  .sza .tab.dwa .w, .sza .tab.kto .w, .sza .tab.kroki .w { grid-template-columns: 1fr; }
+  .sza .tab.dwa .glowka { display: none; }
+  .sza .liczby, .sza .dwie { grid-template-columns: 1fr; }
+  .sza .liczba + .liczba { border-left: 0; border-top: 1px solid var(--tusz); padding-left: 0; }
+  .sza .dwie .kol + .kol { border-left: 0; border-top: 2px solid var(--tusz); }
+  .sza .rozklad .w { grid-template-columns: 4.75rem minmax(0, 1fr); }
+  .sza .rozklad .zostaje { grid-column: 2; }
+  .sza .rozklad .zostaje::before { content: "Zostaje: "; font-weight: 400; }
+  .sza .rozklad .glowka { display: none; }
+  .sza .rozklad time { font-size: 1.75rem; }
+  .sza .akcje-cena .btn { flex: 1 1 100%; }
+  .sza .osoba { grid-template-columns: 1fr; align-items: start; }
+  .sza .osoba .portret { width: 11rem; }
+  .sza .cert { grid-template-columns: 7rem 1fr; }
+  .sza .form { grid-template-columns: 1fr; }
+  .sza .akcje .btn { flex: 1 1 100%; }
+  .sza .foto-pas img { object-position: 68% 40%; }
+
+  /* Cennik: każda forma jako osobny blok */
+  .sza .cennik thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .sza .cennik, .sza .cennik tbody, .sza .cennik tr, .sza .cennik th, .sza .cennik td { display: block; }
+  .sza .cennik tr { border-top: 1px solid var(--tusz); padding: 1rem 0; }
+  .sza .cennik tr.glowna { padding-inline: 1rem; background: var(--zolty); }
+  .sza .cennik th, .sza .cennik td { border: 0; padding: 0; }
+  .sza .cennik .glowna th { padding-left: 0; }
+  .sza .cennik td { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-top: 0.35rem; }
+  .sza .cennik td::before { content: attr(data-k); font-size: 0.75rem; font-weight: 700; font-stretch: 88%; text-transform: uppercase; letter-spacing: 0.08em; }
+  .sza .cennik td.kw { text-align: left; padding-right: 0 !important; font-size: 1.75rem; }
+
+  /* Dolny pasek: wjeżdża od dołu i tą samą drogą znika */
+  .sza .dol { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; min-height: 3.5rem; padding-bottom: calc(0.85rem + env(safe-area-inset-bottom)); border-inline: 0; border-bottom: 0; transform: translateY(105%); transition: transform 380ms var(--sprezyna), background-color 120ms ease-out; }
+  .sza[data-dol="1"] .dol { transform: none; }
+  .sza .stopka-w { padding-bottom: 5.5rem; }
+}
+
+/* ---------- Dostępność ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .sza *, .sza *::before, .sza *::after { transition-duration: 1ms !important; animation: none !important; }
+  .sza .btn:active, .sza .wybor label:active span { transform: none; }
+}
+@media (prefers-contrast: more) {
+  .sza { --szary: #2b2b2b; }
+  .sza .rozklad .przerwa time, .sza .rozklad .przerwa strong { opacity: 1; }
+}
+
+/* ---------- Druk: strona jako oferta na kartce (do przekazania dalej) ---------- */
+@media print {
+  .sza .gora, .sza .dol, .sza .akcje, .sza .pod, .sza .form, .sza .sek-tresc > .btn, .sza .akcje-cena { display: none !important; }
+  .sza .sek-w { padding-block: 1.5rem; }
+  .sza .dwie, .sza .cennik, .sza .liczby, .sza .osoba, .sza .tab .w, .sza .rozklad .w, .sza .pytania details { break-inside: avoid; }
+  .sza .sek-glowa { break-after: avoid; break-inside: avoid; }
+  .sza .sek-glowa { position: static; }
+  .sza .pytania details::details-content { block-size: auto; content-visibility: visible; }
+  .sza[data-js] .poj { opacity: 1; transform: none; }
+  .sza, .sza .hero, .sza .zolta, .sza .cennik .glowna th, .sza .cennik .glowna td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* Linki w tekście (zgoda, błędy, kontakt, stopka) mają być widoczne jako linki. */
+.sza .zgoda a, .sza .b a, .sza .kto-odp a, .sza .stopka a { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+@media (hover: hover) { .sza .zgoda a:hover, .sza .kto-odp a:hover, .sza .stopka a:hover { text-decoration-thickness: 2px; } }

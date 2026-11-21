@@ -21,7 +21,8 @@ export const metadata: Metadata = {
 // 21.10: ankieta Mazura w panelu Bruno (sekcja 2).
 // 25.10 (USER_001): OpenAI gpt-5.5 = model klienta w każdej rozmowie, po współpracy 14 dni, naruszenie do 7 dni,
 // tryb poufny i odejście handlowca. Retencja ElevenLabs sprawdzona przez API 25.10: 1 dzień.
-const AKTUALIZACJA = "25 października 2026";
+// 20.11: formularz zapytania o szkolenie AI dla firm (sekcja 2). Dostawcy bez zmian (Supabase, Resend, Vercel).
+const AKTUALIZACJA = "20 listopada 2026";
 
 function Sekcja({ tytul, children }: { tytul: string; children: React.ReactNode }) {
   return (
@@ -77,6 +78,10 @@ export default function PolitykaPrywatnosciPage() {
               odpowiedzi i data wypełnienia. Wynik widzisz tylko Ty i usługodawca. Służy do pokazania Twojego postępu
               miesiąc do miesiąca i do wskazówki, nad czym popracować. Nie podejmujemy na jego podstawie żadnych decyzji
               wobec Ciebie. Trzymamy go tak jak resztę danych konta.
+            </li>
+            <li>
+              <b>Formularz zapytania o szkolenie AI dla firm:</b> imię i nazwisko, nazwa firmy, adres e-mail, numer
+              telefonu (opcjonalnie), liczba osób do przeszkolenia i opcjonalny opis zespołu.
             </li>
             <li>
               <b>Inne formularze na stronie:</b> dane, o które prosi dany formularz (zwykle imię i e-mail).
