@@ -2627,3 +2627,80 @@
     font-size: 11px;
   }
 }
+
+/* ---------- 22.11.2026: motyw „marka” = kolory i kroje strony jakubchodakowski.com (webinar dla rodziców, components/webinar-rodzice).
+   Nakładka na .mAcad: zostaje układ academy, wracają kolory bazowe .root (tło #f6f6f5, limonka #d9e000 / #6f7a00, Outfit + Inter),
+   przycisk jak na stronie marki (czarna pigułka, zwykłe litery). ---------- */
+.mMarka {
+  --bg: #f6f6f5;
+  --ink: #0b0b0b;
+  --czarny: #0b0b0b;
+  --muted: #3a3a3a;
+  --grey: #a4a4a4;
+  --line: rgba(0, 0, 0, 0.09);
+  --orange: #d9e000;
+  --orange-t: #6f7a00;
+  --head: var(--font-blp-head), "Outfit", system-ui, sans-serif;
+  --body: var(--font-blp-body), "Inter", system-ui, sans-serif;
+  --mono: var(--font-blp-body), "Inter", system-ui, sans-serif;
+}
+.mMarka .h1,
+.mMarka .h2,
+.mMarka .h2Duzy {
+  font-weight: 300;
+  letter-spacing: -0.045em;
+}
+.mMarka .g {
+  font-weight: 300;
+  color: var(--grey);
+}
+.mMarka .przycisk,
+.mMarka .pasekTel {
+  background: var(--czarny);
+  color: #fff;
+  font-family: var(--body);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.mMarka .znaczek {
+  font-family: var(--body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+.mMarka .planGodz {
+  background: rgba(217, 224, 0, 0.28);
+  color: #4f5700;
+}
+.mMarka .live,
+.mMarka .kropka {
+  background: var(--orange);
+  box-shadow: 0 0 0 4px rgba(217, 224, 0, 0.3);
+}
+.mMarka .punktyZapis li::before {
+  background-color: var(--orange);
+}
+.mMarka .wielka {
+  color: var(--ink);
+  font-weight: 300;
+}
+.mMarka .heroFoto img {
+  object-fit: cover;
+  object-position: 55% 30%;
+}
+/* 22.11: w motywie marki szary podtytuł jest dłuższy niż w webinarze Bruno, więc na telefonie łamie się zamiast wychodzić poza ekran. */
+@media (max-width: 860px) {
+  .mMarka .h1Dwie > .g {
+    display: block;
+    white-space: normal;
+    font-size: clamp(20px, 6.2vw, 28px);
+    line-height: 1.15;
+  }
+}
+.mMarka .oknoPrzypomnienie {
+  background: rgba(217, 224, 0, 0.18);
+  color: #4f5700;
+  border-color: rgba(217, 224, 0, 0.4);
+}

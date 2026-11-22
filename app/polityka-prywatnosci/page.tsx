@@ -87,8 +87,9 @@ export default function PolitykaPrywatnosciPage() {
               i opcjonalny opis potrzeb zespołu.
             </li>
             <li>
-              <b>Newsletter i informacje o webinarach</b> (strona główna): adres e-mail, skąd przyszedł zapis, czy
-              ktoś prosił o informację o webinarze, daty zapisu, potwierdzenia i wypisania.
+              <b>Newsletter i zapisy na webinary</b> (strona główna, strona webinaru dla rodziców): adres e-mail, imię
+              (przy zapisie na webinar), skąd przyszedł zapis, czy ktoś prosił o informację o webinarze, daty zapisu,
+              potwierdzenia i wypisania.
             </li>
             <li>
               <b>Inne formularze na stronie:</b> dane, o które prosi dany formularz (zwykle imię i e-mail).

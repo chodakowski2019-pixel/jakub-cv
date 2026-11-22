@@ -11,7 +11,7 @@ export async function GET(req: Request) {
   const token = (url.searchParams.get("t") ?? "").trim();
   const baza = `${url.protocol}//${req.headers.get("host") ?? "jakubchodakowski.com"}`;
   if (!/^[a-f0-9]{32}$/.test(token)) return NextResponse.redirect(`${baza}/?newsletter=zly-link#newsletter`, 302);
-  const { data: z, error } = await supabaseAdmin.from("jc_newsletter").select("id, email, potwierdzono, chce_webinar").eq("token", token).maybeSingle();
+  const { data: z, error } = await supabaseAdmin.from("jc_newsletter").select("id, email, imie, zrodlo, potwierdzono, chce_webinar").eq("token", token).maybeSingle();
   if (error || !z) {
     if (error) console.error("[newsletter potwierdz] baza", error.message);
     return NextResponse.redirect(`${baza}/?newsletter=zly-link#newsletter`, 302);
@@ -20,11 +20,13 @@ export async function GET(req: Request) {
     const { error: e } = await supabaseAdmin.from("jc_newsletter").update({ potwierdzono: new Date().toISOString(), wypisano: null }).eq("id", z.id);
     if (e) console.error("[newsletter potwierdz] zapis", e.message);
     try {
-      const m = mailWitaj({ baza, wypisz: `${baza}/api/newsletter/wypisz?t=${token}`, webinar: z.chce_webinar });
+      const m = mailWitaj({ baza, wypisz: `${baza}/api/newsletter/wypisz?t=${token}`, webinar: z.chce_webinar, rodzice: z.zrodlo === "rodzice", imie: z.imie });
       await wyslijMail({ do: z.email, temat: m.temat, html: m.html });
     } catch (e) {
       console.error("[newsletter potwierdz] mail powitalny", e);
     }
   }
+  // 22.11 (2): zapis z webinaru dla rodziców wraca na jego stronę „Gotowe, masz miejsce”.
+  if (z.zrodlo === "rodzice") return NextResponse.redirect(`${baza}/webinar-dla-rodzicow/dzieki?potwierdzone=1`, 302);
   return NextResponse.redirect(`${baza}/?newsletter=potwierdzony#newsletter`, 302);
 }

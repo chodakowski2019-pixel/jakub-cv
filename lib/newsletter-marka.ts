@@ -39,15 +39,18 @@ ${stopka}
 </html>`;
 }
 
-/** Mail 1: „Potwierdź zapis” (double opt-in). Bez treści marketingowej. */
-export function mailPotwierdz(link: string) {
+/** Mail 1: „Potwierdź zapis” (double opt-in). Bez treści marketingowej. `w` = zapis na konkretny webinar (np. dla rodziców). */
+export function mailPotwierdz(link: string, w?: { imie?: string | null; webinar: string }) {
+  const powitanie = w?.imie ? `Cześć ${esc(w.imie)},` : "Cześć,";
   return {
-    temat: "Potwierdź zapis na newsletter o AI",
+    temat: w ? "Potwierdź zapis na webinar dla rodziców" : "Potwierdź zapis na newsletter o AI",
     html: koperta({
       zajawka: "Jedno kliknięcie i jesteś na liście.",
       tresc: [
-        p("Cześć,"),
-        p("dziękuję za zapis na newsletter o AI. Żeby go dokończyć, kliknij przycisk poniżej. Bez kliknięcia nic więcej nie wyślę."),
+        p(powitanie),
+        w
+          ? p(`dziękuję za zapis na ${esc(w.webinar)}. Żeby go dokończyć, kliknij przycisk poniżej. Wtedy wyślę termin i link do spotkania. Bez kliknięcia nic więcej nie wyślę.`)
+          : p("dziękuję za zapis na newsletter o AI. Żeby go dokończyć, kliknij przycisk poniżej. Bez kliknięcia nic więcej nie wyślę."),
         przycisk("Potwierdzam zapis", link),
         `<p style="margin:0 0 20px 0;font-family:${F};font-size:13px;line-height:1.6;color:#777777">${esc(KLAUZULA)} Jeśli ten adres nie jest Twój, zignoruj tę wiadomość.</p>`,
       ].join("\n"),
@@ -56,16 +59,20 @@ export function mailPotwierdz(link: string) {
 }
 
 /** Mail 2: po potwierdzeniu. Krótko: co dalej + link do wypisania. */
-export function mailWitaj(a: { baza: string; wypisz: string; webinar: boolean }) {
+export function mailWitaj(a: { baza: string; wypisz: string; webinar: boolean; rodzice?: boolean; imie?: string | null }) {
   return {
-    temat: "Jesteś na liście. Newsletter o AI",
+    temat: a.rodzice ? "Masz miejsce na webinarze dla rodziców" : "Jesteś na liście. Newsletter o AI",
     html: koperta({
       zajawka: "Zapis potwierdzony.",
       wypisz: a.wypisz,
       tresc: [
-        p("Cześć,"),
-        p("zapis potwierdzony. Będę pisać o tym, co AI zmienia w pracy i w życiu, na przykładach z wiadomości. Prosto i bez żargonu."),
-        a.webinar
+        p(a.imie ? `Cześć ${esc(a.imie)},` : "Cześć,"),
+        a.rodzice
+          ? p("zapis potwierdzony, masz miejsce na webinarze dla rodziców o AI i zawodach przyszłości. Termin i link do spotkania przyjdą w osobnym mailu. Do tego czasu będę też pisać o tym, co AI zmienia w pracy i w życiu.")
+          : p("zapis potwierdzony. Będę pisać o tym, co AI zmienia w pracy i w życiu, na przykładach z wiadomości. Prosto i bez żargonu."),
+        a.rodzice
+          ? ""
+          : a.webinar
           ? p("Informacja o najbliższym bezpłatnym webinarze przyjdzie w osobnym mailu, razem z terminem.")
           : p("Raz w miesiącu prowadzę bezpłatny webinar online, 60 minut. Zaproszenie przyjdzie mailem."),
         p(`Na początek: <a href="${esc(`${a.baza}/ai`)}" style="color:#1a1a1a">katalog narzędzi AI</a> i <a href="${esc(`${a.baza}/blog`)}" style="color:#1a1a1a">blog o AI</a>.`),

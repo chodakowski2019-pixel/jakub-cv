@@ -14,8 +14,10 @@ export async function POST(req: Request) {
   const email = String(b.email ?? "").trim().toLowerCase().slice(0, 160);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return NextResponse.json({ ok: false, blad: "Adres e-mail wygląda na niepełny." }, { status: 400 });
   if (b.zgoda !== true) return NextResponse.json({ ok: false, blad: "Brak zgody na newsletter." }, { status: 400 });
-  const zrodlo = ["newsletter", "webinar", "pasek"].includes(b.zrodlo) ? String(b.zrodlo) : "newsletter";
-  const webinar = zrodlo === "webinar";
+  // 22.11 (2): „rodzice” = strona zapisu na webinar dla rodziców (/webinar-dla-rodzicow), z imieniem.
+  const zrodlo = ["newsletter", "webinar", "pasek", "rodzice"].includes(b.zrodlo) ? String(b.zrodlo) : "newsletter";
+  const webinar = zrodlo === "webinar" || zrodlo === "rodzice";
+  const imie = String(b.imie ?? "").trim().slice(0, 80) || null;
   const baza = `${new URL(req.url).protocol}//${req.headers.get("host") ?? "jakubchodakowski.com"}`;
   console.log("[newsletter] zapis", JSON.stringify({ email, zrodlo, kiedy: new Date().toISOString() }));
 
@@ -37,12 +39,12 @@ export async function POST(req: Request) {
       ponownie = true;
       token = byl.token ?? token;
       potwierdzony = Boolean(byl.potwierdzono) && !byl.wypisano;
-      const zmiana: Record<string, unknown> = { zrodlo, token, chce_webinar: byl.chce_webinar || webinar };
+      const zmiana: Record<string, unknown> = { zrodlo, token, chce_webinar: byl.chce_webinar || webinar, ...(imie ? { imie } : {}) };
       if (byl.wypisano) Object.assign(zmiana, { wypisano: null, potwierdzono: null, mail_potwierdz: null });
       const { error } = await supabaseAdmin.from("jc_newsletter").update(zmiana).eq("id", byl.id);
       if (error) throw new Error(error.message);
     } else {
-      const { error } = await supabaseAdmin.from("jc_newsletter").insert({ email, zrodlo, token, chce_webinar: webinar });
+      const { error } = await supabaseAdmin.from("jc_newsletter").insert({ email, zrodlo, token, chce_webinar: webinar, imie });
       if (error) throw new Error(error.message);
     }
   } catch (e) {
@@ -50,10 +52,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, blad: "Zapis się nie udał. Spróbuj za chwilę." }, { status: 500 });
   }
 
+  // Na webinar dla rodziców zapis jest „nowy”, nawet gdy adres już jest w newsletterze: potwierdzenie i tak dotyczy listy.
   if (potwierdzony) return NextResponse.json({ ok: true, stan: "juz" });
 
   try {
-    const m = mailPotwierdz(`${baza}/api/newsletter/potwierdz?t=${token}`);
+    const m = mailPotwierdz(`${baza}/api/newsletter/potwierdz?t=${token}`, zrodlo === "rodzice" ? { imie, webinar: "webinar dla rodziców o AI i zawodach przyszłości" } : undefined);
     const wynik = await wyslijMail({ do: email, temat: m.temat, html: m.html });
     if (wynik === "pominiety") return NextResponse.json({ ok: false, blad: "Lokalnie mail nie wychodzi (brak klucza Resend). Zapis działa na jakubchodakowski.com." }, { status: 503 });
     await supabaseAdmin.from("jc_newsletter").update({ mail_potwierdz: new Date().toISOString() }).eq("email", email);
@@ -66,8 +69,8 @@ export async function POST(req: Request) {
     await wyslijMail({
       do: SKRZYNKA_JAKUBA,
       replyTo: email,
-      temat: `Newsletter: ${ponownie ? "ponowny zapis" : "nowy zapis"}, ${email.split("@")[1]}${webinar ? " (chce info o webinarze)" : ""}`,
-      html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>${ponownie ? "Ponowny zapis" : "Nowy zapis"} na newsletter jakubchodakowski.com. Na liście będzie po kliknięciu „Potwierdzam zapis”.</p><p><b>E-mail:</b> ${esc(email)}<br><b>Skąd:</b> ${esc(zrodlo)}</p></div>`,
+      temat: `${zrodlo === "rodzice" ? "Webinar dla rodziców" : "Newsletter"}: ${ponownie ? "ponowny zapis" : "nowy zapis"}, ${imie ?? ""} (${email.split("@")[1]})${zrodlo === "webinar" ? " (chce info o webinarze)" : ""}`,
+      html: `<div style="font-family:Inter,Arial,sans-serif;font-size:15px"><p>${ponownie ? "Ponowny zapis" : "Nowy zapis"} na newsletter jakubchodakowski.com. Na liście będzie po kliknięciu „Potwierdzam zapis”.</p><p>${imie ? `<b>Imię:</b> ${esc(imie)}<br>` : ""}<b>E-mail:</b> ${esc(email)}<br><b>Skąd:</b> ${esc(zrodlo)}</p></div>`,
     });
   } catch (e) {
     console.error("[newsletter] powiadomienie", e);

@@ -15,3 +15,6 @@ create table if not exists public.jc_newsletter (
 );
 create index if not exists jc_newsletter_aktywni_idx on public.jc_newsletter (potwierdzono) where wypisano is null;
 alter table public.jc_newsletter enable row level security;
+
+-- 22.11.2026 (2): webinar dla rodziców zapisuje się do tej samej tabeli (zrodlo = 'rodzice', chce_webinar = true) z imieniem.
+alter table public.jc_newsletter add column if not exists imie text;
