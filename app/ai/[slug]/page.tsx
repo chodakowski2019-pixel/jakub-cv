@@ -45,6 +45,7 @@ export default async function Page({ params }: Props) {
     description: n.opis,
     url: n.strona,
     creator: { "@type": "Organization", name: n.producent },
+    ...(n.logo ? { image: `${DOMENA}${n.logo}` } : {}),
     dateModified: n.sprawdzono,
     inLanguage: "pl-PL",
     mainEntityOfPage: url,
@@ -90,8 +91,8 @@ export default async function Page({ params }: Props) {
           <Link href={`${BAZA_NARZEDZI}/kategoria/${k.slug}`}>{k.nazwa}</Link>
         </nav>
         <div className="bai-narzedzie-tytul">
-          <span className="bai-znak bai-znak-duzy" aria-hidden>
-            {n.nazwa.slice(0, 2)}
+          <span className={`bai-znak bai-znak-duzy${n.logo ? " bai-znak-logo" : ""}`} aria-hidden>
+            {n.logo ? <img src={n.logo} alt="" width={56} height={56} /> : n.nazwa.slice(0, 2)}
           </span>
           <h1 className="bai-art-h1">{n.tytul}</h1>
         </div>
@@ -165,7 +166,10 @@ export default async function Page({ params }: Props) {
             <div className="bai-tematy">
               {podobne.map((p) => (
                 <Link key={p.slug} href={`${BAZA_NARZEDZI}/${p.slug}`} className="bai-temat">
-                  <span className="bai-temat-nazwa">{p.nazwa}</span>
+                  <span className="bai-temat-nazwa">
+                    {p.logo ? <img className="bai-temat-logo" src={p.logo} alt="" width={22} height={22} loading="lazy" /> : null}
+                    {p.nazwa}
+                  </span>
                   <span className="bai-temat-opis">{p.krotko}</span>
                 </Link>
               ))}

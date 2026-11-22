@@ -18,6 +18,7 @@ export type Kafel = {
   cenaOd: string;
   krotko: string;
   cechy: string[];
+  logo: string;
 };
 
 type Opcja = { slug: string; nazwa: string; ile: number };
@@ -98,8 +99,8 @@ export function Lista({ narzedzia, cenniki, cechy }: { narzedzia: Kafel[]; cenni
           {wynik.map((n) => (
             <Link key={n.slug} href={n.href} className="bai-narzedzie">
               <div className="bai-narzedzie-glowa">
-                <span className="bai-znak" aria-hidden>
-                  {n.nazwa.slice(0, 2)}
+                <span className={`bai-znak${n.logo ? " bai-znak-logo" : ""}`} aria-hidden>
+                  {n.logo ? <img src={n.logo} alt="" width={44} height={44} loading="lazy" /> : n.nazwa.slice(0, 2)}
                 </span>
                 <div>
                   <h3 className="bai-narzedzie-nazwa">{n.nazwa}</h3>

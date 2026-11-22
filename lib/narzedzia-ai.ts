@@ -69,6 +69,9 @@ export type Narzedzie = {
   /** Jedno zdanie na kafel. */
   krotko: string;
   podobne: string[];
+  /** 22.11.2026 (USER_001: „każde narzędzie powinno mieć zdjęcie logo”): /narzedzia-ai/<slug>.png, gdy plik istnieje.
+   *  Ikony pobiera scripts/narzedzia-ai-loga.mjs ze stron producentów. Pusty = kwadrat z 2 literami. */
+  logo: string;
   /** Slug tekstu z bloga, który rozwija temat (np. cennik). */
   artykul: string;
   tresc: string;
@@ -112,6 +115,7 @@ export function wszystkieNarzedzia(): Narzedzie[] {
         opis: meta.opis || "",
         krotko: meta.krotko || "",
         podobne: lista(meta.podobne),
+        logo: fs.existsSync(path.join(process.cwd(), "public", "narzedzia-ai", `${slug}.png`)) ? `/narzedzia-ai/${slug}.png` : "",
         artykul: meta.artykul || "",
         tresc: tresc.trim(),
         spis: [...tresc.matchAll(/^##\s+(.+)$/gm)].map((m) => ({ id: slugify(m[1].trim()), tytul: m[1].trim() })),

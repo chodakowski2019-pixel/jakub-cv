@@ -33,6 +33,7 @@ export default function Page() {
     cenaOd: n.cenaOd,
     krotko: n.krotko,
     cechy: n.cechy,
+    logo: n.logo,
   }));
   const cenniki = (Object.keys(CENNIKI) as (keyof typeof CENNIKI)[])
     .map((slug) => ({ slug, nazwa: CENNIKI[slug], ile: wszystkie.filter((n) => n.cennik === slug).length }))

@@ -298,6 +298,12 @@ body:has(.bai)::after { display: none; }
 .bai-znak { display: grid; place-items: center; flex: none; width: 2.75rem; height: 2.75rem; font-family: var(--mono); font-size: 0.875rem; letter-spacing: 0.04em; color: var(--tekst); background: var(--tlo2); border: 1px solid var(--linia2); border-radius: 0.375rem; position: relative; }
 .bai-znak::after { content: ""; position: absolute; left: -1px; bottom: -1px; width: 1rem; height: 3px; background: var(--akcent); }
 .bai-znak-duzy { width: 3.5rem; height: 3.5rem; font-size: 1.0625rem; }
+/* 22.11 (USER_001): logo narzędzia na białym kafelku, jak ikona aplikacji. Limonkowa kreska na dole zostaje. */
+.bai-znak-logo { background: #fff; border-color: rgba(255, 255, 255, 0.85); padding: 0.375rem; overflow: hidden; }
+.bai-znak-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.bai-znak-logo::after { z-index: 1; }
+.bai-temat-nazwa:has(.bai-temat-logo) { display: inline-flex; align-items: center; gap: 0.5rem; }
+.bai-temat-logo { width: 1.375rem; height: 1.375rem; border-radius: 0.3rem; background: #fff; padding: 2px; object-fit: contain; }
 .bai .bai-narzedzie-nazwa { font-size: 1.3125rem; line-height: 1.2; letter-spacing: -0.025em; transition: color 0.2s; }
 .bai-narzedzie:hover .bai-narzedzie-nazwa { color: var(--akcent-jasny); }
 .bai-narzedzie-producent { font-size: 0.875rem; color: var(--cichy); }
