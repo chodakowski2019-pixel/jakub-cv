@@ -16,7 +16,8 @@ import { zdarzenie } from "@/lib/analityka";
 const TERMIN = null as Date | null;
 const GODZINA = "19:00";
 const DATA_TEKST = TERMIN ? TERMIN.toLocaleDateString("pl-PL", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Warsaw" }) : "";
-const FOTO = "/bruno/jakub-webinar-okno.jpg";
+// 22.11 (USER_001): w pierwszym ekranie zdjęcie ze strony głównej (wystąpienie, CRASH Mondays) zamiast portretu.
+const FOTO = "/talk-crash-mondays.png";
 const FOTO_MALE = "/bruno/jakub-webinar-okno.jpg";
 const NADAWCA_ADRES = "hello@jakubchodakowski.com";
 
@@ -191,7 +192,7 @@ export default function WebinarRodzice() {
             <span className={s.g}>{T.h1Szary}</span>
           </h1>
           <div className={`${s.heroFoto} ${s.heroFotoTel}`}>
-            <img src={FOTO} alt="Jakub Chodakowski" width={1200} height={1200} />
+            <img src={FOTO} alt="Jakub Chodakowski prowadzi wystąpienie o AI" width={1614} height={1058} style={{ objectPosition: "66% 40%" }} />
             <div className={s.heroFotoPodpis}>
               <b>Jakub Chodakowski</b>
               <span>prowadzi webinar</span>
@@ -212,7 +213,7 @@ export default function WebinarRodzice() {
           </div>
         </div>
         <div className={`${s.heroFoto} ${s.heroFotoKomp}`}>
-          <img src={FOTO} alt="Jakub Chodakowski" width={1200} height={1200} />
+          <img src={FOTO} alt="Jakub Chodakowski prowadzi wystąpienie o AI" width={1614} height={1058} style={{ objectPosition: "66% 40%" }} />
           <div className={s.heroFotoPodpis}>
             <b>Jakub Chodakowski</b>
             <span>prowadzi webinar</span>
