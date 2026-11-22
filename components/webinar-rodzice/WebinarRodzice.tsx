@@ -34,7 +34,7 @@ const T = {
   przycisk: "Chcę zarezerwować miejsce »",
   // Na telefonie numer punktu zamiast czasu (jak w szablonie).
   plan: [
-    ["0-10 min", "Co AI już dziś robi w pracy, na przykładach z wiadomości"],
+    ["0-10 min", "Co AI już dziś robi w pracy"],
     ["10-25 min", "Zawody, które się zmienią, i zawody, które zyskają"],
     ["25-40 min", "Umiejętności, których szukają pracodawcy"],
     ["40-50 min", "Jak rozmawiać z dzieckiem o wyborze szkoły i studiów"],
