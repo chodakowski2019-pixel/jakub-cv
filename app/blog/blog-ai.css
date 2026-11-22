@@ -328,3 +328,34 @@ body:has(.bai)::after { display: none; }
 .bai .bai-cecha::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 0.5rem; height: 2px; background: var(--akcent); }
 .bai .bai-przycisk-obrys { display: inline-flex; align-items: center; min-height: 3rem; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 500; color: var(--tekst); border: 1px solid var(--linia2); border-radius: 0.375rem; transition: border-color 0.2s, color 0.2s; }
 .bai .bai-przycisk-obrys:hover { color: var(--akcent-jasny); border-color: var(--akcent-jasny); }
+
+/* ---------- 22.11.2026 (USER_001: „wszędzie taki styl jak jakubchodakowski.com, napisy i zdjęcia zostają, zmienia się
+   tylko kolorystyka”): MOTYW „marka” dla bloga i katalogu narzędzi (klasa .bai-marka w app/blog/rama.tsx).
+   Kolory strony głównej: tło #f6f6f5, białe karty, czerń, #6f7a00 na tekst akcentu, czarne przyciski, limonka w kreskach. ---------- */
+html:has(.bai.bai-marka),
+body:has(.bai.bai-marka) { background: #f6f6f5; }
+body:has(.bai.bai-marka)::before,
+body:has(.bai.bai-marka)::after { display: none; }
+.bai.bai-marka {
+  --tlo: #f6f6f5;
+  --tlo2: #ffffff;
+  --karta: #ffffff;
+  --tekst: #0b0b0b;
+  --tekst2: #3a3a3a;
+  --cichy: #6b6b6b;
+  --akcent: #d9e000;
+  --akcent-jasny: #6f7a00;
+  --na-akcencie: #0b0b0b;
+  --linia: rgba(0, 0, 0, 0.09);
+  --linia2: rgba(0, 0, 0, 0.18);
+  --smuga-brzeg: rgba(217, 224, 0, 0.1);
+  --smuga-srodek: rgba(217, 224, 0, 0.28);
+  color-scheme: light;
+}
+.bai.bai-marka .bai-nav,
+.bai.bai-marka .bai-pasek { background: rgba(246, 246, 245, 0.82); }
+.bai.bai-marka .bai-przycisk { background: #0b0b0b; color: #ffffff; }
+.bai.bai-marka .bai-przycisk:hover { background: #262626; }
+.bai.bai-marka .bai-tresc a { text-decoration-color: rgba(111, 122, 0, 0.45); }
+.bai.bai-marka .bai-znak-logo { border-color: var(--linia2); }
+@media (prefers-reduced-transparency: reduce) { .bai.bai-marka .bai-nav, .bai.bai-marka .bai-pasek { background: #f6f6f5; } }

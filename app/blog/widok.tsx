@@ -57,7 +57,7 @@ export function Wezwanie() {
         zespołu, mówię to w pierwszej rozmowie.
       </p>
       <div className="bai-akcje">
-        <Link href="/#formularz" className="bai-przycisk">
+        <Link href="/szkolenie-ai-dla-firm#formularz" className="bai-przycisk">
           Sprawdź wolny termin
         </Link>
         <Link href="/#rozklad" className="bai-drugi-link">

@@ -879,3 +879,42 @@ body:has(.sza.jasna) { background: #f3f5f3; }
   .sza.gen.mat-szklo :is(.btn, .znaczek) { border-radius: 0.8rem; }
   .sza.gen.mat-szklo .form input:not([type="radio"]):not([type="checkbox"]), .sza.gen.mat-szklo .form textarea, .sza.gen.mat-szklo .wybor span { border-radius: 0.7rem; }
 }
+
+/* ---------- 22.11.2026 (USER_001: „trzeba zmienić wszędzie UX/UI na taki styl jak jakubchodakowski.com, napisy i zdjęcia
+   zostają, zmienia się tylko kolorystyka”): MOTYW „marka” = kolory strony głównej (components/marka/marka.css).
+   Nakładka na .jasna: tło #f6f6f5, białe karty, czerń, szary drugi wiersz nagłówka, limonka #d9e000 jako wypełnienie,
+   #6f7a00 na tekst, bez gwiazd i ziarna. Strona: app/szkolenie-ai-dla-firm (motyw="marka"). ---------- */
+html:has(.sza.jasna.marka),
+body:has(.sza.jasna.marka) { background: #f6f6f5; }
+body:has(.sza.jasna.marka)::before,
+body:has(.sza.jasna.marka)::after { display: none; }
+.sza.jasna.marka {
+  --tlo: #f6f6f5;
+  --tlo2: #ecebe8;
+  --karta: #ffffff;
+  --tekst: #0b0b0b;
+  --tekst2: #3a3a3a;
+  --cichy: #6b6b6b;
+  --akcent-jasny: #6f7a00;
+  --linia: rgba(0, 0, 0, 0.09);
+  --linia2: rgba(0, 0, 0, 0.18);
+  --szklo: rgba(246, 246, 245, 0.78);
+  --listwa: rgba(246, 246, 245, 0.78);
+  --obrys-tlo: #ffffff;
+  --kontur: rgba(0, 0, 0, 0.55);
+  --kontur-slaby: rgba(0, 0, 0, 0.2);
+  --form-tlo: #ffffff;
+  --pole-tlo: #f6f6f5;
+  --pole-tlo-2: #f6f6f5;
+  --smuga-brzeg: rgba(var(--akcent-rgb), 0.1);
+  --smuga-srodek: rgba(var(--akcent-rgb), 0.3);
+  --poswiata: rgba(var(--akcent-rgb), 0.2);
+}
+.sza.jasna.marka .gwiazdy,
+.sza.jasna.marka .ziarno { display: none; }
+/* Drugie zdanie nagłówka szare, jak na stronie głównej (zamiast zakreślenia limonką). */
+.sza.jasna.marka h1 span + span { color: #a4a4a4; background: none; padding: 0; margin-left: 0; }
+/* Przyciski czarne, jak na stronie głównej; limonka zostaje w kropkach, znacznikach i zakreśleniach. */
+.sza.jasna.marka .btn { background: #0b0b0b; color: #ffffff; border-color: #0b0b0b; }
+.sza.jasna.marka .btn:hover { background: #262626; }
+.sza.jasna.marka .panel.glowna { border-color: rgba(0, 0, 0, 0.12); background: #ffffff; }

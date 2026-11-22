@@ -11,8 +11,9 @@ const geist = Geist({ subsets: ["latin", "latin-ext"], variable: "--sza-sans", d
 const geistMono = Geist_Mono({ subsets: ["latin", "latin-ext"], variable: "--sza-mono", display: "swap" });
 
 export function Rama({ children, etykieta, start }: { children: React.ReactNode; etykieta: string; start: string }) {
+  // 22.11.2026: klasa bai-marka = kolory strony głównej (app/blog/blog-ai.css, koniec pliku).
   return (
-    <div className={`bai ${geist.variable} ${geistMono.variable}`}>
+    <div className={`bai bai-marka ${geist.variable} ${geistMono.variable}`}>
       <header className="bai-nav">
         <div className="bai-nav-wnetrze">
           <Link href={start} className="bai-logo">
@@ -29,7 +30,8 @@ export function Rama({ children, etykieta, start }: { children: React.ReactNode;
             <Link href={STRONA_SZKOLEN} className="bai-mono">
               Szkolenie AI
             </Link>
-            <Link href="/#formularz" className="bai-przycisk bai-przycisk-maly">
+            {/* 22.11: formularz jest na stronie szkoleń (strona główna to od 22.11 strona marki). */}
+            <Link href={`${STRONA_SZKOLEN}#formularz`} className="bai-przycisk bai-przycisk-maly">
               Sprawdź wolny termin
             </Link>
           </nav>

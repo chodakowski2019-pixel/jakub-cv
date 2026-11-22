@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import SzkoleniaAiPage from "@/components/szkolenia-ai/SzkoleniaAiPage";
 
+// 22.11.2026 (2): kolory strony głównej (motyw „marka”, USER_001: „wszędzie taki styl jak jakubchodakowski.com”).
 // 22.11.2026: strona „Szkolenie AI dla firm” przeniesiona ze strony głównej pod /szkolenie-ai-dla-firm,
 // bo stroną główną została strona marki osobistej (USER_001: „to ma być jako strona główna jakubchodakowski.com”).
 // Adres = fraza z Planera Google („szkolenie ai dla firm”, 100 do 1 tys. wyszukiwań/mc). Indeksowana, w mapie witryny.
 // Od 21.11.2026 do 22.11.2026 ta strona była stroną główną (USER_001 21.11: „to ma być strona główna”).
-// Wersja czarna z limonką (motyw="ciemny"), ta sama co podgląd /podglad/szkolenia-ai.
+// Do 22.11 wersja czarna z limonką (motyw="ciemny", jak podgląd /podglad/szkolenia-ai); od 22.11 motyw="marka".
 // Poprzednia strona główna (od 9.10, „Sprzedaż + AI”, components/podglad/glowna/GlownaPage) zostaje pod /podglad/glowna;
 // starsze: public/home.html (/en) i strona „transformacja AI” (historia w git, commit 9fe396a).
 // Kroje Geist i Geist Mono z polskimi znakami (globalny Geist Mono z layoutu ma tylko znaki łacińskie).
@@ -34,5 +35,5 @@ export const metadata: Metadata = {
 };
 
 export default function SzkolenieAiDlaFirm() {
-  return <SzkoleniaAiPage fontClass={`${geist.variable} ${geistMono.variable}`} motyw="ciemny" />;
+  return <SzkoleniaAiPage fontClass={`${geist.variable} ${geistMono.variable}`} motyw="marka" />;
 }

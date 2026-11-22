@@ -36,7 +36,7 @@ export default function Page() {
             {ileTekstow(wszystkie.length)} · {GRUPY.length} tematy
           </p>
           <div className="bai-akcje">
-            <Link href="/#formularz" className="bai-przycisk">
+            <Link href="/szkolenie-ai-dla-firm#formularz" className="bai-przycisk">
               Sprawdź wolny termin
             </Link>
             <span className="bai-notka">Szkolenie AI dla zespołu do 12 osób</span>

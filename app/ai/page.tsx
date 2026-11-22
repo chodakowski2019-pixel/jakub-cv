@@ -71,7 +71,7 @@ export default function Page() {
             {ostatnie ? ` · Sprawdzono: ${dataPoPolsku(ostatnie)}` : ""}
           </p>
           <div className="bai-akcje">
-            <Link href="/#formularz" className="bai-przycisk">
+            <Link href="/szkolenie-ai-dla-firm#formularz" className="bai-przycisk">
               Sprawdź wolny termin
             </Link>
             <span className="bai-notka">Na szkoleniu pracuję na narzędziach, których firma już używa</span>

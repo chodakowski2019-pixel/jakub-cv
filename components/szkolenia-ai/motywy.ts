@@ -31,6 +31,8 @@ export const STARE: { id: string; nazwa: string; klasy: string[]; b: string; a: 
   { id: "grafit", nazwa: "Grafit (wcześniejsza)", klasy: ["grafit"], b: "#22262b", a: "#d9e000" },
   { id: "ciemny", nazwa: "Czarna (pierwsza)", klasy: [], b: "#030405", a: "#d9e000" },
   { id: "jasny", nazwa: "Biała (wcześniejsza)", klasy: ["jasna"], b: "#f3f5f3", a: "#d9e000" },
+  // 22.11.2026: kolory strony głównej jakubchodakowski.com (USER_001: ten sam styl wszędzie).
+  { id: "marka", nazwa: "Marka (strona główna)", klasy: ["jasna", "marka"], b: "#f6f6f5", a: "#d9e000" },
 ];
 
 const ATRAMENT_JASNY = "#f7f9fb";
