@@ -2704,3 +2704,19 @@
   color: #4f5700;
   border-color: rgba(217, 224, 0, 0.4);
 }
+/* 22.11 (USER_001: „logo takie, jakie jest na stronie głównej”): jak .mk-znak w components/marka/marka.css. */
+.mMarka .logo {
+  font-family: var(--body);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #3a3a3a;
+  text-decoration: none;
+}
+@media (max-width: 860px) {
+  .mMarka .logo {
+    font-size: 13px;
+    letter-spacing: 0.16em;
+  }
+}

@@ -65,9 +65,10 @@ const T = {
 
 function Logo() {
   return (
-    <span className={s.logo}>
-      Jakub<i className={s.kropka} />Chodakowski
-    </span>
+    // 22.11 (USER_001): logo jak na stronie głównej (napis wersalikami z rozstrzeleniem, bez kropki), link do strony głównej.
+    <a href="/" className={s.logo}>
+      Jakub Chodakowski
+    </a>
   );
 }
 
