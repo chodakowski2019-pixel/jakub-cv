@@ -34,7 +34,7 @@ export const WYBOR = {
       tytul: "Prowadzę firmę",
       opis: "Jednodniowy warsztat AI dla zespołu. Każdy pracuje na zadaniach z firmy.",
       cta: "Zobacz szkolenie",
-      href: "/podglad/szkolenia-ai",
+      href: "/szkolenie-ai-dla-firm",
       ciemna: true,
     },
     {
@@ -97,7 +97,7 @@ export const FIRMY = {
     { co: "do 12 osób", o: "każdy pracuje na swoim laptopie" },
     { co: "od 3 900 zł", o: "netto" },
   ],
-  cta: { tekst: "Zobacz szkolenie", href: "/podglad/szkolenia-ai" },
+  cta: { tekst: "Zobacz szkolenie", href: "/szkolenie-ai-dla-firm" },
 };
 
 export const KAZDY = {

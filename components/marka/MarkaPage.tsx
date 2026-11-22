@@ -379,7 +379,7 @@ export default function MarkaPage() {
         <div className="mk-stopka-linki">
           <a href="/blog">Blog</a>
           <a href="/ai">Narzędzia AI</a>
-          <a href="/podglad/szkolenia-ai">Szkolenia dla firm</a>
+          <a href="/szkolenie-ai-dla-firm">Szkolenia dla firm</a>
           <a href={`mailto:${MARKA.email}`}>{MARKA.email}</a>
           <a href="/polityka-prywatnosci">Polityka prywatności</a>
           <UstawieniaCookies className="jcz-link" />

@@ -14,8 +14,9 @@ import path from "node:path";
 export const PODGLAD = false;
 /** Adres bloga. W treści artykułów linki pisze się jako /blog/<slug>, renderer podmienia początek na BAZA. */
 export const BAZA = "/blog";
-/** Strona sprzedażowa szkoleń = strona główna. W treści: /szkolenie albo /szkolenie#cena. */
-export const STRONA_SZKOLEN = "/";
+/** Strona sprzedażowa szkoleń (od 22.11 pod /szkolenie-ai-dla-firm). W treści: /szkolenie albo /szkolenie#cena. */
+// 22.11.2026: strona szkoleń przeniesiona ze strony głównej pod własny adres.
+export const STRONA_SZKOLEN: string = "/szkolenie-ai-dla-firm";
 export const DOMENA = "https://jakubchodakowski.com";
 
 export const AUTOR = {
@@ -222,7 +223,7 @@ export function artykulyGrupy(slug: string): Artykul[] {
 function adres(href: string): string {
   if (href === "/blog" || href.startsWith("/blog/")) return `${BAZA}${href.slice("/blog".length)}`;
   if (href === "/szkolenie") return STRONA_SZKOLEN;
-  if (href.startsWith("/szkolenie#")) return `${STRONA_SZKOLEN.replace(/\/$/, "")}/${href.slice("/szkolenie".length)}`;
+  if (href.startsWith("/szkolenie#")) return `${STRONA_SZKOLEN === "/" ? "/" : STRONA_SZKOLEN}${href.slice("/szkolenie".length)}`;
   return href;
 }
 

@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import SzkoleniaAiPage from "@/components/szkolenia-ai/SzkoleniaAiPage";
+import { Outfit, Inter } from "next/font/google";
+import MarkaPage from "@/components/marka/MarkaPage";
 
-// Strona główna jakubchodakowski.com od 21.11.2026 = strona „Szkolenie AI dla firm” (USER_001: „to ma być strona główna”).
-// Wersja czarna z limonką (motyw="ciemny"), ta sama co podgląd /podglad/szkolenia-ai.
-// Poprzednia strona główna (od 9.10, „Sprzedaż + AI”, components/podglad/glowna/GlownaPage) zostaje pod /podglad/glowna;
-// starsze: public/home.html (/en) i strona „transformacja AI” (historia w git, commit 9fe396a).
-// Kroje Geist i Geist Mono z polskimi znakami (globalny Geist Mono z layoutu ma tylko znaki łacińskie).
+// 22.11.2026 (USER_001: „to ma być jako strona główna jakubchodakowski.com”): strona główna = strona marki osobistej
+// (components/marka, wcześniej podgląd /podglad/marka, który teraz przekierowuje tutaj). Indeksowana, canonical „/”.
+// Poprzednia strona główna „Szkolenie AI dla firm” (21-22.11) żyje pod /szkolenie-ai-dla-firm.
+// Starsze: „Sprzedaż + AI” pod /podglad/glowna, public/home.html (/en).
 
-const geist = Geist({ subsets: ["latin", "latin-ext"], variable: "--sza-sans", display: "swap" });
-const geistMono = Geist_Mono({ subsets: ["latin", "latin-ext"], variable: "--sza-mono", display: "swap" });
+const outfit = Outfit({ subsets: ["latin", "latin-ext"], weight: ["300", "400", "500"], variable: "--mk-head", display: "swap" });
+const inter = Inter({ subsets: ["latin", "latin-ext"], weight: ["400", "500", "600"], variable: "--mk-body", display: "swap" });
 
-const TYTUL = "Szkolenie AI dla firm | Jakub Chodakowski";
-const OPIS = "Warsztat AI dla zespołu do 12 osób: każdy pracuje na swoim laptopie i na zadaniach z firmy. Rozkład dnia, cena i wolne terminy.";
-const OG = "Szkolenie AI dla firm. Jeden dzień, zespół do 12 osób";
+// Napis na karcie przeglądarki: „Nauka o AI” (USER_001 22.11).
+const TYTUL = "Nauka o AI";
+const OPIS = "Jakub Chodakowski uczy, jak zmienić życie i firmę z AI. Bezpłatne webinary online, warsztaty AI dla zespołów, newsletter o AI.";
+const OG = "Nauka o AI | Jakub Chodakowski";
 
 export const metadata: Metadata = {
   title: { absolute: TYTUL },
@@ -31,5 +31,9 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <SzkoleniaAiPage fontClass={`${geist.variable} ${geistMono.variable}`} motyw="ciemny" />;
+  return (
+    <div className={`${outfit.variable} ${inter.variable}`}>
+      <MarkaPage />
+    </div>
+  );
 }

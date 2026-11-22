@@ -21,6 +21,8 @@ function wpisy(host: string | null): string[] {
   const d = "https://jakubchodakowski.com";
   return [
     d,
+    // 22.11: strona szkoleń pod własnym adresem (strona główna = marka osobista).
+    `${d}/szkolenie-ai-dla-firm`,
     `${d}/en`,
     `${d}${BAZA}`,
     ...artykulyAi().map((a) => `${d}${BAZA}/${a.slug}`),
