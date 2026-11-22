@@ -272,7 +272,8 @@ function Tresc({ id }: { id: string }) {
 }
 
 export default function MarkaPage() {
-  const [otwarty, setOtwarty] = useState<string | null>("o-mnie");
+  // 22.11 (USER_001): domyślnie wszystkie paski zamknięte (wcześniej „O mnie” otwarte).
+  const [otwarty, setOtwarty] = useState<string | null>(null);
   const [przewiniete, setPrzewiniete] = useState(false);
   const korzen = useRef<HTMLDivElement>(null);
   const miejsceKuli = useRef<HTMLDivElement>(null);
@@ -284,7 +285,9 @@ export default function MarkaPage() {
     naScroll();
     window.addEventListener("scroll", naScroll, { passive: true });
     const obs = new IntersectionObserver(
-      (wpisy) => wpisy.forEach((w) => w.isIntersecting && (w.target.classList.add("mk-widac"), obs.unobserve(w.target))),
+      // Znacznik „widać” jako atrybut data, nie klasa: React przy każdym renderze nadpisuje className i kasował klasę
+      // (22.11: po kliknięciu paska 2 i 3 paski robiły się przezroczyste).
+      (wpisy) => wpisy.forEach((w) => w.isIntersecting && ((w.target as HTMLElement).dataset.widac = "1", obs.unobserve(w.target))),
       { rootMargin: "0px 0px -8% 0px" },
     );
     korzen.current?.querySelectorAll(".mk-wejdz").forEach((el) => obs.observe(el));
@@ -294,10 +297,17 @@ export default function MarkaPage() {
     };
   }, []);
 
+  // Przewijanie dopiero po zwinięciu poprzedniego paska (animacja 0,6 s), inaczej pozycja jest liczona na starym układzie.
+  // Przewija tylko, gdy początek paska jest poza wygodnym miejscem na ekranie.
   const otworz = (id: string) => {
     setOtwarty(id);
     history.replaceState(null, "", `#${id}`);
-    requestAnimationFrame(() => document.getElementById(`pasek-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    setTimeout(() => {
+      const el = document.getElementById(`pasek-${id}`);
+      if (!el) return;
+      const gora = el.getBoundingClientRect().top;
+      if (gora < 80 || gora > innerHeight * 0.45) scrollTo({ top: scrollY + gora - 100, behavior: "smooth" });
+    }, 640);
   };
 
   return (
