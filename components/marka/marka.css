@@ -567,3 +567,7 @@ body:has(.mk)::after { display: none; }
 }
 .mk-toast button { width: 32px; height: 32px; border-radius: 50%; color: #fff; font-size: 20px; line-height: 1; }
 .mk-toast button:hover { background: rgba(255, 255, 255, 0.12); }
+/* 22.11: kółko z ikoną nie może się ściskać w wąskim wierszu (było jajowate w potwierdzeniu zapisu). */
+.mk .mk-plus { flex: none; aspect-ratio: 1; line-height: 1; }
+.mk-zapis-ok { align-items: center; }
+.mk-zapis-ok b { letter-spacing: 0.02em; }

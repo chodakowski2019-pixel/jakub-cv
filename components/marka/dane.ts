@@ -165,7 +165,8 @@ export const NEWSLETTER = {
   opis: "Newsletter, materiały do pobrania i zaproszenia na webinary. Wypisanie jednym kliknięciem.",
   przycisk: "Zapisz się",
   // 22.11: zapis podłączony (/api/newsletter, tabela jc_newsletter, double opt-in).
-  ok: { tytul: "Sprawdź skrzynkę.", tekst: "Wysłałem mail z przyciskiem „Potwierdzam zapis”. Bez kliknięcia zapis się nie liczy." },
+  // 22.11 (USER_001): komunikat po zapisie jego słowami.
+  ok: { tytul: "WAŻNE!", tekst: "Wejdź na swój e-mail i potwierdź zapis." },
   juz: { tytul: "Ten adres już jest na liście.", tekst: "Kolejne maile przyjdą na ten adres." },
   komunikaty: {
     potwierdzony: "Zapis potwierdzony. Mail powitalny jest już w skrzynce.",
