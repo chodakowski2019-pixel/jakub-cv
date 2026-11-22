@@ -104,6 +104,16 @@ export const FIRMY = {
     { co: "od 3 900 zł", o: "netto" },
   ],
   cta: { tekst: "Zobacz szkolenie", href: "/szkolenie-ai-dla-firm" },
+  // 22.11 (USER_001): nad formularzem „Uzupełnij formularz” (bez zdania o 24 godzinach), telefon obowiązkowy,
+  // pole opisu „Czego potrzebujecie?”.
+  formularz: {
+    tytul: "Uzupełnij formularz",
+    wariant: {
+      telefonWymagany: true,
+      etykietaWiadomosc: "Czego potrzebujecie?",
+      przykladWiadomosc: "np. szybsze raporty, mniej czasu na maile, porządek w dokumentach",
+    },
+  },
 };
 
 export const KAZDY = {

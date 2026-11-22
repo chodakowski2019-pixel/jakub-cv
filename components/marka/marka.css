@@ -471,39 +471,76 @@ body:has(.mk)::after { display: none; }
   .mk-pasek-szklo { background: var(--bg); backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
 
-/* ---------- 22.11: formularz zapytania o szkolenie w pasku „AI dla firm” (komponent z components/szkolenia-ai/Formularz.tsx) ---------- */
-.mk-form { margin-top: 30px; padding: 28px; border-radius: 24px; background: var(--bg); }
-.mk-form-obietnica { margin: 6px 0 20px; font-size: 16px; color: var(--ink2); }
-.mk-form .form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 14px; }
-.mk-form .pole { display: grid; gap: 6px; margin: 0; padding: 0; border: 0; min-width: 0; }
-.mk-form .szer { grid-column: 1 / -1; }
-.mk-form label, .mk-form legend { font-size: 15px; font-weight: 500; color: var(--ink); padding: 0; }
-.mk-form label em, .mk-form legend em { font-style: normal; font-weight: 400; color: var(--cichy); }
-.mk-form input:not([type="radio"]):not([type="checkbox"]), .mk-form textarea {
-  width: 100%; min-height: 46px; padding: 11px 16px; border-radius: 14px; border: 1px solid var(--linia); background: #fff;
-  font: inherit; font-size: 16px; color: var(--ink); outline: none; transition: border-color 0.2s, box-shadow 0.2s; resize: vertical;
+/* ---------- 22.11: formularz zapytania o szkolenie w pasku „AI dla firm” (components/szkolenia-ai/Formularz.tsx) ----------
+   Wersja 2 (USER_001: „formularz jeszcze popraw, żeby lepiej wyglądał”): biała karta z cieniem, pola na jasnym tle bez ramek,
+   pierścień limonki przy wpisywaniu, liczba osób jako pigułki, przycisk czarny z limonkowym kółkiem jak reszta strony. */
+.mk-form {
+  margin-top: 30px; padding: 36px 36px 32px; border-radius: 28px; background: #fff;
+  border: 1px solid var(--linia); box-shadow: 0 40px 80px -60px rgba(0, 0, 0, 0.45);
 }
-.mk-form input:focus, .mk-form textarea:focus { border-color: var(--lim-t); box-shadow: 0 0 0 4px rgba(217, 224, 0, 0.3); }
-.mk-form input::placeholder, .mk-form textarea::placeholder { color: #a4a4a4; }
-.mk-form .zle input, .mk-form .zle textarea { border-color: #d9442b; }
-.mk-form .b { margin: 0; font-size: 15px; color: #b3341f; }
-.mk-form .wybor { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
-.mk-form .wybor label { position: relative; padding: 10px 16px; border-radius: 999px; background: #fff; border: 1px solid var(--linia); cursor: pointer; font-weight: 500; transition: background 0.2s, border-color 0.2s; }
-.mk-form .wybor label.wybrane { background: var(--ink); border-color: var(--ink); color: #fff; }
+.mk-form-tytul { margin: 0 0 24px; font-family: var(--head); font-weight: 400; font-size: clamp(26px, 2.4vw, 34px); letter-spacing: -0.025em; line-height: 1.1; }
+.mk-form .form { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; }
+.mk-form .pole { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; align-content: start; }
+.mk-form .szer { grid-column: 1 / -1; }
+.mk-form label, .mk-form legend { font-size: 14px; font-weight: 500; color: var(--ink2); padding: 0; letter-spacing: 0.01em; }
+.mk-form label em, .mk-form legend em { font-style: normal; font-weight: 400; color: var(--cichy); }
+/* :where = niska waga reguły, żeby stany (najechanie, wpisywanie, błąd) niżej mogły ją nadpisać. */
+.mk-form :where(input:not([type="radio"]):not([type="checkbox"]), textarea) {
+  width: 100%; min-height: 54px; padding: 15px 18px; border-radius: 16px; border: 1.5px solid transparent; background: var(--bg);
+  font: inherit; font-size: 16px; color: var(--ink); outline: none; resize: vertical;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.25s;
+}
+.mk-form textarea { min-height: 110px; line-height: 1.5; }
+.mk-form input:hover, .mk-form textarea:hover { background: #efefed; }
+.mk-form input:focus, .mk-form textarea:focus { background: #fff; border-color: var(--lim-t); box-shadow: 0 0 0 5px rgba(217, 224, 0, 0.28); }
+.mk-form input::placeholder, .mk-form textarea::placeholder { color: #a8a8a6; }
+.mk-form .zle input, .mk-form .zle textarea { background: #fff6f4; border-color: #e3826f; }
+.mk-form .b { margin: 0; font-size: 14px; color: #b3341f; }
+.mk-form .wybor { display: flex; flex-wrap: wrap; gap: 8px; }
+.mk-form .wybor label {
+  position: relative; min-height: 46px; display: inline-flex; align-items: center; padding: 0 20px; border-radius: 999px;
+  background: var(--bg); cursor: pointer; font-size: 15px; font-weight: 500; color: var(--ink);
+  transition: background 0.2s, color 0.2s, transform 0.12s ease-out;
+}
+.mk-form .wybor label:hover { background: #efefed; }
+.mk-form .wybor label:active { transform: scale(0.97); }
+.mk-form .wybor label.wybrane { background: var(--ink); color: #fff; }
 .mk-form .wybor input { position: absolute; opacity: 0; pointer-events: none; }
 .mk-form .wybor label:has(input:focus-visible) { box-shadow: 0 0 0 4px rgba(217, 224, 0, 0.45); }
-.mk-form .zgoda label { display: flex; gap: 12px; align-items: flex-start; font-weight: 400; color: var(--ink2); line-height: 1.5; }
-.mk-form .zgoda input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--ink); flex-shrink: 0; }
-.mk-form .zgoda a { text-decoration: underline; text-underline-offset: 3px; }
+.mk-form .zgoda { padding-top: 4px; }
+.mk-form .zgoda label { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; font-weight: 400; color: var(--cichy); line-height: 1.55; cursor: pointer; }
+.mk-form .zgoda input {
+  appearance: none; -webkit-appearance: none; width: 22px; height: 22px; margin: 0; flex-shrink: 0; border-radius: 7px;
+  background: var(--bg); border: 1.5px solid rgba(0, 0, 0, 0.18); display: grid; place-items: center; cursor: pointer; transition: background 0.2s, border-color 0.2s;
+}
+.mk-form .zgoda input::after { content: ""; width: 10px; height: 6px; border: 2px solid var(--ink); border-top: 0; border-right: 0; rotate: -45deg; translate: 0 -1px; opacity: 0; transition: opacity 0.15s; }
+.mk-form .zgoda input:checked { background: var(--lim); border-color: var(--lim); }
+.mk-form .zgoda input:checked::after { opacity: 1; }
+.mk-form .zgoda input:focus-visible { box-shadow: 0 0 0 4px rgba(217, 224, 0, 0.45); }
+.mk-form .zle.zgoda input { border-color: #e3826f; }
+.mk-form .zgoda a { color: var(--ink2); text-decoration: underline; text-underline-offset: 3px; }
 .mk-form .pulapka { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
-.mk-form .btn { justify-self: start; min-height: 50px; padding: 0 26px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer; transition: transform 0.12s ease-out, background 0.2s; }
+.mk-form .btn {
+  justify-self: start; display: inline-flex; align-items: center; gap: 14px; min-height: 56px; padding: 6px 28px 6px 6px;
+  border: 0; border-radius: 999px; background: var(--ink); color: #fff; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer;
+  transition: transform 0.12s ease-out, background 0.2s;
+}
+.mk-form .btn::before {
+  content: "→"; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--lim); color: var(--ink);
+  font-size: 18px; transition: transform 0.4s var(--spr);
+}
 .mk-form .btn:hover { background: #262626; }
+.mk-form .btn:hover::before { transform: translateX(3px); }
 .mk-form .btn:active { transform: scale(0.97); }
 .mk-form .btn:disabled { opacity: 0.6; cursor: wait; }
-.mk-form .ok { display: block; padding: 6px 0; }
-.mk-form .ok h3 { font-family: var(--head); font-weight: 400; font-size: 28px; margin: 0 0 6px; }
+.mk-form .ok { display: block; padding: 8px 0; }
+.mk-form .ok h3 { font-family: var(--head); font-weight: 400; font-size: 30px; letter-spacing: -0.02em; margin: 0 0 8px; }
 .mk-form .ok p { margin: 0; color: var(--ink2); }
-@media (max-width: 860px) { .mk-form { padding: 20px 16px; } .mk-form .form { grid-template-columns: 1fr; } }
+@media (max-width: 860px) {
+  .mk-form { padding: 24px 18px; border-radius: 22px; }
+  .mk-form .form { grid-template-columns: 1fr; }
+  .mk-form .btn { justify-self: stretch; }
+}
 
 /* 22.11: e-mail w „O mnie” i LinkedIn w stopce. */
 .mk-omnie-mail { display: inline-flex; align-items: center; gap: 12px; margin-top: 22px; padding: 5px 20px 5px 5px; min-height: 44px; border-radius: 999px; background: var(--bg); font-size: 16px; font-weight: 500; color: var(--ink); transition: background 0.2s; }

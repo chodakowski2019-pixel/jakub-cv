@@ -13,23 +13,28 @@ type Bledy = Partial<Record<keyof Pola, string>>;
 
 const PUSTE: Pola = { imie: "", firma: "", email: "", telefon: "", osoby: "", wiadomosc: "", zgoda: false, www: "" };
 
-function sprawdz(p: Pola): Bledy {
+// 22.11.2026: wariant formularza na stronie głównej (components/marka): telefon obowiązkowy, inny podpis pola opisu.
+// Bez wariantu formularz działa jak dotąd (strona /szkolenie-ai-dla-firm).
+export type WariantFormularza = { telefonWymagany?: boolean; etykietaWiadomosc?: string; przykladWiadomosc?: string; przycisk?: string };
+
+function sprawdz(p: Pola, w: WariantFormularza = {}): Bledy {
   const b: Bledy = {};
   if (p.imie.trim().length < 2) b.imie = "Imię i nazwisko jest potrzebne.";
   if (p.firma.trim().length < 2) b.firma = "Nazwa firmy jest potrzebna.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(p.email.trim())) b.email = "Adres e-mail wygląda na niepełny.";
+  if (w.telefonWymagany && p.telefon.replace(/\D/g, "").length < 9) b.telefon = "Numer telefonu jest potrzebny do kontaktu.";
   if (!p.osoby) b.osoby = "Liczba osób jest potrzebna do wyceny.";
   if (!p.zgoda) b.zgoda = "Bez zgody nie można odpowiedzieć na zapytanie.";
   return b;
 }
 
-export default function Formularz() {
+export default function Formularz({ wariant = {} }: { wariant?: WariantFormularza } = {}) {
   const [p, setP] = useState<Pola>(PUSTE);
   const [dotkniete, setDotkniete] = useState<Partial<Record<keyof Pola, boolean>>>({});
   const [stan, setStan] = useState<"pusty" | "wysylam" | "ok" | "blad">("pusty");
   const okRef = useRef<HTMLDivElement>(null);
 
-  const bledy = sprawdz(p);
+  const bledy = sprawdz(p, wariant);
   const blad = (k: keyof Pola) => (dotkniete[k] ? bledy[k] : undefined);
   const ustaw = <K extends keyof Pola>(k: K, v: Pola[K]) => setP((x) => ({ ...x, [k]: v }));
   const dotknij = (k: keyof Pola) => setDotkniete((x) => ({ ...x, [k]: true }));
@@ -37,9 +42,9 @@ export default function Formularz() {
   async function wyslij(e: React.FormEvent) {
     e.preventDefault();
     if (stan === "wysylam") return;
-    const b = sprawdz(p);
+    const b = sprawdz(p, wariant);
     if (Object.keys(b).length) {
-      setDotkniete({ imie: true, firma: true, email: true, osoby: true, zgoda: true });
+      setDotkniete({ imie: true, firma: true, email: true, telefon: true, osoby: true, zgoda: true });
       const pierwsze = Object.keys(b)[0];
       document.getElementById(`sza-${pierwsze}`)?.focus();
       return;
@@ -87,9 +92,10 @@ export default function Formularz() {
         {blad("email") && <p className="b" id="sza-email-b">{blad("email")}</p>}
       </div>
 
-      <div className="pole">
-        <label htmlFor="sza-telefon">Telefon <em>opcjonalnie</em></label>
-        <input id="sza-telefon" name="telefon" type="tel" inputMode="tel" autoComplete="tel" value={p.telefon} onChange={(e) => ustaw("telefon", e.target.value)} />
+      <div className={`pole${blad("telefon") ? " zle" : ""}`}>
+        <label htmlFor="sza-telefon">Telefon {!wariant.telefonWymagany && <em>opcjonalnie</em>}</label>
+        <input id="sza-telefon" name="telefon" type="tel" inputMode="tel" autoComplete="tel" value={p.telefon} onChange={(e) => ustaw("telefon", e.target.value)} onBlur={() => dotknij("telefon")} aria-invalid={!!blad("telefon")} aria-describedby={blad("telefon") ? "sza-telefon-b" : undefined} />
+        {blad("telefon") && <p className="b" id="sza-telefon-b">{blad("telefon")}</p>}
       </div>
 
       <fieldset className={`pole szer${blad("osoby") ? " zle" : ""}`}>
@@ -106,8 +112,8 @@ export default function Formularz() {
       </fieldset>
 
       <div className="pole szer">
-        <label htmlFor="sza-wiadomosc">Czym zajmuje się zespół <em>opcjonalnie</em></label>
-        <textarea id="sza-wiadomosc" name="wiadomosc" rows={3} placeholder={FORMULARZ.przyklady.wiadomosc} value={p.wiadomosc} onChange={(e) => ustaw("wiadomosc", e.target.value)} />
+        <label htmlFor="sza-wiadomosc">{wariant.etykietaWiadomosc ?? <>Czym zajmuje się zespół <em>opcjonalnie</em></>}</label>
+        <textarea id="sza-wiadomosc" name="wiadomosc" rows={3} placeholder={wariant.przykladWiadomosc ?? FORMULARZ.przyklady.wiadomosc} value={p.wiadomosc} onChange={(e) => ustaw("wiadomosc", e.target.value)} />
       </div>
 
       {/* Pole-pułapka na boty: niewidoczne, poza kolejnością tabulatora. */}
@@ -128,7 +134,7 @@ export default function Formularz() {
 
       <div className="pole szer">
         <button type="submit" className="btn duzy" disabled={stan === "wysylam"}>
-          {stan === "wysylam" ? "Wysyłanie…" : FORMULARZ.przycisk}
+          {stan === "wysylam" ? "Wysyłanie…" : wariant.przycisk ?? FORMULARZ.przycisk}
         </button>
         {stan === "blad" && (
           <p className="b" role="alert">

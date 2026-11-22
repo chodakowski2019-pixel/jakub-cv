@@ -11,7 +11,6 @@ import KulaLimonka from "@/components/bruno/kula-limonka";
 import { MARKA, START, PASKI, O_MNIE, FIRMY, KAZDY, PODCAST, ROLKI, PROJEKTY, MATERIALY, NEWSLETTER } from "./dane";
 import { UstawieniaCookies } from "@/components/analityka/Zgoda";
 import Formularz from "@/components/szkolenia-ai/Formularz";
-import { FORMULARZ } from "@/components/szkolenia-ai/dane";
 import "./marka.css";
 
 function Zapis({ przycisk, maly = false }: { przycisk: string; maly?: boolean }) {
@@ -182,9 +181,8 @@ function Tresc({ id }: { id: string }) {
         {/* 22.11 (USER_001): formularz zamiast przycisku „Zobacz szkolenie”. Ten sam co na stronie szkoleń:
             /api/szkolenia-ai (mail + tabela szkolenia_ai_leady) i zdarzenie lead_szkolenie. Jasny wygląd: .mk-form w marka.css. */}
         <div className="mk-form">
-          <p className="mk-mono">{FORMULARZ.tytul}</p>
-          <p className="mk-form-obietnica">{FORMULARZ.dalej.kroki[0]} {FORMULARZ.dalej.kroki[1]}</p>
-          <Formularz />
+          <h3 className="mk-form-tytul">{FIRMY.formularz.tytul}</h3>
+          <Formularz wariant={FIRMY.formularz.wariant} />
         </div>
       </div>
     );

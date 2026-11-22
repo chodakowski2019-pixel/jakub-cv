@@ -82,7 +82,8 @@ export default function PolitykaPrywatnosciPage() {
             </li>
             <li>
               <b>Formularz zapytania o szkolenie AI dla firm:</b> imię i nazwisko, nazwa firmy, adres e-mail, numer
-              telefonu (opcjonalnie), liczba osób do przeszkolenia i opcjonalny opis zespołu.
+              telefonu (na stronie głównej obowiązkowy, na stronie szkolenia opcjonalny), liczba osób do przeszkolenia
+              i opcjonalny opis potrzeb zespołu.
             </li>
             <li>
               <b>Inne formularze na stronie:</b> dane, o które prosi dany formularz (zwykle imię i e-mail).
