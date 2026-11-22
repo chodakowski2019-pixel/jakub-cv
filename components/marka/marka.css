@@ -551,3 +551,19 @@ body:has(.mk)::after { display: none; }
 .mk-linkedin svg { color: #0a66c2; }
 .mk-linkedin:hover { color: var(--lim-t); }
 @media (max-width: 860px) { .mk-linkedin { margin-left: 0; } }
+
+/* 22.11: zapis na newsletter podłączony: klauzula, błąd, potwierdzenie, komunikat po kliknięciu w link z maila. */
+.mk-zapis-klauzula { flex-basis: 100%; margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: var(--cichy); max-width: 560px; }
+.mk-zapis-klauzula a { text-decoration: underline; text-underline-offset: 3px; }
+.mk-zapis-blad { flex-basis: 100%; margin: 2px 0 0; font-size: 15px; color: #b3341f; }
+.mk .mk-btn:disabled { opacity: 0.6; cursor: wait; }
+.mk-zapis-ok { position: relative; display: flex; gap: 14px; align-items: flex-start; max-width: 560px; padding: 18px 20px; border-radius: 20px; background: rgba(217, 224, 0, 0.18); }
+.mk-zapis-ok b { font-family: var(--head); font-weight: 500; font-size: 20px; }
+.mk-zapis-ok p { margin: 4px 0 0; font-size: 15px; color: var(--ink2); }
+.mk-toast {
+  position: fixed; z-index: 95; left: 50%; top: 84px; translate: -50% 0; display: flex; align-items: center; gap: 12px;
+  max-width: calc(100% - 32px); padding: 8px 10px 8px 8px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 15px;
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5); animation: mk-wynurz 0.6s var(--spr) both;
+}
+.mk-toast button { width: 32px; height: 32px; border-radius: 50%; color: #fff; font-size: 20px; line-height: 1; }
+.mk-toast button:hover { background: rgba(255, 255, 255, 0.12); }

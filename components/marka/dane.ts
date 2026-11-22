@@ -164,6 +164,12 @@ export const NEWSLETTER = {
   h2: "Bądź na bieżąco z AI",
   opis: "Newsletter, materiały do pobrania i zaproszenia na webinary. Wypisanie jednym kliknięciem.",
   przycisk: "Zapisz się",
-  // Podgląd: zapis nie jest jeszcze podłączony (brak tabeli i dostawcy). Formularz mówi to wprost.
-  podglad: "To jest podgląd. Zapis ruszy po podłączeniu newslettera.",
+  // 22.11: zapis podłączony (/api/newsletter, tabela jc_newsletter, double opt-in).
+  ok: { tytul: "Sprawdź skrzynkę.", tekst: "Wysłałem mail z przyciskiem „Potwierdzam zapis”. Bez kliknięcia zapis się nie liczy." },
+  juz: { tytul: "Ten adres już jest na liście.", tekst: "Kolejne maile przyjdą na ten adres." },
+  komunikaty: {
+    potwierdzony: "Zapis potwierdzony. Mail powitalny jest już w skrzynce.",
+    wypisano: "Adres wypisany z newslettera. Więcej maili nie będzie.",
+    "zly-link": "Ten link już nie działa. Wystarczy zapisać się jeszcze raz.",
+  },
 };

@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 // tryb poufny i odejście handlowca. Retencja ElevenLabs sprawdzona przez API 25.10: 1 dzień.
 // 20.11: formularz zapytania o szkolenie AI dla firm (sekcja 2). Dostawcy bez zmian (Supabase, Resend, Vercel).
 // 22.11: punkt 8 (cookies i analityka): baner zgód, GA4, Clarity, piksele Meta, TikTok, LinkedIn, Google Ads; punkt 4 odsyła do 8.
+// 22.11 (2): newsletter marki (punkty 2, 3, 5).
 const AKTUALIZACJA = "22 listopada 2026";
 
 function Sekcja({ tytul, children, id }: { tytul: string; children: React.ReactNode; id?: string }) {
@@ -86,6 +87,10 @@ export default function PolitykaPrywatnosciPage() {
               i opcjonalny opis potrzeb zespołu.
             </li>
             <li>
+              <b>Newsletter i informacje o webinarach</b> (strona główna): adres e-mail, skąd przyszedł zapis, czy
+              ktoś prosił o informację o webinarze, daty zapisu, potwierdzenia i wypisania.
+            </li>
+            <li>
               <b>Inne formularze na stronie:</b> dane, o które prosi dany formularz (zwykle imię i e-mail).
             </li>
           </ul>
@@ -111,6 +116,11 @@ export default function PolitykaPrywatnosciPage() {
             <li>
               <b>Prowadzenie konta i rozmów treningowych w Bruno AI</b> (nagranie, transkrypcja, ocena, powtórki,
               przypomnienia): wykonanie umowy o dostęp do narzędzia, art. 6 ust. 1 lit. b RODO.
+            </li>
+            <li>
+              <b>Newsletter o AI i informacje o webinarach:</b> na podstawie Twojej zgody, art. 6 ust. 1 lit. a RODO.
+              Zgodę potwierdzasz kliknięciem w link w pierwszym mailu. Wycofujesz ją jednym kliknięciem w „Wypisz się”
+              w każdym mailu.
             </li>
             <li>
               <b>Bezpieczeństwo konta i usługi</b> (blokada po nieudanych próbach logowania, logi techniczne,
@@ -181,6 +191,10 @@ export default function PolitykaPrywatnosciPage() {
         <Sekcja tytul="5. Jak długo trzymam dane">
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
             <li>Dane z formularza kontaktowego: do wycofania zgody, najdłużej 12 miesięcy od ostatniego kontaktu.</li>
+            <li>
+              Newsletter: do wypisania. Adres, który nie potwierdził zapisu, kasuję po 30 dniach. Po wypisaniu zostaje
+              sam adres z datą wypisania, żeby nie wysłać na niego niczego ponownie.
+            </li>
             <li>Dane z formularza konfiguracyjnego i nagrania: przez czas współpracy, a po jej zakończeniu usuwane albo zwracane firmie w ciągu 14 dni.</li>
             <li>Jeśli nie dojdzie do współpracy: 12 miesięcy od wysłania formularza.</li>
             <li>

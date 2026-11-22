@@ -10,25 +10,82 @@ import Image from "next/image";
 import KulaLimonka from "@/components/bruno/kula-limonka";
 import { MARKA, START, PASKI, O_MNIE, FIRMY, KAZDY, PODCAST, ROLKI, PROJEKTY, MATERIALY, NEWSLETTER } from "./dane";
 import { UstawieniaCookies } from "@/components/analityka/Zgoda";
+import { zdarzenie } from "@/lib/analityka";
+import { KLAUZULA } from "@/lib/newsletter-klauzula";
 import Formularz from "@/components/szkolenia-ai/Formularz";
 import "./marka.css";
 
-function Zapis({ przycisk, maly = false }: { przycisk: string; maly?: boolean }) {
-  const [wyslane, setWyslane] = useState(false);
-  const wyslij = (e: FormEvent) => {
+// 22.11 (USER_001: „newsletter nie jest podłączony, a powinien być”): zapis do jc_newsletter przez /api/newsletter.
+// Double opt-in jak zapisy na webinar Bruno: po wysłaniu przychodzi mail „Potwierdź zapis”. Klik pod klauzulą = zgoda.
+function Zapis({ przycisk, maly = false, zrodlo }: { przycisk: string; maly?: boolean; zrodlo: "newsletter" | "webinar" }) {
+  const [email, setEmail] = useState("");
+  const [www, setWww] = useState("");
+  const [stan, setStan] = useState<"pusty" | "wysylam" | "ok" | "juz" | "blad">("pusty");
+  const [blad, setBlad] = useState("");
+  const id = maly ? "mk-mail-2" : "mk-mail";
+  const wyslij = async (e: FormEvent) => {
     e.preventDefault();
-    setWyslane(true);
+    if (stan === "wysylam") return;
+    setStan("wysylam");
+    try {
+      const r = await fetch("/api/newsletter", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, zrodlo, zgoda: true, www }) });
+      const j = await r.json().catch(() => ({ ok: false }));
+      if (!r.ok || !j.ok) throw new Error(j.blad || "Zapis się nie udał. Spróbuj za chwilę.");
+      setStan(j.stan === "juz" ? "juz" : "ok");
+      zdarzenie(zrodlo === "webinar" ? "zapis_webinar" : "zapis_newsletter", { zrodlo });
+    } catch (err) {
+      setBlad(err instanceof Error ? err.message : "Zapis się nie udał.");
+      setStan("blad");
+    }
   };
+  if (stan === "ok" || stan === "juz")
+    return (
+      <div className="mk-zapis-ok" role="status">
+        <span className="mk-plus" aria-hidden>✓</span>
+        <div>
+          <b>{stan === "ok" ? NEWSLETTER.ok.tytul : NEWSLETTER.juz.tytul}</b>
+          <p>{stan === "ok" ? NEWSLETTER.ok.tekst : NEWSLETTER.juz.tekst}</p>
+        </div>
+      </div>
+    );
   return (
     <form className={`mk-zapis${maly ? " mk-zapis-maly" : ""}`} onSubmit={wyslij}>
-      <label className="mk-ukryte" htmlFor={maly ? "mk-mail-2" : "mk-mail"}>Adres e-mail</label>
-      <input id={maly ? "mk-mail-2" : "mk-mail"} type="email" required placeholder="Adres e-mail" autoComplete="email" />
-      <button type="submit" className="mk-btn mk-btn-czarny">
+      <label className="mk-ukryte" htmlFor={id}>Adres e-mail</label>
+      <input id={id} type="email" required placeholder="Adres e-mail" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <div className="mk-ukryte" aria-hidden="true">
+        <label htmlFor={`${id}-www`}>Strona www</label>
+        <input id={`${id}-www`} tabIndex={-1} autoComplete="off" value={www} onChange={(e) => setWww(e.target.value)} />
+      </div>
+      <button type="submit" className="mk-btn mk-btn-czarny" disabled={stan === "wysylam"}>
         <span className="mk-plus" aria-hidden>+</span>
-        {przycisk}
+        {stan === "wysylam" ? "Zapisuję…" : przycisk}
       </button>
-      {wyslane && <p className="mk-zapis-info" role="status">{NEWSLETTER.podglad}</p>}
+      {stan === "blad" && <p className="mk-zapis-blad" role="alert">{blad}</p>}
+      <p className="mk-zapis-klauzula">
+        {KLAUZULA} <a href="/polityka-prywatnosci">Polityka prywatności</a>.
+      </p>
     </form>
+  );
+}
+
+// Komunikat po kliknięciu w link z maila (/?newsletter=potwierdzony | wypisano | zly-link).
+function KomunikatNewslettera() {
+  const [k, setK] = useState<string | null>(null);
+  useEffect(() => {
+    const v = new URLSearchParams(location.search).get("newsletter");
+    if (!v || !(v in NEWSLETTER.komunikaty)) return;
+    setK(v);
+    history.replaceState(null, "", location.pathname + location.hash);
+    const t = setTimeout(() => setK(null), 9000);
+    return () => clearTimeout(t);
+  }, []);
+  if (!k) return null;
+  return (
+    <div className="mk-toast" role="status">
+      <span className="mk-plus" aria-hidden>{k === "potwierdzony" ? "✓" : "i"}</span>
+      {NEWSLETTER.komunikaty[k as keyof typeof NEWSLETTER.komunikaty]}
+      <button type="button" aria-label="Zamknij" onClick={() => setK(null)}>×</button>
+    </div>
   );
 }
 
@@ -198,7 +255,7 @@ function Tresc({ id }: { id: string }) {
             </div>
           ))}
         </div>
-        <Zapis przycisk={KAZDY.zapis} maly />
+        <Zapis przycisk={KAZDY.zapis} maly zrodlo="webinar" />
       </div>
     );
   if (id === "podcast")
@@ -379,11 +436,12 @@ export default function MarkaPage() {
           <p className="mk-mono">Newsletter</p>
           <h2 className="mk-h2">{NEWSLETTER.h2}</h2>
           <p className="mk-news-opis">{NEWSLETTER.opis}</p>
-          <Zapis przycisk={NEWSLETTER.przycisk} />
+          <Zapis przycisk={NEWSLETTER.przycisk} zrodlo="newsletter" />
         </section>
       </main>
 
       <KulaZaCzytelnikiem miejsce={miejsceKuli} />
+      <KomunikatNewslettera />
 
       <footer className="mk-stopka">
         <div className="mk-stopka-linki">
