@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import Zgoda from "@/components/analityka/Zgoda";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -40,6 +41,8 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         {children}
         <Analytics />
+        {/* 22.11.2026: baner zgód + GA4, Clarity, Google Ads, Meta, TikTok, LinkedIn. Tylko jakubchodakowski.com, po zgodzie. */}
+        <Zgoda />
       </body>
     </html>
   );

@@ -1,0 +1,64 @@
+/* 22.11.2026: baner zgód marki jakubchodakowski.com. Ciemna karta z limonką: pasuje do jasnej strony marki
+   i do czarnej strony szkoleń. „Odrzuć” ma ten sam rozmiar i wagę co „Akceptuję” (RODO: odmowa tak łatwa jak zgoda). */
+.jcz {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 90;
+  padding: 0 16px 16px;
+  pointer-events: none;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  animation: jcz-wjazd 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.jcz-karta {
+  pointer-events: auto;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: rgba(16, 16, 16, 0.9);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.6);
+  color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 20px;
+}
+.jcz-tekst { flex: 1 1 300px; margin: 0; font-size: 15px; line-height: 1.5; color: rgba(255, 255, 255, 0.78); }
+.jcz-tekst a { color: #e9f542; text-decoration: underline; text-underline-offset: 3px; }
+.jcz-opcje { flex-basis: 100%; display: grid; gap: 8px; order: 1; }
+.jcz-opcja { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.06); font-size: 15px; line-height: 1.45; color: rgba(255, 255, 255, 0.72); cursor: pointer; }
+.jcz-opcja b { color: #fff; font-weight: 600; margin-right: 6px; }
+.jcz-opcja input { width: 18px; height: 18px; margin-top: 2px; accent-color: #d9e000; flex-shrink: 0; }
+.jcz-przyciski { display: flex; flex-wrap: wrap; gap: 8px; order: 2; }
+.jcz-opcje ~ .jcz-przyciski { flex-basis: 100%; justify-content: flex-end; }
+.jcz-btn {
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.12s ease-out;
+}
+.jcz-btn:hover { background: rgba(255, 255, 255, 0.08); }
+.jcz-btn:active { transform: scale(0.97); }
+.jcz-btn-glowny { background: #d9e000; border-color: #d9e000; color: #0b0b0b; }
+.jcz-btn-glowny:hover { background: #e9f542; }
+@keyframes jcz-wjazd { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@media (max-width: 560px) {
+  .jcz { padding: 0 10px 10px; }
+  .jcz-przyciski { flex-basis: 100%; }
+  .jcz-btn { flex: 1 1 auto; }
+}
+@media (prefers-reduced-motion: reduce) { .jcz { animation: none; } }
+@media (prefers-reduced-transparency: reduce) { .jcz-karta { background: #101010; backdrop-filter: none; -webkit-backdrop-filter: none; } }
+/* Przycisk „Ustawienia cookies” w stopkach: wygląda jak zwykły link stopki. */
+.jcz-link { background: none; border: 0; padding: 0; margin: 0; font: inherit; color: inherit; cursor: pointer; text-align: left; }
+.jcz-link:hover { text-decoration: underline; text-underline-offset: 3px; }

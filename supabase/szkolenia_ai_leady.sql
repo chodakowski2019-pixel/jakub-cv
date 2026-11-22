@@ -1,5 +1,5 @@
 -- Zapytania z formularza „Szkolenie AI dla firm” (app/api/szkolenia-ai/route.ts).
--- Projekt Supabase: jakubchodakowski-com. NIE uruchomione: do wykonania przed publikacją strony.
+-- Projekt Supabase: jakubchodakowski-com. Wykonane 22.11.2026 (API zarządzania).
 -- Zapis idzie kluczem serwisowym z serwera, więc RLS zostaje włączone bez polityk (brak dostępu z przeglądarki).
 
 create table if not exists public.szkolenia_ai_leady (

@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { track } from "@vercel/analytics";
+import { zdarzenie } from "@/lib/analityka";
 import { FORMULARZ, KONTAKT } from "./dane";
 
 // Formularz zapytania o szkolenie. Błędy pokazują się przy polu, po wyjściu z pola
@@ -50,6 +51,7 @@ export default function Formularz() {
       if (!r.ok || !j.ok) throw new Error("blad");
       setStan("ok");
       track("szkolenia_ai_zapytanie", { osoby: p.osoby });
+      zdarzenie("lead_szkolenie", { osoby: p.osoby });
       requestAnimationFrame(() => okRef.current?.focus());
     } catch {
       setStan("blad");

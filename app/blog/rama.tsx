@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { AUTOR, BAZA, STRONA_SZKOLEN } from "@/lib/blog-ai";
 import { BAZA_NARZEDZI } from "@/lib/narzedzia-ai";
 import "./blog-ai.css";
+import { UstawieniaCookies } from "@/components/analityka/Zgoda";
 
 // Wspólna rama bloga i katalogu narzędzi: listwa górna, stopka, kroje i styl (blog-ai.css).
 // Kroje te same co na stronie szkoleń, z polskimi znakami.
@@ -46,6 +47,7 @@ export function Rama({ children, etykieta, start }: { children: React.ReactNode;
             <Link href={STRONA_SZKOLEN}>Szkolenie AI</Link>
             <span> · </span>
             <Link href="/polityka-prywatnosci">Polityka prywatności</Link>
+            <UstawieniaCookies className="jcz-link" przed={<span> · </span>} />
           </p>
         </div>
       </footer>

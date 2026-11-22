@@ -22,11 +22,12 @@ export const metadata: Metadata = {
 // 25.10 (USER_001): OpenAI gpt-5.5 = model klienta w każdej rozmowie, po współpracy 14 dni, naruszenie do 7 dni,
 // tryb poufny i odejście handlowca. Retencja ElevenLabs sprawdzona przez API 25.10: 1 dzień.
 // 20.11: formularz zapytania o szkolenie AI dla firm (sekcja 2). Dostawcy bez zmian (Supabase, Resend, Vercel).
-const AKTUALIZACJA = "20 listopada 2026";
+// 22.11: punkt 8 (cookies i analityka): baner zgód, GA4, Clarity, piksele Meta, TikTok, LinkedIn, Google Ads; punkt 4 odsyła do 8.
+const AKTUALIZACJA = "22 listopada 2026";
 
-function Sekcja({ tytul, children }: { tytul: string; children: React.ReactNode }) {
+function Sekcja({ tytul, children, id }: { tytul: string; children: React.ReactNode; id?: string }) {
   return (
-    <section className="mb-9">
+    <section className="mb-9 scroll-mt-6" id={id}>
       <h2 className="text-lg sm:text-xl font-bold tracking-[-0.01em] mb-3">{tytul}</h2>
       <div className="flex flex-col gap-3 text-[15px] leading-relaxed text-slate-700">{children}</div>
     </section>
@@ -138,6 +139,10 @@ export default function PolitykaPrywatnosciPage() {
             <li>Resend Inc. (wysyłka powiadomień e-mail), USA</li>
             <li>Google LLC (skrzynka pocztowa, logowanie przez Google), USA</li>
           </ul>
+          <p>
+            Po Twojej zgodzie dane o korzystaniu ze strony trafiają też do dostawców statystyk i reklam opisanych w
+            punkcie 8 (Google, Microsoft, Meta, TikTok, LinkedIn).
+          </p>
           <p>Rozmowę głosową i jej ocenę obsługują dostawcy modeli AI:</p>
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
             <li>
@@ -235,10 +240,38 @@ export default function PolitykaPrywatnosciPage() {
           </p>
         </Sekcja>
 
-        <Sekcja tytul="8. Pliki cookies i analityka">
+        <Sekcja tytul="8. Pliki cookies i analityka" id="cookies">
           <p>
-            Strona nie używa plików cookies do śledzenia. Do liczenia odwiedzin korzystam z Vercel Web Analytics,
-            które nie stawia ciasteczek i nie identyfikuje pojedynczych osób.
+            Do liczenia odwiedzin korzystam z Vercel Web Analytics. Nie stawia ciasteczek i nie identyfikuje
+            pojedynczych osób, dlatego działa bez zgody.
+          </p>
+          <p>
+            Na stronach jakubchodakowski.com pozostałe narzędzia włączam <b>dopiero po Twojej zgodzie</b> w okienku na
+            dole strony. Przed zgodą ich skrypty w ogóle się nie ładują. Zgody są dwie i możesz dać jedną bez drugiej:
+          </p>
+          <ul className="list-disc pl-5 flex flex-col gap-1.5">
+            <li>
+              <b>Statystyki</b>: Google Analytics 4 (Google Ireland Ltd.) liczy odwiedziny i drogę po stronie. Microsoft
+              Clarity (Microsoft Ireland Operations Ltd.) pokazuje mapy kliknięć i zapis przewijania strony, z
+              ukrytymi treściami wpisanymi w pola formularzy. Ciasteczka: <code>_ga</code>, <code>_ga_*</code> (do 2
+              lat), <code>_clck</code> (rok), <code>_clsk</code> (doba).
+            </li>
+            <li>
+              <b>Marketing</b>: piksele Meta (Meta Platforms Ireland Ltd., Facebook i Instagram), TikTok (TikTok
+              Technology Ltd.), LinkedIn Insight Tag (LinkedIn Ireland Unlimited Company) i Google Ads (Google Ireland
+              Ltd.). Mierzą, czy reklama doprowadziła kogoś na stronę i do wysłania formularza, i pozwalają pokazać
+              reklamę osobom, które już tu były. Ciasteczka: <code>_fbp</code> (3 miesiące), <code>_ttp</code> (13
+              miesięcy), <code>li_*</code> i <code>bcookie</code> (do roku), <code>_gcl_*</code> (3 miesiące).
+            </li>
+          </ul>
+          <p>
+            Podstawa prawna: Twoja zgoda (art. 6 ust. 1 lit. a RODO i art. 399 Prawa komunikacji elektronicznej). Część
+            danych może trafić do USA. Dostawcy przekazują je na podstawie decyzji Komisji Europejskiej o odpowiednim
+            stopniu ochrony (EU-US Data Privacy Framework) albo standardowych klauzul umownych.
+          </p>
+          <p>
+            Zgodę zmienisz albo cofniesz w każdej chwili przyciskiem „Ustawienia cookies” w stopce strony. Wybór
+            zapisuję w pamięci Twojej przeglądarki (<code>jc-zgoda-v1</code>), bez wysyłania go na serwer.
           </p>
           <p>
             Panel Bruno AI używa jednego ciasteczka niezbędnego do działania: <code>bruno_sesja</code>. Trzyma

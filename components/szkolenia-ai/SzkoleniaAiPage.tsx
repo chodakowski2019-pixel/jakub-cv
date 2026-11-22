@@ -8,6 +8,7 @@ import Orbita from "./Orbita";
 import Kolory from "./Kolory";
 import Kula from "./Kula";
 import Loga from "./Loga";
+import { UstawieniaCookies } from "@/components/analityka/Zgoda";
 import { PALETY, STARE, klasyGen, zmienne } from "./motywy";
 import {
   BADANIE, BILET, CENA, CENY, DLA_KOGO, FORMULARZ, FOTO, HERO, HERO_TAG, KONTAKT, PROWADZACY, PROWADZACY_LICZBY,
@@ -526,6 +527,7 @@ export default function SzkoleniaAiPage({ fontClass, motyw = "ciemny", przelaczn
             </div>
             <div>
               <p className="mono">Dokumenty</p>
+              <UstawieniaCookies className="jcz-link" />
               <a href="/regulamin">Regulamin</a>
               <a href="/polityka-prywatnosci">Polityka prywatności</a>
             </div>
