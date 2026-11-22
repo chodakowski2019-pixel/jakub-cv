@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import s from "@/components/bruno/webinar-lp.module.css";
 import { zdarzenie } from "@/lib/analityka";
+import { WEBINAR_RODZICE } from "@/lib/webinar-rodzice";
 
 // 22.11.2026 (USER_001): strona zapisu na webinar DLA RODZICÓW o AI i przyszłości pracy (jaki zawód wybrać dziecku).
 // „Szablon, czyli miejsca napisów i zdjęć, pozostają takie same, podmień tylko teksty, kolorystyka pod nasz nowy UX/UI”.
@@ -12,9 +13,9 @@ import { zdarzenie } from "@/lib/analityka";
 // Kolory: motyw academy + nakładka .mMarka (kolory strony jakubchodakowski.com). Zapis: /api/newsletter (zrodlo „rodzice”, double opt-in).
 // Termin jeszcze nieustalony: TERMIN = null pokazuje „Termin podam mailem” zamiast daty i licznika. Po ustaleniu wpisać datę tutaj.
 
-/** Start webinaru (czas polski), np. new Date("2026-12-09T19:00:00+01:00"). null = termin nieustalony. */
-const TERMIN = null as Date | null;
-const GODZINA = "19:00";
+// 22.11 (USER_001): termin w lib/webinar-rodzice.ts (środa 25.11.2026, 19:00).
+const TERMIN = WEBINAR_RODZICE.start;
+const GODZINA = TERMIN ? TERMIN.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Warsaw" }) : "";
 const DATA_TEKST = TERMIN ? TERMIN.toLocaleDateString("pl-PL", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Warsaw" }) : "";
 // 22.11 (USER_001): w pierwszym ekranie zdjęcie ze strony głównej (wystąpienie, CRASH Mondays) zamiast portretu.
 const FOTO = "/talk-crash-mondays.png";
@@ -51,13 +52,13 @@ const T = {
   },
   faq: [
     ["Dla kogo jest ten webinar?", "Dla rodziców dzieci, które za kilka lat wybiorą szkołę średnią, studia albo zawód. Wiedza techniczna nie jest potrzebna."],
-    ["Gdzie się odbywa?", "Online. Termin i link do spotkania przyjdą mailem po potwierdzeniu zapisu. Wystarczy telefon albo komputer, kamera jest zbędna."],
+    ["Gdzie się odbywa?", TERMIN ? "Online. Link do spotkania przyjdzie mailem po potwierdzeniu zapisu. Wystarczy telefon albo komputer, kamera jest zbędna." : "Online. Termin i link do spotkania przyjdą mailem po potwierdzeniu zapisu. Wystarczy telefon albo komputer, kamera jest zbędna."],
     ["Ile kosztuje?", "Nic. Webinar jest bezpłatny."],
   ] as [string, string][],
   okno: {
     tytul: "Zarezerwuj miejsce",
     pod: TERMIN ? `${DATA_TEKST}, ${GODZINA}, online` : "Online · 60 minut · bezpłatnie",
-    przypomnienie: "Po zapisie kliknij „Potwierdzam zapis” w e-mailu. Wtedy wyślę termin i link do spotkania.",
+    przypomnienie: TERMIN ? "Po zapisie kliknij „Potwierdzam zapis” w e-mailu. Wtedy wyślę link do spotkania." : "Po zapisie kliknij „Potwierdzam zapis” w e-mailu. Wtedy wyślę termin i link do spotkania.",
     przycisk: "Zapisuję się »",
     klauzula: "Zapisując się, wyrażasz zgodę na otrzymywanie od Jakuba Chodakowskiego wiadomości o tym webinarze i o AI. Administratorem Twoich danych jest Jakub Chodakowski. Wypisanie jednym kliknięciem w każdym mailu.",
   },
@@ -347,9 +348,9 @@ export function WebinarRodziceDzieki({ potwierdzone }: { potwierdzone: boolean }
               Gotowe. <span className={s.pom}>Masz miejsce.</span>
             </h1>
             <p className={s.dziekiLead}>
-              Webinar dla rodziców o AI i zawodach przyszłości.
+              Webinar dla rodziców o AI i zawodach przyszłości{TERMIN ? `: ${WEBINAR_RODZICE.terminTekst}, online.` : "."}
               <br />
-              Termin i link do spotkania przyjdą mailem.
+              {TERMIN ? "Link do spotkania przyjdzie mailem." : "Termin i link do spotkania przyjdą mailem."}
             </p>
             <ol className={s.dziekiKroki}>
               <li>
@@ -363,12 +364,12 @@ export function WebinarRodziceDzieki({ potwierdzone }: { potwierdzone: boolean }
               Dzięki, to <span className={s.pom}>prawie</span> wszystko!
             </h1>
             <p className={s.dziekiLead}>
-              Miejsce na webinarze czeka na Ciebie.
+              Miejsce na webinarze czeka na Ciebie{TERMIN ? `: ${WEBINAR_RODZICE.terminTekst}` : ""}.
               <span className={s.dziekiOdstep}>Została 1 rzecz:</span>
             </p>
             <ol className={s.dziekiKroki}>
               <li>
-                <b>Znajdź e-mail z adresu <code>{NADAWCA_ADRES}</code> i kliknij „Potwierdzam zapis”.</b> Właśnie wyszedł. Jeśli go nie widzisz, sprawdź „Oferty” i spam. Bez kliknięcia nie wyślę terminu ani linku.
+                <b>Znajdź e-mail z adresu <code>{NADAWCA_ADRES}</code> i kliknij „Potwierdzam zapis”.</b> Właśnie wyszedł. Jeśli go nie widzisz, sprawdź „Oferty” i spam. Bez kliknięcia nie wyślę linku do spotkania.
               </li>
             </ol>
           </>

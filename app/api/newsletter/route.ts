@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
 import { supabaseAdmin } from "@/lib/supabase";
 import { SKRZYNKA_JAKUBA, esc, mailPotwierdz, wyslijMail } from "@/lib/newsletter-marka";
+import { WEBINAR_RODZICE } from "@/lib/webinar-rodzice";
 
 export const dynamic = "force-dynamic";
 
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
   if (potwierdzony) return NextResponse.json({ ok: true, stan: "juz" });
 
   try {
-    const m = mailPotwierdz(`${baza}/api/newsletter/potwierdz?t=${token}`, zrodlo === "rodzice" ? { imie, webinar: "webinar dla rodziców o AI i zawodach przyszłości" } : undefined);
+    const m = mailPotwierdz(`${baza}/api/newsletter/potwierdz?t=${token}`, zrodlo === "rodzice" ? { imie, webinar: WEBINAR_RODZICE.tytul } : undefined);
     const wynik = await wyslijMail({ do: email, temat: m.temat, html: m.html });
     if (wynik === "pominiety") return NextResponse.json({ ok: false, blad: "Lokalnie mail nie wychodzi (brak klucza Resend). Zapis działa na jakubchodakowski.com." }, { status: 503 });
     await supabaseAdmin.from("jc_newsletter").update({ mail_potwierdz: new Date().toISOString() }).eq("email", email);

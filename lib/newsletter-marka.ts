@@ -10,6 +10,7 @@ export const ADRES_ODPOWIEDZI = "hello@jakubchodakowski.com";
 export const SKRZYNKA_JAKUBA = "chodakowski2019@gmail.com";
 
 import { KLAUZULA } from "./newsletter-klauzula";
+import { WEBINAR_RODZICE } from "./webinar-rodzice";
 export { KLAUZULA };
 
 export const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
@@ -49,7 +50,7 @@ export function mailPotwierdz(link: string, w?: { imie?: string | null; webinar:
       tresc: [
         p(powitanie),
         w
-          ? p(`dziękuję za zapis na ${esc(w.webinar)}. Żeby go dokończyć, kliknij przycisk poniżej. Wtedy wyślę termin i link do spotkania. Bez kliknięcia nic więcej nie wyślę.`)
+          ? p(`dziękuję za zapis na ${esc(w.webinar)}${WEBINAR_RODZICE.start ? ` (${esc(WEBINAR_RODZICE.terminTekst)}, online)` : ""}. Żeby go dokończyć, kliknij przycisk poniżej. Wtedy wyślę ${WEBINAR_RODZICE.start ? "link" : "termin i link"} do spotkania. Bez kliknięcia nic więcej nie wyślę.`)
           : p("dziękuję za zapis na newsletter o AI. Żeby go dokończyć, kliknij przycisk poniżej. Bez kliknięcia nic więcej nie wyślę."),
         przycisk("Potwierdzam zapis", link),
         `<p style="margin:0 0 20px 0;font-family:${F};font-size:13px;line-height:1.6;color:#777777">${esc(KLAUZULA)} Jeśli ten adres nie jest Twój, zignoruj tę wiadomość.</p>`,
@@ -68,7 +69,7 @@ export function mailWitaj(a: { baza: string; wypisz: string; webinar: boolean; r
       tresc: [
         p(a.imie ? `Cześć ${esc(a.imie)},` : "Cześć,"),
         a.rodzice
-          ? p("zapis potwierdzony, masz miejsce na webinarze dla rodziców o AI i zawodach przyszłości. Termin i link do spotkania przyjdą w osobnym mailu. Do tego czasu będę też pisać o tym, co AI zmienia w pracy i w życiu.")
+          ? p(WEBINAR_RODZICE.start ? `zapis potwierdzony, masz miejsce na webinarze dla rodziców o AI i zawodach przyszłości: ${esc(WEBINAR_RODZICE.terminTekst)}, online. Link do spotkania przyjdzie w osobnym mailu. Będę też pisać o tym, co AI zmienia w pracy i w życiu.` : "zapis potwierdzony, masz miejsce na webinarze dla rodziców o AI i zawodach przyszłości. Termin i link do spotkania przyjdą w osobnym mailu. Do tego czasu będę też pisać o tym, co AI zmienia w pracy i w życiu.")
           : p("zapis potwierdzony. Będę pisać o tym, co AI zmienia w pracy i w życiu, na przykładach z wiadomości. Prosto i bez żargonu."),
         a.rodzice
           ? ""
