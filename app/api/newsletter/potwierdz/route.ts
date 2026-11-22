@@ -27,6 +27,6 @@ export async function GET(req: Request) {
     }
   }
   // 22.11 (2): zapis z webinaru dla rodziców wraca na jego stronę „Gotowe, masz miejsce”.
-  if (z.zrodlo === "rodzice") return NextResponse.redirect(`${baza}/webinar-dla-rodzicow/dzieki?potwierdzone=1`, 302);
+  if (z.zrodlo === "rodzice") return NextResponse.redirect(`${baza}/webinardlarodzicow/dzieki?potwierdzone=1`, 302);
   return NextResponse.redirect(`${baza}/?newsletter=potwierdzony#newsletter`, 302);
 }

@@ -8,11 +8,11 @@ const OPIS = "Bezpłatny webinar online dla rodziców: które zawody AI zmieni, 
 export const metadata: Metadata = {
   title: { absolute: "Webinar dla rodziców" },
   description: OPIS,
-  alternates: { canonical: "/webinar-dla-rodzicow" },
+  alternates: { canonical: "/webinardlarodzicow" },
   openGraph: {
     title: "Jaki zawód ma przyszłość w erze AI? Webinar dla rodziców",
     description: OPIS,
-    url: "/webinar-dla-rodzicow",
+    url: "/webinardlarodzicow",
     siteName: "Jakub Chodakowski",
     locale: "pl_PL",
     type: "website",

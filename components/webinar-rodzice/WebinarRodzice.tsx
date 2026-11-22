@@ -155,7 +155,7 @@ export default function WebinarRodzice() {
     const d = await odp?.json().catch(() => null);
     if (d?.ok) {
       zdarzenie("zapis_webinar", { zrodlo: "rodzice" });
-      router.push("/webinar-dla-rodzicow/dzieki");
+      router.push("/webinardlarodzicow/dzieki");
       return;
     }
     setBlad(d?.blad ?? "Zapis się urwał. Spróbuj ponownie.");
