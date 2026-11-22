@@ -40,7 +40,7 @@ const T = {
     ["40-50 min", "Jak rozmawiać z dzieckiem o wyborze szkoły i studiów"],
     ["50-60 min", "Pytania rodziców"],
   ] as [string, string][],
-  prowadzacy: "Od 2022 roku uczę, jak korzystać z AI. Szkolę nauczycieli z praktycznego użycia AI. Na webinarze pokażę, co AI zmienia w pracy i jak przygotować do tego dziecko.",
+  prowadzacy: "Od 2022 roku uczę, jak korzystać z AI. Szkolę nauczycieli i firmy. Na webinarze pokażę, co AI zmienia w pracy i jak przygotować do tego dziecko.",
   // Karta z liczbą obok planu (w szablonie: koło 40/30/30). Liczby: World Economic Forum, Future of Jobs Report 2025 (styczeń 2025).
   liczba: {
     wielka: "170 mln",
