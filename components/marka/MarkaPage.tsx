@@ -151,9 +151,11 @@ function Tresc({ id }: { id: string }) {
           <div className="mk-kolko">
             <Image src={O_MNIE.zdjecie.src} alt={O_MNIE.zdjecie.alt} width={O_MNIE.zdjecie.w} height={O_MNIE.zdjecie.h} sizes="220px" />
           </div>
-          <p className="mk-omnie-tekst">
-            {O_MNIE.tekst.map((c, i) => (c.b ? <b key={i}>{c.b}</b> : <span key={i}>{c.t}</span>))}
-          </p>
+          {O_MNIE.tekst.map((akapit, j) => (
+            <p key={j} className="mk-omnie-tekst">
+              {akapit.map((c, i) => (c.b ? <b key={i}>{c.b}</b> : <span key={i}>{c.t}</span>))}
+            </p>
+          ))}
           <a className="mk-omnie-mail" href={`mailto:${MARKA.email}`}>
             <span className="mk-plus" aria-hidden>@</span>
             {MARKA.email}

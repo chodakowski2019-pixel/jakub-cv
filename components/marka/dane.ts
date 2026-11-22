@@ -75,18 +75,24 @@ export const PASKI: Pasek[] = [
 export const O_MNIE = {
   zdjecie: { src: "/bruno/jakub-webinar-okno.jpg", alt: "Jakub Chodakowski", podpis: "", w: 1200, h: 1200 },
   // 22.11 (USER_001): tezy połączone w jeden tekst, pogrubione „Wierzę”, „Nie zgadzam się”, „Pokazuję”, „Chcę”.
+  // 22.11 (USER_001): 3 akapity, zmienione ostatnie zdanie.
   tekst: [
-    { t: "Nazywam się Jakub Chodakowski. Od 2022 roku uczę, jak korzystać z AI. " },
-    { b: "Wierzę" },
-    { t: ", że dane są ważniejsze niż samo AI. Bez dobrych danych najlepsze narzędzie niewiele da. " },
-    { b: "Nie zgadzam się" },
-    { t: " na straszenie AI, bo strach niczego nie uczy, a praktyka tak. " },
-    { t: "Zawsze " },
-    { b: "pokazuję" },
-    { t: " AI w działaniu, nie opieram się tylko na teorii. Prosto i bez żargonu. " },
-    { b: "Chcę" },
-    { t: ", żeby każdy wiedział, co AI zmienia w jego życiu, zanim świat zmieni się bez niego." },
-  ] as { t?: string; b?: string }[],
+    [
+      { t: "Nazywam się Jakub Chodakowski. Od 2022 roku uczę, jak korzystać z AI. " },
+      { b: "Wierzę" },
+      { t: ", że dane są ważniejsze niż samo AI. Bez dobrych danych najlepsze narzędzie niewiele da." },
+    ],
+    [
+      { b: "Nie zgadzam się" },
+      { t: " na straszenie AI, bo strach niczego nie uczy, a praktyka tak. Zawsze " },
+      { b: "pokazuję" },
+      { t: " AI w działaniu, nie opieram się tylko na teorii. Prosto i bez żargonu." },
+    ],
+    [
+      { b: "Chcę" },
+      { t: ", żeby każdy wiedział, jak sztuczna inteligencja może zmienić jego życie, zanim świat zmieni się bez niego." },
+    ],
+  ] as { t?: string; b?: string }[][],
   cert: { src: "/cert-ai-managers.png", alt: "Certyfikat AI for Managers, Elephant AI, Jakub Chodakowski", podpis: "Certyfikat AI for Managers, Elephant AI, 20.06.2024", w: 1798, h: 1274 },
 };
 
