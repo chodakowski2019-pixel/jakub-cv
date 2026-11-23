@@ -1271,6 +1271,77 @@ textarea.wpis {
   }
 }
 
+/* 23.11 (USER_001): checkbox przy każdej osobie + pasek „Odblokuj {n} osób” (50 zł za osobę) */
+.kartaHWl {
+  border-color: var(--p-ink);
+  box-shadow: 0 0 0 1px var(--p-ink);
+}
+.kartaHZamek svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+.kartaHWybor {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -10px -10px -10px 0;
+  cursor: pointer;
+}
+.kartaHWybor input {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--p-ink);
+  cursor: pointer;
+}
+.kartaHUkryte dd {
+  color: var(--p-ink-2);
+}
+.odblokujPasek {
+  position: sticky;
+  bottom: 16px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 20px 0 0;
+  padding: 14px 16px 14px 22px;
+  background: #fff;
+  border: 1px solid var(--p-ramka-2);
+  border-radius: var(--p-radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  font-family: var(--p-font);
+}
+.odblokujPasek > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.odblokujPasek b {
+  font-size: 16px;
+}
+.odblokujPasek small {
+  font-size: 13px;
+  color: var(--p-ink-2);
+}
+.odblokujPasek button {
+  flex: none;
+}
+@media (max-width: 560px) {
+  .odblokujPasek {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px 16px;
+  }
+}
+
 /* 16.11 (USER_001): zakładka „Nagraj rozmowę”: 2 kafle sytuacji, 3 kafle rozmów, karta startu z kulą. */
 .nrGora {
   display: flex;

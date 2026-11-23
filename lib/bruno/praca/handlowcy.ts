@@ -67,7 +67,17 @@ export type KartaHandlowca = {
   maCV: boolean;
   /** 12.11: % dopasowania do wyszukiwania; null = wyszukiwanie bez kryteriów albo widok poza wyszukiwarką. */
   dopasowanie?: number | null;
+  /** 23.11 (USER_001): płeć, liczona z imienia (formularz nie pyta o płeć). "" = imienia brak. */
+  plec: "Kobieta" | "Mężczyzna" | "";
 };
+
+/** Polskie imiona żeńskie kończą się na „a”; wyjątki męskie poniżej. */
+const MESKIE_NA_A = new Set(["kuba", "barnaba", "bonawentura", "kosma", "jarema", "dyzma", "boryna"]);
+export function plecZImienia(imie: string): KartaHandlowca["plec"] {
+  const x = imie.trim().toLowerCase();
+  if (!x) return "";
+  return x.endsWith("a") && !MESKIE_NA_A.has(x) ? "Kobieta" : "Mężczyzna";
+}
 
 export type PelnyHandlowiec = KartaHandlowca & {
   email: string;
@@ -120,6 +130,7 @@ function doKarty(w: Wiersz): KartaHandlowca {
     start: t(o.start),
     sprawdzony: w.status === "zatwierdzony",
     maCV: !!w.konto?.cv_sciezka,
+    plec: plecZImienia(imie ?? ""),
   };
 }
 

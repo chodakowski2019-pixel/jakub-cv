@@ -2,7 +2,7 @@ import type Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase";
 import { SKRZYNKA_JAKUBA, wyslij } from "@/lib/bruno/mail";
 import { odblokowaneId, widoczneId } from "./handlowcy";
-import { MAKS_WYBRANYCH, pakietPoLiczbie } from "./kontakty-cennik";
+import { MAKS_WYBRANYCH } from "./kontakty-cennik";
 
 // 11.11 (USER_001): giełda handlowców, zakup kontaktów. Kolejność: wynik wyszukiwania → płatność (Stripe Checkout)
 // → konto firmy → kontakty odblokowane w panelu. Zakup zapisuje webhook ALBO strona powrotu ze Stripe (która pierwsza),
@@ -49,8 +49,10 @@ export async function zapiszZakup(z: { sesja: string; email: string | null; paki
 export async function zakupZeStripe(s: Stripe.Checkout.Session): Promise<Zakup | null> {
   const m = s.metadata ?? {};
   if (m.produkt !== "praca" || m.rodzaj !== "kontakty" || s.payment_status !== "paid") return null;
-  const pakiet = pakietPoLiczbie(m.pakiet);
-  if (!pakiet) return null;
+  // 23.11: 50 zł za osobę, więc „pakiet” = liczba opłaconych osób (1..MAKS_WYBRANYCH), nie stała paczka.
+  const ile = Number(m.pakiet);
+  if (!Number.isInteger(ile) || ile < 1 || ile > MAKS_WYBRANYCH) return null;
+  const pakiet = { ile };
   const email = s.customer_details?.email ?? s.customer_email ?? null;
   const { zakup, nowy } = await zapiszZakup({ sesja: s.id, email, pakiet: pakiet.ile, kwotaGr: s.amount_total ?? 0, wybrani: czysteId(m.wybrani) });
   if (zakup && nowy) {

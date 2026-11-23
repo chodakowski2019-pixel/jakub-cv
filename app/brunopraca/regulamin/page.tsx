@@ -71,7 +71,7 @@ const SEKCJE: SekcjaDok[] = [
     tytul: "5a. Kontakty do handlowców (Pracodawca)",
     punkty: [
       "Wyszukiwarka jest bezpłatna. Treść oferty z linku albo pliku PDF system streszcza automatycznie do krótkiego opisu. Wyszukiwarka pokazuje liczbę handlowców pasujących do opisu, Profile skrócone najlepiej dopasowanych i stopień dopasowania w procentach. Stopień dopasowania jest wyliczany automatycznie z porównania opisu z Profilem i ma charakter pomocniczy.",
-      "Żeby zobaczyć pełny Profil handlowca z danymi kontaktowymi, Pracodawca kupuje Pakiet (paczkę): 3 Kontakty za 149 zł brutto. Cena jest podana w Wyszukiwarce przed płatnością. Kontakty daje też subskrypcja (pkt 5b) i gwarancja (pkt 5c).",
+      "Żeby zobaczyć pełny Profil handlowca z danymi kontaktowymi, Pracodawca zaznacza w Wyszukiwarce wybranych handlowców i płaci 50 zł brutto za każdy Kontakt, jednorazowo. Przed odblokowaniem Wyszukiwarka pokazuje szczegóły Profilu bez imienia, nazwiska, telefonu, e-maila i CV, a zdjęcie jest zamazane. Łączna cena jest podana przed płatnością. Kontakty daje też subskrypcja (pkt 5b) i gwarancja (pkt 5c).",
       "Płatność jest jednorazowa i nie odnawia się sama. Obsługuje ją Stripe (karta, BLIK, przelew). Fakturę wysyłamy e-mailem.",
       "Po płatności Pracodawca zakłada konto albo loguje się na istniejące. Kontakty do osób wybranych przed płatnością odblokowują się od razu i są widoczne w panelu.",
       "Kontakty z Pakietu, których Pracodawca nie wykorzystał od razu, zostają na jego koncie przez 12 miesięcy od zakupu i można nimi odblokować kolejne osoby.",

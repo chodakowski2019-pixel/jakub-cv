@@ -33,7 +33,18 @@ export function pakietFirmyPoKwocie(kwotaGr: number): PakietFirmy | null {
   return PAKIETY_FIRM.find((p) => p.cena * 100 === kwotaGr) ?? null;
 }
 
-export const MAKS_WYBRANYCH = PAKIETY[PAKIETY.length - 1].ile;
+/** 23.11 (USER_001): odblokowanie kontaktu = 50 zł za każdą zaznaczoną osobę (brutto, jednorazowo). Zastępuje paczkę 3 za 149 zł. */
+export const CENA_KONTAKTU = 50;
+/** Najwięcej osób w jednym zakupie (limit metadanych Stripe: 500 znaków, uuid = 37 znaków z przecinkiem → 13). */
+export const MAKS_WYBRANYCH = 13;
+
+/** „1 osobę”, „2 osoby”, „5 osób” (biernik: „Odblokuj 1 osobę”). */
+export function osob(n: number): string {
+  const j = n % 10;
+  const d = n % 100;
+  if (n === 1) return "1 osobę";
+  return `${n} ${j >= 2 && j <= 4 && (d < 12 || d > 14) ? "osoby" : "osób"}`;
+}
 /** Ile miesięcy niewykorzystane kontakty czekają na koncie firmy. */
 export const WAZNOSC_MIES = 12;
 

@@ -5,7 +5,7 @@ import d from "@/components/bruno/praca/dolacz.module.css";
 import h from "@/components/bruno/praca/handlowcy.module.css";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 import { BRANZE, DOSWIADCZENIE, RYNKI, TRYBY, czytajFiltry, odblokowaneId, szukajHandlowcow, zapiszWyszukiwanie } from "@/lib/bruno/praca/handlowcy";
-import { PAKIETY, handlowcow } from "@/lib/bruno/praca/kontakty-cennik";
+import { CENA_KONTAKTU, handlowcow } from "@/lib/bruno/praca/kontakty-cennik";
 
 // 11.11 (USER_001): salesbruno.pl/praca/handlowcy = wyszukiwarka handlowców dla firm (link wysyłany firmom).
 // Firma wpisuje, kogo szuka → „Mamy dla Ciebie X handlowców” (karty bez kontaktu) → płatność Stripe za pakiet kontaktów
@@ -50,7 +50,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
               <h1 className={h.h1}>Znajdź handlowca, który już sprzedaje w Twojej branży.</h1>
               <p className={h.lead}>Wpisz, kogo szukasz. Zobaczysz, ilu handlowców z bazy pasuje. Płacisz tylko za kontakty.</p>
               <ol className={h.kroki}>
-                {["Wpisz, kogo szukasz", "Zobacz pasujących handlowców", `Odblokuj kontakty, od ${PAKIETY[0].cena} zł`].map((k, i) => (
+                {["Wpisz, kogo szukasz", "Zobacz pasujących handlowców", `Odblokuj kontakty: ${CENA_KONTAKTU} zł za osobę`].map((k, i) => (
                   <li key={k}>
                     <i>{i + 1}</i>
                     {k}

@@ -4,7 +4,7 @@ import { getStripePraca, kluczStripePraca } from "@/lib/bruno/stripe";
 import { zalogowanePraca } from "@/lib/bruno/praca/konta";
 import { odblokowaneId, widoczneId } from "@/lib/bruno/praca/handlowcy";
 import { czysteId, odblokuj, zapiszZakup } from "@/lib/bruno/praca/kontakty";
-import { kontaktow, pakietDla, pakietPoLiczbie } from "@/lib/bruno/praca/kontakty-cennik";
+import { CENA_KONTAKTU, kontaktow } from "@/lib/bruno/praca/kontakty-cennik";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -33,8 +33,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, url: `/praca/panel?z=handlowcy&odblokowane=${w.odblokowane}` });
   }
 
-  const wybrany = pakietPoLiczbie(b.pakiet);
-  const pakiet = wybrany && wybrany.ile >= ids.length ? wybrany : pakietDla(ids.length);
+  // 23.11 (USER_001): 50 zł za każdą zaznaczoną osobę, zamiast paczki 3 za 149 zł.
+  const pakiet = { ile: ids.length, cena: ids.length * CENA_KONTAKTU };
   // 12.11: wyszukiwarka jest też w panelu firmy (/praca/panel?z=szukaj) i publicznie (/wyszukiwarka).
   const powrot = typeof b.powrot === "string" && (b.powrot.startsWith("/praca/handlowcy") || b.powrot.startsWith("/praca/panel?z=szukaj") || b.powrot.startsWith("/wyszukiwarka")) ? b.powrot : "/praca/handlowcy";
 
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
   const opis = `Kontakty do handlowców na SalesBruno.pl: ${kontaktow(pakiet.ile)}`;
   const sesja = await getStripePraca().checkout.sessions.create({
     mode: "payment",
-    line_items: [{ price_data: { currency: "pln", unit_amount: pakiet.cena * 100, product_data: { name: opis } }, quantity: 1 }],
+    line_items: [{ price_data: { currency: "pln", unit_amount: CENA_KONTAKTU * 100, product_data: { name: "Kontakt do handlowca na SalesBruno.pl" } }, quantity: pakiet.ile }],
     ...(pracodawca ? { customer_email: pracodawca.email } : {}),
     customer_creation: "always",
     metadata,

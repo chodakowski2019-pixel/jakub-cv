@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { KartaHandlowca } from "@/lib/bruno/praca/handlowcy";
-import { MAKS_WYBRANYCH, PAKIETY, WAZNOSC_MIES, handlowcow, kontaktow, pakietDla, znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
+import { CENA_KONTAKTU, MAKS_WYBRANYCH, handlowcow, kontaktow, osob, znaczkiRynku } from "@/lib/bruno/praca/kontakty-cennik";
 import d from "./dolacz.module.css";
 import h from "./handlowcy.module.css";
 
@@ -26,14 +26,12 @@ export default function HandlowcyWyniki({
 }) {
   const mam = new Set(odblokowane);
   const doWyboru = karty.filter((k) => !mam.has(k.id));
-  const [wybrane, setWybrane] = useState<string[]>(() => doWyboru.slice(0, MAKS_WYBRANYCH).map((k) => k.id));
-  const [pakietIle, setPakietIle] = useState<number | null>(null);
+  // 23.11 (USER_001): 50 zł za każdą zaznaczoną osobę; na start nikt nie jest zaznaczony.
+  const [wybrane, setWybrane] = useState<string[]>([]);
   const [stan, setStan] = useState<"" | "wysylam">("");
   const [blad, setBlad] = useState("");
 
   const ile = wybrane.length;
-  const minimalny = pakietDla(Math.max(1, ile));
-  const pakiet = PAKIETY.find((p) => p.ile === pakietIle && p.ile >= ile) ?? minimalny;
   const zKonta = naKoncie >= ile && ile > 0;
 
   function przelacz(id: string) {
@@ -47,7 +45,7 @@ export default function HandlowcyWyniki({
     const odp = await fetch("/api/bruno/praca/kontakty", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ wybrani: wybrane, pakiet: pakiet.ile, powrot, zKonta: !platnosc }),
+      body: JSON.stringify({ wybrani: wybrane, powrot, zKonta: !platnosc }),
     }).catch(() => null);
     const j = await odp?.json().catch(() => null);
     if (!odp?.ok || !j?.ok || !j.url) {
@@ -161,12 +159,8 @@ export default function HandlowcyWyniki({
               Wybrano: <b>{handlowcow(ile)}</b>
               {zKonta ? (
                 <small>Na koncie: {kontaktow(naKoncie)}</small>
-              ) : pakiet.ile > ile && ile > 0 ? (
-                <small>
-                  Zostaje {kontaktow(pakiet.ile - ile)} na {WAZNOSC_MIES} mies.
-                </small>
               ) : (
-                <small>Płatność jednorazowa</small>
+                <small>{CENA_KONTAKTU} zł brutto za osobę, płatność jednorazowa</small>
               )}
               {blad && <span className={h.kupBlad}>{blad}</span>}
               {test && !blad && <span className={h.kupTest}>Tryb lokalny: bez Stripe</span>}
@@ -176,19 +170,9 @@ export default function HandlowcyWyniki({
                 {stan === "wysylam" ? "Chwileczkę…" : `Odblokuj ${kontaktow(ile)} z konta`}
               </button>
             ) : (
-              <>
-                <div className={h.pakiety} role="radiogroup" aria-label="Pakiet kontaktów">
-                  {PAKIETY.map((p) => (
-                    <button type="button" role="radio" aria-checked={pakiet.ile === p.ile} key={p.ile} className={`${h.pakiet} ${pakiet.ile === p.ile ? h.pakietWl : ""}`} disabled={p.ile < ile} onClick={() => setPakietIle(p.ile)}>
-                      {kontaktow(p.ile)}
-                      <b>{p.cena} zł</b>
-                    </button>
-                  ))}
-                </div>
-                <button type="button" className={d.cta} disabled={stan === "wysylam" || ile === 0} onClick={() => odblokuj(true)}>
-                  {stan === "wysylam" ? "Chwileczkę…" : `Odblokuj kontakty · ${pakiet.cena} zł`}
-                </button>
-              </>
+              <button type="button" className={d.cta} disabled={stan === "wysylam" || ile === 0} onClick={() => odblokuj(true)}>
+                {stan === "wysylam" ? "Chwileczkę…" : ile ? `Odblokuj ${osob(ile)} · ${ile * CENA_KONTAKTU} zł` : "Zaznacz osoby"}
+              </button>
             )}
           </div>
         </div>
