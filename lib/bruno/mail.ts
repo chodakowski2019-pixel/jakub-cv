@@ -56,6 +56,9 @@ export async function wyslij(args: {
   scheduledAt?: string;
 }): Promise<{ ok: true; pominiety?: boolean; id?: string | null }> {
   const rodzaj = args.rodzaj ?? "inny";
+  // 24.11 (USER_001): konta demo (@demo.salesbruno.pl, = DOMENA_DEMO w demo-zespol.ts) nie mają skrzynki (brak MX).
+  // Ok. 35 maili dziennie wracało jako niedoręczone i psuło opinię domeny jakubchodakowski.com. Żadnej wysyłki, bez zapisu.
+  if (args.do.trim().toLowerCase().endsWith("@demo.salesbruno.pl")) return { ok: true, pominiety: true };
   if (!mailDziala()) {
     if (process.env.NODE_ENV === "development") {
       console.warn("[bruno mail] RESEND_API_KEY brak, mail pominięty:", args.temat, "→", args.do);
