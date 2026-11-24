@@ -1192,5 +1192,1427 @@
   "teza": "Gdy z usługi korzysta się przez klienta biznesowego, ElevenLabs działa jako podmiot przetwarzający, a o danych decyduje umowa z tym klientem.",
   "nazwa": "ElevenLabs, polityka prywatności",
   "url": "https://elevenlabs.io/privacy-policy"
+ },
+ "le-chat-nazwa-vibe": {
+  "liczba": "",
+  "teza": "Le Chat działa teraz pod nazwą Mistral Vibe, a rozmowy, ustawienia i plany przechodzą bez zmian.",
+  "nazwa": "Mistral AI, strona produktu Mistral Vibe (dawniej Le Chat)",
+  "url": "https://mistral.ai/products/le-chat"
+ },
+ "le-chat-plan-darmowy": {
+  "liczba": "0 USD",
+  "teza": "Mistral ma plan darmowy z ograniczonym dostępem do czatu, wyszukiwania i tworzenia treści.",
+  "nazwa": "Mistral AI, cennik",
+  "url": "https://mistral.ai/pricing"
+ },
+ "le-chat-cena-pro": {
+  "liczba": "14,99 USD miesięcznie bez podatku",
+  "teza": "Plan Pro dla jednej osoby kosztuje 14,99 USD miesięcznie bez podatku.",
+  "nazwa": "Mistral AI, cennik",
+  "url": "https://mistral.ai/pricing"
+ },
+ "le-chat-cena-team": {
+  "liczba": "24,99 USD za osobę miesięcznie bez podatku",
+  "teza": "Plan Team dla zespołów kosztuje 24,99 USD za osobę miesięcznie bez podatku.",
+  "nazwa": "Mistral AI, cennik",
+  "url": "https://mistral.ai/pricing"
+ },
+ "le-chat-cena-eur": {
+  "liczba": "14,99 EUR i 24,99 EUR",
+  "teza": "Cennik w euro ma te same kwoty co w dolarach: 14,99 EUR za Pro i 24,99 EUR za Team.",
+  "nazwa": "Mistral AI, cennik (kod strony)",
+  "url": "https://mistral.ai/pricing"
+ },
+ "le-chat-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise nie ma ceny w cenniku, cena jest ustalana po kontakcie z Mistral.",
+  "nazwa": "Mistral AI, cennik",
+  "url": "https://mistral.ai/pricing"
+ },
+ "le-chat-trening-domyslny": {
+  "liczba": "",
+  "teza": "W planach Free, Pro, Team i Student treści rozmów domyślnie służą do trenowania modeli, chyba że użytkownik to wyłączy.",
+  "nazwa": "Mistral AI, centrum pomocy: Do you use my user data to train your Artificial Intelligence models?",
+  "url": "https://help.mistral.ai/en/articles/347617-do-you-use-my-user-data-to-train-your-artificial-intelligence-models"
+ },
+ "le-chat-trening-team": {
+  "liczba": "",
+  "teza": "W planie Team administrator może wyłączyć trenowanie na danych dla całej firmy.",
+  "nazwa": "Mistral AI, centrum pomocy: Can I opt out of my input or output data being used for training?",
+  "url": "https://help.mistral.ai/en/articles/455207-can-i-opt-out-of-my-input-or-output-data-being-used-for-training"
+ },
+ "le-chat-trening-enterprise": {
+  "liczba": "",
+  "teza": "Klienci planu Enterprise są domyślnie wyłączeni z trenowania modeli.",
+  "nazwa": "Mistral AI, centrum pomocy: Do you use my user data to train your Artificial Intelligence models?",
+  "url": "https://help.mistral.ai/en/articles/347617-do-you-use-my-user-data-to-train-your-artificial-intelligence-models"
+ },
+ "le-chat-dpa": {
+  "liczba": "",
+  "teza": "Mistral udostępnia klientom umowę o przetwarzaniu danych, w której klient jest administratorem, a Mistral podmiotem przetwarzającym.",
+  "nazwa": "Mistral AI, Data Processing Addendum",
+  "url": "https://legal.mistral.ai/terms/data-processing-addendum"
+ },
+ "le-chat-firma-francja": {
+  "liczba": "",
+  "teza": "Mistral AI to francuska firma z siedzibą w Paryżu.",
+  "nazwa": "Mistral AI, polityka prywatności",
+  "url": "https://legal.mistral.ai/terms/privacy-policy"
+ },
+ "le-chat-polski-modele": {
+  "liczba": "",
+  "teza": "Mistral wymienia polski wśród języków, w których jego modele mają działać dobrze.",
+  "nazwa": "Mistral AI, dokumentacja: Supported languages",
+  "url": "https://docs.mistral.ai/resources/languages"
+ },
+ "le-chat-polityka-pl": {
+  "liczba": "",
+  "teza": "Polityka prywatności Mistral ma polską wersję językową.",
+  "nazwa": "Mistral AI, polityka prywatności (wybór języka)",
+  "url": "https://legal.mistral.ai/terms/privacy-policy"
+ },
+ "grammarly-plan-darmowy": {
+  "liczba": "0 EUR miesięcznie",
+  "teza": "Grammarly ma plan darmowy Free z poprawą pisowni i gramatyki oraz limitem 100 poleceń AI miesięcznie.",
+  "nazwa": "Grammarly, cennik (Plans)",
+  "url": "https://www.grammarly.com/plans"
+ },
+ "grammarly-cena-pro": {
+  "liczba": "144 USD rocznie za osobę, 30 USD miesięcznie za osobę",
+  "teza": "Plan Grammarly Pro kosztuje 144 USD rocznie za osobę, czyli średnio 12 USD miesięcznie, a przy płatności co miesiąc 30 USD za osobę.",
+  "nazwa": "Centrum pomocy Grammarly, How much does Grammarly Pro cost?",
+  "url": "https://support.grammarly.com/hc/en-us/articles/115000090011-How-much-does-Grammarly-Pro-cost"
+ },
+ "grammarly-pro-149-miejsc": {
+  "liczba": "do 149 miejsc",
+  "teza": "Plan Pro obsługuje zespoły do 149 osób i zastąpił dawny plan Grammarly Business.",
+  "nazwa": "Centrum pomocy Grammarly, How much does Grammarly Pro cost?",
+  "url": "https://support.grammarly.com/hc/en-us/articles/115000090011-How-much-does-Grammarly-Pro-cost"
+ },
+ "grammarly-waluta": {
+  "liczba": "",
+  "teza": "Domyślną walutą cennika Grammarly jest dolar amerykański, a w niektórych regionach ceny są podawane w euro.",
+  "nazwa": "Centrum pomocy Grammarly, How much does Grammarly Pro cost?",
+  "url": "https://support.grammarly.com/hc/en-us/articles/115000090011-How-much-does-Grammarly-Pro-cost"
+ },
+ "grammarly-enterprise-kontakt": {
+  "liczba": "",
+  "teza": "Plan Enterprise dla większych organizacji nie ma ceny w cenniku, producent podaje ją po kontakcie z działem obsługi firm.",
+  "nazwa": "Grammarly, cennik (Plans)",
+  "url": "https://www.grammarly.com/plans"
+ },
+ "grammarly-trenowanie-domyslnie": {
+  "liczba": "",
+  "teza": "Na kontach Free, Premium i jednoosobowym Pro treści domyślnie mogą służyć do trenowania modeli, a użytkownik może to wyłączyć w ustawieniach.",
+  "nazwa": "Centrum pomocy Grammarly, Product Improvement and Training Control",
+  "url": "https://support.grammarly.com/hc/en-us/articles/25555503115277-Product-Improvement-and-Training-Control"
+ },
+ "grammarly-trenowanie-zespoly": {
+  "liczba": "",
+  "teza": "Konta zespołowe kupione przez stronę mają trenowanie domyślnie włączone i administrator może je wyłączyć dla całej firmy, a konta kupione przez dział obsługi firm mają je domyślnie wyłączone.",
+  "nazwa": "Centrum pomocy Grammarly, Product Improvement and Training Control",
+  "url": "https://support.grammarly.com/hc/en-us/articles/25555503115277-Product-Improvement-and-Training-Control"
+ },
+ "grammarly-dpa": {
+  "liczba": "",
+  "teza": "Umowa dla klientów biznesowych włącza załącznik o przetwarzaniu danych osobowych (DPA) producenta.",
+  "nazwa": "Grammarly, Customer Business Agreement",
+  "url": "https://www.grammarly.com/terms/customer-business-agreement"
+ },
+ "grammarly-dane-usa": {
+  "liczba": "",
+  "teza": "Grammarly przechowuje dane w centrach danych Amazon Web Services we wschodnich Stanach Zjednoczonych.",
+  "nazwa": "Centrum pomocy Grammarly, Privacy and security FAQs",
+  "url": "https://support.grammarly.com/hc/en-us/articles/20916119474829-Privacy-and-security-FAQs"
+ },
+ "grammarly-polski-podstawowy": {
+  "liczba": "ponad 20 języków",
+  "teza": "Grammarly poprawia pisownię i podstawową gramatykę w ponad 20 językach, w tym po polsku, także w planie darmowym.",
+  "nazwa": "Grammarly, strona Languages",
+  "url": "https://www.grammarly.com/languages"
+ },
+ "grammarly-polski-bez-zaawansowanych": {
+  "liczba": "",
+  "teza": "Zaawansowane podpowiedzi o stylu i tonie oraz przepisywanie akapitów działają tylko w 6 językach i polskiego wśród nich nie ma.",
+  "nazwa": "Grammarly, strona Languages",
+  "url": "https://www.grammarly.com/languages"
+ },
+ "languagetool-plan-darmowy": {
+  "liczba": "",
+  "teza": "Darmowe konto LanguageTool daje sprawdzanie tekstu i parafrazowanie w przeglądarce z limitami, a dodatek do przeglądarki wymaga planu Premium.",
+  "nazwa": "Centrum pomocy LanguageTool, What features are available in the new premium-only version of the LanguageTool browser extension?",
+  "url": "https://help.languagetool.org/hc/en-us/articles/39254502438551-What-features-are-available-in-the-new-premium-only-version-of-the-LanguageTool-browser-extension"
+ },
+ "languagetool-cena-premium": {
+  "liczba": "59,89 EUR rocznie, 19,90 EUR miesięcznie",
+  "teza": "LanguageTool Premium dla jednej osoby kosztuje 59,89 EUR rocznie albo 19,90 EUR przy płatności co miesiąc.",
+  "nazwa": "Centrum pomocy LanguageTool, What subscriptions does LanguageTool offer?",
+  "url": "https://help.languagetool.org/hc/en-us/articles/39254510973335-What-subscriptions-does-LanguageTool-offer"
+ },
+ "languagetool-cena-zespol": {
+  "liczba": "56,90 EUR rocznie za osobę, do 20 osób",
+  "teza": "Plan zespołowy LanguageTool dla 2 do 20 osób kosztuje 56,90 EUR rocznie za osobę.",
+  "nazwa": "Centrum pomocy LanguageTool, What subscriptions does LanguageTool offer?",
+  "url": "https://help.languagetool.org/hc/en-us/articles/39254510973335-What-subscriptions-does-LanguageTool-offer"
+ },
+ "languagetool-zespol-powyzej-20": {
+  "liczba": "2 do 20 osób",
+  "teza": "Licencje dla 2 do 20 osób kupuje się samodzielnie, a dla większych firm producent przygotowuje ofertę po kontakcie.",
+  "nazwa": "Centrum pomocy LanguageTool, How can I purchase a team plan?",
+  "url": "https://help.languagetool.org/hc/en-us/articles/39254517212439-How-can-I-purchase-a-team-plan"
+ },
+ "languagetool-polski": {
+  "liczba": "ponad 20 000 dodatkowych reguł",
+  "teza": "LanguageTool sprawdza teksty po polsku, a Premium dodaje ponad 20 000 dodatkowych reguł między innymi dla języka polskiego.",
+  "nazwa": "Centrum pomocy LanguageTool, What languages does LanguageTool support?",
+  "url": "https://help.languagetool.org/hc/en-us/articles/39254526141463-What-languages-does-LanguageTool-support"
+ },
+ "languagetool-strona-pl": {
+  "liczba": "",
+  "teza": "Strona LanguageTool ma polską wersję językową, w tym polski cennik Premium.",
+  "nazwa": "LanguageTool, strona Premium po polsku",
+  "url": "https://languagetool.org/pl/premium"
+ },
+ "languagetool-bez-trenowania": {
+  "liczba": "",
+  "teza": "Producent deklaruje, że nie używa tekstów żadnego użytkownika LanguageTool, w planie indywidualnym ani zespołowym, do trenowania modeli, i nie wymaga to zmiany ustawień.",
+  "nazwa": "LanguageTool, Privacy Policy (Learneo)",
+  "url": "https://languagetool.org/legal/privacy"
+ },
+ "languagetool-dpa": {
+  "liczba": "",
+  "teza": "Dane klientów planu zespołowego są przetwarzane według umowy o przetwarzaniu danych (DPA) dla firm.",
+  "nazwa": "LanguageTool, Privacy Policy (Learneo)",
+  "url": "https://languagetool.org/legal/privacy"
+ },
+ "languagetool-firma-niemcy": {
+  "liczba": "",
+  "teza": "Wydawcą LanguageTool jest spółka LanguageTooler GmbH z siedzibą w Hamburgu w Niemczech.",
+  "nazwa": "LanguageTool, Imprint",
+  "url": "https://languagetool.org/legal/"
+ },
+ "deepseek-czat-darmowy": {
+  "liczba": "0 USD",
+  "teza": "Producent opisuje aplikację DeepSeek jako asystenta AI do rozmów z modelami za darmo.",
+  "nazwa": "DeepSeek, strona główna (opis aplikacji)",
+  "url": "https://www.deepseek.com/en"
+ },
+ "deepseek-api-cena": {
+  "liczba": "0,15 USD i 0,3 USD za milion tokenów",
+  "teza": "API DeepSeek jest płatne za zużycie: model deepseek-flash kosztuje 0,15 USD za milion tokenów wejściowych poza godzinami szczytu i 0,3 USD w szczycie.",
+  "nazwa": "DeepSeek API Docs, Models & Pricing",
+  "url": "https://api-docs.deepseek.com/quick_start/pricing"
+ },
+ "deepseek-bez-planow": {
+  "liczba": "",
+  "teza": "DeepSeek ma jeden cennik API bez planów abonamentowych.",
+  "nazwa": "DeepSeek, FAQ: Are there plans with higher rate limits?",
+  "url": "https://static.deepseek.com/faq/index.html?lang=en"
+ },
+ "deepseek-konto-firmowe": {
+  "liczba": "",
+  "teza": "Konto zweryfikowane na firmę nie daje innych funkcji niż konto prywatne, różni się tylko sposobem weryfikacji.",
+  "nazwa": "DeepSeek, FAQ: What is the difference between Personal and Enterprise Real-Name Verification?",
+  "url": "https://static.deepseek.com/faq/index.html?lang=en"
+ },
+ "deepseek-umowa-wzor": {
+  "liczba": "",
+  "teza": "Dla klientów API DeepSeek oferuje standardową umowę ramową, której nie można zmieniać.",
+  "nazwa": "DeepSeek, FAQ: Do you support signing cooperation agreements?",
+  "url": "https://static.deepseek.com/faq/index.html?lang=en"
+ },
+ "deepseek-dane-chiny": {
+  "liczba": "",
+  "teza": "DeepSeek zbiera, przetwarza i przechowuje dane osobowe użytkowników w Chińskiej Republice Ludowej.",
+  "nazwa": "DeepSeek, Privacy Policy (aktualizacja 10 lutego 2026)",
+  "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html"
+ },
+ "deepseek-trening": {
+  "liczba": "",
+  "teza": "Polityka prywatności wymienia trenowanie modeli jako jeden z celów wykorzystania danych użytkowników.",
+  "nazwa": "DeepSeek, Privacy Policy",
+  "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html"
+ },
+ "deepseek-trening-sprzeciw": {
+  "liczba": "",
+  "teza": "Użytkownik ma prawo nie zgodzić się na użycie swoich danych do trenowania modeli.",
+  "nazwa": "DeepSeek, Privacy Policy",
+  "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html"
+ },
+ "deepseek-firma-chiny": {
+  "liczba": "",
+  "teza": "Usługi DeepSeek dostarcza i kontroluje spółka Hangzhou DeepSeek Artificial Intelligence z siedzibą w Chinach.",
+  "nazwa": "DeepSeek, Privacy Policy",
+  "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html"
+ },
+ "deepseek-przedstawiciel-ue": {
+  "liczba": "",
+  "teza": "DeepSeek wyznaczył firmę Prighter jako swojego przedstawiciela do spraw prywatności w Unii Europejskiej.",
+  "nazwa": "DeepSeek, Privacy Policy",
+  "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html"
+ },
+ "deepseek-jezyki-strony": {
+  "liczba": "",
+  "teza": "Strona DeepSeek ma tylko wersję chińską i angielską, producent nie wymienia języka polskiego.",
+  "nazwa": "DeepSeek, strona główna (przełącznik języka)",
+  "url": "https://www.deepseek.com/en"
+ },
+ "descript-darmowy": {
+  "liczba": "0 USD",
+  "teza": "Descript ma darmowy plan Free, do którego nie trzeba podawać karty płatniczej.",
+  "nazwa": "Descript, cennik, pytania i odpowiedzi",
+  "url": "https://www.descript.com/pricing"
+ },
+ "descript-darmowy-limity": {
+  "liczba": "60 minut miesięcznie, eksport 720p",
+  "teza": "Plan Free daje 60 minut materiału miesięcznie i eksport wideo w rozdzielczości 720p.",
+  "nazwa": "Descript, cennik, porównanie planów",
+  "url": "https://www.descript.com/pricing"
+ },
+ "descript-cena-hobbyist": {
+  "liczba": "24 USD za osobę miesięcznie",
+  "teza": "Najtańszy plan płatny Hobbyist kosztuje 24 USD za osobę miesięcznie przy płatności co miesiąc; cennik nie podaje, czy cena zawiera podatek.",
+  "nazwa": "Descript, cennik (kod strony)",
+  "url": "https://www.descript.com/pricing"
+ },
+ "descript-cena-hobbyist-rocznie": {
+  "liczba": "16 USD za osobę miesięcznie",
+  "teza": "Przy płatności rocznej plan Hobbyist kosztuje 16 USD za osobę miesięcznie.",
+  "nazwa": "Descript, cennik (kod strony)",
+  "url": "https://www.descript.com/pricing"
+ },
+ "descript-business": {
+  "liczba": "65 USD za osobę miesięcznie albo 50 USD przy płatności rocznej",
+  "teza": "Plan Business kosztuje 65 USD za osobę miesięcznie przy płatności co miesiąc albo 50 USD przy płatności rocznej.",
+  "nazwa": "Descript, cennik (kod strony)",
+  "url": "https://www.descript.com/pricing"
+ },
+ "descript-business-rocznie": {
+  "liczba": "50 USD za osobę miesięcznie",
+  "teza": "Przy płatności rocznej plan Business kosztuje 50 USD za osobę miesięcznie.",
+  "nazwa": "Descript, cennik (kod strony)",
+  "url": "https://www.descript.com/pricing"
+ },
+ "descript-business-5-osob": {
+  "liczba": "do 5 osób",
+  "teza": "Plan Business obejmuje zespół do 5 osób, a każde miejsce jest płatne osobno.",
+  "nazwa": "Descript, cennik",
+  "url": "https://www.descript.com/pricing"
+ },
+ "descript-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise ma cenę ustalaną indywidualnie po rozmowie z producentem i daje między innymi wyłączenie trenowania.",
+  "nazwa": "Descript, cennik",
+  "url": "https://www.descript.com/pricing"
+ },
+ "descript-trening-warunki": {
+  "liczba": "",
+  "teza": "Warunki korzystania mówią, że Descript może używać treści wprowadzonych i wygenerowanych do trenowania swoich modeli, chyba że użytkownik z tego zrezygnował.",
+  "nazwa": "Descript, Terms of Service",
+  "url": "https://www.descript.com/terms"
+ },
+ "descript-trening-ustawienie": {
+  "liczba": "",
+  "teza": "Użytkownik wyłącza udostępnianie danych w ustawieniach profilu, w sekcji Share data with Descript.",
+  "nazwa": "Descript Help Center, Account data and privacy",
+  "url": "https://help.descript.com/account-and-app-settings/data-privacy"
+ },
+ "descript-trening-onboarding": {
+  "liczba": "",
+  "teza": "Przy pierwszym uruchomieniu użytkownik sam wybiera, czy udostępnia dane, a w planie Enterprise udostępnianie jest domyślnie wyłączone.",
+  "nazwa": "Descript Help Center, Account data and privacy",
+  "url": "https://help.descript.com/account-and-app-settings/data-privacy"
+ },
+ "descript-podwykonawcy": {
+  "liczba": "",
+  "teza": "Descript deklaruje, że umowy z dostawcami narzędzi AI zabraniają im trenowania modeli na treściach klientów.",
+  "nazwa": "Descript, Terms of Service",
+  "url": "https://www.descript.com/terms"
+ },
+ "descript-transkrypcja-polski": {
+  "liczba": "25 języków",
+  "teza": "Automatyczna transkrypcja działa w 25 językach, w tym po polsku.",
+  "nazwa": "Descript, cennik, porównanie planów",
+  "url": "https://www.descript.com/pricing"
+ },
+ "descript-dubbing-polski": {
+  "liczba": "30 języków",
+  "teza": "Tłumaczenie nagrania z dubbingiem działa w 30 językach, w tym po polsku.",
+  "nazwa": "Descript, cennik, porównanie planów",
+  "url": "https://www.descript.com/pricing"
+ },
+ "descript-lektor-polski": {
+  "liczba": "14 języków",
+  "teza": "Głosy AI brzmiące jak rodzimi użytkownicy języka są dostępne w 14 językach, w tym po polsku.",
+  "nazwa": "Descript, cennik, porównanie planów",
+  "url": "https://www.descript.com/pricing"
+ },
+ "descript-podatek": {
+  "liczba": "",
+  "teza": "Poza USA ceny Descript nie zawierają żadnych podatków, w tym VAT.",
+  "nazwa": "Descript Help Center, Taxes on Descript subscriptions and fees",
+  "url": "https://help.descript.com/billing-payments-plans/taxes"
+ },
+ "descript-usa": {
+  "liczba": "",
+  "teza": "Descript to firma z USA z adresem w San Francisco.",
+  "nazwa": "Descript, Terms of Service",
+  "url": "https://www.descript.com/terms"
+ },
+ "synthesia-darmowy": {
+  "liczba": "0 USD miesięcznie, 500 kredytów",
+  "teza": "Synthesia ma darmowy plan Basic za 0 USD miesięcznie z 500 kredytami na miesiąc i znakiem wodnym na filmach.",
+  "nazwa": "Cennik Synthesia, Synthesia Limited",
+  "url": "https://www.synthesia.io/pricing"
+ },
+ "synthesia-cena-starter": {
+  "liczba": "19 USD miesięcznie",
+  "teza": "Najtańszy plan płatny Starter kosztuje 19 USD miesięcznie przy płatności co miesiąc i daje 1 250 kredytów miesięcznie; strona nie podaje, czy cena zawiera podatek.",
+  "nazwa": "Cennik Synthesia, Synthesia Limited",
+  "url": "https://www.synthesia.io/pricing"
+ },
+ "synthesia-cena-starter-rocznie": {
+  "liczba": "14 USD miesięcznie, 168 USD rocznie",
+  "teza": "Przy płatności rocznej plan Starter kosztuje 14 USD miesięcznie, czyli 168 USD za rok.",
+  "nazwa": "Cennik Synthesia, Synthesia Limited",
+  "url": "https://www.synthesia.io/pricing"
+ },
+ "synthesia-starter-miejsca": {
+  "liczba": "1 edytor, 3 gości",
+  "teza": "Plan Starter obejmuje jedno miejsce do tworzenia filmów i 3 gości, którzy mogą komentować.",
+  "nazwa": "Cennik Synthesia, porównanie planów, Synthesia Limited",
+  "url": "https://www.synthesia.io/pricing"
+ },
+ "synthesia-business": {
+  "liczba": "99 USD miesięcznie albo 79 USD przy płatności rocznej",
+  "teza": "Plan Business kosztuje 99 USD miesięcznie za jedną osobę przy płatności co miesiąc albo 79 USD miesięcznie przy płatności rocznej.",
+  "nazwa": "Cennik Synthesia, Synthesia Limited",
+  "url": "https://www.synthesia.io/pricing"
+ },
+ "synthesia-business-miejsca": {
+  "liczba": "20 USD za miejsce miesięcznie",
+  "teza": "W planie Business każda kolejna osoba w zespole kosztuje 20 USD za miejsce miesięcznie.",
+  "nazwa": "Cennik Synthesia, Synthesia Limited",
+  "url": "https://www.synthesia.io/pricing"
+ },
+ "synthesia-business-10-osob": {
+  "liczba": "do 10 osób",
+  "teza": "Plan Business obejmuje do 10 członków zespołu i nieograniczoną liczbę gości.",
+  "nazwa": "Cennik Synthesia, Synthesia Limited",
+  "url": "https://www.synthesia.io/pricing"
+ },
+ "synthesia-enterprise": {
+  "liczba": "",
+  "teza": "Cena planu Enterprise jest ustalana indywidualnie po rozmowie z producentem.",
+  "nazwa": "Cennik Synthesia, Synthesia Limited",
+  "url": "https://www.synthesia.io/pricing"
+ },
+ "synthesia-jezyki": {
+  "liczba": "ponad 140 języków i głosów",
+  "teza": "Cennik Synthesia podaje ponad 140 języków i głosów we wszystkich planach.",
+  "nazwa": "Cennik Synthesia, porównanie planów, Synthesia Limited",
+  "url": "https://www.synthesia.io/pricing"
+ },
+ "synthesia-glos-polski": {
+  "liczba": "",
+  "teza": "Spis głosów w dokumentacji Synthesia zawiera głosy w języku polskim z kodem pl.",
+  "nazwa": "Synthesia API: Supported Voices, Synthesia Limited",
+  "url": "https://docs.synthesia.io/reference/voices"
+ },
+ "synthesia-interfejs-jezyki": {
+  "liczba": "5 języków strony",
+  "teza": "Strona Synthesia działa po angielsku, francusku, niemiecku, hiszpańsku i portugalsku, bez wersji polskiej.",
+  "nazwa": "Cennik Synthesia, przełącznik języka, Synthesia Limited",
+  "url": "https://www.synthesia.io/pricing"
+ },
+ "synthesia-bez-trenowania": {
+  "liczba": "",
+  "teza": "Synthesia deklaruje, że nie używa danych klientów, ani tego, co wprowadzają, ani gotowych filmów, do wstępnego trenowania swoich modeli.",
+  "nazwa": "AI Governance Practices, Synthesia Limited",
+  "url": "https://www.synthesia.io/legal/ai-governance-practices"
+ },
+ "synthesia-dpa": {
+  "liczba": "",
+  "teza": "Synthesia udostępnia umowę o przetwarzaniu danych (Data Processing Addendum) jako dodatek do warunków korzystania z usługi.",
+  "nazwa": "Data Processing Agreement, Synthesia Limited",
+  "url": "https://www.synthesia.io/legal/data-processing-agreement"
+ },
+ "synthesia-zgoda-awatar": {
+  "liczba": "",
+  "teza": "Przy tworzeniu własnego awatara Synthesia porównuje nagranie weryfikacyjne z próbką i wymaga wyraźnej zgody na przetwarzanie danych biometrycznych.",
+  "nazwa": "Privacy Policy, Synthesia Limited",
+  "url": "https://www.synthesia.io/legal/privacy-policy"
+ },
+ "synthesia-londyn": {
+  "liczba": "",
+  "teza": "Synthesia Limited to firma z siedzibą w Londynie w Wielkiej Brytanii i administrator danych z polityki prywatności.",
+  "nazwa": "Privacy Policy, Synthesia Limited",
+  "url": "https://www.synthesia.io/legal/privacy-policy"
+ },
+ "n8n-cena-starter": {
+  "liczba": "20 EUR miesięcznie",
+  "teza": "Najtańszy plan w chmurze, Starter, kosztuje 20 EUR miesięcznie przy płatności rocznej i obejmuje 2 500 wykonań przepływu.",
+  "nazwa": "n8n, cennik",
+  "url": "https://n8n.io/pricing/"
+ },
+ "n8n-cena-pro": {
+  "liczba": "50 EUR miesięcznie",
+  "teza": "Plan Pro kosztuje 50 EUR miesięcznie przy płatności rocznej i obejmuje 10 000 wykonań przepływu.",
+  "nazwa": "n8n, cennik",
+  "url": "https://n8n.io/pricing/"
+ },
+ "n8n-cena-business": {
+  "liczba": "667 EUR miesięcznie",
+  "teza": "Plan Business dla firm do 100 osób kosztuje 667 EUR miesięcznie przy płatności rocznej i działa tylko na własnym serwerze.",
+  "nazwa": "n8n, cennik",
+  "url": "https://n8n.io/pricing/"
+ },
+ "n8n-bez-limitu-osob": {
+  "liczba": "",
+  "teza": "Każdy plan n8n ma bez limitu użytkowników i przepływów, a cena zależy od liczby wykonań przepływu w miesiącu.",
+  "nazwa": "n8n, cennik",
+  "url": "https://n8n.io/pricing/"
+ },
+ "n8n-startup": {
+  "liczba": "50%",
+  "teza": "Firmy poniżej 20 pracowników mogą dostać plan Startup z rabatem 50% na plan Business, jeśli spełnią warunki.",
+  "nazwa": "n8n, cennik",
+  "url": "https://n8n.io/pricing/"
+ },
+ "n8n-community": {
+  "liczba": "",
+  "teza": "n8n można postawić na własnym serwerze; bez klucza licencyjnego działa jako darmowa wersja Community.",
+  "nazwa": "n8n, dokumentacja: Host n8n",
+  "url": "https://docs.n8n.io/hosting/"
+ },
+ "n8n-dane-ue": {
+  "liczba": "",
+  "teza": "W planach w chmurze dane są przechowywane w Unii Europejskiej, na serwerach we Frankfurcie; przy własnym serwerze tam, gdzie firma go postawi.",
+  "nazwa": "n8n, cennik (pytania)",
+  "url": "https://n8n.io/pricing/"
+ },
+ "n8n-bez-trenowania": {
+  "liczba": "",
+  "teza": "Warunki AI n8n mówią, że firma nie używa treści klienta ani wyników do trenowania modeli.",
+  "nazwa": "n8n, AI Terms",
+  "url": "https://n8n.io/legal/ai-terms/"
+ },
+ "n8n-dpa": {
+  "liczba": "",
+  "teza": "n8n udostępnia podpisaną przez siebie umowę o przetwarzaniu danych do kontrasygnaty przez klienta.",
+  "nazwa": "n8n, strona Legal",
+  "url": "https://n8n.io/legal/"
+ },
+ "n8n-berlin": {
+  "liczba": "",
+  "teza": "n8n to produkt firmy n8n GmbH z siedzibą w Berlinie.",
+  "nazwa": "n8n, Imprint",
+  "url": "https://n8n.io/imprint/"
+ },
+ "grok-nazwa-spacexsi": {
+  "liczba": "",
+  "teza": "Producent Groka występuje w dokumentacji jako SpaceXSI, z dopiskiem xAI.",
+  "nazwa": "SpaceXSI, dokumentacja (llms.txt)",
+  "url": "https://docs.x.ai/llms.txt"
+ },
+ "grok-plan-darmowy": {
+  "liczba": "0 USD",
+  "teza": "Grok ma darmowy plan z ograniczonym limitem użycia.",
+  "nazwa": "SpaceXSI, dokumentacja: The X Subscription, Pricing",
+  "url": "https://docs.x.ai/x-subscription/pricing"
+ },
+ "grok-cena-plus": {
+  "liczba": "8 USD miesięcznie",
+  "teza": "Najtańszy płatny plan Plus kosztuje 8 USD miesięcznie albo 80 USD rocznie, bez podatku.",
+  "nazwa": "SpaceXSI, dokumentacja: The X Subscription, Pricing",
+  "url": "https://docs.x.ai/x-subscription/pricing"
+ },
+ "grok-cena-premium": {
+  "liczba": "30 USD miesięcznie",
+  "teza": "Plan Premium kosztuje 30 USD miesięcznie albo 300 USD rocznie.",
+  "nazwa": "SpaceXSI, dokumentacja: The X Subscription, Pricing",
+  "url": "https://docs.x.ai/x-subscription/pricing"
+ },
+ "grok-ceny-bez-podatku": {
+  "liczba": "",
+  "teza": "Ceny katalogowe nie obejmują podatku, który może zostać doliczony przy zakupie.",
+  "nazwa": "SpaceXSI, dokumentacja: The X Subscription, Pricing",
+  "url": "https://docs.x.ai/x-subscription/pricing"
+ },
+ "grok-cena-zespol": {
+  "liczba": "30 USD za miejsce",
+  "teza": "Plan dla zespołu zaczyna się od 30 USD za miejsce w wersji Premium. Plus nie jest dostępny dla zespołów.",
+  "nazwa": "SpaceXSI, dokumentacja: The X Subscription, Pricing",
+  "url": "https://docs.x.ai/x-subscription/pricing"
+ },
+ "grok-zespol-plus": {
+  "liczba": "",
+  "teza": "Plan zespołowy daje wspólne rozliczenia, administrację i statystyki użycia, ale nie obejmuje planu Plus.",
+  "nazwa": "SpaceXSI, dokumentacja: The X Subscription, Pricing",
+  "url": "https://docs.x.ai/x-subscription/pricing"
+ },
+ "grok-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise jest dostępny przez kontakt z działem handlowym producenta.",
+  "nazwa": "SpaceXSI, dokumentacja: Grok Business / Enterprise, Grok.com User Guide",
+  "url": "https://docs.x.ai/grok/user-guide"
+ },
+ "grok-business-warunki": {
+  "liczba": "",
+  "teza": "Obszar zespołu w Grok Business podlega warunkom Enterprise producenta.",
+  "nazwa": "SpaceXSI, dokumentacja: Grok Business / Enterprise, Grok.com User Guide",
+  "url": "https://docs.x.ai/grok/user-guide"
+ },
+ "grok-trening-prywatne": {
+  "liczba": "",
+  "teza": "Na kontach prywatnych rozmowy z Grokiem mogą służyć do trenowania modeli, a użytkownik może to wyłączyć.",
+  "nazwa": "SpaceXSI, Consumer FAQs",
+  "url": "https://x.ai/legal/faq"
+ },
+ "grok-trening-wybor": {
+  "liczba": "",
+  "teza": "Użytkownik konta prywatnego decyduje, czy jego dane służą do trenowania Groka.",
+  "nazwa": "SpaceXSI, Consumer FAQs",
+  "url": "https://x.ai/legal/faq"
+ },
+ "grok-trening-firma": {
+  "liczba": "",
+  "teza": "Producent deklaruje, że nie trenuje modeli na danych firmowych klientów biznesowych.",
+  "nazwa": "SpaceXSI, Enterprise FAQs",
+  "url": "https://x.ai/legal/faq-enterprise"
+ },
+ "grok-dpa": {
+  "liczba": "",
+  "teza": "Umowa o przetwarzaniu danych (DPA) jest automatycznie częścią warunków Enterprise.",
+  "nazwa": "SpaceXSI, Enterprise FAQs",
+  "url": "https://x.ai/legal/faq-enterprise"
+ },
+ "grok-retencja-firma": {
+  "liczba": "30 dni",
+  "teza": "Dane wejściowe i odpowiedzi klientów biznesowych są usuwane automatycznie w ciągu 30 dni, z wyjątkami opisanymi w warunkach.",
+  "nazwa": "SpaceXSI, Enterprise FAQs",
+  "url": "https://x.ai/legal/faq-enterprise"
+ },
+ "grok-firma-usa": {
+  "liczba": "",
+  "teza": "Administratorem danych użytkowników z Europy jest SpaceX Super Intelligence LLC z siedzibą w USA.",
+  "nazwa": "SpaceXSI, Europe Privacy Policy Addendum",
+  "url": "https://x.ai/legal/europe-privacy-policy-addendum"
+ },
+ "grok-soc2": {
+  "liczba": "",
+  "teza": "Producent deklaruje zgodność z SOC 2 Type 2.",
+  "nazwa": "SpaceXSI, dokumentacja: FAQ Security",
+  "url": "https://docs.x.ai/developers/faq/security"
+ },
+ "grok-polski-interfejs": {
+  "liczba": "",
+  "teza": "Lista języków w kodzie aplikacji grok.com zawiera polski.",
+  "nazwa": "grok.com, kod aplikacji (lista języków)",
+  "url": "https://grok.com"
+ },
+ "grok-polski-mowa": {
+  "liczba": "",
+  "teza": "Rozpoznawanie mowy w API Groka obsługuje język polski.",
+  "nazwa": "SpaceXSI, dokumentacja: Speech to Text",
+  "url": "https://docs.x.ai/developers/model-capabilities/audio/speech-to-text"
+ },
+ "heygen-darmowy": {
+  "liczba": "0 USD, 3 filmy miesięcznie",
+  "teza": "HeyGen ma darmowy plan, bez karty płatniczej, z maksymalnie 3 filmami miesięcznie.",
+  "nazwa": "HeyGen, cennik, pytania i odpowiedzi",
+  "url": "https://www.heygen.com/pricing"
+ },
+ "heygen-darmowy-znak-wodny": {
+  "liczba": "1 minuta",
+  "teza": "Filmy z darmowego planu mają znak wodny i trwają najwyżej 1 minutę.",
+  "nazwa": "HeyGen, cennik",
+  "url": "https://www.heygen.com/pricing"
+ },
+ "heygen-cena-creator": {
+  "liczba": "29 USD miesięcznie albo 24 USD przy płatności rocznej",
+  "teza": "Najtańszy plan płatny Creator kosztuje 29 USD miesięcznie albo 24 USD miesięcznie przy płatności rocznej; cennik nie podaje, czy cena zawiera podatek.",
+  "nazwa": "HeyGen, cennik, pytania i odpowiedzi",
+  "url": "https://www.heygen.com/pricing"
+ },
+ "heygen-cena-pro": {
+  "liczba": "od 49 USD miesięcznie",
+  "teza": "Plan Pro zaczyna się od 49 USD miesięcznie za 1 000 kredytów i ma droższe progi z większą liczbą kredytów.",
+  "nazwa": "HeyGen, cennik, pytania i odpowiedzi",
+  "url": "https://www.heygen.com/pricing"
+ },
+ "heygen-business": {
+  "liczba": "149 USD miesięcznie plus 20 USD za miejsce miesięcznie",
+  "teza": "Plan Business dla zespołów kosztuje 149 USD miesięcznie plus 20 USD miesięcznie za każde miejsce.",
+  "nazwa": "HeyGen, cennik, pytania i odpowiedzi",
+  "url": "https://www.heygen.com/pricing"
+ },
+ "heygen-business-funkcje": {
+  "liczba": "",
+  "teza": "Plan Business daje wspólną przestrzeń pracy, jedno rozliczenie dla firmy i logowanie SSO.",
+  "nazwa": "HeyGen, cennik",
+  "url": "https://www.heygen.com/pricing"
+ },
+ "heygen-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise nie ma ceny w cenniku, cenę ustala dział obsługi firm po kontakcie.",
+  "nazwa": "HeyGen, cennik",
+  "url": "https://www.heygen.com/pricing"
+ },
+ "heygen-trening-dane": {
+  "liczba": "",
+  "teza": "Polityka prywatności HeyGen mówi, że treści wprowadzone przez użytkownika mogą służyć do trenowania modeli.",
+  "nazwa": "HeyGen, Privacy Policy",
+  "url": "https://www.heygen.com/privacy"
+ },
+ "heygen-trening-poza-enterprise": {
+  "liczba": "",
+  "teza": "Dane klientów spoza planu Enterprise mogą służyć do trenowania modeli, a użytkownik może z tego zrezygnować.",
+  "nazwa": "HeyGen, Trust and Safety",
+  "url": "https://www.heygen.com/trust-and-safety"
+ },
+ "heygen-trening-enterprise": {
+  "liczba": "",
+  "teza": "Dane klientów planu Enterprise są domyślnie wyłączone z trenowania modeli AI.",
+  "nazwa": "HeyGen, Security Practices",
+  "url": "https://www.heygen.com/security"
+ },
+ "heygen-dpa": {
+  "liczba": "",
+  "teza": "Gdy warunki akceptuje firma, przetwarzanie danych osobowych z treści regulują postanowienia umowy Data Processing Addendum.",
+  "nazwa": "HeyGen, Terms of Service",
+  "url": "https://www.heygen.com/terms"
+ },
+ "heygen-jezyki": {
+  "liczba": "ponad 175 języków i dialektów",
+  "teza": "Płatne plany HeyGen obejmują ponad 175 języków i dialektów, plan darmowy ponad 30 języków.",
+  "nazwa": "HeyGen, cennik",
+  "url": "https://www.heygen.com/pricing"
+ },
+ "heygen-glos-polski": {
+  "liczba": "",
+  "teza": "Lista języków głosów lektora w centrum pomocy HeyGen zawiera język polski.",
+  "nazwa": "HeyGen Help Center, Voice: Languages We Support",
+  "url": "https://help.heygen.com/en/articles/11391932-voice-languages-we-support"
+ },
+ "heygen-interfejs-polski": {
+  "liczba": "",
+  "teza": "Aplikację webową HeyGen można przełączyć na język polski w ustawieniach konta.",
+  "nazwa": "HeyGen Help Center, HeyGen's Preferences & Personalization Settings",
+  "url": "https://help.heygen.com/en/articles/15046858-heygen-s-preferences-personalization-settings"
+ },
+ "heygen-usa": {
+  "liczba": "",
+  "teza": "HeyGen to spółka założona w USA z adresem w Los Angeles.",
+  "nazwa": "HeyGen, Privacy Policy",
+  "url": "https://www.heygen.com/privacy"
+ },
+ "jasper-okres-probny": {
+  "liczba": "7 dni",
+  "teza": "Jasper nie ma planu darmowego, ale plan Pro można testować przez 7 dni za darmo.",
+  "nazwa": "Jasper, cennik (Pricing), FAQ",
+  "url": "https://www.jasper.ai/pricing"
+ },
+ "jasper-cena-pro-miesiecznie": {
+  "liczba": "69 USD miesięcznie za stanowisko",
+  "teza": "Plan Pro przy płatności co miesiąc kosztuje 69 USD miesięcznie za stanowisko.",
+  "nazwa": "Jasper, cennik (Pricing), zakładka Monthly",
+  "url": "https://www.jasper.ai/pricing"
+ },
+ "jasper-cena-pro-rocznie": {
+  "liczba": "59 USD miesięcznie za stanowisko przy płatności rocznej",
+  "teza": "Plan Pro przy płatności rocznej z góry kosztuje 59 USD miesięcznie za stanowisko i wymaga zobowiązania na 12 miesięcy.",
+  "nazwa": "Jasper, cennik (Pricing), zakładka Yearly i FAQ",
+  "url": "https://www.jasper.ai/pricing"
+ },
+ "jasper-cena-pro-59": {
+  "liczba": "59 USD",
+  "teza": "W zakładce płatności rocznej cennik podaje 59 USD miesięcznie za stanowisko w planie Pro.",
+  "nazwa": "Jasper, cennik (Pricing), zakładka Yearly",
+  "url": "https://www.jasper.ai/pricing"
+ },
+ "jasper-pro-1-stanowisko": {
+  "liczba": "1 stanowisko",
+  "teza": "Plan Pro obejmuje jedno stanowisko, 2 style marki, 5 materiałów wiedzy i 3 grupy odbiorców.",
+  "nazwa": "Jasper, cennik (Pricing)",
+  "url": "https://www.jasper.ai/pricing"
+ },
+ "jasper-business": {
+  "liczba": "",
+  "teza": "Plan Business ma cenę ustalaną indywidualnie i obejmuje między innymi agentów do tłumaczeń, API oraz panel administratora.",
+  "nazwa": "Jasper, cennik (Pricing)",
+  "url": "https://www.jasper.ai/pricing"
+ },
+ "jasper-business-12-mies": {
+  "liczba": "12 miesięcy",
+  "teza": "Plany Business są dopasowane do firmy i zaczynają się od zobowiązania na 12 miesięcy.",
+  "nazwa": "Jasper, cennik (Pricing), FAQ",
+  "url": "https://www.jasper.ai/pricing"
+ },
+ "jasper-trenowanie-pro": {
+  "liczba": "",
+  "teza": "Według warunków dla planów Creator i Pro Jasper używa treści klienta, także poleceń i wyników, do rozwijania swoich modeli AI.",
+  "nazwa": "Jasper, Terms of Service (Creator i Pro), wersja 4.1",
+  "url": "https://www.jasper.ai/legal/terms"
+ },
+ "jasper-sprzeciw-ue": {
+  "liczba": "",
+  "teza": "Użytkownik z UE może zgłosić sprzeciw mailem na legal@jasper.ai i wtedy Jasper przestaje trenować modele na jego treściach.",
+  "nazwa": "Jasper, Terms of Service (Creator i Pro), wersja 4.1",
+  "url": "https://www.jasper.ai/legal/terms"
+ },
+ "jasper-trenowanie-business": {
+  "liczba": "",
+  "teza": "Umowa dla planu Business zakazuje Jasperowi i podmiotom trzecim trenowania modeli AI na treściach klienta.",
+  "nazwa": "Jasper, Software as a Service Agreement (plan Business), wersja 5",
+  "url": "https://www.jasper.ai/legal/saas-agreement"
+ },
+ "jasper-faq-trenowanie": {
+  "liczba": "",
+  "teza": "W FAQ cennika Jasper deklaruje, że nie używa danych klienta do trenowania modeli AI, a dane trzyma w centrach danych w USA.",
+  "nazwa": "Jasper, cennik (Pricing), FAQ",
+  "url": "https://www.jasper.ai/pricing"
+ },
+ "jasper-dpa": {
+  "liczba": "",
+  "teza": "Jasper udostępnia umowę o przetwarzaniu danych (DPA), którą klient planu Business może podpisać.",
+  "nazwa": "Jasper, Data Processing Agreement, wersja 2.0",
+  "url": "https://www.jasper.ai/legal/dpa"
+ },
+ "jasper-dpa-dane-osobowe": {
+  "liczba": "",
+  "teza": "Klient, który chce przekazywać dane osobowe, musi najpierw zawrzeć z Jasperem umowę DPA.",
+  "nazwa": "Jasper, Terms of Service (Creator i Pro), wersja 4.1",
+  "url": "https://www.jasper.ai/legal/terms"
+ },
+ "jasper-firma-usa": {
+  "liczba": "",
+  "teza": "Producentem jest amerykańska spółka Jasper AI, Inc. z Delaware, z biurem w San Francisco.",
+  "nazwa": "Jasper, Data Processing Agreement, wersja 2.0",
+  "url": "https://www.jasper.ai/legal/dpa"
+ },
+ "jasper-30-jezykow": {
+  "liczba": "ponad 30 języków",
+  "teza": "Jasper tworzy i przerabia treści w ponad 30 językach.",
+  "nazwa": "Jasper, cennik (Pricing)",
+  "url": "https://www.jasper.ai/pricing"
+ },
+ "jasper-polski-tlumaczenia": {
+  "liczba": "27 języków",
+  "teza": "Agent do tłumaczeń Jaspera obsługuje 27 języków, w tym polski.",
+  "nazwa": "Jasper, strona agenta Translation",
+  "url": "https://www.jasper.ai/agents/translation"
+ },
+ "jasper-tlumaczenia-business": {
+  "liczba": "",
+  "teza": "Agenci do tłumaczeń, badań i GEO są w planie Business, nie w Pro.",
+  "nazwa": "Jasper, cennik (Pricing)",
+  "url": "https://www.jasper.ai/pricing"
+ },
+ "make-plan-darmowy": {
+  "liczba": "1 000 kredytów miesięcznie",
+  "teza": "Make ma plan Free z 1 000 kredytów miesięcznie bez limitu czasu.",
+  "nazwa": "Make, porównanie Make vs Zapier",
+  "url": "https://www.make.com/compare/make-vs-zapier"
+ },
+ "make-cena-core": {
+  "liczba": "9 USD miesięcznie za 10 000 kredytów",
+  "teza": "Najtańszy płatny plan Core kosztuje od 9 USD za 10 000 kredytów miesięcznie.",
+  "nazwa": "Make, porównanie Make vs Zapier",
+  "url": "https://www.make.com/compare/make-vs-zapier"
+ },
+ "make-cennik-planow": {
+  "liczba": "9 USD, 16 USD, 29 USD miesięcznie",
+  "teza": "W tabeli producenta Core kosztuje 9 USD, Pro 16 USD, a Teams 29 USD miesięcznie, każdy od 10 000 kredytów.",
+  "nazwa": "Make, porównanie Make vs n8n (tabela cen)",
+  "url": "https://www.make.com/compare/make-vs-n8n"
+ },
+ "make-plany-lista": {
+  "liczba": "",
+  "teza": "Make ma plany Free, Core, Pro, Teams i Enterprise.",
+  "nazwa": "Make, porównanie Make vs n8n",
+  "url": "https://www.make.com/compare/make-vs-n8n"
+ },
+ "make-roczna-taniej": {
+  "liczba": "",
+  "teza": "Płatność roczna z góry jest tańsza niż płatność miesięczna.",
+  "nazwa": "Make, cennik (pytania)",
+  "url": "https://www.make.com/en/pricing"
+ },
+ "make-enterprise": {
+  "liczba": "",
+  "teza": "Cena planu Enterprise jest ustalana indywidualnie pod potrzeby firmy.",
+  "nazwa": "Make, porównanie Make vs Zapier",
+  "url": "https://www.make.com/compare/make-vs-zapier"
+ },
+ "make-strefa-danych": {
+  "liczba": "",
+  "teza": "Organizacja w Make ma strefę danych do wyboru: US1, US2, EU1 albo EU2.",
+  "nazwa": "Make, centrum pomocy: AI providers and data zones in Make",
+  "url": "https://help.make.com/ai-providers-and-data-zones-in-make"
+ },
+ "make-strefa-eu-ai": {
+  "liczba": "",
+  "teza": "Wybór strefy EU1 albo EU2 nie gwarantuje, że każde zapytanie AI zostanie przetworzone w UE.",
+  "nazwa": "Make, centrum pomocy: AI providers and data zones in Make",
+  "url": "https://help.make.com/ai-providers-and-data-zones-in-make"
+ },
+ "make-ai-usa": {
+  "liczba": "",
+  "teza": "Niektóre funkcje AI, w tym asystent Maia i modele OpenAI, zawsze wysyłają zapytania do USA, niezależnie od strefy danych.",
+  "nazwa": "Make, centrum pomocy: AI providers and data zones in Make",
+  "url": "https://help.make.com/ai-providers-and-data-zones-in-make"
+ },
+ "make-maia-trening": {
+  "liczba": "",
+  "teza": "Make nie używa danych klienta, czyli poleceń, scenariuszy i wyników, do trenowania modelu asystenta Maia.",
+  "nazwa": "Make, centrum pomocy: Maia by Make system card",
+  "url": "https://help.make.com/maia-by-make-system-card"
+ },
+ "make-dpa": {
+  "liczba": "",
+  "teza": "Make ma umowę o przetwarzaniu danych, w której klient jest administratorem, a Celonis podmiotem przetwarzającym.",
+  "nazwa": "Celonis Data Processing Agreement for Make (maj 2024)",
+  "url": "https://www.make.com/data-processing-agreement.pdf"
+ },
+ "make-firma-celonis": {
+  "liczba": "",
+  "teza": "Umowę na Make zawiera się z amerykańską spółką Celonis, Inc. z Nowego Jorku.",
+  "nazwa": "Make, informacja o prywatności",
+  "url": "https://www.make.com/en/privacy-notice"
+ },
+ "make-prawo-ny": {
+  "liczba": "",
+  "teza": "Umowa ramowa Make podlega prawu stanu Nowy Jork.",
+  "nazwa": "Master Services Agreement for Make (marzec 2026)",
+  "url": "https://cdn.make.com/cms/documents/master-service-agreement.pdf"
+ },
+ "make-jezyki": {
+  "liczba": "2 języki",
+  "teza": "Interfejs Make jest dostępny w dwóch językach: czeskim i angielskim.",
+  "nazwa": "Make Academy, kurs Make Foundation: Scenario UI",
+  "url": "https://academy-content.make.com/courses/make-foundation-scenarios/01-scenario-ui/"
+ },
+ "opusclip-darmowy": {
+  "liczba": "0 USD, 60 kredytów miesięcznie",
+  "teza": "OpusClip ma darmowy plan Free z 60 kredytami miesięcznie, klipami ze znakiem wodnym i eksportem tylko przez 3 dni.",
+  "nazwa": "OpusClip, cennik",
+  "url": "https://www.opus.pro/pricing"
+ },
+ "opusclip-cena-starter": {
+  "liczba": "15 USD miesięcznie",
+  "teza": "Najtańszy plan płatny Starter kosztuje 15 USD miesięcznie, tylko przy płatności co miesiąc, i daje 150 kredytów miesięcznie; cennik nie podaje, czy cena zawiera podatek.",
+  "nazwa": "OpusClip, cennik",
+  "url": "https://www.opus.pro/pricing"
+ },
+ "opusclip-cena-pro": {
+  "liczba": "29 USD miesięcznie albo 14,5 USD przy płatności rocznej",
+  "teza": "Plan Pro kosztuje 29 USD miesięcznie przy płatności co miesiąc albo 14,5 USD miesięcznie przy płatności rocznej.",
+  "nazwa": "OpusClip, cennik",
+  "url": "https://www.opus.pro/pricing"
+ },
+ "opusclip-pro-rocznie": {
+  "liczba": "174 USD rocznie, 3 600 kredytów",
+  "teza": "Plan Pro przy płatności rocznej to 174 USD za rok, 3 600 kredytów na 12 miesięcy i wspólna przestrzeń dla 2 osób.",
+  "nazwa": "OpusClip, cennik",
+  "url": "https://www.opus.pro/pricing"
+ },
+ "opusclip-pro-miejsca": {
+  "liczba": "do 4 osób",
+  "teza": "W planie Pro jeden pakiet obejmuje 2 osoby, a zespół może liczyć najwyżej 4 osoby.",
+  "nazwa": "OpusClip, cennik, porównanie planów",
+  "url": "https://www.opus.pro/pricing"
+ },
+ "opusclip-business": {
+  "liczba": "",
+  "teza": "Plan Business ma cenę ustalaną indywidualnie po kontakcie i obejmuje umowę ramową MSA oraz zabezpieczenia klasy enterprise.",
+  "nazwa": "OpusClip, cennik",
+  "url": "https://www.opus.pro/pricing"
+ },
+ "opusclip-business-msa": {
+  "liczba": "",
+  "teza": "Plan Business obejmuje umowę Master Service Agreement i zabezpieczenia klasy enterprise.",
+  "nazwa": "OpusClip, cennik",
+  "url": "https://www.opus.pro/pricing"
+ },
+ "opusclip-trening-indywidualni": {
+  "liczba": "",
+  "teza": "Dane użytkowników spoza umów enterprise mogą służyć do ulepszania modeli AI, po usunięciu danych osobowych.",
+  "nazwa": "OpusClip Help Center, Does OpusClip use my data to train AI models?",
+  "url": "https://help.opus.pro/docs/article/opusclip-data-training"
+ },
+ "opusclip-trening-enterprise": {
+  "liczba": "",
+  "teza": "OpusClip nie trenuje modeli AI na danych klientów enterprise, a zasady użycia danych reguluje umowa.",
+  "nazwa": "OpusClip Help Center, Does OpusClip use my data to train AI models?",
+  "url": "https://help.opus.pro/docs/article/opusclip-data-training"
+ },
+ "opusclip-sprzeciw-ue": {
+  "liczba": "",
+  "teza": "Użytkownik z UE może sprzeciwić się użyciu swoich danych osobowych do rozwoju modeli AI, wysyłając maila do producenta.",
+  "nazwa": "OpusClip, Privacy Policy",
+  "url": "https://www.opus.pro/privacy-policy"
+ },
+ "opusclip-serwery-usa": {
+  "liczba": "",
+  "teza": "OpusClip działa na serwerach Google Cloud w USA.",
+  "nazwa": "OpusClip, Privacy Policy",
+  "url": "https://www.opus.pro/privacy-policy"
+ },
+ "opusclip-jezyki-polski": {
+  "liczba": "21 języków",
+  "teza": "OpusClip obsługuje nagrania w 21 językach, w tym po polsku.",
+  "nazwa": "OpusClip Help Center, FAQs",
+  "url": "https://help.opus.pro/docs/article/faqs"
+ },
+ "opusclip-strona-jezyki": {
+  "liczba": "",
+  "teza": "Strona OpusClip ma wersje angielską, hiszpańską, portugalską, niemiecką i francuską, bez polskiej.",
+  "nazwa": "OpusClip, cennik, przełącznik języka",
+  "url": "https://www.opus.pro/pricing"
+ },
+ "opusclip-usa": {
+  "liczba": "",
+  "teza": "OpusClip to produkt spółki Opusclip Inc. z adresem w Mountain View w USA.",
+  "nazwa": "OpusClip, Privacy Policy",
+  "url": "https://www.opus.pro/privacy-policy"
+ },
+ "power-automate-free": {
+  "liczba": "",
+  "teza": "Podstawowe funkcje Power Automate są bezpłatne dla kont służbowych i szkolnych w Microsoft Entra, ale tylko ze standardowymi łącznikami.",
+  "nazwa": "Microsoft Learn: Types of Power Automate licenses",
+  "url": "https://learn.microsoft.com/en-us/power-platform/admin/power-automate-licensing/types"
+ },
+ "power-automate-proba": {
+  "liczba": "30 dni",
+  "teza": "Microsoft daje 30 dni bezpłatnej wersji próbnej Power Automate.",
+  "nazwa": "Microsoft, cennik Power Automate (wersja polska)",
+  "url": "https://www.microsoft.com/pl-pl/power-platform/products/power-automate/pricing"
+ },
+ "power-automate-premium-eur": {
+  "liczba": "13,00 EUR za użytkownika miesięcznie, płatne rocznie, bez VAT",
+  "teza": "Power Automate Premium kosztuje 13,00 EUR za użytkownika miesięcznie, płatne rocznie, bez VAT.",
+  "nazwa": "Microsoft, cennik Power Automate (wersja polska)",
+  "url": "https://www.microsoft.com/pl-pl/power-platform/products/power-automate/pricing"
+ },
+ "power-automate-premium-usd": {
+  "liczba": "15,00 USD za użytkownika miesięcznie, płatne rocznie",
+  "teza": "W cenniku amerykańskim Power Automate Premium kosztuje 15,00 USD za użytkownika miesięcznie, płatne rocznie.",
+  "nazwa": "Microsoft, cennik Power Automate (wersja USA)",
+  "url": "https://www.microsoft.com/en-us/power-platform/products/power-automate/pricing"
+ },
+ "power-automate-process": {
+  "liczba": "130,00 EUR za bota miesięcznie, płatne rocznie, bez VAT",
+  "teza": "Power Automate Process do automatyzacji bez udziału człowieka kosztuje 130,00 EUR za bota miesięcznie, płatne rocznie, bez VAT.",
+  "nazwa": "Microsoft, cennik Power Automate (wersja polska)",
+  "url": "https://www.microsoft.com/pl-pl/power-platform/products/power-automate/pricing"
+ },
+ "power-automate-ceny-marketing": {
+  "liczba": "",
+  "teza": "Microsoft zaznacza, że ceny na stronie są orientacyjne, a właściwa cena pojawia się przy zakupie.",
+  "nazwa": "Microsoft, cennik Power Automate (wersja USA)",
+  "url": "https://www.microsoft.com/en-us/power-platform/products/power-automate/pricing"
+ },
+ "power-automate-m365": {
+  "liczba": "",
+  "teza": "Licencje Microsoft 365, Dynamics 365 i Power Platform zawierają ograniczony zestaw funkcji Power Automate.",
+  "nazwa": "Microsoft Learn: Types of Power Automate licenses",
+  "url": "https://learn.microsoft.com/en-us/power-platform/admin/power-automate-licensing/types"
+ },
+ "power-automate-trening": {
+  "liczba": "",
+  "teza": "Polecenia i odpowiedzi Copilota w Power Platform nie trenują modeli Microsoft ani OpenAI, chyba że administrator firmy włączy udostępnianie danych.",
+  "nazwa": "Microsoft Learn: FAQ for Copilot data security and privacy for Dynamics 365 and Power Platform",
+  "url": "https://learn.microsoft.com/en-us/power-platform/faqs-copilot-data-security-privacy"
+ },
+ "power-automate-dpa": {
+  "liczba": "",
+  "teza": "Zasady przetwarzania danych w usługach online Microsoft określa umowa Data Protection Addendum, dodatek do warunków produktów.",
+  "nazwa": "Microsoft Licensing: Microsoft Products and Services Data Protection Addendum (DPA)",
+  "url": "https://www.microsoft.com/licensing/docs/view/Microsoft-Products-and-Services-Data-Protection-Addendum-DPA"
+ },
+ "power-automate-dpa-pl": {
+  "liczba": "",
+  "teza": "Umowa DPA Microsoft jest dostępna także po polsku.",
+  "nazwa": "Microsoft Licensing: Microsoft Products and Services Data Protection Addendum (DPA), lista wersji językowych",
+  "url": "https://www.microsoft.com/licensing/docs/view/Microsoft-Products-and-Services-Data-Protection-Addendum-DPA"
+ },
+ "power-automate-eu": {
+  "liczba": "",
+  "teza": "Power Platform jest objęta Granicą Danych UE, ale firma musi ustawić dzierżawę i środowiska w regionie UE.",
+  "nazwa": "Microsoft Learn: What is the EU Data Boundary?",
+  "url": "https://learn.microsoft.com/en-us/privacy/eudb/eu-data-boundary-learn"
+ },
+ "power-automate-polski": {
+  "liczba": "",
+  "teza": "Power Automate for desktop działa w języku Windows i obsługuje polski obok angielskiego.",
+  "nazwa": "Microsoft Learn: Prerequisites and limitations (Power Automate for desktop)",
+  "url": "https://learn.microsoft.com/en-us/power-automate/desktop-flows/requirements"
+ },
+ "power-automate-firma-usa": {
+  "liczba": "",
+  "teza": "Microsoft Corporation ma siedzibę w Redmond w USA.",
+  "nazwa": "Microsoft, oświadczenie o ochronie prywatności",
+  "url": "https://www.microsoft.com/en-us/privacy/privacystatement"
+ },
+ "quillbot-plan-darmowy": {
+  "liczba": "125 słów",
+  "teza": "Darmowe konto QuillBot daje podstawowy dostęp do narzędzi, w tym parafrazowanie do 125 słów i streszczenia do 1 200 słów.",
+  "nazwa": "Centrum pomocy QuillBot, What’s the difference between a free and a Premium account?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/360058341753-What-s-the-difference-between-a-free-and-a-Premium-account"
+ },
+ "quillbot-cena-premium": {
+  "liczba": "8,33 USD miesięcznie przy płatności rocznej",
+  "teza": "Plan Premium dla jednej osoby kosztuje 8,33 USD miesięcznie przy płatności rocznej.",
+  "nazwa": "QuillBot, strona Premium (kopia strony z 17.11.2026 w Internet Archive)",
+  "url": "https://web.archive.org/web/20261117222433/https://quillbot.com/premium"
+ },
+ "quillbot-cena-region": {
+  "liczba": "",
+  "teza": "Cena QuillBot Premium zależy od regionu i wybranego okresu płatności, a przy zakupie może się zmienić według lokalizacji i waluty.",
+  "nazwa": "Centrum pomocy QuillBot, What is the price of Quillbot Premium?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/36491424881943-What-is-the-price-of-Quillbot-Premium"
+ },
+ "quillbot-team-min-2": {
+  "liczba": "od 2 miejsc",
+  "teza": "Plan zespołowy Team Plan może kupić każdy, kto potrzebuje Premium dla 2 lub więcej osób.",
+  "nazwa": "Centrum pomocy QuillBot, Who can buy a Team Plan?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/17207635798423-Who-can-buy-a-Team-Plan"
+ },
+ "quillbot-team-rabat": {
+  "liczba": "",
+  "teza": "Team Plan to kilka kont Premium kupionych naraz, z rabatem zależnym od liczby miejsc, z panelem administratora i wspólną fakturą.",
+  "nazwa": "Centrum pomocy QuillBot, What are Quillbot Team Plans and their benefits?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/17089815419031-What-are-Quillbot-Team-Plans-and-their-benefits"
+ },
+ "quillbot-team-funkcje": {
+  "liczba": "",
+  "teza": "Każda osoba w Team Plan dostaje pełne Premium oraz narzędzia zespołowe: wspólny słownik i przewodnik stylu, panel administratora i ustawienia danych.",
+  "nazwa": "Centrum pomocy QuillBot, What are Quillbot Team Plans and their benefits?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/17089815419031-What-are-Quillbot-Team-Plans-and-their-benefits"
+ },
+ "quillbot-team-cena-5": {
+  "liczba": "od 5 osób",
+  "teza": "Na stronie Premium producent podaje, że przy 5 lub więcej osobach jest jedna faktura z rabatem, ale nie podaje kwoty planu zespołowego.",
+  "nazwa": "QuillBot, strona Premium (kopia strony z 17.11.2026 w Internet Archive)",
+  "url": "https://web.archive.org/web/20261117222433/https://quillbot.com/premium"
+ },
+ "quillbot-trenowanie-domyslne": {
+  "liczba": "",
+  "teza": "Teksty i dane o użyciu z kont indywidualnych służą do trenowania i ulepszania usług QuillBot.",
+  "nazwa": "Centrum pomocy QuillBot, How does Quillbot use my data?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/360056530894-How-does-Quillbot-use-my-data"
+ },
+ "quillbot-trenowanie-wylaczenie": {
+  "liczba": "",
+  "teza": "Posiadacz konta może wyłączyć użycie swoich tekstów do trenowania modeli w ustawieniach danych.",
+  "nazwa": "Centrum pomocy QuillBot, How does Quillbot use my data?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/360056530894-How-does-Quillbot-use-my-data"
+ },
+ "quillbot-trenowanie-team": {
+  "liczba": "",
+  "teza": "QuillBot nie trenuje modeli na żadnych tekstach użytkowników planu Team Plan.",
+  "nazwa": "Centrum pomocy QuillBot, How does Quillbot use my data?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/360056530894-How-does-Quillbot-use-my-data"
+ },
+ "quillbot-team-polityka": {
+  "liczba": "",
+  "teza": "Polityka prywatności Learneo potwierdza, że brak trenowania na tekstach Team Plan to ustawienie domyślne, bez żadnych działań właściciela planu.",
+  "nazwa": "Learneo, Privacy Policy (wspólna dla QuillBot i LanguageTool)",
+  "url": "https://languagetool.org/legal/privacy"
+ },
+ "quillbot-polski-parafraza": {
+  "liczba": "",
+  "teza": "Parafrazowanie i tłumaczenie w QuillBot obsługują język polski.",
+  "nazwa": "Centrum pomocy QuillBot, What languages does Quillbot work in?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/4541525640727-What-languages-does-Quillbot-work-in"
+ },
+ "quillbot-polski-korekta": {
+  "liczba": "4 języki",
+  "teza": "Korekta gramatyki działa tylko po angielsku, niemiecku, hiszpańsku i francusku, a streszczenia tylko po angielsku.",
+  "nazwa": "Centrum pomocy QuillBot, What languages does Quillbot work in?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/4541525640727-What-languages-does-Quillbot-work-in"
+ },
+ "quillbot-firma-usa": {
+  "liczba": "",
+  "teza": "QuillBot należy do amerykańskiej firmy Learneo, Inc. z siedzibą w San Francisco.",
+  "nazwa": "Learneo, Privacy Policy (wspólna dla QuillBot i LanguageTool)",
+  "url": "https://languagetool.org/legal/privacy"
+ },
+ "quillbot-transfer-ue": {
+  "liczba": "",
+  "teza": "QuillBot ma biura w USA i Indiach i współpracuje z dostawcami usług na całym świecie.",
+  "nazwa": "Centrum pomocy QuillBot, If you transfer data outside the EU, what safeguards do you have in place?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/35932729688087-If-you-transfer-data-outside-the-EU-what-safeguards-do-you-have-in-place-to-ensure-their-protection"
+ },
+ "quillbot-dpf-scc": {
+  "liczba": "",
+  "teza": "Przy przekazywaniu danych z UE QuillBot stosuje certyfikację Data Privacy Framework i umowy ze standardowymi klauzulami umownymi.",
+  "nazwa": "Centrum pomocy QuillBot, If you transfer data outside the EU, what safeguards do you have in place?",
+  "url": "https://help.quillbot.com/hc/en-us/articles/35932729688087-If-you-transfer-data-outside-the-EU-what-safeguards-do-you-have-in-place-to-ensure-their-protection"
+ },
+ "runway-darmowy": {
+  "liczba": "0 USD, 125 kredytów jednorazowo",
+  "teza": "Runway ma darmowy plan Free z jednorazową pulą 125 kredytów.",
+  "nazwa": "Runway, cennik",
+  "url": "https://runwayml.com/pricing"
+ },
+ "runway-cena-standard": {
+  "liczba": "15 USD miesięcznie albo 12 USD przy płatności rocznej",
+  "teza": "Najtańszy plan płatny Standard kosztuje 15 USD miesięcznie albo 12 USD miesięcznie przy płatności rocznej i daje 625 kredytów miesięcznie; cennik nie podaje, czy cena zawiera podatek.",
+  "nazwa": "Runway, cennik",
+  "url": "https://runwayml.com/pricing"
+ },
+ "runway-standard-limit": {
+  "liczba": "52 sekundy Gen-4.5",
+  "teza": "625 kredytów w planie Standard wystarcza na 52 sekundy wideo z modelu Gen-4.5 albo 78 obrazów.",
+  "nazwa": "Runway, cennik",
+  "url": "https://runwayml.com/pricing"
+ },
+ "runway-team": {
+  "liczba": "69 USD za miejsce miesięcznie albo 55 USD przy płatności rocznej",
+  "teza": "Plan Team kosztuje 69 USD za miejsce miesięcznie albo 55 USD za miejsce miesięcznie przy płatności rocznej.",
+  "nazwa": "Runway, strona planu Team",
+  "url": "https://runwayml.com/team-plan"
+ },
+ "runway-team-miejsca": {
+  "liczba": "od 2 do 9 osób",
+  "teza": "Plan Team jest dla zespołów od 2 do 9 osób pracujących we wspólnej przestrzeni.",
+  "nazwa": "Runway, strona planu Team, pytania i odpowiedzi",
+  "url": "https://runwayml.com/team-plan"
+ },
+ "runway-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise ma cenę ustalaną indywidualnie i obejmuje SSO oraz brak trenowania na danych klienta.",
+  "nazwa": "Runway, strona planu Team",
+  "url": "https://runwayml.com/team-plan"
+ },
+ "runway-enterprise-bez-trenowania": {
+  "liczba": "",
+  "teza": "W planie Enterprise Runway nie trenuje modeli na danych klienta.",
+  "nazwa": "Runway, strona planu Team",
+  "url": "https://runwayml.com/team-plan"
+ },
+ "runway-trening-warunki": {
+  "liczba": "",
+  "teza": "Warunki korzystania mówią, że treści wprowadzone i wygenerowane mogą służyć Runway do trenowania modeli AI.",
+  "nazwa": "Runway, Terms of Use",
+  "url": "https://runwayml.com/terms-of-use"
+ },
+ "runway-dpa": {
+  "liczba": "48 godzin",
+  "teza": "Umowa Enterprise obejmuje Data Processing Addendum z powiadomieniem o potwierdzonym naruszeniu danych w ciągu 48 godzin.",
+  "nazwa": "Runway Dev, Enterprise",
+  "url": "https://dev.runwayml.com/enterprise"
+ },
+ "runway-glos-polski": {
+  "liczba": "",
+  "teza": "Gotowe głosy w zamianie tekstu na mowę obsługują między innymi język polski.",
+  "nazwa": "Runway Help Center, Supported Languages in Generative Audio",
+  "url": "https://help.runwayml.com/hc/en-us/articles/33505227741587-Supported-Languages-in-Generative-Audio"
+ },
+ "runway-dubbing-polski": {
+  "liczba": "29 języków",
+  "teza": "Dubbing głosu w Runway obsługuje 29 języków, w tym polski.",
+  "nazwa": "Runway Help Center, Supported Languages in Generative Audio",
+  "url": "https://help.runwayml.com/hc/en-us/articles/33505227741587-Supported-Languages-in-Generative-Audio"
+ },
+ "runway-interfejs-angielski": {
+  "liczba": "",
+  "teza": "Interfejs Runway jest dostępny tylko po angielsku.",
+  "nazwa": "Runway Help Center, What languages can I prompt in?",
+  "url": "https://help.runwayml.com/hc/en-us/articles/24342920074131-What-languages-can-I-prompt-in"
+ },
+ "runway-polecenia-jezyk": {
+  "liczba": "",
+  "teza": "Modele wideo i obrazu przyjmują polecenia w każdym języku, ale najlepsze wyniki dają po angielsku.",
+  "nazwa": "Runway Help Center, What languages can I prompt in?",
+  "url": "https://help.runwayml.com/hc/en-us/articles/24342920074131-What-languages-can-I-prompt-in"
+ },
+ "runway-usa": {
+  "liczba": "",
+  "teza": "Runway AI, Inc. ma siedzibę w USA, a dane użytkowników mogą trafiać do USA.",
+  "nazwa": "Runway, Privacy Policy",
+  "url": "https://runwayml.com/privacy-policy"
+ },
+ "wordtune-plan-darmowy": {
+  "liczba": "0 USD",
+  "teza": "Plan darmowy Basic daje 10 przeredagowań i podpowiedzi AI dziennie, 3 streszczenia miesięcznie i bez limitu poprawę pisowni i gramatyki.",
+  "nazwa": "Wordtune, cennik (Plans)",
+  "url": "https://www.wordtune.com/plans"
+ },
+ "wordtune-cena-advanced": {
+  "liczba": "6,99 USD miesięcznie przy płatności rocznej, 13,99 USD przy płatności co miesiąc",
+  "teza": "Plan Advanced kosztuje 6,99 USD miesięcznie przy płatności rocznej albo 13,99 USD przy płatności co miesiąc.",
+  "nazwa": "Wordtune, cennik (Plans, kod strony)",
+  "url": "https://www.wordtune.com/plans"
+ },
+ "wordtune-cena-unlimited": {
+  "liczba": "9,99 USD miesięcznie przy płatności rocznej, 19,99 USD przy płatności co miesiąc",
+  "teza": "Plan Unlimited bez dziennych limitów kosztuje 9,99 USD miesięcznie przy płatności rocznej albo 19,99 USD przy płatności co miesiąc.",
+  "nazwa": "Wordtune, cennik (Plans, kod strony)",
+  "url": "https://www.wordtune.com/plans"
+ },
+ "wordtune-okres-probny": {
+  "liczba": "3 dni",
+  "teza": "Płatne plany mają 3 dni darmowego okresu próbnego, ale wymagają podania danych płatniczych.",
+  "nazwa": "Wordtune, cennik (Plans), FAQ",
+  "url": "https://www.wordtune.com/plans"
+ },
+ "wordtune-bez-zwrotow": {
+  "liczba": "",
+  "teza": "Wordtune nie zwraca pieniędzy, subskrypcję można tylko anulować przed kolejnym okresem rozliczeniowym.",
+  "nazwa": "Wordtune, cennik (Plans), FAQ",
+  "url": "https://www.wordtune.com/plans"
+ },
+ "wordtune-business": {
+  "liczba": "",
+  "teza": "Wordtune ma plan Business dla zespołów: konto zespołu zakłada się samodzielnie albo dostaje ofertę po kontakcie, bez ceny w cenniku.",
+  "nazwa": "Wordtune, FAQ",
+  "url": "https://www.wordtune.com/faq"
+ },
+ "wordtune-trenowanie-business": {
+  "liczba": "",
+  "teza": "W planie Business Wordtune może domyślnie używać tekstów i wyników w formie zanonimizowanej do trenowania algorytmów, chyba że plan stanowi inaczej.",
+  "nazwa": "Wordtune, Business Terms of Service",
+  "url": "https://www.wordtune.com/business/terms-of-use"
+ },
+ "wordtune-traceless": {
+  "liczba": "",
+  "teza": "W subskrypcji z opcją Traceless Model teksty i wyniki są usuwane kilka sekund po wygenerowaniu i nie służą do trenowania.",
+  "nazwa": "Wordtune, Business Terms of Service",
+  "url": "https://www.wordtune.com/business/terms-of-use"
+ },
+ "wordtune-trenowanie-indywidualne": {
+  "liczba": "",
+  "teza": "Na kontach indywidualnych użytkownik daje Wordtune licencję na używanie tekstów także do ulepszania algorytmów.",
+  "nazwa": "Wordtune, Terms of Use",
+  "url": "https://www.wordtune.com/terms-of-use"
+ },
+ "wordtune-jezyki": {
+  "liczba": "10 języków",
+  "teza": "Wordtune tłumaczy na angielski z 10 języków, wśród których nie ma polskiego, a potem poprawia tekst po angielsku.",
+  "nazwa": "Wordtune, FAQ",
+  "url": "https://www.wordtune.com/faq"
+ },
+ "wordtune-angielski": {
+  "liczba": "",
+  "teza": "Cennik Wordtune opisuje produkt jako narzędzie do poprawy angielskiego.",
+  "nazwa": "Wordtune, cennik (Plans)",
+  "url": "https://www.wordtune.com/plans"
+ },
+ "wordtune-firma-izrael": {
+  "liczba": "",
+  "teza": "Wordtune należy do AI21 Labs Ltd, a umowa podlega prawu Izraela z sądem w Tel Awiwie.",
+  "nazwa": "Wordtune, Terms of Use",
+  "url": "https://www.wordtune.com/terms-of-use"
+ },
+ "wordtune-administrator": {
+  "liczba": "",
+  "teza": "Administratorem danych osobowych użytkowników Wordtune jest AI21 Labs Ltd.",
+  "nazwa": "Wordtune, Privacy Policy",
+  "url": "https://www.wordtune.com/privacy-policy"
+ },
+ "zapier-plan-darmowy": {
+  "liczba": "100 zadań miesięcznie",
+  "teza": "Plan Free jest darmowy na zawsze i obejmuje 100 zadań miesięcznie.",
+  "nazwa": "Zapier, cennik",
+  "url": "https://zapier.com/pricing"
+ },
+ "zapier-cena-pro": {
+  "liczba": "19,99 USD miesięcznie przy płatności rocznej, 29,99 USD przy miesięcznej",
+  "teza": "Plan Professional na 750 zadań kosztuje 19,99 USD miesięcznie przy płatności rocznej albo 29,99 USD przy płatności miesięcznej.",
+  "nazwa": "Zapier, cennik (wersja dla programów, Self-serve plan pricing)",
+  "url": "https://zapier.com/pricing"
+ },
+ "zapier-rozliczenie-roczne": {
+  "liczba": "",
+  "teza": "Ceny w cenniku są miesięczne; przy planie rocznym płaci się z góry za 12 miesięcy.",
+  "nazwa": "Zapier, cennik (wersja dla programów)",
+  "url": "https://zapier.com/pricing"
+ },
+ "zapier-cena-team": {
+  "liczba": "69 USD miesięcznie przy płatności rocznej, 103,50 USD przy miesięcznej",
+  "teza": "Plan Team zaczyna się od 2 000 zadań i kosztuje 69 USD miesięcznie przy płatności rocznej albo 103,50 USD przy miesięcznej.",
+  "nazwa": "Zapier, cennik (wersja dla programów, Self-serve plan pricing)",
+  "url": "https://zapier.com/pricing"
+ },
+ "zapier-uzytkownicy": {
+  "liczba": "25 osób",
+  "teza": "Plany Free i Professional są dla jednej osoby, Team obejmuje do 25 osób, a Enterprise bez limitu.",
+  "nazwa": "Zapier, cennik (pytania)",
+  "url": "https://zapier.com/pricing"
+ },
+ "zapier-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise nie ma ceny w cenniku, cena jest ustalana po kontakcie z Zapier.",
+  "nazwa": "Zapier, cennik",
+  "url": "https://zapier.com/pricing"
+ },
+ "zapier-proba": {
+  "liczba": "14 dni",
+  "teza": "Nowe konto dostaje 14 dni próbnego planu Professional bez karty płatniczej.",
+  "nazwa": "Zapier, cennik (pytania)",
+  "url": "https://zapier.com/pricing"
+ },
+ "zapier-pln": {
+  "liczba": "",
+  "teza": "Ceny są ustalane w USD, ale rozliczenie może być w złotych po kursie z dnia płatności.",
+  "nazwa": "Zapier, cennik (wersja dla programów, Currency)",
+  "url": "https://zapier.com/pricing"
+ },
+ "zapier-trening": {
+  "liczba": "",
+  "teza": "Klienci Enterprise są automatycznie wyłączeni z trenowania modeli na ich treściach, pozostali mogą się wypisać w dowolnym momencie.",
+  "nazwa": "Zapier, AI Automation Platform: Legal and Compliance Information",
+  "url": "https://zapier.com/legal/automation-platform-information"
+ },
+ "zapier-podwykonawcy-trening": {
+  "liczba": "",
+  "teza": "Podwykonawcy Zapier nie mogą używać treści klientów do trenowania własnych modeli.",
+  "nazwa": "Zapier, AI Automation Platform: Legal and Compliance Information",
+  "url": "https://zapier.com/legal/automation-platform-information"
+ },
+ "zapier-dpa": {
+  "liczba": "",
+  "teza": "Zapier udostępnia własną umowę o przetwarzaniu danych na osobnej stronie.",
+  "nazwa": "Zapier, Data Privacy Overview",
+  "url": "https://zapier.com/legal/data-privacy"
+ },
+ "zapier-dpa-cudze": {
+  "liczba": "",
+  "teza": "Zapier nie podpisuje umów o przetwarzaniu danych przygotowanych przez inne firmy.",
+  "nazwa": "Zapier, Data Privacy Overview",
+  "url": "https://zapier.com/legal/data-privacy"
+ },
+ "zapier-dane-usa": {
+  "liczba": "",
+  "teza": "Zapier trzyma dane na serwerach AWS w USA.",
+  "nazwa": "Zapier, Data Privacy Overview",
+  "url": "https://zapier.com/legal/data-privacy"
+ },
+ "zapier-dane-ue-brak": {
+  "liczba": "",
+  "teza": "Zapier nie oferuje przechowywania danych tylko w Unii Europejskiej.",
+  "nazwa": "Zapier, Data Privacy Overview",
+  "url": "https://zapier.com/legal/data-privacy"
+ },
+ "zapier-firma-usa": {
+  "liczba": "",
+  "teza": "Zapier, Inc. ma adres w San Francisco w USA.",
+  "nazwa": "Zapier, Data Processing Addendum (Schedule 1)",
+  "url": "https://zapier.com/legal/data-processing-addendum"
+ },
+ "zapier-jezyk": {
+  "liczba": "",
+  "teza": "Interfejs Zapier jest dostępny tylko po angielsku.",
+  "nazwa": "Zapier, centrum pomocy: Can I change Zapier's interface language?",
+  "url": "https://help.zapier.com/hc/en-us/articles/35201074788877-Can-I-change-Zapier-s-interface-language"
+ },
+ "zapier-tlumaczenie": {
+  "liczba": "ponad 100 języków",
+  "teza": "Wbudowany krok Translate by Zapier tłumaczy teksty na ponad 100 języków.",
+  "nazwa": "Zapier, Translate by Zapier: pomoc",
+  "url": "https://zapier.com/apps/translate/help"
  }
 }

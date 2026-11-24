@@ -8,7 +8,20 @@ const DOMENY = {
   chatgpt: "https://chatgpt.com", claude: "https://claude.ai", deepl: "https://www.deepl.com", elevenlabs: "https://elevenlabs.io",
   fireflies: "https://fireflies.ai", gamma: "https://gamma.app", gemini: "https://gemini.google.com", "microsoft-copilot": "https://copilot.microsoft.com",
   notebooklm: "https://notebooklm.google.com", "notion-ai": "https://www.notion.com", perplexity: "https://www.perplexity.ai",
+  // 22.11.2026: katalog do 50 narzędzi.
+  "le-chat": "https://chat.mistral.ai", deepseek: "https://www.deepseek.com", grok: "https://grok.com", chatpdf: "https://www.chatpdf.com",
+  consensus: "https://consensus.app", "acrobat-ai-assistant": "https://acrobat.adobe.com", elicit: "https://elicit.com", "you-com": "https://you.com",
+  languagetool: "https://languagetool.org", grammarly: "https://www.grammarly.com", quillbot: "https://quillbot.com", jasper: "https://www.jasper.ai",
+  "copy-ai": "https://www.copy.ai", wordtune: "https://www.wordtune.com", otter: "https://otter.ai", tldv: "https://tldv.io", fathom: "https://fathom.video",
+  "read-ai": "https://www.read.ai", "zoom-ai-companion": "https://www.zoom.com", krisp: "https://krisp.ai", canva: "https://www.canva.com",
+  midjourney: "https://www.midjourney.com", "adobe-firefly": "https://firefly.adobe.com", ideogram: "https://ideogram.ai", "beautiful-ai": "https://www.beautiful.ai",
+  "microsoft-designer": "https://designer.microsoft.com", "napkin-ai": "https://www.napkin.ai", synthesia: "https://www.synthesia.io", heygen: "https://www.heygen.com",
+  descript: "https://www.descript.com", runway: "https://runwayml.com", opusclip: "https://www.opus.pro", zapier: "https://zapier.com", make: "https://www.make.com",
+  n8n: "https://n8n.io", "power-automate": "https://www.microsoft.com/en-us/power-platform/products/power-automate", tidio: "https://www.tidio.com",
+  livechat: "https://www.livechat.com", "intercom-fin": "https://fin.ai",
 };
+// Pobiera tylko brakujące (public/narzedzia-ai/<slug>.png nie istnieje), chyba że podano --wszystkie.
+const WSZYSTKIE = process.argv.includes("--wszystkie");
 const UA = { "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36", "accept-language": "pl,en;q=0.8" };
 const OUT = "scripts/out/narzedzia-ai-loga-surowe"; // surowe pliki poza public (nie idą na serwer)
 fs.mkdirSync(OUT, { recursive: true });
@@ -18,6 +31,7 @@ async function pobierz(url) {
   return { buf: Buffer.from(await r.arrayBuffer()), typ: r.headers.get("content-type") || "" };
 }
 for (const [slug, strona] of Object.entries(DOMENY)) {
+  if (!WSZYSTKIE && fs.existsSync(`public/narzedzia-ai/${slug}.png`)) continue;
   let wynik = "";
   try {
     const { buf } = await pobierz(strona);
