@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Wezwanie, ileZrodel } from "../../blog/widok";
+import { Zapis } from "../zapis";
 import { AUTOR, BAZA, DOMENA, PODGLAD, artykul as tekstBloga, renderujMarkdown } from "@/lib/blog-ai";
 import { BAZA_NARZEDZI, CECHY, CENNIKI, kategoria, narzedzie, wszystkieNarzedzia } from "@/lib/narzedzia-ai";
+import { BAZA_BLACK_WEEK, promocjaNarzedzia, sprawdzonoPromocje } from "@/lib/promocje-ai";
 
 // Podstrona narzędzia: fakty sprawdzone u producenta (tabliczka), opis pisany pod polską firmę, pytania, źródła,
 // podobne narzędzia. Budowa wzorowana na katalogach narzędzi, treść własna i inna dla każdego wpisu.
@@ -35,6 +37,7 @@ export default async function Page({ params }: Props) {
   const podobne = n.podobne.map((s) => narzedzie(s)).filter((x) => x !== undefined);
   const tekst = n.artykul ? tekstBloga(n.artykul) : undefined;
   const url = `${DOMENA}${BAZA_NARZEDZI}/${n.slug}`;
+  const promo = promocjaNarzedzia(n.slug);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -122,6 +125,28 @@ export default async function Page({ params }: Props) {
             ))}
           </p>
         )}
+        {promo && (
+          <aside className="bai-promo" aria-label="Promocja Black Week">
+            <p className="bai-mono bai-promo-nad">Promocja Black Week 2026{promo.do ? ` · do ${dataPoPolsku(promo.do)}` : ""}</p>
+            <p className="bai-promo-rabat">{promo.rabat}</p>
+            <p className="bai-promo-opis">{promo.opis}</p>
+            {promo.kod && (
+              <p className="bai-promo-kod">
+                Kod: <b>{promo.kod}</b>
+              </p>
+            )}
+            <p className="bai-mono bai-promo-meta">Sprawdzono: {dataPoPolsku(sprawdzonoPromocje() || n.sprawdzono)}</p>
+            <div className="bai-akcje">
+              <a href={promo.link} target="_blank" rel={promo.reklama ? "sponsored noopener noreferrer" : "noopener noreferrer"} className="bai-przycisk bai-przycisk-maly">
+                Przejdź do oferty{promo.reklama ? "*" : ""}
+              </a>
+              <Link href={BAZA_BLACK_WEEK} className="bai-drugi-link">
+                Wszystkie promocje Black Week
+              </Link>
+            </div>
+            {promo.reklama && <p className="bai-bw-reklama">* Reklama: link partnerski</p>}
+          </aside>
+        )}
         <div className="bai-akcje">
           <a href={n.strona} target="_blank" rel="noopener noreferrer" className="bai-przycisk-obrys">
             Strona producenta
@@ -136,6 +161,8 @@ export default async function Page({ params }: Props) {
 
       <div className="bai-w3">
         <article className="bai-tresc" dangerouslySetInnerHTML={{ __html: renderujMarkdown(n.tresc) }} />
+
+        <Zapis skad={`narzedzie-${n.slug}`} tytul="Nowe promocje na narzędzia AI" />
 
         <Wezwanie />
 

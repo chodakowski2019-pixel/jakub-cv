@@ -359,3 +359,73 @@ body:has(.bai.bai-marka)::after { display: none; }
 .bai.bai-marka .bai-tresc a { text-decoration-color: rgba(111, 122, 0, 0.45); }
 .bai.bai-marka .bai-znak-logo { border-color: var(--linia2); }
 @media (prefers-reduced-transparency: reduce) { .bai.bai-marka .bai-nav, .bai.bai-marka .bai-pasek { background: #f6f6f5; } }
+
+/* ── Black Week 2026 (25.11.2026): strona /ai/black-week, baner promocji na podstronie narzędzia, zapis na newsletter ── */
+.bai .bai-pulapka { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+.bai .bai-odl { margin-top: 1.75rem; }
+.bai .bai-odl-cyfry { display: flex; gap: clamp(0.75rem, 3vw, 1.75rem); margin-top: 0.75rem; }
+.bai .bai-odl-cyfry > div { display: flex; flex-direction: column; gap: 0.25rem; min-width: 3.5rem; }
+.bai .bai-odl-liczba { font-family: var(--mono); font-size: clamp(2rem, 6vw, 3.25rem); line-height: 1; letter-spacing: -0.02em; color: var(--akcent-jasny); font-variant-numeric: tabular-nums; }
+.bai .bai-odl-koniec .bai-mono { color: var(--tekst2); text-transform: none; letter-spacing: 0; font-size: 0.9375rem; }
+
+.bai .bai-bw-filtry { display: grid; gap: 0.75rem; margin-bottom: 1.5rem; }
+.bai .bai-bw-grupa { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.bai .bai-chip { font: inherit; font-size: 0.9375rem; padding: 0.4375rem 0.875rem; color: var(--tekst2); background: none; border: 1px solid var(--linia2); border-radius: 999px; cursor: pointer; transition: color 0.2s, border-color 0.2s, background 0.2s; }
+.bai .bai-chip:hover { color: var(--tekst); border-color: var(--tekst2); }
+.bai .bai-chip[aria-pressed="true"] { color: var(--na-akcencie); background: var(--akcent); border-color: var(--akcent); }
+
+.bai .bai-bw-lista { display: grid; gap: 1rem; }
+.bai .bai-bw-karta { display: grid; gap: 1.25rem; padding: 1.375rem; background: var(--karta); border: 1px solid var(--linia); border-radius: 0.5rem; transition: border-color 0.25s; }
+.bai .bai-bw-karta:hover { border-color: var(--linia2); }
+.bai .bai-bw-wygasla { opacity: 0.55; }
+@media (min-width: 900px) { .bai .bai-bw-karta { grid-template-columns: 17rem 1fr 13rem; align-items: start; } }
+.bai .bai-bw-lewa { display: flex; align-items: center; gap: 0.875rem; }
+.bai .bai-bw-nr { min-width: 1.75rem; color: var(--akcent-jasny); }
+.bai .bai-bw-srodek { display: grid; gap: 0.625rem; }
+.bai .bai-bw-opis { font-size: 1.0625rem; color: var(--tekst); }
+.bai .bai-bw-ceny { font-size: 1rem; color: var(--tekst2); }
+.bai .bai-bw-warunki { font-size: 0.9375rem; color: var(--cichy); }
+.bai .bai-bw-meta { color: var(--cichy); }
+.bai .bai-bw-prawa { display: grid; gap: 0.625rem; justify-items: start; }
+@media (min-width: 900px) { .bai .bai-bw-prawa { justify-items: end; text-align: right; } }
+.bai .bai-bw-rabat { font-size: clamp(1.75rem, 4vw, 2.25rem); line-height: 1; letter-spacing: -0.03em; color: var(--akcent-jasny); }
+.bai .bai-bw-kod { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.375rem 0.75rem; padding: 0.5rem 0.75rem; font: inherit; font-family: var(--mono); font-size: 0.875rem; color: var(--tekst); background: var(--tlo2); border: 1px dashed var(--linia2); border-radius: 0.375rem; cursor: pointer; max-width: 100%; text-align: left; }
+.bai .bai-bw-kod .bai-mono { white-space: nowrap; }
+.bai .bai-bw-kod:hover { border-color: var(--akcent-jasny); }
+.bai .bai-bw-reklama { font-size: 0.875rem; color: var(--cichy); }
+.bai .bai-bw-zrodlo { font-size: 0.9375rem; color: var(--tekst2); }
+.bai .bai-bw-zrodlo summary { cursor: pointer; color: var(--tekst2); padding: 0.375rem 0; }
+.bai .bai-bw-zrodlo summary:hover { color: var(--akcent-jasny); }
+.bai .bai-bw-zrodlo blockquote { margin: 0.5rem 0; padding-left: 0.875rem; border-left: 2px solid var(--akcent); color: var(--cichy); font-size: 0.9375rem; }
+.bai .bai-bw-zrodlo a { color: var(--akcent-jasny); border-bottom: 1px solid var(--linia2); }
+.bai .bai-pytania-bw { margin-top: 4rem; display: grid; gap: 0.25rem; }
+.bai .bai-pytania-bw .bai-h2-maly { margin-bottom: 0.75rem; }
+.bai .bai-pytania-bw .bai-bw-zrodlo { border-bottom: 1px solid var(--linia); padding-bottom: 0.5rem; }
+.bai .bai-pytania-bw .bai-bw-zrodlo p { padding: 0.25rem 0 0.5rem; }
+
+.bai .bai-zapis { margin-top: 3.5rem; padding: clamp(1.5rem, 4vw, 2.25rem); background: var(--tlo2); border: 1px solid var(--linia2); border-radius: 0.5rem; }
+.bai .bai-zapis-nad { color: var(--akcent-jasny); }
+.bai .bai-zapis-tytul { margin-top: 0.5rem; font-size: clamp(1.375rem, 3vw, 1.75rem); line-height: 1.2; letter-spacing: -0.03em; }
+.bai .bai-zapis-opis { margin-top: 0.5rem; color: var(--tekst2); }
+.bai .bai-zapis-forma { margin-top: 1.25rem; display: grid; gap: 0.875rem; }
+.bai .bai-zapis-rzad { display: grid; gap: 0.75rem; margin-top: 1rem; }
+.bai .bai-zapis-forma .bai-zapis-rzad { margin-top: 0; }
+@media (min-width: 640px) { .bai .bai-zapis-rzad { grid-template-columns: 1fr auto; } }
+.bai .bai-zapis-zgoda { display: grid; grid-template-columns: auto 1fr; gap: 0.625rem; font-size: 0.875rem; line-height: 1.5; color: var(--cichy); cursor: pointer; }
+.bai .bai-zapis-zgoda input { margin-top: 0.25rem; accent-color: var(--akcent); }
+.bai .bai-zapis-ok { margin-top: 1rem; color: var(--akcent-jasny); }
+.bai .bai-zapis-blad { margin-top: 0.5rem; color: #ff8a80; font-size: 0.9375rem; }
+.bai .bai-przycisk:disabled, .bai .bai-przycisk-obrys:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.bai .bai-skaner { margin-top: 3.5rem; }
+.bai .bai-zglos { margin-top: 3.5rem; display: grid; gap: 0.5rem; }
+.bai .bai-zglos-opis { color: var(--tekst2); }
+
+.bai .bai-promo { margin-top: 1.5rem; padding: 1.25rem 1.375rem; background: var(--tlo2); border: 1px solid var(--akcent); border-radius: 0.5rem; display: grid; gap: 0.5rem; justify-items: start; }
+.bai .bai-promo-nad { color: var(--akcent-jasny); }
+.bai .bai-promo-rabat { font-size: 2rem; line-height: 1; letter-spacing: -0.03em; color: var(--akcent-jasny); }
+.bai .bai-promo-opis { color: var(--tekst); }
+.bai .bai-promo-kod { font-family: var(--mono); font-size: 0.9375rem; color: var(--tekst2); word-break: break-all; }
+.bai .bai-promo-kod b { color: var(--tekst); font-weight: 500; }
+.bai .bai-promo-meta { color: var(--cichy); }

@@ -1,0 +1,632 @@
+{
+ "skan": "2026-11-25T14:48:03.349Z",
+ "adresow": 53,
+ "wyniki": [
+  {
+   "slug": "acrobat-ai-assistant",
+   "strona": "https://www.adobe.com/acrobat/generative-ai-pdf.html",
+   "status": "rabat",
+   "odczytane": 2,
+   "trafienia": [
+    {
+     "url": "https://www.adobe.com/",
+     "typ": "rabat",
+     "cytat": "Adobe for Business Adobe for Business Students and teachers save 71%. Students and teachers save 71%. Students and teachers Students and teachers Everything you need to make anything. Everything you n"
+    }
+   ]
+  },
+  {
+   "slug": "adobe-firefly",
+   "strona": "https://www.adobe.com/products/firefly.html",
+   "status": "rabat",
+   "odczytane": 2,
+   "trafienia": [
+    {
+     "url": "https://www.adobe.com/",
+     "typ": "rabat",
+     "cytat": "Adobe for Business Adobe for Business Students and teachers save 71%. Students and teachers save 71%. Students and teachers Students and teachers Everything you need to make anything. Everything you n"
+    }
+   ]
+  },
+  {
+   "slug": "beautiful-ai",
+   "strona": "https://www.beautiful.ai",
+   "status": "brak",
+   "odczytane": 3,
+   "trafienia": []
+  },
+  {
+   "slug": "canva",
+   "strona": "https://www.canva.com",
+   "status": "brak",
+   "odczytane": 2,
+   "trafienia": []
+  },
+  {
+   "slug": "chatgpt",
+   "strona": "https://chatgpt.com",
+   "status": "rabat",
+   "odczytane": 5,
+   "trafienia": [
+    {
+     "url": "https://chatgpt.com/pl-PL/pricing/",
+     "typ": "rabat",
+     "cytat": "Nonprofits organizacje non-profit mogą teraz uzyskać nawet 75% zniżki na ChatGPT Business lub ChatGPT Enterprise. Skontaktuj się z naszym działem sprzedaży ⁠ . Ilu użytkowników obejmuje każdy plan su"
+    },
+    {
+     "url": "https://chatgpt.com/pl-PL/pricing/",
+     "typ": "rabat",
+     "cytat": "Nonprofits organizacje non-profit mogą teraz uzyskać nawet 75% zniżki na ChatGPT Business lub ChatGPT Enterprise. Skontaktuj się z naszym działem sprzedaży ⁠ . Ilu użytkowników obejmuje każdy plan su"
+    }
+   ]
+  },
+  {
+   "slug": "chatpdf",
+   "strona": "https://www.chatpdf.com",
+   "status": "brak",
+   "odczytane": 2,
+   "trafienia": []
+  },
+  {
+   "slug": "claude-anthropic",
+   "strona": "https://claude.com",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://claude.com/pricing",
+     "typ": "rabat",
+     "cytat": "test models Contact sales Start building (opens in new tab) Save 50% with batch processing. Learn more Batch processing Fable 5.2 Next generation intelligence for long-running agents Prompt caching Re"
+    }
+   ]
+  },
+  {
+   "slug": "consensus",
+   "strona": "https://consensus.app",
+   "status": "brak",
+   "odczytane": 3,
+   "trafienia": []
+  },
+  {
+   "slug": "copy-ai",
+   "strona": "https://www.copy.ai",
+   "status": "brak",
+   "odczytane": 3,
+   "trafienia": []
+  },
+  {
+   "slug": "deepl",
+   "strona": "https://www.deepl.com/pl/pro",
+   "status": "rabat",
+   "odczytane": 4,
+   "trafienia": [
+    {
+     "url": "https://www.deepl.com/pl/pro",
+     "typ": "rabat",
+     "cytat": "bonament dla siebie Tłumacz API Voice Rocznie Miesięcznie Zaoszczędź 16 %, wybierając rozliczenie roczne Niemcy (EUR €) Individual Niezrównanej jakości tłumaczenia dla użytkowników indywidualnych 7,49"
+    },
+    {
+     "url": "https://www.deepl.com/pl/pro",
+     "typ": "rabat",
+     "cytat": "bonament dla siebie Tłumacz API Voice Rocznie Miesięcznie Zaoszczędź 16 %, wybierając rozliczenie roczne Niemcy (EUR €) Individual Niezrównanej jakości tłumaczenia dla użytkowników indywidualnych 7,49"
+    },
+    {
+     "url": "https://www.deepl.com/pl/pro",
+     "typ": "rabat",
+     "cytat": "bonament dla siebie Tłumacz API Voice Rocznie Miesięcznie Zaoszczędź 16 %, wybierając rozliczenie roczne Niemcy (EUR €) Individual Niezrównanej jakości tłumaczenia dla użytkowników indywidualnych 7,49"
+    }
+   ]
+  },
+  {
+   "slug": "deepseek",
+   "strona": "https://www.deepseek.com/en",
+   "status": "brak",
+   "odczytane": 2,
+   "trafienia": []
+  },
+  {
+   "slug": "descript",
+   "strona": "https://www.descript.com",
+   "status": "brak",
+   "odczytane": 3,
+   "trafienia": []
+  },
+  {
+   "slug": "elevenlabs",
+   "strona": "https://elevenlabs.io/pricing",
+   "status": "promocja",
+   "odczytane": 4,
+   "trafienia": [
+    {
+     "url": "https://elevenlabs.io/pricing",
+     "typ": "slowo",
+     "cytat": "ElevenLabs Pricing | Black Friday Sale: Save up to 55% &)]:tw-overflow-x-hidden\"> Black Friday Up to 55% off Get up to 55% off Ends December 1 Get the offer First month for $1 Get your first month for only $1 Ends Decembe"
+    },
+    {
+     "url": "https://elevenlabs.io/",
+     "typ": "slowo",
+     "cytat": "with AI voices Duolingo Character voices for learning and marketing Get started Black Friday Up to 55% off annual plans Get up to 55% off Creator and Pro annual plans. Unlock the possibilities of ElevenLabs for less. Claim now ElevenAgents Deploy agents that talk, type, and take"
+    },
+    {
+     "url": "https://join.elevenlabs.io/bfcm?utm_source=multiple&utm_medium=paid&utm_campaign=bfcm-redirect",
+     "typ": "slowo",
+     "cytat": "Black Friday &amp; Cyber Monday: up to 55% off ElevenLabs plans Get the offer Offer ends in 6d 20h 36m 21s 6d 20h 36m 21s left Limited-time offer Black Friday &amp; Cyber Monday Up to 55% off select E"
+    }
+   ]
+  },
+  {
+   "slug": "elicit",
+   "strona": "https://elicit.com",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://elicit.com/pricing",
+     "typ": "rabat",
+     "cytat": "mport from Zotero Try for free Plus For deeper research $11 Save 42% Per user/month, billed as $132 annually Export to RIS, CSV, BIB, PDF and DOCX Add 5 columns to your tables at a tim e Unlimited sea"
+    }
+   ]
+  },
+  {
+   "slug": "fathom",
+   "strona": "https://fathom.ai",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://www.fathom.ai/pricing",
+     "typ": "rabat",
+     "cytat": "percharge every meeting Individuals Teams Monthly Annually (save 25%+) Free plan Unlimited recordings, instant call summaries, integrations with LLMs &amp; more. Sign up. Free forever. → FOR TEAMS Tea"
+    }
+   ]
+  },
+  {
+   "slug": "fireflies",
+   "strona": "https://fireflies.ai/pricing",
+   "status": "rabat",
+   "odczytane": 2,
+   "trafienia": [
+    {
+     "url": "https://fireflies.ai/pricing",
+     "typ": "rabat",
+     "cytat": "ranscripts, summaries, and video recordings. Monthly Annual Save up to 44% Free For individuals starting out $0 $0 Free forever Get Started Unlimited transcription* Limited AI summaries 400 mins of st"
+    }
+   ]
+  },
+  {
+   "slug": "gamma",
+   "strona": "https://gamma.app",
+   "status": "blokada",
+   "odczytane": 0,
+   "trafienia": []
+  },
+  {
+   "slug": "gemini",
+   "strona": "https://workspace.google.com/intl/pl/",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://workspace.google.com/pricing",
+     "typ": "rabat",
+     "cytat": "i Wypróbuj Google Workspace przez 14 dni sell Uzyskaj nawet 50% zniżki przez pierwsze 3 mies. korzystania z Google Workspace. Oferta ważna przez ograniczony czas. Zniżka jest naliczana w momencie płat"
+    }
+   ]
+  },
+  {
+   "slug": "grammarly",
+   "strona": "https://www.grammarly.com",
+   "status": "promocja",
+   "odczytane": 4,
+   "trafienia": [
+    {
+     "url": "https://www.grammarly.com/",
+     "typ": "rabat",
+     "cytat": "oose the right Grammarly plan Billing period Monthly Yearly Save up to 60% For individuals Free Get peace of mind with writing that’s mistake-free. €0 EUR / month Create Account Write without mistakes"
+    },
+    {
+     "url": "https://www.grammarly.com/",
+     "typ": "rabat",
+     "cytat": "oose the right Grammarly plan Billing period Monthly Yearly Save up to 60% For individuals Free Get peace of mind with writing that’s mistake-free. €0 EUR / month Create Account Write without mistakes"
+    },
+    {
+     "url": "https://www.grammarly.com/black-friday",
+     "typ": "slowo",
+     "cytat": "Black Friday Deal: Save 50% on Grammarly Pro Grammarly Home Product Learn Features AI agents AI assistant AI at Grammarly Trust &amp; security Superhuman Use Grammarly Docs Desktop Mobile Browser Lang"
+    }
+   ]
+  },
+  {
+   "slug": "grok",
+   "strona": "https://grok.com",
+   "status": "brak",
+   "odczytane": 3,
+   "trafienia": []
+  },
+  {
+   "slug": "heygen",
+   "strona": "https://www.heygen.com",
+   "status": "brak",
+   "odczytane": 3,
+   "trafienia": []
+  },
+  {
+   "slug": "ideogram",
+   "strona": "https://ideogram.ai",
+   "status": "brak",
+   "odczytane": 3,
+   "trafienia": []
+  },
+  {
+   "slug": "intercom-fin",
+   "strona": "https://www.intercom.com/fin",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://www.intercom.com/pricing",
+     "typ": "rabat",
+     "cytat": "ss free trial Intercom helpdesk + Fin AI Agent Pay annually Save up to 35 % Essential Pay annually Customer support for individuals, startups, and small businesses. Intercom helpdesk $29 $19 per seat/"
+    }
+   ]
+  },
+  {
+   "slug": "jasper",
+   "strona": "https://www.jasper.ai",
+   "status": "brak",
+   "odczytane": 3,
+   "trafienia": []
+  },
+  {
+   "slug": "kling-ai",
+   "strona": "https://kling.ai",
+   "status": "brak",
+   "odczytane": 5,
+   "trafienia": []
+  },
+  {
+   "slug": "krisp",
+   "strona": "https://krisp.ai",
+   "status": "promocja",
+   "odczytane": 4,
+   "trafienia": [
+    {
+     "url": "https://krisp.ai/",
+     "typ": "slowo",
+     "cytat": "Voice AI for Meetings: Noise Cancellation &amp; AI Note Taker | Krisp Black Friday Deal AI Meeting Assistant 55% off Annual Plans KRISPBF2026 AI Meeting Assistant Back AI Meeting Assistant with #1 Noise Cancellation Explore AI Meeting Assistant AI Notetaker AI Note Take"
+    },
+    {
+     "url": "https://krisp.ai/",
+     "typ": "slowo",
+     "cytat": "Voice AI for Meetings: Noise Cancellation &amp; AI Note Taker | Krisp Black Friday Deal AI Meeting Assistant 55% off Annual Plans KRISPBF2026 AI Meeting Assistant Back AI Meeting Assistant with #1 Noise Cancellation Explore AI Meeting Assistant AI Notetaker AI Note Take"
+    },
+    {
+     "url": "https://krisp.ai/pricing/",
+     "typ": "slowo",
+     "cytat": "Krisp Pricing Plans Black Friday Deal AI Meeting Assistant 55% off Annual Plans KRISPBF2026 AI Meeting Assistant Back AI Meeting Assistant with #1 Noise Cancellation Explore AI Meeting Assistant AI Notetaker AI Note Take"
+    }
+   ]
+  },
+  {
+   "slug": "languagetool",
+   "strona": "https://languagetool.org",
+   "status": "rabat",
+   "odczytane": 4,
+   "trafienia": [
+    {
+     "url": "https://languagetool.org/pl",
+     "typ": "rabat",
+     "cytat": "ub przeredagować teksty w różnych językach. Zarejestruj się 20 % Rabat Premium ograniczony czasowo Uzyskaj teraz rabat Ponad 2000 organizacji ufa naszym narzędziom do pisania opartym na sztucznej inte"
+    },
+    {
+     "url": "https://languagetool.org/pl",
+     "typ": "rabat",
+     "cytat": "ub przeredagować teksty w różnych językach. Zarejestruj się 20 % Rabat Premium ograniczony czasowo Uzyskaj teraz rabat Ponad 2000 organizacji ufa naszym narzędziom do pisania opartym na sztucznej inte"
+    }
+   ]
+  },
+  {
+   "slug": "le-chat",
+   "strona": "https://mistral.ai/products/le-chat",
+   "status": "brak",
+   "odczytane": 3,
+   "trafienia": []
+  },
+  {
+   "slug": "livechat",
+   "strona": "https://www.livechat.com",
+   "status": "promocja",
+   "odczytane": 5,
+   "trafienia": [
+    {
+     "url": "https://www.livechat.com/pricing/",
+     "typ": "rabat",
+     "cytat": "data-events-content2=\"Monthly\" > Billed monthly Pay yearly. Save up to 24%. pricing-plans#sync\" > Essential For small teams earning their first revenue from chat. $19 per user / month Billed annually"
+    },
+    {
+     "url": "https://www.livechat.com/black-friday/",
+     "typ": "slowo",
+     "cytat": "Black Friday Tips to Boost Revenue with LiveChat® | LiveChat.com mobile-menu#sync\" > Text by LiveChat is here. Try our new customer service growth platform with chat, AI Agent and more. events#send\" >"
+    }
+   ]
+  },
+  {
+   "slug": "make",
+   "strona": "https://www.make.com",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://www.make.com/pricing",
+     "typ": "rabat",
+     "cytat": "stomer support 15-minute minimum interval between runs Core Save 15 % $9 /mo Automating fundamental use cases $0.90 /1,000 credits Get started Everything in Free, plus: Unlimited active scenarios More"
+    }
+   ]
+  },
+  {
+   "slug": "manus",
+   "strona": "https://manus.im",
+   "status": "promocja",
+   "odczytane": 5,
+   "trafienia": [
+    {
+     "url": "https://manus.im/black-friday",
+     "typ": "slowo",
+     "cytat": "Czarny Piątek - Manus Funkcje Rozwiązania Zasoby Wydarzenia Biznes Cennik Polski Rozpocznij Polski Less structure, more intelligence. Produkt Cennik Aplikacja internetowa Projektowanie AI Prezentacje"
+    }
+   ]
+  },
+  {
+   "slug": "microsoft-copilot",
+   "strona": "https://www.microsoft.com/pl-pl/microsoft-365-copilot",
+   "status": "brak",
+   "odczytane": 2,
+   "trafienia": []
+  },
+  {
+   "slug": "microsoft-designer",
+   "strona": "https://designer.microsoft.com",
+   "status": "brak",
+   "odczytane": 2,
+   "trafienia": []
+  },
+  {
+   "slug": "midjourney",
+   "strona": "https://www.midjourney.com",
+   "status": "blokada",
+   "odczytane": 0,
+   "trafienia": []
+  },
+  {
+   "slug": "n8n",
+   "strona": "https://n8n.io",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://n8n.io/pricing/",
+     "typ": "rabat",
+     "cytat": "low executions, regardless of complexity. Monthly Annually (Save 17%) Starter Build and run your first workflows and agents. 20€ /mo, billed annually 2.5K workflow executions with unlimited steps Star"
+    }
+   ]
+  },
+  {
+   "slug": "napkin-ai",
+   "strona": "https://www.napkin.ai",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://www.napkin.ai/pricing/",
+     "typ": "rabat",
+     "cytat": "Create Compelling Visuals 10x Faster Pay monthly Pay yearly Save 25% Free Forever $0 Sign up 500 AI credits per week AI credits are used to generate visuals, with ~1 credit charged per word selected f"
+    }
+   ]
+  },
+  {
+   "slug": "notebooklm",
+   "strona": "https://workspace.google.com/products/gemini-notebook/",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://workspace.google.com/pricing",
+     "typ": "rabat",
+     "cytat": "i Wypróbuj Google Workspace przez 14 dni sell Uzyskaj nawet 50% zniżki przez pierwsze 3 mies. korzystania z Google Workspace. Oferta ważna przez ograniczony czas. Zniżka jest naliczana w momencie płat"
+    }
+   ]
+  },
+  {
+   "slug": "notion-ai",
+   "strona": "https://www.notion.com/pricing",
+   "status": "rabat",
+   "odczytane": 2,
+   "trafienia": [
+    {
+     "url": "https://www.notion.com/pricing",
+     "typ": "rabat",
+     "cytat": "ted by teams at Select payment mode: Pay monthly Pay yearly Save up to 20% with yearly Price in EUR USD United States EUR European Union Learn about FX rates Essentials for staying organized. Free €0"
+    }
+   ]
+  },
+  {
+   "slug": "opusclip",
+   "strona": "https://www.opus.pro",
+   "status": "rabat",
+   "odczytane": 4,
+   "trafienia": [
+    {
+     "url": "https://www.opus.pro/pricing",
+     "typ": "rabat",
+     "cytat": "n Up - It’s Free Join waitlist Choose a plan Monthly Yearly Save up to 50 % with annual billing Starter For individual creators $ 15 USD $ 15 USD /mo Starter plan only available in monthly Start your"
+    }
+   ]
+  },
+  {
+   "slug": "otter",
+   "strona": "https://otter.ai",
+   "status": "promocja",
+   "odczytane": 5,
+   "trafienia": [
+    {
+     "url": "https://otter.ai/pricing",
+     "typ": "slowo",
+     "cytat": "Pricing | Otter.ai Black Friday is here: 50% off Pro annual (code BANBF26PROA50OFF) or Business annual (code BANBF26BIZA50OFF) . Claim Pro | Claim Business Use Cases Something for everyone Sales Automatic follow-ups, no"
+    }
+   ]
+  },
+  {
+   "slug": "perplexity",
+   "strona": "https://www.perplexity.ai",
+   "status": "brak",
+   "odczytane": 2,
+   "trafienia": []
+  },
+  {
+   "slug": "power-automate",
+   "strona": "https://www.microsoft.com/pl-pl/power-platform/products/power-automate",
+   "status": "brak",
+   "odczytane": 2,
+   "trafienia": []
+  },
+  {
+   "slug": "quillbot",
+   "strona": "https://quillbot.com",
+   "status": "blokada",
+   "odczytane": 0,
+   "trafienia": []
+  },
+  {
+   "slug": "read-ai",
+   "strona": "https://www.read.ai",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://www.read.ai/plans-pricing",
+     "typ": "rabat",
+     "cytat": "ased on the following annual license counts: 100+ licenses: 10% discount, 500+ licenses: 15% discount, 1,000+ licenses: 20% discount Keep Reading Sign up for emails to get the latest product updates,"
+    }
+   ]
+  },
+  {
+   "slug": "runway",
+   "strona": "https://runwayml.com",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://runway.com/pricing",
+     "typ": "rabat",
+     "cytat": "prises Individual Team &amp; Enterprise API Monthly Yearly -20% off Free Free forever. For people looking to explore Runway&#x27;s AI Tools $0 /month 125 credits 125 one-time credits to explore Runway"
+    }
+   ]
+  },
+  {
+   "slug": "suno",
+   "strona": "https://suno.com",
+   "status": "promocja",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://suno.com/",
+     "typ": "slowo",
+     "cytat": "Suno | Generator muzyki AI Black Friday Zyskaj 30% zniżki Kończy się za 5 dni Black Friday Black Friday 30% zniżki Kończy się za 5 dni Stwórz dowolną piosenkę, jaką sobie wyobrazisz Stwórz dowolną piosenkę, jaką sobie wyobrazis"
+    },
+    {
+     "url": "https://suno.com/",
+     "typ": "slowo",
+     "cytat": "Suno | Generator muzyki AI Black Friday Zyskaj 30% zniżki Kończy się za 5 dni Black Friday Black Friday 30% zniżki Kończy się za 5 dni Stwórz dowolną piosenkę, jaką sobie wyobrazisz Stwórz dowolną piosenkę, jaką sobie wyobrazis"
+    },
+    {
+     "url": "https://suno.com/pricing",
+     "typ": "slowo",
+     "cytat": "Suno | Pricing Log in Open App Extra 30% off annual plans Black Friday Sale Get more Suno for less in our biggest sale of the year. Sale ends: 1d 10h 00m 00s FAQs You&#x27;ve got questions. We&#x27;ve got answers. What are the differences between model versi"
+    }
+   ]
+  },
+  {
+   "slug": "synthesia",
+   "strona": "https://www.synthesia.io",
+   "status": "promocja",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://www.synthesia.io/",
+     "typ": "slowo",
+     "cytat": "for you. Switch to German Log in Book demo Get started Book demo Log in Sign up Black friday Our biggest offer of the year. Save on Pro and Teams plan for a limited time. AI Video and Avatar platform for business Create on-brand videos with AI avatars, voiceovers and motion graph"
+    },
+    {
+     "url": "https://www.synthesia.io/",
+     "typ": "slowo",
+     "cytat": "for you. Switch to German Log in Book demo Get started Book demo Log in Sign up Black friday Our biggest offer of the year. Save on Pro and Teams plan for a limited time. AI Video and Avatar platform for business Create on-brand videos with AI avatars, voiceovers and motion graph"
+    },
+    {
+     "url": "https://www.synthesia.io/pricing",
+     "typ": "slowo",
+     "cytat": "Synthesia Pricing - Compare Free and Paid Plans Black Friday CYBER WEEK Get Pro for $19 with our biggest offer of the year. Save up to 50% on yearly plans. Last chance to get Pro from €19/month. Save up to 50% on yearly plans. Ends in 00:00:00 Vide"
+    }
+   ]
+  },
+  {
+   "slug": "tidio",
+   "strona": "https://www.tidio.com",
+   "status": "promocja",
+   "odczytane": 5,
+   "trafienia": [
+    {
+     "url": "https://www.tidio.com/black-friday/",
+     "typ": "slowo",
+     "cytat": "Tidio Black Friday 2026 Deal: 20% Off Your First Payment EN notifications Notifications Welcome to Tidio chevron_right wand_shine Tell us what you need and we&#x27;ll design an agent around it arrow_right_a"
+    }
+   ]
+  },
+  {
+   "slug": "tldv",
+   "strona": "https://tldv.io",
+   "status": "brak",
+   "odczytane": 4,
+   "trafienia": []
+  },
+  {
+   "slug": "wordtune",
+   "strona": "https://www.wordtune.com",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://www.wordtune.com/plans",
+     "typ": "rabat",
+     "cytat": "mic institution, or at a non-profit, you are eligible for a 30% discount on both our annual and monthly plans. To apply, please contact support . How long does the free trial last? The free trial last"
+    }
+   ]
+  },
+  {
+   "slug": "you-com",
+   "strona": "https://you.com",
+   "status": "brak",
+   "odczytane": 5,
+   "trafienia": []
+  },
+  {
+   "slug": "zapier",
+   "strona": "https://zapier.com",
+   "status": "rabat",
+   "odczytane": 3,
+   "trafienia": [
+    {
+     "url": "https://zapier.com/pricing",
+     "typ": "rabat",
+     "cytat": "m task limit About task usage rates Pay monthly Pay yearly (Save 33%) Currency USD ($) AUD ($) BRL (R$) CAD ($) CHF (Fr) DKK (kr.) EUR (€) GBP (£) HKD (HK$) ILS (₪) INR (₹) JPY (¥) MXN ($) NOK (kr) NZ"
+    }
+   ]
+  },
+  {
+   "slug": "zoom-ai-companion",
+   "strona": "https://www.zoom.com/en/products/ai-assistant/",
+   "status": "brak",
+   "odczytane": 5,
+   "trafienia": []
+  }
+ ]
+}

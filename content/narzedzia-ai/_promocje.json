@@ -1,0 +1,114 @@
+{
+  "_opis": "Promocje Black Week 2026. WPIS TYLKO po sprawdzeniu na stronie producenta, z cytatem. Nic z głowy. link_afiliacyjny puste = zwykły link do oferty producenta (bez oznaczenia reklamy). Po wpisaniu linku afiliacyjnego strona sama dodaje oznaczenie. Aktualizacja: node scripts/promocje-skaner.mjs, potem ręczna poprawka tego pliku.",
+  "sprawdzono": "2026-11-25",
+  "promocje": [
+    {
+      "slug": "elevenlabs",
+      "rabat": "do 55%",
+      "opis": "Roczne plany Creator i Pro w niższej cenie za pierwszy rok. Pierwszy miesiąc planu miesięcznego Creator za 11 USD.",
+      "ceny": "Creator: 99 USD za pierwszy rok (zwykle 220 USD rocznie). Pro: 445,50 USD za pierwszy rok (zwykle 990 USD).",
+      "do": "2026-12-01",
+      "kod": "",
+      "warunki": "Rabat 55% dla nowych klientów planu Pro. Osoby płacące już miesięcznie za Pro dostają 50% po przejściu na plan roczny.",
+      "zrodlo": "https://elevenlabs.io/pricing",
+      "cytat": "The ElevenLabs Black Friday and Cyber Monday sale ends on December 1st. Until then, eligible customers can save up to 55% when they choose an annual plan.",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "synthesia",
+      "rabat": "do 50%",
+      "opis": "Plan Pro za 19 USD w pierwszym miesiącu i do 50% mniej przy planie rocznym.",
+      "ceny": "Pro miesięcznie: 19 USD pierwszy miesiąc, potem 89 USD. Pro rocznie: 59 USD miesięcznie przy rozliczeniu roku (zwykle 89 USD).",
+      "do": "2026-12-07",
+      "kod": "",
+      "warunki": "Oferta dla nowych klientów i osób z darmowego planu, które przechodzą na płatny. Nie dla obecnych płacących. Płatność przed końcem oferty.",
+      "zrodlo": "https://www.synthesia.io/pricing",
+      "cytat": "Offer valid from 16:00 GMT on 23 November to 07:59 GMT on 7 December 2026 and must be paid for before it ends.",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "tidio",
+      "rabat": "20%",
+      "opis": "20% mniej przy pierwszej płatności za plan Starter albo Growth, przy płatności miesięcznej i rocznej.",
+      "ceny": "Rabat liczony od pierwszej płatności: przy planie miesięcznym pierwszy miesiąc, przy rocznym pierwszy rok.",
+      "do": "2026-12-08",
+      "kod": "BF2026",
+      "warunki": "Plany Starter i Growth. Oferta od 25 listopada do 8 grudnia 2026.",
+      "zrodlo": "https://www.tidio.com/black-friday/",
+      "cytat": "Take 20% off your first payment with code BF2026, on monthly or annual billing.",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "otter",
+      "rabat": "50%",
+      "opis": "Plany roczne Pro i Business 50% taniej, z osobnymi kodami.",
+      "ceny": "Zniżka 50% na roczną subskrypcję Pro albo Business.",
+      "do": null,
+      "kod": "Pro: BANBF26PROA50OFF, Business: BANBF26BIZA50OFF",
+      "warunki": "Plany roczne. Data końca nie jest podana na stronie cennika.",
+      "zrodlo": "https://otter.ai/pricing",
+      "cytat": "Black Friday is here: 50% off Pro annual (code BANBF26PROA50OFF) or Business annual (code BANBF26BIZA50OFF).",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "krisp",
+      "rabat": "55%",
+      "opis": "Roczne plany asystenta spotkań z odszumianiem 55% taniej.",
+      "ceny": "55% mniej na planach rocznych.",
+      "do": null,
+      "kod": "KRISPBF2026",
+      "warunki": "Plany roczne. Data końca nie jest podana na stronie cennika.",
+      "zrodlo": "https://krisp.ai/pricing/",
+      "cytat": "Black Friday Deal AI Meeting Assistant 55% off Annual Plans KRISPBF2026",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "grammarly",
+      "rabat": "50%",
+      "opis": "Grammarly Pro 50% taniej przez pierwszy okres subskrypcji.",
+      "ceny": "Rabat obejmuje pierwszy okres, potem cena standardowa.",
+      "do": null,
+      "kod": "",
+      "warunki": "Tylko Pro, bez planów Enterprise. Nie łączy się z innymi promocjami ani z okresem próbnym: po okresie próbnym rabat nie działa. Rabat tylko na pierwszy okres, potem odnowienie po zwykłej cenie.",
+      "zrodlo": "https://www.grammarly.com/black-friday",
+      "cytat": "This Black Friday, get it all with our biggest savings of the year: 50% off Grammarly Pro.",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "suno",
+      "rabat": "dodatkowe 30%",
+      "opis": "Dodatkowe 30% zniżki na plany roczne generatora muzyki.",
+      "ceny": "Dodatkowe 30% na planach rocznych.",
+      "do": null,
+      "kod": "",
+      "warunki": "Na stronie cennika działa odliczanie (w chwili sprawdzenia 25.11 pokazywało 1 dzień i 10 godzin), dokładnej daty końca nie ma.",
+      "zrodlo": "https://suno.com/pricing",
+      "cytat": "Extra 30% off annual plans. Black Friday Sale. Get more Suno for less in our biggest sale of the year.",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "languagetool",
+      "rabat": "20%",
+      "opis": "Premium 20% taniej, oferta ograniczona czasowo.",
+      "ceny": "20% rabatu na plan Premium.",
+      "do": null,
+      "kod": "",
+      "warunki": "Strona podaje tylko, że oferta jest ograniczona czasowo.",
+      "zrodlo": "https://languagetool.org/pl",
+      "cytat": "20 % Rabat Premium ograniczony czasowo",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "gemini",
+      "rabat": "do 50%",
+      "opis": "Google Workspace (z Gemini) do 50% taniej przez pierwsze 3 miesiące.",
+      "ceny": "Na stronie cennika Workspace plan Starter: 31,50 zł za użytkownika, w ofercie 25,20 zł (20% rabatu przez 3 miesiące).",
+      "do": null,
+      "kod": "",
+      "warunki": "Rabat liczony przy płatności. Wysokość rabatu zależy od planu. Oferta ważna przez ograniczony czas.",
+      "zrodlo": "https://workspace.google.com/pricing",
+      "cytat": "Uzyskaj nawet 50% zniżki przez pierwsze 3 mies. korzystania z Google Workspace. Oferta ważna przez ograniczony czas.",
+      "link_afiliacyjny": ""
+    }
+  ]
+}

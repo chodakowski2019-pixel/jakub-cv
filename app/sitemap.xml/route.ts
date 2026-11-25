@@ -27,6 +27,7 @@ function wpisy(host: string | null): string[] {
     `${d}${BAZA}`,
     ...artykulyAi().map((a) => `${d}${BAZA}/${a.slug}`),
     `${d}${BAZA_NARZEDZI}`,
+    `${d}${BAZA_NARZEDZI}/black-week`,
     ...wszystkieNarzedzia().map((n) => `${d}${BAZA_NARZEDZI}/${n.slug}`),
   ];
 }

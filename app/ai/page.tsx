@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Lista, type Kafel } from "./lista";
+import { Zapis } from "./zapis";
+import { BAZA_BLACK_WEEK, wszystkiePromocje } from "@/lib/promocje-ai";
 import { DOMENA, PODGLAD } from "@/lib/blog-ai";
 import { BAZA_NARZEDZI, CECHY, CENNIKI, kategoria, kategorieZNarzedziami, wszystkieNarzedzia } from "@/lib/narzedzia-ai";
 
@@ -20,6 +22,7 @@ const dataPoPolsku = (d: string) => new Date(d).toLocaleDateString("pl-PL", { da
 
 export default function Page() {
   const wszystkie = wszystkieNarzedzia();
+  const promocje = wszystkiePromocje().filter((p) => !p.wygasla);
   const kategorie = kategorieZNarzedziami();
   const kafle: Kafel[] = wszystkie.map((n) => ({
     slug: n.slug,
@@ -71,7 +74,10 @@ export default function Page() {
             {ostatnie ? ` · Sprawdzono: ${dataPoPolsku(ostatnie)}` : ""}
           </p>
           <div className="bai-akcje">
-            <Link href="/szkolenie-ai-dla-firm#formularz" className="bai-przycisk">
+            <Link href={BAZA_BLACK_WEEK} className="bai-przycisk">
+              Promocje Black Week ({promocje.length})
+            </Link>
+            <Link href="/szkolenie-ai-dla-firm#formularz" className="bai-przycisk-obrys">
               Sprawdź wolny termin
             </Link>
             <span className="bai-notka">Na szkoleniu pracuję na narzędziach, których firma już używa</span>
@@ -93,6 +99,7 @@ export default function Page() {
       {/* ── FILTRY I KAFLE ── */}
       <div className="bai-w6 bai-dol">
         <Lista narzedzia={kafle} cenniki={cenniki} cechy={cechy} />
+        <Zapis skad="lista" />
         <p className="bai-katalog-zasada">
           Do katalogu trafiają tylko narzędzia sprawdzone na stronach producentów. Ceny i warunki zmieniają się często, dlatego przy każdym wpisie jest data
           sprawdzenia.

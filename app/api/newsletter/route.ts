@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return NextResponse.json({ ok: false, blad: "Adres e-mail wygląda na niepełny." }, { status: 400 });
   if (b.zgoda !== true) return NextResponse.json({ ok: false, blad: "Brak zgody na newsletter." }, { status: 400 });
   // 22.11 (2): „rodzice” = strona zapisu na webinar dla rodziców (/webinardlarodzicow), z imieniem.
-  const zrodlo = ["newsletter", "webinar", "pasek", "rodzice"].includes(b.zrodlo) ? String(b.zrodlo) : "newsletter";
+  const zrodlo = ["newsletter", "webinar", "pasek", "rodzice", "promocje-ai"].includes(b.zrodlo) ? String(b.zrodlo) : "newsletter";
   const webinar = zrodlo === "webinar" || zrodlo === "rodzice";
   const imie = String(b.imie ?? "").trim().slice(0, 80) || null;
   const baza = `${new URL(req.url).protocol}//${req.headers.get("host") ?? "jakubchodakowski.com"}`;
