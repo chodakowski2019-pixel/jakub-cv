@@ -1271,6 +1271,114 @@
   "nazwa": "Mistral AI, polityka prywatności (wybór języka)",
   "url": "https://legal.mistral.ai/terms/privacy-policy"
  },
+ "acrobat-ai-cena-express": {
+  "liczba": "9,99 USD miesięcznie",
+  "teza": "Acrobat Express z asystentem AI kosztuje 9,99 USD miesięcznie przy planie rocznym rozliczanym miesięcznie, 10,99 USD przy rezygnacji w dowolnym momencie.",
+  "nazwa": "Adobe, strona Acrobat AI Assistant",
+  "url": "https://www.adobe.com/acrobat/generative-ai-pdf.html"
+ },
+ "acrobat-ai-cena-studio": {
+  "liczba": "24,99 USD miesięcznie",
+  "teza": "Acrobat Studio kosztuje 24,99 USD miesięcznie przy planie rocznym rozliczanym miesięcznie albo 34,99 USD miesięcznie bez zobowiązania.",
+  "nazwa": "Adobe, strona Acrobat AI Assistant",
+  "url": "https://www.adobe.com/acrobat/generative-ai-pdf.html"
+ },
+ "acrobat-ai-zespoly-express": {
+  "liczba": "8,26 USD miesięcznie za licencję",
+  "teza": "Acrobat Express dla zespołów kosztuje 8,26 USD miesięcznie za licencję (regularnie 11,99 USD) i zawiera asystenta AI.",
+  "nazwa": "Adobe, strona Acrobat AI Assistant",
+  "url": "https://www.adobe.com/acrobat/generative-ai-pdf.html"
+ },
+ "acrobat-ai-zespoly-studio": {
+  "liczba": "29,99 USD miesięcznie za licencję",
+  "teza": "Acrobat Studio dla zespołów kosztuje 29,99 USD miesięcznie za licencję i zawiera funkcje asystenta AI.",
+  "nazwa": "Adobe, strona Acrobat AI Assistant",
+  "url": "https://www.adobe.com/acrobat/generative-ai-pdf.html"
+ },
+ "acrobat-ai-proba-zespoly": {
+  "liczba": "do 10 licencji",
+  "teza": "Plany dla zespołów można wypróbować za darmo na maksymalnie 10 licencjach.",
+  "nazwa": "Adobe, strona Acrobat AI Assistant",
+  "url": "https://www.adobe.com/acrobat/generative-ai-pdf.html"
+ },
+ "acrobat-ai-enterprise": {
+  "liczba": "",
+  "teza": "Acrobat Studio dla dużych organizacji nie ma ceny na stronie, wymaga kontaktu z Adobe.",
+  "nazwa": "Adobe, strona cen dla firm",
+  "url": "https://www.adobe.com/acrobat/business/pricing-plans.html"
+ },
+ "acrobat-ai-jezyki": {
+  "liczba": "13 języków",
+  "teza": "Producent wymienia 13 języków asystenta, polski nie jest wśród nich, a odpowiedzi w innych językach są poza zamierzonym zakresem.",
+  "nazwa": "Adobe, strona Acrobat AI Assistant",
+  "url": "https://www.adobe.com/acrobat/generative-ai-pdf.html"
+ },
+ "acrobat-ai-trening": {
+  "liczba": "",
+  "teza": "Adobe deklaruje, że treść dokumentów klientów nie służy do trenowania modelu asystenta ani modeli podmiotów trzecich.",
+  "nazwa": "Adobe, komunikat prasowy o asystencie dla firm (2024)",
+  "url": "https://news.adobe.com/news/news-details/2024/adobe-revolutionizes-workplace-productivity-with-launch-of-acrobat-ai-assistant-for-the-enterprise"
+ },
+ "acrobat-ai-podmioty-trzecie": {
+  "liczba": "",
+  "teza": "Adobe zabrania podmiotom trzecim ręcznego przeglądania danych klientów i trenowania na nich ich modeli.",
+  "nazwa": "Adobe, komunikat prasowy o asystencie dla firm (2024)",
+  "url": "https://news.adobe.com/news/news-details/2024/adobe-revolutionizes-workplace-productivity-with-launch-of-acrobat-ai-assistant-for-the-enterprise"
+ },
+ "adobe-firefly-plan-darmowy": {
+  "liczba": "",
+  "teza": "Plan Free daje darmowe dzienne generowania obrazów, wideo i dźwięku.",
+  "nazwa": "Adobe, plany Firefly",
+  "url": "https://www.adobe.com/products/firefly/plans.html"
+ },
+ "adobe-firefly-cena-standard": {
+  "liczba": "11,17 EUR miesięcznie z VAT, 2 000 kredytów",
+  "teza": "Plan Standard kosztuje 11,17 EUR miesięcznie z VAT i daje 2 000 kredytów miesięcznie, czyli do 400 obrazów albo 20 pięciosekundowych filmów.",
+  "nazwa": "Adobe, plany Firefly",
+  "url": "https://www.adobe.com/products/firefly/plans.html"
+ },
+ "adobe-firefly-cena-pro": {
+  "liczba": "22,36 EUR miesięcznie z VAT, 4 000 kredytów",
+  "teza": "Plan Pro kosztuje zwykle 22,36 EUR miesięcznie z VAT i daje 4 000 kredytów miesięcznie. W promocji do 6 grudnia jest 50 procent taniej przez pierwsze 6 miesięcy.",
+  "nazwa": "Adobe, plany Firefly",
+  "url": "https://www.adobe.com/products/firefly/plans.html"
+ },
+ "adobe-firefly-plany-zespolowe": {
+  "liczba": "od 18,48 EUR za licencję miesięcznie bez VAT",
+  "teza": "Plany dla zespołów kosztują za licencję miesięcznie bez VAT: Pro for teams 18,48 EUR (4 000 kredytów), Pro Plus for teams 46,21 EUR (10 000 kredytów), Premium for teams 184,86 EUR (50 000 kredytów).",
+  "nazwa": "Adobe, plany Firefly (zespoły i firmy)",
+  "url": "https://www.adobe.com/products/firefly/plans.html"
+ },
+ "adobe-firefly-kredyty": {
+  "liczba": "",
+  "teza": "Kredyty odnawiają się co okres rozliczeniowy i nie przechodzą na następny. W planach płatnych standardowe generowanie obrazów jest bez limitu, a wideo, dźwięk i modele partnerskie zużywają kredyty.",
+  "nazwa": "Adobe, plany Firefly (pytania)",
+  "url": "https://www.adobe.com/products/firefly/plans.html"
+ },
+ "adobe-firefly-bez-trenowania": {
+  "liczba": "",
+  "teza": "Adobe deklaruje, że nie trenuje modeli na osobistej ani wygenerowanej zawartości użytkowników.",
+  "nazwa": "Adobe, Firefly (strona polska)",
+  "url": "https://www.adobe.com/pl/products/firefly.html"
+ },
+ "adobe-firefly-dane-treningowe": {
+  "liczba": "",
+  "teza": "Modele Firefly są trenowane na licencjonowanej zawartości z Adobe Stock, a Adobe opisuje je jako bezpieczne do użytku komercyjnego.",
+  "nazwa": "Adobe, Firefly (strona polska)",
+  "url": "https://www.adobe.com/pl/products/firefly.html"
+ },
+ "adobe-firefly-jezyki": {
+  "liczba": "ponad 20 języków",
+  "teza": "Firefly przyjmuje polecenia tekstowe w wielu językach, ale polski nie jest wymieniony z nazwy. Funkcje tłumaczenia audio i wideo obsługują ponad 20 języków.",
+  "nazwa": "Adobe, Firefly (strona polska)",
+  "url": "https://www.adobe.com/pl/products/firefly.html"
+ },
+ "adobe-firefly-przeglad-tresci": {
+  "liczba": "",
+  "teza": "Zasady użytkowania Adobe zastrzegają, że polecenia i wyniki funkcji AI mogą być sprawdzane automatycznie i ręcznie w celu zapobiegania nadużyciom.",
+  "nazwa": "Adobe, zasady użytkowania generatywnej AI",
+  "url": "https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
+ },
  "grammarly-plan-darmowy": {
   "liczba": "0 EUR miesięcznie",
   "teza": "Grammarly ma plan darmowy Free z poprawą pisowni i gramatyki oraz limitem 100 poleceń AI miesięcznie.",
@@ -1390,6 +1498,258 @@
   "teza": "Wydawcą LanguageTool jest spółka LanguageTooler GmbH z siedzibą w Hamburgu w Niemczech.",
   "nazwa": "LanguageTool, Imprint",
   "url": "https://languagetool.org/legal/"
+ },
+ "beautiful-ai-okres-probny": {
+  "liczba": "14 dni",
+  "teza": "Plany Pro i Team mają 14-dniowy okres próbny. Wymagana jest karta, a bez anulowania przed końcem okresu zostanie ona obciążona.",
+  "nazwa": "Beautiful.ai, cennik",
+  "url": "https://www.beautiful.ai/pricing"
+ },
+ "beautiful-ai-cena-pro": {
+  "liczba": "14,50 USD miesięcznie przy płatności rocznej",
+  "teza": "Plan Pro kosztuje 14,50 USD miesięcznie przy płatności rocznej.",
+  "nazwa": "Beautiful.ai, cennik",
+  "url": "https://www.beautiful.ai/pricing"
+ },
+ "beautiful-ai-cena-team": {
+  "liczba": "40 USD za osobę miesięcznie przy płatności rocznej, 50 USD przy miesięcznej",
+  "teza": "Plan Team dla od 2 do 20 miejsc kosztuje 40 USD za osobę miesięcznie przy płatności rocznej albo 50 USD przy miesięcznej. Karta cennika mówi też o stałej cenie dla do trzech osób, więc sposób liczenia warto potwierdzić u producenta.",
+  "nazwa": "Beautiful.ai, cennik",
+  "url": "https://www.beautiful.ai/pricing"
+ },
+ "beautiful-ai-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise ma cenę ustalaną po kontakcie i dodaje logowanie jednokrotne SSO, SCIM, dzienniki audytu i zaawansowane uprawnienia.",
+  "nazwa": "Beautiful.ai, cennik",
+  "url": "https://www.beautiful.ai/pricing"
+ },
+ "beautiful-ai-ai-w-planach": {
+  "liczba": "",
+  "teza": "Nieograniczone generowanie treści przez AI jest w każdym płatnym planie.",
+  "nazwa": "Beautiful.ai, cennik",
+  "url": "https://www.beautiful.ai/pricing"
+ },
+ "beautiful-ai-bez-trenowania": {
+  "liczba": "",
+  "teza": "Dostawcy AI współpracujący z Beautiful.ai mają zakaz używania danych klientów do trenowania.",
+  "nazwa": "Beautiful.ai, bezpieczeństwo",
+  "url": "https://www.beautiful.ai/security"
+ },
+ "beautiful-ai-wylaczenie-ai": {
+  "liczba": "30 dni",
+  "teza": "Integracje generatywnej AI można wyłączyć dla konta firmy na prośbę. Dane w zewnętrznych interfejsach AI są przechowywane najwyżej 30 dni, aby przeciwdziałać nadużyciom.",
+  "nazwa": "Beautiful.ai, bezpieczeństwo",
+  "url": "https://www.beautiful.ai/security"
+ },
+ "beautiful-ai-dpa": {
+  "liczba": "",
+  "teza": "Klient z Unii Europejskiej może poprosić o umowę o przetwarzaniu danych (DPA) pod adresem privacy@beautiful.ai.",
+  "nazwa": "Beautiful.ai, regulamin",
+  "url": "https://www.beautiful.ai/terms-of-service"
+ },
+ "beautiful-ai-soc2": {
+  "liczba": "",
+  "teza": "Beautiful.ai opisuje na stronie bezpieczeństwa zgodność SOC 2 Type 2.",
+  "nazwa": "Beautiful.ai, bezpieczeństwo",
+  "url": "https://www.beautiful.ai/security"
+ },
+ "canva-plany": {
+  "liczba": "4 plany",
+  "teza": "Cennik Canva porównuje cztery plany: Free, Pro, Business i Enterprise. Samej treści cennika nie udało się odczytać, bo strona blokuje automatyczny odczyt, więc ceny nie są tu podane.",
+  "nazwa": "Canva, tytuł strony cennika",
+  "url": "https://canva.com/pricing/"
+ },
+ "canva-polska-wersja": {
+  "liczba": "",
+  "teza": "Strona główna Canva i centrum pomocy mają wersję w języku polskim.",
+  "nazwa": "Canva, polskie centrum pomocy (tytuł strony)",
+  "url": "https://www.canva.com/help/language-settings/"
+ },
+ "canva-polska-strona-glowna": {
+  "liczba": "",
+  "teza": "Polska strona główna Canva nosi tytuł w języku polskim.",
+  "nazwa": "Canva, strona główna po polsku (tytuł strony)",
+  "url": "https://www.canva.com/"
+ },
+ "canva-trenowanie-ai": {
+  "liczba": "",
+  "teza": "Polityka prywatności Canva dopuszcza używanie aktywności i treści konta do trenowania algorytmów, modeli i produktów AI.",
+  "nazwa": "Canva, polityka prywatności",
+  "url": "https://www.canva.com/policies/privacy-policy/"
+ },
+ "canva-trenowanie-wylaczenie": {
+  "liczba": "",
+  "teza": "Użytkownik może zarządzać używaniem swoich danych do trenowania AI na stronie ustawień prywatności. Polityka nie mówi, czy domyślnie jest włączone, czy wyłączone.",
+  "nazwa": "Canva, polityka prywatności",
+  "url": "https://www.canva.com/policies/privacy-policy/"
+ },
+ "canva-edukacja-bez-trenowania": {
+  "liczba": "",
+  "teza": "Jedyny wyjątek podany w polityce to Canva Education, której treści nie służą do trenowania AI. Polityka nie wymienia planów Business ani Enterprise.",
+  "nazwa": "Canva, polityka prywatności",
+  "url": "https://www.canva.com/policies/privacy-policy/"
+ },
+ "canva-dpa": {
+  "liczba": "",
+  "teza": "Gdy Canva przetwarza dane osobowe jako podmiot przetwarzający dla klienta, obowiązuje umowa o przetwarzaniu danych (DPA) zawarta z klientem.",
+  "nazwa": "Canva, polityka prywatności",
+  "url": "https://www.canva.com/policies/privacy-policy/"
+ },
+ "chatpdf-plan-darmowy": {
+  "liczba": "2 dokumenty dziennie",
+  "teza": "Plan darmowy pozwala analizować 2 dokumenty dziennie.",
+  "nazwa": "ChatPDF, strona główna",
+  "url": "https://www.chatpdf.com"
+ },
+ "chatpdf-bez-rejestracji": {
+  "liczba": "2 pliki PDF dziennie",
+  "teza": "Dwa pliki PDF dziennie można wgrać bez rejestracji.",
+  "nazwa": "ChatPDF, strona PDF AI",
+  "url": "https://www.chatpdf.com/pdf-ai"
+ },
+ "chatpdf-plus": {
+  "liczba": "",
+  "teza": "Płatny plan Plus daje nieograniczoną analizę dokumentów, ale cena nie jest podana na sprawdzonych stronach.",
+  "nazwa": "ChatPDF, strona PDF AI",
+  "url": "https://www.chatpdf.com/pdf-ai"
+ },
+ "chatpdf-jezyki": {
+  "liczba": "",
+  "teza": "Producent twierdzi, że narzędzie przyjmuje pliki w dowolnym języku i prowadzi rozmowę w dowolnym języku.",
+  "nazwa": "ChatPDF, strona główna",
+  "url": "https://www.chatpdf.com"
+ },
+ "chatpdf-prywatnosc": {
+  "liczba": "",
+  "teza": "Producent deklaruje, że dokumenty są domyślnie prywatne.",
+  "nazwa": "ChatPDF, strona główna",
+  "url": "https://www.chatpdf.com"
+ },
+ "chatpdf-szyfrowanie": {
+  "liczba": "",
+  "teza": "Pliki są szyfrowane przy przesyłaniu i w przechowywaniu.",
+  "nazwa": "ChatPDF, strona główna",
+  "url": "https://www.chatpdf.com"
+ },
+ "chatpdf-api-limity": {
+  "liczba": "2000 stron lub 32 MB",
+  "teza": "Przez interfejs API plik PDF może mieć najwyżej 2000 stron albo 32 MB.",
+  "nazwa": "ChatPDF, dokumentacja API",
+  "url": "https://www.chatpdf.com/docs/api/backend"
+ },
+ "consensus-opis": {
+  "liczba": "ponad 400 milionów prac",
+  "teza": "Consensus to wyszukiwarka AI po recenzowanych publikacjach naukowych, obejmuje ponad 400 milionów prac.",
+  "nazwa": "Consensus, strona główna",
+  "url": "https://consensus.app/"
+ },
+ "consensus-tryby": {
+  "liczba": "",
+  "teza": "Strona wymienia tryby Pro Search i Deep Search z odpowiedziami zbudowanymi przez AI.",
+  "nazwa": "Consensus, strona główna",
+  "url": "https://consensus.app/"
+ },
+ "consensus-dostep-darmowy": {
+  "liczba": "0 USD",
+  "teza": "Dane strony oznaczają dostęp jako bezpłatny, a najniższa cena w ofercie to 0 USD.",
+  "nazwa": "Consensus, strona główna (dane strukturalne)",
+  "url": "https://consensus.app/"
+ },
+ "consensus-plany": {
+  "liczba": "",
+  "teza": "Cennik ma plan Individual oraz plan Team and Enterprise, przełącznik płatności miesięcznej i rocznej.",
+  "nazwa": "Consensus, cennik",
+  "url": "https://consensus.app/pricing/"
+ },
+ "consensus-trening": {
+  "liczba": "",
+  "teza": "Polityka prywatności deklaruje, że dane użytkowników nie służą do trenowania dużych modeli językowych.",
+  "nazwa": "Consensus, polityka prywatności",
+  "url": "https://consensus.app/home/privacy-policy/"
+ },
+ "consensus-serwery-usa": {
+  "liczba": "",
+  "teza": "Producent ma siedzibę w USA i wszystkie jego serwery są w USA.",
+  "nazwa": "Consensus, polityka prywatności",
+  "url": "https://consensus.app/home/privacy-policy/"
+ },
+ "consensus-firma": {
+  "liczba": "",
+  "teza": "Administratorem danych jest Consensus NLP, Inc.",
+  "nazwa": "Consensus, polityka prywatności",
+  "url": "https://consensus.app/home/privacy-policy/"
+ },
+ "consensus-jedno-konto": {
+  "liczba": "1 konto",
+  "teza": "Regulamin pozwala na jedno niezbywalne konto użytkownika, o ile producent nie zgodzi się inaczej na piśmie.",
+  "nazwa": "Consensus, regulamin",
+  "url": "https://consensus.app/home/terms-of-service/"
+ },
+ "copy-ai-cena-chat": {
+  "liczba": "29 USD miesięcznie, 24 USD przy płatności rocznej",
+  "teza": "Plan Chat dla 5 osób kosztuje 29 USD miesięcznie przy płatności miesięcznej albo 24 USD miesięcznie przy rocznej (288 USD rocznie).",
+  "nazwa": "Copy.ai, cennik",
+  "url": "https://www.copy.ai/prices"
+ },
+ "copy-ai-chat-modele": {
+  "liczba": "5 stanowisk",
+  "teza": "Plan Chat obejmuje 5 stanowisk, nieograniczoną liczbę słów w czacie i dostęp do modeli OpenAI, Anthropic i Gemini.",
+  "nazwa": "Copy.ai, cennik",
+  "url": "https://www.copy.ai/prices"
+ },
+ "copy-ai-cena-growth": {
+  "liczba": "1 000 USD miesięcznie, 12 000 USD rocznie",
+  "teza": "Plan Growth dla 75 stanowisk i 20 tysięcy kredytów przepływów pracy miesięcznie kosztuje 1 000 USD miesięcznie, rozliczane 12 000 USD rocznie.",
+  "nazwa": "Copy.ai, cennik",
+  "url": "https://www.copy.ai/prices"
+ },
+ "copy-ai-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise nie ma ceny na stronie, producent proponuje własną prezentację.",
+  "nazwa": "Copy.ai, cennik",
+  "url": "https://www.copy.ai/prices"
+ },
+ "copy-ai-trening-enterprise": {
+  "liczba": "",
+  "teza": "Strona dla firm deklaruje, że dane klienta nie służą do trenowania modeli AI.",
+  "nazwa": "Copy.ai, strona Enterprise",
+  "url": "https://www.copy.ai/enterprise"
+ },
+ "copy-ai-trening-bezpieczenstwo": {
+  "liczba": "",
+  "teza": "Strona o bezpieczeństwie deklaruje, że modele są trenowane bez użycia danych klienta.",
+  "nazwa": "Copy.ai, strona Security",
+  "url": "https://www.copy.ai/security"
+ },
+ "copy-ai-gdpr-soc2": {
+  "liczba": "",
+  "teza": "Producent podaje, że platforma ma certyfikat SOC 2 i jest zgodna z RODO.",
+  "nazwa": "Copy.ai, strona Enterprise",
+  "url": "https://www.copy.ai/enterprise"
+ },
+ "copy-ai-polski": {
+  "liczba": "ponad 25 języków",
+  "teza": "W FAQ producent wymienia ponad 25 języków tworzenia treści, wśród nich polski.",
+  "nazwa": "Copy.ai, strona kontaktowa (FAQ)",
+  "url": "https://www.copy.ai/contact-us"
+ },
+ "copy-ai-polityka-prywatnosci": {
+  "liczba": "",
+  "teza": "Polityka prywatności nie obejmuje treści przetwarzanych dla klientów biznesowych.",
+  "nazwa": "Copy.ai, polityka prywatności",
+  "url": "https://www.copy.ai/privacy-policy"
+ },
+ "copy-ai-hosting": {
+  "liczba": "",
+  "teza": "Dane są przechowywane w chmurze w USA i Unii Europejskiej, ale mogą trafiać także do innych krajów.",
+  "nazwa": "Copy.ai, polityka prywatności",
+  "url": "https://www.copy.ai/privacy-policy"
+ },
+ "copy-ai-firma-usa": {
+  "liczba": "",
+  "teza": "Producent to CopyAI, Inc. z siedzibą w stanie Tennessee w USA.",
+  "nazwa": "Copy.ai, polityka prywatności",
+  "url": "https://www.copy.ai/privacy-policy"
  },
  "deepseek-czat-darmowy": {
   "liczba": "0 USD",
@@ -1559,6 +1919,66 @@
   "nazwa": "Descript, Terms of Service",
   "url": "https://www.descript.com/terms"
  },
+ "elicit-plan-darmowy": {
+  "liczba": "138 milionów prac",
+  "teza": "Plan Basic jest darmowy, z ograniczonym użyciem agenta i raportów oraz nieograniczonym wyszukiwaniem w ponad 138 milionach prac.",
+  "nazwa": "Elicit, cennik",
+  "url": "https://elicit.com/pricing"
+ },
+ "elicit-cena-pro": {
+  "liczba": "49 USD miesięcznie za osobę, 588 USD rocznie",
+  "teza": "Plan Pro kosztuje 49 USD miesięcznie za użytkownika przy rozliczeniu rocznym 588 USD.",
+  "nazwa": "Elicit, cennik",
+  "url": "https://elicit.com/pricing"
+ },
+ "elicit-pro-przeglad": {
+  "liczba": "5000 prac",
+  "teza": "Plan Pro obejmuje proces przeglądu systematycznego, który przesiewa 5000 prac.",
+  "nazwa": "Elicit, cennik",
+  "url": "https://elicit.com/pricing"
+ },
+ "elicit-cena-scale": {
+  "liczba": "229 USD miesięcznie za osobę, 2748 USD rocznie",
+  "teza": "Plan Scale do współpracy kosztuje 229 USD miesięcznie za użytkownika przy rozliczeniu rocznym 2748 USD.",
+  "nazwa": "Elicit, cennik",
+  "url": "https://elicit.com/pricing"
+ },
+ "elicit-enterprise": {
+  "liczba": "40000 prac",
+  "teza": "Plan Enterprise dla firm i szkół ma cenę indywidualną i przesiewa do 40000 prac.",
+  "nazwa": "Elicit, cennik",
+  "url": "https://elicit.com/pricing"
+ },
+ "elicit-enterprise-trening": {
+  "liczba": "",
+  "teza": "Plan Enterprise ma zapis o braku trenowania na danych klienta domyślnie, ale warunki dla planu Team opisują to inaczej.",
+  "nazwa": "Elicit, cennik",
+  "url": "https://elicit.com/pricing"
+ },
+ "elicit-team-warunki-doskonalenie": {
+  "liczba": "",
+  "teza": "Umowa dla planu Team mówi, że platforma jest ulepszana przez przetwarzanie materiałów klienta.",
+  "nazwa": "Elicit, umowa dla planów Team",
+  "url": "https://elicit.com/operations/team-terms"
+ },
+ "elicit-dpa": {
+  "liczba": "",
+  "teza": "Umowa dla planów Team włącza do siebie umowę o ochronie danych Elicit.",
+  "nazwa": "Elicit, umowa dla planów Team",
+  "url": "https://elicit.com/operations/team-terms"
+ },
+ "elicit-dpa-zakres": {
+  "liczba": "",
+  "teza": "Umowa DPA dotyczy sytuacji, gdy Elicit przetwarza dane osobowe klienta jako podmiot przetwarzający.",
+  "nazwa": "Elicit, Data Processing Addendum",
+  "url": "https://elicit.com/operations/dpa"
+ },
+ "elicit-serwery-usa": {
+  "liczba": "",
+  "teza": "Serwery producenta znajdują się w USA, a spółką jest Elicit Research, PBC.",
+  "nazwa": "Elicit, polityka prywatności",
+  "url": "https://elicit.com/operations/privacy"
+ },
  "synthesia-darmowy": {
   "liczba": "0 USD miesięcznie, 500 kredytów",
   "teza": "Synthesia ma darmowy plan Basic za 0 USD miesięcznie z 500 kredytami na miesiąc i znakiem wodnym na filmach.",
@@ -1648,6 +2068,84 @@
   "teza": "Synthesia Limited to firma z siedzibą w Londynie w Wielkiej Brytanii i administrator danych z polityki prywatności.",
   "nazwa": "Privacy Policy, Synthesia Limited",
   "url": "https://www.synthesia.io/legal/privacy-policy"
+ },
+ "fathom-plan-free": {
+  "liczba": "0 USD",
+  "teza": "Plan Free jest darmowy bez limitu nagrań i transkrypcji, z natychmiastowymi podsumowaniami AI.",
+  "nazwa": "Fathom, cennik",
+  "url": "https://fathom.ai/pricing"
+ },
+ "fathom-cena-premium": {
+  "liczba": "16 USD miesięcznie przy rocznej, 20 USD przy miesięcznej",
+  "teza": "Plan Premium dla osób indywidualnych kosztuje 16 USD miesięcznie przy płatności rocznej albo 20 USD przy miesięcznej.",
+  "nazwa": "Fathom, cennik",
+  "url": "https://fathom.ai/pricing"
+ },
+ "fathom-cena-team": {
+  "liczba": "15 USD miesięcznie za osobę przy rocznej, 19 USD przy miesięcznej, minimum 2 osoby",
+  "teza": "Plan Team kosztuje 15 USD za osobę miesięcznie przy płatności rocznej albo 19 USD przy miesięcznej, od 2 użytkowników.",
+  "nazwa": "Fathom, cennik",
+  "url": "https://fathom.ai/pricing"
+ },
+ "fathom-cena-business": {
+  "liczba": "25 USD miesięcznie za osobę przy rocznej, 34 USD przy miesięcznej, minimum 2 osoby",
+  "teza": "Plan Business kosztuje 25 USD za osobę miesięcznie przy płatności rocznej albo 34 USD przy miesięcznej, od 2 użytkowników.",
+  "nazwa": "Fathom, cennik",
+  "url": "https://fathom.ai/pricing"
+ },
+ "fathom-team-bezpieczenstwo": {
+  "liczba": "",
+  "teza": "Plan Team zawiera kontrolę bezpieczeństwa zespołu i zgodność z HIPAA ze standardową umową BAA.",
+  "nazwa": "Fathom, cennik",
+  "url": "https://fathom.ai/pricing"
+ },
+ "fathom-proba": {
+  "liczba": "90 dni",
+  "teza": "Płatne plany mają gwarancję 90 dni i przycisk darmowej próby.",
+  "nazwa": "Fathom, cennik",
+  "url": "https://fathom.ai/pricing"
+ },
+ "fathom-trening-polityka": {
+  "liczba": "",
+  "teza": "Polityka prywatności przewiduje użycie zanonimizowanych danych z treści spotkań do ulepszania usługi, z możliwością rezygnacji w ustawieniach konta.",
+  "nazwa": "Fathom, polityka prywatności",
+  "url": "https://fathom.ai/privacy"
+ },
+ "fathom-trening-opt-out": {
+  "liczba": "",
+  "teza": "Użytkownik może zrezygnować z tego użycia danych w ustawieniach konta.",
+  "nazwa": "Fathom, polityka prywatności",
+  "url": "https://fathom.ai/privacy"
+ },
+ "fathom-dpa": {
+  "liczba": "",
+  "teza": "Dla klientów biznesowych Fathom przetwarza dane na podstawie umowy DPA dostępnej publicznie.",
+  "nazwa": "Fathom, polityka prywatności",
+  "url": "https://fathom.ai/privacy"
+ },
+ "fathom-dpa-zakres": {
+  "liczba": "",
+  "teza": "Umowa DPA dotyczy przetwarzania danych osobowych przez Fathom i jest zawierana z Fathom Video Inc.",
+  "nazwa": "Fathom, umowa DPA",
+  "url": "https://fathom.ai/dpa"
+ },
+ "fathom-hosting-usa": {
+  "liczba": "",
+  "teza": "Usługa jest hostowana w USA.",
+  "nazwa": "Fathom, polityka prywatności",
+  "url": "https://fathom.ai/privacy"
+ },
+ "fathom-jezyki": {
+  "liczba": "7 języków",
+  "teza": "Fathom transkrybuje i streszcza po angielsku, hiszpańsku, francusku, niemiecku, włosku, holendersku i portugalsku, polski nie jest na tej liście.",
+  "nazwa": "Fathom, strona transkrypcji AI",
+  "url": "https://www.fathom.ai/features/ai-transcription"
+ },
+ "fathom-tlumaczenie": {
+  "liczba": "29 języków",
+  "teza": "Poza siedmioma językami natywnymi producent oferuje tłumaczenie na 29 dalszych języków.",
+  "nazwa": "Fathom, strona transkrypcji AI",
+  "url": "https://www.fathom.ai/features/ai-transcription"
  },
  "n8n-cena-starter": {
   "liczba": "20 EUR miesięcznie",
@@ -1907,6 +2405,102 @@
   "nazwa": "HeyGen, Privacy Policy",
   "url": "https://www.heygen.com/privacy"
  },
+ "ideogram-plan-darmowy-publiczny": {
+  "liczba": "",
+  "teza": "W planie darmowym wszystko, co użytkownik wygeneruje, jest publiczne.",
+  "nazwa": "Ideogram, dokumentacja planów",
+  "url": "https://docs.ideogram.ai/plans-and-billing/available-plans"
+ },
+ "ideogram-prywatne": {
+  "liczba": "",
+  "teza": "Plany Plus, Pro, Team i Enterprise trzymają nowe obrazy jako prywatne, dopóki użytkownik ich nie opublikuje.",
+  "nazwa": "Ideogram, dokumentacja planów",
+  "url": "https://docs.ideogram.ai/plans-and-billing/available-plans"
+ },
+ "ideogram-cena-plus": {
+  "liczba": "20 USD miesięcznie, 15 USD przy płatności rocznej",
+  "teza": "Plan Plus kosztuje 20 USD miesięcznie albo 15 USD miesięcznie przy płatności rocznej (180 USD rocznie) i daje 2 400 kredytów miesięcznie.",
+  "nazwa": "Ideogram, cennik",
+  "url": "https://ideogram.ai/pricing/"
+ },
+ "ideogram-cena-pro": {
+  "liczba": "60 USD miesięcznie, 42 USD przy płatności rocznej",
+  "teza": "Plan Pro kosztuje 60 USD miesięcznie albo 42 USD miesięcznie przy płatności rocznej (504 USD rocznie) i daje 7 500 kredytów miesięcznie.",
+  "nazwa": "Ideogram, cennik",
+  "url": "https://ideogram.ai/pricing/"
+ },
+ "ideogram-cena-team": {
+  "liczba": "30 USD za osobę miesięcznie, 20 USD przy płatności rocznej",
+  "teza": "Plan Team kosztuje 30 USD za osobę miesięcznie albo 20 USD za osobę miesięcznie przy płatności rocznej (240 USD rocznie) i daje 3 600 kredytów na osobę miesięcznie.",
+  "nazwa": "Ideogram, dokumentacja planów",
+  "url": "https://docs.ideogram.ai/plans-and-billing/available-plans"
+ },
+ "ideogram-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise ma cenę i limity ustalane w umowie z organizacją.",
+  "nazwa": "Ideogram, dokumentacja planów",
+  "url": "https://docs.ideogram.ai/plans-and-billing/available-plans"
+ },
+ "ideogram-prywatnosc-trenowanie": {
+  "liczba": "",
+  "teza": "Polityka prywatności Ideogram mówi, że firma używa danych wpisanych przez użytkownika, a wśród celów wymienia trenowanie modeli napędzających usługi. Polityka nie opisuje wyłączenia trenowania.",
+  "nazwa": "Ideogram, polityka prywatności",
+  "url": "https://ideogram.ai/legal/privacy"
+ },
+ "intercom-fin-cena-wynik": {
+  "liczba": "0,99 USD za rozwiązaną sprawę",
+  "teza": "Fin kosztuje 0,99 USD za każdy rozwiązany przypadek, a kiedy nie rozwiąże sprawy, nie ma opłaty.",
+  "nazwa": "Intercom, cennik",
+  "url": "https://www.intercom.com/pricing"
+ },
+ "intercom-fin-minimum": {
+  "liczba": "np. 50 wyników miesięcznie",
+  "teza": "Przy istniejącym systemie pomocy obowiązuje minimalne miesięczne zobowiązanie, podane jako przykład 50 wyników. Nie ma opłat za miejsca, wdrożenie ani platformę.",
+  "nazwa": "Intercom, cennik",
+  "url": "https://www.intercom.com/pricing"
+ },
+ "intercom-fin-okres-probny": {
+  "liczba": "14 dni",
+  "teza": "Fin ma 14-dniowy okres próbny bez karty kredytowej.",
+  "nazwa": "Intercom, cennik",
+  "url": "https://www.intercom.com/pricing"
+ },
+ "intercom-fin-plany-helpdesk": {
+  "liczba": "19, 85 i 132 USD za miejsce miesięcznie",
+  "teza": "Fin działa we wszystkich planach Intercom w tej samej cenie za wynik. Miejsca w systemie pomocy kosztują Essential 19 USD (płatność roczna, nowi klienci), Advanced 85 USD i Expert 132 USD za osobę miesięcznie.",
+  "nazwa": "Intercom, cennik",
+  "url": "https://www.intercom.com/pricing"
+ },
+ "intercom-fin-jezyki": {
+  "liczba": "ponad 45 języków",
+  "teza": "Fin wykrywa i rozwiązuje sprawy w ponad 45 językach. Pomoc nie wymienia polskiego z nazwy.",
+  "nazwa": "Intercom, pomoc: Fin AI Agent explained",
+  "url": "https://www.intercom.com/help/en/articles/7120684-fin-ai-agent-explained"
+ },
+ "intercom-fin-dostawcy-trenowanie": {
+  "liczba": "",
+  "teza": "Zewnętrzni dostawcy modeli AI mają umowny zakaz trenowania na danych klientów.",
+  "nazwa": "Intercom, bezpieczeństwo",
+  "url": "https://www.intercom.com/security"
+ },
+ "intercom-fin-dostrajanie": {
+  "liczba": "usunięcie w 30 dni",
+  "teza": "Fin może używać zanonimizowanych danych klientów do dostrajania modeli. Klient może zrezygnować w każdej chwili, a dane są usuwane w ciągu 30 dni.",
+  "nazwa": "Intercom, bezpieczeństwo (pytania)",
+  "url": "https://www.intercom.com/security"
+ },
+ "intercom-fin-dane-region": {
+  "liczba": "3 regiony",
+  "teza": "Intercom hostuje dane w USA, UE albo Australii, zależnie od potrzeb klienta.",
+  "nazwa": "Intercom, bezpieczeństwo",
+  "url": "https://www.intercom.com/security"
+ },
+ "intercom-fin-dpa": {
+  "liczba": "",
+  "teza": "Dodatkowe warunki produktowe Intercom odwołują się do umowy o przetwarzaniu danych (DPA) zawartej z klientem.",
+  "nazwa": "Intercom, Additional Product Terms",
+  "url": "https://www.intercom.com/legal/terms-and-policies/additional-product-terms"
+ },
  "jasper-okres-probny": {
   "liczba": "7 dni",
   "teza": "Jasper nie ma planu darmowego, ale plan Pro można testować przez 7 dni za darmo.",
@@ -2009,6 +2603,174 @@
   "nazwa": "Jasper, cennik (Pricing)",
   "url": "https://www.jasper.ai/pricing"
  },
+ "kling-ai-opis": {
+  "liczba": "",
+  "teza": "Kling AI to generator wideo i obrazów z AI.",
+  "nazwa": "Kling AI, strona główna",
+  "url": "https://kling.ai/"
+ },
+ "kling-ai-plan-darmowy": {
+  "liczba": "0 USD",
+  "teza": "Plan Basic jest darmowy i nie zawiera miesięcznych punktów.",
+  "nazwa": "Kling AI, plany członkostwa",
+  "url": "https://kling.ai/app/membership/membership-plan"
+ },
+ "kling-ai-cena-standard": {
+  "liczba": "6,5 USD przez 3 miesiące, potem 8,8 USD miesięcznie",
+  "teza": "Plan Standard kosztuje 6,5 USD miesięcznie przez pierwsze 3 miesiące, potem 8,8 USD miesięcznie, i daje 660 punktów miesięcznie (oferta czasowa do 30.11.2026).",
+  "nazwa": "Kling AI, plany członkostwa",
+  "url": "https://kling.ai/app/membership/membership-plan"
+ },
+ "kling-ai-cena-pro": {
+  "liczba": "24 USD przez 3 miesiące, potem 32,56 USD miesięcznie",
+  "teza": "Plan Pro kosztuje 24 USD miesięcznie przez pierwsze 3 miesiące, potem 32,56 USD, i daje 3000 punktów miesięcznie.",
+  "nazwa": "Kling AI, plany członkostwa",
+  "url": "https://kling.ai/app/membership/membership-plan"
+ },
+ "kling-ai-cena-premier": {
+  "liczba": "135 USD przez 3 miesiące, potem 181,99 USD miesięcznie",
+  "teza": "Plan Premier kosztuje 135 USD miesięcznie przez pierwsze 3 miesiące, potem 181,99 USD, i daje 18000 punktów miesięcznie.",
+  "nazwa": "Kling AI, plany członkostwa",
+  "url": "https://kling.ai/app/membership/membership-plan"
+ },
+ "kling-ai-prawa-platne": {
+  "liczba": "",
+  "teza": "Cennik wymienia wśród korzyści planów płatnych treści generowane do użytku komercyjnego.",
+  "nazwa": "Kling AI, plany członkostwa",
+  "url": "https://kling.ai/app/membership/membership-plan"
+ },
+ "kling-ai-prawa-regulamin": {
+  "liczba": "",
+  "teza": "Regulamin zabrania komercyjnego użycia wyników bez pisemnej zgody producenta.",
+  "nazwa": "Kling AI, umowa użytkownika",
+  "url": "https://kling.ai/docs/user-policy"
+ },
+ "kling-ai-wlasnosc": {
+  "liczba": "",
+  "teza": "Producent nie rości sobie własności do treści użytkownika.",
+  "nazwa": "Kling AI, umowa użytkownika",
+  "url": "https://kling.ai/docs/user-policy"
+ },
+ "kling-ai-trening": {
+  "liczba": "",
+  "teza": "Producent może używać treści użytkownika do trenowania i rozwijania swoich modeli AI.",
+  "nazwa": "Kling AI, umowa użytkownika",
+  "url": "https://kling.ai/docs/user-policy"
+ },
+ "kling-ai-dane-singapur": {
+  "liczba": "",
+  "teza": "Dane użytkowników są przechowywane na serwerach w Singapurze.",
+  "nazwa": "Kling AI, polityka prywatności",
+  "url": "https://kling.ai/docs/privacy-policy"
+ },
+ "kling-ai-firma-singapur": {
+  "liczba": "",
+  "teza": "Adres zespołu Kling AI to Singapur.",
+  "nazwa": "Kling AI, umowa użytkownika",
+  "url": "https://kling.ai/docs/user-policy"
+ },
+ "krisp-okres-probny": {
+  "liczba": "7 dni",
+  "teza": "Krisp ma 7-dniowy okres próbny bez karty kredytowej, a stałego planu darmowego cennik nie pokazuje.",
+  "nazwa": "Krisp, cennik",
+  "url": "https://krisp.ai/pricing/"
+ },
+ "krisp-cena-core": {
+  "liczba": "8 USD miesięcznie przy płatności rocznej, 16 USD przy miesięcznej",
+  "teza": "Plan Core kosztuje 8 USD za osobę miesięcznie przy płatności rocznej albo 16 USD przy płatności miesięcznej.",
+  "nazwa": "Krisp, cennik",
+  "url": "https://krisp.ai/pricing/"
+ },
+ "krisp-cena-advanced": {
+  "liczba": "15 USD miesięcznie przy płatności rocznej, 30 USD przy miesięcznej",
+  "teza": "Plan Advanced kosztuje 15 USD za osobę miesięcznie przy płatności rocznej albo 30 USD przy płatności miesięcznej i ma rozszerzone ustawienia dla administratora oraz 60 GB miejsca.",
+  "nazwa": "Krisp, cennik",
+  "url": "https://krisp.ai/pricing/"
+ },
+ "krisp-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise nie ma ceny w cenniku, a cena jest ustalana po kontakcie. Obejmuje logowanie jednokrotne SSO i raport SOC 2.",
+  "nazwa": "Krisp, cennik",
+  "url": "https://krisp.ai/pricing/"
+ },
+ "krisp-jezyki-polski": {
+  "liczba": "16 języków",
+  "teza": "Krisp podaje polski wśród języków transkrypcji i streszczeń spotkań.",
+  "nazwa": "Krisp, cennik (lista języków)",
+  "url": "https://krisp.ai/pricing/"
+ },
+ "krisp-dpa": {
+  "liczba": "",
+  "teza": "Krisp zawiera z klientami umowy o przetwarzaniu danych na prośbę i w tej roli działa jako podmiot przetwarzający.",
+  "nazwa": "Krisp, polityka prywatności",
+  "url": "https://krisp.ai/privacy-policy/"
+ },
+ "krisp-nagrania-bez-uzycia": {
+  "liczba": "",
+  "teza": "Polityka prywatności Krisp mówi, że firma nie monitoruje, nie sprzedaje ani nie wykorzystuje treści nagrań i notatek ze spotkań. Osobny zapis o ulepszaniu własnych modeli AI nie wyjaśnia, czy dotyczy treści klientów.",
+  "nazwa": "Krisp, polityka prywatności",
+  "url": "https://krisp.ai/privacy-policy/"
+ },
+ "krisp-soc2": {
+  "liczba": "",
+  "teza": "Krisp ma audyt SOC 2 Type II, a raport jest w Centrum Zaufania.",
+  "nazwa": "Krisp, bezpieczeństwo",
+  "url": "https://krisp.ai/security/"
+ },
+ "livechat-okres-probny": {
+  "liczba": "14 dni",
+  "teza": "LiveChat daje 14 dni okresu próbnego pełnego planu Growth bez karty kredytowej, a stałego planu darmowego cennik nie pokazuje.",
+  "nazwa": "LiveChat, cennik",
+  "url": "https://www.livechat.com/pricing/"
+ },
+ "livechat-cena-essential": {
+  "liczba": "19 USD za osobę miesięcznie przy płatności rocznej, 25 USD przy miesięcznej",
+  "teza": "Plan Essential kosztuje 19 USD za osobę miesięcznie przy płatności rocznej albo 25 USD przy płatności miesięcznej.",
+  "nazwa": "LiveChat, cennik",
+  "url": "https://www.livechat.com/pricing/"
+ },
+ "livechat-cena-growth": {
+  "liczba": "79 USD za osobę miesięcznie przy płatności rocznej, 99 USD przy miesięcznej",
+  "teza": "Plan Growth kosztuje 79 USD za osobę miesięcznie przy płatności rocznej albo 99 USD przy płatności miesięcznej.",
+  "nazwa": "LiveChat, cennik",
+  "url": "https://www.livechat.com/pricing/"
+ },
+ "livechat-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise nie ma ceny w cenniku, a cena jest ustalana po rozmowie z producentem. Obejmuje logowanie jednokrotne, raport SOC 2 Type 2 i umowy o poziomie usług.",
+  "nazwa": "LiveChat, cennik",
+  "url": "https://www.livechat.com/pricing/"
+ },
+ "livechat-agent-ai-limity": {
+  "liczba": "10 i 200 rozwiązań miesięcznie",
+  "teza": "Plan Essential obejmuje 10 rozwiązanych przez AI rozmów miesięcznie, a Growth 200. Dodatkowa paczka 50 rozwiązań kosztuje 49,50 USD.",
+  "nazwa": "LiveChat, cennik",
+  "url": "https://www.livechat.com/pricing/"
+ },
+ "livechat-widget-polski": {
+  "liczba": "48 języków",
+  "teza": "Okno czatu LiveChat jest przetłumaczone na 48 języków, a polski jest na tej liście.",
+  "nazwa": "LiveChat, centrum pomocy",
+  "url": "https://www.livechat.com/help/how-to-modify-chat-window-language/"
+ },
+ "livechat-agent-jezyki": {
+  "liczba": "",
+  "teza": "Agenci AI obsługują rozmowy w wielu językach, ale producent nie wymienia polskiego z nazwy i zaleca przetestowanie języków klientów.",
+  "nazwa": "LiveChat, AI Customer Service Software",
+  "url": "https://www.livechat.com/ai-customer-service-software/"
+ },
+ "livechat-dpa": {
+  "liczba": "",
+  "teza": "Polityka prywatności odwołuje się do umowy o przetwarzaniu danych (DPA), która w razie sprzeczności rozstrzyga o przetwarzaniu danych osobowych.",
+  "nazwa": "LiveChat, polityka prywatności",
+  "url": "https://www.livechat.com/legal/privacy-policy/"
+ },
+ "livechat-cele-trenowanie": {
+  "liczba": "",
+  "teza": "Polityka prywatności wymienia wśród celów przetwarzania danych badanie, rozwijanie i trenowanie usług, w tym systemów AI.",
+  "nazwa": "LiveChat, polityka prywatności",
+  "url": "https://www.livechat.com/legal/privacy-policy/"
+ },
  "make-plan-darmowy": {
   "liczba": "1 000 kredytów miesięcznie",
   "teza": "Make ma plan Free z 1 000 kredytów miesięcznie bez limitu czasu.",
@@ -2093,6 +2855,204 @@
   "nazwa": "Make Academy, kurs Make Foundation: Scenario UI",
   "url": "https://academy-content.make.com/courses/make-foundation-scenarios/01-scenario-ui/"
  },
+ "manus-plan-darmowy": {
+  "liczba": "300 punktów dziennie",
+  "teza": "Plan Free kosztuje 0 USD i daje 300 punktów (credits) odnawianych codziennie oraz jedno zadanie naraz.",
+  "nazwa": "Manus, centrum pomocy: What is the current membership pricing for Manus?",
+  "url": "https://help.manus.im/en/articles/11711111-what-is-the-current-membership-pricing-for-manus"
+ },
+ "manus-cena-pro": {
+  "liczba": "od 20 USD miesięcznie, 4 000 punktów miesięcznie",
+  "teza": "Plan Pro zaczyna się od 20 USD miesięcznie i 4 000 punktów miesięcznie, a płatność roczna daje 17 procent zniżki.",
+  "nazwa": "Manus, centrum pomocy: What is the current membership pricing for Manus?",
+  "url": "https://help.manus.im/en/articles/11711111-what-is-the-current-membership-pricing-for-manus"
+ },
+ "manus-cena-pro-wyzsza": {
+  "liczba": "od 40 USD miesięcznie, 8 000 punktów miesięcznie",
+  "teza": "Wyższy wariant Pro zaczyna się od 40 USD miesięcznie i 8 000 punktów miesięcznie.",
+  "nazwa": "Manus, centrum pomocy: What is the current membership pricing for Manus?",
+  "url": "https://help.manus.im/en/articles/11711111-what-is-the-current-membership-pricing-for-manus"
+ },
+ "manus-cena-team": {
+  "liczba": "od 20 USD za miejsce miesięcznie albo 200 USD za miejsce rocznie, 4 000 punktów na miejsce",
+  "teza": "Plan Team zaczyna się od 20 USD za osobę miesięcznie albo 200 USD za osobę rocznie, przy bazowych 4 000 punktów na osobę miesięcznie.",
+  "nazwa": "Manus, strona planu Team (FAQ)",
+  "url": "https://manus.im/team"
+ },
+ "manus-team-punkty-wspolne": {
+  "liczba": "",
+  "teza": "W planie Team punkty są wspólne dla wszystkich miejsc, a niewykorzystane przez jedną osobę mogą zużyć inne.",
+  "nazwa": "Manus, strona planu Team (FAQ)",
+  "url": "https://manus.im/team"
+ },
+ "manus-team-gosc": {
+  "liczba": "",
+  "teza": "Plan Team ma darmową rolę gościa bez limitu liczby gości. Gość ogląda wyniki i komentuje, ale nie tworzy zadań.",
+  "nazwa": "Manus, strona planu Team (FAQ)",
+  "url": "https://manus.im/team"
+ },
+ "manus-team-sso": {
+  "liczba": "150 USD jednorazowo poniżej 30 miejsc",
+  "teza": "Logowanie jednokrotne (SSO) jest dostępne w planie Team: od 30 miejsc bezpłatnie, poniżej 30 miejsc za dopłatą 150 USD.",
+  "nazwa": "Manus, strona planu Team (FAQ)",
+  "url": "https://manus.im/team"
+ },
+ "manus-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise jest dla organizacji z wyższymi wymaganiami i wymaga kontaktu z działem sprzedaży producenta; cennika nie ma na stronie.",
+  "nazwa": "Manus, strona planu Team (FAQ)",
+  "url": "https://manus.im/team"
+ },
+ "manus-trening-team-strona": {
+  "liczba": "",
+  "teza": "Strona planu Team deklaruje, że Manus nie zezwala na trenowanie modeli na danych klienta.",
+  "nazwa": "Manus, strona planu Team",
+  "url": "https://manus.im/team"
+ },
+ "manus-trening-dostawcy": {
+  "liczba": "",
+  "teza": "Manus ma umowy z dostawcami modeli językowych, które wykluczają użycie danych do trenowania.",
+  "nazwa": "Manus, strona planu Team (FAQ)",
+  "url": "https://manus.im/team"
+ },
+ "manus-trening-opt-out": {
+  "liczba": "",
+  "teza": "Centrum pomocy opisuje w planie Team opcję rezygnacji z trenowania na danych (Data Training Opt-Out), co sugeruje ustawienie do włączenia, a nie domyślną gwarancję.",
+  "nazwa": "Manus, centrum pomocy: What is the current membership pricing for Manus?",
+  "url": "https://help.manus.im/en/articles/11711111-what-is-the-current-membership-pricing-for-manus"
+ },
+ "manus-certyfikaty": {
+  "liczba": "",
+  "teza": "Manus ma certyfikaty SOC 2 Type II, ISO 27001 i ISO 27701.",
+  "nazwa": "Manus, strona planu Team (FAQ)",
+  "url": "https://manus.im/team"
+ },
+ "manus-polski-interfejs": {
+  "liczba": "",
+  "teza": "Strona Manus ma polską wersję językową, a menu wyboru języka zawiera polski.",
+  "nazwa": "Manus, strona planu Team po polsku",
+  "url": "https://manus.im/pl/team"
+ },
+ "manus-waluta": {
+  "liczba": "",
+  "teza": "Ceny są w dolarach amerykańskich, a przeliczenia na lokalną walutę dokonuje bank albo operator płatności.",
+  "nazwa": "Manus, centrum pomocy: pricing unit",
+  "url": "https://help.manus.im/en/articles/11711125-what-is-the-pricing-unit-for-manus-globally-can-i-pay-in-local-currency"
+ },
+ "microsoft-designer-wymagane-konto": {
+  "liczba": "",
+  "teza": "Według strony pomocy Microsoft do korzystania z Designera potrzebne jest konto Microsoft 365 Personal albo Family.",
+  "nazwa": "Microsoft, pomoc: Welcome to Microsoft Designer",
+  "url": "https://support.microsoft.com/en-us/designer/welcome-to-microsoft-designer"
+ },
+ "microsoft-designer-bez-firm": {
+  "liczba": "",
+  "teza": "Ta sama strona pomocy mówi, że Designer nie jest dostępny dla użytkowników firmowych (enterprise).",
+  "nazwa": "Microsoft, pomoc: Welcome to Microsoft Designer",
+  "url": "https://support.microsoft.com/en-us/designer/welcome-to-microsoft-designer"
+ },
+ "microsoft-designer-kredyty": {
+  "liczba": "",
+  "teza": "Zużycie funkcji AI w Designerze jest liczone w miesięcznych kredytach AI, razem z innymi aplikacjami Microsoftu.",
+  "nazwa": "Microsoft, pomoc: AI usage across Microsoft 365 subscriptions",
+  "url": "https://support.microsoft.com/en-us/microsoft-365-copilot/ai-credits-and-limits-for-microsoft-365-subscriptions"
+ },
+ "microsoft-designer-kredyty-opis": {
+  "liczba": "",
+  "teza": "Kredyty AI to miesięczne limity użycia w aplikacjach Microsoft 365 i Windows, a korzyści AI są tylko dla właściciela subskrypcji i nie można ich dzielić.",
+  "nazwa": "Microsoft, pomoc: AI usage across Microsoft 365 subscriptions",
+  "url": "https://support.microsoft.com/en-us/microsoft-365-copilot/ai-credits-and-limits-for-microsoft-365-subscriptions"
+ },
+ "midjourney-cena-basic-standard": {
+  "liczba": "Basic 10 USD, Standard 30 USD miesięcznie",
+  "teza": "Plan Basic kosztuje 10 USD miesięcznie albo 8 USD przy płatności rocznej, a Standard 30 USD miesięcznie albo 24 USD przy płatności rocznej. Uwaga: strony Midjourney blokują automatyczny odczyt, fragment pochodzi z wyników wyszukiwania po stronach producenta.",
+  "nazwa": "Midjourney, cennik i dokumentacja planów",
+  "url": "https://www.midjourney.com/pricing"
+ },
+ "midjourney-cena-pro-mega": {
+  "liczba": "Pro 60 USD, Mega 120 USD miesięcznie",
+  "teza": "Plan Pro kosztuje 60 USD miesięcznie albo 48 USD przy płatności rocznej, a Mega 120 USD miesięcznie albo 96 USD przy płatności rocznej. Płatność roczna oznacza zapłatę za cały rok z góry i rabat 20 procent.",
+  "nazwa": "Midjourney, cennik i dokumentacja planów",
+  "url": "https://docs.midjourney.com/hc/en-us/articles/27870484040333-Comparing-Midjourney-Plans"
+ },
+ "midjourney-prog-firmy": {
+  "liczba": "1 000 000 USD rocznie",
+  "teza": "Firmy lub ich pracownicy z rocznym przychodem powyżej 1 000 000 USD muszą mieć plan Pro albo Mega, aby być właścicielem stworzonych obrazów.",
+  "nazwa": "Midjourney, regulamin (Terms of Service)",
+  "url": "https://docs.midjourney.com/hc/en-us/articles/32083055291277-Terms-of-Service"
+ },
+ "midjourney-stealth": {
+  "liczba": "",
+  "teza": "Tryb Stealth, który ukrywa obrazy i filmy przed innymi, jest dostępny tylko w planach Pro i Mega, i tylko na stronie midjourney.com. Obrazy tworzone we wspólnych kanałach Discorda są widoczne dla innych.",
+  "nazwa": "Midjourney, Stealth Mode",
+  "url": "https://docs.midjourney.com/hc/en-us/articles/32019750070669-Stealth-Mode"
+ },
+ "midjourney-wlasnosc": {
+  "liczba": "",
+  "teza": "Cennik Midjourney mówi, że użytkownik jest właścicielem obrazów i filmów, które stworzył, także po anulowaniu subskrypcji, z kilkoma wyjątkami.",
+  "nazwa": "Midjourney, cennik (pytania)",
+  "url": "https://www.midjourney.com/pricing"
+ },
+ "midjourney-plany-grupowe": {
+  "liczba": "",
+  "teza": "Midjourney ma w dokumentacji stronę o planach grupowych i rozliczeniach firmowych.",
+  "nazwa": "Midjourney, dokumentacja (tytuł strony)",
+  "url": "https://docs.midjourney.com/hc/en-us/articles/27870607078285-Group-Plans-Corporate-Billing"
+ },
+ "napkin-ai-plan-darmowy": {
+  "liczba": "500 kredytów AI tygodniowo",
+  "teza": "Plan Free jest darmowy na stałe i daje 500 kredytów AI tygodniowo. Grafiki mają znak Napkin.",
+  "nazwa": "Napkin AI, cennik",
+  "url": "https://www.napkin.ai/pricing"
+ },
+ "napkin-ai-cena-plus": {
+  "liczba": "9 USD za osobę miesięcznie, 10 000 kredytów AI",
+  "teza": "Plan Plus kosztuje 9 USD za osobę miesięcznie, daje 10 000 kredytów AI miesięcznie, eksport do PPT i SVG oraz zarządzanie zespołem i rozliczeniami.",
+  "nazwa": "Napkin AI, cennik",
+  "url": "https://www.napkin.ai/pricing"
+ },
+ "napkin-ai-cena-pro": {
+  "liczba": "22 USD za osobę miesięcznie, 30 000 kredytów AI",
+  "teza": "Plan Pro kosztuje 22 USD za osobę miesięcznie i daje 30 000 kredytów AI miesięcznie, własne style marki i przesyłanie czcionek.",
+  "nazwa": "Napkin AI, cennik",
+  "url": "https://www.napkin.ai/pricing"
+ },
+ "napkin-ai-rok": {
+  "liczba": "25 procent taniej",
+  "teza": "Płatność roczna jest o 25 procent tańsza niż miesięczna. Cennik nie podaje kwot rocznych.",
+  "nazwa": "Napkin AI, cennik",
+  "url": "https://www.napkin.ai/pricing"
+ },
+ "napkin-ai-miejsca": {
+  "liczba": "",
+  "teza": "W planach płatnych za każdego członka zespołu, który przyjmie zaproszenie, naliczane jest dodatkowe miejsce.",
+  "nazwa": "Napkin AI, cennik",
+  "url": "https://www.napkin.ai/pricing"
+ },
+ "napkin-ai-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise nie ma ceny w cenniku, dane klientów Enterprise nie służą do trenowania AI Napkin.",
+  "nazwa": "Napkin AI, cennik",
+  "url": "https://www.napkin.ai/pricing"
+ },
+ "napkin-ai-dostawcy": {
+  "liczba": "",
+  "teza": "Polityka prywatności wymienia OpenAI i Anthropic jako dostawców generowania i przetwarzania AI, a inne usługi, w tym Gemini Google, mogą przetwarzać część zapytań albo służyć jako zapasowe.",
+  "nazwa": "Napkin AI, polityka prywatności",
+  "url": "https://www.napkin.ai/privacy"
+ },
+ "napkin-ai-dpa": {
+  "liczba": "",
+  "teza": "Polityka prywatności przewiduje, że organizacje mogą mieć z Napkin osobne umowy o przetwarzaniu danych.",
+  "nazwa": "Napkin AI, polityka prywatności",
+  "url": "https://www.napkin.ai/privacy"
+ },
+ "napkin-ai-jezyki": {
+  "liczba": "ponad 60 języków",
+  "teza": "Grafiki i prezentacje można tworzyć w ponad 60 językach. Interfejs jest po angielsku, francusku, hiszpańsku, włosku, koreańsku i portugalsku. Polski nie jest wymieniony z nazwy.",
+  "nazwa": "Napkin AI, pomoc: obsługiwane języki",
+  "url": "https://help.napkin.ai/en/articles/10010062-is-napkin-ai-available-in-my-language"
+ },
  "opusclip-darmowy": {
   "liczba": "0 USD, 60 kredytów miesięcznie",
   "teza": "OpusClip ma darmowy plan Free z 60 kredytami miesięcznie, klipami ze znakiem wodnym i eksportem tylko przez 3 dni.",
@@ -2176,6 +3136,66 @@
   "teza": "OpusClip to produkt spółki Opusclip Inc. z adresem w Mountain View w USA.",
   "nazwa": "OpusClip, Privacy Policy",
   "url": "https://www.opus.pro/privacy-policy"
+ },
+ "otter-plan-darmowy": {
+  "liczba": "300 minut miesięcznie",
+  "teza": "Plan Basic jest darmowy i daje 300 minut transkrypcji miesięcznie na użytkownika.",
+  "nazwa": "Otter, cennik",
+  "url": "https://otter.ai/pricing"
+ },
+ "otter-limity-basic": {
+  "liczba": "30 minut na rozmowę",
+  "teza": "W planie Basic jedna rozmowa może trwać do 30 minut, a w historii zostaje 25 ostatnich rozmów.",
+  "nazwa": "Otter, cennik",
+  "url": "https://otter.ai/pricing"
+ },
+ "otter-cena-pro": {
+  "liczba": "8,33 USD miesięcznie przy rocznej, 16,99 USD przy miesięcznej",
+  "teza": "Plan Pro kosztuje 8,33 USD miesięcznie za użytkownika przy płatności rocznej albo 16,99 USD przy miesięcznej.",
+  "nazwa": "Otter, cennik",
+  "url": "https://otter.ai/pricing"
+ },
+ "otter-cena-business": {
+  "liczba": "19,99 USD miesięcznie przy rocznej, 30 USD przy miesięcznej",
+  "teza": "Plan Business kosztuje 19,99 USD miesięcznie za użytkownika przy płatności rocznej albo 30 USD przy miesięcznej.",
+  "nazwa": "Otter, cennik",
+  "url": "https://otter.ai/pricing"
+ },
+ "otter-business-zakres": {
+  "liczba": "25 członków",
+  "teza": "Plan Business obejmuje do 25 członków przestrzeni roboczej, do 4 godzin na rozmowę i nieograniczoną transkrypcję spotkań.",
+  "nazwa": "Otter, cennik",
+  "url": "https://otter.ai/pricing"
+ },
+ "otter-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise ma cenę indywidualną, nieograniczoną liczbę członków oraz SSO i SCIM.",
+  "nazwa": "Otter, cennik",
+  "url": "https://otter.ai/pricing"
+ },
+ "otter-jezyki": {
+  "liczba": "6 języków",
+  "teza": "Transkrypcja AI działa w 6 językach, polski nie jest wśród nich.",
+  "nazwa": "Otter, cennik",
+  "url": "https://otter.ai/pricing"
+ },
+ "otter-trening-polityka": {
+  "liczba": "",
+  "teza": "Polityka prywatności przewiduje trenowanie technologii AI na zanonimizowanych nagraniach i transkrypcjach.",
+  "nazwa": "Otter, polityka prywatności",
+  "url": "https://otter.ai/privacy-policy"
+ },
+ "otter-trening-enterprise": {
+  "liczba": "",
+  "teza": "W planie Enterprise wyłączenie danych z trenowania uzgadnia się z opiekunem konta.",
+  "nazwa": "Otter, strona Enterprise",
+  "url": "https://otter.ai/enterprise"
+ },
+ "otter-aws-usa": {
+  "liczba": "",
+  "teza": "Producent korzysta z usług chmurowych Amazon Web Services w USA.",
+  "nazwa": "Otter, polityka prywatności",
+  "url": "https://otter.ai/privacy-policy"
  },
  "power-automate-free": {
   "liczba": "",
@@ -2351,6 +3371,60 @@
   "nazwa": "Centrum pomocy QuillBot, If you transfer data outside the EU, what safeguards do you have in place?",
   "url": "https://help.quillbot.com/hc/en-us/articles/35932729688087-If-you-transfer-data-outside-the-EU-what-safeguards-do-you-have-in-place-to-ensure-their-protection"
  },
+ "read-ai-plan-free": {
+  "liczba": "5 transkrypcji miesięcznie",
+  "teza": "Plan Free jest darmowy, bez karty, i daje 5 transkrypcji spotkań miesięcznie.",
+  "nazwa": "Read AI, cennik",
+  "url": "https://www.read.ai/pricing"
+ },
+ "read-ai-cena-pro": {
+  "liczba": "15 USD miesięcznie przy rocznej, 19,75 USD przy miesięcznej",
+  "teza": "Plan Pro kosztuje 15 USD za użytkownika miesięcznie przy płatności rocznej albo 19,75 USD przy miesięcznej.",
+  "nazwa": "Read AI, cennik",
+  "url": "https://www.read.ai/pricing"
+ },
+ "read-ai-cena-enterprise": {
+  "liczba": "22,50 USD miesięcznie przy rocznej, 29,75 USD przy miesięcznej",
+  "teza": "Plan Enterprise kosztuje 22,50 USD za użytkownika miesięcznie przy płatności rocznej albo 29,75 USD przy miesięcznej i wymaga co najmniej 5 licencji.",
+  "nazwa": "Read AI, cennik",
+  "url": "https://www.read.ai/pricing"
+ },
+ "read-ai-enterprise-plus": {
+  "liczba": "29,75 USD miesięcznie przy rocznej",
+  "teza": "Plan Enterprise+ kosztuje od 29,75 USD za użytkownika miesięcznie przy rocznej płatności, a cenę ustala się z działem handlowym producenta; ma własną politykę przechowywania danych, HIPAA i hosting w UE i Kalifornii.",
+  "nazwa": "Read AI, cennik",
+  "url": "https://www.read.ai/plans-pricing"
+ },
+ "read-ai-trening-polityka": {
+  "liczba": "",
+  "teza": "Polityka prywatności pozwala używać danych do trenowania modeli w usługach, z zastrzeżeniem ustawień konta.",
+  "nazwa": "Read AI, polityka prywatności",
+  "url": "https://www.read.ai/privacy-policy"
+ },
+ "read-ai-program-opt-in": {
+  "liczba": "",
+  "teza": "Udział w programie doświadczeń klienta jest dobrowolny i można go zmienić w ustawieniach konta.",
+  "nazwa": "Read AI, polityka prywatności",
+  "url": "https://www.read.ai/privacy-policy"
+ },
+ "read-ai-serwery": {
+  "liczba": "",
+  "teza": "Producent przetwarza i przechowuje dane na serwerach w USA i innych krajach.",
+  "nazwa": "Read AI, polityka prywatności",
+  "url": "https://www.read.ai/privacy-policy"
+ },
+ "read-ai-polski": {
+  "liczba": "",
+  "teza": "Producent ogłosił dodanie czterech języków, w tym polskiego.",
+  "nazwa": "Read AI, blog",
+  "url": "https://www.read.ai/post/korean-polish-catalan-and-ukrainian-now-added-to-read-ai"
+ },
+ "read-ai-jezyki-raporty": {
+  "liczba": "ponad 16 języków",
+  "teza": "Raporty ze spotkań są dostępne w ponad 16 językach, a plan Free wspomina o ponad 20 językach.",
+  "nazwa": "Read AI, cennik",
+  "url": "https://www.read.ai/pricing"
+ },
  "runway-darmowy": {
   "liczba": "0 USD, 125 kredytów jednorazowo",
   "teza": "Runway ma darmowy plan Free z jednorazową pulą 125 kredytów.",
@@ -2435,6 +3509,210 @@
   "nazwa": "Runway, Privacy Policy",
   "url": "https://runwayml.com/privacy-policy"
  },
+ "suno-opis": {
+  "liczba": "",
+  "teza": "Suno tworzy kompletne piosenki z wokalem, tekstem i produkcją z jednego opisu tekstowego.",
+  "nazwa": "Suno, strona główna",
+  "url": "https://suno.com/"
+ },
+ "suno-plan-darmowy": {
+  "liczba": "50 punktów dziennie",
+  "teza": "Plan Free jest darmowy na stałe i daje 50 punktów na piosenki dziennie, bez praw komercyjnych.",
+  "nazwa": "Suno, cennik",
+  "url": "https://suno.com/pricing"
+ },
+ "suno-cena-pro": {
+  "liczba": "10 USD miesięcznie, 8 USD przy płatności rocznej",
+  "teza": "Plan Pro kosztuje 10 USD miesięcznie albo 8 USD miesięcznie przy płatności rocznej (96 USD rocznie) i daje 2 500 punktów miesięcznie.",
+  "nazwa": "Suno, cennik",
+  "url": "https://suno.com/pricing"
+ },
+ "suno-cena-premier": {
+  "liczba": "30 USD miesięcznie, 24 USD przy płatności rocznej",
+  "teza": "Plan Premier kosztuje 30 USD miesięcznie albo 24 USD miesięcznie przy płatności rocznej (288 USD rocznie) i daje 10 000 punktów miesięcznie.",
+  "nazwa": "Suno, cennik",
+  "url": "https://suno.com/pricing"
+ },
+ "suno-rabat-roczny": {
+  "liczba": "20 procent",
+  "teza": "Oba płatne plany są tańsze o 20 procent przy płatności rocznej.",
+  "nazwa": "Suno, strona główna",
+  "url": "https://suno.com/"
+ },
+ "suno-prawa-platne": {
+  "liczba": "",
+  "teza": "Subskrybenci płatnych planów dostają od Suno prawa do utworów, które Suno posiada.",
+  "nazwa": "Suno, warunki korzystania",
+  "url": "https://suno.com/terms"
+ },
+ "suno-prawa-free": {
+  "liczba": "",
+  "teza": "Użytkownicy planu darmowego mogą używać utworów tylko do celów osobistych i niekomercyjnych.",
+  "nazwa": "Suno, warunki korzystania",
+  "url": "https://suno.com/terms"
+ },
+ "suno-prawa-pobranie": {
+  "liczba": "",
+  "teza": "Komercyjnie można wykorzystać tylko utwory pobrane zatwierdzoną drogą.",
+  "nazwa": "Suno, warunki korzystania",
+  "url": "https://suno.com/terms"
+ },
+ "suno-trening-warunki": {
+  "liczba": "",
+  "teza": "Regulamin pozwala Suno używać przesłanych treści do ulepszania usługi i modeli.",
+  "nazwa": "Suno, warunki korzystania",
+  "url": "https://suno.com/terms"
+ },
+ "suno-trening-prywatnosc": {
+  "liczba": "",
+  "teza": "Polityka prywatności mówi, że Suno używa treści, w tym promptów, do trenowania modeli.",
+  "nazwa": "Suno, polityka prywatności",
+  "url": "https://suno.com/privacy"
+ },
+ "suno-firma-usa": {
+  "liczba": "",
+  "teza": "Suno ma siedzibę w Stanach Zjednoczonych.",
+  "nazwa": "Suno, polityka prywatności",
+  "url": "https://suno.com/privacy"
+ },
+ "tidio-plan-darmowy": {
+  "liczba": "50 rozmów miesięcznie",
+  "teza": "Plan Free obejmuje 50 rozmów z ludźmi miesięcznie, a do tego jednorazową pulę 50 rozmów z Lyro, która się nie odnawia.",
+  "nazwa": "Tidio, cennik",
+  "url": "https://www.tidio.com/pricing/"
+ },
+ "tidio-okres-probny": {
+  "liczba": "7 dni",
+  "teza": "Płatne plany mają 7-dniowy okres próbny bez karty.",
+  "nazwa": "Tidio, cennik (pytania)",
+  "url": "https://www.tidio.com/pricing/"
+ },
+ "tidio-cena-starter": {
+  "liczba": "33 USD miesięcznie, 390 USD rocznie",
+  "teza": "Plan Starter na 50 rozmów miesięcznie kosztuje 33 USD miesięcznie albo 390 USD rocznie.",
+  "nazwa": "Tidio, cennik",
+  "url": "https://www.tidio.com/pricing/"
+ },
+ "tidio-cena-growth": {
+  "liczba": "od 63 USD miesięcznie, 750 USD rocznie",
+  "teza": "Plan Growth zaczyna się od 63 USD miesięcznie albo 750 USD rocznie, a limity wynoszą od 100 do 1000 rozmów.",
+  "nazwa": "Tidio, cennik",
+  "url": "https://www.tidio.com/pricing/"
+ },
+ "tidio-plus-premium": {
+  "liczba": "od 300 USD miesięcznie",
+  "teza": "Plan Plus zaczyna się od 300 USD miesięcznie plus opłata za zużycie, a Premium nie ma ceny w cenniku i wymaga kontaktu.",
+  "nazwa": "Tidio, cennik",
+  "url": "https://www.tidio.com/pricing/"
+ },
+ "tidio-limit-rozmow": {
+  "liczba": "",
+  "teza": "Rozmowy obsłużone przez Lyro i przez pracowników liczą się do tego samego limitu planu.",
+  "nazwa": "Tidio, cennik",
+  "url": "https://www.tidio.com/pricing/"
+ },
+ "tidio-lyro-polski": {
+  "liczba": "51 języków",
+  "teza": "Lyro porozumiewa się w 51 językach, w tym po polsku. Panel administratora producent podaje bez polskiego.",
+  "nazwa": "Tidio, FAQ",
+  "url": "https://www.tidio.com/faq/"
+ },
+ "tidio-strona-pl": {
+  "liczba": "",
+  "teza": "Strona Tidio ma wersję polską, a Lyro rozpoznaje język klienta i odpowiada w nim.",
+  "nazwa": "Tidio, strona polska",
+  "url": "https://www.tidio.com/pl/"
+ },
+ "tidio-dpa": {
+  "liczba": "",
+  "teza": "Umowa o powierzeniu przetwarzania danych (DPA) wchodzi w skład regulaminu Tidio.",
+  "nazwa": "Tidio, FAQ",
+  "url": "https://www.tidio.com/faq/"
+ },
+ "tidio-dane-ue": {
+  "liczba": "",
+  "teza": "Tidio przechowuje dane na serwerach w krajach Europejskiego Obszaru Gospodarczego.",
+  "nazwa": "Tidio, FAQ",
+  "url": "https://www.tidio.com/faq/"
+ },
+ "tidio-trenowanie-dostawcy": {
+  "liczba": "",
+  "teza": "Dostawcom modeli AI umowa zakazuje trenowania własnych modeli na danych klientów Tidio.",
+  "nazwa": "Tidio, regulamin (AI Terms)",
+  "url": "https://www.tidio.com/terms/"
+ },
+ "tidio-dane-zagregowane": {
+  "liczba": "",
+  "teza": "Tidio zastrzega sobie prawo do używania zagregowanych, zanonimizowanych danych z rozmów do strojenia działania modeli.",
+  "nazwa": "Tidio, regulamin (AI Terms)",
+  "url": "https://www.tidio.com/terms/"
+ },
+ "tidio-soc2": {
+  "liczba": "",
+  "teza": "Tidio ma ukończony audyt SOC 2.",
+  "nazwa": "Tidio, FAQ",
+  "url": "https://www.tidio.com/faq/"
+ },
+ "tldv-plan-free": {
+  "liczba": "0 EUR",
+  "teza": "Plan Free kosztuje 0 EUR.",
+  "nazwa": "tl;dv, cennik",
+  "url": "https://tldv.io/pricing/"
+ },
+ "tldv-cena-pro": {
+  "liczba": "18 EUR miesięcznie za osobę przy rocznej, 29 EUR przy miesięcznej",
+  "teza": "Plan Pro kosztuje 18 EUR za osobę miesięcznie przy płatności rocznej (216 EUR rocznie) albo 29 EUR przy miesięcznej.",
+  "nazwa": "tl;dv, cennik",
+  "url": "https://tldv.io/pricing/"
+ },
+ "tldv-cena-business": {
+  "liczba": "29 EUR miesięcznie za osobę przy rocznej, 39 EUR przy miesięcznej",
+  "teza": "Plan Business kosztuje 29 EUR za osobę miesięcznie przy płatności rocznej (348 EUR rocznie) albo 39 EUR przy miesięcznej.",
+  "nazwa": "tl;dv, cennik",
+  "url": "https://tldv.io/pricing/"
+ },
+ "tldv-trening": {
+  "liczba": "",
+  "teza": "Producent deklaruje, że dane klientów nie służą do trenowania AI.",
+  "nazwa": "tl;dv, informacje o bezpieczeństwie",
+  "url": "https://tldv.io/features/security-commitment/"
+ },
+ "tldv-rodo": {
+  "liczba": "",
+  "teza": "Producent deklaruje zgodność z RODO dla wszystkich użytkowników.",
+  "nazwa": "tl;dv, informacje o bezpieczeństwie",
+  "url": "https://tldv.io/features/security-commitment/"
+ },
+ "tldv-dane-europa": {
+  "liczba": "",
+  "teza": "Centra danych producenta są w Europie, a użytkownik wybiera hosting AI w Europie lub USA.",
+  "nazwa": "tl;dv, informacje o bezpieczeństwie",
+  "url": "https://tldv.io/features/security-commitment/"
+ },
+ "tldv-soc2": {
+  "liczba": "",
+  "teza": "Producent deklaruje zgodność z SOC 2, raport typu II można zamówić przez portal zaufania.",
+  "nazwa": "tl;dv, informacje o bezpieczeństwie",
+  "url": "https://tldv.io/features/security-commitment/"
+ },
+ "tldv-jezyki": {
+  "liczba": "ponad 30 języków",
+  "teza": "Transkrypcje, notatki i raporty działają w ponad 30 językach.",
+  "nazwa": "tl;dv, strona języków",
+  "url": "https://tldv.io/features/languages/"
+ },
+ "tldv-polski": {
+  "liczba": "",
+  "teza": "Polski jest na liście języków transkrypcji w centrum pomocy.",
+  "nazwa": "tl;dv, centrum pomocy: zmiana języka transkrypcji",
+  "url": "https://intercom.help/tldv/en/articles/6231678-how-to-change-transcript-language"
+ },
+ "tldv-interfejs": {
+  "liczba": "7 języków",
+  "teza": "Platforma jest dostępna w 7 językach interfejsu, polski nie jest wśród nich.",
+  "nazwa": "tl;dv, strona języków",
+  "url": "https://tldv.io/features/languages/"
+ },
  "wordtune-plan-darmowy": {
   "liczba": "0 USD",
   "teza": "Plan darmowy Basic daje 10 przeredagowań i podpowiedzi AI dziennie, 3 streszczenia miesięcznie i bez limitu poprawę pisowni i gramatyki.",
@@ -2512,6 +3790,54 @@
   "teza": "Administratorem danych osobowych użytkowników Wordtune jest AI21 Labs Ltd.",
   "nazwa": "Wordtune, Privacy Policy",
   "url": "https://www.wordtune.com/privacy-policy"
+ },
+ "you-com-opis": {
+  "liczba": "",
+  "teza": "Strona producenta przedstawia You.com jako infrastrukturę AI do wyszukiwania i wnioskowania dla programistów i firm.",
+  "nazwa": "You.com, strona główna",
+  "url": "https://you.com"
+ },
+ "you-com-plan-darmowy": {
+  "liczba": "100 zapytań dziennie",
+  "teza": "Plan darmowy nie wymaga klucza API, konta ani karty i daje 100 zapytań Web Search API dziennie przez MCP.",
+  "nazwa": "You.com, plany",
+  "url": "https://you.com/plans"
+ },
+ "you-com-platnosc-za-uzycie": {
+  "liczba": "5 USD za 1000 zapytań",
+  "teza": "W modelu płatności za użycie Web Search API i Answer API kosztują po 5 USD za 1000 zapytań, bez minimum i bez opłat za stanowiska.",
+  "nazwa": "You.com, plany",
+  "url": "https://you.com/plans"
+ },
+ "you-com-kredyt": {
+  "liczba": "10 USD, 2000 wyszukiwań",
+  "teza": "Producent oferuje 10 USD darmowego kredytu, co odpowiada 2000 wyszukiwań.",
+  "nazwa": "You.com, plany",
+  "url": "https://you.com/plans"
+ },
+ "you-com-enterprise": {
+  "liczba": "",
+  "teza": "Plan Enterprise ma cenę indywidualną i obejmuje zerowe przechowywanie danych, SOC 2 i gotowość do umowy DPA.",
+  "nazwa": "You.com, plany",
+  "url": "https://you.com/plans"
+ },
+ "you-com-dpa": {
+  "liczba": "",
+  "teza": "Plan Enterprise jest przygotowany na umowy o przetwarzaniu danych (DPA).",
+  "nazwa": "You.com, cennik",
+  "url": "https://you.com/pricing"
+ },
+ "you-com-trening": {
+  "liczba": "",
+  "teza": "Dokumentacja deklaruje, że zapytania nie służą do trenowania modeli.",
+  "nazwa": "You.com, dokumentacja: Zero Data Retention",
+  "url": "https://you.com/docs/administration/zero-data-retention"
+ },
+ "you-com-zdr-na-prosbe": {
+  "liczba": "",
+  "teza": "Zerowe przechowywanie danych (ZDR) włącza producent na prośbę klienta, bez przełącznika samoobsługowego.",
+  "nazwa": "You.com, dokumentacja: Zero Data Retention",
+  "url": "https://you.com/docs/administration/zero-data-retention"
  },
  "zapier-plan-darmowy": {
   "liczba": "100 zadań miesięcznie",
@@ -2614,5 +3940,59 @@
   "teza": "Wbudowany krok Translate by Zapier tłumaczy teksty na ponad 100 języków.",
   "nazwa": "Zapier, Translate by Zapier: pomoc",
   "url": "https://zapier.com/apps/translate/help"
+ },
+ "zoom-ai-w-cenie": {
+  "liczba": "",
+  "teza": "Zoom informuje, że AI Companion jest wliczony bez dodatkowej opłaty w płatne usługi na kontach użytkowników.",
+  "nazwa": "Zoom, komunikat o AI Companion",
+  "url": "https://news.zoom.com/zoom-ai-companion/"
+ },
+ "zoom-ai-dostepnosc": {
+  "liczba": "",
+  "teza": "Funkcje mogą być niedostępne w wybranych branżach i regionach.",
+  "nazwa": "Zoom, komunikat o AI Companion",
+  "url": "https://news.zoom.com/zoom-ai-companion/"
+ },
+ "zoom-ai-trening": {
+  "liczba": "",
+  "teza": "Zoom deklaruje, że nie używa treści klientów do trenowania własnych modeli AI ani modeli podmiotów trzecich.",
+  "nazwa": "Zoom, porównanie narzędzi AI",
+  "url": "https://www.zoom.com/en/compare/zoom-vs-other-ai-tools/"
+ },
+ "zoom-ai-trening-szczegoly": {
+  "liczba": "",
+  "teza": "Zoom wymienia rodzaje treści wyłączone z trenowania: audio, wideo, czat, udostępniane ekrany i załączniki.",
+  "nazwa": "Zoom, komunikat o AI Companion",
+  "url": "https://news.zoom.com/zoom-ai-companion/"
+ },
+ "zoom-ai-cena-workplace-pro": {
+  "liczba": "14,16 USD miesięcznie za użytkownika",
+  "teza": "Zoom Workplace Pro kosztuje 14,16 USD za użytkownika miesięcznie i zawiera podstawowe funkcje AI.",
+  "nazwa": "Zoom, porównanie narzędzi AI (stan na czerwiec 2026)",
+  "url": "https://www.zoom.com/en/compare/zoom-vs-other-ai-tools/"
+ },
+ "zoom-ai-wbudowane": {
+  "liczba": "",
+  "teza": "Podstawowe funkcje AI, takie jak podsumowania spotkań, pomoc w czacie i pisanie maili, są wbudowane w płatne plany Zoom Workplace.",
+  "nazwa": "Zoom, blog o ZoomMate",
+  "url": "https://www.zoom.com/en/blog/zoom-ai-companion-zoommate/"
+ },
+ "zoom-ai-nazwa": {
+  "liczba": "",
+  "teza": "Marka AI Companion zniknęła z nazw funkcji, które nazywa się teraz według tego, co robią.",
+  "nazwa": "Zoom, blog o ZoomMate",
+  "url": "https://www.zoom.com/en/blog/zoom-ai-companion-zoommate/"
+ },
+ "zoom-ai-zoommate-cena": {
+  "liczba": "20 USD miesięcznie za użytkownika",
+  "teza": "ZoomMate, dodatek do zaawansowanych zadań, zaczyna się od 20 USD za użytkownika miesięcznie z kredytami AI.",
+  "nazwa": "Zoom, porównanie narzędzi AI (stan na czerwiec 2026)",
+  "url": "https://www.zoom.com/en/compare/zoom-vs-other-ai-tools/"
+ },
+ "zoom-ai-tlumaczenie-46": {
+  "liczba": "46 języków",
+  "teza": "Zoom podaje, że wykrywa mowę i tłumaczy napisy na żywo w 46 językach, ale nie wymienia ich na tej stronie.",
+  "nazwa": "Zoom, strona o dostępności i tłumaczeniu",
+  "url": "https://www.zoom.com/en/products/ai-assistant/features/accessibility/"
  }
 }

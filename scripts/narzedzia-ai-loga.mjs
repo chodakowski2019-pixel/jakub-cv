@@ -19,6 +19,10 @@ const DOMENY = {
   descript: "https://www.descript.com", runway: "https://runwayml.com", opusclip: "https://www.opus.pro", zapier: "https://zapier.com", make: "https://www.make.com",
   n8n: "https://n8n.io", "power-automate": "https://www.microsoft.com/en-us/power-platform/products/power-automate", tidio: "https://www.tidio.com",
   livechat: "https://www.livechat.com", "intercom-fin": "https://fin.ai",
+  // 25.11.2026: +10 narzędzi (60).
+  manus: "https://manus.im", "meta-ai": "https://www.meta.ai", clickup: "https://clickup.com", writesonic: "https://writesonic.com",
+  "leonardo-ai": "https://leonardo.ai", suno: "https://suno.com", "kling-ai": "https://klingai.com", veed: "https://www.veed.io",
+  capcut: "https://www.capcut.com", freepik: "https://www.freepik.com",
 };
 // Pobiera tylko brakujące (public/narzedzia-ai/<slug>.png nie istnieje), chyba że podano --wszystkie.
 const WSZYSTKIE = process.argv.includes("--wszystkie");
