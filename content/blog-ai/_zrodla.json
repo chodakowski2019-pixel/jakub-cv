@@ -521,11 +521,155 @@
   "nazwa": "OpenAI, cennik dla firm, strona polska",
   "url": "https://openai.com/pl-PL/business/pricing/"
  },
- "chatgpt-min-2": {
-  "liczba": "2 miejsca",
-  "teza": "ChatGPT Business wymaga co najmniej 2 opłaconych miejsc.",
+ "chatgpt-min-1": {
+  "liczba": "1 miejsce",
+  "teza": "Nową przestrzeń roboczą ChatGPT Business można utworzyć z 1 płatnym miejscem Standard albo Premium.",
   "nazwa": "OpenAI, centrum pomocy ChatGPT Business",
   "url": "https://help.openai.com/pl-pl/articles/8792828-chatgpt-business-overview"
+ },
+ "chatgpt-polaczenia": {
+  "liczba": "",
+  "teza": "ChatGPT Business łączy się z Google Workspace, Slack, GitHub i Microsoft 365. Ma rozszerzenia do Excela, Worda, PowerPointa i Arkuszy Google.",
+  "nazwa": "OpenAI, cennik dla firm, strona polska",
+  "url": "https://openai.com/pl-PL/business/pricing/"
+ },
+ "chatgpt-karta": {
+  "liczba": "",
+  "teza": "Plan Business opłaca się kartą. Fakturę i inne formy płatności OpenAI proponuje w planie Enterprise.",
+  "nazwa": "OpenAI, cennik dla firm, strona polska",
+  "url": "https://openai.com/pl-PL/business/pricing/"
+ },
+ "claude-team-150": {
+  "liczba": "od 2 do 150",
+  "teza": "Plan Claude Team: od 2 do 150 miejsc. Miejsce Standard 20 USD przy rozliczeniu rocznym, 25 USD przy miesięcznym. Ceny dla USA, bez podatków.",
+  "nazwa": "Anthropic, centrum pomocy: plan Team",
+  "url": "https://support.claude.com/en/articles/9266767-what-is-the-team-plan"
+ },
+ "chatgpt-free": {
+  "liczba": "",
+  "teza": "Bezpłatna wersja ChatGPT jest dostępna dla wszystkich.",
+  "nazwa": "OpenAI, cennik dla firm, strona polska",
+  "url": "https://openai.com/pl-PL/business/pricing/"
+ },
+ "claude-free": {
+  "liczba": "0 USD",
+  "teza": "Claude ma plan Free za 0 USD z ograniczonym użyciem.",
+  "nazwa": "Anthropic, cennik Claude",
+  "url": "https://claude.com/pricing"
+ },
+ "nask-30": {
+  "liczba": "30,3%",
+  "teza": "30,3% miejsc pracy w Polsce, około 5,08 mln stanowisk, ma pewien stopień podatności na automatyzację lub przekształcenie przez generatywną AI.",
+  "nazwa": "NASK i Ministerstwo Cyfryzacji, Generatywna sztuczna inteligencja a polski rynek pracy, czerwiec 2025",
+  "url": "https://nask.pl/media/2025/06/Generatywna-sztuczna-inteligencja-a-polski-rynek-pracy.pdf"
+ },
+ "nask-4-9": {
+  "liczba": "4,9%",
+  "teza": "4,9% zatrudnionych (817,5 tys. osób) pracuje w zawodach o najwyższej podatności na generatywną AI. Podatność nie oznacza nieuchronnego zaniku zawodu.",
+  "nazwa": "NASK i Ministerstwo Cyfryzacji, Generatywna sztuczna inteligencja a polski rynek pracy, czerwiec 2025",
+  "url": "https://nask.pl/media/2025/06/Generatywna-sztuczna-inteligencja-a-polski-rynek-pracy.pdf"
+ },
+ "nask-biurowi": {
+  "liczba": "71,2%",
+  "teza": "Zawód pracownika biurowego jest najbardziej podatny na generatywną AI. 71,2% pracowników biurowych wykonuje zawody podatne na jej wpływ.",
+  "nazwa": "NASK i Ministerstwo Cyfryzacji, Generatywna sztuczna inteligencja a polski rynek pracy, czerwiec 2025",
+  "url": "https://nask.pl/media/2025/06/Generatywna-sztuczna-inteligencja-a-polski-rynek-pracy.pdf"
+ },
+ "nask-wytyczne": {
+  "liczba": "68,1%",
+  "teza": "68,1% pracujących w Polsce nie dostało żadnych wytycznych o korzystaniu z generatywnej AI, 8,1% potwierdza takie zasady. 66% pracowników firm używających AI chce jej szerszego użycia.",
+  "nazwa": "NASK i Ministerstwo Cyfryzacji, Generatywna sztuczna inteligencja a polski rynek pracy, czerwiec 2025",
+  "url": "https://nask.pl/media/2025/06/Generatywna-sztuczna-inteligencja-a-polski-rynek-pracy.pdf"
+ },
+ "ilo-jedna-czwarta": {
+  "liczba": "25%",
+  "teza": "25% zatrudnienia na świecie to zawody potencjalnie narażone na generatywną AI. Najbardziej prawdopodobny skutek to przekształcenie pracy, nie zastąpienie. Najwyższą ekspozycję mają prace biurowe.",
+  "nazwa": "ILO i NASK, globalny indeks narażenia zawodów na generatywną AI, maj 2025",
+  "url": "https://www.ilo.org/resource/news/one-four-jobs-risk-being-transformed-genai-new-ilo%E2%80%93nask-global-index-shows"
+ },
+ "pie-3-68": {
+  "liczba": "3,68 mln",
+  "teza": "Około 3,68 mln osób w Polsce (ok. 22% pracujących w badaniu) pracuje w 20 zawodach najbardziej narażonych na wpływ AI, m.in. finansiści, prawnicy, programiści i sekretarki.",
+  "nazwa": "PIE, AI na polskim rynku pracy, październik 2024",
+  "url": "https://pie.net.pl/wp-content/uploads/2024/10/AI-na-polskim-rynku-pracy.pdf"
+ },
+ "ksef-etapy": {
+  "liczba": "1 kwietnia 2026",
+  "teza": "Faktury w KSeF: od 1 lutego 2026 r. firmy ze sprzedażą powyżej 200 mln zł z VAT w 2024 r., od 1 kwietnia 2026 r. pozostałe.",
+  "nazwa": "Ministerstwo Finansów, ksef.podatki.gov.pl",
+  "url": "https://ksef.podatki.gov.pl/od-kiedy-trzeba-wystawiac-faktury-w-ksef"
+ },
+ "ksef-10000": {
+  "liczba": "10 000 zł",
+  "teza": "Do 31 grudnia 2026 r. można wystawiać faktury poza KSeF, jeśli w miesiącu suma sprzedaży z VAT na nich nie przekroczy 10 000 zł.",
+  "nazwa": "Ministerstwo Finansów, ksef.podatki.gov.pl",
+  "url": "https://ksef.podatki.gov.pl/od-kiedy-trzeba-wystawiac-faktury-w-ksef"
+ },
+ "fakturownia-ocr": {
+  "liczba": "",
+  "teza": "Fakturownia odczytuje i zapisuje dane z wgranych faktur kosztowych funkcją OCR, aktywowaną osobno.",
+  "nazwa": "Fakturownia, strona OCR",
+  "url": "https://fakturownia.pl/ocr"
+ },
+ "fakturownia-ksef": {
+  "liczba": "0 zł",
+  "teza": "Fakturownia podaje integrację z KSeF za 0 zł: przesyłanie i pobieranie dokumentów.",
+  "nazwa": "Fakturownia, strona OCR",
+  "url": "https://fakturownia.pl/ocr"
+ },
+ "wfirma-magic-box": {
+  "liczba": "",
+  "teza": "Magic Box w wFirma zastępuje moduł OCR, przyjmuje masowo faktury zakupu i pliki JPK, sam rozpoznaje typ pliku.",
+  "nazwa": "wFirma, pomoc: Magic Box",
+  "url": "https://pomoc.wfirma.pl/-magic-box-automatyczne-przetwarzanie-plikow"
+ },
+ "wfirma-ai-decyzja": {
+  "liczba": "",
+  "teza": "wFirma: funkcje AI wspierają, nie decydują. Zatwierdzenie, korekta albo odrzucenie należy do użytkownika.",
+  "nazwa": "wFirma, pomoc: AI w systemie wFirma.pl",
+  "url": "https://pomoc.wfirma.pl/-ai-w-systemie-wfirma-pl-poznaj-moc-sztucznej-inteligencji"
+ },
+ "copilot-promo": {
+  "liczba": "15,60 €",
+  "teza": "Dodatek Copilot: 18,20 € przy płatności rocznej, w promocji od 1 lipca do 31 grudnia 2026 r. 15,60 €, tylko w pierwszym roku, przy zobowiązaniu rocznym. Tylko dla obecnych klientów Microsoft 365.",
+  "nazwa": "Microsoft, cennik Microsoft 365 Copilot dla firm, strona polska",
+  "url": "https://www.microsoft.com/pl-pl/copilot/pricing/business"
+ },
+ "copilot-premium": {
+  "liczba": "27,73 €",
+  "teza": "Microsoft 365 Business Premium z Copilotem: 27,73 € za użytkownika miesięcznie przy płatności rocznej, 33,28 € przy miesięcznej, bez VAT.",
+  "nazwa": "Microsoft, cennik Microsoft 365 Copilot dla firm, strona polska",
+  "url": "https://www.microsoft.com/pl-pl/copilot/pricing/business"
+ },
+ "copilot-zuzycie": {
+  "liczba": "",
+  "teza": "Wybrane zaawansowane funkcje AI w Copilocie są rozliczane osobno, według użycia.",
+  "nazwa": "Microsoft, cennik Microsoft 365 Copilot dla firm, strona polska",
+  "url": "https://www.microsoft.com/pl-pl/copilot/pricing/business"
+ },
+ "copilot-anulowanie": {
+  "liczba": "7 dni",
+  "teza": "Subskrypcję Copilota można anulować w 7 dni z proporcjonalnym zwrotem. Copilota można wypróbować bezpłatnie.",
+  "nazwa": "Microsoft, cennik Microsoft 365 Copilot dla firm, strona polska",
+  "url": "https://www.microsoft.com/pl-pl/copilot/pricing/business"
+ },
+ "workspace-proba": {
+  "liczba": "14 dni",
+  "teza": "Google Workspace można wypróbować bez opłat przez 14 dni.",
+  "nazwa": "Google Workspace, cennik, strona polska",
+  "url": "https://workspace.google.com/pricing?hl=pl"
+ },
+ "gemini-starter-2026-11": {
+  "liczba": "31,50 zł",
+  "teza": "Business Starter: 31,50 zł za użytkownika miesięcznie bez podatku, asystent Gemini w Gmailu i czat z Gemini, dane firmy nie trenują modeli.",
+  "nazwa": "Google Workspace, cennik, strona polska",
+  "url": "https://workspace.google.com/pricing?hl=pl"
+ },
+ "gemini-standard-2026-11": {
+  "liczba": "63,00 zł",
+  "teza": "Business Standard: 63,00 zł za użytkownika miesięcznie bez podatku, Gemini w Gmailu, Dokumentach, Meet i innych usługach oraz Gemini Notebook.",
+  "nazwa": "Google Workspace, cennik, strona polska",
+  "url": "https://workspace.google.com/pricing?hl=pl"
  },
  "chatgpt-team-nazwa": {
   "liczba": "29 sierpnia 2025 r.",

@@ -5,17 +5,17 @@ strona: https://chatgpt.com
 kategoria: asystenci-ai
 cennik: darmowy-plan
 cena_od: 20 USD miesięcznie (plan Plus, jedna osoba)
-plan_firmowy: ChatGPT Business, 25 USD za osobę miesięcznie albo 20 USD przy płatności rocznej, od 2 miejsc
+plan_firmowy: ChatGPT Business, 25 USD za osobę miesięcznie albo 20 USD przy płatności rocznej, od 1 miejsca
 po_polsku: tak, strona, cennik i centrum pomocy są po polsku
 dane: plan firmowy domyślnie bez trenowania modeli, konto prywatne może służyć do trenowania
 cechy: plan-firmowy, umowa-dpa, bez-trenowania, po-polsku
-sprawdzono: 2026-11-21
+sprawdzono: 2026-11-25
 tytul: "ChatGPT: co to jest, cena i wersja dla firm"
 opis: "ChatGPT w firmie: do czego służy, ile kosztuje plan Business, czym różni się od konta prywatnego i co dzieje się z danymi."
-krotko: "Asystent do pisania, streszczania i pracy z dokumentami. Ma osobny plan dla zespołów od 2 osób."
+krotko: "Asystent do pisania, streszczania i pracy z dokumentami. Ma osobny plan dla firm, od 1 miejsca."
 podobne: claude, gemini, microsoft-copilot
 artykul: chatgpt-dla-firm-cena
-zrodla: chatgpt-plus, chatgpt-business-cena, chatgpt-business-pln, chatgpt-min-2, chatgpt-zawartosc, chatgpt-bez-treningu, chatgpt-indywidualne, chatgpt-dpa
+zrodla: chatgpt-plus, chatgpt-business-cena, chatgpt-business-pln, chatgpt-min-1, chatgpt-zawartosc, chatgpt-bez-treningu, chatgpt-indywidualne, chatgpt-dpa
 ---
 
 ChatGPT to asystent AI firmy OpenAI. Odpowiada na polecenia pisane zwykłym językiem. W biurze służy głównie do pracy z tekstem.
@@ -35,7 +35,7 @@ ChatGPT działa w przeglądarce i w aplikacji. Nie wymaga instalacji ani pakietu
 
 Są dwie drogi. Plan Plus to konto jednej osoby za 20 USD miesięcznie. Plan Business to konto firmy.
 
-Business kosztuje 25 USD za osobę miesięcznie albo 20 USD przy płatności rocznej. Polska strona cennika podaje 71 zł. Plan wymaga co najmniej 2 opłaconych miejsc.
+Business kosztuje 25 USD za osobę miesięcznie albo 20 USD przy płatności rocznej. Polska strona cennika podaje 71 zł. Plan da się kupić już dla 1 osoby.
 
 W planie Business są też połączenia z Google Workspace, Slack i Microsoft 365, logowanie SSO oraz wspólne rozliczenia.
 
@@ -69,4 +69,4 @@ Tak. Strona, cennik i centrum pomocy mają polską wersję. Polecenia można pis
 
 ### Ile osób musi mieć firma, żeby kupić plan Business?
 
-Wystarczą dwie. Plan wymaga co najmniej 2 opłaconych miejsc.
+Wystarczy jedna. Według centrum pomocy OpenAI (listopad 2026) plan Business da się założyć z 1 płatnym miejscem.

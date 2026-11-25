@@ -14,7 +14,7 @@ tytul: "Otter: cena, plan Business i dane ze spotkań"
 opis: "Otter nagrywa spotkania i robi z nich notatki. Ile kosztuje plan Business, co dzieje się z nagraniami i czy zna polski."
 krotko: "Asystent AI do spotkań: transkrypcja, notatki i podsumowania. Plan darmowy daje 300 minut miesięcznie."
 podobne: fireflies, tldv
-artykul:
+artykul: ai-do-notatek-ze-spotkan
 zrodla: otter-plan-darmowy, otter-limity-basic, otter-cena-pro, otter-cena-business, otter-business-zakres, otter-enterprise, otter-jezyki, otter-trening-polityka, otter-trening-enterprise, otter-aws-usa
 ---
 

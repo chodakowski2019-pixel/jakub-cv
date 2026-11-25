@@ -14,6 +14,7 @@ tytul: "Gamma: prezentacje z AI, cena dla firm i dane"
 opis: "Gamma w firmie: prezentacje i dokumenty z opisu słownego. Ile kosztuje plan Business, co z danymi i czego nie udało się potwierdzić."
 krotko: "Narzędzie do tworzenia prezentacji, dokumentów i stron z opisu słownego. Plan dla zespołów wyłącza trenowanie na danych."
 podobne: chatgpt, microsoft-copilot, notion-ai
+artykul: ai-do-prezentacji
 zrodla: gamma-plany, gamma-business, gamma-kredyty, gamma-dane-firmy, gamma-dane-osoba, gamma-jezyk
 ---
 

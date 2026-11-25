@@ -5,8 +5,9 @@ opis: "ChatGPT Business kosztuje 25 USD za osobę miesięcznie albo 20 USD przy 
 grupa: narzedzia-ai-dla-firm
 fraza: chatgpt dla firm cena
 data: 2026-11-21
-zrodla: chatgpt-business-cena, chatgpt-business-pln, chatgpt-business-premium, chatgpt-min-2, chatgpt-team-nazwa, chatgpt-zawartosc, chatgpt-bez-treningu, chatgpt-plus, chatgpt-indywidualne, chatgpt-wylaczenie, chatgpt-dpa, chatgpt-vat, chatgpt-platnosc, parp-bkl-64
-tldr: "ChatGPT Business kosztuje 25 USD za osobę miesięcznie albo 20 USD przy płatności rocznej. Polska strona cennika podaje 71 zł. Minimum to 2 miejsca. Dane z planu firmowego domyślnie nie służą do trenowania modeli."
+aktualizacja: 2026-11-25
+zrodla: chatgpt-business-cena, chatgpt-business-pln, chatgpt-business-premium, chatgpt-min-1, chatgpt-karta, claude-team, chatgpt-team-nazwa, chatgpt-zawartosc, chatgpt-bez-treningu, chatgpt-plus, chatgpt-indywidualne, chatgpt-wylaczenie, chatgpt-dpa, chatgpt-vat, chatgpt-platnosc, parp-bkl-64
+tldr: "ChatGPT Business kosztuje 25 USD za osobę miesięcznie albo 20 USD przy płatności rocznej. Polska strona cennika podaje 71 zł. Plan można kupić już dla 1 osoby. Dane z planu firmowego domyślnie nie służą do trenowania modeli."
 ---
 
 W firmie trzy osoby mają prywatne konta ChatGPT Plus. Każda płaci własną kartą. Nikt nie wie, co dzieje się z wklejanymi dokumentami.
@@ -20,7 +21,7 @@ Plan dla firm nazywa się ChatGPT Business. Kosztuje 25 USD za osobę miesięczn
 | Plan | Dla kogo | Cena za osobę miesięcznie |
 |---|---|---|
 | Plus | jedna osoba | 20 USD |
-| Business, miejsce Standard | zespół od 2 osób | 25 USD albo 20 USD przy płatności rocznej |
+| Business, miejsce Standard | firma, już od 1 osoby | 25 USD albo 20 USD przy płatności rocznej |
 | Business, miejsce Premium | osoby z dużym zużyciem | 125 USD albo 100 USD przy płatności rocznej |
 | Enterprise | duże organizacje | wycena indywidualna |
 
@@ -48,7 +49,7 @@ Starsze poradniki wciąż piszą o planie Team. Chodzi o ten sam produkt.
 
 ## Ile miejsc trzeba kupić
 
-Minimum to 2 opłacone miejsca. Jednej osoby do planu Business zapisać się nie da.
+Wystarczy 1 opłacone miejsce. Tak mówi centrum pomocy OpenAI w listopadzie 2026 roku. Starsze poradniki podają minimum 2 miejsc, ta zasada już nie obowiązuje.
 
 Koszt łatwo policzyć. Liczba osób razy 20 USD daje miesięczny koszt przy płatności rocznej. Przy płatności miesięcznej trzeba liczyć 25 USD.
 
@@ -96,8 +97,8 @@ Drugi minus zostaje. Więcej w tekście [ChatGPT a RODO](/blog/chatgpt-a-rodo-da
 
 ## Który plan wybrać
 
-- **Jedna osoba, bez danych klientów.** Wystarczy Plus z wyłączonym trenowaniem.
-- **Zespół od 2 osób.** Plan Business, miejsca Standard.
+- **Sprawy prywatne, bez danych klientów.** Wystarczy Plus z wyłączonym trenowaniem.
+- **Firma, nawet jednoosobowa.** Plan Business, miejsca Standard.
 - **Firma na Microsoft 365.** Warto porównać z Copilotem: [Copilot czy ChatGPT dla firmy](/blog/copilot-czy-chatgpt-dla-firmy).
 - **Firma na Google Workspace.** Gemini może już być w cenie: [Gemini dla firm](/blog/gemini-dla-firm-cena).
 
@@ -107,7 +108,7 @@ Na szkoleniu pracuję na narzędziach, których firma już używa. Zmiana narzę
 
 ### Czy można kupić ChatGPT Business dla jednej osoby?
 
-Nie. Plan wymaga co najmniej 2 opłaconych miejsc. Dla jednej osoby zostaje plan Plus za 20 USD miesięcznie.
+Tak. Przestrzeń roboczą Business da się założyć z 1 płatnym miejscem. Plus za 20 USD to nadal konto prywatne, bez umowy o przetwarzaniu danych.
 
 ### Czy ChatGPT Business jest zgodny z RODO?
 
@@ -119,4 +120,4 @@ W planie kupowanym samodzielnie nie. Centrum pomocy OpenAI wymienia brak przelew
 
 ### Czy Claude jest tańszy od ChatGPT?
 
-Ceny planów zespołowych są zbliżone. Szczegóły: [Claude dla firm: cennik i plany](/blog/claude-dla-firm-cennik).
+Nie. Plany dla zespołu kosztują tyle samo, 20 USD za osobę przy płatności rocznej. Porównanie: [ChatGPT czy Claude dla firmy](/blog/chatgpt-czy-claude-dla-firmy).

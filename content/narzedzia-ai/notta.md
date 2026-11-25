@@ -14,7 +14,7 @@ tytul: "Notta: cena, plan Business i transkrypcja po polsku"
 opis: "Notta zamienia nagrania i spotkania na tekst. Ile kosztuje plan Business, czy rozumie polski i co producent mówi o danych klientów."
 krotko: "Transkrypcja nagrań i spotkań z notatkami AI. Plan darmowy daje 120 minut miesięcznie."
 podobne: otter, fireflies, krisp
-artykul:
+artykul: ai-do-notatek-ze-spotkan
 zrodla: notta-plan-darmowy, notta-cena-pro, notta-cena-business, notta-business-zakres, notta-enterprise, notta-polski, notta-aws-rodo, notta-polityka
 ---
 

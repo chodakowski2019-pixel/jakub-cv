@@ -14,7 +14,7 @@ tytul: "Beautiful.ai: prezentacje z AI, ceny i dane w firmie"
 opis: "Beautiful.ai w firmie: ile kosztuje plan Team, czy jest okres próbny, co producent mówi o trenowaniu AI na danych i umowie DPA."
 krotko: "Program do prezentacji z AI. Układa slajdy sam i pilnuje spójnego wyglądu w zespole."
 podobne: gamma, canva
-artykul:
+artykul: ai-do-prezentacji
 zrodla: beautiful-ai-okres-probny, beautiful-ai-cena-pro, beautiful-ai-cena-team, beautiful-ai-enterprise, beautiful-ai-ai-w-planach, beautiful-ai-bez-trenowania, beautiful-ai-wylaczenie-ai, beautiful-ai-dpa, beautiful-ai-soc2
 ---
 

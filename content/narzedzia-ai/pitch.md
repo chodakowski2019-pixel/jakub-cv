@@ -14,7 +14,7 @@ tytul: "Pitch: cena, plan Team i dane w prezentacjach"
 opis: "Pitch tworzy prezentacje zespołowe z AI. Ile kosztuje plan Team i Business, co mówi umowa o danych i czy darmowy plan wystarczy firmie."
 krotko: "Program do prezentacji dla zespołów, z darmowym planem i asystentem AI."
 podobne: gamma, beautiful-ai
-artykul:
+artykul: ai-do-prezentacji
 zrodla: pitch-darmowy-plan, pitch-cena-plus, pitch-cena-team, pitch-cena-business, pitch-enterprise, pitch-ceny-miejsca, pitch-kredyty, pitch-dpa, pitch-llm-polityka
 ---
 

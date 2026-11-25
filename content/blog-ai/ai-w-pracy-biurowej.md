@@ -60,6 +60,8 @@ Format: kroki ponumerowane, każdy w jednym zdaniu.
 Zaznacz kroki, w których łatwo o błąd.
 ```
 
+Pięć kolejnych poleceń tylko do poczty: [AI do pisania maili](/blog/ai-do-pisania-maili).
+
 ## Jak wygląda dobre polecenie
 
 Słabe polecenie brzmi: „napisz maila do klienta”. AI nie wie wtedy, do kogo pisze ani po co.

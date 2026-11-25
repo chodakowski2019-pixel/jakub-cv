@@ -14,7 +14,7 @@ tytul: "Decktopus: cena, plan Business i dane w prezentacjach"
 opis: "Decktopus robi prezentacje z jednego polecenia. Ile kosztuje plan Business, co z danymi i czy narzędzie zna polski."
 krotko: "Narzędzie AI do prezentacji: z tematu albo pliku powstaje cała prezentacja. Plan Pro od 9,99 USD miesięcznie."
 podobne: gamma, beautiful-ai, canva
-artykul:
+artykul: ai-do-prezentacji
 zrodla: decktopus-cena-pro, decktopus-cena-business, decktopus-business-zakres, decktopus-enterprise, decktopus-kredyty, decktopus-jezyki, decktopus-trening, decktopus-rezygnacja
 ---
 

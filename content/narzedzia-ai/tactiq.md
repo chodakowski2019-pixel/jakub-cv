@@ -14,7 +14,7 @@ tytul: "Tactiq: cena, plany dla firm i polski w transkrypcji"
 opis: "Tactiq zapisuje spotkania w Meet, Teams i Zoom. Ile kosztują plany Team i Business, czy rozumie polski i co producent mówi o danych."
 krotko: "Dodatek do przeglądarki, który spisuje spotkania na żywo. Plan darmowy daje 10 transkrypcji miesięcznie."
 podobne: otter, fireflies, tldv
-artykul:
+artykul: ai-do-notatek-ze-spotkan
 zrodla: tactiq-plan-darmowy, tactiq-cena-pro, tactiq-cena-team, tactiq-cena-business, tactiq-enterprise, tactiq-jezyki, tactiq-llm-trening, tactiq-centrum-prywatnosci, tactiq-przechowywanie
 ---
 

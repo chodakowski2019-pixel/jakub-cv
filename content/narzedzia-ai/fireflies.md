@@ -14,6 +14,7 @@ tytul: "Fireflies.ai: notatki ze spotkań, cena i język polski"
 opis: "Fireflies.ai w firmie: nagrywa spotkania online i robi z nich notatki. Ile kosztuje, czy rozumie polski i o czym pamiętać przed nagrywaniem."
 krotko: "Asystent do spotkań online. Nagrywa rozmowę, robi transkrypcję, podsumowanie i listę zadań. Obsługuje polski."
 podobne: notion-ai, notebooklm, microsoft-copilot
+artykul: ai-do-notatek-ze-spotkan
 zrodla: fireflies-darmowy, fireflies-pro, fireflies-business, fireflies-jezyki, fireflies-polski, fireflies-dane, fireflies-lokalizacja
 ---
 

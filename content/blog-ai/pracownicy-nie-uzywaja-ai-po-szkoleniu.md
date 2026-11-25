@@ -100,6 +100,8 @@ Nie po ankiecie zadowolenia. Po trzech sygnałach z codziennej pracy.
 
 Sam poziom zadowolenia niewiele mówi. W badaniu BCG tylko 36% pracowników czuło się właściwie przeszkolonych z AI.
 
+Cały plan pierwszego miesiąca, tydzień po tygodniu: [jak wdrożyć AI w firmie](/blog/jak-wdrozyc-ai-w-firmie).
+
 ## Najczęstsze pytania
 
 ### Czy warto powtórzyć szkolenie?

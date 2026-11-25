@@ -119,7 +119,7 @@ Nie. Już plan Business Starter zawiera Gemini w Gmailu i czat z Gemini. Szerszy
 
 ### Czy Gemini jest tańsze od ChatGPT?
 
-To zależy, czy firma ma już Google Workspace. Jeśli tak, Gemini jest w cenie. Ceny ChatGPT: [ChatGPT dla firm: cena](/blog/chatgpt-dla-firm-cena).
+To zależy, czy firma ma już Google Workspace. Jeśli tak, Gemini jest w cenie. Pełne porównanie z kosztem dla 10 osób: [ChatGPT czy Gemini dla firmy](/blog/chatgpt-czy-gemini-dla-firmy).
 
 ### Czy dane z Gemini trenują modele Google?
 

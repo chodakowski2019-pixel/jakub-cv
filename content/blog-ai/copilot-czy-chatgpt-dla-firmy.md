@@ -5,7 +5,8 @@ opis: "Copilot czy ChatGPT Business: gdzie działają, ile kosztują, co z danym
 grupa: narzedzia-ai-dla-firm
 fraza: copilot czy chatgpt
 data: 2026-11-21
-zrodla: copilot-cena, copilot-miesiecznie, copilot-pakiet, m365-standard, copilot-wymog, copilot-chat, copilot-chat-ograniczenia, copilot-bez-treningu, copilot-dpa, chatgpt-business-cena, chatgpt-min-2, chatgpt-bez-treningu, chatgpt-dpa, chatgpt-zawartosc, excel-co-potrafi, excel-polski
+aktualizacja: 2026-11-25
+zrodla: copilot-cena, copilot-miesiecznie, copilot-pakiet, m365-standard, copilot-wymog, copilot-chat, copilot-chat-ograniczenia, copilot-bez-treningu, copilot-dpa, chatgpt-business-cena, chatgpt-min-1, chatgpt-bez-treningu, chatgpt-dpa, chatgpt-zawartosc, excel-co-potrafi, excel-polski
 tldr: "Firma pracująca w Microsoft 365 zwykle zaczyna od Copilota, bo działa w Wordzie, Excelu i Outlooku. ChatGPT Business nie zależy od pakietu biurowego. Ceny są zbliżone: 18,20 € albo 20 USD za osobę miesięcznie przy płatności rocznej."
 ---
 
@@ -29,7 +30,7 @@ Ceny dotyczą jednej osoby na miesiąc. Stan na listopad 2026 roku.
 | Cena przy płatności rocznej | 18,20 € bez VAT | 20 USD |
 | Cena przy płatności miesięcznej | 21,84 € bez VAT | 25 USD |
 | Wymagania | subskrypcja Microsoft 365 | brak |
-| Wielkość firmy | do 300 użytkowników | od 2 miejsc |
+| Wielkość firmy | do 300 użytkowników | od 1 miejsca |
 | Trenowanie na danych firmy | nie | domyślnie nie |
 | Umowa o przetwarzaniu danych | tak | tak |
 
@@ -67,7 +68,7 @@ Jedna uwaga. Copilot w Excelu obsługuje polecenia po polsku. Microsoft uprzedza
 - **Firma nie używa Microsoft 365.** Albo używa go tylko część zespołu.
 - **Narzędzia są różne.** ChatGPT Business łączy się z Google Workspace, Slack i Microsoft 365.
 - **Zespół już zna ChatGPT.** Nauka idzie wtedy szybciej.
-- **Potrzebne są dwa albo trzy konta.** Plan zaczyna się od 2 miejsc.
+- **Potrzebne jest jedno albo kilka kont.** Plan zaczyna się od 1 miejsca.
 
 ## Jak wygląda praca w każdym z nich
 

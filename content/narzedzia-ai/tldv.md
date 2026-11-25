@@ -14,7 +14,7 @@ tytul: "tl;dv: cena, plan Business i dane ze spotkań"
 opis: "tl;dv nagrywa spotkania online i robi z nich notatki. Ile kosztuje plan Business, co z danymi i czy rozumie język polski."
 krotko: "Asystent AI do spotkań online. Plan Free jest darmowy, transkrypcja działa też po polsku."
 podobne: otter, fireflies
-artykul:
+artykul: ai-do-notatek-ze-spotkan
 zrodla: tldv-plan-free, tldv-cena-pro, tldv-cena-business, tldv-trening, tldv-rodo, tldv-dane-europa, tldv-soc2, tldv-jezyki, tldv-polski, tldv-interfejs
 ---
 

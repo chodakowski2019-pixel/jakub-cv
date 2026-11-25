@@ -122,6 +122,8 @@ Zmienia się raczej to, na co idzie czas. Mniej pisania tych samych maili. Więc
 
 Gotowe zasady dla zespołu: [regulamin korzystania z AI w pracy](/blog/regulamin-korzystania-z-ai-w-pracy).
 
+Odczyt faktur, KSeF i zestawienia zaległości: [AI do faktur](/blog/ai-do-faktur).
+
 ## Najczęstsze pytania
 
 ### Czy można wkleić fakturę klienta do ChatGPT?

@@ -14,7 +14,7 @@ tytul: "Microsoft Copilot: cena dla firm i darmowy Copilot Chat"
 opis: "Copilot w firmie: czym różni się darmowy Copilot Chat od płatnego dodatku, ile kosztuje, czego wymaga i co dzieje się z danymi."
 krotko: "Asystent wbudowany w Worda, Excela i Outlooka. Darmowy czat jest w cenie Microsoft 365, pełna wersja to płatny dodatek."
 podobne: chatgpt, gemini, claude
-artykul: copilot-czy-chatgpt-dla-firmy
+artykul: copilot-dla-firm-cena
 zrodla: copilot-cena, copilot-miesiecznie, copilot-pakiet, m365-standard, copilot-wymog, copilot-chat, copilot-chat-ograniczenia, copilot-bez-treningu, copilot-dpa, excel-co-potrafi, excel-polski
 ---
 

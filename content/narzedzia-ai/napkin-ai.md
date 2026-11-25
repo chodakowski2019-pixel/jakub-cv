@@ -14,7 +14,7 @@ tytul: "Napkin AI: schematy z tekstu, cena i dane w firmie"
 opis: "Napkin AI w firmie: plan darmowy, ceny planów Plus i Pro, jakie firmy AI przetwarzają dane i czy działa po polsku. Sprawdzone u producenta."
 krotko: "Zamienia tekst w schematy i grafiki do prezentacji. Ma plan darmowy i płatne od 9 USD miesięcznie."
 podobne: gamma, canva
-artykul:
+artykul: ai-do-prezentacji
 zrodla: napkin-ai-plan-darmowy, napkin-ai-cena-plus, napkin-ai-cena-pro, napkin-ai-rok, napkin-ai-miejsca, napkin-ai-enterprise, napkin-ai-dostawcy, napkin-ai-dpa, napkin-ai-jezyki
 ---
 

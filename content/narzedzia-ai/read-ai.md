@@ -14,7 +14,7 @@ tytul: "Read AI: cena, plan Enterprise i dane"
 opis: "Read AI zapisuje spotkania online i tworzy z nich raporty. Ile kosztuje plan Enterprise, co z danymi i czy zna polski."
 krotko: "Asystent AI do spotkań online. Plan Free daje 5 transkrypcji miesięcznie, jest też polski."
 podobne: otter, fathom
-artykul:
+artykul: ai-do-notatek-ze-spotkan
 zrodla: read-ai-plan-free, read-ai-cena-pro, read-ai-cena-enterprise, read-ai-enterprise-plus, read-ai-trening-polityka, read-ai-program-opt-in, read-ai-serwery, read-ai-polski, read-ai-jezyki-raporty
 ---
 

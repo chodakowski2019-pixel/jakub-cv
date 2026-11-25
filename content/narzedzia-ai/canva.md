@@ -14,7 +14,7 @@ tytul: "Canva: plany dla firm, AI i dane, sprawdzone u producenta"
 opis: "Canva w firmie: jakie są plany, co polityka prywatności mówi o trenowaniu AI na treściach i czy działa po polsku. Ceny niepotwierdzone."
 krotko: "Program do grafik, prezentacji i dokumentów z funkcjami AI. Ma plany Free, Pro, Business i Enterprise."
 podobne: gamma
-artykul:
+artykul: ai-do-prezentacji
 zrodla: canva-plany, canva-polska-wersja, canva-polska-strona-glowna, canva-trenowanie-ai, canva-trenowanie-wylaczenie, canva-edukacja-bez-trenowania, canva-dpa
 ---
 

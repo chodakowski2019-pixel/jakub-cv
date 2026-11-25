@@ -14,7 +14,7 @@ tytul: "Fathom: cena, plany dla zespołów i dane"
 opis: "Fathom nagrywa spotkania online i robi z nich notatki. Ile kosztują plany Team i Business, co z danymi i czy zna polski."
 krotko: "Asystent AI do spotkań online. Plan Free daje nieograniczone nagrania i transkrypcje."
 podobne: otter, tldv
-artykul:
+artykul: ai-do-notatek-ze-spotkan
 zrodla: fathom-plan-free, fathom-cena-premium, fathom-cena-team, fathom-cena-business, fathom-team-bezpieczenstwo, fathom-proba, fathom-trening-polityka, fathom-trening-opt-out, fathom-dpa, fathom-dpa-zakres, fathom-hosting-usa, fathom-jezyki, fathom-tlumaczenie
 ---
 

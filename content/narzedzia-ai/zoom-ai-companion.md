@@ -14,7 +14,7 @@ tytul: "Zoom AI Companion: cena, plan i dane"
 opis: "Zoom AI Companion to funkcje AI w Zoom Workplace. Ile to kosztuje, co dzieje się z danymi i czy działa po polsku. Nazwa ZoomMate."
 krotko: "Podsumowania spotkań i pomoc AI wbudowane w płatne plany Zoom. Dziś pod nazwami funkcji."
 podobne: microsoft-copilot, otter
-artykul:
+artykul: ai-do-notatek-ze-spotkan
 zrodla: zoom-ai-w-cenie, zoom-ai-dostepnosc, zoom-ai-trening, zoom-ai-trening-szczegoly, zoom-ai-cena-workplace-pro, zoom-ai-wbudowane, zoom-ai-nazwa, zoom-ai-zoommate-cena, zoom-ai-tlumaczenie-46
 ---
 

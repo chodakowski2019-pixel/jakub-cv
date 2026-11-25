@@ -14,7 +14,7 @@ tytul: "Visme: cena, plan Business i dane w narzędziach AI"
 opis: "Visme robi prezentacje, infografiki i raporty. Ile kosztuje plan Business, co regulamin mówi o danych w AI i czy działa po polsku."
 krotko: "Program do prezentacji, infografik i raportów z AI i planem darmowym."
 podobne: canva, gamma
-artykul:
+artykul: ai-do-prezentacji
 zrodla: visme-darmowy-plan, visme-cena-starter, visme-cena-business, visme-enterprise, visme-kredyty-ai, visme-dostawcy-ai, visme-licencja-hosting, visme-dpa-kontakt, visme-jezyk-strony
 ---
 

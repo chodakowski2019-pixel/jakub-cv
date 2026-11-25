@@ -116,6 +116,8 @@ Wystarczą trzy dokumenty: program, lista obecności i zaświadczenia. Komisja E
 
 Więcej o obowiązku: [czy szkolenie z AI jest obowiązkowe](/blog/czy-szkolenie-z-ai-jest-obowiazkowe).
 
+Gdy zespół boi się utraty pracy, pomagają liczby z badań: [czy AI zabierze pracę](/blog/czy-ai-zabierze-prace).
+
 ## Najczęstsze pytania
 
 ### Czy pracownicy muszą znać AI przed szkoleniem?
