@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Wezwanie, ileZrodel } from "../../blog/widok";
+import { PromoBaner } from "../promo-baner";
 import { Zapis } from "../zapis";
 import { AUTOR, BAZA, DOMENA, PODGLAD, artykul as tekstBloga, renderujMarkdown } from "@/lib/blog-ai";
 import { BAZA_NARZEDZI, CECHY, CENNIKI, kategoria, narzedzie, wszystkieNarzedzia } from "@/lib/narzedzia-ai";
@@ -105,6 +106,22 @@ export default async function Page({ params }: Props) {
           {n.zrodla.length > 0 ? ` · ${ileZrodel(n.zrodla.length)}` : ""}
         </p>
 
+        {/* 25.11.2026: promocja Black Week nad tabliczką faktów (czarna tablica, chowa się sama po terminie). */}
+        {promo && (
+          <PromoBaner
+            rabatPrzed={promo.rabatPrzed}
+            rabatLiczba={promo.rabatLiczba}
+            opis={promo.opis}
+            doTekst={promo.do ? dataPoPolsku(promo.do) : ""}
+            koniec={promo.koniec}
+            kody={promo.kody}
+            link={promo.link}
+            reklama={promo.reklama}
+            sprawdzono={dataPoPolsku(sprawdzonoPromocje() || n.sprawdzono)}
+            wszystkie={BAZA_BLACK_WEEK}
+          />
+        )}
+
         {/* Tabliczka faktów: to, o co pyta właściciel firmy, w jednym miejscu. */}
         <dl className="bai-fakty">
           {fakty
@@ -124,28 +141,6 @@ export default async function Page({ params }: Props) {
               </span>
             ))}
           </p>
-        )}
-        {promo && (
-          <aside className="bai-promo" aria-label="Promocja Black Week">
-            <p className="bai-mono bai-promo-nad">Promocja Black Week 2026{promo.do ? ` · do ${dataPoPolsku(promo.do)}` : ""}</p>
-            <p className="bai-promo-rabat">{promo.rabat}</p>
-            <p className="bai-promo-opis">{promo.opis}</p>
-            {promo.kod && (
-              <p className="bai-promo-kod">
-                Kod: <b>{promo.kod}</b>
-              </p>
-            )}
-            <p className="bai-mono bai-promo-meta">Sprawdzono: {dataPoPolsku(sprawdzonoPromocje() || n.sprawdzono)}</p>
-            <div className="bai-akcje">
-              <a href={promo.link} target="_blank" rel={promo.reklama ? "sponsored noopener noreferrer" : "noopener noreferrer"} className="bai-przycisk bai-przycisk-maly">
-                Przejdź do oferty{promo.reklama ? "*" : ""}
-              </a>
-              <Link href={BAZA_BLACK_WEEK} className="bai-drugi-link">
-                Wszystkie promocje Black Week
-              </Link>
-            </div>
-            {promo.reklama && <p className="bai-bw-reklama">* Reklama: link partnerski</p>}
-          </aside>
         )}
         <div className="bai-akcje">
           <a href={n.strona} target="_blank" rel="noopener noreferrer" className="bai-przycisk-obrys">

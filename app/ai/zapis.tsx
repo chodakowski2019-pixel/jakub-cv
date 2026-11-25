@@ -1,14 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { zdarzenie } from "@/lib/analityka";
 import { KLAUZULA } from "@/lib/newsletter-klauzula";
 
 // 25.11.2026: zapis na newsletter „Promocje AI” w katalogu /ai (strona Black Week, lista, podstrony narzędzi).
 // Ten sam endpoint co strona główna: /api/newsletter (double opt-in, tabela jc_newsletter, zrodlo „promocje-ai”).
-export function Zapis({ tytul = "Promocje na narzędzia AI na e-mail", opis = "Raz w tygodniu: nowe promocje i jedno sprawdzone narzędzie. Bez spamu.", skad = "" }: { tytul?: string; opis?: string; skad?: string }) {
+// Jak na stronie głównej: bez okienka do zaznaczania, klik pod klauzulą = zgoda, a adres i tak trzeba potwierdzić w mailu.
+// `ciemny` = czarny pas (strona Black Week); bez niego biała karta (lista i podstrony narzędzi, gdzie obok jest wezwanie do szkolenia).
+export function Zapis({
+  tytul = "Nowe promocje na narzędzia AI na e-mail",
+  opis = "Raz w tygodniu: sprawdzone promocje i jedno narzędzie. Wypisanie jednym kliknięciem.",
+  skad = "",
+  ciemny = false,
+}: {
+  tytul?: string;
+  opis?: string;
+  skad?: string;
+  ciemny?: boolean;
+}) {
   const [email, setEmail] = useState("");
-  const [zgoda, setZgoda] = useState(false);
   const [www, setWww] = useState("");
   const [stan, setStan] = useState<"" | "wysylam" | "ok" | "juz" | "blad">("");
   const [blad, setBlad] = useState("");
@@ -21,7 +32,12 @@ export function Zapis({ tytul = "Promocje na narzędzia AI na e-mail", opis = "R
       const r = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, zgoda, zrodlo: "promocje-ai", www }),
+        body: JSON.stringify({
+          email,
+          zgoda: true,
+          zrodlo: "promocje-ai",
+          www,
+        }),
       });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) {
@@ -38,34 +54,69 @@ export function Zapis({ tytul = "Promocje na narzędzia AI na e-mail", opis = "R
   }
 
   return (
-    <aside className="bai-zapis" aria-label="Newsletter z promocjami">
-      <p className="bai-mono bai-zapis-nad">Newsletter</p>
-      <h2 className="bai-zapis-tytul">{tytul}</h2>
-      <p className="bai-zapis-opis">{opis}</p>
-      {stan === "ok" || stan === "juz" ? (
-        <p className="bai-zapis-ok" role="status">
-          {stan === "juz" ? "Ten adres jest już na liście." : "Sprawdź skrzynkę i kliknij „Potwierdzam zapis”. Bez kliknięcia nic nie wyślę."}
-        </p>
-      ) : (
-        <form onSubmit={wyslij} className="bai-zapis-forma">
-          <div className="bai-zapis-rzad">
-            <input className="bai-pole" type="email" required autoComplete="email" placeholder="Twój adres e-mail" value={email} onChange={(e) => setEmail(e.target.value)} aria-label="Adres e-mail" />
-            <button type="submit" className="bai-przycisk" disabled={stan === "wysylam" || !zgoda}>
-              {stan === "wysylam" ? "Zapisuję..." : "Zapisz się"}
-            </button>
-          </div>
-          <input type="text" name="www" tabIndex={-1} autoComplete="off" value={www} onChange={(e) => setWww(e.target.value)} className="bai-pulapka" aria-hidden />
-          <label className="bai-zapis-zgoda">
-            <input type="checkbox" checked={zgoda} onChange={(e) => setZgoda(e.target.checked)} />
-            <span>{KLAUZULA}</span>
-          </label>
-          {stan === "blad" && (
-            <p className="bai-zapis-blad" role="alert">
-              {blad}
-            </p>
-          )}
-        </form>
-      )}
+    <aside
+      className={`bai-zapis${ciemny ? " bai-zapis-ciemny" : ""}`}
+      aria-label="Newsletter z promocjami"
+    >
+      <div className="bai-zapis-w">
+        <div>
+          <h2 className="bai-zapis-tytul">
+            {/* „e-mail” nie może się łamać na łączniku. */}
+            {tytul.split("e-mail").map((c, i) => (
+              <Fragment key={i}>
+                {i > 0 && <span className="bai-nw">e-mail</span>}
+                {c}
+              </Fragment>
+            ))}
+          </h2>
+          <p className="bai-zapis-opis">{opis}</p>
+        </div>
+        {stan === "ok" || stan === "juz" ? (
+          <p className="bai-zapis-ok" role="status">
+            {stan === "juz"
+              ? "Ten adres jest już na liście."
+              : "Jeszcze jeden krok: otwórz skrzynkę i kliknij „Potwierdzam zapis”."}
+          </p>
+        ) : (
+          <form onSubmit={wyslij} className="bai-zapis-forma">
+            <div className="bai-zapis-rzad">
+              <input
+                className="bai-pole"
+                type="email"
+                required
+                autoComplete="email"
+                placeholder="Adres e-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                aria-label="Adres e-mail"
+              />
+              <button
+                type="submit"
+                className="bai-przycisk"
+                disabled={stan === "wysylam"}
+              >
+                {stan === "wysylam" ? "Zapisuję..." : "Zapisz się"}
+              </button>
+            </div>
+            <input
+              type="text"
+              name="www"
+              tabIndex={-1}
+              autoComplete="off"
+              value={www}
+              onChange={(e) => setWww(e.target.value)}
+              className="bai-pulapka"
+              aria-hidden
+            />
+            {stan === "blad" && (
+              <p className="bai-zapis-blad" role="alert">
+                {blad}
+              </p>
+            )}
+            <p className="bai-zapis-klauzula">{KLAUZULA}</p>
+          </form>
+        )}
+      </div>
     </aside>
   );
 }

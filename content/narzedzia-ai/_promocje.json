@@ -1,5 +1,5 @@
 {
-  "_opis": "Promocje Black Week 2026. WPIS TYLKO po sprawdzeniu na stronie producenta, z cytatem. Nic z głowy. link_afiliacyjny puste = zwykły link do oferty producenta (bez oznaczenia reklamy). Po wpisaniu linku afiliacyjnego strona sama dodaje oznaczenie. Aktualizacja: node scripts/promocje-skaner.mjs, potem ręczna poprawka tego pliku.",
+  "_opis": "Promocje Black Week 2026. WPIS TYLKO po sprawdzeniu na stronie producenta, z cytatem. Nic z głowy. `rabat` = opcjonalne słowo + liczba z % (np. „do 55%”). `kody` = lista {etykieta, kod}, pusta gdy kodu nie ma. `do` = RRRR-MM-DD albo null, gdy producent nie podaje końca. link_afiliacyjny pusty = zwykły link do oferty producenta (bez oznaczenia reklamy); po wpisaniu linku strona sama dodaje oznaczenie. Aktualizacja: node scripts/promocje-skaner.mjs, potem ręczna poprawka tego pliku.",
   "sprawdzono": "2026-11-25",
   "promocje": [
     {
@@ -8,7 +8,7 @@
       "opis": "Roczne plany Creator i Pro w niższej cenie za pierwszy rok. Pierwszy miesiąc planu miesięcznego Creator za 11 USD.",
       "ceny": "Creator: 99 USD za pierwszy rok (zwykle 220 USD rocznie). Pro: 445,50 USD za pierwszy rok (zwykle 990 USD).",
       "do": "2026-12-01",
-      "kod": "",
+      "kody": [],
       "warunki": "Rabat 55% dla nowych klientów planu Pro. Osoby płacące już miesięcznie za Pro dostają 50% po przejściu na plan roczny.",
       "zrodlo": "https://elevenlabs.io/pricing",
       "cytat": "The ElevenLabs Black Friday and Cyber Monday sale ends on December 1st. Until then, eligible customers can save up to 55% when they choose an annual plan.",
@@ -20,7 +20,7 @@
       "opis": "Plan Pro za 19 USD w pierwszym miesiącu i do 50% mniej przy planie rocznym.",
       "ceny": "Pro miesięcznie: 19 USD pierwszy miesiąc, potem 89 USD. Pro rocznie: 59 USD miesięcznie przy rozliczeniu roku (zwykle 89 USD).",
       "do": "2026-12-07",
-      "kod": "",
+      "kody": [],
       "warunki": "Oferta dla nowych klientów i osób z darmowego planu, które przechodzą na płatny. Nie dla obecnych płacących. Płatność przed końcem oferty.",
       "zrodlo": "https://www.synthesia.io/pricing",
       "cytat": "Offer valid from 16:00 GMT on 23 November to 07:59 GMT on 7 December 2026 and must be paid for before it ends.",
@@ -32,7 +32,12 @@
       "opis": "20% mniej przy pierwszej płatności za plan Starter albo Growth, przy płatności miesięcznej i rocznej.",
       "ceny": "Rabat liczony od pierwszej płatności: przy planie miesięcznym pierwszy miesiąc, przy rocznym pierwszy rok.",
       "do": "2026-12-08",
-      "kod": "BF2026",
+      "kody": [
+        {
+          "etykieta": "",
+          "kod": "BF2026"
+        }
+      ],
       "warunki": "Plany Starter i Growth. Oferta od 25 listopada do 8 grudnia 2026.",
       "zrodlo": "https://www.tidio.com/black-friday/",
       "cytat": "Take 20% off your first payment with code BF2026, on monthly or annual billing.",
@@ -44,7 +49,16 @@
       "opis": "Plany roczne Pro i Business 50% taniej, z osobnymi kodami.",
       "ceny": "Zniżka 50% na roczną subskrypcję Pro albo Business.",
       "do": null,
-      "kod": "Pro: BANBF26PROA50OFF, Business: BANBF26BIZA50OFF",
+      "kody": [
+        {
+          "etykieta": "Pro",
+          "kod": "BANBF26PROA50OFF"
+        },
+        {
+          "etykieta": "Business",
+          "kod": "BANBF26BIZA50OFF"
+        }
+      ],
       "warunki": "Plany roczne. Data końca nie jest podana na stronie cennika.",
       "zrodlo": "https://otter.ai/pricing",
       "cytat": "Black Friday is here: 50% off Pro annual (code BANBF26PROA50OFF) or Business annual (code BANBF26BIZA50OFF).",
@@ -56,7 +70,12 @@
       "opis": "Roczne plany asystenta spotkań z odszumianiem 55% taniej.",
       "ceny": "55% mniej na planach rocznych.",
       "do": null,
-      "kod": "KRISPBF2026",
+      "kody": [
+        {
+          "etykieta": "",
+          "kod": "KRISPBF2026"
+        }
+      ],
       "warunki": "Plany roczne. Data końca nie jest podana na stronie cennika.",
       "zrodlo": "https://krisp.ai/pricing/",
       "cytat": "Black Friday Deal AI Meeting Assistant 55% off Annual Plans KRISPBF2026",
@@ -68,7 +87,7 @@
       "opis": "Grammarly Pro 50% taniej przez pierwszy okres subskrypcji.",
       "ceny": "Rabat obejmuje pierwszy okres, potem cena standardowa.",
       "do": null,
-      "kod": "",
+      "kody": [],
       "warunki": "Tylko Pro, bez planów Enterprise. Nie łączy się z innymi promocjami ani z okresem próbnym: po okresie próbnym rabat nie działa. Rabat tylko na pierwszy okres, potem odnowienie po zwykłej cenie.",
       "zrodlo": "https://www.grammarly.com/black-friday",
       "cytat": "This Black Friday, get it all with our biggest savings of the year: 50% off Grammarly Pro.",
@@ -80,7 +99,7 @@
       "opis": "Dodatkowe 30% zniżki na plany roczne generatora muzyki.",
       "ceny": "Dodatkowe 30% na planach rocznych.",
       "do": null,
-      "kod": "",
+      "kody": [],
       "warunki": "Na stronie cennika działa odliczanie (w chwili sprawdzenia 25.11 pokazywało 1 dzień i 10 godzin), dokładnej daty końca nie ma.",
       "zrodlo": "https://suno.com/pricing",
       "cytat": "Extra 30% off annual plans. Black Friday Sale. Get more Suno for less in our biggest sale of the year.",
@@ -92,7 +111,7 @@
       "opis": "Premium 20% taniej, oferta ograniczona czasowo.",
       "ceny": "20% rabatu na plan Premium.",
       "do": null,
-      "kod": "",
+      "kody": [],
       "warunki": "Strona podaje tylko, że oferta jest ograniczona czasowo.",
       "zrodlo": "https://languagetool.org/pl",
       "cytat": "20 % Rabat Premium ograniczony czasowo",
@@ -104,10 +123,213 @@
       "opis": "Google Workspace (z Gemini) do 50% taniej przez pierwsze 3 miesiące.",
       "ceny": "Na stronie cennika Workspace plan Starter: 31,50 zł za użytkownika, w ofercie 25,20 zł (20% rabatu przez 3 miesiące).",
       "do": null,
-      "kod": "",
+      "kody": [],
       "warunki": "Rabat liczony przy płatności. Wysokość rabatu zależy od planu. Oferta ważna przez ograniczony czas.",
       "zrodlo": "https://workspace.google.com/pricing",
       "cytat": "Uzyskaj nawet 50% zniżki przez pierwsze 3 mies. korzystania z Google Workspace. Oferta ważna przez ograniczony czas.",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "veed",
+      "rabat": "30%",
+      "opis": "Rabat 30% na roczny plan albo na pierwszy miesiąc planu miesięcznego, po wpisaniu kodu przy płatności. Dotyczy wszystkich planów płatnych poza Enterprise, bez ograniczeń krajów.",
+      "ceny": "Strona nie podaje cen po rabacie. Zwykłe ceny: Creator 12,25 USD miesięcznie przy płatności rocznej i 25 USD przy miesięcznej; Pro 22,08 USD przy rocznej i 45 USD przy miesięcznej (za miejsce).",
+      "do": "2026-12-02",
+      "kody": [
+        {
+          "etykieta": "",
+          "kod": "BLACKFRIDAY30"
+        }
+      ],
+      "warunki": "Wyprzedaż od 24 listopada do 2 grudnia 2026. Kod działa raz na subskrypcję i nie łączy się z innym rabatem VEED ani istniejącą ofertą. Plan roczny: 30% taniej przez cały rok. Plan miesięczny: 30% taniej tylko za pierwszy miesiąc, potem cena zwykła.",
+      "zrodlo": "https://www.veed.io/tools/black-friday",
+      "cytat": "Take 30% off an annual plan or your first month on monthly with code BLACKFRIDAY30, and discover VEED AI, the AI video agent that edits for you.",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "speechify",
+      "rabat": "30%",
+      "opis": "Na stronie Speechify jest baner Black Friday z rabatem 30%. Producent nie podaje na tej stronie, których planów dotyczy rabat.",
+      "ceny": "Strona promocji nie podaje cen po rabacie. Zwykła cena planu Premium: 29 USD miesięcznie albo 139 USD rocznie.",
+      "do": null,
+      "kody": [],
+      "warunki": "Producent nie podaje warunków, daty końca ani kodu na stronie promocji.",
+      "zrodlo": "https://speechify.com/black-friday/",
+      "cytat": "BLACK FRIDAY! GET 30% OFF. TRY FOR FREE NOW",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "pictory",
+      "rabat": "50%",
+      "opis": "Baner Black Friday na cenniku Pictory mówi o rabacie 50% na wszystkie plany. Cennik pokazuje ceny po obniżce obok przekreślonych cen zwykłych.",
+      "ceny": "Starter: 14,50 USD miesięcznie przy płatności miesięcznej i 12,50 USD przy rocznej (zwykle 29 USD). Professional: 29,50 USD i 17,50 USD (zwykle 59 USD). Teams: 99,50 USD i 59,50 USD (zwykle 199 USD).",
+      "do": null,
+      "kody": [
+        {
+          "etykieta": "",
+          "kod": "BLACKFRIYAYY50"
+        }
+      ],
+      "warunki": "Dotyczy planów Starter, Professional i Teams. Kod jest w linkach do płatności z cennika. Strona nie podaje daty końca: odliczanie pokazuje zera. Warunki dla nowych i obecnych klientów nie są podane.",
+      "zrodlo": "https://pictory.ai/pricing",
+      "cytat": "Black Friday Sale: 50% off all plans",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "invideo-ai",
+      "rabat": "do 75%",
+      "opis": "Promocja Black Friday na plany invideo AI: Starter 50% taniej, Plus 60% taniej, Max do 75% taniej dzięki zasadzie zapłać za 12 miesięcy, dostań 24. Dotyczy płatności rocznej.",
+      "ceny": "Starter: 10 EUR za miejsce miesięcznie przy płatności rocznej (zwykle 20 EUR). Plus: 24 EUR miesięcznie przy rocznej (zwykle 60 EUR). Max: 62,50 EUR miesięcznie za miejsce, 1500 EUR z góry za 2 lata, potem 3000 EUR rocznie.",
+      "do": "2026-11-26",
+      "kody": [],
+      "warunki": "Rabat widać po stronie cennika jako cenę promocyjną; kodu nie ma. Data końca pochodzi z danych ofert zapisanych w stronie (wygaśnięcie 26 listopada 2026, godz. 8:00 czasu UTC). Ceny w EUR zależą od regionu.",
+      "zrodlo": "https://invideo.io/pricing",
+      "cytat": "Black Friday sale Up to 75% off Pay for 12 months, get 24",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "fliki",
+      "rabat": "50%",
+      "opis": "Rabat 50% na roczne plany Standard i Premium po wpisaniu kodu przy płatności.",
+      "ceny": "Strona cennika nie pokazuje kwot po załadowaniu. Według opisu producenta zwykła cena miesięczna: Standard 28 USD, Premium 88 USD; płatność roczna daje zwykle 25% obniżki.",
+      "do": null,
+      "kody": [
+        {
+          "etykieta": "",
+          "kod": "FLIKIBFCM50"
+        }
+      ],
+      "warunki": "Dotyczy tylko rocznych planów Standard i Premium. Producent nie podaje daty końca ani tego, czy rabat jest dla nowych klientów.",
+      "zrodlo": "https://fliki.ai/pricing",
+      "cytat": "Black Friday Sale! 50% off annual Standard & Premium plans with code FLIKIBFCM50, applied at checkout",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "colossyan",
+      "rabat": "40%",
+      "opis": "Black Friday: 40% zniżki na pierwszy rok planu Professional, plany roczne, dodatkowi edytorzy wliczeni.",
+      "ceny": "Professional zwykle kosztuje 59 USD miesięcznie przy płatności rocznej; strona nie podaje ceny po rabacie.",
+      "do": "2026-11-30",
+      "kody": [
+        {
+          "etykieta": "",
+          "kod": "BLACKFRIDAY40"
+        }
+      ],
+      "warunki": "Dotyczy planu Professional, planów rocznych, tylko pierwszego roku. Kod wpisuje się przy zakupie. Koniec w poniedziałek 30 listopada o 23:59 czasu PT.",
+      "zrodlo": "https://www.colossyan.com/pricing/",
+      "cytat": "40% off your first year of Professional, until Monday 30 Nov.",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "freepik",
+      "rabat": "do 62%",
+      "opis": "Black Friday u Magnific (dawniej Freepik): zniżka na plany roczne plus darmowe kredyty w prezencie. Plany Business są też przecenione, do 40% od 3 miejsc.",
+      "ceny": "Premium: 303 PLN za pierwszy rok, potem 606 PLN rocznie (ceny bez VAT). Plus i Pro dostają dodatkowo 50 tysięcy i 125 tysięcy kredytów w prezencie w pierwszym roku.",
+      "do": "2026-12-01",
+      "kody": [],
+      "warunki": "Plany roczne, nowe zakupy i przejścia z planu miesięcznego na roczny. Business od 3 miejsc. Koniec 1 grudnia o 08:00 czasu środkowoeuropejskiego. Kodu nie podano.",
+      "zrodlo": "https://www.magnific.com/pricing",
+      "cytat": "Up to 62% off and gift credits on annual plans.",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "picsart",
+      "rabat": "50%",
+      "opis": "Rabat 50% na pierwszy rok rocznego planu Ultra, dla nowych subskrybentów, przy przejściu z Pro na Ultra oraz przy zmianie na wyższy pakiet kredytów Ultra. Do tego 7 dni bez zużycia kredytów na Seedance 2.5 (do 720p i 10 sekund).",
+      "ceny": "Cennik w Polsce pokazuje plan Ultra za 114,16 zł miesięcznie przy płatności rocznej z oznaczeniem ceny startowej z rabatem 50%; ceny przed rabatem strona obok nie podaje. Plan Pro: 39,66 zł miesięcznie przy płatności rocznej (bez promocji).",
+      "do": "2026-12-01",
+      "kody": [],
+      "warunki": "Tylko roczny plan Ultra, zakup na stronie picsart.com (nie w aplikacji mobilnej). Nie obejmuje planów miesięcznych ani okresów próbnych. Rabat dotyczy pierwszego roku, potem odnowienie po zwykłej cenie. Przy kilku miejscach tylko dla administratora konta. Każde konto dostaje promocję raz, nie łączy się z innymi ofertami. Koniec 1 grudnia 2026, 23:59 czasu PT. Kod niepotrzebny.",
+      "zrodlo": "https://picsart.com/seedance-2-5-unlimited-ultra-annual-terms",
+      "cytat": "50% off Ultra annual: 50% off the price of your first year of Ultra annual. Promotion runs until December 1, 2026, 11:59 p.m. PT.",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "neuronwriter",
+      "rabat": "50%",
+      "opis": "Połowa ceny na wszystkie plany roczne NEURONwriter oraz na dodatek AI Advanced. Promocja trwa od 26 listopada do 2 grudnia 2026.",
+      "ceny": "Strona promocji nie podaje cen po rabacie. Zwykłe ceny roczne z cennika: Bronze 230 USD, Gold 690 USD, Diamond 1170 USD.",
+      "do": "2026-12-02",
+      "kody": [],
+      "warunki": "Kod nie jest wymagany. Dotyczy planów rocznych i dodatku AI Advanced. Strona nie podaje, czy rabat dotyczy tylko nowych klientów ani na jak długo działa.",
+      "zrodlo": "https://neuronwriter.com/black-friday/",
+      "cytat": "Deal: 50% off on all annual plans and 50% for AI Advanced Add-on. Valid: 26 Nov – 2 Dec 2026. Coupon Code: Not required",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "sembly",
+      "rabat": "20%",
+      "opis": "Rabat 20% na każdy plan płatny, przy każdym okresie rozliczenia, na 12 miesięcy. Kod wpisuje się przy płatności.",
+      "ceny": "Przy płatności rocznej: Basic 8 USD zamiast 10 USD miesięcznie, Pro 16 USD zamiast 20 USD za użytkownika miesięcznie, MAX 24 USD zamiast 30 USD za użytkownika miesięcznie.",
+      "do": "2026-11-30",
+      "kody": [
+        {
+          "etykieta": "",
+          "kod": "BF2026"
+        }
+      ],
+      "warunki": "Dotyczy wszystkich planów płatnych (Basic, Pro, MAX), przy każdym okresie rozliczenia, rabat działa przez 12 miesięcy. Strona nie podaje, czy dotyczy tylko nowych klientów ani czy łączy się z innymi rabatami.",
+      "zrodlo": "https://www.sembly.ai/pricing/",
+      "cytat": "Black Friday: 20% off all plans for 12 months · ends Nov 30",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "pabbly-connect",
+      "rabat": "42%",
+      "opis": "Promocja Black Friday dotyczy pakietu Pabbly Plus, który obejmuje 9 aplikacji Pabbly razem z Pabbly Connect. Lifetime i pakiety łączone mają dodatkowe 10% rabatu.",
+      "ceny": "Pabbly Plus na rok: 828 USD z promocją zamiast 1 428 USD (oszczędność 600 USD). Odnowienie po roku po tej samej cenie 828 USD.",
+      "do": null,
+      "kody": [
+        {
+          "etykieta": "",
+          "kod": "BFCM26"
+        }
+      ],
+      "warunki": "Promocja rusza 27 listopada 2026 o 12:00 w nocy czasu ET (10:30 IST); strona nie podaje daty końca. Dotyczy planu Pabbly Plus (1 rok, 9 aplikacji), nie samego planu Standard Connect. Dostępny także dla obecnych użytkowników, 30 dni gwarancji zwrotu pieniędzy.",
+      "zrodlo": "https://blackfriday.pabbly.com/",
+      "cytat": "The regular price is $1,428/year, but this Black Friday, you can get Pabbly Plus for just $828/year - save $600!",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "hostinger-horizons",
+      "rabat": "do 85%",
+      "opis": "Wyprzedaż Black Friday Hostingera obejmuje plany z Hostinger AI Builder (dawniej Horizons). Rabat dotyczy planów płatnych z góry na 48 miesięcy, a plany dają też podwójną liczbę kredytów Hostinger.",
+      "ceny": "Premium 1,99 USD miesięcznie zamiast 12,99 USD (85%), razem 95,52 USD za 48 miesięcy, odnowienie 10,99 USD. Unlimited 2,79 USD zamiast 18,99 USD (85%), razem 133,92 USD, odnowienie 16,99 USD. Cloud Startup 7,99 USD zamiast 27,99 USD (71%), razem 383,52 USD, odnowienie 25,99 USD.",
+      "do": "2026-12-14",
+      "kody": [],
+      "warunki": "Cena obowiązuje w pierwszym okresie 48 miesięcy, potem odnowienie po cenie ze strony. Plany płatne z góry. Podwójne kredyty Hostinger: 500 zamiast 250 (Premium), 1 000 zamiast 500 (Unlimited), 2 000 zamiast 1 000 (Cloud Startup). Gwarancja zwrotu 30 dni.",
+      "zrodlo": "https://www.hostinger.com/black-friday",
+      "cytat": "The Hostinger Black Friday sale runs from October 19 to December 14, 2026.",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "decktopus",
+      "rabat": "66%",
+      "opis": "Rabat na pierwszy rok rocznych planów Pro i Business.",
+      "ceny": "Plan Pro rocznie zwykle 9,99 USD miesięcznie (119,88 USD za rok), Business 19,99 USD miesięcznie za miejsce; cena po rabacie nie jest podana na stronie.",
+      "do": "2026-12-11",
+      "kody": [
+        {
+          "etykieta": "",
+          "kod": "BF26"
+        }
+      ],
+      "warunki": "Plany roczne Pro i Business, rabat dotyczy pierwszego roku, kod wpisuje się przy płatności. Strona nie podaje, czy oferta jest tylko dla nowych klientów. Koniec 11 grudnia 2026, 23:59 GMT+3 (wpis na blogu producenta).",
+      "zrodlo": "https://www.decktopus.com/pricing",
+      "cytat": "Black Friday: 66% off annual plans · Use code BF26 at checkout · Ends December 11",
+      "link_afiliacyjny": ""
+    },
+    {
+      "slug": "predis-ai",
+      "rabat": "do 50%",
+      "opis": "Promocja Black Friday + Cyber Monday na plany roczne.",
+      "ceny": "Core 19 USD miesięcznie zamiast 32 USD, Rise 40 USD zamiast 79 USD, Enterprise+ 212 USD zamiast 249 USD (płatność roczna, ceny ze strony cennika).",
+      "do": null,
+      "kody": [],
+      "warunki": "Rabat dotyczy płatności rocznej. Strona pokazuje odliczanie bez daty końca (\"Ends in soon\").",
+      "zrodlo": "https://predis.ai/pricing",
+      "cytat": "BFCM deal: up to 50% off yearly plans.",
       "link_afiliacyjny": ""
     }
   ]

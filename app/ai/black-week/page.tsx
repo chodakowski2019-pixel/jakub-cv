@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Odliczanie } from "./odliczanie";
 import { Ranking, type Karta } from "./ranking";
 import { Zglos } from "./zglos";
 import { Zapis } from "../zapis";
 import { DOMENA, PODGLAD } from "@/lib/blog-ai";
-import { BAZA_NARZEDZI, CECHY, kategoria } from "@/lib/narzedzia-ai";
-import { BAZA_BLACK_WEEK, KONIEC_BLACK_WEEK, START_BLACK_WEEK, sprawdzonoPromocje, statystykaSkanu, wszystkiePromocje } from "@/lib/promocje-ai";
+import { BAZA_NARZEDZI, CECHY, kategoria, wszystkieNarzedzia } from "@/lib/narzedzia-ai";
+import { BAZA_BLACK_WEEK, KONIEC_BLACK_WEEK, START_BLACK_WEEK, sprawdzonoPromocje, wszystkiePromocje } from "@/lib/promocje-ai";
 
 // 25.11.2026 (USER_001: „lec i rob”, wzorzec: blackweek.ai): jedna strona z promocjami Black Week na narzędzia AI.
 // Czym się różnimy: każda promocja ma cytat ze strony producenta i datę sprawdzenia, link do naszego wpisu o narzędziu
-// (cena dla firm, język polski, dane) i filtry „dla firmy”. Zero zmyślonych rabatów: lista = tylko to, co potwierdza strona producenta.
+// (cena dla firm, język polski, dane). Zero zmyślonych rabatów: lista = tylko to, co potwierdza strona producenta.
+//
+// Wersja 2 tego samego dnia (USER_001: „popraw ux/ui tego”). Konwencja: TABLICA. Pierwszy ekran = nagłówek + czarna tablica
+// (odliczanie i 4 liczby), niżej promocje w wierszach jak w tabeli (da się przejrzeć 9 ofert bez czytania akapitów),
+// szczegóły pod „Warunki i źródło”. Wyszukiwarka + jeden rząd zakładek zamiast trzech rzędów filtrów. Kolory i kroje katalogu bez zmian.
 const TYTUL = "Black Week 2026: promocje na narzędzia AI, sprawdzone";
 const OPIS = "Promocje Black Friday i Cyber Monday na narzędzia AI dla firm. Przy każdej: rabat, kod, data końca i cytat ze strony producenta. Sprawdzone 25 listopada 2026.";
 
@@ -22,52 +25,63 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: TYTUL, description: OPIS },
 };
 
-const dataPoPolsku = (d: string) => new Date(d).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Warsaw" });
-const liczba = (s: string) => Number((s.match(/\d+(?:[.,]\d+)?/) ?? ["0"])[0].replace(",", "."));
+const TZ = "Europe/Warsaw";
+const dzienMiesiac = (d: string) => new Date(d).toLocaleDateString("pl-PL", { day: "numeric", month: "long", timeZone: TZ });
+const pelnaData = (d: string) => new Date(d).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric", timeZone: TZ });
 
 export default function Page() {
   const promocje = wszystkiePromocje();
+  const sprawdzono = sprawdzonoPromocje() || "2026-11-25";
   const karty: Karta[] = promocje.map((p) => ({
     slug: p.slug,
     nazwa: p.n.nazwa,
-    producent: p.n.producent,
     logo: p.n.logo,
     kategoria: p.n.kategoria,
     kategoriaNazwa: kategoria(p.n.kategoria)?.nazwa ?? "",
-    rabat: p.rabat,
-    rabatLiczba: liczba(p.rabat),
+    rabatPrzed: p.rabatPrzed,
+    rabatLiczba: p.rabatLiczba,
     opis: p.opis,
     ceny: p.ceny,
     do: p.do,
-    doTekst: p.do ? dataPoPolsku(p.do) : "",
-    kod: p.kod,
+    doTekst: p.do ? dzienMiesiac(p.do) : "",
+    koniec: p.koniec,
+    kody: p.kody,
     warunki: p.warunki,
     zrodlo: p.zrodlo,
     cytat: p.cytat,
     link: p.link,
     reklama: p.reklama,
-    sprawdzono: dataPoPolsku(sprawdzonoPromocje() || "2026-11-25"),
-    cechy: p.n.cechy,
-    wygasla: p.wygasla,
+    cechy: p.n.cechy.map((c) => CECHY[c]),
   }));
   const slugiKat = [...new Set(karty.map((k) => k.kategoria))];
   const kategorie = slugiKat.map((s) => ({ slug: s, nazwa: kategoria(s)?.nazwa ?? s, ile: karty.filter((k) => k.kategoria === s).length }));
-  const cechy = (Object.keys(CECHY) as (keyof typeof CECHY)[]).filter((c) => karty.some((k) => k.cechy.includes(c))).map((c) => ({ slug: c, nazwa: CECHY[c] }));
-  const skan = statystykaSkanu();
-  const zData = karty.filter((k) => k.do).length;
+  // Do wyszukiwarki: narzędzia z katalogu, które nie mają teraz promocji.
+  const zPromocja = new Set(karty.map((k) => k.slug));
+  const katalog = wszystkieNarzedzia()
+    .filter((n) => !zPromocja.has(n.slug))
+    .map((n) => ({ slug: n.slug, nazwa: n.nazwa }));
   const najwiekszy = [...karty].sort((a, b) => b.rabatLiczba - a.rabatLiczba)[0];
+  const zKodem = karty.filter((k) => k.kody.length > 0).length;
+
+  const liczby: [string, string][] = [
+    ["Promocje na liście", String(karty.length)],
+    ["Największy rabat", najwiekszy ? `${najwiekszy.rabatLiczba}% · ${najwiekszy.nazwa}` : "brak"],
+    ["Z kodem rabatowym", String(zKodem)],
+    ["Narzędzia w katalogu", String(wszystkieNarzedzia().length)],
+    ["Ostatnie sprawdzenie", dzienMiesiac(sprawdzono)],
+  ];
 
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: TYTUL,
-    itemListElement: karty.map((k, i) => ({ "@type": "ListItem", position: i + 1, name: `${k.nazwa}: ${k.rabat}`, url: `${DOMENA}${BAZA_NARZEDZI}/${k.slug}` })),
+    itemListElement: promocje.map((p, i) => ({ "@type": "ListItem", position: i + 1, name: `${p.n.nazwa}: ${p.rabat}`, url: `${DOMENA}${BAZA_NARZEDZI}/${p.slug}` })),
   };
   const faq = [
-    ["Skąd wiadomo, że promocje są prawdziwe?", "Każdą wpisuję dopiero po przeczytaniu strony producenta. Przy ofercie jest cytat z tej strony i data sprawdzenia. Jeśli strony nie da się odczytać, promocji nie dodaję."],
+    ["Skąd wiadomo, że promocje są prawdziwe?", "Każdą wpisuję dopiero po przeczytaniu strony producenta. Przy ofercie jest cytat z tej strony. Jeśli strony nie da się odczytać, promocji nie dodaję."],
     ["Czy te linki są partnerskie?", "Obecnie linki prowadzą na strony producentów, bez prowizji. Gdy któryś będzie linkiem partnerskim, przycisk dostanie gwiazdkę i dopisek „Reklama: link partnerski”."],
     ["Czy kolejność jest płatna?", "Nie. Domyślnie lista idzie od największego rabatu. Płatnych miejsc nie ma."],
-    ["Co z promocjami bez daty końca?", "Producent nie podaje wtedy terminu na stronie. Zaznaczam to przy ofercie i sprawdzam ponownie. Kupując, sprawdź cenę i warunki na stronie producenta."],
+    ["Co z promocjami bez daty końca?", "Producent nie podaje wtedy terminu na stronie. Zaznaczam to przy ofercie. Przed zakupem warto sprawdzić cenę i warunki na stronie producenta."],
   ] as const;
   const faqLd = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) };
 
@@ -76,77 +90,66 @@ export default function Page() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
 
-      <section className="bai-hero">
-        <div className="bai-smuga" aria-hidden />
-        <div className="bai-w6 bai-hero-wnetrze">
-          <p className="bai-mono bai-brow">Black Week 23-30 listopada 2026</p>
-          <h1 className="bai-h1">
-            <span>Black Week 2026:</span> <span>promocje na narzędzia AI.</span>
-          </h1>
-          <p className="bai-lead">
-            Przy każdej promocji cytat ze strony producenta, data końca i kod. Obok mój wpis o narzędziu: ile kosztuje wersja dla firm, czy działa po polsku i co z
-            danymi.
-          </p>
-          <p className="bai-mono bai-licznik">
-            Promocje: {karty.length} · Z datą końca: {zData}
-            {najwiekszy ? ` · Największy rabat: ${najwiekszy.rabat} (${najwiekszy.nazwa})` : ""}
-          </p>
-          <Odliczanie start={START_BLACK_WEEK} koniec={KONIEC_BLACK_WEEK} />
-          <div className="bai-akcje">
-            <a href="#ranking" className="bai-przycisk">
-              Zobacz promocje
-            </a>
-            <a href="#zapis" className="bai-drugi-link">
-              Promocje na e-mail
-            </a>
+      {/* ── PIERWSZY EKRAN: nagłówek + czarna tablica ── */}
+      <section className="bai-hero bai-bw-hero">
+        <div className="bai-w6 bai-bw-hero-wnetrze">
+          <div>
+            <p className="bai-mono bai-brow">Black Week · 23-30 listopada 2026</p>
+            <h1 className="bai-h1 bai-bw-h1">
+              <span>Promocje na narzędzia AI.</span> <span>Tylko sprawdzone.</span>
+            </h1>
+            <p className="bai-lead">Każdą ofertę czytam na stronie producenta. Przy każdej jest rabat, kod, termin i cytat ze źródła.</p>
+            <div className="bai-akcje">
+              <a href="#ranking" className="bai-przycisk">
+                Zobacz {karty.length} promocji
+              </a>
+              <a href="#zapis" className="bai-drugi-link">
+                Wyślij mi nowe na e-mail
+              </a>
+            </div>
           </div>
+
+          <aside className="bai-tablica" aria-label="Black Week w liczbach">
+            <Odliczanie start={START_BLACK_WEEK} koniec={KONIEC_BLACK_WEEK} />
+            <dl className="bai-tab-liczby">
+              {liczby.map(([e, w]) => (
+                <div key={e}>
+                  <dt>{e}</dt>
+                  <dd>{w}</dd>
+                </div>
+              ))}
+            </dl>
+          </aside>
         </div>
       </section>
 
-      <div className="bai-w6 bai-dol">
-        <Ranking karty={karty} kategorie={kategorie} cechy={cechy} />
+      <div className="bai-w6 bai-bw-dol">
+        <Ranking karty={karty} kategorie={kategorie} katalog={katalog} />
+        <p className="bai-of-stopka">
+          Sprawdzone u producentów: {pelnaData(sprawdzono)}. Kolejność od największego rabatu, bez płatnych miejsc. Ceny i warunki ustala producent.
+        </p>
 
         <div id="zapis">
-          <Zapis skad="black-week" />
+          <Zapis skad="black-week" ciemny />
         </div>
 
-        <section className="bai-skaner" aria-label="Jak sprawdzam promocje">
-          <h2 className="bai-h2-maly">Jak to sprawdzam</h2>
-          <dl className="bai-fakty">
-            <div>
-              <dt className="bai-mono">Strony producentów</dt>
-              <dd>{skan ? `${skan.odczytane} z ${skan.narzedzi} odczytanych` : "sprawdzane ręcznie"}</dd>
+        {/* ── PYTANIA + ZGŁOSZENIE ── */}
+        <div className="bai-bw-koniec">
+          <section aria-labelledby="bw-pytania">
+            <h2 id="bw-pytania" className="bai-h2-maly">
+              Pytania
+            </h2>
+            <div className="bai-faq">
+              {faq.map(([q, a]) => (
+                <details key={q}>
+                  <summary>{q}</summary>
+                  <p>{a}</p>
+                </details>
+              ))}
             </div>
-            <div>
-              <dt className="bai-mono">Ostatni skan</dt>
-              <dd>{skan ? dataPoPolsku(skan.skan) : dataPoPolsku(sprawdzonoPromocje() || "2026-11-25")}</dd>
-            </div>
-            <div>
-              <dt className="bai-mono">Na liście</dt>
-              <dd>tylko oferty potwierdzone na stronie producenta</dd>
-            </div>
-            <div>
-              <dt className="bai-mono">Kolejność</dt>
-              <dd>od największego rabatu, bez płatnych miejsc</dd>
-            </div>
-          </dl>
-          <p className="bai-katalog-zasada">
-            Strony, których nie da się odczytać automatycznie (blokady, treść ładowana skryptem), sprawdzam ręcznie albo pomijam. Nie podaję rabatów, których nie potwierdza
-            strona producenta. Pełny katalog narzędzi: <Link href={BAZA_NARZEDZI}>wszystkie wpisy</Link>.
-          </p>
-        </section>
-
-        <Zglos />
-
-        <section className="bai-pytania-bw">
-          <h2 className="bai-h2-maly">Pytania</h2>
-          {faq.map(([q, a]) => (
-            <details key={q} className="bai-bw-zrodlo">
-              <summary>{q}</summary>
-              <p>{a}</p>
-            </details>
-          ))}
-        </section>
+          </section>
+          <Zglos />
+        </div>
       </div>
     </>
   );

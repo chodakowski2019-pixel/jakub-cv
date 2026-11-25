@@ -4,31 +4,51 @@ import { narzedzie, type Narzedzie } from "@/lib/narzedzia-ai";
 
 // 25.11.2026 (USER_001: „lec i rob”, wzorzec: blackweek.ai): promocje Black Week w katalogu /ai.
 // Dane: content/narzedzia-ai/_promocje.json (wpis TYLKO po sprawdzeniu na stronie producenta, z cytatem).
-// Skan pomocniczy: scripts/promocje-skaner.mjs → _skan.json (surowy ślad dla człowieka, na stronie tylko liczby i godzina).
+// Skaner (scripts/promocje-skaner.mjs) WYŁĄCZONY 25.11.2026 (USER_001: „na razie skaner wyłączamy”): strona go nie czyta, promocje wpisuje się ręcznie po sprawdzeniu u producenta.
 // Link afiliacyjny: pole `link_afiliacyjny`. Puste = zwykły link do oferty producenta, bez oznaczenia reklamy.
+//
+// Strony są statyczne (budowane przy wdrożeniu), więc „czy promocja jeszcze trwa” liczy PRZEGLĄDARKA
+// (app/ai/black-week/ranking.tsx, app/ai/promo-baner.tsx, app/ai/lista.tsx). Tutaj tylko daty.
 
 export const BAZA_BLACK_WEEK = "/ai/black-week";
 /** Koniec Black Week 2026: poniedziałek 30.11 (Cyber Monday), do końca dnia czasu polskiego. */
 export const KONIEC_BLACK_WEEK = "2026-11-30T23:59:59+01:00";
 export const START_BLACK_WEEK = "2026-11-23T00:00:00+01:00";
+/** Oferta bez daty końca u producenta: po tym dniu nie pokazujemy jej poza stroną Black Week, a tam dostaje dopisek „sprawdź u producenta”. */
+export const KONIEC_BEZ_DATY = "2026-12-01";
+
+/** Koniec dnia czasu polskiego (zima = UTC+1) dla daty RRRR-MM-DD. */
+export const koniecDnia = (d: string) => `${d}T23:59:59+01:00`;
+
+export type Kod = { etykieta: string; kod: string };
 
 export type Promocja = {
   slug: string;
+  /** Opcjonalne słowo + liczba z procentem, np. „do 55%”, „dodatkowe 30%”. */
   rabat: string;
   opis: string;
   ceny: string;
-  /** ISO (YYYY-MM-DD) albo null, gdy strona producenta nie podaje końca. */
+  /** RRRR-MM-DD albo null, gdy strona producenta nie podaje końca. */
   do: string | null;
-  kod: string;
+  kody: Kod[];
   warunki: string;
   zrodlo: string;
   cytat: string;
   linkAfiliacyjny: string;
 };
 
-export type PromocjaZNarzedziem = Promocja & { n: Narzedzie; wygasla: boolean; link: string; reklama: boolean };
+export type PromocjaZNarzedziem = Promocja & {
+  n: Narzedzie;
+  /** Słowo przed liczbą („do”, „dodatkowe”) albo pusty tekst. */
+  rabatPrzed: string;
+  rabatLiczba: number;
+  /** Do kiedy pokazywać ofertę jako trwającą (ISO z godziną). */
+  koniec: string;
+  link: string;
+  reklama: boolean;
+};
 
-type Plik = { sprawdzono: string; promocje: (Omit<Promocja, "linkAfiliacyjny"> & { link_afiliacyjny?: string })[] };
+type Plik = { sprawdzono: string; promocje: (Omit<Promocja, "linkAfiliacyjny" | "kody"> & { link_afiliacyjny?: string; kody?: Kod[] })[] };
 const KAT = path.join(process.cwd(), "content", "narzedzia-ai");
 
 function czytaj<T>(nazwa: string): T | null {
@@ -37,11 +57,6 @@ function czytaj<T>(nazwa: string): T | null {
   } catch {
     return null;
   }
-}
-
-/** Czy promocja z datą końca już minęła (koniec dnia czasu polskiego). Bez daty = nie wiadomo, pokazujemy jako aktywną. */
-export function czyWygasla(doDnia: string | null, teraz = Date.now()) {
-  return doDnia ? teraz > new Date(`${doDnia}T23:59:59+01:00`).getTime() : false;
 }
 
 function zUtm(url: string) {
@@ -68,11 +83,15 @@ export function wszystkiePromocje(): PromocjaZNarzedziem[] {
       const n = narzedzie(x.slug);
       if (!n) return null;
       const aff = x.link_afiliacyjny ?? "";
+      const m = x.rabat.match(/^(.*?)\s*(\d+(?:[.,]\d+)?)\s*%/);
       return {
         ...x,
+        kody: (x.kody ?? []).filter((k) => k.kod),
         linkAfiliacyjny: aff,
         n,
-        wygasla: czyWygasla(x.do),
+        rabatPrzed: m ? m[1].trim() : "",
+        rabatLiczba: m ? Number(m[2].replace(",", ".")) : 0,
+        koniec: koniecDnia(x.do ?? KONIEC_BEZ_DATY),
         link: aff || zUtm(x.zrodlo),
         reklama: Boolean(aff),
       } satisfies PromocjaZNarzedziem;
@@ -80,17 +99,7 @@ export function wszystkiePromocje(): PromocjaZNarzedziem[] {
     .filter((x): x is PromocjaZNarzedziem => x !== null);
 }
 
+/** Promocja narzędzia, o ile w chwili budowania strony jeszcze trwa. Po tej dacie baner chowa przeglądarka. */
 export function promocjaNarzedzia(slug: string): PromocjaZNarzedziem | undefined {
-  return wszystkiePromocje().find((p) => p.slug === slug && !p.wygasla);
-}
-
-export function statystykaSkanu() {
-  const s = czytaj<{ skan: string; adresow: number; wyniki: { status: string; odczytane: number }[] }>("_skan.json");
-  if (!s) return null;
-  return {
-    skan: s.skan,
-    narzedzi: s.adresow,
-    odczytane: s.wyniki.filter((w) => w.odczytane > 0).length,
-    blokada: s.wyniki.filter((w) => w.status === "blokada").length,
-  };
+  return wszystkiePromocje().find((p) => p.slug === slug && Date.now() < new Date(p.koniec).getTime());
 }

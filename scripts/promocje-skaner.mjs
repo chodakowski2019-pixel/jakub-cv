@@ -1,9 +1,14 @@
+// WYŁĄCZONY 25.11.2026 (USER_001: „na razie skaner wyłączamy”). Nie uruchamiany, strona go nie używa. Odpalić tylko z --wlacz.
 // 25.11.2026: skaner promocji katalogu /ai. Czyta strony producentów z content/narzedzia-ai/*.md (pole `strona`
 // i adresy cennika/promocji), szuka słów Black Friday / Cyber Monday / Black Week i rabatu w procentach.
 // Wynik: content/narzedzia-ai/_skan.json (godzina skanu, adres, status, cytat). To SUROWY ślad dla człowieka:
 // promocja trafia na stronę dopiero po ręcznym wpisie do _promocje.json z cytatem (zero zmyślonych rabatów).
 // Użycie: node scripts/promocje-skaner.mjs
 import fs from "node:fs";
+if (!process.argv.includes("--wlacz")) {
+  console.log("Skaner promocji jest wyłączony (25.11.2026). Uruchom z --wlacz, żeby go użyć.");
+  process.exit(0);
+}
 import path from "node:path";
 
 const KAT = path.join(process.cwd(), "content", "narzedzia-ai");

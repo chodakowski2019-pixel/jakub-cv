@@ -27,6 +27,10 @@ export const KATEGORIE: Kategoria[] = [
   // 22.11.2026 (USER_001: „dorób jeszcze do 50 narzędzi”): 2 nowe kategorie.
   { slug: "automatyzacja", nazwa: "Automatyzacja", opis: "Połączenia między aplikacjami i powtarzalne zadania, które wykonują się same." },
   { slug: "obsluga-klienta", nazwa: "Obsługa klienta", opis: "Czat na stronie i odpowiedzi na pytania klientów z pomocą AI." },
+  // 25.11.2026 (USER_001: „narzędzi do 100”): 3 nowe kategorie.
+  { slug: "marketing-i-seo", nazwa: "Marketing i SEO", opis: "Teksty pod wyszukiwarkę, plan treści i widoczność strony firmy w Google." },
+  { slug: "organizacja-pracy", nazwa: "Organizacja pracy", opis: "Zadania, kalendarz i projekty zespołu z pomocą AI." },
+  { slug: "strony-i-kod", nazwa: "Strony i programowanie", opis: "Strony internetowe, aplikacje i kod tworzone z opisu słownego." },
 ];
 
 export function kategoria(slug: string): Kategoria | undefined {

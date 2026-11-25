@@ -29,15 +29,17 @@ export function Zglos() {
   }
 
   return (
-    <section className="bai-zglos" id="zglos">
-      <h2 className="bai-h2-maly">Znasz promocję, której tu nie ma?</h2>
-      <p className="bai-zglos-opis">Wklej adres strony z ofertą. Sprawdzę ją u producenta i dopiszę, jeśli się zgadza. Nie podajesz imienia ani e-maila.</p>
+    <section className="bai-zglos" id="zglos" aria-labelledby="bw-zglos">
+      <h2 id="bw-zglos" className="bai-h2-maly">
+        Znasz promocję, której tu nie ma?
+      </h2>
+      <p className="bai-zglos-opis">Wklej adres strony z ofertą. Sprawdzę ją u producenta i dopiszę, jeśli się zgadza.</p>
       {stan === "ok" ? (
         <p className="bai-zapis-ok" role="status">
           Dziękuję. Sprawdzę i dopiszę.
         </p>
       ) : (
-        <form onSubmit={wyslij} className="bai-zapis-rzad">
+        <form onSubmit={wyslij} className="bai-zglos-forma">
           <input className="bai-pole" type="url" required placeholder="https://..." value={url} onChange={(e) => setUrl(e.target.value)} aria-label="Adres strony z promocją" />
           <input type="text" name="www" tabIndex={-1} autoComplete="off" value={www} onChange={(e) => setWww(e.target.value)} className="bai-pulapka" aria-hidden />
           <button type="submit" className="bai-przycisk-obrys" disabled={stan === "wysylam"}>
@@ -50,6 +52,7 @@ export function Zglos() {
           {blad}
         </p>
       )}
+      <p className="bai-zglos-notka">Bez imienia i bez e-maila. Sam adres.</p>
     </section>
   );
 }

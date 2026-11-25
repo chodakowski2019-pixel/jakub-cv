@@ -22,7 +22,7 @@ const dataPoPolsku = (d: string) => new Date(d).toLocaleDateString("pl-PL", { da
 
 export default function Page() {
   const wszystkie = wszystkieNarzedzia();
-  const promocje = wszystkiePromocje().filter((p) => !p.wygasla);
+  const promocje = wszystkiePromocje().filter((p) => Date.now() < new Date(p.koniec).getTime());
   const kategorie = kategorieZNarzedziami();
   const kafle: Kafel[] = wszystkie.map((n) => ({
     slug: n.slug,
@@ -37,6 +37,7 @@ export default function Page() {
     krotko: n.krotko,
     cechy: n.cechy,
     logo: n.logo,
+    promo: promocje.filter((p) => p.slug === n.slug).map((p) => ({ tekst: p.rabat, koniec: p.koniec }))[0],
   }));
   const cenniki = (Object.keys(CENNIKI) as (keyof typeof CENNIKI)[])
     .map((slug) => ({ slug, nazwa: CENNIKI[slug], ile: wszystkie.filter((n) => n.cennik === slug).length }))

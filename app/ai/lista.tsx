@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // Lista narzędzi z wyszukiwarką i filtrami (jak w katalogach narzędzi: model cenowy i cechy).
 // Dane przychodzą z serwera jako zwykłe obiekty. Filtrowanie w przeglądarce, bez przeładowania strony.
@@ -19,6 +19,8 @@ export type Kafel = {
   krotko: string;
   cechy: string[];
   logo: string;
+  /** 25.11.2026: promocja Black Week (np. „do 55%”) i chwila, po której znaczek znika (ISO). */
+  promo?: { tekst: string; koniec: string };
 };
 
 type Opcja = { slug: string; nazwa: string; ile: number };
@@ -27,6 +29,10 @@ export function Lista({ narzedzia, cenniki, cechy }: { narzedzia: Kafel[]; cenni
   const [szukaj, setSzukaj] = useState("");
   const [cennik, setCennik] = useState<string | null>(null);
   const [wybraneCechy, setWybraneCechy] = useState<string[]>([]);
+  // Strona jest statyczna: znaczek promocji chowa przeglądarka, gdy minie termin.
+  const [teraz, setTeraz] = useState<number | null>(null);
+  useEffect(() => setTeraz(Date.now()), []);
+  const trwa = (n: Kafel) => Boolean(n.promo) && (teraz === null || teraz < new Date(n.promo!.koniec).getTime());
 
   const wynik = useMemo(() => {
     const q = szukaj.trim().toLowerCase();
@@ -98,6 +104,8 @@ export function Lista({ narzedzia, cenniki, cechy }: { narzedzia: Kafel[]; cenni
         <div className="bai-narzedzia">
           {wynik.map((n) => (
             <Link key={n.slug} href={n.href} className="bai-narzedzie">
+              {/* 25.11.2026: metka promocji Black Week wisi na górnej krawędzi kafla (nie przesuwa treści). */}
+              {trwa(n) && <span className="bai-kafel-promo">Black Week · {n.promo!.tekst}</span>}
               <div className="bai-narzedzie-glowa">
                 <span className={`bai-znak${n.logo ? " bai-znak-logo" : ""}`} aria-hidden>
                   {n.logo ? <img src={n.logo} alt="" width={44} height={44} loading="lazy" /> : n.nazwa.slice(0, 2)}
