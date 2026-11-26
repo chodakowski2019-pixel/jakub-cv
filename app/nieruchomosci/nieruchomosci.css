@@ -1,0 +1,38 @@
+/* Projekt Nieruchomości (26.11.2026). Styl z blog-ai.css (.bai), tu tylko liczby, wykres i tabela z sortowaniem. */
+
+.nr-liczby { margin-top: 2.5rem; display: grid; gap: 1px; background: var(--linia); border: 1px solid var(--linia); border-radius: 0.375rem; overflow: hidden; }
+@media (min-width: 640px) { .nr-liczby { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .nr-liczby { grid-template-columns: repeat(4, 1fr); } }
+.nr-liczba { padding: 1.25rem 1.25rem 1.375rem; background: var(--tlo); }
+.nr-liczba-wartosc { margin-top: 0.5rem; font-size: clamp(1.75rem, 3vw, 2.25rem); line-height: 1.1; letter-spacing: -0.035em; color: var(--tekst); font-variant-numeric: tabular-nums; }
+.nr-liczba-pod { margin-top: 0.375rem; font-size: 0.9375rem; color: var(--cichy); }
+
+.bai .nr-plus, .bai-tabela td.nr-plus { color: var(--akcent-jasny); }
+.bai .nr-minus, .bai-tabela td.nr-minus { color: #c0392b; }
+.bai-tabela td.nr-num, .bai-tabela th.nr-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bai-tabela td a { border-bottom: 1px solid var(--linia2); transition: color 0.2s, border-color 0.2s; }
+.bai-tabela td a:hover { color: var(--akcent-jasny); border-color: var(--akcent-jasny); }
+.nr-sort { all: unset; cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; }
+.nr-sort:hover, .nr-sort[aria-pressed="true"] { color: var(--akcent-jasny); }
+.nr-sort:focus-visible { outline: 2px solid var(--akcent-jasny); outline-offset: 3px; border-radius: 2px; }
+
+.nr-filtry { margin-top: 1.75rem; display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; align-items: center; }
+.nr-filtry .bai-pole { max-width: 22rem; }
+.nr-zakladka { all: unset; cursor: pointer; padding: 0.5rem 0.875rem; font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cichy); border: 1px solid var(--linia2); border-radius: 0.375rem; transition: color 0.2s, border-color 0.2s; }
+.nr-zakladka:hover { color: var(--tekst); }
+.nr-zakladka[aria-pressed="true"] { color: var(--na-akcencie); background: var(--akcent); border-color: var(--akcent); }
+.nr-zakladka:focus-visible { outline: 2px solid var(--akcent-jasny); outline-offset: 3px; }
+.nr-wiecej { margin-top: 1rem; }
+
+/* Wykres słupkowy ceny za m² w latach */
+.nr-wykres { margin-top: 1.75rem; padding: 1.25rem 1rem 0.75rem; border: 1px solid var(--linia); border-radius: 0.375rem; background: var(--tlo2); }
+.nr-wykres svg { display: block; width: 100%; height: auto; }
+.nr-wykres .nr-slupek { fill: var(--tekst); opacity: 0.16; }
+.nr-wykres .nr-slupek-ostatni { opacity: 1; }
+.nr-wykres .nr-slupek-ostatni { fill: var(--akcent); }
+.nr-wykres text { font-family: var(--mono); font-size: 11px; fill: var(--cichy); }
+.nr-wykres .nr-wartosc { fill: var(--tekst2); }
+
+.nr-zrodlo { margin-top: 1rem; font-size: 0.9375rem; color: var(--cichy); }
+.nr-zrodlo a { border-bottom: 1px solid var(--linia2); }
+.nr-stan-na { color: var(--akcent-jasny); }

@@ -2,6 +2,7 @@ import { DOMENA, SCIEZKI, jezykZHosta } from "@/lib/bruno/domeny";
 import { GRUPY, stronaGrupy, wszystkieArtykuly } from "@/lib/bruno/blog";
 import { BAZA, wszystkieArtykuly as artykulyAi } from "@/lib/blog-ai";
 import { BAZA_NARZEDZI, wszystkieNarzedzia } from "@/lib/narzedzia-ai";
+import { BAZA_NIERUCHOMOSCI, wszystkieJednostki } from "@/lib/nieruchomosci/dane";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,9 @@ function wpisy(host: string | null): string[] {
     `${d}${BAZA_NARZEDZI}`,
     `${d}${BAZA_NARZEDZI}/black-week`,
     ...wszystkieNarzedzia().map((n) => `${d}${BAZA_NARZEDZI}/${n.slug}`),
+    // 26.11: projekt Nieruchomości, lista + podstrona każdego miasta, powiatu i województwa.
+    `${d}${BAZA_NIERUCHOMOSCI}`,
+    ...wszystkieJednostki().filter((j) => j.slug !== "polska").map((j) => `${d}${BAZA_NIERUCHOMOSCI}/${j.slug}`),
   ];
 }
 
