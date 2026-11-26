@@ -35,6 +35,8 @@ function wpisy(host: string | null): string[] {
     // 26.11: projekt Nieruchomości, lista + podstrona każdego miasta, powiatu i województwa.
     `${d}${BAZA_NIERUCHOMOSCI}`,
     ...wszystkieJednostki().filter((j) => j.slug !== "polska").map((j) => `${d}${BAZA_NIERUCHOMOSCI}/${j.slug}`),
+    // 26.11: mapa bitew na ziemiach Polski.
+    `${d}/bitwy`,
   ];
 }
 
