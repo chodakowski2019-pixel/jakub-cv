@@ -38,6 +38,7 @@ async function wszystkieStrony(sciezka) {
 const slug = (s) =>
   s.toLowerCase()
     .replace(/^powiat\s+/, "")
+    .replace(/\s+od\s+\d{4}$/, "")
     .replace(/^m\.\s*st\.\s*/, "")
     .replace(/^m\.\s*/, "")
     .normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ł/g, "l")
@@ -55,7 +56,7 @@ for (const poziom of [0, 2, 5]) {
     for (const w of wiersze) {
       if (!jednostki.has(w.id)) {
         const miasto = /^Powiat m\./.test(w.name);
-        const nazwa = poziom === 0 ? "Polska" : poziom === 2 ? w.name.toLowerCase() : w.name.replace(/^Powiat m\.\s*(st\.\s*)?/, "").replace(/^Powiat /, "powiat ");
+        const nazwa = poziom === 0 ? "Polska" : poziom === 2 ? w.name.toLowerCase() : w.name.replace(/^Powiat m\.\s*(st\.\s*)?/, "").replace(/^Powiat /, "powiat ").replace(/\s+od\s+\d{4}$/, "");
         jednostki.set(w.id, {
           id: w.id,
           poziom: poziom === 0 ? "kraj" : poziom === 2 ? "wojewodztwo" : miasto ? "miasto" : "powiat",
