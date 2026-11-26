@@ -27,6 +27,8 @@ Plan dla firm nazywa się ChatGPT Business. Kosztuje 25 USD za osobę miesięczn
 
 Polska strona cennika OpenAI podaje dla miejsca Standard 71 zł miesięcznie. Dla miejsca Premium 355 zł. Strona nie mówi, czy to kwoty netto czy brutto.
 
+Ceny planów dla firm w Claude, Gemini, Copilot i innych narzędziach są w jednej tabeli: [ile kosztują narzędzia AI dla firm](/ai/ceny).
+
 ## Czym plan Business różni się od Plus
 
 Cena jest podobna. Różnica leży w danych i w zarządzaniu.

@@ -29,6 +29,8 @@ function wpisy(host: string | null): string[] {
     ...artykulyAi().map((a) => `${d}${BAZA}/${a.slug}`),
     `${d}${BAZA_NARZEDZI}`,
     `${d}${BAZA_NARZEDZI}/black-week`,
+    // 26.11: stały adres z cenami wszystkich narzędzi (baza SEO, plik 33).
+    `${d}${BAZA_NARZEDZI}/ceny`,
     ...wszystkieNarzedzia().map((n) => `${d}${BAZA_NARZEDZI}/${n.slug}`),
     // 26.11: projekt Nieruchomości, lista + podstrona każdego miasta, powiatu i województwa.
     `${d}${BAZA_NIERUCHOMOSCI}`,

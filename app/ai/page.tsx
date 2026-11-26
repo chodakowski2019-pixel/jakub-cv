@@ -78,6 +78,10 @@ export default function Page() {
             <Link href={BAZA_BLACK_WEEK} className="bai-przycisk">
               Promocje Black Week ({promocje.length})
             </Link>
+            {/* 26.11.2026: link do strony z cenami wszystkich narzędzi (/ai/ceny). */}
+            <Link href={`${BAZA_NARZEDZI}/ceny`} className="bai-przycisk-obrys">
+              Ceny wszystkich narzędzi
+            </Link>
             <Link href="/szkolenie-ai-dla-firm#formularz" className="bai-przycisk-obrys">
               Sprawdź wolny termin
             </Link>
